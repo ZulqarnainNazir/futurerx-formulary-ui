@@ -1,0 +1,25 @@
+.calls-grid-root {
+    width: 100%;
+    .frx-grid-container{
+      .frx-grid{
+        .frx-grid__grid-block{
+          .ant-table{
+            .ant-table-container{
+              .ant-table-body{
+                .ant-table-tbody{
+                  .ant-table-row{
+                    .ant-table-cell{
+                      .frx-grid-settings-cell{
+                        display: none;
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+}
+  

@@ -1,0 +1,8 @@
+.frx-grid-settings-header-cell {
+  cursor: pointer;
+  /* settings icon style */
+  & &__settings-icon {
+    position: relative;
+    top: 5px;
+  } 
+}
