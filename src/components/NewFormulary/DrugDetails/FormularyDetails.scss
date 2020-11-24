@@ -92,6 +92,9 @@
     overflow: hidden;
     .inner-container{
         padding: 12px 10px 10px;
+        &.bg-light-grey{
+            background: #F9F9F9;
+        }
     }
     .bordered{
         border: 1px solid #E5E5E5;
@@ -111,8 +114,118 @@
         padding: 0 20px;
         align-items: center;
         text-transform: uppercase;
+        &.panel{
+            background: white;
+            .panel-tooltip{
+                margin-left: 10px;
+                line-height: 0;
+            }
+        }
     }
     .configure-mini-tabs{
         margin-bottom: 12px;
+    }
+    .details-top{
+        margin-bottom: 10px;
+    }
+}
+.panel-grid{
+    border: 1px solid #E5E5E5;
+    border-radius: 5px;
+    overflow: hidden;
+    .top, .bottom{
+        display: flex;
+        border-bottom: 1px solid #E5E5E5;
+        .item{
+            height: 40px;
+            padding: 0 20px;
+            display: flex;
+            align-items: center;
+            border-right: 1px solid #E5E5E5;
+            width: 25%;
+            .ant-checkbox-inner{
+                border-radius: 4px;
+                border: 2px solid #D5D5D5;
+
+            }
+            .ant-checkbox-checked .ant-checkbox-inner{
+                border: none;
+                background: #1D54B4;
+            }
+            .ant-checkbox:hover::after, .ant-checkbox-wrapper:hover .ant-checkbox::after{
+                visibility: hidden;
+            }
+            &.left{
+                justify-content: flex-start;
+            }
+            &:last-child{
+                border-right: none;
+            }
+        }
+    }
+    .top{
+        .item{
+            font-size: 12px;
+            line-height: 14px;
+            color: #707683;
+            text-transform: uppercase;
+        }
+    }
+    .bottom{
+        background: white;
+        flex-wrap: wrap;
+        border-bottom: none;
+        .item{
+            font-size: 12px;
+            line-height: 14px;
+            color: #323C47;
+            border-bottom: 1px solid #E5E5E5;
+            &.no-data{
+                height: 82px;
+                width: 100%;
+                font-size: 14px;
+                font-weight: bold;
+                color: #C4C4C4;
+                align-items: center !important;
+                justify-content: center !important;
+            }
+        }
+        .row{
+            width: 100%;
+            display: flex;
+            &:last-child{
+                .item{
+                    border-bottom: none;
+                }
+            }
+        }
+        
+
+    }
+    &.text-center{
+        .top,.bottom{
+            .item{
+                text-align: center;
+                justify-content: center;
+                &.left{
+                    justify-content: flex-start;
+                }
+            }
+        }
+    }
+    &.first-left{
+        .top, .bottom{
+            .item:first-child{
+                text-align: left;
+                justify-content: flex-start;
+            }
+        }
+    }
+}
+.MuiTooltip-tooltip.custom-tooltip{
+    &.panel-tooltip{
+        min-width: 357px;
+        text-align: left;
+        font-weight: normal;
     }
 }
