@@ -88,7 +88,6 @@ export default class DrugDetails extends React.Component<any,drugDetailsState>{
 
                     </div>
                 </div>
-                <DrugGrid />
             </>
         )
     }

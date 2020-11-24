@@ -51,7 +51,6 @@ export default class DrugGrid extends React.Component<any,any>{
                 columns={columns}
                 isRowSelectionEnabled={true}
                 isRowSelectorCheckbox={true}
-                isColumnCheckbox = {true}
                 // expandable={{
                 //   isExpandable: true,
                 //   expandIconColumnIndex: 1,
