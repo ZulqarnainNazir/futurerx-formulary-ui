@@ -1,6 +1,7 @@
 import React from 'react';
 import { TabInfo } from "../../../../../models/tab.model";
 import FrxTabs from '../../../../shared/FrxTabs/FrxTabs';
+import DrugDetails from './components/DrugDetails';
 
 const tabs = [
     { id: 1, text: "TIER" },
@@ -47,7 +48,7 @@ export default class FormularyConfigure extends React.Component<configureProps,c
             case 4:
                 return <div>QL</div>
             case 5:
-                return <div>DRUG DETAILS</div>
+                return <DrugDetails />
         }
     }
     render(){

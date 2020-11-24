@@ -101,4 +101,18 @@
     .white-bg{
         background: white;
     }
+    .header{
+        display: flex;
+        height: 52px;
+        border-bottom: 1px solid #E5E5E5;
+        font-size: 12px;
+        color: #1D54B4;
+        font-weight: $font-weight-500;
+        padding: 0 20px;
+        align-items: center;
+        text-transform: uppercase;
+    }
+    .configure-mini-tabs{
+        margin-bottom: 12px;
+    }
 }

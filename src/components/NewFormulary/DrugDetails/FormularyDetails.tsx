@@ -61,7 +61,7 @@ export default class FormularyDetails extends React.Component<any,any> {
                         onClickTab={this.onClickTab}
                     />
                     <div className="inner-container">
-                    {this.renderActiveTabContent()}
+                        {this.renderActiveTabContent()}
                     </div>
                 </div>
             </>
