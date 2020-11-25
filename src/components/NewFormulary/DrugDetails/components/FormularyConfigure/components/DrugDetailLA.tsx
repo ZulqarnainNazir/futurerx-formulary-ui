@@ -53,7 +53,7 @@ class DrugDetailLA extends React.Component<any,tabsState> {
                         <Grid container justify="space-between" alignItems="center"  className='rowcontent'>
                           <Grid item xs={1}></Grid>
                           <Grid item xs={3}>
-                          <CustomizedSwitches/>
+                          <CustomizedSwitches leftTitle="Off" rightTitle="On"/>
                           </Grid>
                           <Grid item xs={8}>
                               <FrxMiniTabs

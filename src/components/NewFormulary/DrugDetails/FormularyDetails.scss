@@ -138,6 +138,7 @@
     .modify-wrapper{
         .modify-panel{
             padding: 0 20px;
+            display: flex;
             .icon{
                 display: flex;
                 height: 50px;
@@ -155,6 +156,23 @@
                     line-height: 31px;
                     text-align: center;
                 }
+            }
+            .switch-box{
+                display: flex;
+                align-items: center;
+                padding: 0 40px;
+                border-right: 1px solid #e5e5e5;
+                .label{
+                    font-size: 14px;
+                    text-transform: uppercase;
+                    color: #707683;
+                }
+            }
+            .mini-tabs{
+                display: flex;
+                padding: 0 40px;
+                border-right: 1px solid #e5e5e5;
+                align-items: center;
             }
         }
     }

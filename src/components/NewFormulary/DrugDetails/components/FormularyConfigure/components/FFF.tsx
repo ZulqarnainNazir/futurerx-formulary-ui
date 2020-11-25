@@ -1,13 +1,41 @@
 import React from 'react';
 import PanelHeader from './PanelHeader';
 import PanelGrid from './panelGrid';
-
+import CustomizedSwitches from './tt';
+import { TabInfo } from "../../../../../../models/tab.model";
+import FrxMiniTabs from "../../../../../shared/FrxMiniTabs/FrxMiniTabs";
 export default class FFF extends React.Component<any,any>{
     state={
         panelGridTitle1: ['Free First Fill','Number of Drugs','added drugs','removed drugs'],
         panelTitleAlignment1: ['left','left','left','left'],
-        panelGridValue1: []  
+        panelGridValue1: [],
+        activeTabIndex: 0,
+        tabs: [
+            {
+                id: 1,
+                text: "Replace"
+            },
+            {
+                id: 2,
+                text: "Append"
+            },
+            {
+                id: 3,
+                text: "Remove"
+            },
+        ]
     }
+    onClickTab = (selectedTabIndex: number) => {
+        let activeTabIndex = 0;
+    
+        const tabs = this.state.tabs.map((tab: TabInfo, index: number) => {
+          if (index === selectedTabIndex) {
+            activeTabIndex = index;
+          }
+          return tab;
+        });
+        this.setState({ tabs, activeTabIndex });
+    };
     render(){
         return (
             <>
@@ -25,6 +53,16 @@ export default class FFF extends React.Component<any,any>{
                         <div className="modify-wrapper bordered white-bg">
                             <div className="modify-panel">
                                 <div className="icon"><span>R</span></div>
+                                <div className="switch-box">
+                                    <CustomizedSwitches leftTitle="Modify" rightTitle="view all"/>
+                                </div>
+                                <div className="mini-tabs">
+                                    <FrxMiniTabs
+                                        tabList={this.state.tabs}
+                                        activeTabIndex={this.state.activeTabIndex}
+                                        onClickTab={this.onClickTab}
+                                    />
+                                </div>
                             </div>
                         </div>
                     </div>
