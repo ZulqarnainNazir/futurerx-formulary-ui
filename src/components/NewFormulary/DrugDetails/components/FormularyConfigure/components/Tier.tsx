@@ -1,7 +1,7 @@
 import React from "react";
 import { Grid } from "@material-ui/core";
 import FrxMiniTabs from "../../../../../shared/FrxMiniTabs/FrxMiniTabs";
-import "./DrugDetailLA.scss";
+import "./Tier.scss";
 
 import {
   getTapList,
@@ -68,7 +68,7 @@ class Tier extends React.Component<any, tabsState> {
                 </div>
                 <div className="limited-access">
                   <PanelHeader title="Tier Definition Settings" />
-                  <div className="modify-wrapper bordered white-bg">
+                  <div className="modify-wrapper white-bg">
                     <div className="modify-panel">
                       <div className="icon">
                         <span>R</span>
@@ -88,12 +88,14 @@ class Tier extends React.Component<any, tabsState> {
                       </div>
                     </div>
                   </div>
-                  <div className="group">
-                    <label>
-                      QUANTITY <span className="astrict">*</span>
-                    </label>
-                    <DropDown options={[1, 2, 3]} />
-                  </div>
+                  <Grid item xs={4}>
+                    <div className="group tier-dropdown white-bg">
+                      <label>
+                        TIER <span className="astrict">*</span>
+                      </label>
+                      <DropDown options={[1, 2, 3]} />
+                    </div>
+                  </Grid>
                 </div>
               </Grid>
             </Grid>
