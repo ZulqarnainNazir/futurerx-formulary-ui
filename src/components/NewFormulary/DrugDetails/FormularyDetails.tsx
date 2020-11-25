@@ -3,6 +3,7 @@ import { TabInfo } from "../../../models/tab.model";
 import FrxTabs from "../../shared/FrxTabs/FrxTabs";
 import FormularyDetailsTop from './components/FormularyDetailsTop/FormularyDetailsTop';
 import FormularyConfigure from './components/FormularyConfigure/FormularyConfigure';
+import CompareView from "./components/CompareView/CompareView";
 import './FormularyDetails.scss';
 
 const tabs = [
@@ -37,7 +38,7 @@ export default class FormularyDetails extends React.Component<any,any> {
             case 1:
                 return <FormularyConfigure />
             case 2:
-                return <div>Compare/View</div>
+                return <div><CompareView /></div>
             case 3:
                 return <div>Validation</div>
             case 4:
