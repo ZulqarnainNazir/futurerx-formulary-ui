@@ -5,6 +5,7 @@ import Medicare from '../NewFormulary/Medicare/Medicare';
 import DrugDetails from '../NewFormulary/DrugDetails/components/FormularyConfigure/components/DrugDetails';
 
 import './FormularyBody.scss';
+import HmpsSubmissionTable from './hmpsSubmissionTable/hmpsSubmissionTable';
 
 const tabs = [
     { id: 1, text: "HMPS SUBMISSION FILES (EXPORT)" },
@@ -48,7 +49,8 @@ export default class FormularyBody extends React.Component<any,any>{
         const tabIndex = this.state.activeTabIndex;
         switch(tabIndex){
             case 0:
-                return <Medicare drugDetailClick={this.drugDetailsClickHandler}/>
+                // return <Medicare drugDetailClick={this.drugDetailsClickHandler}/>
+                return <HmpsSubmissionTable />
             case 1:
                 return <div>MEDICAID</div>
             case 2:
