@@ -98,7 +98,7 @@ class TabletDetailsInfoPopup extends React.Component<TabletDetailsInfoPopupProps
                                         <div className="TabletBodyDetails__leftside_bgimg">
                                             <img src={DrugPopup2} />
                                         </div>
-                                        <span>*Image may vary by manufacturer </span>
+                                        <span><span className="astreak">*</span>Image may vary by manufacturer </span>
                                         <div className="TabletBodyDetails__leftside_typography">
                                             <p>{title} (fingolimod) is an immunosuppressant. It works by keeping immune cells trapped in your lymph nodes so they can't reach the central nervous system (brain and spinal cord).</p>
                                             <p>{title} is used to treat relapsing multiple sclerosis (MS) in adults, and children and adolescents aged 10 years and older.</p>

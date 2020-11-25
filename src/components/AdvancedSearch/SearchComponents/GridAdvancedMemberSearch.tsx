@@ -134,7 +134,7 @@ GridAdvancedMemberSearchState
                         <div className="advanced-grid-search__input-field">
                         <TextBox
                             className="advanced-grid-search__input"
-                            placeholder="Member Info"
+                            placeholder="Member"
                             name="memberInfo"
                             type="text"
                             value={this.state.memberInfo}

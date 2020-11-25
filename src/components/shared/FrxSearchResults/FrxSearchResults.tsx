@@ -47,7 +47,7 @@ export default class FrxSearchResults extends Component<Props, State> {
     componentDidMount() {
         let temp: any = this.props.searchResults.map((item: any) => item.results)[0].filter((item: any) => item.highlight === true)[0]
         this.setState({
-            mapData: this.props.searchResults.map((item: any) => { return { drugName: item.title.replace('{_qty}', item.qty), store: item.results.filter((item: any) => item.highlight === true)[0] } }).map((item: any) => { return { ...item, bestPrice: item.store.bestPrice } }),
+            mapData: this.props.searchResults.map((item: any) => { return { drugName: item.title, qty: item.qty, capacity: item.capacity, type: item.type, store: item.results.filter((item: any) => item.highlight === true)[0] } }).map((item: any) => { return { ...item, bestPrice: item.store.bestPrice } }),
             mapLocationData: this.props.searchResults.map((item: any) => { return item.results }),
             preferedNetwork: this.props.searchResults.filter((item: any) => item.highlight === true).map((item: any) => { return { ['Pharmacy Name']: item.title, ['Address']: item.address, ['Phone #']: item.phone, ['Fax #']: item.fax } }),
             _pharmacyData: pharmacyData().filter((item: any) => item.pharmacy === temp.pharmacy)[0],
@@ -71,7 +71,7 @@ export default class FrxSearchResults extends Component<Props, State> {
     }
     componentWillReceiveProps(newProps) {
         this.setState({
-            mapData: newProps.searchResults.map((item: any) => { return { drugName: item.title.replace('{_qty}', item.qty), store: item.results.filter((item: any) => item.highlight === true)[0] } }).map((item: any) => { return { ...item, bestPrice: item.store.bestPrice } }),
+            mapData: newProps.searchResults.map((item: any) => { return { drugName: item.title, qty: item.qty, capacity: item.capacity, type: item.type, store: item.results.filter((item: any) => item.highlight === true)[0] } }).map((item: any) => { return { ...item, bestPrice: item.store.bestPrice } }),
             mapLocationData: this.props.searchResults.map((item: any) => { return item.results }),
             preferedNetwork: this.props.searchResults.filter((item: any) => item.highlight === true).map((item: any) => { return { ['Pharmacy Name']: item.title, ['Address']: item.address, ['Phone #']: item.phone, ['Fax #']: item.fax } }),
             _mapPointData: [].concat.apply([], this.props.searchResults.map((item: any) => { return item.results }).map((item: any) => item.map((_item: any) => pharmacyData().filter((__item: any) => _item.pharmacy === __item.pharmacy)[0])))

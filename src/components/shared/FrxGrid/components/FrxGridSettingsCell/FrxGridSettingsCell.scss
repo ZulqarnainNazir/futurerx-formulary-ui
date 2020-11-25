@@ -1,3 +1,5 @@
+@import "../../../../../assets/style.scss";
+
 .frx-grid-settings-cell__icon {
   .frx-grid-settings-cell__icon--expanded {
     transform: rotate(90deg);
@@ -23,6 +25,9 @@
         border: 2px solid #D5D5D5;
         border-radius: 4px;
       }
+      .ant-checkbox-input{
+        opacity: 0 !important;
+      }
     }
     .ant-checkbox-checked{
       .ant-checkbox-inner{
@@ -30,8 +35,11 @@
         border: none;
       }
       .ant-checkbox-inner::after{
-        top: 2px;
+        top: 1px;
         width: 5.714286px;
+        border: 2px solid $color-white;
+        border-left: 0;
+        border-top: 0;
       }
     }
   }

@@ -27,7 +27,7 @@ export const getClaimsSearchData = () => {
             searchType: "TEXT",
             isRequired: true,
             pixelWidth: 170,
-            placeholder: "Drug Name",
+            placeholder: "Drug Label",
             nameSpace: "claimsGrid",
             name: "drugLabel",
         },

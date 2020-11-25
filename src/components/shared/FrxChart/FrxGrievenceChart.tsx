@@ -1,9 +1,9 @@
-import React, { Component } from "react";
+import React, {Component} from "react";
 import "./FrxChart.scss";
 import FrxGrievncesBarChart from "../FrxBarChart/FrxGrievncesBarChart";
 import FrxGrievencesDonutChart from "../FrxDonutChart/FrxGrievencesDonutChart";
 
-import { Box, createStyles, Grid, makeStyles, Theme } from "@material-ui/core";
+import {Box, createStyles, Grid, makeStyles, Theme} from "@material-ui/core";
 import StatsSummary from "../FrxStatsSummary/FrxStatsSummary";
 
 interface FrxChartProps {
@@ -19,18 +19,18 @@ interface FrxChartState {
 class FrxGrievenceChart extends Component<FrxChartProps, FrxChartState> {
   state = {
     selectedItem: "",
-    loading: true
+    loading: true,
   };
 
   componentDidMount() {
     this.setState({
       selectedItem: Object.keys(this.props.data)[new Date().getMonth()],
-      loading: false
+      loading: false,
     });
     window.onresize = () => {
-      this.setState({ loading: true });
+      this.setState({loading: true});
       setTimeout(() => {
-        this.setState({ loading: false });
+        this.setState({loading: false});
       }, 100);
     };
   }
@@ -46,9 +46,9 @@ class FrxGrievenceChart extends Component<FrxChartProps, FrxChartState> {
     console.log(
       this.props.data["october"].reduce(
         (a: any, b: any) => {
-          return { value: a.value + b.value };
+          return {value: a.value + b.value};
         },
-        { value: 0 }
+        {value: 0}
       ).value
     );
 
@@ -69,15 +69,15 @@ class FrxGrievenceChart extends Component<FrxChartProps, FrxChartState> {
                   data={[
                     ...this.props.data[this.state.selectedItem].map(
                       (item: any) => {
-                        return item.value;
+                        return parseInt(item.value);
                       }
                     ),
                     this.props.data[this.state.selectedItem].reduce(
                       (a: any, b: any) => {
-                        return { value: a.value + b.value };
+                        return {value: parseInt(a.value + b.value)};
                       },
-                      { value: 0 }
-                    ).value
+                      {value: 0}
+                    ).value,
                   ]}
                   labels={[
                     ...this.props.data[this.state.selectedItem].map(
@@ -85,14 +85,14 @@ class FrxGrievenceChart extends Component<FrxChartProps, FrxChartState> {
                         return item.key;
                       }
                     ),
-                    "total"
+                    "total",
                   ]}
                   total={4}
-                  heading={`${this.state.selectedItem
-                    .split("")[0]
-                    .toLocaleUpperCase() +
-                    this.state.selectedItem.substr(1)} 2020`}
-                  colors={["#F65A1C", "#59B35E", "#666666","#2055B5"]}
+                  heading={`${
+                    this.state.selectedItem.split("")[0].toLocaleUpperCase() +
+                    this.state.selectedItem.substr(1)
+                  } 2020`}
+                  colors={["#F65A1C", "#59B35E", "#666666", "#2055B5"]}
                 />
               </div>
             )}
@@ -105,7 +105,7 @@ class FrxGrievenceChart extends Component<FrxChartProps, FrxChartState> {
                   isSelected={this.state.selectedItem === item}
                   itemClicked={() => {
                     this.setState({
-                      selectedItem: item
+                      selectedItem: item,
                     });
                   }}
                   data={this.props.data[item]}

@@ -30,6 +30,27 @@
       }
     }
   }
+  .searchButton {
+    button {
+      background: #2055b5;
+      border: 1px solid #2055b5;
+      .MuiButton-label {
+        font-family: Roboto;
+        font-style: normal;
+        font-weight: 500;
+        font-size: 12px;
+        line-height: 35px;
+        /* identical to box height, or 292% */
+
+        display: flex;
+        align-items: center;
+        text-align: center;
+        letter-spacing: 0.01em;
+
+        color: #ffffff;
+      }
+    }
+  }
 }
 
 .PharmacyMapbox-container {
@@ -77,8 +98,8 @@
     }
   }
   .alignLeft {
-    grid-area: m!important;
-    max-width: 373px;;
+    grid-area: m !important;
+    max-width: 373px;
   }
   .map-container-info {
     grid-area: t;

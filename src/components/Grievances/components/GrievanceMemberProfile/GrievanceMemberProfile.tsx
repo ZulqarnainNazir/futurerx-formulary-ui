@@ -207,7 +207,11 @@ export default class GMemberProfile extends React.Component<any,any>{
                         <Container className="member-components-container">
                             <Grid item xs={12}>
                             <div className="bg-white claim-container">
-                                <Claim activeIndex={this.state.claimIndex} />
+                                <Claim 
+                                activeIndex={this.state.claimIndex} 
+                                 memberInformation={this.props.memberInformation}
+                                 contactInformation={this.props.contactInformation}
+                                />
                             </div>
                             </Grid>
                         </Container>

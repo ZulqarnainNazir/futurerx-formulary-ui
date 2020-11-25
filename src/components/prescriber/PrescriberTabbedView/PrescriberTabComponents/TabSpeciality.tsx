@@ -35,7 +35,7 @@ class TabSpeciality extends React.Component<Props> {
                     <h5>Secondary Specialty</h5>
                     <div className="row">
                     <Box component="div" display="inline">
-                    Provider ID
+                    Taxonomy Code
                     </Box>
                     <Box component="div" display="inline">
                         {prescriberTabSpeciality.secondarySpeciality.taxonomyCode}
@@ -43,7 +43,7 @@ class TabSpeciality extends React.Component<Props> {
                     </div>
                     <div className="row">
                     <Box component="div" display="inline">
-                    Birth Date
+                    Taxonomy Description
                     </Box>
                     <Box component="div" display="inline">
                         {prescriberTabSpeciality.secondarySpeciality.taxonomyDescription}
