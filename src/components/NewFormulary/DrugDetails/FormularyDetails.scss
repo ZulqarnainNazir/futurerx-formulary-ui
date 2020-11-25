@@ -1,0 +1,231 @@
+@import "./../../../assets/style.scss";
+
+.drug-detail-top{
+    background: white;
+    padding: 22px 20px 30px 30px;
+    margin-bottom: 10px;
+    border: 1px solid #E5E5E5;
+    border-radius: 5px;
+    .breadcrum-sec{
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 27px;
+        .breadcrum{
+            span{
+                margin-right: 5px;
+                color: #323C47;
+                &.color-blue{
+                    font-size: 12px;
+                    text-decoration: dashed underline;
+                    font-weight: $font-weight-500;
+                    color: #1D54B4;
+                    cursor: pointer;
+                }
+                &.active-state{
+                    font-size: 18px;
+                    font-weight: $font-weight-500;
+                }
+            }
+        }
+        .version-wrapper{
+            border: 1px solid #F65A1C;
+            height: 37px;
+            width: 890px;
+            background: #FFF5F0;
+            border-radius: 3px;
+            display: flex;
+            .version-dd{
+                width: 295px;
+                border-right: 1px solid #F65A1C;
+                height: 35px;
+                margin-right: 10px;
+            }
+            .item{
+                margin-right: 53px;
+                display: flex;
+                line-height: 35px;
+                font-size: 12px;
+                color: #F65A1C;
+                font-weight: $font-weight-500;
+                align-items: center;
+                svg{
+                    margin-right: 5px;
+                }
+                &:last-child{
+                    margin-right: 0;
+                }
+            }
+        }
+    }
+    .durationInfo{
+        display: flex;
+        .item{
+            margin-right: 60px;
+            font-size: 14px;
+            color: #323C47;
+            font-weight: $font-weight-500;
+            .label{
+                color: $primary-text-color;
+                font-weight: normal;
+            }
+            .tag{
+                display: block;
+                height: 24px;
+                border-radius: 12px;
+                padding: 0 10px;
+                line-height: 24px;
+                color: white;
+                font-size: 12px;
+                font-weight: bold;
+                &.purple{
+                    background: #684999;
+                }
+            }
+        }
+    }
+}
+.drug-details-bottom{
+    background: #F9F9F9;
+    border: 1px solid #E5E5E5;
+    border-radius: 5px;
+    overflow: hidden;
+    .inner-container{
+        padding: 12px 10px 10px;
+        &.bg-light-grey{
+            background: #F9F9F9;
+        }
+    }
+    .bordered{
+        border: 1px solid #E5E5E5;
+        border-radius: 5px;
+        overflow: hidden;
+    }
+    .white-bg{
+        background: white;
+    }
+    .header{
+        display: flex;
+        height: 52px;
+        border-bottom: 1px solid #E5E5E5;
+        font-size: 12px;
+        color: #1D54B4;
+        font-weight: $font-weight-500;
+        padding: 0 20px;
+        align-items: center;
+        text-transform: uppercase;
+        &.panel{
+            background: white;
+            .panel-tooltip{
+                margin-left: 10px;
+                line-height: 0;
+            }
+        }
+    }
+    .configure-mini-tabs{
+        margin-bottom: 12px;
+    }
+    .details-top{
+        margin-bottom: 10px;
+    }
+}
+.panel-grid{
+    border: 1px solid #E5E5E5;
+    border-radius: 5px;
+    overflow: hidden;
+    .top, .bottom{
+        display: flex;
+        border-bottom: 1px solid #E5E5E5;
+        .item{
+            height: 40px;
+            padding: 0 20px;
+            display: flex;
+            align-items: center;
+            border-right: 1px solid #E5E5E5;
+            width: 25%;
+            .ant-checkbox-inner{
+                border-radius: 4px;
+                border: 2px solid #D5D5D5;
+
+            }
+            .ant-checkbox-checked .ant-checkbox-inner{
+                border: none;
+                background: #1D54B4;
+            }
+            .ant-checkbox:hover::after, .ant-checkbox-wrapper:hover .ant-checkbox::after{
+                visibility: hidden;
+            }
+            &.left{
+                justify-content: flex-start;
+            }
+            &:last-child{
+                border-right: none;
+            }
+        }
+    }
+    .top{
+        .item{
+            font-size: 12px;
+            line-height: 14px;
+            color: #707683;
+            text-transform: uppercase;
+        }
+    }
+    .bottom{
+        background: white;
+        flex-wrap: wrap;
+        border-bottom: none;
+        .item{
+            font-size: 12px;
+            line-height: 14px;
+            color: #323C47;
+            border-bottom: 1px solid #E5E5E5;
+            &.no-data{
+                height: 82px;
+                width: 100%;
+                font-size: 14px;
+                font-weight: bold;
+                color: #C4C4C4;
+                align-items: center !important;
+                justify-content: center !important;
+            }
+        }
+        .row{
+            width: 100%;
+            display: flex;
+            &:last-child{
+                .item{
+                    border-bottom: none;
+                }
+            }
+        }
+        
+
+    }
+    &.text-center{
+        .top,.bottom{
+            .item{
+                text-align: center;
+                justify-content: center;
+                &.left{
+                    justify-content: flex-start;
+                }
+            }
+        }
+    }
+    &.first-left{
+        .top, .bottom{
+            .item:first-child{
+                text-align: left;
+                justify-content: flex-start;
+            }
+        }
+    }
+}
+.MuiTooltip-tooltip.custom-tooltip{
+    &.panel-tooltip{
+        min-width: 357px;
+        text-align: left;
+        font-weight: normal;
+    }
+}

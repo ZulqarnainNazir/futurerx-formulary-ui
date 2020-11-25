@@ -2,7 +2,9 @@ import React from 'react';
 import { TabInfo } from "../../models/tab.model";
 import FrxTabs from '../shared/FrxTabs/FrxTabs';
 import Medicare from './Medicare/Medicare';
-import DrugDetails from './DrugDetails/DrugDetails';
+import DrugDetails from './DrugDetails/FormularyDetails';
+import DrugDetailsContext from './FormularyDetailsContext';
+import {getFormularyDetails} from '../../mocks/formulary/formularyDetails';
 
 import './NewFormulary.scss';
 
@@ -72,9 +74,10 @@ export default class Formulary extends React.Component<any,any>{
                         </div>
                     </>
                 ) : this.state.showDrugDetails ? (
-                    <>
-                        <DrugDetails />
-                    </>
+                    
+                    <DrugDetailsContext.Provider value={{showDetailHandler: this.drugDetailsClickHandler}}>
+                        <DrugDetails data={getFormularyDetails()}/>
+                    </DrugDetailsContext.Provider>
                 ) : null}
             </div>
         )
