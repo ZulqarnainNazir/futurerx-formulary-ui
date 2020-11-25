@@ -1,0 +1,46 @@
+.formularyHeading{
+    margin-top: 5vh;
+    width: 85%;
+    height: 140px;
+    margin-left: 6%;
+    top: 164px;
+
+/* Background – White */
+
+background: #FFFFFF;
+/* Border – Light Grey */
+
+border: 1px solid #E5E5E5;
+border-radius: 5px;
+}
+.fh-content{
+    padding: 30px;
+    display: flex;
+    flex-direction: column;
+    >.row-one{
+        display: flex;
+        justify-content: space-between;
+    }
+}
+.rowLeft{
+    display: flex;
+    justify-content: start;
+    align-items: center;
+     
+     
+}
+.rowRight{
+    display: flex;
+    justify-content: end;
+    align-items: center;
+    margin: 5px;
+     
+}
+.row-two{
+    margin-top: 25px;
+    display: flex;
+    align-items: center;
+}
+.date{
+    margin-left: 61px;
+}
