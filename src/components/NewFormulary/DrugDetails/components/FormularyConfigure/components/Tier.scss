@@ -118,8 +118,13 @@
       }
     }
   }
+
   .tier-dropdown {
     padding: 20px;
     border-top: 1px solid #e5e5e5;
+
+    .select-box .ant-select {
+      width: 100%;
+    }
   }
 }

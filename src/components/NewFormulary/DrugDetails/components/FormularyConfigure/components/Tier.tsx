@@ -88,14 +88,14 @@ class Tier extends React.Component<any, tabsState> {
                       </div>
                     </div>
                   </div>
-                  <Grid item xs={4}>
-                    <div className="group tier-dropdown white-bg">
+                  <div className="group tier-dropdown white-bg">
+                    <Grid item xs={4}>
                       <label>
                         TIER <span className="astrict">*</span>
                       </label>
                       <DropDown options={[1, 2, 3]} />
-                    </div>
-                  </Grid>
+                    </Grid>
+                  </div>
                 </div>
               </Grid>
             </Grid>
