@@ -38,6 +38,7 @@ class FrxGridMenu extends React.Component<FrxGridMenuProps> {
                   className="frx-grid-menu__item"
                   onClick={(e: React.MouseEvent<Element>) => {
                     e.stopPropagation();
+                    handleClose();
                     handleMenuClick(menu);
                   }}
                 >

@@ -7,6 +7,7 @@ import './FrxTermRecord.scss';
 
 interface Props {
     isNotesPopup: boolean;
+    close: any;
 }
 interface State {
 
@@ -67,7 +68,7 @@ export default class FrxTermRecord extends React.Component<Props, State>{
                 {!isNotesPopup && <div className="termRecord-root">
                     <div className="form">
                         <div className="form-row">
-                            <div className="label">Term date*</div>
+                            <div className="label">Term date<span>*</span></div>
                             <div className="formField">
                                 <CustomDatePicker
                                     onChange={(date: any, dateString: any) => { this.setState({ date: date }) }}
@@ -78,7 +79,7 @@ export default class FrxTermRecord extends React.Component<Props, State>{
                             </div>
                         </div>
                         <div className="form-row">
-                            <div className="label">Term note*</div>
+                            <div className="label">Term note<span>*</span></div>
                             <div className="formField">
                                 <TextareaAutosize
                                     style={this.textAreaStyles}
@@ -88,6 +89,10 @@ export default class FrxTermRecord extends React.Component<Props, State>{
                                     className="textArea"
                                 />
                             </div>
+                        </div>
+                        <div className="buttonRow">
+                            <Button onClick={this.props.close}>Cancel</Button>
+                            <Button onClick={this.props.close}>Save</Button>
                         </div>
                     </div>
                     <div className="notes">

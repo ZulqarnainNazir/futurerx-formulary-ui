@@ -64,7 +64,7 @@ class CallTab extends Component<Props, State> {
         >
           <DropDown
             placeholder="Classification"
-            className="call-tab__input--dropdown"
+            className="call-tab__input--dropdown scroll-bar"
             // dropdownClassName="formulary-service-year-dropdown"
             // defaultValue={this.state.medicareTyep}
             options={classificationOptions}

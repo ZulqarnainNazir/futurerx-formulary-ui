@@ -45,7 +45,7 @@ class MemberPopup extends Component<MemberPopupProps, MemberPopupState> {
     data: [],
     openPopup: false,
     poupType: { title: '' },
-    selectedRow: { index: '' },
+    selectedRow: { index: '', id: '' },
     miniTabs: [
       {
         id: 1,
@@ -190,24 +190,32 @@ class MemberPopup extends Component<MemberPopupProps, MemberPopupState> {
                       expandOpenIcon: <span className="openIcon"></span>,
                       expandedRowClassName: ((record, index) => {
                         console.log(record, index);
-                        return record.index === this.state.selectedRow.index ? 'expand-selected' : 'not-selected';
+                        return record.id === this.state.selectedRow.id ? 'expand-selected' : 'not-selected';
                       }),
-                      expandCloseIcon: <div className="closeIcon" onClick={() => { this.setState({ openPopup: false }) }}>X</div>,
-                      expandedRowRender: (props: any) => <FrxTermRecord isNotesPopup={this.state.poupType.title==='Add Note'}/> 
+                      expandCloseIcon: <div className="closeIcon" onClick={() => { this.setState({ openPopup: false, selectedRow: {} }) }}>X</div>,
+                      expandedRowRender: (props: any): any => {
+                        return props.data.id === this.state.selectedRow.id
+                          ? <FrxTermRecord isNotesPopup={this.state.poupType.title === 'Add Note'} close={() => { this.setState({ openPopup: false, selectedRow: {} }) }} />
+                          : <></>
+                      }
                     }}
                     settingsTriDotMenuClick={(item: any) => {
-                      if (item.title === 'Term Record') {
-                        this.setState({ openPopup: true, poupType: item })
-                      } else if (item.title === 'Add Note') {
-                        this.setState({ openPopup: true, poupType: item })
+                      if (!this.state.openPopup) {
+                        if (item.title === 'Term Record') {
+                          this.setState({ openPopup: true, poupType: item })
+                        } else if (item.title === 'Add Note') {
+                          this.setState({ openPopup: true, poupType: item })
+                        }
                       }
                     }}
                     settingsTriDotClick={(item: any) => {
-                      this.setState({
-                        selectedRow: item
-                      })
+                      if (!this.state.openPopup) {
+                        this.setState({
+                          selectedRow: item
+                        })
+                      }
                     }}
-                    onSettingsClick="grid-menu"
+                    onSettingsClick={this.state.openPopup ? undefined : 'grid-menu'}
                   />
                 </>
               )}

@@ -119,7 +119,7 @@ PaDashboardSearchState
           <div className="claims-search__first-row">
             <Input
               className="claims-search__input"
-              placeholder="Case #"
+              placeholder="Case ID"
               type="text"
               name="case"
               value={this.state.case}

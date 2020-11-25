@@ -92,7 +92,7 @@ GridAdvancedPharmacySearchState
                         <div className="advanced-grid-search__input-field">
                         <TextBox
                              className="advanced-grid-search__input"
-                            placeholder="Member Info"
+                            placeholder="Member"
                             type="text"
                             name="memberInfo"
                             value={this.state.memberInfo}

@@ -49,14 +49,21 @@ export default function DropDown(props: any) {
         className={props.className}
         placeholder={props.placeholder}
         value={props.value}
+        onChange={props.onChange}
         dropdownClassName={props.dropdownClassName}
         dropdownStyle={props.dropdownStyle}
         defaultValue={props.defaultValue}
         onSelect={props.onSelect}
+        dropdownAlign={{
+          offset: [0, 0],
+          overflow: {
+            adjustY: 0,
+          },
+        }}
       >
         {/* <option>{props.option || "select"}</option> */}
         {props.options.map((opt, ind) => (
-          <Option key={ind} value={ind}>
+          <Option key={ind} value={opt}>
             {opt}
           </Option>
         ))}

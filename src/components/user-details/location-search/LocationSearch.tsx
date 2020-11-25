@@ -5,6 +5,7 @@ import { Select, Divider, Input } from "antd";
 import DialogPopup from "../../shared/FrxDialogPopup/FrxDialogPopup";
 
 import "./LocationSearch.scss";
+import { timeout } from "d3";
 const { Option } = Select;
 
 export interface Props {
@@ -28,10 +29,15 @@ export default class LocationSearch extends Component<Props, State> {
     miles: '',
     inputMiles: '',
     isDistanceDropdownOpen: false,
+    addMilesFocus: false
   };
-
+  drpMil: any = undefined
+  drpSel: any = undefined
+  butt_sel: any = undefined
   showDropDownIcon = () => {
-    this.setState({ isDistanceDropdownOpen: !this.state.isDistanceDropdownOpen });
+    this.setState({
+      isDistanceDropdownOpen: !this.state.isDistanceDropdownOpen,
+    });
   };
 
   render() {
@@ -110,10 +116,6 @@ export default class LocationSearch extends Component<Props, State> {
               type="text"
             />
             <Select
-              //   defaultValue="lucy"
-              //   style={{width: 120}}
-              //   onChange={handleChange}
-              //   name="distance"
               value={this.state.miles !== '' ? this.state.miles : undefined}
               className="antd-select-dropdown  select_distance"
               placeholder="Distance"
@@ -122,7 +124,10 @@ export default class LocationSearch extends Component<Props, State> {
                 this.setState({
                   miles: e
                 })
+                document.getElementById('but-hide')?.click()
               }}
+              open={this.drpMil}
+              ref={input => this.drpSel = input}
               onBlur={this.showDropDownIcon}
               suffixIcon={
                 // isDistanceDropdownOpen ? (
@@ -158,23 +163,30 @@ export default class LocationSearch extends Component<Props, State> {
                     />
                   </svg>
                 </>
-                // )
+                // ) : ""
               }
               dropdownClassName="distance-dropdown"
               dropdownRender={(menu) => (
                 <>
                   {menu}
                   <div className="distance-add-miles-contianer">
-                    <Input className="add-miles" onChange={(e: any) => {
-                      this.setState({
-                        inputMiles: e.target.value
-                      })
-                    }} />
+                    <Input className="add-miles"
+                      value={this.state.inputMiles}
+                      onChange={(e: any) => {
+                        this.setState({
+                          inputMiles: e.target.value
+                        })
+                      }} />
                     miles
                     <Button color="primary" onClick={() => {
-                      this.setState({
-                        miles: this.state.inputMiles + ' miles'
-                      })
+                      this.drpSel.selectRef.current.props.onSelect(this.state.inputMiles + ' miles')
+                      setTimeout(() => {
+                        this.setState({
+                          inputMiles: ''
+                        })
+                        console.log(this.butt_sel);
+                        this.butt_sel?.focus()
+                      }, 300);
                     }}>OK</Button>
                   </div>
                 </>
@@ -186,6 +198,7 @@ export default class LocationSearch extends Component<Props, State> {
                 </Option>
               ))}
             </Select>
+            <Button ref={input => this.butt_sel = input} onClick={() => { this.drpMil = false }}/>
           </div>
         </div>
       </DialogPopup>

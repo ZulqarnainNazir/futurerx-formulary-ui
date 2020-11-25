@@ -186,6 +186,7 @@
     box-sizing: border-box;
     border-radius: 4px;
     border: 1px solid $container-border-color;
+    width: 100%;
     .frx-search-form-root__form__search-field--checkicon {
         margin: 0 0 0 auto;
         & > path {

@@ -46,7 +46,7 @@ export default class PriorAuthorizations extends React.Component<Props, State>{
                         columns={this.state.activeMiniTabIndex === 1 ? _pacases_appeal : _pacases_initial}
                         searchOptions={this.state.activeMiniTabIndex === 1 ? getPaCasesSearchData : getPaCasesSearchData}
                         data={this.state.activeMiniTabIndex === 1 ? getPaAppealData : getPAInitialData}
-                        
+                        settingsWidth={20}
                         />
                         
 

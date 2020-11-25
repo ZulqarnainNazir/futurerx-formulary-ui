@@ -123,7 +123,7 @@ class AuthEditModeBlank extends React.Component<AuthEditModeInfoProps> {
   getErrorField = (index: any) => {
     const {errorforms} = this.state;
     return (
-      <Grid item xs={12} sm={12}>
+      <Grid item xs={12} sm={12} className="authedit-info-errorspacegrid">
         <table className="authedit-info-root__content--data-section__table">
           <div className="tablefields">
             <span>
@@ -258,50 +258,48 @@ class AuthEditModeBlank extends React.Component<AuthEditModeInfoProps> {
   getProductField = (index: any) => {
     const {forms} = this.state;
     return (
-      <Grid item xs={12} sm={12}>
-        <table className="authedit-info-root__content--data-section__table">
-          <div className="tablefields">
-            <span>
-              <Input
-                className="authedittable-info-root__input"
-                placeholder="Product Value"
-                defaultValue=""
-                name="productValue"
-              />
-            </span>
-          </div>
-          <div className="tablefields spacepad">
-            <span>
-              <Input
-                className="authedittable-info-root__input"
-                placeholder="Product Description"
-                defaultValue=""
-                name="productDescription"
-              />
-            </span>
-          </div>
-          <div className="tablefields deliconout">
-            <span
-              onClick={() => {
-                this.handleRemoveForm(index);
-              }}
+      <table className="authedit-info-root__content--data-section__table prespace">
+        <div className="tablefields">
+          <span>
+            <Input
+              className="authedittable-info-root__input"
+              placeholder="Product Value"
+              defaultValue=""
+              name="productValue"
+            />
+          </span>
+        </div>
+        <div className="tablefields spacepad">
+          <span>
+            <Input
+              className="authedittable-info-root__input"
+              placeholder="Product Description"
+              defaultValue=""
+              name="productDescription"
+            />
+          </span>
+        </div>
+        <div className="tablefields deliconout">
+          <span
+            onClick={() => {
+              this.handleRemoveForm(index);
+            }}
+          >
+            <svg
+              width="13"
+              height="15"
+              viewBox="0 0 13 15"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
             >
-              <svg
-                width="13"
-                height="15"
-                viewBox="0 0 13 15"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  d="M1.74967 13.0417C1.74967 13.9125 2.46217 14.625 3.33301 14.625H9.66634C10.5372 14.625 11.2497 13.9125 11.2497 13.0417V3.54167H1.74967V13.0417ZM12.0413 1.16667H9.27051L8.47884 0.375H4.52051L3.72884 1.16667H0.958008V2.75H12.0413V1.16667Z"
-                  fill="#999999"
-                />
-              </svg>
-            </span>
-          </div>
-        </table>
-      </Grid>
+              <path
+                d="M1.74967 13.0417C1.74967 13.9125 2.46217 14.625 3.33301 14.625H9.66634C10.5372 14.625 11.2497 13.9125 11.2497 13.0417V3.54167H1.74967V13.0417ZM12.0413 1.16667H9.27051L8.47884 0.375H4.52051L3.72884 1.16667H0.958008V2.75H12.0413V1.16667Z"
+                fill="#999999"
+              />
+            </svg>
+          </span>
+        </div>
+      </table>
     );
   };
 
@@ -473,7 +471,13 @@ class AuthEditModeBlank extends React.Component<AuthEditModeInfoProps> {
                         // style={{width: "100%", marginRight: "10px"}}
                         placeholder={authType}
                         dropdownStyle={{zIndex: 2000}}
-                        dropdownAlign={{offset: [-1, -2]}}
+                        dropdownAlign={{
+                          offset: [-1, -4],
+                          overflow: {
+                            adjustY: 0,
+                          },
+                        }}
+                        getPopupContainer={(node) => node.parentNode}
                         className="category__input--dropdown"
                         dropdownClassName="AuthEditSearch-dropdown-select_dropdown"
                         onChange={this.handleAuthChange}
@@ -663,181 +667,187 @@ class AuthEditModeBlank extends React.Component<AuthEditModeInfoProps> {
                 </div>
               </div>
             </div>
-            <div className="authedit-info-root__content--data-section">
-              <Grid container spacing={3}>
-                <Grid item xs={4} sm={4}>
-                  <div className="fieldsfirst">
-                    <label>
-                      Total Refills Allowed <span className="important">*</span>
-                    </label>
-                    <span>
-                      <Input
-                        className="authedit-info-root__input"
-                        placeholder="Total Refills Allowed"
-                        defaultValue={refillsSection.totalReffills}
-                        name="totalRefills"
-                      />
-                    </span>
-                  </div>
-                </Grid>
-                <Grid item xs={4} sm={4} spacing={3}>
-                  <div className="fieldscenter">
-                    <label>
-                      Refills Used <span className="important">*</span>
-                    </label>
-                    <span>
-                      <Input
-                        className="authedit-info-root__input"
-                        placeholder="Refills Used"
-                        defaultValue={refillsSection.refillsUsed}
-                        name="refillsUsed"
-                      />
-                    </span>
-                  </div>
-                </Grid>
-                <Grid item xs={4} sm={4} spacing={3}>
-                  <div className="fieldsend">
-                    <label>
-                      Refills Remaining <span className="important">*</span>
-                    </label>
+            <div className="authadmin-info-root__content--data">
+              <div className="authadmin-info-root__content--data-section">
+                <div className="fields">
+                  <label>
+                    Total Refills Allowed <span className="important">*</span>
+                  </label>
+                  <span>
+                    <Input
+                      className="authedit-info-root__input"
+                      placeholder="Total Refills Allowed"
+                      defaultValue={refillsSection.totalReffills}
+                      name="totalRefills"
+                    />
+                  </span>
+                </div>
+                <div className="fieldscenter">
+                  <label>
+                    Refills Used <span className="important">*</span>
+                  </label>
+                  <span>
+                    <Input
+                      className="authedit-info-root__input"
+                      placeholder="Refills Used"
+                      defaultValue={refillsSection.refillsUsed}
+                      name="refillsUsed"
+                    />
+                  </span>
+                </div>
+                <div className="endfields">
+                  <label>
+                    Refills Remaining <span className="important">*</span>
+                  </label>
+                  <span>
                     <Input
                       className="authedit-info-root__input"
                       placeholder="Refills Remaining"
                       defaultValue={refillsSection.refillsRemaining}
                       name="refillsRemaining"
                     />
-                  </div>
-                </Grid>
-                <Grid item xs={4} sm={4} spacing={3}>
-                  <div className="fieldsfirst">
-                    <label>
-                      Product Type <span className="important">*</span>
-                    </label>
-                    <Select
-                      // style={{width: "100%", marginRight: "10px"}}
-                      placeholder={refillsSection.productType}
-                      dropdownStyle={{zIndex: 2000}}
-                      dropdownAlign={{offset: [-1, -2]}}
-                      className="category__input--dropdown"
-                      dropdownClassName="AuthEditSearch-dropdown-select_dropdown"
-                      suffixIcon={
-                        <svg
-                          className="ant-select-suffix"
-                          width="8"
-                          height="8"
-                          viewBox="0 0 6 3"
-                          fill="none"
-                          xmlns="http://www.w3.org/2000/svg"
-                        >
-                          <path
-                            d="M5.79875 0H0.20125C0.0333594 0 -0.0603867 0.147179 0.0435863 0.247656L2.84234 2.94215C2.92245 3.01928 3.0767 3.01928 3.15766 2.94215L5.95641 0.247656C6.06039 0.147179 5.96664 0 5.79875 0Z"
-                            fill="#999999"
-                          />
-                        </svg>
-                      }
-                    >
-                      <Option value="DDID">DDID</Option>
-                      <Option value="NDC">NDC</Option>
-                      <Option value="Core-9">Core-9</Option>
-                      <Option value="GPI">GPI</Option>
-                      <Option value="AHFS">AHFS</Option>
-                      <Option value="RxCUT">RxCUI</Option>
-                      <Option value="ICD-10">ICD-10</Option>
-                    </Select>
-                  </div>
-                </Grid>
-
-                <Grid item xs={8} sm={8}>
-                  <div className="fieldmultisend">
-                    <label>
-                      Apply to Multi-Ingredient Compound Claims
+                  </span>
+                </div>
+              </div>
+              <div className="authadmin-info-root__content--data-sectionrow">
+                <div className="fields">
+                  <label>
+                    Product Type <span className="important">*</span>
+                  </label>
+                  <Select
+                    // style={{width: "100%", marginRight: "10px"}}
+                    placeholder={refillsSection.productType}
+                    dropdownStyle={{zIndex: 2000}}
+                    dropdownAlign={{
+                      offset: [-1, -4],
+                      overflow: {
+                        adjustY: 0,
+                      },
+                    }}
+                    className="category__input--dropdown"
+                    dropdownClassName="AuthEditSearch-dropdown-select_dropdown"
+                    getPopupContainer={(node) => node.parentNode}
+                    suffixIcon={
+                      <svg
+                        className="ant-select-suffix"
+                        width="8"
+                        height="8"
+                        viewBox="0 0 6 3"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          d="M5.79875 0H0.20125C0.0333594 0 -0.0603867 0.147179 0.0435863 0.247656L2.84234 2.94215C2.92245 3.01928 3.0767 3.01928 3.15766 2.94215L5.95641 0.247656C6.06039 0.147179 5.96664 0 5.79875 0Z"
+                          fill="#999999"
+                        />
+                      </svg>
+                    }
+                  >
+                    <Option value="DDID">DDID</Option>
+                    <Option value="NDC">NDC</Option>
+                    <Option value="Core-9">Core-9</Option>
+                    <Option value="GPI">GPI</Option>
+                    <Option value="AHFS">AHFS</Option>
+                    <Option value="RxCUT">RxCUI</Option>
+                    <Option value="ICD-10">ICD-10</Option>
+                  </Select>
+                </div>
+                <div className="fieldsright">
+                  <label>
+                    Apply to Multi-Ingredient Compound Claims
+                    <span className="important">*</span>
+                  </label>
+                  <Select
+                    placeholder="Yes"
+                    defaultValue={refillsSection.applyMutli}
+                    dropdownStyle={{zIndex: 2000}}
+                    dropdownAlign={{
+                      offset: [-1, -4],
+                      overflow: {
+                        adjustY: 0,
+                      },
+                    }}
+                    className="category__input--dropdown"
+                    getPopupContainer={(node) => node.parentNode}
+                    dropdownClassName="AuthEditSearch-dropdown-select_dropdown"
+                    suffixIcon={
+                      <svg
+                        className="ant-select-suffix"
+                        width="8"
+                        height="8"
+                        viewBox="0 0 6 3"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          d="M5.79875 0H0.20125C0.0333594 0 -0.0603867 0.147179 0.0435863 0.247656L2.84234 2.94215C2.92245 3.01928 3.0767 3.01928 3.15766 2.94215L5.95641 0.247656C6.06039 0.147179 5.96664 0 5.79875 0Z"
+                          fill="#999999"
+                        />
+                      </svg>
+                    }
+                  >
+                    <Option value="Yes">Yes</Option>
+                    <Option value="No">No</Option>
+                  </Select>
+                </div>
+              </div>
+              <table className="authedit-info-root__content--data-section__table prespace">
+                <div className="tablefields">
+                  <header>
+                    <p>
+                      Product Value <span className="important">*</span>
+                    </p>
+                  </header>
+                  <span>
+                    <Input
+                      className="authedittable-info-root__input"
+                      placeholder="Product Value"
+                      defaultValue=""
+                      name="productValue"
+                    />
+                  </span>
+                </div>
+                <div className="tablefields spacepad">
+                  <header>
+                    <p>
+                      Product description
                       <span className="important">*</span>
-                    </label>
-                    <Select
-                      placeholder={refillsSection.applyMutli}
-                      dropdownStyle={{zIndex: 2000}}
-                      dropdownAlign={{offset: [-1, -2]}}
-                      className="category__input--dropdown"
-                      dropdownClassName="AuthEditSearch-dropdown-select_dropdown"
-                      suffixIcon={
-                        <svg
-                          className="ant-select-suffix"
-                          width="8"
-                          height="8"
-                          viewBox="0 0 6 3"
-                          fill="none"
-                          xmlns="http://www.w3.org/2000/svg"
-                        >
-                          <path
-                            d="M5.79875 0H0.20125C0.0333594 0 -0.0603867 0.147179 0.0435863 0.247656L2.84234 2.94215C2.92245 3.01928 3.0767 3.01928 3.15766 2.94215L5.95641 0.247656C6.06039 0.147179 5.96664 0 5.79875 0Z"
-                            fill="#999999"
-                          />
-                        </svg>
-                      }
+                    </p>
+                  </header>
+                  <span>
+                    <Input
+                      className="authedittable-info-root__input"
+                      placeholder="Product Description"
+                      defaultValue=""
+                      name="productDescription"
+                    />
+                  </span>
+                </div>
+                <div className="tablefields delicon">
+                  <span>
+                    <svg
+                      width="13"
+                      height="15"
+                      viewBox="0 0 13 15"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
                     >
-                      <Option value="Yes">Yes</Option>
-                      <Option value="No">No</Option>
-                    </Select>
-                  </div>
-                </Grid>
-                <Grid item xs={12} sm={12}>
-                  <table className="authedit-info-root__content--data-section__table">
-                    <div className="tablefields">
-                      <header>
-                        <p>
-                          Product Value <span className="important">*</span>
-                        </p>
-                      </header>
-                      <span>
-                        <Input
-                          className="authedittable-info-root__input"
-                          placeholder="Product Value"
-                          defaultValue=""
-                          name="productValue"
-                        />
-                      </span>
-                    </div>
-                    <div className="tablefields spacepad">
-                      <header>
-                        <p>
-                          Product description
-                          <span className="important">*</span>
-                        </p>
-                      </header>
-                      <span>
-                        <Input
-                          className="authedittable-info-root__input"
-                          placeholder="Product Description"
-                          defaultValue=""
-                          name="productDescription"
-                        />
-                      </span>
-                    </div>
-                    <div className="tablefields delicon">
-                      <span>
-                        <svg
-                          width="13"
-                          height="15"
-                          viewBox="0 0 13 15"
-                          fill="none"
-                          xmlns="http://www.w3.org/2000/svg"
-                        >
-                          <path
-                            d="M1.74967 13.0417C1.74967 13.9125 2.46217 14.625 3.33301 14.625H9.66634C10.5372 14.625 11.2497 13.9125 11.2497 13.0417V3.54167H1.74967V13.0417ZM12.0413 1.16667H9.27051L8.47884 0.375H4.52051L3.72884 1.16667H0.958008V2.75H12.0413V1.16667Z"
-                            fill="#999999"
-                          />
-                        </svg>
-                      </span>
-                    </div>
-                  </table>
-                </Grid>
-                {forms.map((item: any, index: number) =>
-                  this.getProductField(index)
-                )}
-                <Grid item xs={12} sm={12}>
-                  <div className="addmoreproduct">
-                    <div>
-                      {forms.length < 20 ? (
+                      <path
+                        d="M1.74967 13.0417C1.74967 13.9125 2.46217 14.625 3.33301 14.625H9.66634C10.5372 14.625 11.2497 13.9125 11.2497 13.0417V3.54167H1.74967V13.0417ZM12.0413 1.16667H9.27051L8.47884 0.375H4.52051L3.72884 1.16667H0.958008V2.75H12.0413V1.16667Z"
+                        fill="#999999"
+                      />
+                    </svg>
+                  </span>
+                </div>
+              </table>
+              {forms.map((item: any, index: number) =>
+                this.getProductField(index)
+              )}
+              {forms.length < 20 ? (
+                <Grid container>
+                  <Grid item xs={12} sm={12} className="prespace">
+                    <div className="addmoreproduct">
+                      <div>
                         <Button
                           className="addMore"
                           onClick={this.handleAddProduct}
@@ -862,71 +872,76 @@ class AuthEditModeBlank extends React.Component<AuthEditModeInfoProps> {
                           </svg>
                           <span className="addMore--text">Add Product</span>
                         </Button>
-                      ) : (
-                        ""
-                      )}
+                      </div>
+                      <div className="importantdata">*Limit 20</div>
                     </div>
-                    <div className="importantdata">*Limit 20</div>
-                  </div>
+                  </Grid>
                 </Grid>
-                {authType && authType == "Administrative" ? (
-                  <Grid item xs={12} sm={12}>
-                    <Grid item xs={12} sm={12}>
-                      <table className="authedit-info-root__content--data-section__table">
-                        <div className="tablefields">
-                          <header>
-                            <p>
-                              Error Code <span className="important">*</span>
-                            </p>
-                          </header>
-                          <span>
-                            <Input
-                              className="authedittable-info-root__input"
-                              defaultValue="E123"
-                              name="productValue"
-                            />
-                          </span>
-                        </div>
-                        <div className="tablefields spacepad">
-                          <header>
-                            <p>
-                              Error description
-                              <span className="important">*</span>
-                            </p>
-                          </header>
-                          <span>
-                            <Input
-                              className="authedittable-info-root__input"
-                              defaultValue="Invalid Number of Refills"
-                              name="productDescription"
-                            />
-                          </span>
-                        </div>
-                        <div className="tablefields delicon">
-                          <span>
-                            <svg
-                              width="13"
-                              height="15"
-                              viewBox="0 0 13 15"
-                              fill="none"
-                              xmlns="http://www.w3.org/2000/svg"
-                            >
-                              <path
-                                d="M1.74967 13.0417C1.74967 13.9125 2.46217 14.625 3.33301 14.625H9.66634C10.5372 14.625 11.2497 13.9125 11.2497 13.0417V3.54167H1.74967V13.0417ZM12.0413 1.16667H9.27051L8.47884 0.375H4.52051L3.72884 1.16667H0.958008V2.75H12.0413V1.16667Z"
-                                fill="#999999"
-                              />
-                            </svg>
-                          </span>
-                        </div>
-                      </table>
-                    </Grid>
-                    {errorforms.map((item: any, index: number) =>
-                      this.getErrorField(index)
-                    )}
-                    <Grid item xs={12} sm={12}>
-                      <div className="addmoreproduct">
-                        <div>
-                          {errorforms.length < 15 ? (
+              ) : (
+                ""
+              )}
+              {authType && authType == "Administrative" ? (
+                <div>
+                  <table className="authedit-info-root__content--data-section__table">
+                    <div className="tablefields">
+                      <header>
+                        <p>
+                          Error Code <span className="important">*</span>
+                        </p>
+                      </header>
+                      <span>
+                        <Input
+                          className="authedittable-info-root__input"
+                          defaultValue="E123"
+                          name="productValue"
+                        />
+                      </span>
+                    </div>
+                    <div className="tablefields spacepad">
+                      <header>
+                        <p>
+                          Error description
+                          <span className="important">*</span>
+                        </p>
+                      </header>
+                      <span>
+                        <Input
+                          className="authedittable-info-root__input"
+                          defaultValue="Invalid Number of Refills"
+                          name="productDescription"
+                        />
+                      </span>
+                    </div>
+                    <div className="tablefields delicon">
+                      <span>
+                        <svg
+                          width="13"
+                          height="15"
+                          viewBox="0 0 13 15"
+                          fill="none"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <path
+                            d="M1.74967 13.0417C1.74967 13.9125 2.46217 14.625 3.33301 14.625H9.66634C10.5372 14.625 11.2497 13.9125 11.2497 13.0417V3.54167H1.74967V13.0417ZM12.0413 1.16667H9.27051L8.47884 0.375H4.52051L3.72884 1.16667H0.958008V2.75H12.0413V1.16667Z"
+                            fill="#999999"
+                          />
+                        </svg>
+                      </span>
+                    </div>
+                  </table>
+                  {errorforms.map((item: any, index: number) =>
+                    this.getErrorField(index)
+                  )}
+                  {errorforms.length < 15 ? (
+                    <Grid container>
+                      <Grid
+                        item
+                        xs={12}
+                        sm={12}
+                        className="authedit-info-errorspacegrid"
+                      >
+                        <div className="addmoreproduct">
+                          <div>
                             <Button
                               className="addMore"
                               onClick={this.handleAddError}
@@ -951,19 +966,20 @@ class AuthEditModeBlank extends React.Component<AuthEditModeInfoProps> {
                               </svg>
                               <span className="addMore--text">Add Error</span>
                             </Button>
-                          ) : (
-                            ""
-                          )}
+                          </div>
+                          <div className="importantdata">*Limit 15</div>
                         </div>
-                        <div className="importantdata">*Limit 15</div>
-                      </div>
+                      </Grid>
                     </Grid>
-                  </Grid>
-                ) : (
-                  ""
-                )}
-              </Grid>
+                  ) : (
+                    ""
+                  )}
+                </div>
+              ) : (
+                ""
+              )}
             </div>
+
             {authType && authType == "Restrictive" ? (
               <div className="authedit-info-root__datecontent--data">
                 <Grid container spacing={3}>
@@ -976,7 +992,13 @@ class AuthEditModeBlank extends React.Component<AuthEditModeInfoProps> {
                         <Select
                           placeholder={restSection.prescriberType}
                           dropdownStyle={{zIndex: 2000}}
-                          dropdownAlign={{offset: [-1, -2]}}
+                          dropdownAlign={{
+                            offset: [-1, -4],
+                            overflow: {
+                              adjustY: 0,
+                            },
+                          }}
+                          getPopupContainer={(node) => node.parentNode}
                           className="category__input--dropdown"
                           dropdownClassName="AuthEditSearch-dropdown-select_dropdown"
                           suffixIcon={
@@ -1051,9 +1073,9 @@ class AuthEditModeBlank extends React.Component<AuthEditModeInfoProps> {
                     {prescriberforms.map((item: any, index: number) =>
                       this.getPrescriberField(index)
                     )}
-                    <div className="addmoreproduct prespace">
-                      <div>
-                        {prescriberforms.length < 15 ? (
+                    {prescriberforms.length < 15 ? (
+                      <div className="addmoreproduct prespace">
+                        <div>
                           <Button
                             className="addMore"
                             onClick={this.handleAddPrescriber}
@@ -1080,12 +1102,12 @@ class AuthEditModeBlank extends React.Component<AuthEditModeInfoProps> {
                               Add Prescriber
                             </span>
                           </Button>
-                        ) : (
-                          ""
-                        )}
+                        </div>
+                        <div className="importantdata">*Limit 15</div>
                       </div>
-                      <div className="importantdata">*Limit 15</div>
-                    </div>
+                    ) : (
+                      ""
+                    )}
                   </Grid>
                   <Grid item xs={12} sm={6}>
                     <div className="fieldspre">
@@ -1096,7 +1118,13 @@ class AuthEditModeBlank extends React.Component<AuthEditModeInfoProps> {
                         <Select
                           placeholder={restSection.pharmacyType}
                           dropdownStyle={{zIndex: 2000}}
-                          dropdownAlign={{offset: [-1, -2]}}
+                          dropdownAlign={{
+                            offset: [-1, -4],
+                            overflow: {
+                              adjustY: 0,
+                            },
+                          }}
+                          getPopupContainer={(node) => node.parentNode}
                           className="category__input--dropdown"
                           dropdownClassName="AuthEditSearch-dropdown-select_dropdown"
                           suffixIcon={
@@ -1171,9 +1199,9 @@ class AuthEditModeBlank extends React.Component<AuthEditModeInfoProps> {
                     {pharmacyforms.map((item: any, index: number) =>
                       this.getPharmacyField(index)
                     )}
-                    <div className="addmoreproduct prespace">
-                      <div>
-                        {pharmacyforms.length < 15 ? (
+                    {pharmacyforms.length < 15 ? (
+                      <div className="addmoreproduct prespace">
+                        <div>
                           <Button
                             className="addMore"
                             onClick={this.handleAddPharmacy}
@@ -1198,12 +1226,12 @@ class AuthEditModeBlank extends React.Component<AuthEditModeInfoProps> {
                             </svg>
                             <span className="addMore--text">Add Pharmacy</span>
                           </Button>
-                        ) : (
-                          ""
-                        )}
+                        </div>
+                        <div className="importantdata">*Limit 15</div>
                       </div>
-                      <div className="importantdata">*Limit 15</div>
-                    </div>
+                    ) : (
+                      ""
+                    )}
                   </Grid>
                 </Grid>
               </div>
@@ -1224,7 +1252,13 @@ class AuthEditModeBlank extends React.Component<AuthEditModeInfoProps> {
                         // placeholder="Include"
                         defaultValue={copayType}
                         dropdownStyle={{zIndex: 2000}}
-                        dropdownAlign={{offset: [-1, -2]}}
+                        dropdownAlign={{
+                          offset: [-1, -4],
+                          overflow: {
+                            adjustY: 0,
+                          },
+                        }}
+                        getPopupContainer={(node) => node.parentNode}
                         onChange={this.handleCopayChange}
                         className="category__input--dropdown"
                         dropdownClassName="AuthEditSearch-dropdown-select_dropdown"
@@ -1293,7 +1327,13 @@ class AuthEditModeBlank extends React.Component<AuthEditModeInfoProps> {
                       // placeholder="Include"
                       defaultValue={overSection.includeDeductible}
                       dropdownStyle={{zIndex: 2000}}
-                      dropdownAlign={{offset: [-1, -2]}}
+                      dropdownAlign={{
+                        offset: [-1, -4],
+                        overflow: {
+                          adjustY: 0,
+                        },
+                      }}
+                      getPopupContainer={(node) => node.parentNode}
                       className="category__input--dropdown"
                       dropdownClassName="AuthEditSearch-dropdown-select_dropdown"
                       suffixIcon={
@@ -1326,7 +1366,13 @@ class AuthEditModeBlank extends React.Component<AuthEditModeInfoProps> {
                       // placeholder="Include"
                       defaultValue={overSection.includeMop}
                       dropdownStyle={{zIndex: 2000}}
-                      dropdownAlign={{offset: [-1, -2]}}
+                      dropdownAlign={{
+                        offset: [-1, -4],
+                        overflow: {
+                          adjustY: 0,
+                        },
+                      }}
+                      getPopupContainer={(node) => node.parentNode}
                       // value={this.state.status}
                       // onChange={this.onSelectStatus}
 
@@ -1362,7 +1408,13 @@ class AuthEditModeBlank extends React.Component<AuthEditModeInfoProps> {
 
                       defaultValue={overSection.overrideClaim}
                       dropdownStyle={{zIndex: 2000}}
-                      dropdownAlign={{offset: [-1, -2]}}
+                      dropdownAlign={{
+                        offset: [-1, -4],
+                        overflow: {
+                          adjustY: 0,
+                        },
+                      }}
+                      getPopupContainer={(node) => node.parentNode}
                       className="category__input--dropdown"
                       dropdownClassName="AuthEditSearch-dropdown-select_dropdown"
                       suffixIcon={
@@ -1465,7 +1517,13 @@ class AuthEditModeBlank extends React.Component<AuthEditModeInfoProps> {
                       // placeholder="B"
                       defaultValue={overSection.overridePart}
                       dropdownStyle={{zIndex: 2000}}
-                      dropdownAlign={{offset: [-1, -2]}}
+                      dropdownAlign={{
+                        offset: [-1, -4],
+                        overflow: {
+                          adjustY: 0,
+                        },
+                      }}
+                      getPopupContainer={(node) => node.parentNode}
                       // value={this.state.status}
                       // onChange={this.onSelectStatus}
 
@@ -1503,7 +1561,13 @@ class AuthEditModeBlank extends React.Component<AuthEditModeInfoProps> {
                       // placeholder="C"
                       defaultValue={overSection.overrideCms}
                       dropdownStyle={{zIndex: 2000}}
-                      dropdownAlign={{offset: [-1, -2]}}
+                      dropdownAlign={{
+                        offset: [-1, -4],
+                        overflow: {
+                          adjustY: 0,
+                        },
+                      }}
+                      getPopupContainer={(node) => node.parentNode}
                       // value={this.state.status}
                       // onChange={this.onSelectStatus}
 
@@ -1534,7 +1598,7 @@ class AuthEditModeBlank extends React.Component<AuthEditModeInfoProps> {
             ) : (
               ""
             )}
-            <div className="authedit-info-root__datecontent--data">
+            <div className="authedit-info-root__contentdatesection--data">
               <div className="datefields">
                 {memberInfo3.map((label, i) => (
                   <div key={i + ""} className="fieldsdata">

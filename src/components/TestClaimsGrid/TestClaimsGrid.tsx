@@ -9,12 +9,13 @@ import {
   _testClaimsGridColumns,
 } from "../../utils/grid/columns";
 // import { getClaimsGridData } from "../../mocks/grid/testClaims-mock";
-import { getClaimsGridData } from "../../mocks/grid/Claims-mockdata";
+import {getClaimsGridData} from "../../mocks/grid/Claims-mockdata";
 import "./TestClaimsGrid.scss";
 import MemberCostshare from "../MemberCostshare/MemberCostshare";
-import { GridMenu } from "../../models/grid.model";
+import {GridMenu} from "../../models/grid.model";
 import FrxGridCompare from "../shared/FrxGrid/FrxGridCompare/FrxGridCompare";
 import FrxLoader from "../shared/FrxLoader/FrxLoader";
+import AuthGridModel from "../AuthsAndOverrides/AuthsAndOverridesEditMode/AuthGridModel";
 
 export interface TestClaimsGridProps {
   columns: any;
@@ -26,6 +27,7 @@ export interface TestClaimsGridProps {
   settingsTriDotMenuClick?: any;
   onColumnCellClick: any;
   searchType?: any;
+  settingsWidth: any;
 }
 
 export interface TestClaimsGridState {
@@ -36,6 +38,7 @@ export interface TestClaimsGridState {
   searchOptions: any;
   width: number;
   selectedItem: any;
+  openPopup: boolean;
 }
 
 class TestClaimsGrid extends React.Component<
@@ -50,6 +53,7 @@ class TestClaimsGrid extends React.Component<
     searchOptions: undefined,
     width: 0,
     selectedItem: undefined,
+    openPopup: false,
   };
 
   componentDidMount() {
@@ -65,7 +69,7 @@ class TestClaimsGrid extends React.Component<
     });
     this.calculateTableWidth(this.props.columns);
     setTimeout(() => {
-      this.setState({ isFetchingData: false });
+      this.setState({isFetchingData: false});
     }, 1000);
   }
 
@@ -80,7 +84,7 @@ class TestClaimsGrid extends React.Component<
         searchOptions: newProps.searchOptions() ? newProps.searchOptions() : [],
       });
       setTimeout(() => {
-        this.setState({ isFetchingData: false });
+        this.setState({isFetchingData: false});
       }, 1000);
     }
   }
@@ -94,7 +98,7 @@ class TestClaimsGrid extends React.Component<
   handleSearch = (searchObject) => {
     console.log(searchObject);
 
-    this.setState({ isFetchingData: true });
+    this.setState({isFetchingData: true});
     if (searchObject) {
       var searchData: any = [].concat.apply(
         [],
@@ -127,7 +131,7 @@ class TestClaimsGrid extends React.Component<
         });
       }, 2000);
     } else {
-      this.setState({ isFetchingData: false });
+      this.setState({isFetchingData: false});
     }
   };
 
@@ -141,7 +145,7 @@ class TestClaimsGrid extends React.Component<
   calculateTableWidth = (columns: any) => {
     this.setState({
       width: columns().reduce((_item: any, item: any) => {
-        return { pixelWidth: item.pixelWidth + _item.pixelWidth };
+        return {pixelWidth: item.pixelWidth + _item.pixelWidth};
       }).pixelWidth,
     });
   };
@@ -153,11 +157,16 @@ class TestClaimsGrid extends React.Component<
    * @author virinchi
    */
   settingsTriDotMenuClick = (menuItem: GridMenu) => {
+    if (menuItem.title === "Modify Auth or Override") {
+      this.setState({
+        openPopup: true,
+      });
+    }
     if (this.props.settingsTriDotMenuClick) {
       console.log("tridot menu clicked", menuItem);
 
       this.props.settingsTriDotMenuClick(() => {
-        this.setState({ isCompareOpen: true });
+        this.setState({isCompareOpen: true});
       }, menuItem);
     }
   };
@@ -177,6 +186,7 @@ class TestClaimsGrid extends React.Component<
   };
 
   render() {
+    const {openPopup, selectedItem} = this.state;
     const columns = this.props.columns
       ? typeof this.props.columns === "function"
         ? this.props.columns()
@@ -187,12 +197,13 @@ class TestClaimsGrid extends React.Component<
     ) : (
       <>
         {this.props.header(() => {
-          this.setState({ isCompareOpen: true });
+          this.setState({isCompareOpen: true});
         })}
         <div className="grid">
           <div
             className={
-              this.props.searchType === "communicationscall"
+              this.props.searchType === "communicationscall" ||
+              this.props.searchType === "communicationsother"
                 ? "advanced-search-calls-grid"
                 : "test-claims-grid-root"
             }
@@ -211,7 +222,7 @@ class TestClaimsGrid extends React.Component<
               data={this.state.filteredData}
               onSettingsClick="grid-menu"
               settingsWidth={28}
-              scroll={{ x: this.state.width, y: 400 }}
+              scroll={{x: this.state.width, y: 400}}
               settingsTriDotClick={this.settingsTriDotClick}
               settingsTriDotMenuClick={this.settingsTriDotMenuClick}
               searchOptions={
@@ -229,9 +240,22 @@ class TestClaimsGrid extends React.Component<
                 selectedItem: undefined,
               });
             }}
+            type={
+              this.props.type === "CLAIMSHISTORY" ? "testClaimId" : "claimId"
+            }
             openPopup={this.state.isCompareOpen}
             mode={this.state.selectedItem ? "single" : "multi"}
             selectedItem={this.state.selectedItem}
+          />
+        )}
+        {this.state.openPopup && (
+          <AuthGridModel
+            data={this.state.selectedItem}
+            isOpen={this.state.openPopup}
+            isEditCopy={false}
+            onClose={() => {
+              this.setState({openPopup: false, selectedItem: {}});
+            }}
           />
         )}
       </>

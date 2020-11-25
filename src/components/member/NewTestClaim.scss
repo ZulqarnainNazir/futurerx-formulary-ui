@@ -1,5 +1,4 @@
 @import "../../assets/style.scss";
-@import "../../assets/fonts.scss";
 .new-test-claim-popup-root {
   z-index: 999 !important;
   .MuiDialog-paperWidthFalse {
@@ -7,8 +6,16 @@
     height: 800px;
     max-height: calc(100% - 0px);
     margin: 0 auto;
+    .frx-dialog-root__heading{
+      height: 79px;
+      .MuiTypography-root{
+        line-height: 79px;
+      }
+    }
   }
   .new-test-claim-components-container {
+    overflow-y: scroll;
+    max-height: calc(100vh - 100px);
     font-size: 12px;
   }
   .MuiDialog-paper {
@@ -80,11 +87,19 @@
     border: 1px solid #2055b5;
     background-color: #2055b5;
   }
+  .btnSave {
+    height: 45px !important;
+    width: 156px !important;
+    font-size: 14px;
+    font-weight: 500;
+    outline: none;
+    cursor: pointer;
+  }
   .saparator {
     padding-left: 10px;
   }
   .test-claim-search__icon {
-    margin-left: 10px;
+    margin-left: 0px;
   }
   .higlighted-value input {
     color: #2055b5 !important;
@@ -443,6 +458,31 @@
     }
     .EligibilityInsurance-Popup {
       margin-top: 70px !important;
+    }
+  }
+  .frx-info-card-list-item-root__column{
+    font-size: $font-12;
+    text-transform: capitalize;
+    letter-spacing: 0.5px;
+    font-weight: $font-weight-normal;
+    color: $primary-text-color;
+    &--checkbox.Mui-checked{
+      .MuiIconButton-label{
+        .MuiSvgIcon-root{
+          fill: #1D54B4;
+          width: 20px;
+          height: 20px;
+        }
+      }
+    }
+    &--checkbox{
+      .MuiIconButton-label{
+        .MuiSvgIcon-root{
+          fill: #D5D5D5;
+          width: 20px;
+          height: 20px;
+        }
+      }
     }
   }
 }

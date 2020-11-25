@@ -7,6 +7,7 @@ import React, { Component } from "react";
 import Tag from "../../shared/Frx-components/tags/Tag";
 import { Avatar } from "@material-ui/core";
 import "./MemberInfo.scss";
+import MemberDetailsPopup from "../../member/MemberDetailsPopup";
 
 interface Props {
   icon?: any;
@@ -17,7 +18,7 @@ interface Props {
 // interface State {}
 
 class MemeberInfo extends Component<Props> {
-  // state = {};
+  state = { showAccordion: false };
 
   getGenderIcon = () => {
     if (this.props.user) {
@@ -99,8 +100,8 @@ class MemeberInfo extends Component<Props> {
       user && user.status ? (
         <Tag tagValue="Active" style={{ backgroundColor: "#59B35E" }} />
       ) : (
-        <Tag tagValue="Termed" style={{ backgroundColor: "#E76262" }} />
-      );
+          <Tag tagValue="Termed" style={{ backgroundColor: "#E76262" }} />
+        );
     return (
       <div className="member-info">
         {user ? (
@@ -117,7 +118,10 @@ class MemeberInfo extends Component<Props> {
             <div
               className="member-name"
               style={{ cursor: "pointer" }}
-              onClick={() => handlClick(user.id_member_info)}
+              onClick={() => {
+                handlClick(user.id_member_info)
+                this.setState({ showAccordion: true })
+              }}
             >
               <span style={customStyle} className="member-name-text">
                 {user.first_name}&nbsp;{user.middle_name}&nbsp;{user.last_name} III (Mickey)
@@ -127,6 +131,13 @@ class MemeberInfo extends Component<Props> {
             <div className="member-status">{icon || statusTag}</div>
           </>
         ) : null}
+        {this.state.showAccordion && (
+          <MemberDetailsPopup
+            isOpen={this.state.showAccordion}
+            onClose={() => { this.setState({ showAccordion: false }) }}
+            panelName="*"
+          />
+        )}
       </div>
     );
   }

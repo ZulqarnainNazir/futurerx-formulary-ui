@@ -107,6 +107,11 @@ GridAdvancedGrievenceSearchState
 
     render() {
         const options = ["-NA-"]
+        const optionClassification = ["First call resolution", "Oral", "Written"]
+        const optionGrievanceType = ["Medical", "Pharmacy"]
+        const optionReviewStage = ["Review", "Awaiting AOR", "Withdrawn", "Cancelled", "Open", "Closed"]
+        const optionPriorityType = ["Standard", "Expedited"]
+        const optionStatus = ["Open", "Closed"]
         return (
             <div className="advanced-grid-search">
                 <div>
@@ -144,29 +149,29 @@ GridAdvancedGrievenceSearchState
                         />
                         <DropDown 
                             placeholder="Classification" 
-                            options={options} 
+                            options={optionClassification} 
                             className="advanced-grid-search__input"
                         />
                         <DropDown 
                             placeholder="Grievance Type" 
-                            options={options} 
+                            options={optionGrievanceType} 
                             className="advanced-grid-search__input"
                         />
                     </div>
                     <div className="advanced-grid-search__first-row">
                         <DropDown 
                             placeholder="Review Stage" 
-                            options={options} 
+                            options={optionReviewStage} 
                             className="advanced-grid-search__input"
                         />
                         <DropDown 
                             placeholder="Priority" 
-                            options={options} 
+                            options={optionPriorityType} 
                             className="advanced-grid-search__input"
                         />
                         <DropDown 
                             placeholder="Status" 
-                            options={options} 
+                            options={optionStatus} 
                             className="advanced-grid-search__input"
                         />
                          <CustomDatePicker
