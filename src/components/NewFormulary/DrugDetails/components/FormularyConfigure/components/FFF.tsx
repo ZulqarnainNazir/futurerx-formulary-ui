@@ -10,17 +10,27 @@ export default class FFF extends React.Component<any,any>{
     }
     render(){
         return (
-            <div className="bordered">
-                <PanelHeader 
-                    title="Free First Fill"
-                    tooltip="ADD File or delete Free First Fill Status in Drug Grid below for the supplemental HPMS submission file and marketing material display." />
-                <div className="inner-container bg-light-grey">
-                    <PanelGrid 
-                        panelGridTitle={this.state.panelGridTitle1} 
-                        panelGridValue={this.state.panelGridValue1}
-                        panelTitleAlignment={this.state.panelTitleAlignment1} />
+            <>
+                <div className="bordered">
+                    <PanelHeader 
+                        title="Free First Fill"
+                        tooltip="ADD File or delete Free First Fill Status in Drug Grid below for the supplemental HPMS submission file and marketing material display." />
+                    <div className="inner-container bg-light-grey">
+                        <div className="mb-10">
+                            <PanelGrid 
+                                panelGridTitle={this.state.panelGridTitle1} 
+                                panelGridValue={this.state.panelGridValue1}
+                                panelTitleAlignment={this.state.panelTitleAlignment1} />
+                        </div>
+                        <div className="modify-wrapper bordered white-bg">
+                            <div className="modify-panel">
+                                <div className="icon"><span>R</span></div>
+                            </div>
+                        </div>
+                    </div>
+                    
                 </div>
-            </div>
+            </>
         )
     }
 }
