@@ -194,7 +194,7 @@ class ClaimTransactionAccordion extends React.Component<ClaimTransactionAccordio
                     </div>  
                 )}
                 </>
-              ):  title === "Workers’ Compensation Segment" ? (
+              ):  title === "Workers Compensation Segment" ? (
                 <>
                 {accordionDataReqWorkers.map((label, i) => 
                     <div key={i + ""} className="accordion-root__table__data">

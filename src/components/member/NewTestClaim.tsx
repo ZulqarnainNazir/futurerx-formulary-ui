@@ -370,7 +370,7 @@ class NewTestClaim extends React.Component<NewTestClaimProps> {
           componentTitle = {true}
         >
 
-          <Container className="new-test-claim-components-container">
+          <Container className="new-test-claim-components-container scroll-bar">
             <Grid container className="topsection">
               <Grid item xs={12}>
                 <div className="bg-white">
@@ -397,6 +397,7 @@ class NewTestClaim extends React.Component<NewTestClaimProps> {
                             defaultChecked
                             color="primary"
                             inputProps={{ 'aria-label': 'secondary checkbox' }}
+                            className="frx-info-card-list-item-root__column--checkbox"
                           />
                         </span>
                       </Grid>

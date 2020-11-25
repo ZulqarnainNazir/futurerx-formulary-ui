@@ -121,7 +121,7 @@ PaDashboardSearchState
           <div className="claims-search__first-row">
             <Input
               className="claims-search__input"
-              placeholder="Grievance #"
+              placeholder="Grievance ID"
               type="text"
               name="case"
               value={this.state.grievance}

@@ -46,7 +46,7 @@ import {
   _pacases_initial,
   _testClaimsGridColumns,
 } from "../../utils/grid/columns";
-import NewTestClaim from "../member/NewTestClaim5";
+import NewTestClaim from "../member/NewTestClaimComponent";
 // import { _claimsGridColumns, _grievancesGridColumns, _pacases_initial, _testClaimsGridColumns } from "../../utils/grid/columns";
 import { getGrievancesGridData } from "../../mocks/grid/grievances-mock";
 import { getClaimsGridData } from "../../mocks/grid/claims-mock";
@@ -59,6 +59,7 @@ import {
   getUserPrefs,
   setUserPrefs,
 } from "../../redux/slices/users/UserPrefsActionCreator";
+import GrievanceOverlay from "../Grievances/components/GrievanceOverlay/GrievanceOverlay";
 
 // Redux store related functions.
 // Dispatch action
@@ -110,6 +111,7 @@ class ConnectedMemberProfile extends React.Component<any, any> {
     newGrievances: false,
     openPopup: false,
     claimIndex: 0,
+    grievanceToggle: false,
   };
 
   componentDidMount = () => {
@@ -293,21 +295,20 @@ class ConnectedMemberProfile extends React.Component<any, any> {
     console.log(this.props);
     return (
       <div
-        className={`member-profile-root ${
-          this.state.newGrievances ? "new-grievance-root" : ""
-        }`}
+        className={`member-profile-root ${this.state.newGrievances ? "new-grievance-root" : ""
+          }`}
       >
         {this.state.loading ? (
           <FrxLoader />
-        ) : (
-          <>
+        ) :
+          (<>
             <FrxTabs
               tabList={this.state.tabs}
               typeCard={"line"}
               activeTabIndex={this.state.activeTabIndex}
               onClickTab={this.onClickTab}
             />
-            {this.state.activeTabIndex === 0 ? (
+            {(this.state.activeTabIndex === 0 && !this.state.newGrievances) ? (
               <>
                 <MemberInfoContainer
                   hideMembers={this.hideMembers}
@@ -374,7 +375,7 @@ class ConnectedMemberProfile extends React.Component<any, any> {
                     <Container className="member-components-container">
                       <Grid item xs={12}>
                         <div className="bg-white claim-container">
-                          <Claim activeIndex={this.state.claimIndex} />
+                          <Claim activeIndex={this.state.claimIndex} onSwitchNewGrievance={this.onNewGrievancesClickHandler} />
                         </div>
                       </Grid>
                     </Container>
@@ -392,19 +393,19 @@ class ConnectedMemberProfile extends React.Component<any, any> {
                   {/* </Container> */}
                 </Container>
               </>
-            ) : this.state.activeTabIndex === 1 ? (
+            ) : (this.state.activeTabIndex === 1 && !this.state.newGrievances) ? (
               <Container className="tab-content formulary-content">
                 <Formulary history={this.props.history} />
               </Container>
-            ) : this.state.activeTabIndex === 2 ? (
+            ) : (this.state.activeTabIndex === 2 && !this.state.newGrievances) ? (
               <Container className="tab-content">
                 <Pharmacy />
               </Container>
-            ) : this.state.activeTabIndex === 3 ? (
+            ) : (this.state.activeTabIndex === 3 && !this.state.newGrievances) ? (
               <Container className="tab-content">
                 <BestPrice />
               </Container>
-            ) : this.state.activeTabIndex === 4 ? (
+            ) : (this.state.activeTabIndex === 4 && !this.state.newGrievances) ? (
               <Container className="tab-content">
                 <div className="claims-root">
                   <TestClaimsGrid
@@ -413,11 +414,16 @@ class ConnectedMemberProfile extends React.Component<any, any> {
                         <div className="claimsbuttongroup-root">
                           <div className="heading">Test Claims</div>
                           <div className="button">
-                            <Button onClick={this.onButtonClick}>
+                            <Button
+                              className="btn-claims"
+                              onClick={this.onButtonClick}
+                            >
                               {" "}
                               + New Test Claim
                             </Button>
-                            <Button onClick={callBack}>Claim Compare</Button>
+                            <Button className="btn-claims" onClick={callBack}>
+                              Claim Compare
+                            </Button>
 
                             {this.state.openPopup ? (
                               <NewTestClaim
@@ -427,8 +433,8 @@ class ConnectedMemberProfile extends React.Component<any, any> {
                                 title="New Test Claim"
                               />
                             ) : (
-                              ""
-                            )}
+                                ""
+                              )}
                           </div>
                         </div>
                       );
@@ -440,13 +446,14 @@ class ConnectedMemberProfile extends React.Component<any, any> {
                         callBack();
                       }
                     }}
+                    settingsWidth={20}
                     columns={_testClaimsGridColumns}
                     searchOptions={getTestClaimsSearchData}
                     onColumnCellClick={""}
                   />
                 </div>
               </Container>
-            ) : this.state.activeTabIndex === 5 ? (
+            ) : (this.state.activeTabIndex === 5 && !this.state.newGrievances) ? (
               <Container className="tab-content">
                 <div className="claims-root">
                   <TestClaimsGrid
@@ -456,11 +463,24 @@ class ConnectedMemberProfile extends React.Component<any, any> {
                         <div className="claimsbuttongroup-root">
                           <div className="heading">Claims</div>
                           <div className="button">
-                            <Button onClick={this.onButtonClick}>
+                            <Button
+                              className="btn-claims"
+                              onClick={this.onButtonClick}
+                            >
                               {" "}
                               + New Test Claim
                             </Button>
-                            <Button onClick={callBack}>Claim Compare</Button>
+                            <Button className="btn-claims" onClick={callBack}>
+                              Claim Compare
+                            </Button>
+                            {this.state.openPopup ? (
+                              <NewTestClaim
+                                isOpen={this.state.openPopup}
+                                onClose={this.onButtonClick}
+                                panelName="demographics-tab"
+                                title="New Test Claim"
+                              />
+                            ) : null}
                           </div>
                         </div>
                       );
@@ -475,44 +495,48 @@ class ConnectedMemberProfile extends React.Component<any, any> {
                     // searchOptions={getClaimsSearchData} />
                     searchOptions={getClaimsSearchData}
                     onColumnCellClick={""}
+                    settingsWidth={20}
                   />
                 </div>
               </Container>
-            ) : this.state.activeTabIndex === 6 ? (
+            ) : (this.state.activeTabIndex === 6 && !this.state.newGrievances) ? (
               <Container className="tab-content">
                 <div className="prior-auth-root">
                   <PriorAuthorizations />
                 </div>
               </Container>
-            ) : this.state.activeTabIndex === 7 ? (
+            ) : (this.state.activeTabIndex === 7 || this.state.newGrievances) ? (
               <Container className="tab-content grievances-tab-content">
                 <div className="grievances-member-profile-root">
                   <div className="grievances-root">
                     <Grievances
                       isOpen={this.state.newGrievances}
                       onSwitchNewGrievance={this.onNewGrievancesClickHandler}
-                      memberInformation={[this.props.memberSummary.memberDetails]}
-                      contactInformation={[this.props.memberSummary.memberAddress]}
+                      memberInformation={[
+                        this.props.memberSummary.memberDetails,
+                      ]}
+                      contactInformation={[
+                        this.props.memberSummary.memberAddress,
+                      ]}
                     />
                   </div>
                   {!this.state.newGrievances && (
                     <TestClaimsGrid
                       type="Grievances"
                       header={(callBack: any) => {
-                        return (
-                          <></>
-                        );
+                        return <></>;
                       }}
                       columns={_grievancesGridColumns}
                       searchOptions={getGrieviencesSearchData}
                       data={getGrievancesGridData}
                       onColumnCellClick={this.onNewGrievancesClickHandler}
+                      settingsWidth={20}
                     />
                   )}
                   {/* <Grievances /> */}
                 </div>
               </Container>
-            ) : this.state.activeTabIndex === 8 ? (
+            ) : (this.state.activeTabIndex === 8 && !this.state.newGrievances) ? (
               <Container className="tab-content">
                 <div className="auth-overrides-member-profile-root">
                   <AuthAndOverriders />
@@ -525,12 +549,13 @@ class ConnectedMemberProfile extends React.Component<any, any> {
                 </div>
               </Container>
             ) : (
-              <Container className="tab-content">
-                <></>
-              </Container>
-            )}
-          </>
-        )}
+                                  <Container className="tab-content">
+                                    <></>
+                                  </Container>
+                                )}
+          </>)
+
+        }
       </div>
     );
   }

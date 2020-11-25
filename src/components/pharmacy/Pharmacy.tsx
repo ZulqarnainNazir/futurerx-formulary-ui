@@ -85,7 +85,7 @@ class Pharmacy extends Component {
             lng: "",
             lat: ""
         },
-        showMap: false,
+        showMap: true,
     }
     componentDidMount() {
         // this.onGetCoordinatesInfo();

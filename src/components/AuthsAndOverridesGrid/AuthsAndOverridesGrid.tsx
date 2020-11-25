@@ -4,21 +4,29 @@
 
 import * as React from "react";
 import FrxGridContainer from "../shared/FrxGrid/FrxGridContainer";
-import {authOveridesGridColumns} from "../../utils/grid/columns";
-import {getAuthOverridesGridData} from "../../mocks/grid/auth-override-mock";
+import { authOveridesGridColumns } from "../../utils/grid/columns";
+import { getAuthOverridesGridData } from "../../mocks/grid/auth-override-mock";
 import "./AuthsAndOverrides.scss";
-import {getAuthOverridesSearchMock} from "../../mocks/search/authoverrides-search-mock";
+import { getAuthOverridesSearchMock } from "../../mocks/search/authoverrides-search-mock";
 import AuthGridModel from "../AuthsAndOverrides/AuthsAndOverridesEditMode/AuthGridModel";
 import FrxDialogPopup from "../shared/FrxDialogPopup/FrxDialogPopup";
 
-export interface AuthsAndOverridesGridProps {}
+export interface AuthsAndOverridesGridProps {
+  openPopup: boolean;
+  selectedData: any;
+  onClose: any;
+  openEditPopup: any;
+  selectEditData: any;
+  callBacks: any;
+  isEditCopy: boolean;
+}
 
-export interface AuthsAndOverridesGridState {}
+export interface AuthsAndOverridesGridState { }
 
 class AuthsAndOverridesGrid extends React.Component<
   AuthsAndOverridesGridProps,
   AuthsAndOverridesGridState
-> {
+  > {
   state = {
     isFetchingData: false,
     data: [] as any[],
@@ -30,7 +38,7 @@ class AuthsAndOverridesGrid extends React.Component<
   componentDidMount() {
     //fetch data from API
     const data = getAuthOverridesGridData();
-    this.setState({data, filteredData: data});
+    this.setState({ data, filteredData: data });
   }
 
   /**
@@ -42,29 +50,27 @@ class AuthsAndOverridesGrid extends React.Component<
    */
   handleSearch = (searchObject) => {
     console.log(searchObject);
-    this.setState({isFetchingData: true});
+    this.setState({ isFetchingData: true });
     if (searchObject && searchObject.status) {
       setTimeout(() => {
         const newData = this.state.data.filter(
           (d) => d.status === searchObject.status
         );
-        this.setState({isFetchingData: false, filteredData: newData});
+        this.setState({ isFetchingData: false, filteredData: newData });
       }, 2000);
     } else {
-      this.setState({isFetchingData: false});
+      this.setState({ isFetchingData: false });
     }
   };
   settingsTriDotMenuClick = (menuItem: any) => {
     if (menuItem) {
       if (menuItem.id === 1) {
-        this.setState({
-          openPopup: true,
-        });
+        this.props.openEditPopup()
       }
     }
   };
   render() {
-    const columns = authOveridesGridColumns();
+    const columns = authOveridesGridColumns(this.props.callBacks);
     return (
       <div className="auths-overrides-grid-root">
         <FrxGridContainer
@@ -81,18 +87,19 @@ class AuthsAndOverridesGrid extends React.Component<
           onSettingsClick="grid-menu"
           settingsTriDotMenuClick={this.settingsTriDotMenuClick}
           settingsTriDotClick={(item: any) => {
-            this.setState({
-              selectedData: item,
-            });
+            this.props.selectEditData(item)
           }}
+          settingsWidth={40}
+          scroll={{ x: 1800, y: 577 }}
         />
-        {this.state.openPopup && (
+        {this.props.openPopup && (
           <AuthGridModel
-            data={this.state.selectedData}
-            isOpen={this.state.openPopup}
-            onClose={() => {
-              this.setState({openPopup: false, selectedData: {}});
-            }}
+            data={this.props.selectedData}
+            isOpen={this.props.openPopup}
+            isEditCopy={this.props.isEditCopy}
+            onClose={
+              this.props.onClose
+            }
           />
         )}
       </div>
