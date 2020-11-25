@@ -1,7 +1,7 @@
 import React from 'react';
-import Box from '@material-ui/core/Box';
 import PanelHeader from './PanelHeader';
 import PanelGrid from './panelGrid';
+import Box from '@material-ui/core/Box';
 import Button from '../../../../../shared/Frx-components/button/Button';
 export default class FGC extends React.Component<any,any>{
     state={

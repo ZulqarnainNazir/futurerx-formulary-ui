@@ -102,6 +102,11 @@
         background: #1F55B6;
         color: white;
         margin: 20px 10px 10px 0;
+        &:disabled{
+            background: #E5E5E5;
+            border-color: #E5E5E5;
+            color: #707683;
+        }
     }
     .bordered{
         border: 1px solid #E5E5E5;
@@ -173,6 +178,64 @@
                 padding: 0 40px;
                 border-right: 1px solid #e5e5e5;
                 align-items: center;
+            }
+        }
+        .header-with-notes{
+            position: relative;
+            svg.note-icon{
+                position: absolute;
+                right: 20px;
+                top: 50%;
+                transform: translateY(-50%);
+            }
+        }
+        .settings-form{
+            border-top: 1px solid #e5e5e5;
+            padding: 20px;
+            .radio-group{
+                display: flex;
+                &.marketing-material{
+                    padding: 15px 0 20px;
+                }
+                label{
+                    display: flex;
+                    align-items: center;
+                    padding-right: 0;
+                    margin-right: 60px;
+                    span.label{
+                        top: 1px;
+                        color: #C4C4C4;
+                    }
+                    input:checked ~ span.label{
+                        color: #323C47;
+                    }
+                }
+            }
+            .select-box{
+                .ant-select{
+                    width: 100%;
+                    max-width: 370px;
+                }
+            }
+            label{
+                display: block;
+                font-size: 12px;
+                color: #707683;
+                line-height: 20px;
+                margin-bottom: 5px;
+                text-transform: uppercase;
+                font-weight: normal;
+                .astrict{
+                    color: red;
+                }
+            }
+            input{
+                width: 385px;
+                border: 1px solid #e5e5e5;
+                border-radius: 3px;
+                background: white;
+                height: 35px;
+                margin-bottom: 10px;
             }
         }
     }
