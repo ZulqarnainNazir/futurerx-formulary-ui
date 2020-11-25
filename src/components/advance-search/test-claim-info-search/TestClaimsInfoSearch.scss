@@ -5,8 +5,8 @@
       margin-top: 10px;
 
       .test-claim-status-dhuHistory-container {
-        .test-claim-status {
-          padding-right: 5px;
+        .test-claim-duhHistory {
+          padding-left: 8px;
         }
         .test-claim-status,
         .test-claim-duhHistory {
@@ -92,23 +92,25 @@
           // width: 50% !important;
           span {
             .ant-tag {
+              // display: inline-block;
               font-family: "Roboto";
               font-style: normal;
               font-weight: 500;
               font-size: 12px;
               // line-height: 20px;
-              padding-left: 3px;
-              padding-right: 3px;
+              // padding-left: 3px;
+              // padding-right: 3px;
+              padding: 0 15px 20px;
               height: 20px;
               text-align: center;
               letter-spacing: 0.2px;
               text-transform: uppercase;
-
+              
               background-color: #684999;
               border-radius: 15px;
               color: #ffffff;
 
-              width: 106px;
+              // width: 106px;
             }
           }
         }
@@ -161,7 +163,7 @@
 
     .date-container {
       .date-dueDate-contianer {
-        padding-left: 5px;
+        padding-left: 8px;
       }
       .date-effectiveDate-contianer,
       .date-dueDate-contianer {

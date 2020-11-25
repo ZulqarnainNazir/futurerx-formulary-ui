@@ -176,6 +176,15 @@ const latLngs = [
         ], coordinates: { lat: 27.964705, lng: -82.452576 }, pharmacy: 'Best Drug Store', index: ''
     }
 ]
+const userLocation = {
+    "address": "9284 Angora St. Long Beach 90712",
+    "phone": "(562) 895-8419",
+    "coordinates": {
+        "lat": 27.964157,
+        "lng": -82.452606
+    },
+    "pharmacy": "Joanne Davis",
+}
 class GoogleMap extends Component<GoogleMapProps> {
 
     state = {
@@ -184,8 +193,6 @@ class GoogleMap extends Component<GoogleMapProps> {
 
         location:
             { lat: 27.904157, lng: -82.452658 },
-
-        // location:{},
 
     }
 
@@ -197,37 +204,7 @@ class GoogleMap extends Component<GoogleMapProps> {
 
 
     renderMarkers = (map: any, maps: any) => {
-        // let marker1 = new maps.Marker({
-        //     position: { lat: 27.964157, lng: - 82.452606 },
-        //     title: 'Acme Rx',
-        //     map,
-        // })
-        // let marker2 = new maps.Marker({
-        //     position: { lat: 27.964034, lng: - 82.452467 },
-        //     title: 'Best Drugs Store',
-        //     map,
-        // })
-        // let marker3 = new maps.Marker({
-        //     position: { lat: 27.963709, lng: - 82.451898 },
-        //     title: 'Care Pharm',
-        //     map,
-        // })
-        // let marker4 = new maps.Marker({
-        //     position: { lat: 27.964705, lng: -82.452576 },
-        //     title: 'Wal Mart',
-        //     map,
-        // })
-        // let marker5 = new maps.Marker({
-        //     position: { lat: 27.964214, lng: -82.452453 },
-        //     title: 'Publix',
-        //     map,
-        // })
-        // return [marker1,
-        //     marker2,
-        //     marker3,
-        //     marker4
-        //     // marker5
-        // ]
+
     };
 
 
@@ -251,7 +228,8 @@ class GoogleMap extends Component<GoogleMapProps> {
                 yesIWantToUseGoogleMapApiInternals={true}
                 onGoogleApiLoaded={({ map, maps }) => this.renderMarkers(map, maps)}
             >
-                {(coordinates || latLngs).map((item: any) => (<MyGreatPlace lat={item.coordinates.lat} lng={item.coordinates.lng} text={item.pharmacy} data={{ pharmacy: item.pharmacy, address: item.address, phone: item.phone, time: item.workingHours.filter((_item: any) => _item.day === new Date().toString().substr(0, 3))[0].time }} isPreffered={preffered ? preffered.includes(item.pharmacy) : false} />))}
+                {(coordinates || latLngs).map((item: any) => (<MyGreatPlace lat={item.coordinates.lat} lng={item.coordinates.lng} text={item.pharmacy} data={{ pharmacy: item.pharmacy, address: item.address, phone: item.phone, time: item.workingHours.filter((_item: any) => _item.day === new Date().toString().substr(0, 3))[0].time }} isPreffered={false} />))}
+                <MyGreatPlace lat={userLocation.coordinates.lat} lng={userLocation.coordinates.lng} text={userLocation.pharmacy} data={{ pharmacy: userLocation.pharmacy, address: userLocation.address, phone: userLocation.phone }} isPreffered={true} />
             </GoogleMapReact>
         );
     }

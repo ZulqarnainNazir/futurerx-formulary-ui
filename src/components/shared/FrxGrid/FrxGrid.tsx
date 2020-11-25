@@ -75,7 +75,9 @@ const SETTINGS_WIDTH = 58;
 const CLAIMS_GRID_SETTINGS_WIDTH = 28;
 const DEFAULT_GRID_WIDTH = 1284;
 
-interface FrxGridProps<T> extends Grid<T> { }
+interface FrxGridProps<T> extends Grid<T> {
+  handleCheck?:any
+}
 interface FrxGridState<T> {
   filteredInfo: null;
   filterTable: T[];
@@ -367,7 +369,7 @@ class FrxGrid extends Component<FrxGridProps<any>, FrxGridState<any>> {
                     settingsMenuItems={this.state.settingsMenuItems}
                     onSettingsTriDotClick={this.onSettingsTriDotClick}
 										handleMenuClick={this.settingsTriDotMenuClick}
-										
+										handleCheck={this.props.handleCheck}
 										rowSelectionChange={this.rowSelectionChange}
 										isRowSelectorCheckbox={this.props.isRowSelectorCheckbox}
                     handleSettingsComponentMenuClose={

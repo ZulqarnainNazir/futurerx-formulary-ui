@@ -1,8 +1,11 @@
-.grid-compare-popup-root {
-  z-index: 999 !important;
+.hideHeading {
   .frx-dialog-root__heading {
     display: none;
   }
+}
+.grid-compare-popup-root {
+  z-index: 999 !important;
+
   .flex-container {
     display: flex;
     flex-direction: row;
@@ -15,6 +18,27 @@
       box-sizing: border-box;
       border-radius: 3px;
       margin-right: 10px;
+      padding: 0px;
+      .MuiButton-label {
+        font-family: Roboto;
+        font-style: normal;
+        font-weight: bold;
+        font-size: 12px;
+        line-height: 35px;
+        /* identical to box height, or 292% */
+        text-transform: capitalize;
+        display: flex;
+        align-items: center;
+        letter-spacing: 0.1px;
+
+        color: #2055b5;
+
+        /* Inside Auto Layout */
+
+        flex: none;
+        order: 0;
+        flex-grow: 0;
+      }
     }
     .custom-action-btn {
       color: #ffffff !important;
@@ -23,6 +47,30 @@
       box-sizing: border-box;
       border-radius: 3px;
       margin-right: 20px;
+      width: 90px;
+      height: 35px;
+      padding: 0px;
+      .MuiButton-label {
+        font-family: Roboto;
+        font-style: normal;
+        font-weight: bold;
+        font-size: 12px;
+        line-height: 35px;
+        /* identical to box height, or 292% */
+
+        display: flex;
+        align-items: center;
+        letter-spacing: 0.1px;
+
+        color: #ffffff;
+
+        /* Inside Auto Layout */
+
+        flex: none;
+        order: 0;
+        flex-grow: 0;
+        text-transform: capitalize;
+      }
     }
     .MuiButton-root {
       margin-top: 0;
@@ -48,6 +96,7 @@
   }
   .MuiDialogContent-root {
     padding: 0px !important;
+    width: 1160px;
     .frx-dialog-root__heading {
       display: block;
       &:first-child {
@@ -61,9 +110,8 @@
     }
   }
   .frx-grid-container {
-    margin-bottom: 50px;
+    margin: 20px 0;
     padding: 0px 20px;
-    margin-top: 20px;
     .clear-btn-grid {
       position: absolute;
       right: 10px;
@@ -84,8 +132,14 @@
         }
       }
     }
+    .frx-grid{
+      .frx-grid__grid-block{
+        padding: 15px 0 20px 0;
+      }
+    }
   }
-  .grid-compare-dropdown {
+  .grid-compare-dropdown,
+  .grid-compare-dropdowntest {
     width: 170px;
     font-family: Roboto;
     font-style: normal;
@@ -97,6 +151,11 @@
     text-transform: capitalize;
 
     color: #999999;
+  }
+  .grid-compare-dropdowntest {
+    .ant-select-arrow {
+      margin-top: -8px !important;
+    }
   }
 }
 .grid-compare-select-drpDwn {

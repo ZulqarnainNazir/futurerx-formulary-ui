@@ -1,5 +1,7 @@
 @import "./../../../assets/style.scss";
-
+.mb-10{
+    margin-bottom: 10px;
+}
 .drug-detail-top{
     background: white;
     padding: 22px 20px 30px 30px;
@@ -92,6 +94,19 @@
     overflow: hidden;
     .inner-container{
         padding: 12px 10px 10px;
+        &.bg-light-grey{
+            background: #F9F9F9;
+        }
+    }
+    .Button{
+        background: #1F55B6;
+        color: white;
+        margin: 20px 10px 10px 0;
+        &:disabled{
+            background: #E5E5E5;
+            border-color: #E5E5E5;
+            color: #707683;
+        }
     }
     .bordered{
         border: 1px solid #E5E5E5;
@@ -111,8 +126,217 @@
         padding: 0 20px;
         align-items: center;
         text-transform: uppercase;
+        &.panel{
+            background: white;
+            .panel-tooltip{
+                margin-left: 10px;
+                line-height: 0;
+            }
+        }
     }
     .configure-mini-tabs{
         margin-bottom: 12px;
+    }
+    .details-top{
+        margin-bottom: 10px;
+    }
+    .modify-wrapper{
+        .modify-panel{
+            padding: 0 20px;
+            display: flex;
+            .icon{
+                display: flex;
+                height: 50px;
+                padding-right: 18px;
+                border-right: 1px solid #E5E5E5;
+                align-items: center;
+                span{
+                    display: block;
+                    border-radius: 50%;
+                    height: 31px;
+                    width: 31px;
+                    background: #1FBBC4;
+                    color: white;
+                    font-size: 16px;
+                    line-height: 31px;
+                    text-align: center;
+                }
+            }
+            .switch-box{
+                display: flex;
+                align-items: center;
+                padding: 0 40px;
+                border-right: 1px solid #e5e5e5;
+                .label{
+                    font-size: 14px;
+                    text-transform: uppercase;
+                    color: #707683;
+                }
+            }
+            .mini-tabs{
+                display: flex;
+                padding: 0 40px;
+                border-right: 1px solid #e5e5e5;
+                align-items: center;
+            }
+        }
+        .header-with-notes{
+            position: relative;
+            svg.note-icon{
+                position: absolute;
+                right: 20px;
+                top: 50%;
+                transform: translateY(-50%);
+            }
+        }
+        .settings-form{
+            border-top: 1px solid #e5e5e5;
+            padding: 20px;
+            .radio-group{
+                display: flex;
+                &.marketing-material{
+                    padding: 15px 0 20px;
+                }
+                label{
+                    display: flex;
+                    align-items: center;
+                    padding-right: 0;
+                    margin-right: 60px;
+                    span.label{
+                        top: 1px;
+                        color: #C4C4C4;
+                    }
+                    input:checked ~ span.label{
+                        color: #323C47;
+                    }
+                }
+            }
+            .select-box{
+                .ant-select{
+                    width: 100%;
+                    max-width: 370px;
+                }
+            }
+            label{
+                display: block;
+                font-size: 12px;
+                color: #707683;
+                line-height: 20px;
+                margin-bottom: 5px;
+                text-transform: uppercase;
+                font-weight: normal;
+                .astrict{
+                    color: red;
+                }
+            }
+            input{
+                width: 385px;
+                border: 1px solid #e5e5e5;
+                border-radius: 3px;
+                background: white;
+                height: 35px;
+                margin-bottom: 10px;
+            }
+        }
+    }
+}
+.panel-grid{
+    border: 1px solid #E5E5E5;
+    border-radius: 5px;
+    overflow: hidden;
+    .top, .bottom{
+        display: flex;
+        border-bottom: 1px solid #E5E5E5;
+        .item{
+            height: 40px;
+            padding: 0 20px;
+            display: flex;
+            align-items: center;
+            border-right: 1px solid #E5E5E5;
+            width: 25%;
+            .ant-checkbox-inner{
+                border-radius: 4px;
+                border: 2px solid #D5D5D5;
+
+            }
+            .ant-checkbox-checked .ant-checkbox-inner{
+                border: none;
+                background: #1D54B4;
+            }
+            .ant-checkbox:hover::after, .ant-checkbox-wrapper:hover .ant-checkbox::after{
+                visibility: hidden;
+            }
+            &.left{
+                justify-content: flex-start;
+            }
+            &:last-child{
+                border-right: none;
+            }
+        }
+    }
+    .top{
+        .item{
+            font-size: 12px;
+            line-height: 14px;
+            color: #707683;
+            text-transform: uppercase;
+        }
+    }
+    .bottom{
+        background: white;
+        flex-wrap: wrap;
+        border-bottom: none;
+        .item{
+            font-size: 12px;
+            line-height: 14px;
+            color: #323C47;
+            border-bottom: 1px solid #E5E5E5;
+            &.no-data{
+                height: 82px;
+                width: 100%;
+                font-size: 14px;
+                font-weight: bold;
+                color: #C4C4C4;
+                align-items: center !important;
+                justify-content: center !important;
+            }
+        }
+        .row{
+            width: 100%;
+            display: flex;
+            &:last-child{
+                .item{
+                    border-bottom: none;
+                }
+            }
+        }
+        
+
+    }
+    &.text-center{
+        .top,.bottom{
+            .item{
+                text-align: center;
+                justify-content: center;
+                &.left{
+                    justify-content: flex-start;
+                }
+            }
+        }
+    }
+    &.first-left{
+        .top, .bottom{
+            .item:first-child{
+                text-align: left;
+                justify-content: flex-start;
+            }
+        }
+    }
+}
+.MuiTooltip-tooltip.custom-tooltip{
+    &.panel-tooltip{
+        min-width: 357px;
+        text-align: left;
+        font-weight: normal;
     }
 }

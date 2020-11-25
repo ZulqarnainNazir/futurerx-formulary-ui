@@ -1,28 +1,31 @@
 import * as React from "react";
 import FrxGridContainer from "../../../shared/FrxGrid/FrxGridContainer";
-import {
-  PaGridColumns
-} from "../../../../utils/grid/columns";
-import { getPaDashboardGridData } from "../../../../mocks/grid/PA-Dashboard-gridMock";
-import { GridMenu } from "../../../../models/grid.model";
+import {PaGridColumns} from "../../../../utils/grid/columns";
+import {AppealGridColumns} from "../../../../utils/grid/columns";
+import {getPaDashboardGridData} from "../../../../mocks/grid/PA-Dashboard-gridMock";
+import {GridMenu} from "../../../../models/grid.model";
 
 export interface PaDashboardGridProps {
   isPaid: boolean;
+  activetabs: number;
 }
 
 export interface PaDashboardGridState {}
 
-class PaDashboardGrid extends React.Component<PaDashboardGridProps, PaDashboardGridState> {
+class PaDashboardGrid extends React.Component<
+  PaDashboardGridProps,
+  PaDashboardGridState
+> {
   state = {
     isFetchingData: false,
     data: [] as any[],
-    filteredData: [] as any[]
+    filteredData: [] as any[],
   };
 
   componentDidMount() {
     //fetch data from API
     const data = getPaDashboardGridData();
-    this.setState({ data, filteredData: data });
+    this.setState({data, filteredData: data});
   }
 
   /**
@@ -32,18 +35,18 @@ class PaDashboardGrid extends React.Component<PaDashboardGridProps, PaDashboardG
    * TODO: fix a type for the searchObject
    * @author Deepak_T
    */
-  handleSearch = searchObject => {
+  handleSearch = (searchObject) => {
     console.log(searchObject);
-    this.setState({ isFetchingData: true });
+    this.setState({isFetchingData: true});
     if (searchObject && searchObject.status) {
       setTimeout(() => {
         const newData = this.state.data.filter(
-          d => d.status === searchObject.status
+          (d) => d.status === searchObject.status
         );
-        this.setState({ isFetchingData: false, filteredData: newData });
+        this.setState({isFetchingData: false, filteredData: newData});
       }, 2000);
     } else {
-      this.setState({ isFetchingData: false });
+      this.setState({isFetchingData: false});
     }
   };
 
@@ -109,7 +112,12 @@ class PaDashboardGrid extends React.Component<PaDashboardGridProps, PaDashboardG
     // const columns = !this.props.isPaid
     //   ? claimsGridColumnsForRejectedAndTotal()
     //   : claimsGridColumnsForPaid();
+    // const {activetabs} = this.props;
+    const {activetabs} = this.props;
     const columns = PaGridColumns();
+    const AppealColumns = AppealGridColumns();
+    console.log(activetabs);
+
     return (
       <div className="claims-grid-root">
         <FrxGridContainer
@@ -119,12 +127,14 @@ class PaDashboardGrid extends React.Component<PaDashboardGridProps, PaDashboardG
           fixedColumnKeys={[""]}
           pagintionPosition="topRight"
           gridName="PA"
+          onSettingsClick="grid-menu"
           enableSettings
           isFetchingData={this.state.isFetchingData}
-          columns={columns}
-          scroll={{ x: 3800, y: 377 }}
+          columns={activetabs && activetabs == 1 ? AppealColumns : columns}
+          scroll={{x: 3600, y: 377}}
           enableResizingOfColumns
           data={this.state.filteredData}
+          settingsWidth={20}
         />
       </div>
     );

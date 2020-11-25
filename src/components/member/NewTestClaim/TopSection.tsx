@@ -17,9 +17,8 @@ export class TopSection extends React.Component{
                     <div className="input">
                       <CustomSelect
                         placeholder="Select Sequence"
-                        value='D.0 Standard'
                         options={["D.0 Standard", "Multi-Ingredient Compound ", "Coordination of Benefits",
-                      "Nx Transaction","FIR Transaction","Eligibility Transaction","Service Transaction"]}
+                        "Nx Transaction","FIR Transaction","Eligibility Transaction","Service Transaction"]}
                       />
                     </div>
                   </Box>
@@ -34,6 +33,7 @@ export class TopSection extends React.Component{
                       defaultChecked
                       color="primary"
                       inputProps={{ 'aria-label': 'secondary checkbox' }}
+                      className="frx-info-card-list-item-root__column--checkbox"
                     />
                   </span>
                 </Grid>

@@ -85,6 +85,7 @@ class ClaimsHistory extends React.Component<ClaimsHistoryProps, ClaimsHistorySta
               enableResizingOfColumns
               data={this.state.filteredData}
               onSettingsClick="grid-menu"
+              settingsWidth={25}
               scroll={{ x: 3800, y: 377 }}
               />
         </div>

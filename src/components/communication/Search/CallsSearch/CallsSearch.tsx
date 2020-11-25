@@ -70,7 +70,7 @@ class CallsSearch extends React.Component<
      * classification drop down change handler
      * @author Muthu
      */
-    
+
     onSelectClassification = (value: string) => {
         this.setState({ classification: value });
     };
@@ -87,7 +87,18 @@ class CallsSearch extends React.Component<
 
     render() {
         const callerTypes: string[] = ["Member", "Pharmacy", "Prescriber", "Parent/Caretaker", "AOR/Attorney", "Third Party", "Others"]
-        const classification: string[] = ["Inquiry", "Coverage Determination", "Appeal", "First Call Resolution Grie...", "Grievance/Complaint", "Quality of care grievance", "Client customized Prima...", "Others", "Part B Drug Organizational Determination", "Prior Authorization"]
+        const classification: string[] = [
+            "Inquiry",
+            "Coverage Determination (Medicare) ",
+            "Part B Drug Organizational Determination",
+            "Prior Authorization (Commercial)",
+            "Appeal",
+            "First Call Resolution Grievance/Complaint",
+            "Grievance/Complaint",
+            "Quality of care grievance",
+            "Client customized Primary classifications",
+            "Others"
+        ]
         return (
             <div className="calls-search">
                 <div className="calls-search__first-row">
@@ -124,7 +135,7 @@ class CallsSearch extends React.Component<
                             </svg>
                         }
                     >
-                        
+
                         {
                             callerTypes.map((type) => {
                                 return (
@@ -154,7 +165,7 @@ class CallsSearch extends React.Component<
                             </svg>
                         }
                     >
-                         {
+                        {
                             classification.map((type) => {
                                 return (
                                     <Option value={type}>{type}</Option>
@@ -171,10 +182,10 @@ class CallsSearch extends React.Component<
                     <span>Clear</span>
                 </Button>
                 <Button
-                        className="calls-search__btn-field"
-                        onClick={e => this.onSearch()}
-                    >
-                        Search
+                    className="calls-search__btn-field"
+                    onClick={e => this.onSearch()}
+                >
+                    Search
                     </Button>
             </div>
         );

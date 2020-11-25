@@ -45,7 +45,7 @@ class EligibilityInsurancePopup extends React.Component<EligibilityInsurancePopu
                                 <Grid xs={12} sm={3}>
                                     <div className="keyValue_left_title">
                                         <div >Insurance ID</div>
-                                        <div >BIN</div>
+                                        <div >BIN#</div>
                                         <div >PCN</div>
                                         <div >Group ID</div>
 
@@ -120,7 +120,7 @@ class EligibilityInsurancePopup extends React.Component<EligibilityInsurancePopu
                                 <Grid xs={12} sm={3}>
                                     <div className="keyValue_edit_right">
                                         <div >Insurance ID</div>
-                                        <div >BIN</div>
+                                        <div >BIN#</div>
                                         <div >PCN</div>
                                         <div >Group ID</div>
                                     </div>
@@ -205,7 +205,7 @@ class EligibilityInsurancePopup extends React.Component<EligibilityInsurancePopu
                                     <Grid xs={12} sm={3}>
                                         <div className="keyValue_add_title_right">
                                             <div >Insurance ID</div>
-                                            <div >BIN</div>
+                                            <div >BIN#</div>
                                             <div >PCN</div>
                                             <div >Group ID</div>
                                         </div>

@@ -20,9 +20,9 @@ class ClaimsInfoSearch extends Component<Props, State> {
   render() {
     const options = [
       {value: "Madicare"},
-      {value: "options 1"},
-      {value: "options 2"},
-      {value: "options 3"},
+      {value: "Medicaid"},
+      {value: "Commercial"},
+      {value: "Exchange"},
     ];
     return (
       <div className="ClaimsInfoSearch">
@@ -70,7 +70,7 @@ class ClaimsInfoSearch extends Component<Props, State> {
                 // onChange={this.onSelectStatus}
                 mode="tags"
                 showArrow
-                defaultValue={["Medicare"]}
+                defaultValue={[options[0].value]  }
                 tagRender={this.tagRender}
                 options={options}
                 className="member-search__input--dropdown medicater-dropdown"
@@ -156,7 +156,7 @@ class ClaimsInfoSearch extends Component<Props, State> {
                     className="member-search__input--dropdown"
                     // dropdownClassName="formulary-service-year-dropdown"
                     // defaultValue={this.state.medicareTyep}
-                    options={["--NA--"]}
+                    options={["Part A", "Part B"]}
                     // onSelect={this.onSelectforMedicare}
                   />
                 </Grid>
@@ -226,7 +226,7 @@ class ClaimsInfoSearch extends Component<Props, State> {
                       //   onChange={(e) => this.handleInputChange(e)}
                     />
                   </Grid>
-                  <Grid item sm={6}>
+                  <Grid item sm={6} className="claim-ndc">
                     <Input
                       className="member-search__input"
                       placeholder="NDC"
@@ -286,7 +286,7 @@ class ClaimsInfoSearch extends Component<Props, State> {
                       //   onChange={(e) => this.handleInputChange(e)}
                     />
                   </Grid>
-                  <Grid item sm={6}>
+                  <Grid item sm={6} className="claim-ddid">
                     <Input
                       className="member-search__input"
                       placeholder="DDID"
@@ -346,7 +346,7 @@ class ClaimsInfoSearch extends Component<Props, State> {
                       //   onChange={(e) => this.handleInputChange(e)}
                     />
                   </Grid>
-                  <Grid item sm={6}>
+                  <Grid item sm={6} className="claim-contract_id">
                     <Input
                       className="member-search__input"
                       placeholder="Contract ID"
@@ -406,7 +406,7 @@ class ClaimsInfoSearch extends Component<Props, State> {
                       //   onChange={(e) => this.handleInputChange(e)}
                     />
                   </Grid>
-                  <Grid item sm={6}>
+                  <Grid item sm={6} className="claim-group_id">
                     <Input
                       className="member-search__input"
                       placeholder="Group ID"

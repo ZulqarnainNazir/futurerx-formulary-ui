@@ -62,6 +62,7 @@ class AuthsAndOverridesGrid extends React.Component<AuthsAndOverridesGridProps, 
           data={this.state.filteredData}
           pagintionPosition="topRight"
           onSettingsClick="grid-menu"
+          settingsWidth={45}
           scroll={{ x: 1500, y: 420 }}
         />
       </div>

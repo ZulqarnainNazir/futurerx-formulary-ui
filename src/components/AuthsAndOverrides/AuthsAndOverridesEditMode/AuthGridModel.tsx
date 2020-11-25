@@ -14,13 +14,14 @@ import AuthMemberEditOver from "../AuthandOverrideEditModeInfo/AuthEditModeOver"
 // import AuthMemberEditInfoRest from "../AuthandOverrideEditModeInfo/AuthEditModeOverRest";
 // import AuthMemberEditInfoClinical from "../AuthandOverrideEditModeInfo/AuthEditModeOverClinical";
 // import AuthMemberEditInfoOverrideAdmin from "../AuthandOverrideEditModeInfo/AuthEditModeOverAdministrative";
-import {TabInfo} from "../../../models/tab.model";
-import {getClaimModalFolderTabData} from "../../../mocks/ClaimGridModelMock";
+import { TabInfo } from "../../../models/tab.model";
+import { getClaimModalFolderTabData } from "../../../mocks/ClaimGridModelMock";
 import FrxDialogPopup from "../../shared/FrxDialogPopup/FrxDialogPopup";
 
 export interface ClaimsGridModelProps {
   data: any;
   isOpen: boolean;
+  isEditCopy: boolean;
   onClose: () => void;
 }
 
@@ -32,7 +33,7 @@ export interface ClaimsGridModelState {
 class AuthGridEditModel extends React.Component<
   ClaimsGridModelProps,
   ClaimsGridModelState
-> {
+  > {
   state = {
     folderTab: getClaimModalFolderTabData(),
     activeTabIndex: 0,
@@ -53,7 +54,7 @@ class AuthGridEditModel extends React.Component<
         return tab;
       }
     );
-    this.setState({folderTabs, activeTabIndex});
+    this.setState({ folderTabs, activeTabIndex });
   };
 
   handleClosePopup = () => {
@@ -77,7 +78,7 @@ class AuthGridEditModel extends React.Component<
         negativeActionText="Close"
         title=""
         handleClose={this.handleClosePopup}
-        handleAction={() => {}}
+        handleAction={() => { }}
         open={!this.state.popUpClose}
         showActions={false}
         showCloseIcon={false}
@@ -91,8 +92,19 @@ class AuthGridEditModel extends React.Component<
             {/* Member Info */}
             <div className="auth-grid-model-root__content--header">
               <div className="auth-grid-model-root__content--header__claimid">
-                <label htmlFor="Auth ID:">AUTHORIZATION ID:</label>
-                <span>{claimData.authOverrideId}</span>
+                {this.props.isEditCopy ? (
+                  <>
+                    <label htmlFor="Auth ID:">New {claimData.recordType}</label>
+                    {/* <span>{claimData.authOverrideId}</span> */}
+                  </>
+                ) :
+                  (
+                    <>
+                      <label htmlFor="Auth ID:">{claimData.recordType} ID:</label>
+                      <span>{claimData.authOverrideId}</span>
+                    </>
+                  )
+                }
               </div>
               <div className="auth-grid-model-root__content--header__sequence sequencespace">
                 <label>Date Created</label>
@@ -122,16 +134,16 @@ class AuthGridEditModel extends React.Component<
                   parentFn={() => this.handleClosePopupAfter()}
                 />
               ) : (
-                ""
-              )}
+                  ""
+                )}
               {claimData && claimData.recordType == "Override" ? (
                 <AuthMemberEditOver
                   claimData={claimData}
                   parentFn={() => this.handleClosePopupAfter()}
                 />
               ) : (
-                ""
-              )}
+                  ""
+                )}
 
               <div className="auth-grid-model-root__content--data__folder-tab"></div>
             </div>

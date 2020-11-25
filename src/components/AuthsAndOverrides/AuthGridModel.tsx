@@ -13,10 +13,10 @@ import ClaimTransaction from "../ClaimsGridModel/Components/ClaimTransaction/Cla
 import ClaimsHistory from "../ClaimsGridModel/Components/ClaimsHistory/ClaimsHistory";
 import AuthMemberInfoData from "../authmemberinfodata/AuthMemberInfodata";
 import FrxFolderTabs from "../shared/FrxTabs/FrxTabs";
-import {ReactComponent as CloseIcon} from "../../assets/icons/CloseIcon.svg";
-import {ReactComponent as IconAudit} from "../../assets/icons/IconAudit.svg";
-import {TabInfo} from "../../models/tab.model";
-import {getClaimModalFolderTabData} from "../../mocks/ClaimGridModelMock";
+import { ReactComponent as CloseIcon } from "../../assets/icons/CloseIcon.svg";
+import { ReactComponent as IconAudit } from "../../assets/icons/IconAudit.svg";
+import { TabInfo } from "../../models/tab.model";
+import { getClaimModalFolderTabData } from "../../mocks/ClaimGridModelMock";
 import AuthClinical from "../AuthClinical/AuthClinical";
 import AuthAdminInfo from "../authmemberinfodata/AuthAdminInfodata";
 import OverRideAdminInfo from "../authmemberinfodata/OverrideAdminInfodata";
@@ -30,6 +30,7 @@ export interface ClaimsGridModelProps {
   data: any;
   isOpen: boolean;
   onClose: () => void;
+  callBacks?: any;
 }
 
 export interface ClaimsGridModelState {
@@ -40,7 +41,7 @@ export interface ClaimsGridModelState {
 class AuthGridModel extends React.Component<
   ClaimsGridModelProps,
   ClaimsGridModelState
-> {
+  > {
   state = {
     folderTab: getClaimModalFolderTabData(),
     activeTabIndex: 0,
@@ -48,7 +49,7 @@ class AuthGridModel extends React.Component<
   };
 
   componentDidMount() {
-    console.log(this.props.data);
+    console.log(this.props.callBacks);
   }
 
   onClickTab = (selectedTabIndex: number) => {
@@ -61,7 +62,7 @@ class AuthGridModel extends React.Component<
         return tab;
       }
     );
-    this.setState({folderTabs, activeTabIndex});
+    this.setState({ folderTabs, activeTabIndex });
   };
 
   handleClosePopup = () => {
@@ -74,14 +75,14 @@ class AuthGridModel extends React.Component<
 
   render() {
     const claimData = this.props.data;
-    console.log(claimData);
+    // console.log(claimData);
     return (
       <FrxDialogPopup
         positiveActionText=""
         negativeActionText="Close"
         title=""
         handleClose={this.handleClosePopup}
-        handleAction={() => {}}
+        handleAction={() => { }}
         open={!this.state.popUpClose}
         showActions={false}
         showCloseIcon={false}
@@ -95,7 +96,7 @@ class AuthGridModel extends React.Component<
             {/* Member Info */}
             <div className="auth-grid-model-root__content--header">
               <div className="auth-grid-model-root__content--header__claimid">
-                <label htmlFor="Auth ID:">AUTHORIZATION ID:</label>
+                <label htmlFor="Auth ID:">{claimData.recordType} ID:</label>
                 <span>{claimData.authOverrideId}</span>
               </div>
               <div className="auth-grid-model-root__content--header__sequence">
@@ -110,6 +111,10 @@ class AuthGridModel extends React.Component<
                   fill="none"
                   xmlns="http://www.w3.org/2000/svg"
                   className="icons"
+                  onClick={() => {
+                    this.handleClosePopup();
+                    this.props.callBacks?.copy(this.props.data)
+                  }}
                 >
                   <path
                     d="M13.5938 0C14.3704 0 15 0.62959 15 1.40625V9.84375C15 10.6204 14.3704 11.25 13.5938 11.25H5.15625C4.37959 11.25 3.75 10.6204 3.75 9.84375V1.40625C3.75 0.62959 4.37959 0 5.15625 0H13.5938ZM5.15625 12.1875C3.86391 12.1875 2.8125 11.1361 2.8125 9.84375V3.75H1.40625C0.62959 3.75 0 4.37959 0 5.15625V13.5938C0 14.3704 0.62959 15 1.40625 15H9.84375C10.6204 15 11.25 14.3704 11.25 13.5938V12.1875H5.15625Z"
@@ -123,6 +128,10 @@ class AuthGridModel extends React.Component<
                   fill="none"
                   xmlns="http://www.w3.org/2000/svg"
                   className="icons"
+                  onClick={() => {
+                    this.handleClosePopup();
+                    this.props.callBacks?.edit(this.props.data)
+                  }}
                 >
                   <path
                     fill-rule="evenodd"
@@ -170,54 +179,54 @@ class AuthGridModel extends React.Component<
                 {/* <AuthMemberInfoData claimData={claimData} /> */}
                 {/* {claimData && crecordType?} */}
                 {claimData.recordType == "Authorization" &&
-                claimData.overrideType === "Restrictive" ? (
-                  <AuthRestInfo claimData={claimData} />
-                ) : (
-                  ""
-                )}
+                  claimData.overrideType === "Restrictive" ? (
+                    <AuthRestInfo claimData={claimData} />
+                  ) : (
+                    ""
+                  )}
                 {claimData.recordType == "Authorization" &&
-                claimData.overrideType === "Clinical" ? (
-                  <div>
-                    <AuthAdminInfo claimData={claimData} />
-                    <AuthClinical claimData={claimData} />
-                  </div>
-                ) : (
-                  ""
-                )}
+                  claimData.overrideType === "Clinical" ? (
+                    <div>
+                      <AuthAdminInfo claimData={claimData} />
+                      <AuthClinical claimData={claimData} />
+                    </div>
+                  ) : (
+                    ""
+                  )}
                 {claimData.recordType === "Authorization" &&
-                claimData.overrideType === "Administrative" ? (
-                  <div>
-                    <AuthAdminInfo claimData={claimData} />
-                    <AuthClinical claimData={claimData} />
-                  </div>
-                ) : (
-                  ""
-                )}
+                  claimData.overrideType === "Administrative" ? (
+                    <div>
+                      <AuthAdminInfo claimData={claimData} />
+                      <AuthClinical claimData={claimData} />
+                    </div>
+                  ) : (
+                    ""
+                  )}
                 {claimData.recordType === "Override" &&
-                claimData.overrideType === "Administrative" ? (
-                  <div>
-                    <OverRideAdminInfo claimData={claimData} />
-                    <AuthClinical claimData={claimData} />
-                  </div>
-                ) : (
-                  ""
-                )}
+                  claimData.overrideType === "Administrative" ? (
+                    <div>
+                      <OverRideAdminInfo claimData={claimData} />
+                      <AuthClinical claimData={claimData} />
+                    </div>
+                  ) : (
+                    ""
+                  )}
 
                 {claimData.recordType === "Override" &&
-                claimData.overrideType === "Restrictive" ? (
-                  <OverRideRestInfo claimData={claimData} />
-                ) : (
-                  ""
-                )}
+                  claimData.overrideType === "Restrictive" ? (
+                    <OverRideRestInfo claimData={claimData} />
+                  ) : (
+                    ""
+                  )}
                 {claimData.recordType === "Override" &&
-                claimData.overrideType === "Clinical" ? (
-                  <div>
-                    <OverRideClinicalInfo claimData={claimData} />
-                    <AuthClinical claimData={claimData} />
-                  </div>
-                ) : (
-                  ""
-                )}
+                  claimData.overrideType === "Clinical" ? (
+                    <div>
+                      <OverRideClinicalInfo claimData={claimData} />
+                      <AuthClinical claimData={claimData} />
+                    </div>
+                  ) : (
+                    ""
+                  )}
                 <AuthCommonDateInfo claimData={claimData} />
               </div>
             </div>

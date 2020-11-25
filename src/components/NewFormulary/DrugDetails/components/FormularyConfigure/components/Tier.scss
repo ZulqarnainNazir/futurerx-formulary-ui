@@ -1,0 +1,121 @@
+@import "../../../../../../assets/style.scss";
+
+.drug-detail-LA-root {
+  .drug-detail-la-container {
+    box-sizing: border-box;
+    border-radius: 5px 5px 0px 0px;
+    background: #ffffff;
+    .la-header {
+      height: 52px;
+      border-bottom: 1px solid #e5e5e5;
+      padding: 11px 0px 11px 20px;
+      span {
+        font-family: Roboto;
+        font-style: normal;
+        font-weight: 500;
+        font-size: 12px;
+        line-height: 30px;
+        text-transform: uppercase;
+        color: #1d54b4;
+      }
+    }
+    .drug-detail-la-inner {
+      .drug-type {
+        padding-top: 10px;
+        padding-bottom: 10px;
+      }
+      .limited-access {
+        background: #f9f9f9;
+        border: 1px solid #e5e5e5;
+        box-sizing: border-box;
+        border-radius: 5px;
+        .limited-access-header {
+          height: 50px;
+          background: #ffffff;
+          border-bottom: 1px solid #e5e5e5;
+          box-sizing: border-box;
+          border-radius: 5px 5px 0px 0px;
+          padding-top: 10px;
+          padding-left: 19px;
+          span {
+            font-family: Roboto;
+            font-style: normal;
+            font-weight: 500;
+            font-size: 12px;
+            line-height: 30px;
+            text-transform: uppercase;
+            color: #1d54b4;
+          }
+        }
+        .limited-access-inner {
+          padding: 10px;
+          // border:1px solid #E5E5E5;
+          .first {
+            padding: 10px;
+            .rowheader {
+              height: 40px;
+              border: 1px solid #e5e5e5;
+              box-sizing: border-box;
+              border-radius: 3px 3px 0px 0px;
+              .MuiGrid-item {
+                border-right: 1px solid #e5e5e5;
+                height: 40px;
+              }
+            }
+            .rowcontent {
+              background: #ffffff;
+              height: 40px;
+              border: 1px solid #e5e5e5;
+              box-sizing: border-box;
+              border-radius: 0px 0px 3px 3px;
+              .MuiGrid-item {
+                border-right: 1px solid #e5e5e5;
+                height: 40px;
+              }
+            }
+            span {
+              font-family: Roboto;
+              font-style: normal;
+              font-weight: normal;
+              font-size: 12px;
+              line-height: 40px;
+              display: flex;
+              justify-content: center;
+              align-items: center;
+              letter-spacing: 0.01em;
+              text-transform: uppercase;
+              color: #707683;
+              padding: 0 20px;
+              &.text-left {
+                justify-content: flex-start;
+              }
+            }
+          }
+
+          .second {
+            padding: 10px;
+            margin-top: 10px;
+            .rowcontent {
+              height: 40px;
+              border: 1px solid #e5e5e5;
+              box-sizing: border-box;
+              border-radius: 3px 3px 0px 0px;
+              background: #ffffff;
+            }
+            span {
+              font-family: Roboto;
+              font-style: normal;
+              font-weight: normal;
+              font-size: 12px;
+              line-height: 14px;
+              display: flex;
+              align-items: center;
+              letter-spacing: 0.01em;
+              text-transform: uppercase;
+            }
+          }
+        }
+      }
+    }
+  }
+}
