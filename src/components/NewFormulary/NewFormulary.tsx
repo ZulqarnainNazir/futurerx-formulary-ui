@@ -4,6 +4,7 @@ import FrxTabs from '../shared/FrxTabs/FrxTabs';
 import Medicare from './Medicare/Medicare';
 import DrugDetails from './DrugDetails/FormularyDetails';
 import DrugDetailsContext from './FormularyDetailsContext';
+import FormularyDashboardStats from './../FormularyDashboardStats/FormularyDashboardStats';
 import {getFormularyDetails} from '../../mocks/formulary/formularyDetails';
 
 import './NewFormulary.scss';
@@ -62,6 +63,7 @@ export default class Formulary extends React.Component<any,any>{
     render(){
         return (
             <div className="formulary-root">
+                <FormularyDashboardStats/>
                 { this.state.showTabs ? (
                     <>
                         <FrxTabs
