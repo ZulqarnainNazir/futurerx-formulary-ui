@@ -1,4 +1,4 @@
-import { Card } from '@material-ui/core'
+import { Card, Input } from '@material-ui/core'
 import { ArrowDownward, ArrowDropDown, ExpandLess } from '@material-ui/icons'
 import React, { Component } from 'react'
 import Table from '../../shared/Frx-components/table/Table'
@@ -31,7 +31,7 @@ export default class HmpsSubmissionTable extends Component {
                         </div>
                         <div style={{ textAlign: "center", backgroundColor: "#F9F9F9" }} className="grid-item">
                             <div >
-                                <input style={{ height: "25px" }} type="checkbox" />
+                                <input  type="checkbox" />
                             </div>
                         </div>
                         <div style={{ backgroundColor: "#F9F9F9", borderRight: "0px solid white" }} className="grid-item">
