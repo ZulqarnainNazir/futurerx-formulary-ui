@@ -1,6 +1,7 @@
 import React from 'react';
 import { TabInfo } from "../../../../../models/tab.model";
 import FrxTabs from '../../../../shared/FrxTabs/FrxTabs';
+import CompareFormularies from './components/CompareFormularies';
 
 const tabs = [
     { id: 1, text: "COMPARE FORMUARIES" },
@@ -34,7 +35,7 @@ export default class CompareView extends React.Component<configureProps,configur
         const tabIndex = this.state.activeTabIndex;
         switch(tabIndex){
             case 0:
-                return <div>COMPARE FORMULARIES</div>
+                return <div><CompareFormularies /> </div>
             case 1:
                 return <div>VIEW FORMULARIES</div>
             case 2:
