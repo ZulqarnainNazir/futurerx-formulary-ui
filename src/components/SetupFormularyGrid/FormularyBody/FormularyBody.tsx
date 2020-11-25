@@ -1,17 +1,18 @@
 import React from 'react';
-import { TabInfo } from "../../models/tab.model";
-import FrxTabs from '../shared/FrxTabs/FrxTabs';
-import Medicare from '../NewFormulary/Medicare/Medicare';
-import DrugDetails from '../NewFormulary/DrugDetails/components/FormularyConfigure/components/DrugDetails';
+import { TabInfo } from "../../../models/tab.model";
+import FrxTabs from '../../shared/FrxTabs/FrxTabs';
+import Medicare from '../../NewFormulary/Medicare/Medicare';
+import DrugDetails from '../../NewFormulary/DrugDetails/components/FormularyConfigure/components/DrugDetails';
 
 import './FormularyBody.scss';
-import HmpsSubmissionTable from './hmpsSubmissionTable/hmpsSubmissionTable';
+import HmpsSubmissionTable from '../hmpsSubmissionTable/hmpsSubmissionTable';
+import StandardReporting from '../StandardReporting/StandardReporting';
 
 const tabs = [
     { id: 1, text: "HMPS SUBMISSION FILES (EXPORT)" },
     { id: 2, text: "MARKETING MATERIALS & FORMULARY SEARCH TOOL" },
     { id: 3, text: "STANDARD REPORTING" },
-    // { id: 4, text: "EXCHANGE" }
+    // { id: 4, text: "EXCHANGE" } 
 ];
 
 interface State {
@@ -21,7 +22,7 @@ interface State {
     showDrugDetails: boolean;
 }
 
-export default class FormularyBody extends React.Component<any,any>{
+export default class FormularyBody extends React.Component<any, any>{
     state = {
         activeTabIndex: 0,
         tabs: tabs,
@@ -30,12 +31,12 @@ export default class FormularyBody extends React.Component<any,any>{
     }
     onClickTab = (selectedTabIndex: number) => {
         let activeTabIndex = 0;
-    
+
         const tabs = this.state.tabs.map((tab: TabInfo, index: number) => {
-          if (index === selectedTabIndex) {
-            activeTabIndex = index;
-          }
-          return tab;
+            if (index === selectedTabIndex) {
+                activeTabIndex = index;
+            }
+            return tab;
         });
         this.setState({ tabs, activeTabIndex });
     };
@@ -47,30 +48,30 @@ export default class FormularyBody extends React.Component<any,any>{
     }
     renderActiveTabContent = () => {
         const tabIndex = this.state.activeTabIndex;
-        switch(tabIndex){
+        switch (tabIndex) {
             case 0:
                 // return <Medicare drugDetailClick={this.drugDetailsClickHandler}/>
                 return <HmpsSubmissionTable />
             case 1:
                 return <div>MEDICAID</div>
             case 2:
-                return <div>COMMERCIAL</div>
+                return <div><StandardReporting /></div>
             case 3:
                 return <div>EXCHANGE</div>
         }
     }
-    render(){
+    render() {
         return (
             <div className="formulary-root">
                 { this.state.showTabs ? (
                     <>
                         <FrxTabs
-                        tabList={this.state.tabs}
-                        activeTabIndex={this.state.activeTabIndex}
-                        onClickTab={this.onClickTab}
+                            tabList={this.state.tabs}
+                            activeTabIndex={this.state.activeTabIndex}
+                            onClickTab={this.onClickTab}
                         />
                         <div className="formulary-tabs-info">
-                        {this.renderActiveTabContent()}
+                            {this.renderActiveTabContent()}
                         </div>
                     </>
                 ) : this.state.showDrugDetails ? (

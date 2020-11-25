@@ -4,9 +4,8 @@ import FormularySearch from '../formulary/Components/FormularySearch/FormularySe
 import FormularyDetailsTop from '../NewFormulary/DrugDetails/components/FormularyDetailsTop/FormularyDetailsTop'
 import DropDown from '../shared/Frx-components/dropdown/DropDown'
 import TextBox from '../shared/Frx-components/text-box/TextBox'
-import FormularyBody from './FormularyBody'
-import FormularyHeading from './FormularyHeading'
-import {getFormularyDetails} from '../../mocks/formulary/formularyDetails';
+import FormularyBody from './FormularyBody/FormularyBody'
+import { getFormularyDetails } from '../../mocks/formulary/formularyDetails';
 
 interface formularyTopData {
     effectiveDate: string;
@@ -17,19 +16,19 @@ interface formularyTopData {
 
 
 export default class SetupFormularyGrid extends Component {
- 
-render() {
-    return (
-        <div>
-            <div style={{marginLeft:"60px", marginRight:"60px", marginTop:"50px"}} className="FormularyHeading">
-                {/* <FormularyHeading/> */}
-              
-                <FormularyDetailsTop formularyTopData={ getFormularyDetails() } />
+
+    render() {
+        return (
+            <div>
+                <div style={{ marginLeft: "60px", marginRight: "60px", marginTop: "50px" }} className="FormularyHeading">
+                    {/* <FormularyHeading/> */}
+
+                    <FormularyDetailsTop formularyTopData={getFormularyDetails()} />
+                </div>
+                <div className="formularyBody">
+                    <FormularyBody />
+                </div>
             </div>
-            <div className="formularyBody">
-                <FormularyBody  />
-            </div>
-        </div>
-    )
-}
+        )
+    }
 }
