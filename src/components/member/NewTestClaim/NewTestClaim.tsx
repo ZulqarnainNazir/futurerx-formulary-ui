@@ -1,16 +1,4 @@
 import React from 'react'
-import Grid from '@material-ui/core/Grid';
-import { Input } from "@material-ui/core";
-import { Box, Button } from "@material-ui/core";
-import CustomSelect from "../../shared/Frx-components/dropdown/DropDown";
-import CustomDatepicker from "../../shared/Frx-components/date-picker/CustomDatePicker";
-
-
-import MultiIngredientField from './multiIngredientField';
-
-import PayerAmountField from './payerAmountField';
-import PayerRejectField from './payerRejectField';
-import BenefitStageField from './benefitStageField';
 import SubmissionForm from './SubmissionForm';
 import CostForm from './CostForm';
 import AuthPrescriberForm from  './AuthrizationPrescriberForms';
@@ -19,7 +7,7 @@ import CoordinationBenefits from './CoordinationBenefits';
 import MultiIngredientCompound from './MultiIngredientCompound';
 import NxTransaction from './NxTransaction';
 
-export class NewTestClaim3 extends React.Component<any,any> {
+export class NewTestClaim extends React.Component<any,any> {
   state = {
     submissionType: 'Multi-IngredientCompound'
   }

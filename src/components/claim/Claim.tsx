@@ -3,6 +3,7 @@ import { Button, Card, Container, Grid } from "@material-ui/core";
 import Accordion from "@material-ui/core/Accordion";
 import AccordionDetails from "@material-ui/core/AccordionDetails";
 import AccordionSummary from "@material-ui/core/AccordionSummary";
+
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import React from "react";
 import { getBarChartData } from "../../mocks/ChartMock";
@@ -12,7 +13,7 @@ import {
   getOverrideLabels,
   getOverrideNumbers,
   getTop5FilledDrugsLabels,
-  getTop5FilledDrugsNumbers
+  getTop5FilledDrugsNumbers,
 } from "../../mocks/ClaimsMock";
 import { TabInfo } from "../../models/tab.model";
 import PaDashboard from "../PA-Dashboard/PaDashboard";
@@ -37,16 +38,19 @@ const tabs = [
   { id: 3, text: "PA" },
   { id: 4, text: "Grievances" },
   { id: 5, text: "Auths & Overrides" },
-  { id: 6, text: "Communications" }
+  { id: 6, text: "Communications" },
 ];
 
 const miniTabs = [
   { id: 1, text: "Part D" },
-  { id: 2, text: "Part B/C" }
+  { id: 2, text: "Part B/C" },
 ];
 
 interface Props {
   activeIndex: number;
+  onSwitchNewGrievance?: any;
+  memberInformation?: any;
+  contactInformation?: any;
 }
 interface State {
   tabs: Array<TabInfo>;
@@ -67,7 +71,7 @@ class Claim extends React.Component<Props, State> {
     isNotesOpen: false,
     loading: false,
     summaryType: "total",
-    openPopup: false
+    openPopup: false,
   };
 
   top5FilledData: Array<number> = getTop5FilledDrugsNumbers();
@@ -81,22 +85,22 @@ class Claim extends React.Component<Props, State> {
 
   componentDidMount = () => {
     this.setState({
-      activeTabIndex: this.props.activeIndex
-    })
-  }
+      activeTabIndex: this.props.activeIndex,
+    });
+  };
   componentWillReceiveProps = (newProps) => {
     if (newProps.activeIndex != this.props.activeIndex) {
       this.setState({
         activeTabIndex: newProps.activeIndex,
-        loading: true
-      })
+        loading: true,
+      });
       setTimeout(() => {
         this.setState({
-          loading: false
-        })
+          loading: false,
+        });
       }, 1000);
     }
-  }
+  };
   onClickTab = (selectedTabIndex: number) => {
     console.log("claimsn tab clicked ", selectedTabIndex);
     let activeTabIndex = 0;
@@ -142,7 +146,7 @@ class Claim extends React.Component<Props, State> {
     console.log("invoked onButtonClick", this.state.openPopup);
 
     this.setState({
-      openPopup: !this.state.openPopup
+      openPopup: !this.state.openPopup,
     });
   };
 
@@ -181,8 +185,8 @@ class Claim extends React.Component<Props, State> {
                         title="New Test Claim"
                       />
                     ) : (
-                      ""
-                    )}
+                        ""
+                      )}
                   </div>
                 </div>
               </AccordionSummary>
@@ -231,7 +235,7 @@ class Claim extends React.Component<Props, State> {
     } else if (this.state.activeTabIndex === 3) {
       return (
         <div className="claims-content">
-          <GrievanceDashboard />
+          <GrievanceDashboard onSwitchNewGrievance={this.props.onSwitchNewGrievance} />
         </div>
       );
     } else if (this.state.activeTabIndex === 4) {
@@ -290,8 +294,8 @@ class Claim extends React.Component<Props, State> {
               onClose={this.openNotesDialog}
             />
           ) : (
-            ""
-          )}
+              ""
+            )}
           <FrxTabs
             tabList={this.state.tabs}
             activeTabIndex={this.state.activeTabIndex}

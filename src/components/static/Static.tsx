@@ -4,7 +4,7 @@ import PropTypes from "prop-types";
 import FrxTabs from "../shared/FrxTabs/FrxTabs";
 
 // material ui modules //
-import { makeStyles } from "@material-ui/core/styles";
+import {makeStyles} from "@material-ui/core/styles";
 import Paper from "@material-ui/core/Paper";
 import Avatar from "@material-ui/core/Avatar";
 import Grid from "@material-ui/core/Grid";
@@ -32,12 +32,12 @@ import TableRow from "@material-ui/core/TableRow";
 import "./Static.scss";
 
 // antd modules //
-import { DatePicker, Space } from "antd";
+import {DatePicker, Space} from "antd";
 import "antd/dist/antd.css";
-import { getMainTabNames } from "../../utils/text-labels";
-import { TabInfo } from "../../models/tab.model";
+import {getMainTabNames} from "../../utils/text-labels";
+import {TabInfo} from "../../models/tab.model";
 
-const { RangePicker } = DatePicker;
+const {RangePicker} = DatePicker;
 
 function createData(
   name: string,
@@ -47,7 +47,7 @@ function createData(
   tier4: string,
   tier5: string
 ) {
-  return { name, tier1, tier2, tier3, tier4, tier5 };
+  return {name, tier1, tier2, tier3, tier4, tier5};
 }
 
 const rows = [
@@ -86,35 +86,34 @@ const rows = [
 ];
 
 class Assets extends React.Component {
-
   state = {
     tabs: getMainTabNames(),
-    activeTabIndex: 0
-  }
-
+    activeTabIndex: 0,
+  };
 
   onClickTab = (selectedTabIndex: number) => {
     let activeTabIndex = 0;
 
-    const tabs = this.state.tabs.map(
-      (tab: TabInfo, index: number) => {
-        if (index === selectedTabIndex) {
-          activeTabIndex = index;
-        }
-        return tab;
+    const tabs = this.state.tabs.map((tab: TabInfo, index: number) => {
+      if (index === selectedTabIndex) {
+        activeTabIndex = index;
       }
-    );
+      return tab;
+    });
 
-    this.setState({tabs, activeTabIndex})
+    this.setState({tabs, activeTabIndex});
   };
-
 
   render() {
     return (
       <React.Fragment>
         <div className="static-root">
           {/* Section/Navigation */}
-          <FrxTabs tabList={this.state.tabs} activeTabIndex={this.state.activeTabIndex} onClickTab={this.onClickTab} />
+          <FrxTabs
+            tabList={this.state.tabs}
+            activeTabIndex={this.state.activeTabIndex}
+            onClickTab={this.onClickTab}
+          />
           <div className="done-sections">tab active have to fix</div>
           {/* <AppBar className="container-maintab" position="static">
             <Tabs className="tabs"> */}
@@ -513,18 +512,14 @@ class Assets extends React.Component {
                 </Grid>
                 <Grid className="basic-list diagnosis-history scroll-bar">
                   <div className="basic-list-item">
-                    <span className="column title" >
-                      F90.2
-                    </span>
+                    <span className="column title">F90.2</span>
                     <span className="column long">
                       Attention-deficit hyperactive disorder, combine type
                     </span>
                     <span className="column right">05/12/2020</span>
                   </div>
                   <div className="basic-list-item">
-                    <span className="column title">
-                      S72.8X1A
-                    </span>
+                    <span className="column title">S72.8X1A</span>
                     <span className="column long">
                       Nondisplaced segmental fracture of shaft of right femur,
                       initial encounter for closed fracture
@@ -532,27 +527,21 @@ class Assets extends React.Component {
                     <span className="column right">05/12/2019</span>
                   </div>
                   <div className="basic-list-item">
-                    <span className="column title">
-                      M87.28
-                    </span>
+                    <span className="column title">M87.28</span>
                     <span className="column long">
                       Osteonecrosis due to previous trauma, other site
                     </span>
                     <span className="column right">07/09/2018</span>
                   </div>
                   <div className="basic-list-item">
-                    <span className="column title" >
-                      F90.2
-                    </span>
+                    <span className="column title">F90.2</span>
                     <span className="column long">
                       Attention-deficit hyperactive disorder, combine type
                     </span>
                     <span className="column right">05/12/2020</span>
                   </div>
                   <div className="basic-list-item">
-                    <span className="column title" >
-                      F90.2
-                    </span>
+                    <span className="column title">F90.2</span>
                     <span className="column long">
                       Attention-deficit hyperactive disorder, combine type
                     </span>
@@ -1496,7 +1485,7 @@ class Assets extends React.Component {
               </Grid>
               {/* Grid table ----------------------- Grid table */}
               <Grid className="border-lined" xs={12}>
-                <h5 style={{ textAlign: "center" }}>Grid Table</h5>
+                <h5 style={{textAlign: "center"}}>Grid Table</h5>
               </Grid>
               {/* Grid table ----------------------- Grid table */}
               {/* Section/Claim Form */}

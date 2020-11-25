@@ -1,13 +1,13 @@
 import React from "react";
-import Grid from "@material-ui/core/Grid";
+import {Grid,Button} from "@material-ui/core";
 import FrxMiniTabs from "../../../shared/FrxMiniTabs/FrxMiniTabs";
 import FrxGrid from "../../../shared/FrxGrid/FrxGrid";
 import FrxLoader from "../../../shared/FrxLoader/FrxLoader";
 
 import "./GrievancesCommunication.scss";
 import SimpleSearch from "../../../communication/Search/SimpleSearch/SimpleSearch";
-import DiagnosisSearchForm from "../../../shared/FrxSearchForm/FrxSearchForm";
-import FrxTermRecord from "../../../shared/FrxTermRecord/FrxTermRecord";
+import NotesPopup from "../../../member/MemberNotesPopup";
+import ViewSelected from "./ViewSelected"
 
 const sampleImage = require("../../../../mocks/sample.svg");
 
@@ -34,6 +34,9 @@ interface CommunicationState {
   openPopup: boolean;
   poupType: any;
   selectedRow: any;
+  isNotesOpen: boolean;
+  isChecked?:any[];
+  viewselecteMsgCount?:number;
 }
 
 class Communication extends React.Component<
@@ -48,17 +51,15 @@ class Communication extends React.Component<
     openPopup: false,
     poupType: { title: "" },
     selectedRow: { index: "" },
-    miniTabs: [
-      {
-        id: 1,
-        text: "Inbound"
-      },
-      {
-        id: 2,
-        text: "OutBound"
-      }
-    ]
+    miniTabs: this.props.tabs,
+    isNotesOpen: false,
+    isChecked:[] as  any,
+    viewselecteMsgCount:0
   };
+  
+  handleCloseNote = () => {
+        this.setState({isNotesOpen: !this.state.isNotesOpen});
+    };
   /**
    *@function onClose
    *
@@ -89,6 +90,35 @@ class Communication extends React.Component<
     console.log("no action to perform");
   };
 
+  handleCheck=(e)=>{
+    if(e.checked) {
+      this.setState({
+        isChecked: [ ...this.state.isChecked,e.id],
+      },() => {
+        if(this.props.tabs.length<=2){
+          this.props.tabs.push({ id: 3 })
+        }
+        this.props.tabs[2].text= `View Selected (${this.state.isChecked.length})`;
+        this.setState({miniTabs:this.props.tabs,viewselecteMsgCount:this.state.isChecked.length})
+      });
+    } else {
+       let remove = this.state.isChecked.indexOf(e.id);
+       this.setState({
+        isChecked: this.state.isChecked.filter((_, i) => i !== remove)
+       },
+      	 () => {
+          console.log(this.state.isChecked.length);
+          if(this.state.isChecked.length === 0){
+            this.props.tabs.pop()
+          }else{
+            this.props.tabs[2].text= `View Selected (${this.state.isChecked.length})`;
+          }
+          this.setState({miniTabs:this.props.tabs,viewselecteMsgCount:this.state.isChecked.length})
+        }
+      );
+    }
+  }
+
   processData(num: number) {
     const data = this.props.data[num];
     this.setState({ data, filteredData: data, isFetchingData: false });
@@ -96,6 +126,9 @@ class Communication extends React.Component<
   componentDidMount() {
     this.processData(0);
   }
+  rowSelectionChange = (dataRow: any) => {
+  }
+
   handleSearch = (searchObject: any) => {
     this.setState({ isFetchingData: true });
     if (searchObject) {
@@ -117,11 +150,27 @@ class Communication extends React.Component<
     }
   };
   onClickMiniTab = (num: number) => {
+    if(num<2 && this.props.tabs.length===3){
+      this.props.tabs.pop()
+    }
+    if(num===2){
+      this.props.tabs[2].text = 'View Selected'
+    }
     this.setState({
-      activeMiniTabIndex: num
+      activeMiniTabIndex: num,
+      isChecked:[]
     });
     this.processData(num);
   };
+
+  clearSelected=()=>{
+      this.props.tabs.pop()
+      this.setState({miniTabs:this.props.tabs})
+      this.setState({
+        activeMiniTabIndex: 0
+      });
+      this.processData(0);
+  }
 
   // {/* <div
   //     className={`frx-grid-container ${
@@ -142,19 +191,38 @@ class Communication extends React.Component<
       <>
         <div className="communication-info">
           {this.props.showTabs && (
-            <div>
+            <div className="com-tabs">
               <FrxMiniTabs
                 tabList={this.props.tabs ? this.props.tabs : this.state.miniTabs}
                 activeTabIndex={this.state.activeMiniTabIndex}
                 onClickTab={this.onClickMiniTab}
+                msgCount={this.state.isChecked.length}
               />
-              <div className="comtitle">
+              <div className="title">
                 <label className="member-notification-root__header-text">
-                  {this.props.tabs[this.state.activeMiniTabIndex]["text"]}{" "}
+                  {this.state.activeMiniTabIndex != 2 ? this.props.tabs[this.state.activeMiniTabIndex]["text"] : 'View'}{" "}
                 Communications
               </label>
+              {this.state.activeMiniTabIndex===2 && (<span className="advanced-grid-search__action">
+              <Button className="advanced-grid-search__btn-clear" onClick={this.clearSelected}>
+                        <svg className="advanced-grid-search__btn-clear--clearicon" width="17" height="17" viewBox="0 0 17 17" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path fill-rule="evenodd" clip-rule="evenodd" d="M8.5 17C13.1944 17 17 13.1945 17 8.5C17 3.80554 13.1944 0 8.5 0C3.8056 0 0 3.80554 0 8.5C0 13.1945 3.8056 17 8.5 17ZM8.5 16C12.6422 16 16 12.6421 16 8.5C16 4.35791 12.6422 1 8.5 1C4.35785 1 1 4.35791 1 8.5C1 12.6421 4.35785 16 8.5 16Z" fill="#666666" />
+                            <path d="M5.31803 5.31802C5.12277 5.51328 5.12277 5.82986 5.31803 6.02513L7.7929 8.5L5.31803 10.9749C5.12277 11.1701 5.12277 11.4867 5.31803 11.682C5.51329 11.8772 5.82987 11.8772 6.02514 11.682L8.50001 9.20711L10.9749 11.682C11.1701 11.8772 11.4867 11.8772 11.682 11.682C11.8773 11.4867 11.8773 11.1701 11.682 10.9749L9.20712 8.5L11.682 6.02513C11.8773 5.82986 11.8773 5.51328 11.682 5.31802C11.4867 5.12276 11.1701 5.12276 10.9749 5.31802L8.50001 7.79289L6.02513 5.31802C5.82987 5.12276 5.51329 5.12276 5.31803 5.31802Z" fill="#666666" />
+                        </svg>
+                        <span>Clear</span>
+                    </Button>
+              </span>)}
+              {this.state.isNotesOpen ? (
+                        <NotesPopup
+                                category="Communications"
+                                openPopup={this.state.isNotesOpen}
+                                onClose={this.handleCloseNote}
+                        />) : (
+                            ""
+                    )}
                 <span className="member-notification-header__icon-container">
                   <svg
+                    onClick={this.handleCloseNote}
                     width="10"
                     height="12"
                     viewBox="0 0 10 12"
@@ -173,22 +241,23 @@ class Communication extends React.Component<
               </div>
             </div>
           )}
+          <div className="communication-table-wrapper">
+              
+              
+              {this.props.showTabs && this.state.activeMiniTabIndex !== 2 ? (
+                <SimpleSearch onSearch={this.handleSearch} />
+              ) : null}  
           {this.state.activeMiniTabIndex === 0 && (
             <>
-              {this.props.showTabs ? (
-                <SimpleSearch onSearch={this.handleSearch} />
-              ) : (
-                  <div className="noSpacing">
-                    <SimpleSearch onSearch={this.handleSearch} />
-                  </div>
-                )}
               <FrxGrid
                 showSettingsMenu={true}
                 isRowSelectionEnabled={true}
                 isRowSelectorCheckbox
+                rowSelectionChange={this.rowSelectionChange}
                 enableColumnDrag={false}
                 pagintionPosition="bottomRight"
                 columns={columns}
+                handleCheck={this.handleCheck}
                 data={this.state.filteredData}
                 gridName={this.props.title}
                 fixedColumnKeys={["record_type"]}
@@ -209,35 +278,6 @@ class Communication extends React.Component<
                   return record.index === this.state.selectedRow.index
                     ? "selt"
                     : "not-selt";
-                }}
-                expandable={{
-                  isExpandable: this.state.openPopup,
-                  expandIconColumnIndex: 21,
-                  expandOpenIcon: <span className="openIcon"></span>,
-                  expandedRowClassName: (record, index) => {
-                    console.log(record, index);
-                    return record.index === this.state.selectedRow.index
-                      ? "expand-selected"
-                      : "not-selected";
-                  },
-                  expandCloseIcon: (
-                    <div
-                      className="closeIcon"
-                      onClick={() => {
-                        this.setState({ openPopup: false });
-                      }}
-                    >
-                      X
-                    </div>
-                  ),
-                  expandedRowRender: (props: any) => {
-                    console.log(props);
-                    return this.state.poupType.title === "Term Record" ? (
-                      <FrxTermRecord isNotesPopup={false} />
-                    ) : (
-                        <FrxTermRecord isNotesPopup={true} />
-                      );
-                  }
                 }}
                 settingsTriDotMenuClick={(item: any) => {
                   if (item.title === "Term Record") {
@@ -252,18 +292,12 @@ class Communication extends React.Component<
           )}
           {this.state.activeMiniTabIndex === 1 && (
             <>
-              {this.props.showTabs ? (
-                <SimpleSearch onSearch={this.handleSearch} />
-              ) : (
-                  <div className="noSpacing">
-                    <SimpleSearch onSearch={this.handleSearch} />
-                  </div>
-                )}
               <FrxGrid
                 showSettingsMenu={true}
                 isRowSelectionEnabled={true}
                 isRowSelectorCheckbox
                 enableColumnDrag={false}
+                handleCheck={this.handleCheck}
                 pagintionPosition="bottomRight"
                 columns={columns}
                 data={this.state.filteredData}
@@ -287,35 +321,6 @@ class Communication extends React.Component<
                     ? "selt"
                     : "not-selt";
                 }}
-                expandable={{
-                  isExpandable: this.state.openPopup,
-                  expandIconColumnIndex: 21,
-                  expandOpenIcon: <span className="openIcon"></span>,
-                  expandedRowClassName: (record, index) => {
-                    console.log(record, index);
-                    return record.index === this.state.selectedRow.index
-                      ? "expand-selected"
-                      : "not-selected";
-                  },
-                  expandCloseIcon: (
-                    <div
-                      className="closeIcon"
-                      onClick={() => {
-                        this.setState({ openPopup: false });
-                      }}
-                    >
-                      X
-                    </div>
-                  ),
-                  expandedRowRender: (props: any) => {
-                    console.log(props);
-                    return this.state.poupType.title === "Term Record" ? (
-                      <FrxTermRecord isNotesPopup={false} />
-                    ) : (
-                        <FrxTermRecord isNotesPopup={true} />
-                      );
-                  }
-                }}
                 settingsTriDotMenuClick={(item: any) => {
                   if (item.title === "Term Record") {
                     this.setState({ openPopup: true, poupType: item });
@@ -327,11 +332,14 @@ class Communication extends React.Component<
               />
             </>
           )}
+          {this.state.activeMiniTabIndex === 2 && (
+            <ViewSelected viewselecteMsgCount={this.state.viewselecteMsgCount}/>
+          )}
+          </div>
         </div>
       </>
     );
   }
 }
-// {/* </div> */}
 
 export default Communication;

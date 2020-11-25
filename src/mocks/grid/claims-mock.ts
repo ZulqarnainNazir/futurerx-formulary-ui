@@ -8,6 +8,9 @@ export const getClaimsGridData = () => {
       serviceDate: "06/22/2020",
       status: "Paid",
       type: "Medicare",
+      memberName: "Jack Davis",
+      memberId: "M11111",
+      mbi: "11111",
       drugLabel: "Abilify 10mg",
       qty: 30,
       daysSupply: 30,
@@ -31,39 +34,39 @@ export const getClaimsGridData = () => {
         {
           id: 11,
           key: 11,
-          title: "Adjustment to Deny"
+          title: "Adjustment to Deny",
         },
         {
           id: 12,
           key: 12,
-          title: "Member Adjustment"
+          title: "Member Adjustment",
         },
         {
           id: 13,
           key: 13,
-          title: "Pharmacy Adjustment"
+          title: "Pharmacy Adjustment",
         },
         {
           id: 14,
           key: 14,
-          title: "Run Test Claim"
+          title: "Run Test Claim",
         },
         {
           id: 30,
           key: 30,
-          title: "Claim Compare"
+          title: "Claim Compare",
         },
         {
           id: 15,
           key: 15,
-          title: "Create Clinical PA"
+          title: "Create Clinical PA",
         },
         {
           id: 16,
           key: 16,
-          title: "Create Non-Clinical PA"
-        }
-      ]
+          title: "Create Non-Clinical PA",
+        },
+      ],
     },
     {
       id: 2,
@@ -74,6 +77,9 @@ export const getClaimsGridData = () => {
       status: "Rejected",
       type: "Medicare",
       drugLabel: "Abilify 10mg",
+      memberName: "John Murray",
+      memberId: "M22222",
+      mbi: "22222",
       qty: 20,
       daysSupply: 35,
       rejectionCode: 75,
@@ -95,24 +101,24 @@ export const getClaimsGridData = () => {
         {
           id: 17,
           key: 17,
-          title: "Run Test Claim"
+          title: "Run Test Claim",
         },
         {
           id: 30,
           key: 30,
-          title: "Claim Compare"
+          title: "Claim Compare",
         },
         {
           id: 18,
           key: 18,
-          title: "Create Clinical PA"
+          title: "Create Clinical PA",
         },
         {
           id: 19,
           key: 19,
-          title: "Create Non-Clinical PA"
-        }
-      ]
+          title: "Create Non-Clinical PA",
+        },
+      ],
     },
     {
       id: 3,
@@ -122,6 +128,9 @@ export const getClaimsGridData = () => {
       serviceDate: "06/22/2020",
       status: "Paid",
       type: "Commercial",
+      memberName: "Julia McDonald",
+      memberId: "M33333",
+      mbi: "33333",
       drugLabel: "Abilify 10mg",
       qty: 50,
       daysSupply: 25,
@@ -144,24 +153,24 @@ export const getClaimsGridData = () => {
         {
           id: 20,
           key: 20,
-          title: "Run Test Claim"
+          title: "Run Test Claim",
         },
         {
           id: 30,
           key: 30,
-          title: "Claim Compare"
+          title: "Claim Compare",
         },
         {
           id: 21,
           key: 21,
-          title: "Create Clinical PA"
+          title: "Create Clinical PA",
         },
         {
           id: 22,
           key: 22,
-          title: "Create Non-Clinical PA"
-        }
-      ]
+          title: "Create Non-Clinical PA",
+        },
+      ],
     },
     {
       id: 4,
@@ -173,6 +182,9 @@ export const getClaimsGridData = () => {
       status: "Rejected",
       drugLabel: "Abilify 10mg",
       qty: 30,
+      memberName: "Debra Messing",
+      memberId: "M44444",
+      mbi: "44444",
       daysSupply: 60,
       rejectionCode: 75,
       rejectionDescription: "Prior Authorization Needed",
@@ -193,39 +205,39 @@ export const getClaimsGridData = () => {
         {
           id: 23,
           key: 23,
-          title: "Adjustment to Deny"
+          title: "Adjustment to Deny",
         },
         {
           id: 24,
           key: 24,
-          title: "Member Adjustment"
+          title: "Member Adjustment",
         },
         {
           id: 25,
           key: 25,
-          title: "Pharmacy Adjustment"
+          title: "Pharmacy Adjustment",
         },
         {
           id: 26,
           key: 26,
-          title: "Run Test Claim"
+          title: "Run Test Claim",
         },
         {
           id: 30,
           key: 30,
-          title: "Claim Compare"
+          title: "Claim Compare",
         },
         {
           id: 27,
           key: 27,
-          title: "Create Clinical PA"
+          title: "Create Clinical PA",
         },
         {
           id: 28,
           key: 28,
-          title: "Create Non-Clinical PA"
-        }
-      ]
+          title: "Create Non-Clinical PA",
+        },
+      ],
     },
     {
       id: 5,
@@ -235,7 +247,9 @@ export const getClaimsGridData = () => {
       serviceDate: "06/22/2020",
       status: "Reversed",
       type: "Commercial",
-
+      memberName: "Robert Dewey",
+      memberId: "M55555",
+      mbi: "55555",
       drugLabel: "Abilify 10mg",
       qty: 30,
       daysSupply: 60,
@@ -258,39 +272,39 @@ export const getClaimsGridData = () => {
         {
           id: 29,
           key: 29,
-          title: "Adjustment to Deny"
+          title: "Adjustment to Deny",
         },
         {
           id: 30,
           key: 30,
-          title: "Member Adjustment"
+          title: "Member Adjustment",
         },
         {
           id: 31,
           key: 31,
-          title: "Pharmacy Adjustment"
+          title: "Pharmacy Adjustment",
         },
         {
           id: 32,
           key: 32,
-          title: "Run Test Claim"
+          title: "Run Test Claim",
         },
         {
           id: 30,
           key: 30,
-          title: "Claim Compare"
+          title: "Claim Compare",
         },
         {
           id: 33,
           key: 33,
-          title: "Create Clinical PA"
+          title: "Create Clinical PA",
         },
         {
           id: 34,
           key: 34,
-          title: "Create Non-Clinical PA"
-        }
-      ]
+          title: "Create Non-Clinical PA",
+        },
+      ],
     },
     {
       id: 6,
@@ -302,6 +316,9 @@ export const getClaimsGridData = () => {
       status: "Reversed",
       drugLabel: "Abilify 10mg",
       qty: 30,
+      memberName: "Robert Dewey",
+      memberId: "M55555",
+      mbi: "55555",
       daysSupply: 60,
       rejectionCode: 75,
       rejectionDescription: "Prior Authorization Needed",
@@ -322,39 +339,39 @@ export const getClaimsGridData = () => {
         {
           id: 23,
           key: 23,
-          title: "Adjustment to Deny"
+          title: "Adjustment to Deny",
         },
         {
           id: 24,
           key: 24,
-          title: "Member Adjustment"
+          title: "Member Adjustment",
         },
         {
           id: 25,
           key: 25,
-          title: "Pharmacy Adjustment"
+          title: "Pharmacy Adjustment",
         },
         {
           id: 26,
           key: 26,
-          title: "Run Test Claim"
+          title: "Run Test Claim",
         },
         {
           id: 30,
           key: 30,
-          title: "Claim Compare"
+          title: "Claim Compare",
         },
         {
           id: 27,
           key: 27,
-          title: "Create Clinical PA"
+          title: "Create Clinical PA",
         },
         {
           id: 28,
           key: 28,
-          title: "Create Non-Clinical PA"
-        }
-      ]
+          title: "Create Non-Clinical PA",
+        },
+      ],
     },
     {
       id: 7,
@@ -364,6 +381,9 @@ export const getClaimsGridData = () => {
       serviceDate: "06/22/2020",
       type: "Medicare",
       status: "Paid",
+      memberName: "Robert Dewey",
+      memberId: "M55555",
+      mbi: "55555",
       drugLabel: "Abilify 10mg",
       qty: 30,
       daysSupply: 60,
@@ -386,39 +406,39 @@ export const getClaimsGridData = () => {
         {
           id: 29,
           key: 29,
-          title: "Adjustment to Deny"
+          title: "Adjustment to Deny",
         },
         {
           id: 30,
           key: 30,
-          title: "Member Adjustment"
+          title: "Member Adjustment",
         },
         {
           id: 31,
           key: 31,
-          title: "Pharmacy Adjustment"
+          title: "Pharmacy Adjustment",
         },
         {
           id: 32,
           key: 32,
-          title: "Run Test Claim"
+          title: "Run Test Claim",
         },
         {
           id: 30,
           key: 30,
-          title: "Claim Compare"
+          title: "Claim Compare",
         },
         {
           id: 33,
           key: 33,
-          title: "Create Clinical PA"
+          title: "Create Clinical PA",
         },
         {
           id: 34,
           key: 34,
-          title: "Create Non-Clinical PA"
-        }
-      ]
+          title: "Create Non-Clinical PA",
+        },
+      ],
     },
     {
       id: 8,
@@ -429,6 +449,9 @@ export const getClaimsGridData = () => {
       status: "Rejected",
       drugLabel: "Abilify 10mg",
       qty: 30,
+      memberName: "Robert Dewey",
+      memberId: "M55555",
+      mbi: "55555",
       daysSupply: 60,
       rejectionCode: 75,
       rejectionDescription: "Prior Authorization Needed",
@@ -449,39 +472,39 @@ export const getClaimsGridData = () => {
         {
           id: 23,
           key: 23,
-          title: "Adjustment to Deny"
+          title: "Adjustment to Deny",
         },
         {
           id: 24,
           key: 24,
-          title: "Member Adjustment"
+          title: "Member Adjustment",
         },
         {
           id: 25,
           key: 25,
-          title: "Pharmacy Adjustment"
+          title: "Pharmacy Adjustment",
         },
         {
           id: 26,
           key: 26,
-          title: "Run Test Claim"
+          title: "Run Test Claim",
         },
         {
           id: 30,
           key: 30,
-          title: "Claim Compare"
+          title: "Claim Compare",
         },
         {
           id: 27,
           key: 27,
-          title: "Create Clinical PA"
+          title: "Create Clinical PA",
         },
         {
           id: 28,
           key: 28,
-          title: "Create Non-Clinical PA"
-        }
-      ]
+          title: "Create Non-Clinical PA",
+        },
+      ],
     },
     {
       id: 9,
@@ -492,6 +515,9 @@ export const getClaimsGridData = () => {
       status: "Reversed",
       drugLabel: "Abilify 10mg",
       qty: 30,
+      memberName: "Robert Dewey",
+      memberId: "M55555",
+      mbi: "55555",
       daysSupply: 60,
       rejectionCode: 75,
       rejectionDescription: "Prior Authorization Needed",
@@ -512,39 +538,39 @@ export const getClaimsGridData = () => {
         {
           id: 29,
           key: 29,
-          title: "Adjustment to Deny"
+          title: "Adjustment to Deny",
         },
         {
           id: 30,
           key: 30,
-          title: "Member Adjustment"
+          title: "Member Adjustment",
         },
         {
           id: 31,
           key: 31,
-          title: "Pharmacy Adjustment"
+          title: "Pharmacy Adjustment",
         },
         {
           id: 32,
           key: 32,
-          title: "Run Test Claim"
+          title: "Run Test Claim",
         },
         {
           id: 30,
           key: 30,
-          title: "Claim Compare"
+          title: "Claim Compare",
         },
         {
           id: 33,
           key: 33,
-          title: "Create Clinical PA"
+          title: "Create Clinical PA",
         },
         {
           id: 34,
           key: 34,
-          title: "Create Non-Clinical PA"
-        }
-      ]
+          title: "Create Non-Clinical PA",
+        },
+      ],
     },
     {
       id: 10,
@@ -555,6 +581,9 @@ export const getClaimsGridData = () => {
       status: "Rejected",
       drugLabel: "Abilify 10mg",
       qty: 30,
+      memberName: "Robert Dewey",
+      memberId: "M55555",
+      mbi: "55555",
       daysSupply: 60,
       rejectionCode: 75,
       rejectionDescription: "Prior Authorization Needed",
@@ -575,39 +604,39 @@ export const getClaimsGridData = () => {
         {
           id: 23,
           key: 23,
-          title: "Adjustment to Deny"
+          title: "Adjustment to Deny",
         },
         {
           id: 24,
           key: 24,
-          title: "Member Adjustment"
+          title: "Member Adjustment",
         },
         {
           id: 25,
           key: 25,
-          title: "Pharmacy Adjustment"
+          title: "Pharmacy Adjustment",
         },
         {
           id: 26,
           key: 26,
-          title: "Run Test Claim"
+          title: "Run Test Claim",
         },
         {
           id: 30,
           key: 30,
-          title: "Claim Compare"
+          title: "Claim Compare",
         },
         {
           id: 27,
           key: 27,
-          title: "Create Clinical PA"
+          title: "Create Clinical PA",
         },
         {
           id: 28,
           key: 28,
-          title: "Create Non-Clinical PA"
-        }
-      ]
+          title: "Create Non-Clinical PA",
+        },
+      ],
     },
     {
       id: 11,
@@ -618,6 +647,9 @@ export const getClaimsGridData = () => {
       status: "Reversed",
       drugLabel: "Abilify 10mg",
       qty: 30,
+      memberName: "Robert Dewey",
+      memberId: "M55555",
+      mbi: "55555",
       daysSupply: 60,
       rejectionCode: 75,
       rejectionDescription: "Prior Authorization Needed",
@@ -638,39 +670,39 @@ export const getClaimsGridData = () => {
         {
           id: 29,
           key: 29,
-          title: "Adjustment to Deny"
+          title: "Adjustment to Deny",
         },
         {
           id: 30,
           key: 30,
-          title: "Member Adjustment"
+          title: "Member Adjustment",
         },
         {
           id: 31,
           key: 31,
-          title: "Pharmacy Adjustment"
+          title: "Pharmacy Adjustment",
         },
         {
           id: 32,
           key: 32,
-          title: "Run Test Claim"
+          title: "Run Test Claim",
         },
         {
           id: 30,
           key: 30,
-          title: "Claim Compare"
+          title: "Claim Compare",
         },
         {
           id: 33,
           key: 33,
-          title: "Create Clinical PA"
+          title: "Create Clinical PA",
         },
         {
           id: 34,
           key: 34,
-          title: "Create Non-Clinical PA"
-        }
-      ]
+          title: "Create Non-Clinical PA",
+        },
+      ],
     },
     {
       id: 12,
@@ -681,6 +713,9 @@ export const getClaimsGridData = () => {
       status: "Rejected",
       drugLabel: "Abilify 10mg",
       qty: 30,
+      memberName: "Robert Dewey",
+      memberId: "M55555",
+      mbi: "55555",
       daysSupply: 60,
       rejectionCode: 75,
       rejectionDescription: "Prior Authorization Needed",
@@ -701,39 +736,39 @@ export const getClaimsGridData = () => {
         {
           id: 23,
           key: 23,
-          title: "Adjustment to Deny"
+          title: "Adjustment to Deny",
         },
         {
           id: 24,
           key: 24,
-          title: "Member Adjustment"
+          title: "Member Adjustment",
         },
         {
           id: 25,
           key: 25,
-          title: "Pharmacy Adjustment"
+          title: "Pharmacy Adjustment",
         },
         {
           id: 26,
           key: 26,
-          title: "Run Test Claim"
+          title: "Run Test Claim",
         },
         {
           id: 30,
           key: 30,
-          title: "Claim Compare"
+          title: "Claim Compare",
         },
         {
           id: 27,
           key: 27,
-          title: "Create Clinical PA"
+          title: "Create Clinical PA",
         },
         {
           id: 28,
           key: 28,
-          title: "Create Non-Clinical PA"
-        }
-      ]
+          title: "Create Non-Clinical PA",
+        },
+      ],
     },
     {
       id: 13,
@@ -744,6 +779,9 @@ export const getClaimsGridData = () => {
       status: "Reversed",
       drugLabel: "Abilify 10mg",
       qty: 30,
+      memberName: "Robert Dewey",
+      memberId: "M55555",
+      mbi: "55555",
       daysSupply: 60,
       rejectionCode: 75,
       rejectionDescription: "Prior Authorization Needed",
@@ -764,39 +802,39 @@ export const getClaimsGridData = () => {
         {
           id: 29,
           key: 29,
-          title: "Adjustment to Deny"
+          title: "Adjustment to Deny",
         },
         {
           id: 30,
           key: 30,
-          title: "Member Adjustment"
+          title: "Member Adjustment",
         },
         {
           id: 31,
           key: 31,
-          title: "Pharmacy Adjustment"
+          title: "Pharmacy Adjustment",
         },
         {
           id: 32,
           key: 32,
-          title: "Run Test Claim"
+          title: "Run Test Claim",
         },
         {
           id: 30,
           key: 30,
-          title: "Claim Compare"
+          title: "Claim Compare",
         },
         {
           id: 33,
           key: 33,
-          title: "Create Clinical PA"
+          title: "Create Clinical PA",
         },
         {
           id: 34,
           key: 34,
-          title: "Create Non-Clinical PA"
-        }
-      ]
-    }
+          title: "Create Non-Clinical PA",
+        },
+      ],
+    },
   ];
 };

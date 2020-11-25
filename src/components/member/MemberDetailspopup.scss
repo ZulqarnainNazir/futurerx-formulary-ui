@@ -40,6 +40,11 @@
   }
   .frx-dialog-root__heading {
     border-bottom: none !important;
+    position: sticky;
+    top: 0;
+    z-index: 999;
+    background-color: $color-white;
+    // box-shadow: 0px 0px 30px rgba(0, 0, 0, 0.1);
   }
   .frx-dialog-root__heading .frx-dialog-root__close-icon {
     margin-top: 12px;

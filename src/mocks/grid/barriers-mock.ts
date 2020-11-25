@@ -6,7 +6,7 @@ export const getBarriersData = (): any => {
             description: "No access to transportation.",
             priority: "Standard",
             effective_date: "10/03/2020",
-            term_date: "",
+            term_date: "09/03/2020",
             items: [
                 {
                     id: 21,
@@ -24,6 +24,7 @@ export const getBarriersData = (): any => {
             id: 2,
             key: 2,
             description: "No access to internet.",
+            termNote: "Member now has access to the internet",
             priority: "Standard",
             effective_date: "10/01/2020",
             term_date: "10/02/2020",
@@ -46,7 +47,7 @@ export const getBarriersData = (): any => {
             description: "Exposure to crime, violence, and social disorder.",
             priority: "Standard",
             effective_date: "10/03/2020",
-            term_date: "",
+            term_date: "07/24/2020",
             items: [
                 {
                     id: 21,

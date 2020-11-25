@@ -69,7 +69,7 @@ interface PharmacyProfileComponentState {
   filteredData: any;
 }
 
-interface PharmacyProfileComponentProps {}
+interface PharmacyProfileComponentProps { }
 // Redux store related functions.
 // Dispatch action
 /**
@@ -99,7 +99,7 @@ const mapStateToProps = state => {
 class PharmacyProfileComponent extends React.Component<
   any,
   PharmacyProfileComponentState
-> {
+  > {
   state = {
     tabs: getPrescriberProfileTabNames(),
     metaTabs: metaTabs,
@@ -187,152 +187,154 @@ class PharmacyProfileComponent extends React.Component<
         {this.state.loading ? (
           <FrxLoader />
         ) : (
-          <>
-            <FrxTabs
-              tabList={this.state.tabs}
-              typeCard={"line"}
-              activeTabIndex={this.state.activeTabIndex}
-              onClickTab={this.onClickTab}
-            />
-            {this.state.activeTabIndex === 0 ? (
-              <>
-                <Container className="tab-content">
-                  {/* <PrescriberInfo /> */}
+            <>
+              <FrxTabs
+                tabList={this.state.tabs}
+                typeCard={"line"}
+                activeTabIndex={this.state.activeTabIndex}
+                onClickTab={this.onClickTab}
+              />
+              {this.state.activeTabIndex === 0 ? (
+                <>
+                  <Container className="tab-content">
+                    {/* <PrescriberInfo /> */}
 
-                  <div>
-                    <Container className="member-components-container">
-                      <PrescriberNameInfo
-                        prescriberName={this.state.pharmacyName}
-                      />
-                      <Grid container>
-                        <Grid item xs={4}>
-                          {/* PRESCRIBER ADDRESS COMPONENT */}
-                          <div className="bg-white cdh1-mn-container">
-                            <PrescriberAddress
-                              prescriberAddress={this.state.pharmacyAddress}
-                            />
-                          </div>
+                    <div>
+                      <Container className="member-components-container">
+                        <PrescriberNameInfo
+                          prescriberName={this.state.pharmacyName}
+                        />
+                        <Grid container>
+                          <Grid item xs={4}>
+                            {/* PRESCRIBER ADDRESS COMPONENT */}
+                            <div className="bg-white cdh1-mn-container">
+                              <PrescriberAddress
+                                prescriberAddress={this.state.pharmacyAddress}
+                              />
+                            </div>
+                          </Grid>
+                          <Grid item xs={8}>
+                            {/* PRESCRIBER DEMOGRAPHICS & CLAIMNS SUMMARY COMPONENTS */}
+                            <div className="bg-white cdh-mn-container">
+                              <PrescriberTabbedView
+                                tabs={metaTabs}
+                                activeTabIndex={this.state.activeMetaTabIndex}
+                                onTabChange={this.onMetaTabChange}
+                                prescriberTabDemography={
+                                  this.state.pharmacyTabDemography
+                                }
+                                prescriberTabSpeciality={
+                                  this.state.pharmacyTabSpeciality
+                                }
+                                prescriberTabLicensure={
+                                  this.state.pharmacyTabLicensure
+                                }
+                              />
+                            </div>
+                            <div className="bg-white cdh-mn-container">
+                              <PrescriberClaimSummaryDonut
+                                onSelectStatItem={this.onSelectStatItem}
+                                data={getBarChartData()}
+                              />
+                            </div>
+                          </Grid>
                         </Grid>
-                        <Grid item xs={8}>
-                          {/* PRESCRIBER DEMOGRAPHICS & CLAIMNS SUMMARY COMPONENTS */}
+                      </Container>
+                    </div>
+                    <div>
+                      <Container className="member-components-container">
+                        <Grid container>
+                          <Grid item xs={12}>
+                            <div className="bg-white acc-barr-container">
+                              {/* BAR CHART */}
+                              <FrxColumnChart />
+                            </div>
+                          </Grid>
+                        </Grid>
+                      </Container>
+                    </div>
+                    <div>
+                      <Container className="member-components-container">
+                        <Grid container spacing={1}>
+                          <Grid item xs={6}>
+                            <div className="bg-white acc-barr-container">
+                              {/* MINI BAR CHART */}
+                              <FrxGraphCard
+                                data={getPrescribedMemberServiced()}
+                                type="MemberServiced"
+                                title="Members Serviced"
+                                textFormatter="text"
+                                showText={true}
+                                colorMap={{
+                                  "Member Serviced": "#C2CFE0",
+                                  "Average Total Cost": "#90A0B7"
+                                }}
+                              />
+                            </div>
+                          </Grid>
+                          <Grid item xs={6}>
+                            <div className="bg-white acc-barr-container">
+                              {/* MINI BAR CHART */}
+                              <FrxGraphCard
+                                data={getPrescribedAverageTotalCost()}
+                                type="AverageTotalCost"
+                                title="Average Total Cost"
+                                textFormatter="currency"
+                                showText={true}
+                                colorMap={{
+                                  "Member Serviced": "#C2CFE0",
+                                  "Average Total Cost": "#90A0B7"
+                                }}
+                              />
+                            </div>
+                          </Grid>
+                        </Grid>
+                      </Container>
+                    </div>
+                    <div>
+                      <Container className="member-components-container">
+                        <Grid item xs={12}>
                           <div className="bg-white cdh-mn-container">
                             <PrescriberTabbedView
-                              tabs={metaTabs}
-                              activeTabIndex={this.state.activeMetaTabIndex}
-                              onTabChange={this.onMetaTabChange}
-                              prescriberTabDemography={
-                                this.state.pharmacyTabDemography
-                              }
-                              prescriberTabSpeciality={
-                                this.state.pharmacyTabSpeciality
-                              }
-                              prescriberTabLicensure={
-                                this.state.pharmacyTabLicensure
-                              }
-                            />
-                          </div>
-                          <div className="bg-white cdh-mn-container">
-                            <PrescriberClaimSummaryDonut
-                              onSelectStatItem={this.onSelectStatItem}
-                              data={getBarChartData()}
+                              tabs={topFiveTabs}
+                              activeTabIndex={this.state.activeTopFiveTabIndex}
+                              onTabChange={this.onTopFiveTabChange}
+                              filteredData={this.state.filteredData}
+                              columns={PrescriberTab5DrugColumns()}
+                              isFetchingData={this.state.isFetchingData}
+                              handleSearch={this.handleSearch}
                             />
                           </div>
                         </Grid>
-                      </Grid>
-                    </Container>
-                  </div>
-                  <div>
-                    <Container className="member-components-container">
-                      <Grid container>
-                        <Grid item xs={12}>
-                          <div className="bg-white acc-barr-container">
-                            {/* BAR CHART */}
-                            <FrxColumnChart />
-                          </div>
-                        </Grid>
-                      </Grid>
-                    </Container>
-                  </div>
-                  <div>
-                    <Container className="member-components-container">
-                      <Grid container>
-                        <Grid item xs={6}>
-                          <div className="bg-white acc-barr-container">
-                            {/* MINI BAR CHART */}
-                            <FrxGraphCard
-                              data={getPrescribedMemberServiced()}
-                              type="MemberServiced"
-                              textFormatter="text"
-                              showText={true}
-                              colorMap={{
-                                "Member Serviced": "#C2CFE0",
-                                "Average Total Cost": "#90A0B7"
-                              }}
-                            />
-                          </div>
-                        </Grid>
-                        <Grid item xs={6}>
-                          <div className="bg-white acc-barr-container">
-                            {/* MINI BAR CHART */}
-                            <FrxGraphCard
-                              data={getPrescribedAverageTotalCost()}
-                              type="AverageTotalCost"
-                              textFormatter="currency"
-                              showText={true}
-                              colorMap={{
-                                "Member Serviced": "#C2CFE0",
-                                "Average Total Cost": "#90A0B7"
-                              }}
-                            />
-                          </div>
-                        </Grid>
-                      </Grid>
-                    </Container>
-                  </div>
-                  <div>
-                    <Container className="member-components-container">
-                      <Grid item xs={12}>
-                        <div className="bg-white cdh-mn-container">
-                          <PrescriberTabbedView
-                            tabs={topFiveTabs}
-                            activeTabIndex={this.state.activeTopFiveTabIndex}
-                            onTabChange={this.onTopFiveTabChange}
-                            filteredData={this.state.filteredData}
-                            columns={PrescriberTab5DrugColumns()}
-                            isFetchingData={this.state.isFetchingData}
-                            handleSearch={this.handleSearch}
-                          />
-                        </div>
-                      </Grid>
-                    </Container>
-                  </div>
+                      </Container>
+                    </div>
 
-                  {/* </Container> */}
+                    {/* </Container> */}
+                  </Container>
+                </>
+              ) : this.state.activeTabIndex === 1 ? (
+                <Container className="tab-content formulary-content">
+                  {/* CLAIMS */}
+                  <></>
                 </Container>
-              </>
-            ) : this.state.activeTabIndex === 1 ? (
-              <Container className="tab-content formulary-content">
-                {/* CLAIMS */}
-                <></>
-              </Container>
-            ) : this.state.activeTabIndex === 2 ? (
-              <Container className="tab-content">
-                {/* Members */}
-                <></>
-              </Container>
-            ) : this.state.activeTabIndex === 3 ? (
-              <Container className="tab-content">
-                {/* PA-Search */}
-                <></>
-              </Container>
-            ) : this.state.activeTabIndex === 4 ? (
-              <Container className="tab-content">
-                {/* Grievances */}
-                <></>
-              </Container>
-            ) : null}
-          </>
-        )}
+              ) : this.state.activeTabIndex === 2 ? (
+                <Container className="tab-content">
+                  {/* Members */}
+                  <></>
+                </Container>
+              ) : this.state.activeTabIndex === 3 ? (
+                <Container className="tab-content">
+                  {/* PA-Search */}
+                  <></>
+                </Container>
+              ) : this.state.activeTabIndex === 4 ? (
+                <Container className="tab-content">
+                  {/* Grievances */}
+                  <></>
+                </Container>
+              ) : null}
+            </>
+          )}
       </div>
     );
   }

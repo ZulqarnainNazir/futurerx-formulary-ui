@@ -17,6 +17,7 @@ interface TabProps {
   tabList: TabInfo[];
   activeTabIndex: number;
   onClickTab: (clickedTab: number) => void;
+  msgCount?:number
 }
 
 interface TabState {}
@@ -45,7 +46,7 @@ class FrxMiniTabs extends React.Component<TabProps, TabState> {
             <Tab
               className="frx-mini-tabs-root__tabs__tab"
               key={tab.id}
-              label={tab.text}
+              label={tab.id === 3 && this.props.msgCount ? <span className="tabs-with-count">{tab.text.split('(')[0]}<em>{this.props.msgCount}</em></span> : tab.text}
             />
           ))}
         </Tabs>

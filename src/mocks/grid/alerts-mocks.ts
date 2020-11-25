@@ -45,7 +45,9 @@ export const getAlertsData = (): any => {
             description: "Member diagnosed with strep throat.",
             priority: "Standard",
             effective_date: "10/03/2020",
-            term_date: "",
+            term_date: "09/30/2020",
+            hideHighlight: true,
+            termNote: "Member is up to date on all vaccinations.",
             items: [
                 {
                     id: 21,
@@ -66,6 +68,7 @@ export const getAlertsData = (): any => {
             priority: "Standard",
             effective_date: "10/01/2020",
             term_date: "10/02/2020",
+            termNote: "Omeprazole 5 mg prescribed.",
             items: [
                 {
                     id: 21,

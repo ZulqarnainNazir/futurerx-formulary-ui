@@ -34,7 +34,7 @@ class EligibilityPopupInfo extends React.Component<EligibilityPopupInfoProps> {
                                         <div >Contract/PBP</div>
                                         <div >Group ID</div>
                                         <div >Submit Group ID</div>
-                                        <div >BIN</div>
+                                        <div >BIN#</div>
                                         <div >Carrier</div>
                                         <div >PCN</div>
                                         <div >Account</div>
@@ -74,7 +74,6 @@ class EligibilityPopupInfo extends React.Component<EligibilityPopupInfoProps> {
                                 </Grid>
                                 <Grid xs={12} sm={3}>
                                     <div className="keyValue_padding_left">
-                                        <div >Type</div>
                                         <div >LICS Code</div>
                                         <div >LICS Start Date</div>
                                         <div >LICS End Date</div>
@@ -97,7 +96,6 @@ class EligibilityPopupInfo extends React.Component<EligibilityPopupInfoProps> {
                                 </Grid>
                                 <Grid xs={12} sm={3}>
                                     <div className="value">
-                                        <div>719 state St</div>
                                         <div >-</div>
                                         <div>12/12/2020</div>
                                         <div >12/22/2020</div>
@@ -133,7 +131,7 @@ class EligibilityPopupInfo extends React.Component<EligibilityPopupInfoProps> {
                                         <div >Contract/PBP</div>
                                         <div >Group ID</div>
                                         <div >Submit Group ID</div>
-                                        <div >BIN</div>
+                                        <div >BIN#</div>
                                         <div >Carrier</div>
                                         <div >PCN</div>
                                         <div >Account</div>
@@ -253,7 +251,6 @@ class EligibilityPopupInfo extends React.Component<EligibilityPopupInfoProps> {
                                 </Grid>
                                 <Grid xs={12} sm={3}>
                                     <div className="keyValue_edit_right">
-                                        <div >Type</div>
                                         <div >LICS Code</div>
                                         <div >LICS Start Date</div>
                                         <div >LICS End Date</div>
@@ -276,7 +273,6 @@ class EligibilityPopupInfo extends React.Component<EligibilityPopupInfoProps> {
                                 </Grid>
                                 <Grid xs={12} sm={3}>
                                     <div className="value_edit">
-                                        <Input defaultValue="719 state St" />
                                         <Input defaultValue="-" />
                                         <DatePicker placeholder="MM/DD/YYYY" format="MM/DD/YYYY"
                                             suffixIcon={
@@ -528,7 +524,7 @@ class EligibilityPopupInfo extends React.Component<EligibilityPopupInfoProps> {
                                             <div >Contract/PBP</div>
                                             <div >Group ID</div>
                                             <div >Submit Group ID</div>
-                                            <div >BIN</div>
+                                            <div >BIN#</div>
                                             <div >Carrier</div>
                                             <div >PCN</div>
                                             <div >Account</div>
@@ -647,7 +643,6 @@ class EligibilityPopupInfo extends React.Component<EligibilityPopupInfoProps> {
                                     </Grid>
                                     <Grid xs={12} sm={3}>
                                         <div className="keyValue_add_title_right">
-                                            <div >Type</div>
                                             <div >LICS Code</div>
                                             <div >LICS Start Date</div>
                                             <div >LICS End Date</div>
@@ -670,7 +665,6 @@ class EligibilityPopupInfo extends React.Component<EligibilityPopupInfoProps> {
                                     </Grid>
                                     <Grid xs={12} sm={3}>
                                         <div className="value_add">
-                                            <Input />
                                             <Input />
                                             <DatePicker placeholder="" format="MM/DD/YYYY" suffixIcon={
                                                 <svg
