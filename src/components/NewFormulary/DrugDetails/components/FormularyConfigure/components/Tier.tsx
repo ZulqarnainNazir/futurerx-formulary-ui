@@ -10,6 +10,8 @@ import {
 import CustomizedSwitches from "./tt";
 import PanelHeader from "./PanelHeader";
 import PanelGrid from "./panelGrid";
+import DropDown from "../../../../../shared/Frx-components/dropdown/DropDown";
+
 interface tabsState {
   activeMiniTabIndex: number;
   miniTabs: any;
@@ -85,6 +87,12 @@ class Tier extends React.Component<any, tabsState> {
                         />
                       </div>
                     </div>
+                  </div>
+                  <div className="group">
+                    <label>
+                      QUANTITY <span className="astrict">*</span>
+                    </label>
+                    <DropDown options={[1, 2, 3]} />
                   </div>
                 </div>
               </Grid>
