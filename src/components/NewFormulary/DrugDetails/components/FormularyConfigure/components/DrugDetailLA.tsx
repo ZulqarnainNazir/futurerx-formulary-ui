@@ -3,7 +3,7 @@ import { Grid } from "@material-ui/core";
 import FrxMiniTabs from "../../../../../shared/FrxMiniTabs/FrxMiniTabs";
 import "./DrugDetailLA.scss";
 import {getTapList,getMiniTabs} from '../../../../../../mocks/formulary/mock-data';
-import CustomizedSwitches from './tt';
+import CustomizedSwitches from './CustomizedSwitches';
 import PanelHeader from './PanelHeader';
 import PanelGrid from './panelGrid';
 interface tabsState {
@@ -20,8 +20,7 @@ class DrugDetailLA extends React.Component<any,tabsState> {
     tabs:getTapList(),
     panelGridTitle: ['','NUMBER OF DRUGS','ADDED DRUGS','REMOVED DRUGS'],
     panelGridValue: [
-      ['Limited Access','2','2','2'],
-      ['Limited Access 2','0','3','4']
+      ['Limited Access','2','2','2']
     ]
   };
   onClickMiniTab = (num: number) => {
@@ -47,11 +46,13 @@ class DrugDetailLA extends React.Component<any,tabsState> {
                     panelGridValue={this.state.panelGridValue}/>
                 </div>
                 <div className="limited-access-inner">
-                  <div className="second">
+                <div className="second">
                     <Grid container spacing={2} justify="space-between" alignItems="center">
                       <Grid xs={12}>
                         <Grid container justify="space-between" alignItems="center"  className='rowcontent'>
-                          <Grid item xs={1}></Grid>
+                          <Grid item xs={1}>
+                            <span className="tabs-with-count"><em>R</em></span>
+                          </Grid>
                           <Grid item xs={3}>
                           <CustomizedSwitches/>
                           </Grid>
