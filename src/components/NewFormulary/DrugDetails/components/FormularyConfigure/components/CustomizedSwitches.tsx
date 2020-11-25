@@ -18,32 +18,32 @@ interface Props extends SwitchProps {
 const AntSwitch = withStyles((theme: Theme) =>
   createStyles({
     root: {
-      width: 28,
-      height: 16,
+      width: 34,
+      height: 18,
       padding: 0,
       display: 'flex',
     },
     switchBase: {
-      padding: 2,
+      padding: 1,
       color: theme.palette.grey[500],
       '&$checked': {
-        transform: 'translateX(12px)',
+        transform: 'translateX(17px)',
         color: theme.palette.common.white,
         '& + $track': {
           opacity: 1,
-          backgroundColor: theme.palette.primary.main,
-          borderColor: theme.palette.primary.main,
+          backgroundColor: '#1D54B4',
+          borderColor: '#1D54B4',
         },
       },
     },
     thumb: {
-      width: 12,
-      height: 12,
+      width: 16,
+      height: 16,
       boxShadow: 'none',
     },
     track: {
       border: `1px solid ${theme.palette.grey[500]}`,
-      borderRadius: 16 / 2,
+      borderRadius: 17,
       opacity: 1,
       backgroundColor: theme.palette.common.white,
     },
@@ -51,7 +51,7 @@ const AntSwitch = withStyles((theme: Theme) =>
   }),
 )(Switch);
 
-export default function CustomizedSwitches() {
+export default function CustomizedSwitches(props:any) {
   const [state, setState] = React.useState({
     checkedC: true,
   });
@@ -62,15 +62,15 @@ export default function CustomizedSwitches() {
 
   return (
     <FormGroup>
-    <Typography component="div">
-      <Grid component="label" container alignItems="center" spacing={1}>
-        <Grid item className="switchoff">Modify</Grid>
-        <Grid item>
-          <AntSwitch checked={state.checkedC} onChange={handleChange} name="checkedC" />
+      <Typography component="div">
+        <Grid component="label" container alignItems="center" spacing={1}>
+          <Grid item className="label">{props.leftTitle}</Grid>
+          <Grid item className="switch">
+            <AntSwitch checked={state.checkedC} onChange={handleChange} name="checkedC" />
+          </Grid>
+          <Grid item className="label">{props.rightTitle}</Grid>
         </Grid>
-        <Grid item className="switchon">ViewAll</Grid>
-      </Grid>
-    </Typography>
-  </FormGroup>
+      </Typography>
+    </FormGroup>
   );
 }

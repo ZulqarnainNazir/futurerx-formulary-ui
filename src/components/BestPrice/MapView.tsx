@@ -123,7 +123,7 @@ class MapView extends Component<Props, State> {
                         <Grid container className="MapView-root__mapbox_info_data">
                             <div className="row">
                                 <div className="left">
-                                    drug name
+                                    drug label
                                     </div>
                                 <div className="right">best price</div>
                             </div>
@@ -139,7 +139,7 @@ class MapView extends Component<Props, State> {
                                             } else {
                                                 this.setState({ drugData: [...this.state.drugData.filter((_item: any) => _item.drugName !== item.drugName)] })
                                             }
-                                        }} className="input--checkbox">{item.drugName}</Checkbox>
+                                        }} className="input--checkbox">{`${item.drugName} - ${item.capacity} - ${item.qty} ${item.type}`}</Checkbox>
                                     </div>
                                     <div className="right">${parseFloat(item.bestPrice.replace('$', '')).toFixed(2)}</div>
                                 </div>

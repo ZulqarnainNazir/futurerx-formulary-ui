@@ -1,28 +1,30 @@
 import * as React from "react";
 import FrxGridContainer from "../../../shared/FrxGrid/FrxGridContainer";
-import {
-    grievancesGridColumns
-} from "../../../../utils/grid/columns";
-import { getGrievencesDashboardGridData } from "../../../../mocks/grid/GrievenceGrid-mock";
-import { GridMenu } from "../../../../models/grid.model";
+import {grievancesGridColumns} from "../../../../utils/grid/columns";
+import {getGrievencesDashboardGridData} from "../../../../mocks/grid/GrievenceGrid-mock";
+import {GridMenu} from "../../../../models/grid.model";
 
 export interface PaDashboardGridProps {
   isPaid: boolean;
+  onColumnCellClick: any;
 }
 
 export interface PaDashboardGridState {}
 
-class PaDashboardGrid extends React.Component<PaDashboardGridProps, PaDashboardGridState> {
+class PaDashboardGrid extends React.Component<
+  PaDashboardGridProps,
+  PaDashboardGridState
+> {
   state = {
     isFetchingData: false,
     data: [] as any[],
-    filteredData: [] as any[]
+    filteredData: [] as any[],
   };
 
   componentDidMount() {
     //fetch data from API
     const data = getGrievencesDashboardGridData();
-    this.setState({ data, filteredData: data });
+    this.setState({data, filteredData: data});
   }
 
   /**
@@ -32,18 +34,18 @@ class PaDashboardGrid extends React.Component<PaDashboardGridProps, PaDashboardG
    * TODO: fix a type for the searchObject
    * @author Deepak_T
    */
-  handleSearch = searchObject => {
+  handleSearch = (searchObject) => {
     console.log(searchObject);
-    this.setState({ isFetchingData: true });
+    this.setState({isFetchingData: true});
     if (searchObject && searchObject.status) {
       setTimeout(() => {
         const newData = this.state.data.filter(
-          d => d.status === searchObject.status
+          (d) => d.status === searchObject.status
         );
-        this.setState({ isFetchingData: false, filteredData: newData });
+        this.setState({isFetchingData: false, filteredData: newData});
       }, 2000);
     } else {
-      this.setState({ isFetchingData: false });
+      this.setState({isFetchingData: false});
     }
   };
 
@@ -122,10 +124,12 @@ class PaDashboardGrid extends React.Component<PaDashboardGridProps, PaDashboardG
           enableSettings
           isFetchingData={this.state.isFetchingData}
           columns={columns}
-          scroll={{ x: 3000, y: 377 }}
+          scroll={{x: 3000, y: 377}}
           enableResizingOfColumns
           data={this.state.filteredData}
           onSettingsClick="grid-menu"
+          settingsWidth={30}
+          onColumnCellClick={this.props.onColumnCellClick}
         />
       </div>
     );

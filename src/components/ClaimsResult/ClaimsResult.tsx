@@ -155,13 +155,73 @@ class ClaimsResult extends Component<Props, State> {
 
     return (
       <>
-        {isFliped ? (
+        {/* {isFliped ? ( */}
+        <ScrollSync className="main-container">
+          <div className="claims-result-root">
+            <ScrollSyncPane>
+              <div className="compare-section scroll-bar">
+                <ClaimResultGrid
+                  data={isFliped ? firstClaim : secondClaim}
+                  isOpen={isResultDailogOpen}
+                  onClose={this.handleClose}
+                  onFlip={this.handleFlip}
+                  topResult={isFliped ? isFliped : !isFliped}
+                  folderTabs={this.state.folderTabs}
+                  activeTabIndex={this.state.activeTabIndex}
+                  onTabClick={this.onClickTab}
+                  detailsMiniTab={this.state.detailsMiniTab}
+                  detailsActiveTabIndex={this.state.detailsActiveTabIndex}
+                  transactionBlocks={this.state.transactionBlocks}
+                  transactionMiniTab={this.state.transactionMiniTab}
+                  transactionActiveTabIndex={
+                    this.state.transactionActiveTabIndex
+                  }
+                  transactionShowButton={this.state.transactionShowButton}
+                  handleDetailsMinitabClick={this.detailsOnClickMiniTab}
+                  handleTransactionMinitabClick={this.transactionOnClickMiniTab}
+                  handleTransactionExpandAllToggle={this.toggleExpand}
+                  handleTransactionExpandToggle={this.toggle}
+                  handleNewTestClaim={this.props.handleNewTestClaim}
+                />
+              </div>
+            </ScrollSyncPane>
+            <div className="div-rectangle"> </div>
+            <ScrollSyncPane>
+              <div className="compare-section scroll-bar">
+                <ClaimResultGrid
+                  data={isFliped ? secondClaim : firstClaim}
+                  isOpen={isResultDailogOpen}
+                  onClose={this.handleClose}
+                  onFlip={this.handleFlip}
+                  topResult={isFliped ? !isFliped : isFliped}
+                  folderTabs={this.state.folderTabs}
+                  activeTabIndex={this.state.activeTabIndex}
+                  onTabClick={this.onClickTab}
+                  detailsMiniTab={this.state.detailsMiniTab}
+                  detailsActiveTabIndex={this.state.detailsActiveTabIndex}
+                  transactionBlocks={this.state.transactionBlocks}
+                  transactionMiniTab={this.state.transactionMiniTab}
+                  transactionActiveTabIndex={
+                    this.state.transactionActiveTabIndex
+                  }
+                  transactionShowButton={this.state.transactionShowButton}
+                  handleDetailsMinitabClick={this.detailsOnClickMiniTab}
+                  handleTransactionMinitabClick={this.transactionOnClickMiniTab}
+                  handleTransactionExpandAllToggle={this.toggleExpand}
+                  handleTransactionExpandToggle={this.toggle}
+                  handleNewTestClaim={this.props.handleNewTestClaim}
+                />
+              </div>
+            </ScrollSyncPane>
+          </div>
+        </ScrollSync>
+        {/* ) : (
           <ScrollSync className="main-container">
             <div className="claims-result-root">
               <ScrollSyncPane>
                 <div className="compare-section scroll-bar">
                   <ClaimResultGrid
-                    data={firstClaim}
+                    data={secondClaim}
                     isOpen={isResultDailogOpen}
                     onClose={this.handleClose}
                     onFlip={this.handleFlip}
@@ -191,70 +251,6 @@ class ClaimsResult extends Component<Props, State> {
               <ScrollSyncPane>
                 <div className="compare-section scroll-bar">
                   <ClaimResultGrid
-                    data={secondClaim}
-                    isOpen={isResultDailogOpen}
-                    onClose={this.handleClose}
-                    onFlip={this.handleFlip}
-                    topResult={false}
-                    folderTabs={this.state.folderTabs}
-                    activeTabIndex={this.state.activeTabIndex}
-                    onTabClick={this.onClickTab}
-                    detailsMiniTab={this.state.detailsMiniTab}
-                    detailsActiveTabIndex={this.state.detailsActiveTabIndex}
-                    transactionBlocks={this.state.transactionBlocks}
-                    transactionMiniTab={this.state.transactionMiniTab}
-                    transactionActiveTabIndex={
-                      this.state.transactionActiveTabIndex
-                    }
-                    transactionShowButton={this.state.transactionShowButton}
-                    handleDetailsMinitabClick={this.detailsOnClickMiniTab}
-                    handleTransactionMinitabClick={
-                      this.transactionOnClickMiniTab
-                    }
-                    handleTransactionExpandAllToggle={this.toggleExpand}
-                    handleTransactionExpandToggle={this.toggle}
-                    handleNewTestClaim={this.props.handleNewTestClaim}
-                  />
-                </div>
-              </ScrollSyncPane>
-            </div>
-          </ScrollSync>
-        ) : (
-          <ScrollSync className="main-container">
-            <div className="claims-result-root">
-              <ScrollSyncPane>
-                <div className="compare-section scroll-bar">
-                  <ClaimResultGrid
-                    data={secondClaim}
-                    isOpen={isResultDailogOpen}
-                    onClose={this.handleClose}
-                    onFlip={this.handleFlip}
-                    topResult={true}
-                    folderTabs={this.state.folderTabs}
-                    activeTabIndex={this.state.activeTabIndex}
-                    onTabClick={this.onClickTab}
-                    detailsMiniTab={this.state.detailsMiniTab}
-                    detailsActiveTabIndex={this.state.detailsActiveTabIndex}
-                    transactionBlocks={this.state.transactionBlocks}
-                    transactionMiniTab={this.state.transactionMiniTab}
-                    transactionActiveTabIndex={
-                      this.state.transactionActiveTabIndex
-                    }
-                    transactionShowButton={this.state.transactionShowButton}
-                    handleDetailsMinitabClick={this.detailsOnClickMiniTab}
-                    handleTransactionMinitabClick={
-                      this.transactionOnClickMiniTab
-                    }
-                    handleTransactionExpandAllToggle={this.toggleExpand}
-                    handleTransactionExpandToggle={this.toggle}
-                    handleNewTestClaim={this.props.handleNewTestClaim}
-                  />
-                </div>
-              </ScrollSyncPane>
-              <div className="div-rectangle"> </div>
-              <ScrollSyncPane>
-                <div className="compare-section scroll-bar">
-                  <ClaimResultGrid
                     data={firstClaim}
                     isOpen={isResultDailogOpen}
                     onClose={this.handleClose}
@@ -283,7 +279,7 @@ class ClaimsResult extends Component<Props, State> {
               </ScrollSyncPane>
             </div>
           </ScrollSync>
-        )}
+        )} */}
       </>
     );
   }

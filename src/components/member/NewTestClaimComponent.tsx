@@ -1,24 +1,8 @@
 import React from "react";
 import DialogPopup from "../shared/FrxDialogPopup/FrxDialogPopup";
-import { Theme, withStyles, createStyles } from "@material-ui/core/styles";
-import Grid from '@material-ui/core/Grid';
-import CustomSelect from "../shared/Frx-components/dropdown/DropDown";
-import CustomDatepicker from "../shared/Frx-components/date-picker/CustomDatePicker";
-import Button from '@material-ui/core/Button';
-
-import { API } from '../../api/httptemp-helper';
-import { Input, InputAdornment} from "@material-ui/core";
-import { Box, Tooltip,Checkbox } from "@material-ui/core";
-import FrxGrid from '../shared/FrxGrid/FrxGrid';
-import FrxLoader from '../shared/FrxLoader/FrxLoader';
-
-
-import TextField from '@material-ui/core/TextField';
-import { connect } from "react-redux";
-
 import Container from '@material-ui/core/Container';
 import {TopSection} from './NewTestClaim/TopSection'
-import {NewTestClaim3} from './NewTestClaim/NewTestClaim3';
+import {NewTestClaim} from './NewTestClaim/NewTestClaim';
 
 
 interface NewTestClaim5Props {
@@ -33,7 +17,7 @@ interface NewTestClaim5State {
   isTestClaimDialogOpen:boolean;
 }
 
-class NewTestClaim extends React.Component<
+class NewTestClaimComponent extends React.Component<
 NewTestClaim5Props,
 NewTestClaim5State
 > {
@@ -68,10 +52,10 @@ NewTestClaim5State
           componentTitle = {true}
         >
 
-          <Container className="new-test-claim-components-container">
+          <Container className="new-test-claim-components-container scroll-bar">
        
             <TopSection/>
-            <NewTestClaim3/>
+            <NewTestClaim/>
           </Container>
         </DialogPopup>
       </React.Fragment>
@@ -79,4 +63,4 @@ NewTestClaim5State
   }
 }
 
-export default NewTestClaim;
+export default NewTestClaimComponent;

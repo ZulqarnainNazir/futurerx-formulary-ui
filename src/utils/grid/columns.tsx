@@ -11,7 +11,7 @@ import {
   FormularyLimitColumn,
 } from "../../components/formulary/Components/FormularyTable/FormularyColumns";
 import { GridMemberLOBCustom } from "../../components/AdvancedSearch/SearchGridCustom/GridMemberLOBCustom";
-import AuthGridModel from '../../components/AuthsAndOverrides/AuthGridModel';
+import AuthGridModel from "../../components/AuthsAndOverrides/AuthGridModel";
 import PharmacyProfile from "../../components/PharmacyProfile/PharmacyProfileInfo/PharmacyProfile";
 // REFERENCE COMPONENT THAT CAN BE PASSED TO componentToOpenOnClickingCell
 // const DummyComponent = props => {
@@ -290,20 +290,20 @@ export const claimsGridColumnsForPaid: () => Column<any>[] = () => {
       hidden: false,
       sortDirections: ["ascend", "descend"],
     },
-    {
-      position: 19,
-      sorter: {},
-      textCase: "upper",
-      pixelWidth: 190,
-      key: "pricingSource",
-      displayTitle: "DUR History",
-      isFilterable: true,
-      dataType: "string",
+    // {
+    //   position: 19,
+    //   sorter: {},
+    //   textCase: "upper",
+    //   pixelWidth: 190,
+    //   key: "pricingSource",
+    //   displayTitle: "DUR History",
+    //   isFilterable: true,
+    //   dataType: "string",
 
-      filters: textFilters,
-      hidden: false,
-      sortDirections: ["ascend", "descend"],
-    },
+    //   filters: textFilters,
+    //   hidden: false,
+    //   sortDirections: ["ascend", "descend"],
+    // },
   ];
 };
 
@@ -604,20 +604,20 @@ export const claimsGridColumnsForRejectedAndTotal: () => Column<any>[] = () => {
       hidden: false,
       sortDirections: ["ascend", "descend"],
     },
-    {
-      position: 21,
-      sorter: {},
-      textCase: "upper",
-      pixelWidth: 190,
-      key: "pricingSource",
-      displayTitle: "DUR History",
-      isFilterable: true,
-      dataType: "string",
+    // {
+    //   position: 21,
+    //   sorter: {},
+    //   textCase: "upper",
+    //   pixelWidth: 190,
+    //   key: "pricingSource",
+    //   displayTitle: "DUR History",
+    //   isFilterable: true,
+    //   dataType: "string",
 
-      filters: textFilters,
-      hidden: false,
-      sortDirections: ["ascend", "descend"],
-    },
+    //   filters: textFilters,
+    //   hidden: false,
+    //   sortDirections: ["ascend", "descend"],
+    // },
   ];
 };
 
@@ -633,7 +633,7 @@ export const accumulatorGridColumns: () => Column<any>[] = () => {
       key: "claimId",
       displayTitle: "CLAIM ID",
       filters: textFilters,
-      componentToOpenOnClickingCell: props => <ClaimGridModel {...props} />,
+      componentToOpenOnClickingCell: (props) => <ClaimGridModel {...props} />,
       dataType: "string",
       hidden: false,
       sortDirections: ["ascend", "descend"],
@@ -692,7 +692,7 @@ export const accumulatorGridColumns: () => Column<any>[] = () => {
       isFilterable: true,
       dataType: "string",
       className: "entry-component",
-      toolTip: props => <FrxGridToolTip {...props} />,
+      toolTip: (props) => <FrxGridToolTip {...props} />,
       showToolTip: true,
       filters: textFilters,
       hidden: false,
@@ -776,18 +776,18 @@ export const accumulatorGridColumns: () => Column<any>[] = () => {
   ];
 };
 
-export const authOveridesGridColumns: () => Column<any>[] = () => {
+export const authOveridesGridColumns: (callBackFuns?: any) => Column<any>[] = (callBackFuns?: any) => {
   return [
     {
       position: 1,
       textCase: "upper",
-      pixelWidth: 156,
+      pixelWidth: 220,
       sorter: {},
       className: "entry-component",
       isFilterable: true,
-      componentToOpenOnClickingCell: props => <AuthGridModel {...props} />,
+      componentToOpenOnClickingCell: (props) => <AuthGridModel {...props} callBacks={callBackFuns} />,
       key: "authOverrideId",
-      displayTitle: "AUTH / OVERRIDE ID",
+      displayTitle: "AUTH/OVERRIDE ID",
 
       filters: textFilters,
 
@@ -800,7 +800,7 @@ export const authOveridesGridColumns: () => Column<any>[] = () => {
       sorter: {},
       textCase: "upper",
       isFilterable: true,
-      pixelWidth: 130,
+      pixelWidth: 200,
       key: "recordType",
       displayTitle: "RECORD TYPE",
       dataType: "string",
@@ -815,7 +815,7 @@ export const authOveridesGridColumns: () => Column<any>[] = () => {
       sorter: {},
       textCase: "upper",
       isFilterable: true,
-      pixelWidth: 130,
+      pixelWidth: 200,
       key: "overrideType",
       displayTitle: "OVERRIDE TYPE",
       dataType: "string",
@@ -829,10 +829,55 @@ export const authOveridesGridColumns: () => Column<any>[] = () => {
       position: 4,
       sorter: {},
       textCase: "upper",
-      pixelWidth: 156,
+      isFilterable: true,
+      pixelWidth: 200,
+      key: "memberName",
+      displayTitle: "MEMBER NAME",
+      dataType: "string",
+
+      filters: textFilters,
+
+      hidden: false,
+      sortDirections: ["ascend", "descend"],
+    },
+    {
+      position: 5,
+      sorter: {},
+      textCase: "upper",
+      isFilterable: true,
+      pixelWidth: 200,
+      key: "memberId",
+      displayTitle: "MEMBER ID",
+      dataType: "string",
+
+      filters: textFilters,
+
+      hidden: false,
+      sortDirections: ["ascend", "descend"],
+    },
+    {
+      position: 6,
+      sorter: {},
+      textCase: "upper",
+      isFilterable: true,
+      pixelWidth: 180,
+      key: "mbi",
+      displayTitle: "MBI",
+      dataType: "string",
+
+      filters: textFilters,
+
+      hidden: false,
+      sortDirections: ["ascend", "descend"],
+    },
+    {
+      position: 7,
+      sorter: {},
+      textCase: "upper",
+      pixelWidth: 220,
       key: "drugLabel",
       displayTitle: "DRUG LABEL",
-      toolTip: props => <FrxGridToolTip {...props} />,
+      toolTip: (props) => <FrxGridToolTip {...props} />,
       isFilterable: true,
       dataType: "string",
       className: "entry-component",
@@ -842,10 +887,10 @@ export const authOveridesGridColumns: () => Column<any>[] = () => {
       sortDirections: ["ascend", "descend"],
     },
     {
-      position: 5,
+      position: 8,
       sorter: {},
       textCase: "upper",
-      pixelWidth: 192,
+      pixelWidth: 220,
       key: "startDate",
       displayTitle: "START DATE TIME",
       isFilterable: true,
@@ -856,10 +901,10 @@ export const authOveridesGridColumns: () => Column<any>[] = () => {
       sortDirections: ["ascend", "descend"],
     },
     {
-      position: 6,
+      position: 9,
       sorter: {},
       textCase: "upper",
-      pixelWidth: 192,
+      pixelWidth: 220,
       key: "endDate",
       displayTitle: "END DATE TIME",
       isFilterable: true,
@@ -1279,7 +1324,7 @@ export const eligibilityGridColumns: () => Column<any>[] = () => {
       isFilterable: true,
       pixelWidth: 300,
       key: "upimbn",
-      displayTitle: "UPI /MBN",
+      displayTitle: "UPI / MBI",
       dataType: "string",
 
       filters: textFilters,
@@ -1320,7 +1365,7 @@ export const eligibilityGridColumns: () => Column<any>[] = () => {
       isFilterable: true,
       pixelWidth: 350,
       key: "submitGroup",
-      displayTitle: "SUBMIT GROUP",
+      displayTitle: "SUBMIT GROUP#",
       dataType: "string",
       filters: textFilters,
       hidden: false,
@@ -1398,304 +1443,324 @@ export const eligibilityGridColumns: () => Column<any>[] = () => {
       isFilterable: true,
       pixelWidth: 300,
       key: "enrollmentSource",
-      displayTitle: "Enrollment Source", 
+      displayTitle: "Enrollment Source",
       dataType: "string",
       filters: textFilters,
       hidden: false,
       sortDirections: ["ascend", "descend"],
-    }
-    , {
+    },
+    {
       position: 13,
       sorter: {},
       textCase: "upper",
       isFilterable: true,
       pixelWidth: 300,
       key: "planYear",
-      displayTitle: "Plan Year", 
+      displayTitle: "Plan Year",
       dataType: "string",
       filters: textFilters,
       hidden: false,
       sortDirections: ["ascend", "descend"],
-    }
-    , {
+    },
+    {
       position: 14,
       sorter: {},
       textCase: "upper",
       isFilterable: true,
       pixelWidth: 300,
       key: "effectiveDate",
-      displayTitle: "Effective Date", 
+      displayTitle: "Effective Date",
       dataType: "string",
       filters: textFilters,
       hidden: false,
       sortDirections: ["ascend", "descend"],
-    }
-    , {
+    },
+    {
       position: 15,
       sorter: {},
       textCase: "upper",
       isFilterable: true,
       pixelWidth: 300,
       key: "hic",
-      displayTitle: "HIC#", dataType: "string",
+      displayTitle: "HIC#",
+      dataType: "string",
       filters: textFilters,
       hidden: false,
       sortDirections: ["ascend", "descend"],
-    }
-    , {
+    },
+    {
       position: 16,
       sorter: {},
       textCase: "upper",
       isFilterable: true,
       pixelWidth: 300,
       key: "planId",
-      displayTitle: "Plan ID", dataType: "string",
+      displayTitle: "Plan ID",
+      dataType: "string",
       filters: textFilters,
       hidden: false,
       sortDirections: ["ascend", "descend"],
-    }
-    , {
+    },
+    {
       position: 17,
       sorter: {},
       textCase: "upper",
       isFilterable: true,
       pixelWidth: 300,
       key: "planStartDate",
-      displayTitle: "Plan Start Date", dataType: "string",
+      displayTitle: "Plan Start Date",
+      dataType: "string",
       filters: textFilters,
       hidden: false,
       sortDirections: ["ascend", "descend"],
-    }
-    , {
+    },
+    {
       position: 18,
       sorter: {},
       textCase: "upper",
       isFilterable: true,
       pixelWidth: 300,
       key: "planEndDate",
-      displayTitle: "Plan End Date", dataType: "string",
+      displayTitle: "Plan End Date",
+      dataType: "string",
       filters: textFilters,
       hidden: false,
       sortDirections: ["ascend", "descend"],
-    }
-    , {
+    },
+    {
       position: 19,
       sorter: {},
       textCase: "upper",
       isFilterable: true,
       pixelWidth: 300,
       key: "licsCode",
-      displayTitle: "LICS Code", dataType: "string",
+      displayTitle: "LICS Code",
+      dataType: "string",
       filters: textFilters,
       hidden: false,
       sortDirections: ["ascend", "descend"],
-    }
-    , {
+    },
+    {
       position: 20,
       sorter: {},
       textCase: "upper",
       isFilterable: true,
       pixelWidth: 300,
       key: "licsStartDate",
-      displayTitle: "LICS Start Date", dataType: "string",
+      displayTitle: "LICS Start Date",
+      dataType: "string",
       filters: textFilters,
       hidden: false,
       sortDirections: ["ascend", "descend"],
-    }
-    , {
+    },
+    {
       position: 21,
       sorter: {},
       textCase: "upper",
       isFilterable: true,
       pixelWidth: 300,
       key: "licsEndDate",
-      displayTitle: "LICS End Date", dataType: "string",
+      displayTitle: "LICS End Date",
+      dataType: "string",
       filters: textFilters,
       hidden: false,
       sortDirections: ["ascend", "descend"],
-    }
-    , {
+    },
+    {
       position: 22,
       sorter: {},
       textCase: "upper",
       isFilterable: true,
       pixelWidth: 300,
       key: "ltc",
-      displayTitle: "LTC", dataType: "string",
+      displayTitle: "LTC",
+      dataType: "string",
       filters: textFilters,
       hidden: false,
       sortDirections: ["ascend", "descend"],
-    }
-    , {
+    },
+    {
       position: 23,
       sorter: {},
       textCase: "upper",
       isFilterable: true,
       pixelWidth: 300,
       key: "ltcStartDate",
-      displayTitle: "LTC Start Date", dataType: "string",
+      displayTitle: "LTC Start Date",
+      dataType: "string",
       filters: textFilters,
       hidden: false,
       sortDirections: ["ascend", "descend"],
-    }
-    , {
+    },
+    {
       position: 24,
       sorter: {},
       textCase: "upper",
       isFilterable: true,
       pixelWidth: 300,
       key: "ltcEndDate",
-      displayTitle: "LTC End Date", dataType: "string",
+      displayTitle: "LTC End Date",
+      dataType: "string",
       filters: textFilters,
       hidden: false,
       sortDirections: ["ascend", "descend"],
-    }
-    , {
+    },
+    {
       position: 25,
       sorter: {},
       textCase: "upper",
       isFilterable: true,
       pixelWidth: 300,
       key: "hospice",
-      displayTitle: "Hospice", dataType: "string",
+      displayTitle: "Hospice",
+      dataType: "string",
       filters: textFilters,
       hidden: false,
       sortDirections: ["ascend", "descend"],
-    }
-    , {
+    },
+    {
       position: 26,
       sorter: {},
       textCase: "upper",
       isFilterable: true,
       pixelWidth: 300,
       key: "hospiceStartDate",
-      displayTitle: "Hospice Start Date", dataType: "string",
+      displayTitle: "Hospice Start Date",
+      dataType: "string",
       filters: textFilters,
       hidden: false,
       sortDirections: ["ascend", "descend"],
-    }
-    , {
+    },
+    {
       position: 27,
       sorter: {},
       textCase: "upper",
       isFilterable: true,
       pixelWidth: 300,
       key: "hospiceEndDate",
-      displayTitle: "Hospice End Date", dataType: "string",
+      displayTitle: "Hospice End Date",
+      dataType: "string",
       filters: textFilters,
       hidden: false,
       sortDirections: ["ascend", "descend"],
-    }
-    , {
+    },
+    {
       position: 28,
       sorter: {},
       textCase: "upper",
       isFilterable: true,
       pixelWidth: 300,
       key: "esrd",
-      displayTitle: "ESRD", dataType: "string",
+      displayTitle: "ESRD",
+      dataType: "string",
       filters: textFilters,
       hidden: false,
       sortDirections: ["ascend", "descend"],
-    }
-    , {
+    },
+    {
       position: 29,
       sorter: {},
       textCase: "upper",
       isFilterable: true,
       pixelWidth: 300,
       key: "esrdStartDate",
-      displayTitle: "ESRD Start Date", dataType: "string",
+      displayTitle: "ESRD Start Date",
+      dataType: "string",
       filters: textFilters,
       hidden: false,
       sortDirections: ["ascend", "descend"],
-    }
-    , {
+    },
+    {
       position: 30,
       sorter: {},
       textCase: "upper",
       isFilterable: true,
       pixelWidth: 300,
       key: "esrdEndDate",
-      displayTitle: "ESRD End Date", dataType: "string",
+      displayTitle: "ESRD End Date",
+      dataType: "string",
       filters: textFilters,
       hidden: false,
       sortDirections: ["ascend", "descend"],
-    }
-    , {
+    },
+    {
       position: 31,
       sorter: {},
       textCase: "upper",
       isFilterable: true,
       pixelWidth: 300,
       key: "transplant",
-      displayTitle: "Transplant", dataType: "string",
+      displayTitle: "Transplant",
+      dataType: "string",
       filters: textFilters,
       hidden: false,
       sortDirections: ["ascend", "descend"],
-    }
-    , {
+    },
+    {
       position: 32,
       sorter: {},
       textCase: "upper",
       isFilterable: true,
       pixelWidth: 350,
       key: "transplantStartDate",
-      displayTitle: "Transplant Start Date", dataType: "string",
+      displayTitle: "Transplant Start Date",
+      dataType: "string",
       filters: textFilters,
       hidden: false,
       sortDirections: ["ascend", "descend"],
-    }
-    , {
+    },
+    {
       position: 33,
       sorter: {},
       textCase: "upper",
       isFilterable: true,
       pixelWidth: 350,
       key: "transplantEndDate",
-      displayTitle: "Transplant End Date", dataType: "string",
+      displayTitle: "Transplant End Date",
+      dataType: "string",
       filters: textFilters,
       hidden: false,
       sortDirections: ["ascend", "descend"],
-    }
-    , {
+    },
+    {
       position: 34,
       sorter: {},
       textCase: "upper",
       isFilterable: true,
       pixelWidth: 300,
       key: "transitionEligibility",
-      displayTitle: "Transition Eligibility", dataType: "string",
+      displayTitle: "Transition Eligibility",
+      dataType: "string",
       filters: textFilters,
       hidden: false,
       sortDirections: ["ascend", "descend"],
-    }
-    , {
+    },
+    {
       position: 35,
       sorter: {},
       textCase: "upper",
       isFilterable: true,
       pixelWidth: 300,
       key: "transitionStartDate",
-      displayTitle: "Transition Start Date", 
+      displayTitle: "Transition Start Date",
       dataType: "string",
       filters: textFilters,
       hidden: false,
       sortDirections: ["ascend", "descend"],
-    }
-    , {
+    },
+    {
       position: 36,
       sorter: {},
       textCase: "upper",
       isFilterable: true,
       pixelWidth: 300,
       key: "transcitionEndDate",
-      displayTitle: "Transition End Date", 
+      displayTitle: "Transition End Date",
       dataType: "string",
       filters: textFilters,
       hidden: false,
       sortDirections: ["ascend", "descend"],
-    }
+    },
   ];
 };
 
@@ -1985,7 +2050,11 @@ export const getNotificationMockColumns: () => Column<any>[] = () => {
       displayTitle: "TERM DATE",
       cellWrapper: (props: any) => (
         <FrxGridDateHighliter
-          data={{ text: props.children.props.dataRow.term_date }}
+          data={{
+            text: props.children.props.dataRow.term_date,
+            showText: props.children.props.dataRow.termNote,
+            hideHighlight: props.children.props.dataRow.hideHighlight,
+          }}
         />
       ),
       dataType: "date",
@@ -2111,7 +2180,10 @@ export const getBarriersColumns: () => Column<any>[] = () => {
       displayTitle: "TERM DATE",
       cellWrapper: (props: any) => (
         <FrxGridDateHighliter
-          data={{ text: props.children.props.dataRow.term_date, showText: props.children.props.dataRow.description }}
+          data={{
+            text: props.children.props.dataRow.term_date,
+            showText: props.children.props.dataRow.termNote,
+          }}
         />
       ),
       dataType: "date",
@@ -2182,7 +2254,7 @@ export const claimsHistoryGridColumns: () => Column<any>[] = () => {
       className: "entry-component",
       displayTitle: "DRUG LABEL",
       dataType: "string",
-      toolTip: props => <FrxGridToolTip {...props} />,
+      toolTip: (props) => <FrxGridToolTip {...props} />,
       filters: textFilters,
       hidden: false,
       sortDirections: ["ascend", "descend"],
@@ -2397,7 +2469,7 @@ export const claimsHistoryGridColumns: () => Column<any>[] = () => {
       isFilterable: true,
       dataType: "number",
       filters: numberFilters,
-      formatter:<span>$</span>,
+      formatter: <span>$</span>,
       hidden: false,
       sortDirections: ["ascend", "descend"],
     },
@@ -2429,7 +2501,9 @@ export const testClaimsGridColumns: () => Column<any>[] = () => {
       // modal can be here
       // PASS THE COMPONENT TO BE OPENED IN MODAL HERE
       // DISABLED FOR NOW
-      componentToOpenOnClickingCell: props => <ClaimGridModel {...props} isTestClaim={true} />,
+      componentToOpenOnClickingCell: (props) => (
+        <ClaimGridModel {...props} isTestClaim={true} />
+      ),
       key: "claimId",
       displayTitle: "Test Claim ID",
 
@@ -2477,7 +2551,7 @@ export const testClaimsGridColumns: () => Column<any>[] = () => {
       isFilterable: true,
       showToolTip: true,
       className: "entry-component",
-      toolTip: props => <FrxGridToolTip {...props} />,
+      toolTip: (props) => <FrxGridToolTip {...props} />,
       displayTitle: "Drug Label",
       dataType: "string",
 
@@ -2528,7 +2602,7 @@ export const testClaimsGridColumns: () => Column<any>[] = () => {
 
       filters: textFilters,
       hidden: false,
-      sortDirections: ["ascend", "descend"]
+      sortDirections: ["ascend", "descend"],
     },
     {
       position: 8,
@@ -2543,7 +2617,7 @@ export const testClaimsGridColumns: () => Column<any>[] = () => {
 
       filters: textFilters,
       hidden: false,
-      sortDirections: ["ascend", "descend"]
+      sortDirections: ["ascend", "descend"],
     },
     {
       position: 9,
@@ -2557,7 +2631,7 @@ export const testClaimsGridColumns: () => Column<any>[] = () => {
 
       filters: textFilters,
       hidden: false,
-      sortDirections: ["ascend", "descend"]
+      sortDirections: ["ascend", "descend"],
     },
     {
       position: 10,
@@ -2571,7 +2645,7 @@ export const testClaimsGridColumns: () => Column<any>[] = () => {
 
       filters: textFilters,
       hidden: false,
-      sortDirections: ["ascend", "descend"]
+      sortDirections: ["ascend", "descend"],
     },
     {
       position: 11,
@@ -2585,7 +2659,7 @@ export const testClaimsGridColumns: () => Column<any>[] = () => {
 
       filters: textFilters,
       hidden: false,
-      sortDirections: ["ascend", "descend"]
+      sortDirections: ["ascend", "descend"],
     },
     {
       position: 12,
@@ -2599,7 +2673,7 @@ export const testClaimsGridColumns: () => Column<any>[] = () => {
 
       filters: textFilters,
       hidden: false,
-      sortDirections: ["ascend", "descend"]
+      sortDirections: ["ascend", "descend"],
     },
     {
       position: 13,
@@ -2613,7 +2687,7 @@ export const testClaimsGridColumns: () => Column<any>[] = () => {
 
       filters: textFilters,
       hidden: false,
-      sortDirections: ["ascend", "descend"]
+      sortDirections: ["ascend", "descend"],
     },
     {
       position: 14,
@@ -2627,7 +2701,7 @@ export const testClaimsGridColumns: () => Column<any>[] = () => {
 
       filters: textFilters,
       hidden: false,
-      sortDirections: ["ascend", "descend"]
+      sortDirections: ["ascend", "descend"],
     },
     {
       position: 15,
@@ -2641,7 +2715,7 @@ export const testClaimsGridColumns: () => Column<any>[] = () => {
 
       filters: textFilters,
       hidden: false,
-      sortDirections: ["ascend", "descend"]
+      sortDirections: ["ascend", "descend"],
     },
     {
       position: 16,
@@ -2655,7 +2729,7 @@ export const testClaimsGridColumns: () => Column<any>[] = () => {
 
       filters: textFilters,
       hidden: false,
-      sortDirections: ["ascend", "descend"]
+      sortDirections: ["ascend", "descend"],
     },
     {
       position: 17,
@@ -2669,7 +2743,7 @@ export const testClaimsGridColumns: () => Column<any>[] = () => {
 
       filters: textFilters,
       hidden: false,
-      sortDirections: ["ascend", "descend"]
+      sortDirections: ["ascend", "descend"],
     },
     {
       position: 18,
@@ -2683,7 +2757,7 @@ export const testClaimsGridColumns: () => Column<any>[] = () => {
 
       filters: textFilters,
       hidden: false,
-      sortDirections: ["ascend", "descend"]
+      sortDirections: ["ascend", "descend"],
     },
     {
       position: 19,
@@ -2698,7 +2772,7 @@ export const testClaimsGridColumns: () => Column<any>[] = () => {
 
       filters: numberFilters,
       hidden: false,
-      sortDirections: ["ascend", "descend"]
+      sortDirections: ["ascend", "descend"],
     },
     {
       position: 20,
@@ -2712,7 +2786,7 @@ export const testClaimsGridColumns: () => Column<any>[] = () => {
 
       filters: textFilters,
       hidden: false,
-      sortDirections: ["ascend", "descend"]
+      sortDirections: ["ascend", "descend"],
     },
     {
       position: 21,
@@ -3102,7 +3176,7 @@ export const _claimsGridColumns: () => Column<any>[] = () => {
       pixelWidth: 153,
       sorter: {},
       className: "entry-component",
-      componentToOpenOnClickingCell: props => <ClaimGridModel {...props} />,
+      componentToOpenOnClickingCell: (props) => <ClaimGridModel {...props} />,
       key: "claimId",
       displayTitle: "CLAIM ID",
       filters: textFilters,
@@ -3145,7 +3219,7 @@ export const _claimsGridColumns: () => Column<any>[] = () => {
       isFilterable: true,
       displayTitle: "Drug Label",
       className: "entry-component",
-      toolTip: props => <FrxGridToolTip {...props} />,
+      toolTip: (props) => <FrxGridToolTip {...props} />,
       dataType: "string",
       filters: textFilters,
       hidden: false,
@@ -3374,7 +3448,9 @@ export const _testClaimsGridColumns: () => Column<any>[] = () => {
       // modal can be here
       // PASS THE COMPONENT TO BE OPENED IN MODAL HERE
       // DISABLED FOR NOW
-      componentToOpenOnClickingCell: props => <ClaimGridModel {...props} isTestClaim={true} />,
+      componentToOpenOnClickingCell: (props) => (
+        <ClaimGridModel {...props} isTestClaim={true} />
+      ),
       key: "claimId",
       displayTitle: "Test Claim ID",
 
@@ -3383,7 +3459,7 @@ export const _testClaimsGridColumns: () => Column<any>[] = () => {
       dataType: "string",
       enableIntellisense: true,
       hidden: false,
-      sortDirections: ["ascend", "descend"]
+      sortDirections: ["ascend", "descend"],
     },
     {
       position: 2,
@@ -3396,7 +3472,7 @@ export const _testClaimsGridColumns: () => Column<any>[] = () => {
       dataType: "date",
       filters: dateFilters,
       hidden: false,
-      sortDirections: ["ascend", "descend"]
+      sortDirections: ["ascend", "descend"],
     },
     {
       position: 3,
@@ -3411,7 +3487,7 @@ export const _testClaimsGridColumns: () => Column<any>[] = () => {
       filters: textFilters,
 
       hidden: false,
-      sortDirections: ["ascend", "descend"]
+      sortDirections: ["ascend", "descend"],
     },
     {
       position: 4,
@@ -3422,14 +3498,14 @@ export const _testClaimsGridColumns: () => Column<any>[] = () => {
       isFilterable: true,
       showToolTip: true,
       className: "entry-component",
-      toolTip: props => <FrxGridToolTip {...props} />,
+      toolTip: (props) => <FrxGridToolTip {...props} />,
       displayTitle: "Drug Label",
       dataType: "string",
 
       filters: textFilters,
 
       hidden: false,
-      sortDirections: ["ascend", "descend"]
+      sortDirections: ["ascend", "descend"],
     },
     {
       position: 5,
@@ -3444,7 +3520,7 @@ export const _testClaimsGridColumns: () => Column<any>[] = () => {
       filters: numberFilters,
 
       hidden: false,
-      sortDirections: ["ascend", "descend"]
+      sortDirections: ["ascend", "descend"],
     },
     {
       position: 6,
@@ -3459,7 +3535,7 @@ export const _testClaimsGridColumns: () => Column<any>[] = () => {
       filters: textFilters,
 
       hidden: false,
-      sortDirections: ["ascend", "descend"]
+      sortDirections: ["ascend", "descend"],
     },
     {
       position: 7,
@@ -3473,7 +3549,7 @@ export const _testClaimsGridColumns: () => Column<any>[] = () => {
 
       filters: textFilters,
       hidden: false,
-      sortDirections: ["ascend", "descend"]
+      sortDirections: ["ascend", "descend"],
     },
     {
       position: 8,
@@ -3488,10 +3564,24 @@ export const _testClaimsGridColumns: () => Column<any>[] = () => {
 
       filters: textFilters,
       hidden: false,
-      sortDirections: ["ascend", "descend"]
+      sortDirections: ["ascend", "descend"],
     },
     {
       position: 9,
+      sorter: {},
+      textCase: "upper",
+      pixelWidth: 190,
+      key: "pricingSource",
+      displayTitle: "DUR History",
+      isFilterable: true,
+      dataType: "string",
+
+      filters: textFilters,
+      hidden: false,
+      sortDirections: ["ascend", "descend"],
+    },
+    {
+      position: 10,
       sorter: {},
       textCase: "upper",
       pixelWidth: 190,
@@ -3502,10 +3592,10 @@ export const _testClaimsGridColumns: () => Column<any>[] = () => {
 
       filters: textFilters,
       hidden: false,
-      sortDirections: ["ascend", "descend"]
+      sortDirections: ["ascend", "descend"],
     },
     {
-      position: 10,
+      position: 11,
       sorter: {},
       textCase: "upper",
       pixelWidth: 190,
@@ -3516,10 +3606,10 @@ export const _testClaimsGridColumns: () => Column<any>[] = () => {
 
       filters: textFilters,
       hidden: false,
-      sortDirections: ["ascend", "descend"]
+      sortDirections: ["ascend", "descend"],
     },
     {
-      position: 11,
+      position: 12,
       sorter: {},
       textCase: "upper",
       pixelWidth: 190,
@@ -3530,10 +3620,10 @@ export const _testClaimsGridColumns: () => Column<any>[] = () => {
 
       filters: textFilters,
       hidden: false,
-      sortDirections: ["ascend", "descend"]
+      sortDirections: ["ascend", "descend"],
     },
     {
-      position: 12,
+      position: 13,
       sorter: {},
       textCase: "upper",
       pixelWidth: 190,
@@ -3544,10 +3634,10 @@ export const _testClaimsGridColumns: () => Column<any>[] = () => {
 
       filters: textFilters,
       hidden: false,
-      sortDirections: ["ascend", "descend"]
+      sortDirections: ["ascend", "descend"],
     },
     {
-      position: 13,
+      position: 14,
       sorter: {},
       textCase: "upper",
       pixelWidth: 190,
@@ -3558,10 +3648,10 @@ export const _testClaimsGridColumns: () => Column<any>[] = () => {
 
       filters: textFilters,
       hidden: false,
-      sortDirections: ["ascend", "descend"]
+      sortDirections: ["ascend", "descend"],
     },
     {
-      position: 14,
+      position: 15,
       sorter: {},
       textCase: "upper",
       pixelWidth: 190,
@@ -3572,10 +3662,10 @@ export const _testClaimsGridColumns: () => Column<any>[] = () => {
 
       filters: textFilters,
       hidden: false,
-      sortDirections: ["ascend", "descend"]
+      sortDirections: ["ascend", "descend"],
     },
     {
-      position: 15,
+      position: 16,
       sorter: {},
       textCase: "upper",
       pixelWidth: 156,
@@ -3586,10 +3676,10 @@ export const _testClaimsGridColumns: () => Column<any>[] = () => {
 
       filters: textFilters,
       hidden: false,
-      sortDirections: ["ascend", "descend"]
+      sortDirections: ["ascend", "descend"],
     },
     {
-      position: 16,
+      position: 17,
       sorter: {},
       textCase: "upper",
       pixelWidth: 175,
@@ -3600,10 +3690,10 @@ export const _testClaimsGridColumns: () => Column<any>[] = () => {
 
       filters: textFilters,
       hidden: false,
-      sortDirections: ["ascend", "descend"]
+      sortDirections: ["ascend", "descend"],
     },
     {
-      position: 17,
+      position: 18,
       sorter: {},
       textCase: "upper",
       pixelWidth: 192,
@@ -3614,10 +3704,10 @@ export const _testClaimsGridColumns: () => Column<any>[] = () => {
 
       filters: textFilters,
       hidden: false,
-      sortDirections: ["ascend", "descend"]
+      sortDirections: ["ascend", "descend"],
     },
     {
-      position: 18,
+      position: 19,
       sorter: {},
       textCase: "upper",
       pixelWidth: 190,
@@ -3628,10 +3718,10 @@ export const _testClaimsGridColumns: () => Column<any>[] = () => {
 
       filters: textFilters,
       hidden: false,
-      sortDirections: ["ascend", "descend"]
+      sortDirections: ["ascend", "descend"],
     },
     {
-      position: 19,
+      position: 20,
       sorter: {},
       textCase: "upper",
       pixelWidth: 175,
@@ -3643,36 +3733,22 @@ export const _testClaimsGridColumns: () => Column<any>[] = () => {
 
       filters: numberFilters,
       hidden: false,
-      sortDirections: ["ascend", "descend"]
-    },
-    {
-      position: 20,
-      sorter: {},
-      textCase: "upper",
-      pixelWidth: 242,
-      key: "process",
-      displayTitle: "Process Type",
-      isFilterable: true,
-      dataType: "string",
-
-      filters: textFilters,
-      hidden: false,
-      sortDirections: ["ascend", "descend"]
+      sortDirections: ["ascend", "descend"],
     },
     {
       position: 21,
       sorter: {},
       textCase: "upper",
-      pixelWidth: 190,
-      key: "pricingSource",
-      displayTitle: "DUR History",
+      pixelWidth: 300,
+      key: "process",
+      displayTitle: "PROCESS AS BRAND, GENERIC OR OTHER",
       isFilterable: true,
       dataType: "string",
 
       filters: textFilters,
       hidden: false,
-      sortDirections: ["ascend", "descend"]
-    }
+      sortDirections: ["ascend", "descend"],
+    },
   ];
 };
 
@@ -3885,7 +3961,7 @@ export const PaGridColumns: () => Column<any>[] = () => {
       pixelWidth: 160,
       sorter: {},
       isFilterable: true,
-      key: "dateTime",
+      key: "dateTimeReceived",
       displayTitle: "Date/ Time Received",
       filters: textFilters,
 
@@ -3901,8 +3977,8 @@ export const PaGridColumns: () => Column<any>[] = () => {
       sorter: {},
       className: "entry-component",
       isFilterable: true,
-      key: "case",
-      displayTitle: "CASE #",
+      key: "paCaseId",
+      displayTitle: "PA Case ID",
 
       filters: textFilters,
 
@@ -3915,12 +3991,258 @@ export const PaGridColumns: () => Column<any>[] = () => {
       position: 3,
       sorter: {},
       textCase: "upper",
-      pixelWidth: 164,
-      key: "serviceDate",
-      displayTitle: "DATE OF SERVICE",
+      pixelWidth: 188,
+      key: "drugLabel",
       isFilterable: true,
-      dataType: "date",
-      filters: dateFilters,
+      showToolTip: true,
+      className: "entry-component",
+      displayTitle: "DRUG LABEL",
+      toolTip: (props) => <FrxGridToolTip {...props} />,
+      dataType: "string",
+      filters: textFilters,
+      hidden: false,
+      sortDirections: ["ascend", "descend"],
+    },
+    {
+      position: 4,
+      sorter: {},
+      textCase: "upper",
+      isFilterable: true,
+      pixelWidth: 200,
+      key: "caseType",
+      displayTitle: "CASE TYPE",
+      dataType: "string",
+
+      filters: textFilters,
+
+      hidden: false,
+      sortDirections: ["ascend", "descend"],
+    },
+    {
+      position: 5,
+      sorter: {},
+      textCase: "upper",
+      pixelWidth: 130,
+      key: "priorityType",
+      displayTitle: "PRIORITY TYPE",
+      isFilterable: true,
+      dataType: "string",
+
+      filters: textFilters,
+
+      hidden: false,
+      sortDirections: ["ascend", "descend"],
+    },
+    {
+      position: 6,
+      sorter: {},
+      textCase: "upper",
+      isFilterable: true,
+      pixelWidth: 150,
+      key: "classification",
+      displayTitle: "Classification",
+      dataType: "string",
+
+      filters: textFilters,
+
+      hidden: false,
+      sortDirections: ["ascend", "descend"],
+    },
+    {
+      position: 7,
+      sorter: {},
+      textCase: "upper",
+      pixelWidth: 126,
+      key: "reviewStage",
+      displayTitle: "Review Stage",
+      isFilterable: true,
+      dataType: "number",
+
+      filters: numberFilters,
+      hidden: false,
+      sortDirections: ["ascend", "descend"],
+    },
+    {
+      position: 8,
+      sorter: {},
+      textCase: "upper",
+      pixelWidth: 126,
+      key: "reviewTimeFrame",
+      displayTitle: "Review Timeframe",
+      isFilterable: true,
+      dataType: "string",
+
+      filters: textFilters,
+      hidden: false,
+      sortDirections: ["ascend", "descend"],
+    },
+    {
+      position: 9,
+      sorter: {},
+      textCase: "upper",
+      pixelWidth: 126,
+      key: "timeRemaining",
+      displayTitle: "Time Remaining",
+      isFilterable: true,
+      dataType: "string",
+      filters: textFilters,
+      hidden: false,
+      sortDirections: ["ascend", "descend"],
+    },
+    {
+      position: 10,
+      sorter: {},
+      textCase: "upper",
+      pixelWidth: 159,
+      key: "dateTimeCompleted",
+      displayTitle: "Date/ Time Completed",
+      isFilterable: true,
+      dataType: "string",
+      filters: textFilters,
+      hidden: false,
+      sortDirections: ["ascend", "descend"],
+    },
+    {
+      position: 11,
+      sorter: {},
+      textCase: "upper",
+      pixelWidth: 126,
+      key: "caseStatus",
+      displayTitle: "Case Status",
+      isFilterable: true,
+      dataType: "string",
+      filters: textFilters,
+      hidden: false,
+      sortDirections: ["ascend", "descend"],
+    },
+    {
+      position: 12,
+      sorter: {},
+      textCase: "upper",
+      pixelWidth: 126,
+      key: "document",
+      displayTitle: "Document",
+      isFilterable: true,
+      dataType: "string",
+      filters: textFilters,
+      hidden: false,
+      sortDirections: ["ascend", "descend"],
+    },
+    {
+      position: 13,
+      sorter: {},
+      textCase: "upper",
+      pixelWidth: 159,
+      key: "requestor",
+      displayTitle: "Requestor",
+      isFilterable: true,
+      dataType: "string",
+      filters: textFilters,
+      hidden: false,
+      sortDirections: ["ascend", "descend"],
+    },
+    {
+      position: 14,
+      sorter: {},
+      textCase: "upper",
+      pixelWidth: 159,
+      key: "aor",
+      displayTitle: "AOR",
+      isFilterable: true,
+      dataType: "string",
+      filters: textFilters,
+      hidden: false,
+      sortDirections: ["ascend", "descend"],
+    },
+    {
+      position: 15,
+      sorter: {},
+      textCase: "upper",
+      pixelWidth: 159,
+      key: "prescriber",
+      displayTitle: "Prescriber",
+      isFilterable: true,
+      dataType: "string",
+      filters: textFilters,
+      hidden: false,
+      sortDirections: ["ascend", "descend"],
+    },
+    {
+      position: 16,
+      sorter: {},
+      textCase: "upper",
+      pixelWidth: 159,
+      key: "intakeType",
+      displayTitle: "Intake Type",
+      isFilterable: true,
+      dataType: "string",
+      filters: textFilters,
+      hidden: false,
+      sortDirections: ["ascend", "descend"],
+    },
+    {
+      position: 17,
+      sorter: {},
+      textCase: "upper",
+      pixelWidth: 159,
+      key: "changeInPriorityStatus",
+      displayTitle: "Change In Priority Status",
+      isFilterable: true,
+      dataType: "string",
+      filters: textFilters,
+      hidden: false,
+      sortDirections: ["ascend", "descend"],
+    },
+  ];
+};
+export const AppealGridColumns: () => Column<any>[] = () => {
+  return [
+    {
+      position: 1,
+      textCase: "upper",
+      pixelWidth: 160,
+      sorter: {},
+      isFilterable: true,
+      key: "dateTimeReceived",
+      displayTitle: "Date/ Time Received",
+      filters: textFilters,
+
+      dataType: "string",
+      enableIntellisense: true,
+      hidden: false,
+      sortDirections: ["ascend", "descend"],
+    },
+    {
+      position: 2,
+      textCase: "upper",
+      pixelWidth: 126,
+      sorter: {},
+      className: "entry-component",
+      isFilterable: true,
+      key: "appealcaseId",
+      displayTitle: "Appeal Case ID",
+
+      filters: textFilters,
+
+      dataType: "string",
+      enableIntellisense: true,
+      hidden: false,
+      sortDirections: ["ascend", "descend"],
+    },
+    {
+      position: 3,
+      textCase: "upper",
+      pixelWidth: 126,
+      sorter: {},
+      className: "entry-component",
+      isFilterable: true,
+      key: "paCaseId",
+      displayTitle: "Initial PA Case ID",
+
+      filters: textFilters,
+
+      dataType: "string",
+      enableIntellisense: true,
       hidden: false,
       sortDirections: ["ascend", "descend"],
     },
@@ -4000,7 +4322,7 @@ export const PaGridColumns: () => Column<any>[] = () => {
       sortDirections: ["ascend", "descend"],
     },
     {
-      position: 8,
+      position: 9,
       sorter: {},
       textCase: "upper",
       pixelWidth: 126,
@@ -4008,13 +4330,12 @@ export const PaGridColumns: () => Column<any>[] = () => {
       displayTitle: "Review Timeframe",
       isFilterable: true,
       dataType: "string",
-
       filters: textFilters,
       hidden: false,
       sortDirections: ["ascend", "descend"],
     },
     {
-      position: 9,
+      position: 10,
       sorter: {},
       textCase: "upper",
       pixelWidth: 126,
@@ -4027,7 +4348,7 @@ export const PaGridColumns: () => Column<any>[] = () => {
       sortDirections: ["ascend", "descend"],
     },
     {
-      position: 10,
+      position: 11,
       sorter: {},
       textCase: "upper",
       pixelWidth: 159,
@@ -4040,7 +4361,7 @@ export const PaGridColumns: () => Column<any>[] = () => {
       sortDirections: ["ascend", "descend"],
     },
     {
-      position: 10,
+      position: 12,
       sorter: {},
       textCase: "upper",
       pixelWidth: 126,
@@ -4053,7 +4374,7 @@ export const PaGridColumns: () => Column<any>[] = () => {
       sortDirections: ["ascend", "descend"],
     },
     {
-      position: 11,
+      position: 13,
       sorter: {},
       textCase: "upper",
       pixelWidth: 126,
@@ -4066,7 +4387,7 @@ export const PaGridColumns: () => Column<any>[] = () => {
       sortDirections: ["ascend", "descend"],
     },
     {
-      position: 12,
+      position: 14,
       sorter: {},
       textCase: "upper",
       pixelWidth: 159,
@@ -4079,7 +4400,7 @@ export const PaGridColumns: () => Column<any>[] = () => {
       sortDirections: ["ascend", "descend"],
     },
     {
-      position: 13,
+      position: 15,
       sorter: {},
       textCase: "upper",
       pixelWidth: 159,
@@ -4092,7 +4413,7 @@ export const PaGridColumns: () => Column<any>[] = () => {
       sortDirections: ["ascend", "descend"],
     },
     {
-      position: 14,
+      position: 16,
       sorter: {},
       textCase: "upper",
       pixelWidth: 159,
@@ -4105,7 +4426,7 @@ export const PaGridColumns: () => Column<any>[] = () => {
       sortDirections: ["ascend", "descend"],
     },
     {
-      position: 15,
+      position: 17,
       sorter: {},
       textCase: "upper",
       pixelWidth: 159,
@@ -4118,7 +4439,7 @@ export const PaGridColumns: () => Column<any>[] = () => {
       sortDirections: ["ascend", "descend"],
     },
     {
-      position: 16,
+      position: 18,
       sorter: {},
       textCase: "upper",
       pixelWidth: 159,
@@ -4165,9 +4486,11 @@ export const grievancesGridColumns: () => Column<any>[] = () => {
       // modal can be here
       // PASS THE COMPONENT TO BE OPENED IN MODAL HERE
       // DISABLED FOR NOW
-      // componentToOpenOnClickingCell: props => <ClaimGridModel {...props} />,
+      // componentToOpenOnClickingCell: (props) => <ClaimGridModel {...props} />,
+      // onCellClick: (props) => <ClaimGridModel {...props} />,
+      // componentToOpenOnClickingCell: (props) => <ClaimGridModel {...props} />,
       key: "grievance",
-      displayTitle: "Grievance #",
+      displayTitle: "Grievance ID",
 
       filters: textFilters,
 
@@ -4232,23 +4555,23 @@ export const grievancesGridColumns: () => Column<any>[] = () => {
       hidden: false,
       sortDirections: ["ascend", "descend"],
     },
+    // {
+    //   position: 7,
+    //   sorter: {},
+    //   textCase: "upper",
+    //   isFilterable: true,
+    //   pixelWidth: 126,
+    //   key: "classification",
+    //   displayTitle: "Classification",
+    //   dataType: "string",
+
+    //   filters: textFilters,
+
+    //   hidden: false,
+    //   sortDirections: ["ascend", "descend"],
+    // },
     {
       position: 7,
-      sorter: {},
-      textCase: "upper",
-      isFilterable: true,
-      pixelWidth: 126,
-      key: "classification",
-      displayTitle: "Classification",
-      dataType: "string",
-
-      filters: textFilters,
-
-      hidden: false,
-      sortDirections: ["ascend", "descend"],
-    },
-    {
-      position: 8,
       sorter: {},
       textCase: "upper",
       pixelWidth: 115,
@@ -4371,477 +4694,489 @@ export const grievancesGridColumns: () => Column<any>[] = () => {
 
 export const _pacases_initial: () => Column<any>[] = () => {
   return [
-
     {
-      "displayTitle": "PA Case ID",
-      "position": 1,
-      "textCase": "upper",
-      "isFilterable": true,
-      "pixelWidth": 200,
-      "sorter": {},
-      className: "entry-component",
-      "key": "paCaseId",
-      "filters": textFilters,
-      "dataType": "string",
-      "hidden": false,
-      "sortDirections": ["ascend", "descend"]
+      displayTitle: "Date/Time Received",
+      position: 1,
+      textCase: "upper",
+      isFilterable: true,
+      pixelWidth: 230,
+      sorter: {},
+      key: "dateTimeReceived",
+      filters: dateFilters,
+      dataType: "date",
+      hidden: false,
+      sortDirections: ["ascend", "descend"],
     },
     {
-      "displayTitle": "Date/Time Received",
-      "position": 2,
-      "textCase": "upper",
-      "isFilterable": true,
-      "pixelWidth": 230,
-      "sorter": {},
-      "key": "dateTimeReceived",
-      "filters": dateFilters,
-      "dataType": "date",
-      "hidden": false,
-      "sortDirections": ["ascend", "descend"]
+      displayTitle: "PA Case ID",
+      position: 2,
+      textCase: "upper",
+      isFilterable: true,
+      pixelWidth: 200,
+      sorter: {},
+      className: "entry-component",
+      key: "paCaseId",
+      filters: textFilters,
+      dataType: "string",
+      hidden: false,
+      sortDirections: ["ascend", "descend"],
     },
     {
-      "displayTitle": "Drug Label",
-      "position": 3,
-      "textCase": "upper",
-      "isFilterable": true,
-      "pixelWidth": 200,
-      "sorter": {},
-      "key": "drugLabel",
+      displayTitle: "Drug Label",
+      position: 3,
+      textCase: "upper",
+      isFilterable: true,
+      pixelWidth: 200,
+      sorter: {},
+      key: "drugLabel",
       className: "entry-component",
-      toolTip: props => <FrxGridToolTip {...props} />,
+      toolTip: (props) => <FrxGridToolTip {...props} />,
       showToolTip: true,
-      "filters": textFilters,
-      "dataType": "string",
-      "hidden": false,
-      "sortDirections": ["ascend", "descend"]
+      filters: textFilters,
+      dataType: "string",
+      hidden: false,
+      sortDirections: ["ascend", "descend"],
     },
     {
-      "displayTitle": "Classification",
-      "position": 4,
-      "textCase": "upper",
-      "isFilterable": true,
-      "pixelWidth": 200,
-      "sorter": {},
-      "key": "classification",
-      "filters": textFilters,
-      "dataType": "string",
-      "hidden": false,
-      "sortDirections": ["ascend", "descend"]
+      displayTitle: "Classification",
+      position: 4,
+      textCase: "upper",
+      isFilterable: true,
+      pixelWidth: 200,
+      sorter: {},
+      key: "classification",
+      filters: textFilters,
+      dataType: "string",
+      hidden: false,
+      sortDirections: ["ascend", "descend"],
     },
     {
-      "displayTitle": "Case Type",
-      "position": 5,
-      "textCase": "upper",
-      "isFilterable": true,
-      "pixelWidth": 300,
-      "sorter": {},
-      "key": "caseType",
-      "filters": textFilters,
-      "dataType": "string",
-      "hidden": false,
-      "sortDirections": ["ascend", "descend"]
+      displayTitle: "Case Type",
+      position: 5,
+      textCase: "upper",
+      isFilterable: true,
+      pixelWidth: 300,
+      sorter: {},
+      key: "caseType",
+      filters: textFilters,
+      dataType: "string",
+      hidden: false,
+      sortDirections: ["ascend", "descend"],
     },
     {
-      "displayTitle": "Priority Type",
-      "position": 6,
-      "textCase": "upper",
-      "isFilterable": true,
-      "pixelWidth": 230,
-      "sorter": {},
-      "key": "priorityType",
-      "filters": textFilters,
-      "dataType": "string",
-      "hidden": false,
-      "sortDirections": ["ascend", "descend"]
+      displayTitle: "Priority Type",
+      position: 6,
+      textCase: "upper",
+      isFilterable: true,
+      pixelWidth: 230,
+      sorter: {},
+      key: "priorityType",
+      filters: textFilters,
+      dataType: "string",
+      hidden: false,
+      sortDirections: ["ascend", "descend"],
     },
     {
-      "displayTitle": "Review Stage",
-      "position": 7,
-      "textCase": "upper",
-      "isFilterable": true,
-      "pixelWidth": 230,
-      "sorter": {},
-      "key": "reviewStage",
-      "filters": textFilters,
-      "dataType": "string",
-      "hidden": false,
-      "sortDirections": ["ascend", "descend"]
+      displayTitle: "Review Stage",
+      position: 7,
+      textCase: "upper",
+      isFilterable: true,
+      pixelWidth: 230,
+      sorter: {},
+      key: "reviewStage",
+      filters: textFilters,
+      dataType: "string",
+      hidden: false,
+      sortDirections: ["ascend", "descend"],
     },
     {
-      "displayTitle": "Review Timeframe",
-      "position": 8,
-      "textCase": "upper",
-      "isFilterable": true,
-      "pixelWidth": 260,
-      "sorter": {},
-      "key": "reviewTimeFrame",
-      "filters": textFilters,
-      "dataType": "string",
-      "hidden": false,
-      "sortDirections": ["ascend", "descend"]
+      displayTitle: "Review Timeframe",
+      position: 8,
+      textCase: "upper",
+      isFilterable: true,
+      pixelWidth: 260,
+      sorter: {},
+      key: "reviewTimeFrame",
+      filters: textFilters,
+      dataType: "string",
+      hidden: false,
+      sortDirections: ["ascend", "descend"],
     },
     {
-      "displayTitle": "Time Remaining",
-      "position": 9,
-      "textCase": "upper",
-      "isFilterable": true,
-      "pixelWidth": 230,
-      "sorter": {},
-      "key": "timeRemaining",
-      "filters": textFilters,
-      "dataType": "string",
-      "hidden": false,
-      "sortDirections": ["ascend", "descend"]
+      displayTitle: "Time Remaining",
+      position: 9,
+      textCase: "upper",
+      isFilterable: true,
+      pixelWidth: 230,
+      sorter: {},
+      key: "timeRemaining",
+      filters: textFilters,
+      dataType: "string",
+      hidden: false,
+      sortDirections: ["ascend", "descend"],
     },
     {
-      "displayTitle": "Date/ Time Completed",
-      "position": 10,
-      "textCase": "upper",
-      "isFilterable": true,
-      "pixelWidth": 260,
-      "sorter": {},
-      "key": "dateTimeCompleted",
-      "filters": dateFilters,
-      "dataType": "date",
-      "hidden": false,
-      "sortDirections": ["ascend", "descend"]
+      displayTitle: "Date/ Time Completed",
+      position: 10,
+      textCase: "upper",
+      isFilterable: true,
+      pixelWidth: 260,
+      sorter: {},
+      key: "dateTimeCompleted",
+      filters: dateFilters,
+      dataType: "date",
+      hidden: false,
+      sortDirections: ["ascend", "descend"],
     },
     {
-      "displayTitle": "Case Status",
-      "position": 11,
-      "textCase": "upper",
-      "isFilterable": true,
-      "pixelWidth": 230,
-      "sorter": {},
-      "key": "caseStatus",
-      "filters": textFilters,
-      "dataType": "string",
-      "hidden": false,
-      "sortDirections": ["ascend", "descend"]
+      displayTitle: "Case Status",
+      position: 11,
+      textCase: "upper",
+      isFilterable: true,
+      pixelWidth: 230,
+      sorter: {},
+      key: "caseStatus",
+      filters: textFilters,
+      dataType: "string",
+      hidden: false,
+      sortDirections: ["ascend", "descend"],
     },
     {
-      "displayTitle": "Document",
-      "position": 12,
-      "textCase": "upper",
-      "isFilterable": true,
-      "pixelWidth": 230,
-      "sorter": {},
-      "key": "document",
-      "filters": textFilters,
-      "dataType": "string",
-      "hidden": false,
-      "sortDirections": ["ascend", "descend"]
+      displayTitle: "Document",
+      position: 12,
+      textCase: "upper",
+      isFilterable: true,
+      pixelWidth: 230,
+      sorter: {},
+      key: "document",
+      filters: textFilters,
+      dataType: "string",
+      hidden: false,
+      sortDirections: ["ascend", "descend"],
     },
     {
-      "displayTitle": "Requestor",
-      "position": 13,
-      "textCase": "upper",
-      "isFilterable": true,
-      "pixelWidth": 230,
-      "sorter": {},
-      "key": "requestor",
-      "filters": textFilters,
-      "dataType": "string",
-      "hidden": false,
-      "sortDirections": ["ascend", "descend"]
+      displayTitle: "Requestor",
+      position: 13,
+      textCase: "upper",
+      isFilterable: true,
+      pixelWidth: 230,
+      sorter: {},
+      key: "requestor",
+      filters: textFilters,
+      dataType: "string",
+      hidden: false,
+      sortDirections: ["ascend", "descend"],
     },
     {
-      "displayTitle": "AOR",
-      "position": 14,
-      "textCase": "upper",
-      "isFilterable": true,
-      "pixelWidth": 230,
-      "sorter": {},
-      "key": "aor",
-      "filters": textFilters,
-      "dataType": "string",
-      "hidden": false,
-      "sortDirections": ["ascend", "descend"]
+      displayTitle: "AOR",
+      position: 14,
+      textCase: "upper",
+      isFilterable: true,
+      pixelWidth: 230,
+      sorter: {},
+      key: "aor",
+      filters: textFilters,
+      dataType: "string",
+      hidden: false,
+      sortDirections: ["ascend", "descend"],
     },
     {
-      "displayTitle": "Prescriber",
-      "position": 15,
-      "textCase": "upper",
-      "isFilterable": true,
-      "pixelWidth": 230,
-      "sorter": {},
-      "key": "prescriber",
-      "filters": textFilters,
-      "dataType": "string",
-      "hidden": false,
-      "sortDirections": ["ascend", "descend"]
+      displayTitle: "Prescriber",
+      position: 15,
+      textCase: "upper",
+      isFilterable: true,
+      pixelWidth: 230,
+      sorter: {},
+      key: "prescriber",
+      filters: textFilters,
+      dataType: "string",
+      hidden: false,
+      sortDirections: ["ascend", "descend"],
     },
     {
-      "displayTitle": "Intake Type",
-      "position": 16,
-      "textCase": "upper",
-      "isFilterable": true,
-      "pixelWidth": 230,
-      "sorter": {},
-      "key": "intakeType",
-      "filters": textFilters,
-      "dataType": "string",
-      "hidden": false,
-      "sortDirections": ["ascend", "descend"]
+      displayTitle: "Intake Type",
+      position: 16,
+      textCase: "upper",
+      isFilterable: true,
+      pixelWidth: 230,
+      sorter: {},
+      key: "intakeType",
+      filters: textFilters,
+      dataType: "string",
+      hidden: false,
+      sortDirections: ["ascend", "descend"],
     },
     {
-      "displayTitle": "Change In Priority Status",
-      "position": 17,
-      "textCase": "upper",
-      "isFilterable": true,
-      "pixelWidth": 300,
-      "sorter": {},
-      "key": "changeInPriorityStatus",
-      "filters": textFilters,
-      "dataType": "string",
-      "hidden": false,
-      "sortDirections": ["ascend", "descend"]
-    }
+      displayTitle: "Change In Priority Status",
+      position: 17,
+      textCase: "upper",
+      isFilterable: true,
+      pixelWidth: 300,
+      sorter: {},
+      key: "changeInPriorityStatus",
+      filters: textFilters,
+      dataType: "string",
+      hidden: false,
+      sortDirections: ["ascend", "descend"],
+    },
   ];
-}
+};
 export const _pacases_appeal: () => Column<any>[] = () => {
   return [
     {
-      "displayTitle": "Initial PA Case ID",
-      "position": 1,
-      "textCase": "upper",
-      "isFilterable": true,
-      "pixelWidth": 200,
-      "sorter": {},
-      "key": "paCaseId",
+      displayTitle: "Date/Time Received",
+      position: 1,
+      textCase: "upper",
+      isFilterable: true,
+      pixelWidth: 230,
+      sorter: {},
+      key: "dateTimeReceived",
+      filters: dateFilters,
+      dataType: "date",
+      hidden: false,
+      sortDirections: ["ascend", "descend"],
+    },
+    {
+      displayTitle: "Initial PA Case ID",
+      position: 2,
+      textCase: "upper",
+      isFilterable: true,
+      pixelWidth: 200,
+      sorter: {},
+      key: "paCaseId",
       className: "entry-component",
-      "filters": textFilters,
-      "dataType": "string",
-      "hidden": false,
-      "sortDirections": ["ascend", "descend"]
+      filters: textFilters,
+      dataType: "string",
+      hidden: false,
+      sortDirections: ["ascend", "descend"],
     },
     {
-      "displayTitle": "Appeal Case ID",
-      "position": 2,
-      "textCase": "upper",
-      "isFilterable": true,
-      "pixelWidth": 200,
-      "sorter": {},
-      "key": "paCaseId",
+      displayTitle: "Appeal Case ID",
+      position: 3,
+      textCase: "upper",
+      isFilterable: true,
+      pixelWidth: 200,
+      sorter: {},
+      key: "paCaseId",
       className: "entry-component",
-      "filters": textFilters,
-      "dataType": "string",
-      "hidden": false,
-      "sortDirections": ["ascend", "descend"]
+      filters: textFilters,
+      dataType: "string",
+      hidden: false,
+      sortDirections: ["ascend", "descend"],
     },
     {
-      "displayTitle": "Date/Time Received",
-      "position": 3,
-      "textCase": "upper",
-      "isFilterable": true,
-      "pixelWidth": 230,
-      "sorter": {},
-      "key": "dateTimeReceived",
-      "filters": dateFilters,
-      "dataType": "date",
-      "hidden": false,
-      "sortDirections": ["ascend", "descend"]
+      displayTitle: "Date/Time Received",
+      position: 4,
+      textCase: "upper",
+      isFilterable: true,
+      pixelWidth: 230,
+      sorter: {},
+      key: "dateTimeReceived",
+      filters: dateFilters,
+      dataType: "date",
+      hidden: false,
+      sortDirections: ["ascend", "descend"],
     },
     {
-      "displayTitle": "Drug Label",
-      "position": 5,
-      "textCase": "upper",
-      "isFilterable": true,
-      "pixelWidth": 200,
-      "sorter": {},
-      "key": "drugLabel",
-      "filters": textFilters,
+      displayTitle: "Drug Label",
+      position: 5,
+      textCase: "upper",
+      isFilterable: true,
+      pixelWidth: 200,
+      sorter: {},
+      key: "drugLabel",
+      filters: textFilters,
       className: "entry-component",
       showToolTip: true,
-      toolTip: props => <FrxGridToolTip {...props} />,
-      "dataType": "string",
-      "hidden": false,
-      "sortDirections": ["ascend", "descend"]
+      toolTip: (props) => <FrxGridToolTip {...props} />,
+      dataType: "string",
+      hidden: false,
+      sortDirections: ["ascend", "descend"],
     },
     {
-      "displayTitle": "Classification",
-      "position": 6,
-      "textCase": "upper",
-      "isFilterable": true,
-      "pixelWidth": 200,
-      "sorter": {},
-      "key": "classification",
-      "filters": textFilters,
-      "dataType": "string",
-      "hidden": false,
-      "sortDirections": ["ascend", "descend"]
+      displayTitle: "Classification",
+      position: 6,
+      textCase: "upper",
+      isFilterable: true,
+      pixelWidth: 200,
+      sorter: {},
+      key: "classification",
+      filters: textFilters,
+      dataType: "string",
+      hidden: false,
+      sortDirections: ["ascend", "descend"],
     },
     {
-      "displayTitle": "Case Type",
-      "position": 7,
-      "textCase": "upper",
-      "isFilterable": true,
-      "pixelWidth": 300,
-      "sorter": {},
-      "key": "caseType",
-      "filters": textFilters,
-      "dataType": "string",
-      "hidden": false,
-      "sortDirections": ["ascend", "descend"]
+      displayTitle: "Case Type",
+      position: 7,
+      textCase: "upper",
+      isFilterable: true,
+      pixelWidth: 300,
+      sorter: {},
+      key: "caseType",
+      filters: textFilters,
+      dataType: "string",
+      hidden: false,
+      sortDirections: ["ascend", "descend"],
     },
     {
-      "displayTitle": "Priority Type",
-      "position": 8,
-      "textCase": "upper",
-      "isFilterable": true,
-      "pixelWidth": 230,
-      "sorter": {},
-      "key": "priorityType",
-      "filters": textFilters,
-      "dataType": "string",
-      "hidden": false,
-      "sortDirections": ["ascend", "descend"]
+      displayTitle: "Priority Type",
+      position: 8,
+      textCase: "upper",
+      isFilterable: true,
+      pixelWidth: 230,
+      sorter: {},
+      key: "priorityType",
+      filters: textFilters,
+      dataType: "string",
+      hidden: false,
+      sortDirections: ["ascend", "descend"],
     },
     {
-      "displayTitle": "Review Stage",
-      "position": 9,
-      "textCase": "upper",
-      "isFilterable": true,
-      "pixelWidth": 230,
-      "sorter": {},
-      "key": "reviewStage",
-      "filters": textFilters,
-      "dataType": "string",
-      "hidden": false,
-      "sortDirections": ["ascend", "descend"]
+      displayTitle: "Review Stage",
+      position: 9,
+      textCase: "upper",
+      isFilterable: true,
+      pixelWidth: 230,
+      sorter: {},
+      key: "reviewStage",
+      filters: textFilters,
+      dataType: "string",
+      hidden: false,
+      sortDirections: ["ascend", "descend"],
     },
     {
-      "displayTitle": "Review Timeframe",
-      "position": 10,
-      "textCase": "upper",
-      "isFilterable": true,
-      "pixelWidth": 260,
-      "sorter": {},
-      "key": "reviewTimeFrame",
-      "filters": textFilters,
-      "dataType": "string",
-      "hidden": false,
-      "sortDirections": ["ascend", "descend"]
+      displayTitle: "Review Timeframe",
+      position: 10,
+      textCase: "upper",
+      isFilterable: true,
+      pixelWidth: 260,
+      sorter: {},
+      key: "reviewTimeFrame",
+      filters: textFilters,
+      dataType: "string",
+      hidden: false,
+      sortDirections: ["ascend", "descend"],
     },
     {
-      "displayTitle": "Time Remaining",
-      "position": 11,
-      "textCase": "upper",
-      "isFilterable": true,
-      "pixelWidth": 230,
-      "sorter": {},
-      "key": "timeRemaining",
-      "filters": textFilters,
-      "dataType": "string",
-      "hidden": false,
-      "sortDirections": ["ascend", "descend"]
+      displayTitle: "Time Remaining",
+      position: 11,
+      textCase: "upper",
+      isFilterable: true,
+      pixelWidth: 230,
+      sorter: {},
+      key: "timeRemaining",
+      filters: textFilters,
+      dataType: "string",
+      hidden: false,
+      sortDirections: ["ascend", "descend"],
     },
     {
-      "displayTitle": "Date/ Time Completed",
-      "position": 12,
-      "textCase": "upper",
-      "isFilterable": true,
-      "pixelWidth": 260,
-      "sorter": {},
-      "key": "dateTimeCompleted",
-      "filters": dateFilters,
-      "dataType": "date",
-      "hidden": false,
-      "sortDirections": ["ascend", "descend"]
+      displayTitle: "Date/ Time Completed",
+      position: 12,
+      textCase: "upper",
+      isFilterable: true,
+      pixelWidth: 260,
+      sorter: {},
+      key: "dateTimeCompleted",
+      filters: dateFilters,
+      dataType: "date",
+      hidden: false,
+      sortDirections: ["ascend", "descend"],
     },
     {
-      "displayTitle": "Case Status",
-      "position": 13,
-      "textCase": "upper",
-      "isFilterable": true,
-      "pixelWidth": 230,
-      "sorter": {},
-      "key": "caseStatus",
-      "filters": textFilters,
-      "dataType": "string",
-      "hidden": false,
-      "sortDirections": ["ascend", "descend"]
+      displayTitle: "Case Status",
+      position: 13,
+      textCase: "upper",
+      isFilterable: true,
+      pixelWidth: 230,
+      sorter: {},
+      key: "caseStatus",
+      filters: textFilters,
+      dataType: "string",
+      hidden: false,
+      sortDirections: ["ascend", "descend"],
     },
     {
-      "displayTitle": "Document",
-      "position": 14,
-      "textCase": "upper",
-      "isFilterable": true,
-      "pixelWidth": 230,
-      "sorter": {},
-      "key": "document",
-      "filters": textFilters,
-      "dataType": "string",
-      "hidden": false,
-      "sortDirections": ["ascend", "descend"]
+      displayTitle: "Document",
+      position: 14,
+      textCase: "upper",
+      isFilterable: true,
+      pixelWidth: 230,
+      sorter: {},
+      key: "document",
+      filters: textFilters,
+      dataType: "string",
+      hidden: false,
+      sortDirections: ["ascend", "descend"],
     },
     {
-      "displayTitle": "Requestor",
-      "position": 15,
-      "textCase": "upper",
-      "isFilterable": true,
-      "pixelWidth": 230,
-      "sorter": {},
-      "key": "requestor",
-      "filters": textFilters,
-      "dataType": "string",
-      "hidden": false,
-      "sortDirections": ["ascend", "descend"]
+      displayTitle: "Requestor",
+      position: 15,
+      textCase: "upper",
+      isFilterable: true,
+      pixelWidth: 230,
+      sorter: {},
+      key: "requestor",
+      filters: textFilters,
+      dataType: "string",
+      hidden: false,
+      sortDirections: ["ascend", "descend"],
     },
     {
-      "displayTitle": "AOR",
-      "position": 16,
-      "textCase": "upper",
-      "isFilterable": true,
-      "pixelWidth": 230,
-      "sorter": {},
-      "key": "aor",
-      "filters": textFilters,
-      "dataType": "string",
-      "hidden": false,
-      "sortDirections": ["ascend", "descend"]
+      displayTitle: "AOR",
+      position: 16,
+      textCase: "upper",
+      isFilterable: true,
+      pixelWidth: 230,
+      sorter: {},
+      key: "aor",
+      filters: textFilters,
+      dataType: "string",
+      hidden: false,
+      sortDirections: ["ascend", "descend"],
     },
     {
-      "displayTitle": "Prescriber",
-      "position": 17,
-      "textCase": "upper",
-      "isFilterable": true,
-      "pixelWidth": 230,
-      "sorter": {},
-      "key": "prescriber",
-      "filters": textFilters,
-      "dataType": "string",
-      "hidden": false,
-      "sortDirections": ["ascend", "descend"]
+      displayTitle: "Prescriber",
+      position: 17,
+      textCase: "upper",
+      isFilterable: true,
+      pixelWidth: 230,
+      sorter: {},
+      key: "prescriber",
+      filters: textFilters,
+      dataType: "string",
+      hidden: false,
+      sortDirections: ["ascend", "descend"],
     },
     {
-      "displayTitle": "Intake Type",
-      "position": 18,
-      "textCase": "upper",
-      "isFilterable": true,
-      "pixelWidth": 230,
-      "sorter": {},
-      "key": "intakeType",
-      "filters": textFilters,
-      "dataType": "string",
-      "hidden": false,
-      "sortDirections": ["ascend", "descend"]
+      displayTitle: "Intake Type",
+      position: 18,
+      textCase: "upper",
+      isFilterable: true,
+      pixelWidth: 230,
+      sorter: {},
+      key: "intakeType",
+      filters: textFilters,
+      dataType: "string",
+      hidden: false,
+      sortDirections: ["ascend", "descend"],
     },
     {
-      "displayTitle": "Change In Priority Status",
-      "position": 19,
-      "textCase": "upper",
-      "isFilterable": true,
-      "pixelWidth": 300,
-      "sorter": {},
-      "key": "changeInPriorityStatus",
-      "filters": textFilters,
-      "dataType": "string",
-      "hidden": false,
-      "sortDirections": ["ascend", "descend"]
-    }
+      displayTitle: "Change In Priority Status",
+      position: 19,
+      textCase: "upper",
+      isFilterable: true,
+      pixelWidth: 300,
+      sorter: {},
+      key: "changeInPriorityStatus",
+      filters: textFilters,
+      dataType: "string",
+      hidden: false,
+      sortDirections: ["ascend", "descend"],
+    },
   ];
-}
+};
 
 export const AdvancedSearchMemberGridColumns: () => Column<any>[] = () => {
   return [
@@ -4910,7 +5245,7 @@ export const AdvancedSearchMemberGridColumns: () => Column<any>[] = () => {
       filters: textFilters,
       hidden: false,
       sortDirections: ["ascend", "descend"],
-      customContent: props => <GridMemberLOBCustom {...props} />,
+      customContent: (props) => <GridMemberLOBCustom {...props} />,
     },
     {
       position: 6,
@@ -5805,6 +6140,7 @@ export const AdvancedSearchTestClaimsGridColumns: () => Column<any>[] = () => {
       sorter: {},
       key: "testClaimId",
       displayTitle: "Test Claim ID",
+      className: "entry-component",
       filters: textFilters,
       dataType: "string",
       hidden: false,
@@ -5816,7 +6152,7 @@ export const AdvancedSearchTestClaimsGridColumns: () => Column<any>[] = () => {
       isFilterable: true,
       textCase: "upper",
       pixelWidth: 257,
-      key: "dateOfService",
+      key: "serviceDate",
       displayTitle: "DATE OF SERVICE",
       dataType: "date",
       filters: dateFilters,
@@ -5894,7 +6230,7 @@ export const AdvancedSearchTestClaimsGridColumns: () => Column<any>[] = () => {
       textCase: "upper",
       isFilterable: true,
       pixelWidth: 170,
-      key: "quantity",
+      key: "qty",
       displayTitle: "QUANTITY",
       dataType: "string",
       filters: textFilters,
@@ -6089,7 +6425,7 @@ export const AdvancedSearchTestClaimsGridColumns: () => Column<any>[] = () => {
       textCase: "upper",
       isFilterable: true,
       pixelWidth: 170,
-      key: "costshare",
+      key: "costShare",
       displayTitle: "COSTSHARE",
       dataType: "string",
       filters: textFilters,
@@ -6102,7 +6438,7 @@ export const AdvancedSearchTestClaimsGridColumns: () => Column<any>[] = () => {
       textCase: "upper",
       isFilterable: true,
       pixelWidth: 170,
-      key: "processType",
+      key: "process",
       displayTitle: "PROCESS TYPE",
       dataType: "string",
       filters: textFilters,
@@ -6134,6 +6470,7 @@ export const AdvancedSearchGrienvanceGridColumns: () => Column<any>[] = () => {
       pixelWidth: 239,
       key: "grievanceId",
       displayTitle: "GRIEVANCE ID",
+      className: "entry-component",
       dataType: "string",
       filters: textFilters,
       hidden: false,
@@ -6209,7 +6546,7 @@ export const AdvancedSearchGrienvanceGridColumns: () => Column<any>[] = () => {
       sorter: {},
       textCase: "upper",
       isFilterable: true,
-      pixelWidth: 170,
+      pixelWidth: 300,
       key: "complaintDescription",
       displayTitle: "COMPLAINT DESCRIPTION",
       dataType: "string",
@@ -6222,7 +6559,7 @@ export const AdvancedSearchGrienvanceGridColumns: () => Column<any>[] = () => {
       sorter: {},
       textCase: "upper",
       isFilterable: true,
-      pixelWidth: 170,
+      pixelWidth: 300,
       key: "embeddedCoverageDetermination",
       displayTitle: "EMBEDDED COVERAGE DETERMINATION",
       dataType: "string",
@@ -6287,7 +6624,7 @@ export const AdvancedSearchGrienvanceGridColumns: () => Column<any>[] = () => {
       sorter: {},
       textCase: "upper",
       isFilterable: true,
-      pixelWidth: 170,
+      pixelWidth: 270,
       key: "dateTimeCompleted",
       displayTitle: "DATE/TIME COMPLETED",
       dataType: "string",
@@ -7620,10 +7957,10 @@ export const AdvancedSearchDocumentsGridColumns: () => Column<any>[] = () => {
       textCase: "upper",
       isFilterable: true,
       pixelWidth: 290,
-      className:"entry-component",
+      className: "entry-component",
       sorter: {},
       key: "documentName",
-      displayTitle: "CLAIM ID",
+      displayTitle: "DOCUMENT NAME",
       filters: textFilters,
       dataType: "string",
       hidden: false,
@@ -7714,7 +8051,7 @@ export const AdvancedSearchDocumentsGridColumns: () => Column<any>[] = () => {
       isFilterable: true,
       pixelWidth: 170,
       key: "type",
-      displayTitle: "TYPE",
+      displayTitle: "DOCUMENT TYPE",
       dataType: "string",
       filters: textFilters,
       hidden: false,
@@ -8208,7 +8545,6 @@ export const AdvancedSearchAuditGridColumns: () => Column<any>[] = () => {
   ];
 };
 
-
 export const PrescriberTab5DrugColumns: () => Column<any>[] = () => {
   return [
     {
@@ -8222,7 +8558,7 @@ export const PrescriberTab5DrugColumns: () => Column<any>[] = () => {
       filters: textFilters,
       dataType: "string",
       hidden: false,
-      sortDirections: ["ascend", "descend"]
+      sortDirections: ["ascend", "descend"],
     },
     {
       position: 2,
@@ -8235,7 +8571,7 @@ export const PrescriberTab5DrugColumns: () => Column<any>[] = () => {
       dataType: "number",
       filters: numberFilters,
       hidden: false,
-      sortDirections: ["ascend", "descend"]
+      sortDirections: ["ascend", "descend"],
     },
     {
       position: 3,
@@ -8248,7 +8584,7 @@ export const PrescriberTab5DrugColumns: () => Column<any>[] = () => {
       dataType: "number",
       filters: numberFilters,
       hidden: false,
-      sortDirections: ["ascend", "descend"]
+      sortDirections: ["ascend", "descend"],
     },
     {
       position: 4,
@@ -8261,7 +8597,7 @@ export const PrescriberTab5DrugColumns: () => Column<any>[] = () => {
       dataType: "number",
       filters: numberFilters,
       hidden: false,
-      sortDirections: ["ascend", "descend"]
+      sortDirections: ["ascend", "descend"],
     },
     {
       position: 5,
@@ -8274,7 +8610,7 @@ export const PrescriberTab5DrugColumns: () => Column<any>[] = () => {
       dataType: "number",
       filters: numberFilters,
       hidden: false,
-      sortDirections: ["ascend", "descend"]
+      sortDirections: ["ascend", "descend"],
     },
   ];
 };
@@ -8292,7 +8628,7 @@ export const PrescriberProfileClaimGridColumns: () => Column<any>[] = () => {
       filters: textFilters,
       dataType: "string",
       hidden: false,
-      sortDirections: ["ascend", "descend"]
+      sortDirections: ["ascend", "descend"],
     },
     {
       position: 2,
@@ -8302,11 +8638,11 @@ export const PrescriberProfileClaimGridColumns: () => Column<any>[] = () => {
       pixelWidth: 130,
       key: "transactionRef",
       displayTitle: "Transaction Ref",
-      className:"entry-component",
+      className: "entry-component",
       dataType: "string",
       filters: textFilters,
       hidden: false,
-      sortDirections: ["ascend", "descend"]
+      sortDirections: ["ascend", "descend"],
     },
     {
       position: 3,
@@ -8316,11 +8652,11 @@ export const PrescriberProfileClaimGridColumns: () => Column<any>[] = () => {
       pixelWidth: 130,
       key: "claimId",
       displayTitle: "Claim ID",
-      className:"entry-component",
+      className: "entry-component",
       dataType: "string",
       filters: textFilters,
       hidden: false,
-      sortDirections: ["ascend", "descend"]
+      sortDirections: ["ascend", "descend"],
     },
     {
       position: 4,
@@ -8333,7 +8669,7 @@ export const PrescriberProfileClaimGridColumns: () => Column<any>[] = () => {
       dataType: "date",
       filters: dateFilters,
       hidden: false,
-      sortDirections: ["ascend", "descend"]
+      sortDirections: ["ascend", "descend"],
     },
     {
       position: 5,
@@ -8346,7 +8682,112 @@ export const PrescriberProfileClaimGridColumns: () => Column<any>[] = () => {
       dataType: "string",
       filters: textFilters,
       hidden: false,
-      sortDirections: ["ascend", "descend"]
+      sortDirections: ["ascend", "descend"],
     },
   ];
 };
+
+// claimPopup mini grids //
+export const claimsPopupRejectedGrid = [
+  {
+    title: 'Reject Code',
+    dataIndex: 'rejectCode',
+    key: 'rejectCode',
+  },
+  {
+    title: 'Description',
+    dataIndex: 'description',
+    key: 'description',
+  },
+  {
+    title: 'Submitted Value',
+    dataIndex: 'submittedValue',
+    key: 'submittedValue',
+    render: submittedValue => (
+      <>
+        {submittedValue.map(submittedValueag => {
+          return (
+            <div className="submitted-value">
+              <span>
+                {submittedValueag}
+              </span>
+            </div>
+          );
+        })}
+      </>
+    ),
+  },
+  {
+    title: 'Expected Value (if available)',
+    dataIndex: 'expectedValue',
+    key: 'expectedValue',
+    render: expectedValue => (
+      <>
+        {expectedValue.map(expectedValuetag => {
+          return (
+            <div className="expected-value">
+              <span>{expectedValuetag}</span>
+            </div>
+          );
+        })}
+      </>
+    ),
+  },
+  {
+    title: 'Status',
+    dataIndex: 'status',
+    key: 'status',
+  },
+]
+
+export const claimsPopupErrorMsgGrid = [
+  {
+    title: 'Error Code',
+    dataIndex: 'errorCode',
+    key: 'errorCode',
+  },
+  {
+    title: 'Description',
+    dataIndex: 'description',
+    key: 'description',
+  },
+  {
+    title: 'Submitted Value',
+    dataIndex: 'submittedValue',
+    key: 'submittedValue',
+    render: submittedValue => (
+      <>
+        {submittedValue.map(submittedValueag => {
+          return (
+            <div className="submitted-value">
+              <span>
+                {submittedValueag}
+              </span>
+            </div>
+          );
+        })}
+      </>
+    ),
+  },
+  {
+    title: 'Expected Value (if available)',
+    dataIndex: 'expectedValue',
+    key: 'expectedValue',
+    render: expectedValue => (
+      <>
+        {expectedValue.map(expectedValuetag => {
+          return (
+            <div className="expected-value">
+              <span>{expectedValuetag}</span>
+            </div>
+          );
+        })}
+      </>
+    ),
+  },
+  {
+    title: 'Status',
+    dataIndex: 'status',
+    key: 'status',
+  },
+]

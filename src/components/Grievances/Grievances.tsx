@@ -7,7 +7,7 @@ import GrievancesAll from "./components/GrievancesAll/GrievancesAll";
 import GrievancesCaseSummary from "./components/GrievancesCaseSummary/GrievancesCaseSummary";
 import GrievancesCommunication from "./components/GrievancesCommunication/GrievancesCommunication";
 import GrievancesReviewNotes from "./components/GrievancesReviewNotes/GrievancesReviewNotes";
-import GrievanceMemberProfile from './components/GrievanceMemberProfile/GrievanceMemberProfile';
+import GrievanceMemberProfile from "./components/GrievanceMemberProfile/GrievanceMemberProfile";
 import Grid from "@material-ui/core/Grid";
 import { Button } from "@material-ui/core";
 import { TabInfo } from "../../models/tab.model";
@@ -19,9 +19,10 @@ import { getAllGrievancesColumn } from "./components/GrievancesAll/GrievanceAllC
 import Accordion from "@material-ui/core/Accordion";
 import AccordionSummary from "@material-ui/core/AccordionSummary";
 import AccordionDetails from "@material-ui/core/AccordionDetails";
-import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 
 import "./Grievances.scss";
+import GrievanceOverlay from "./components/GrievanceOverlay/GrievanceOverlay";
 
 const tabs = [
   { id: 1, text: "COMMUNICATIONS" },
@@ -56,7 +57,8 @@ class Grievances extends React.Component<any, any> {
       requestor: "Savannah Nguyen",
       date: "10/10/2020",
       time: "12:23:11 EST",
-      AORLink: 'https://futurerx.sharepoint.com/:b:/s/MemberProfile/ERU2xBVhTHNGpkXHk-GWgM4BU8IvwZhwDZ9C4isRrb9d3g?e=5dZotg'
+      AORLink:
+        "https://futurerx.sharepoint.com/:b:/s/MemberProfile/ERU2xBVhTHNGpkXHk-GWgM4BU8IvwZhwDZ9C4isRrb9d3g?e=5dZotg",
     },
     grievanceDetails: {
       occurrenceDate: "10/10/2020",
@@ -78,7 +80,8 @@ class Grievances extends React.Component<any, any> {
       dueTime: "01:43:19 EST",
       extensionTaken: "Yes",
       notifiedOfDelay: "Yes",
-      extentionNotificationLetterLink: 'https://futurerx.sharepoint.com/:b:/s/MemberProfile/ERU2xBVhTHNGpkXHk-GWgM4BU8IvwZhwDZ9C4isRrb9d3g?e=5dZotg'
+      extentionNotificationLetterLink:
+        "https://futurerx.sharepoint.com/:b:/s/MemberProfile/ERU2xBVhTHNGpkXHk-GWgM4BU8IvwZhwDZ9C4isRrb9d3g?e=5dZotg",
     },
     grievanceIssueResolution: {
       resolvedIssue: 2,
@@ -115,12 +118,12 @@ class Grievances extends React.Component<any, any> {
     activeTabIndex: 0,
   };
 
-    handleGrievanceToggle = () => {
-        this.setState({expanded: !this.state.expanded})
-    };
-    onReportsClickHandler = (e) => {
-        e.stopPropagation();
-    }
+  handleGrievanceToggle = () => {
+    this.setState({ expanded: !this.state.expanded });
+  };
+  onReportsClickHandler = (e) => {
+    e.stopPropagation();
+  };
   onClickTab = (selectedTabIndex: number) => {
     let activeTabIndex = 0;
 
@@ -135,25 +138,23 @@ class Grievances extends React.Component<any, any> {
   renderActiveTabContent = () => {
     const tabIndex = this.state.activeTabIndex;
     return tabIndex === 0 ? (
-      <div>
-        <GrievancesCommunication
-          title=""
-          // onClose={this.onButtonClick}
-          // openPopup={true}
-          data={getGCommunicationData()}
-          columns={getCommunicationsGrievances()}
-          showTabs={true}
-          tabs={[
-            { id: 1, text: "Inbound" },
-            { id: 2, text: "Outbound" },
-          ]}
-          tabTypes={["grid", "form"]}
-        />
-      </div>
+      <GrievancesCommunication
+        title=""
+        // onClose={this.onButtonClick}
+        // openPopup={true}
+        data={getGCommunicationData()}
+        columns={getCommunicationsGrievances()}
+        showTabs={true}
+        tabs={[
+          { id: 1, text: "Inbound" },
+          { id: 2, text: "Outbound" },
+        ]}
+        tabTypes={["grid", "form"]}
+      />
     ) : tabIndex === 1 ? (
       <GrievancesReviewNotes title="Grievances Review Notes" />
     ) : tabIndex === 2 ? (
-      <GrievancesAll 
+      <GrievancesAll
         title=""
         data={getGAllData()}
         columns={getAllGrievancesColumn()}
@@ -177,93 +178,12 @@ class Grievances extends React.Component<any, any> {
         : "case-status open";
     const grievanceContent =
       this.props.isOpen === true ? (
-        <React.Fragment>
-          <div className="new-grievance-top">
-            <div className="breadcrum">
-              <span
-                className="color-blue"
-                onClick={this.onNewGrievancesClickHandler}
-              >
-                Module{" "}
-              </span>
-              <span>&gt;</span>
-              <span>Grievances</span>
-            </div>
-            <GrievanceMemberProfile 
-              memberInformation={this.props.memberInformation}
-              contactInformation={this.props.contactInformation}
-            />
-          </div>
-          <div className="new-grievance-root">
-          <Accordion
-            expanded={this.state.expanded}
-            onChange={this.handleGrievanceToggle}>
-                <AccordionSummary
-                    className="newGrievancesAccordian-heading"
-                    expandIcon={<ExpandMoreIcon />}
-                    aria-controls="panel1a-content"
-                    id="panel1a-header">
-                    <div className="grievances-header">
-                        <span className="grievances_header-heading">Grievances</span>
-                        <Button
-                            className="common-btn"
-                            onClick={this.onReportsClickHandler}
-                        >
-                            {" "}
-                            Reports
-                        </Button>
-                    </div>
-                </AccordionSummary>
-                <AccordionDetails className="newGrievanceContent-details">
-                    <div className="grievances-content">
-                    <Grid container className="grievance-wrapper">
-                        <Grid item xs={6} className="left-section">
-                        <div className="case-header">
-                            <div className="title">Grievance CASE</div>
-                            <div className="caseId">
-                            <span>ID:</span>{" "}
-                            <span className="case-id">{this.state.caseId}</span>
-                            </div>
-                            <div className="caseStatus">
-                            <span>Status:</span>{" "}
-                            <span className={caseStatusClass}>
-                                {this.state.caseStatus}
-                            </span>
-                            </div>
-                        </div>
-                        <div className="grievance-accordian">
-                            <GrievancesIntake
-                            intakeData={this.state.grievancesIntake}
-                            />
-                            <GrievancesDetails details={this.state.grievanceDetails} />
-                            <GrievancesIssueResolution
-                            issueResolutionData={this.state.grievanceIssueResolution}
-                            />
-                            <GrievancesNotification
-                            notificationData={this.state.greievanceNotification}
-                            />
-                        </div>
-                        </Grid>
-                        <Grid item xs={6} className="right-section">
-                        <div className="new-grievances-tabs">
-                            <FrxTabs
-                            tabList={this.state.tabs}
-                            activeTabIndex={this.state.activeTabIndex}
-                            onClickTab={this.onClickTab}
-                            count={3}
-                            countIndex={2}
-                            />
-                            <div className="grievance-tabs-info">
-                            {this.renderActiveTabContent()}
-                            </div>
-                        </div>
-                        </Grid>
-                    </Grid>
-                    </div>
-                </AccordionDetails>
-            </Accordion>
-          </div>
-        </React.Fragment>
+        <GrievanceOverlay
+          caseStatusClass={caseStatusClass}
+          memberInformation={this.props.memberInformation}
+          contactInformation={this.props.contactInformation} 
+          onNewGrievancesClickHandler={this.onNewGrievancesClickHandler}
+          />
       ) : (
           <div className="grievance-module">
             <span>Grievances</span>

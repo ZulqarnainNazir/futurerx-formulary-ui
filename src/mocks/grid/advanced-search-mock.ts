@@ -148,21 +148,21 @@ export const getAdvancedSearchCallsGridData = () => {
             extension: ">",
             items: [
                 {
-                  id: 1,
-                  key: 1,
-                  title: "Resend Mail"
+                    id: 1,
+                    key: 1,
+                    title: "Resend Mail"
                 },
                 {
-                  id: 2,
-                  key: 2,
-                  title: "Resend Fax"
+                    id: 2,
+                    key: 2,
+                    title: "Resend Fax"
                 },
                 {
-                  id: 3,
-                  key: 3,
-                  title: "Resend E-mail"
+                    id: 3,
+                    key: 3,
+                    title: "Resend E-mail"
                 },
-              ]
+            ]
         },
         {
             id: 2,
@@ -183,21 +183,21 @@ export const getAdvancedSearchCallsGridData = () => {
             extension: ">",
             items: [
                 {
-                  id: 1,
-                  key: 1,
-                  title: "Resend Mail"
+                    id: 1,
+                    key: 1,
+                    title: "Resend Mail"
                 },
                 {
-                  id: 2,
-                  key: 2,
-                  title: "Resend Fax"
+                    id: 2,
+                    key: 2,
+                    title: "Resend Fax"
                 },
                 {
-                  id: 3,
-                  key: 3,
-                  title: "Resend E-mail"
+                    id: 3,
+                    key: 3,
+                    title: "Resend E-mail"
                 },
-              ]
+            ]
         },
         {
             id: 3,
@@ -218,21 +218,21 @@ export const getAdvancedSearchCallsGridData = () => {
             extension: ">",
             items: [
                 {
-                  id: 1,
-                  key: 1,
-                  title: "Resend Mail"
+                    id: 1,
+                    key: 1,
+                    title: "Resend Mail"
                 },
                 {
-                  id: 2,
-                  key: 2,
-                  title: "Resend Fax"
+                    id: 2,
+                    key: 2,
+                    title: "Resend Fax"
                 },
                 {
-                  id: 3,
-                  key: 3,
-                  title: "Resend E-mail"
+                    id: 3,
+                    key: 3,
+                    title: "Resend E-mail"
                 },
-              ]
+            ]
         },
         {
             id: 4,
@@ -253,21 +253,21 @@ export const getAdvancedSearchCallsGridData = () => {
             extension: ">",
             items: [
                 {
-                  id: 1,
-                  key: 1,
-                  title: "Resend Mail"
+                    id: 1,
+                    key: 1,
+                    title: "Resend Mail"
                 },
                 {
-                  id: 2,
-                  key: 2,
-                  title: "Resend Fax"
+                    id: 2,
+                    key: 2,
+                    title: "Resend Fax"
                 },
                 {
-                  id: 3,
-                  key: 3,
-                  title: "Resend E-mail"
+                    id: 3,
+                    key: 3,
+                    title: "Resend E-mail"
                 },
-              ]
+            ]
         },
         {
             id: 5,
@@ -288,21 +288,21 @@ export const getAdvancedSearchCallsGridData = () => {
             extension: ">",
             items: [
                 {
-                  id: 1,
-                  key: 1,
-                  title: "Resend Mail"
+                    id: 1,
+                    key: 1,
+                    title: "Resend Mail"
                 },
                 {
-                  id: 2,
-                  key: 2,
-                  title: "Resend Fax"
+                    id: 2,
+                    key: 2,
+                    title: "Resend Fax"
                 },
                 {
-                  id: 3,
-                  key: 3,
-                  title: "Resend E-mail"
+                    id: 3,
+                    key: 3,
+                    title: "Resend E-mail"
                 },
-              ]
+            ]
         },
     ];
 };
@@ -323,21 +323,21 @@ export const getAdvancedSearchCommunicationsGridData = () => {
             relatedCall: "",
             items: [
                 {
-                  id: 1,
-                  key: 1,
-                  title: "Resend Mail"
+                    id: 1,
+                    key: 1,
+                    title: "Resend Mail"
                 },
                 {
-                  id: 2,
-                  key: 2,
-                  title: "Resend Fax"
+                    id: 2,
+                    key: 2,
+                    title: "Resend Fax"
                 },
                 {
-                  id: 3,
-                  key: 3,
-                  title: "Resend E-mail"
+                    id: 3,
+                    key: 3,
+                    title: "Resend E-mail"
                 },
-              ]
+            ]
         },
         {
             id: 2,
@@ -354,19 +354,19 @@ export const getAdvancedSearchCommunicationsGridData = () => {
             relatedCall: "",
             items: [
                 {
-                  id: 1,
-                  key: 1,
-                  title: "Resend Mail"
+                    id: 1,
+                    key: 1,
+                    title: "Resend Mail"
                 },
                 {
-                  id: 2,
-                  key: 2,
-                  title: "Resend Fax"
+                    id: 2,
+                    key: 2,
+                    title: "Resend Fax"
                 },
                 {
-                  id: 3,
-                  key: 3,
-                  title: "Resend E-mail"
+                    id: 3,
+                    key: 3,
+                    title: "Resend E-mail"
                 },
             ]
         },
@@ -385,19 +385,19 @@ export const getAdvancedSearchCommunicationsGridData = () => {
             relatedCall: "",
             items: [
                 {
-                  id: 1,
-                  key: 1,
-                  title: "Resend Mail"
+                    id: 1,
+                    key: 1,
+                    title: "Resend Mail"
                 },
                 {
-                  id: 2,
-                  key: 2,
-                  title: "Resend Fax"
+                    id: 2,
+                    key: 2,
+                    title: "Resend Fax"
                 },
                 {
-                  id: 3,
-                  key: 3,
-                  title: "Resend E-mail"
+                    id: 3,
+                    key: 3,
+                    title: "Resend E-mail"
                 },
             ]
         },
@@ -416,19 +416,19 @@ export const getAdvancedSearchCommunicationsGridData = () => {
             relatedCall: "",
             items: [
                 {
-                  id: 1,
-                  key: 1,
-                  title: "Resend Mail"
+                    id: 1,
+                    key: 1,
+                    title: "Resend Mail"
                 },
                 {
-                  id: 2,
-                  key: 2,
-                  title: "Resend Fax"
+                    id: 2,
+                    key: 2,
+                    title: "Resend Fax"
                 },
                 {
-                  id: 3,
-                  key: 3,
-                  title: "Resend E-mail"
+                    id: 3,
+                    key: 3,
+                    title: "Resend E-mail"
                 },
             ]
         },
@@ -447,19 +447,19 @@ export const getAdvancedSearchCommunicationsGridData = () => {
             relatedCall: "",
             items: [
                 {
-                  id: 1,
-                  key: 1,
-                  title: "Resend Mail"
+                    id: 1,
+                    key: 1,
+                    title: "Resend Mail"
                 },
                 {
-                  id: 2,
-                  key: 2,
-                  title: "Resend Fax"
+                    id: 2,
+                    key: 2,
+                    title: "Resend Fax"
                 },
                 {
-                  id: 3,
-                  key: 3,
-                  title: "Resend E-mail"
+                    id: 3,
+                    key: 3,
+                    title: "Resend E-mail"
                 },
             ]
         },
@@ -478,19 +478,19 @@ export const getAdvancedSearchCommunicationsGridData = () => {
             relatedCall: "",
             items: [
                 {
-                  id: 1,
-                  key: 1,
-                  title: "Resend Mail"
+                    id: 1,
+                    key: 1,
+                    title: "Resend Mail"
                 },
                 {
-                  id: 2,
-                  key: 2,
-                  title: "Resend Fax"
+                    id: 2,
+                    key: 2,
+                    title: "Resend Fax"
                 },
                 {
-                  id: 3,
-                  key: 3,
-                  title: "Resend E-mail"
+                    id: 3,
+                    key: 3,
+                    title: "Resend E-mail"
                 },
             ]
         },
@@ -710,21 +710,21 @@ export const getAdvancedSearchOthersGridData = () => {
             documentImage: "Email1 Link",
             items: [
                 {
-                  id: 1,
-                  key: 1,
-                  title: "Resend Mail"
+                    id: 1,
+                    key: 1,
+                    title: "Resend Mail"
                 },
                 {
-                  id: 2,
-                  key: 2,
-                  title: "Resend Fax"
+                    id: 2,
+                    key: 2,
+                    title: "Resend Fax"
                 },
                 {
-                  id: 3,
-                  key: 3,
-                  title: "Resend E-mail"
+                    id: 3,
+                    key: 3,
+                    title: "Resend E-mail"
                 },
-              ]
+            ]
         },
         {
             id: 2,
@@ -741,21 +741,21 @@ export const getAdvancedSearchOthersGridData = () => {
             documentImage: "Text1 Link",
             items: [
                 {
-                  id: 1,
-                  key: 1,
-                  title: "Resend Mail"
+                    id: 1,
+                    key: 1,
+                    title: "Resend Mail"
                 },
                 {
-                  id: 2,
-                  key: 2,
-                  title: "Resend Fax"
+                    id: 2,
+                    key: 2,
+                    title: "Resend Fax"
                 },
                 {
-                  id: 3,
-                  key: 3,
-                  title: "Resend E-mail"
+                    id: 3,
+                    key: 3,
+                    title: "Resend E-mail"
                 },
-              ]
+            ]
         },
         {
             id: 3,
@@ -772,21 +772,21 @@ export const getAdvancedSearchOthersGridData = () => {
             documentImage: "Email2 Link",
             items: [
                 {
-                  id: 1,
-                  key: 1,
-                  title: "Resend Mail"
+                    id: 1,
+                    key: 1,
+                    title: "Resend Mail"
                 },
                 {
-                  id: 2,
-                  key: 2,
-                  title: "Resend Fax"
+                    id: 2,
+                    key: 2,
+                    title: "Resend Fax"
                 },
                 {
-                  id: 3,
-                  key: 3,
-                  title: "Resend E-mail"
+                    id: 3,
+                    key: 3,
+                    title: "Resend E-mail"
                 },
-              ]
+            ]
         },
         {
             id: 4,
@@ -803,21 +803,21 @@ export const getAdvancedSearchOthersGridData = () => {
             documentImage: "Text2 Link",
             items: [
                 {
-                  id: 1,
-                  key: 1,
-                  title: "Resend Mail"
+                    id: 1,
+                    key: 1,
+                    title: "Resend Mail"
                 },
                 {
-                  id: 2,
-                  key: 2,
-                  title: "Resend Fax"
+                    id: 2,
+                    key: 2,
+                    title: "Resend Fax"
                 },
                 {
-                  id: 3,
-                  key: 3,
-                  title: "Resend E-mail"
+                    id: 3,
+                    key: 3,
+                    title: "Resend E-mail"
                 },
-              ]
+            ]
         },
         {
             id: 5,
@@ -834,21 +834,21 @@ export const getAdvancedSearchOthersGridData = () => {
             documentImage: "Email3 Link",
             items: [
                 {
-                  id: 1,
-                  key: 1,
-                  title: "Resend Mail"
+                    id: 1,
+                    key: 1,
+                    title: "Resend Mail"
                 },
                 {
-                  id: 2,
-                  key: 2,
-                  title: "Resend Fax"
+                    id: 2,
+                    key: 2,
+                    title: "Resend Fax"
                 },
                 {
-                  id: 3,
-                  key: 3,
-                  title: "Resend E-mail"
+                    id: 3,
+                    key: 3,
+                    title: "Resend E-mail"
                 },
-              ]
+            ]
         },
     ];
 };
@@ -1794,3 +1794,141 @@ export const getAdvancedSearchRejectedClaimsGridData = () => {
         },
     ];
 };
+
+export const getAdvancedSearchGrievancesData = () => {
+    return [
+        {
+            "id": 1,
+            "key": 1,
+            "dateTimeReceived": "6/22/2020 12:24:05 PM",
+            "grievanceId": "1232",
+            "grievanceCategory": "Plan Benefit",
+            "grievanceType": "Medical",
+            "memberName": "Jack Davis",
+            "memberId": "M11111",
+            "mbi": "11111",
+            "complaintDescription": "Member is stating they did not sign up for this Plan.",
+            "embeddedCoverageDetermination": "N/A",
+            "priorityType": "Standard",
+            "reviewStage": "Review",
+            "reviewTimeFrame": "5 Days",
+            "timeRemaining": "0 D: 4 H : 32 M",
+            "dateTimeCompleted": "6/22/2020 12:24:05 PM",
+            "caseStatus": "Open",
+            "requestor": "Physician",
+            "intakeType": "Fax",
+            "notification": "Oral"
+        },
+        {
+            "id": 2,
+            "key": 2,
+            "dateTimeReceived": "6/22/2020 12:24:05 PM",
+            "grievanceId": "1233",
+            "grievanceCategory": "Plan Benefit",
+            "grievanceType": "Pharmacy",
+            "memberName": "John Murray",
+            "memberId": "M22222",
+            "mbi": "22222",
+            "complaintDescription": "Member is stating they did not sign up for this Plan.",
+            "embeddedCoverageDetermination": "N/A",
+            "priorityType": "Expedited",
+            "reviewStage": "Awaiting AOR",
+            "reviewTimeFrame": "72 Hours",
+            "timeRemaining": "1 D: 4 H : 32 M",
+            "dateTimeCompleted": "6/22/2020 12:24:05 PM",
+            "caseStatus": "Open",
+            "requestor": "Physician",
+            "intakeType": "Fax",
+            "notification": "Written"
+        },
+        {
+            "id": 3,
+            "key": 3,
+            "dateTimeReceived": "6/22/2020 12:24:05 PM",
+            "grievanceId": "1234",
+            "grievanceCategory": "Plan Benefit",
+            "grievanceType": "Medical",
+            "memberName": "Julia McDonald",
+            "memberId": "M33333",
+            "mbi": "33333",
+            "complaintDescription": "Member is stating they did not sign up for this Plan.",
+            "embeddedCoverageDetermination": "PA3456",
+            "priorityType": "Standard",
+            "reviewStage": "Withdrawn",
+            "reviewTimeFrame": "24 Hours",
+            "timeRemaining": "0 D: 4 H : 32 M",
+            "dateTimeCompleted": "6/22/2020 12:24:05 PM",
+            "caseStatus": "Closed",
+            "requestor": "Physician",
+            "intakeType": "Fax",
+            "notification": "Written"
+        },
+        {
+            "id": 4,
+            "key": 4,
+            "dateTimeReceived": "6/22/2020 12:24:05 PM",
+            "grievanceId": "1235",
+            "grievanceCategory": "Plan Benefit",
+            "grievanceType": "Medical",
+            "memberName": "Debra Messing",
+            "memberId": "M44444",
+            "mbi": "44444",
+            "complaintDescription": "Member is stating they did not sign up for this Plan.",
+            "embeddedCoverageDetermination": "N/A",
+            "priorityType": "Standard",
+            "reviewStage": "Cancelled",
+            "reviewTimeFrame": "48 Hours",
+            "timeRemaining": "1 D: 4 H : 32 M",
+            "dateTimeCompleted": "6/22/2020 12:24:05 PM",
+            "caseStatus": "Open",
+            "requestor": "Physician",
+            "intakeType": "Fax",
+            "notification": "Written"
+        },
+        {
+            "id": 5,
+            "key": 5,
+            "dateTimeReceived": "6/22/2020 12:24:05 PM",
+            "grievanceId": "1236",
+            "grievanceCategory": "Plan Benefit",
+            "grievanceType": "Pharmacy",
+            "memberName": "Robert Dewey",
+            "memberId": "M55555",
+            "mbi": "55555",
+            "complaintDescription": "Member is stating they did not sign up for this Plan.",
+            "embeddedCoverageDetermination": "N/A",
+            "priorityType": "Standard",
+            "reviewStage": "Open",
+            "reviewTimeFrame": "4 Days",
+            "timeRemaining": "3 D: 4 H : 32 M",
+            "dateTimeCompleted": "6/22/2020 12:24:05 PM",
+            "caseStatus": "Closed",
+            "requestor": "Physician",
+            "intakeType": "Fax",
+            "notification": "Written"
+        },
+        {
+            "id": 6,
+            "key": 6,
+            "dateTimeReceived": "6/22/2020 12:24:05 PM",
+            "grievanceId": "77777",
+            "grievanceCategory": "Task Category from Call Log where Task Classification is \"First Call Resolution Grievance/Complaint\"",
+            "grievanceType": "Pharmacy",
+            "memberName": "Yes",
+            "memberId": "Yes",
+            "mbi": "Yes",
+            "complaintDescription": "Call Log Notes",
+            "embeddedCoverageDetermination": "N/A",
+            "priorityType": "N/A",
+            "reviewStage": "N/A",
+            "reviewTimeFrame": "N/A",
+            "timeRemaining": "N/A",
+            "dateTimeCompleted": "Call Log End Date/Time",
+            "caseStatus": "Closed",
+            "requestor": "N/A",
+            "aor": "N/A",
+            "intakeType": "Call",
+            "notification": "First Call Resolution"
+        }
+    ]
+}

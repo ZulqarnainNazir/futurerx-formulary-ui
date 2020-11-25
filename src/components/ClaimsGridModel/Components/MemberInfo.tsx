@@ -10,68 +10,18 @@ import { Button, Table, Tag, Space } from "antd";
 import {Tooltip} from "antd";
 
 //components
+import {claimsPopupRejectedGrid, claimsPopupErrorMsgGrid} from "../../../utils/grid/columns";
 import {
   memberInfo1,
   memberInfo2,
   memberInfo3,
-  rejectedCountData
+  rejectedCountData,
+  errorCountData
 } from "../../../mocks/ClaimGridModelMock";
 
 export interface MemberInfoProps{
   claimData: any;
 }
-
-const rejectedCountColumn = [
-  {
-    title: 'Reject Code',
-    dataIndex: 'rejectCode',
-    key: 'rejectCode',
-  },
-  {
-    title: 'Description',
-    dataIndex: 'description',
-    key: 'description',
-  },
-  {
-    title: 'Submitted Value',
-    dataIndex: 'submittedValue',
-    key: 'submittedValue',
-    render: submittedValue => (
-      <>
-        {submittedValue.map(submittedValueag => {
-          return (
-            <div className="submitted-value">
-            <span>
-              {submittedValueag}
-            </span>
-            </div>
-          );
-        })}
-      </>
-    ),
-  },
-  {
-    title: 'Expected Value (if available)',
-    dataIndex: 'expectedValue',
-    key: 'expectedValue',
-    render: expectedValue => (
-      <>
-        {expectedValue.map(expectedValuetag => {
-          return (
-            <div className="expected-value">
-              <span>{expectedValuetag}</span>
-            </div>
-          );
-        })}
-      </>
-    ),
-  },
-  {
-    title: 'Status',
-    dataIndex: 'status',
-    key: 'status',
-  },
-]
 
 class MemberInfo extends React.Component<MemberInfoProps> {
   state = {};
@@ -102,7 +52,30 @@ class MemberInfo extends React.Component<MemberInfoProps> {
             {memberInfo1.map((label, i) => (
               <div key={i + ""} className="fields">
                 <label>{label.label}</label>
-                {this.props.claimData.status === "Paid" ? (
+                {this.props.claimData.status === "Paid" || this.props.claimData.status === "Reversed" ? (
+                  <>
+                  {label.label === "BIN#" ? (
+                    <Tooltip
+                    placement="top"
+                    arrowPointAtCenter={true} 
+                    overlayClassName="member-info-root__tooltip"
+                    title={
+                    <>
+                      {label.label === "BIN#" ? (
+                        <>
+                          <span>M/I Bin Number</span>
+                        </> 
+                      ):null}
+                      </>
+                    }
+                    >
+                  <span
+                  style={{color: label.label === "BIN#" ? "#E0ED51" : "#666666"}}
+                  >
+                  {label.labelValue}
+                  </span>
+                </Tooltip>
+                ):(
                   <span
                   className={
                     label.label === "Member ID" ? "higlighted-value" : ""
@@ -110,6 +83,8 @@ class MemberInfo extends React.Component<MemberInfoProps> {
                 >
                   {label.labelValue}
                 </span>
+                )}
+                </>
                 ) : this.props.claimData.status === "Rejected" ? (
                   <>
                   {label.label === "BIN#" || label.label === "First Name" ? (
@@ -167,10 +142,35 @@ class MemberInfo extends React.Component<MemberInfoProps> {
             {memberInfo2.map((label, i) => (
               <div key={i + ""} className="fields">
                 <label>{label.label}</label>
-                {this.props.claimData.status === "Paid" ? (
+                {this.props.claimData.status === "Paid" || this.props.claimData.status === "Reversed" ? (
+                  <>
+                  {label.label === "RX#" ? (
+                    <Tooltip
+                    placement="top"
+                    arrowPointAtCenter={true} 
+                    overlayClassName="member-info-root__tooltip"
+                    title={
+                    <>
+                      {label.label === "RX#" ? (
+                        <>
+                          <span>DAW code Value Not Supported</span>
+                        </> 
+                      ):null}
+                      </>
+                    }
+                    >
+                  <span
+                  style={{color: label.label === "RX#" ? "#E0ED51" : "#666666"}}
+                  >
+                  {label.labelValue}
+                  </span>
+                </Tooltip>
+                ):(
                   <span>
                   {label.labelValue}
                 </span>
+                )}
+                </>
                 ) : this.props.claimData.status === "Rejected" ? (
                   <>
                   {label.label === "DOB" || label.label === "RX#" ? (
@@ -214,9 +214,38 @@ class MemberInfo extends React.Component<MemberInfoProps> {
             {memberInfo3.map((label, i) => (
               <div key={i + ""} className="fields">
                 <label>{label.label}</label>
-                <span
+                {label.label === "Drug Label" ? (
+                  <Tooltip
+                  placement="left"
+                  arrowPointAtCenter={true} 
+                  overlayClassName="drug-label-tooltip"
+                  title={
+                  <>
+                    {label.label === "Drug Label"? (
+                      <span>
+                       Drug Label - <b>Abilify 10 mg</b>
+                      </span>
+                    ):null}
+                    </>
+                  }
+                  >
+                  <span
+                    className={
+                      label.label === "Drug Label" ||
+                      label.label === "NDC" ||
+                      label.label === "Pharmacy NPI" ||
+                      label.label === "Pharmacy NCPDP#"
+                        ? "higlighted-value"
+                        : ""
+                    }
+                  >
+                    {label.labelValue}
+                  </span>
+                </Tooltip>
+                ) : (
+                  <span
                   className={
-                    label.label === "Drug Name" ||
+                    label.label === "Drug Label" ||
                     label.label === "NDC" ||
                     label.label === "Pharmacy NPI" ||
                     label.label === "Pharmacy NCPDP#"
@@ -226,6 +255,7 @@ class MemberInfo extends React.Component<MemberInfoProps> {
                 >
                   {label.labelValue}
                 </span>
+                )}
               </div>
             ))}
           </div>
@@ -233,10 +263,15 @@ class MemberInfo extends React.Component<MemberInfoProps> {
       </div>
       {this.props.claimData.status === "Rejected" ? (
       <div className="member-info-root__rejected--count">
-        <span className="member-info-root__rejected--count__header">Reject Messages (Count)</span>
-        <Table className="member-info-root__rejected--count__table" pagination={false} columns={rejectedCountColumn} dataSource={rejectedCountData} />
+        <span className="member-info-root__rejected--count__header">Reject Messages (4)</span>
+        <Table className="member-info-root__rejected--count__table" pagination={false} columns={claimsPopupRejectedGrid} dataSource={rejectedCountData} />
       </div>
-      ) : null}
+      ) : this.props.claimData.status === "Paid" || this.props.claimData.status === "Reversed" ? (
+        <div className="member-info-root__rejected--count">
+        <span className="member-info-root__rejected--count__header">Error Messages (2)</span>
+        <Table className="member-info-root__rejected--count__table" pagination={false} columns={claimsPopupErrorMsgGrid} dataSource={errorCountData} />
+      </div>
+      ):null}
       </>
     );
   }

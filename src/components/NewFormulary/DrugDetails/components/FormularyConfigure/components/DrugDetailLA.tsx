@@ -54,7 +54,7 @@ class DrugDetailLA extends React.Component<any,tabsState> {
                             <span className="tabs-with-count"><em>R</em></span>
                           </Grid>
                           <Grid item xs={3}>
-                          <CustomizedSwitches/>
+                          <CustomizedSwitches leftTitle="Off" rightTitle="On"/>
                           </Grid>
                           <Grid item xs={8}>
                               <FrxMiniTabs
