@@ -43,6 +43,9 @@
           border-radius: 2px;
         }
       }
+      .frx-mini-tabs-root__tabs__tab.Mui-disabled {
+        color: #C4C4C4 !important;
+      }
       .frx-mini-tabs-root__tabs__tab:first-child {
         margin-left: 0px;
       }
