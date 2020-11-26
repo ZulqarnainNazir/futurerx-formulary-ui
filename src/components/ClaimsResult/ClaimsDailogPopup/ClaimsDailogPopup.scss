@@ -1,7 +1,13 @@
 @import "../../../assets/style.scss";
 
-// .MuiDialog-root{}
 .dialog-popup {
+  // height: 900px;
+  .MuiDialog-paperFullScreen {
+    width: 91% !important;
+  }
+  // .MuiDialog-paperWidthXl {
+  //   width: 80%;
+  // }
   z-index: 999 !important;
   .frx-dialog-root__heading {
     height: 60px;
@@ -29,6 +35,7 @@
   }
 
   .frx-dialog-root__btn-actions {
+    padding-top: 2px;
     padding-bottom: 20px !important;
     padding-right: 20px !important;
 

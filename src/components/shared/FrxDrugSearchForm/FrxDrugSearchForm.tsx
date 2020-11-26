@@ -176,7 +176,7 @@ export default class FrxDrugSearchForm extends Component<Props, State> {
                                     var input = e
                                     if (input.trim() !== '') {
                                         this.setState({
-                                            filteredOptions: options.filter((i: any) => i.title.toLowerCase().includes(input.toLowerCase()))
+                                            filteredOptions: options.filter((i: any) => i.title.toLowerCase().startsWith(input.toLowerCase()))
                                         })
                                     } else {
                                         this.setState({ filteredOptions: [] })

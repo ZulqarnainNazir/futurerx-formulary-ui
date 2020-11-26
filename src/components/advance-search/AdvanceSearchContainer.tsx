@@ -73,7 +73,7 @@ class AdvanceSearchContainer extends Component<Props, State> {
         break;
       // case 8: this.props.onSelect('pacasesappeals'); break;
       case 8:
-        this.props.onSelect("");
+        this.props.onSelect("grievances");
         break;
       case 9:
         this.props.onSelect("authoverrides");

@@ -51,6 +51,8 @@ import {
   PDEStatusDialogAccepted,
   PDEStatusDialogRejected,
 } from "./Components/PDEStatusDialog/PDEStatusDialog";
+import FrxGridDrugLableTooltip from "../../../../components/shared/FrxGrid/components/FrxGridToolTip/FrxGridToolTip";
+
 export interface ClaimDetailProps {
   claimData: any;
   detailsMiniTab?: TabInfo[];
@@ -67,6 +69,10 @@ class ClaimDetail extends React.Component<ClaimDetailProps, any> {
       activeTabIndex: 0,
       pdeStatusDialog: false,
     };
+  }
+
+  componentDidMount(){
+    console.log("tooltip data", this.props)
   }
 
   onClickTab = (selectedTabIndex: number) => {
@@ -350,7 +356,7 @@ class ClaimDetail extends React.Component<ClaimDetailProps, any> {
               {additionalInformationBox1.map((label, i) => (
                 <div key={i + ""} className="fields">
                   <label>{label.label}</label>
-                  {label.label === "GPI" ? (
+                  {label.label === "GPI" || label.label === "Drug Label" ? (
                     <Tooltip
                       placement="right"
                       arrowPointAtCenter={true}
@@ -364,13 +370,20 @@ class ClaimDetail extends React.Component<ClaimDetailProps, any> {
                                 <b>GPI Name - Atorvastatin Calcium Tab 10mg</b>
                               </span>
                             </div>
-                          ) : null}
+                          ) : label.label === "Drug Label" ? (
+                            <div>
+                            <span>
+                            Drug Label - <b>Abilify 10 mg</b>
+                            </span>
+                            {/* <FrxGridDrugLableTooltip data={this.props.claimData} /> */}
+                          </div>
+                          ): null}
                         </>
                       }
                     >
                       <span
                         className={
-                          label.label === "GPI" ? "higlighted-value" : ""
+                          label.label === "GPI" || label.label === "Drug Label" ? "higlighted-value" : ""
                         }
                       >
                         {label.labelValue}
@@ -379,7 +392,7 @@ class ClaimDetail extends React.Component<ClaimDetailProps, any> {
                   ) : (
                     <span
                       className={
-                        label.label === "Drug Name" ||
+                        label.label === "Drug Label" ||
                         label.label === "NDC" ||
                         label.label === "GPI"
                           ? "higlighted-value"

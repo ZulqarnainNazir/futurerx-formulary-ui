@@ -68,6 +68,7 @@ class AuthsAndOverridesGrid extends React.Component<
           data={this.state.filteredData}
           pagintionPosition="topRight"
           onSettingsClick="grid-menu"
+          settingsWidth={40}
           scroll={{ x: 1900, y: 420 }}
           expandable={{
             isExpandable: true,

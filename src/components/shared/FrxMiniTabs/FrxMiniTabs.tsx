@@ -17,6 +17,9 @@ interface TabProps {
   tabList: TabInfo[];
   activeTabIndex: number;
   onClickTab: (clickedTab: number) => void;
+  msgCount?:number;
+  disabledIndex?: number;
+  disabled?: boolean;
 }
 
 interface TabState {}
@@ -41,11 +44,12 @@ class FrxMiniTabs extends React.Component<TabProps, TabState> {
           aria-label="tabs"
           className="frx-mini-tabs-root__tabs"
         >
-          {this.props.tabList.map((tab: TabInfo) => (
+          {this.props.tabList.map((tab: TabInfo, index: number) => (
             <Tab
               className="frx-mini-tabs-root__tabs__tab"
               key={tab.id}
-              label={tab.text}
+              disabled = {this.props.disabledIndex === index && this.props.disabled ? true : false}
+              label={tab.id === 3 && this.props.msgCount ? <span className="tabs-with-count">{tab.text.split('(')[0]}<em>{this.props.msgCount}</em></span> : tab.text}
             />
           ))}
         </Tabs>

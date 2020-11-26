@@ -42,6 +42,7 @@ GridAdvancedTestClaimsSearchState
         pharmacy: "",
         startDate: undefined,
         endDate: undefined,
+        lobOptions : ["Medicare", "Exchange", "Medicaid", "Commercial"] as any,
     }
 
        /**
@@ -105,10 +106,21 @@ GridAdvancedTestClaimsSearchState
     }
 
     render() {
-        const LobOptions = ["Medicare", "Exchange", "Medicaid", "Commercial"] 
-        const status = ["Paid", "Rejected", "Reversed"]
-        const options = ["- NA -"] 
-        const durHistoryOptions = ["AWP"]
+        const {lobOptions} = this.state;
+        // const lobOptions = ["Medicare", "Exchange", "Medicaid", "Commercial"]
+        // const lobStyling = () => {
+        //     if (lobOptions === "Mediacare"){
+        //         return (
+        //             <>
+        //             jhj
+        //             </>
+        //         )
+        //     }
+        // }
+        const submissionTypeOptions = ["D.O Standard", "Multi-Ingredient Compound", "Coordination of Benefits",
+    "Nx Transaction", "FIR Transaction", "Eligibility Transaction"]
+        const status = ["All","Paid", "Rejected", "Reversed"]
+        const durHistoryOptions = ["All", "Saved", "Not Saved"]
         const { 
             memberInfo,
             claimId,
@@ -138,7 +150,7 @@ GridAdvancedTestClaimsSearchState
                         </div>
                         <DropDown 
                             placeholder="LOB" 
-                            options={LobOptions} 
+                            options={lobOptions} 
                             className="advanced-grid-search__input"
                         />
                         <div className="advanced-grid-search__input-field">
@@ -166,7 +178,7 @@ GridAdvancedTestClaimsSearchState
                         />
                         <DropDown 
                             placeholder="Submission Type" 
-                            options={options} 
+                            options={submissionTypeOptions} 
                             className="advanced-grid-search__input"
                         />
                     </div>

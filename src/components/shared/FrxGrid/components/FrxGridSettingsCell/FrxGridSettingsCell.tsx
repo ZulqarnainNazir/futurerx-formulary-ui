@@ -13,7 +13,6 @@ import FrxGridMenu from "../FrxGridMenu/FrxGridMenu";
 import "./FrxGridSettingsCell.scss";
 import { CheckboxChangeEvent } from "antd/lib/checkbox";
 
-
 export interface FrxGridSettingsCellProps {
   expanded: boolean;
 
@@ -21,9 +20,9 @@ export interface FrxGridSettingsCellProps {
   settingsAnchor: HTMLElement | null;
   setingsComponent?: "grid-menu";
   isRowSelectionEnabled?: boolean;
-	settingsMenuItems?: GridMenu[];
-	isRowSelectorCheckbox?:boolean;
-
+  handleCheck?: any;
+  settingsMenuItems?: GridMenu[];
+  isRowSelectorCheckbox?: boolean;
 
   handleSettingsComponentMenuClose?: () => void;
   handleMenuClick?: (menuItem: GridMenu) => void;
@@ -44,7 +43,6 @@ class FrxGridSettingsCell extends React.Component<FrxGridSettingsCellProps> {
    */
   getComponentToDisplayOnSettingsClick = () => {
     if (this.props.setingsComponent) {
-    
       switch (this.props.setingsComponent) {
         case "grid-menu":
           if (
@@ -75,7 +73,14 @@ class FrxGridSettingsCell extends React.Component<FrxGridSettingsCellProps> {
     }
   };
 
+  /**
+   * @function rowSelectionChange
+   * to detect the row selected in grid
+   *
+   * NOTE: handleCheck is used in greievance communication tab
+   */
   rowSelectionChange = (e: RadioChangeEvent | CheckboxChangeEvent) => {
+    if (this.props.handleCheck) this.props.handleCheck(e.target);
     this.props.rowSelectionChange(this.props.dataRow);
   };
 
@@ -87,7 +92,6 @@ class FrxGridSettingsCell extends React.Component<FrxGridSettingsCellProps> {
   onSettingsTriDotClcik = () => {
     if (this.props.isRowSelectionEnabled) return;
     if (this.props.onSettingsTriDotClick) {
-  
       this.props.onSettingsTriDotClick(this.props.dataRow);
     }
   };
@@ -129,12 +133,17 @@ class FrxGridSettingsCell extends React.Component<FrxGridSettingsCellProps> {
             </svg>
           </span>
         ) : (
-					<>
-					{!this.props.isRowSelectorCheckbox ? <Radio 
-					onChange={this.rowSelectionChange} 
-					checked={this.props.dataRow.isSelected}></Radio> : <Checkbox 	onChange={this.rowSelectionChange}></Checkbox> }
-        </>
-				)}
+          <>
+            {!this.props.isRowSelectorCheckbox ? (
+              <Radio
+                onChange={this.rowSelectionChange}
+                checked={this.props.dataRow.isSelected}
+              ></Radio>
+            ) : (
+              <Checkbox onChange={this.rowSelectionChange}></Checkbox>
+            )}
+          </>
+        )}
         {!isRowSelectionEnabled && this.props.setingsComponent
           ? this.getComponentToDisplayOnSettingsClick()
           : null}
@@ -179,11 +188,19 @@ class FrxGridSettingsCell extends React.Component<FrxGridSettingsCellProps> {
             </svg>
           </span>
         ) : (
-					<>
-					{!this.props.isRowSelectorCheckbox ? <Radio 
-					onChange={this.rowSelectionChange} 
-					checked={this.props.dataRow.isSelected}></Radio> : <Checkbox 		onChange={this.rowSelectionChange} ></Checkbox> }
-        </>
+          <>
+            {!this.props.isRowSelectorCheckbox ? (
+              <Radio
+                onChange={this.rowSelectionChange}
+                checked={this.props.dataRow.isSelected}
+              ></Radio>
+            ) : (
+              <Checkbox
+                id={this.props.dataRow.key}
+                onChange={this.rowSelectionChange}
+              ></Checkbox>
+            )}
+          </>
         )}
         {!isRowSelectionEnabled && this.props.setingsComponent
           ? this.getComponentToDisplayOnSettingsClick()

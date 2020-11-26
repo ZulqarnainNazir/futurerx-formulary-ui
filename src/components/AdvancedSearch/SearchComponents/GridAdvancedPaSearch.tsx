@@ -1,9 +1,10 @@
 //react imports
-import { Input, Button } from "@material-ui/core";
+import * as React from "react";
 //ant and materil imports
+import { Select, Tag } from 'antd';
+import { Input, Button } from "@material-ui/core";
 //3rd party imports
 import { Moment } from "moment";
-import * as React from "react";
 //style imports
 import "./GridSearch.scss";
 //Components
@@ -32,12 +33,15 @@ interface GridAdvancedPaSearchState {
 
 interface GridAdvancedPaSearchProps {
   searchType: string;
+  onPriorAuthTabChange:(selectedTab:number) => void
 }
 
 const miniTabs = [
   { id: 1, text: "Initial Cases" },
   { id: 2, text: "Appeals" }
 ];
+
+// const lobOptions = [{ value: 'Medicare' }, { value: 'Medicaid' }, { value: 'Commercial' }, { value: 'Exchange' }]
 
 class GridAdvancedPaSearch extends React.Component<
   GridAdvancedPaSearchProps,
@@ -52,6 +56,7 @@ class GridAdvancedPaSearch extends React.Component<
     pharmacy: "",
     startDate: undefined,
     endDate: undefined,
+    lobOptions : ["Medicare", "Exchange", "Medicaid", "Commercial"] as any,
     miniTabs: miniTabs,
     activeMiniTabIndex:
       this.props.searchType === "pacasesintial"
@@ -138,21 +143,33 @@ class GridAdvancedPaSearch extends React.Component<
   }
 
   onClickMiniTab = (selectedTabIndex: number) => {
-    let activeMiniTabIndex = 0;
+    // let activeMiniTabIndex = 0;
 
-    const miniTabs = this.state.miniTabs.map(
-      (miniTab: TabInfo, index: number) => {
-        if (index === selectedTabIndex) {
-          activeMiniTabIndex = index;
-        }
-        return miniTab;
-      }
-    );
+    // const miniTabs = this.state.miniTabs.map(
+    //   (miniTab: TabInfo, index: number) => {
+    //     if (index === selectedTabIndex) {
+    //       activeMiniTabIndex = index;
+    //     }
+    //     return miniTab;
+    //   }
+    // );
 
-    this.setState({ miniTabs, activeMiniTabIndex });
+    // this.setState({ miniTabs, activeMiniTabIndex });
+    this.props.onPriorAuthTabChange(selectedTabIndex)
   };
 
+  tagRender(props) {
+    const { label, value, closable, onClose } = props;
+  
+    return (
+      <Tag color={value} closable={closable} onClose={onClose} style={{ marginRight: 3 }}>
+        {label}
+      </Tag>
+    );
+  }
+
   render() {
+    const {lobOptions} = this.state;
     const classification = [
       "Exception",
       "Prior Auth"
@@ -163,9 +180,9 @@ class GridAdvancedPaSearch extends React.Component<
       "Commercial PA"
     ]
     const caseTypeOptionAppeal = [
-      "Medicaid Appeal PA",
-      "Exchange Appeal PA",
-      "Commercial Appeal PA"
+      "Medicaid PA",
+      "Exchange PA",
+      "Commercial PA"
     ]
     const reviewStage = [
       "Review",
@@ -287,6 +304,34 @@ class GridAdvancedPaSearch extends React.Component<
               />
             </div>
             <div className="advanced-grid-search__first-row">
+              <DropDown 
+                  placeholder="LOB" 
+                  options={lobOptions} 
+                  className="advanced-grid-search__input"
+              />
+              {/* <Select
+                mode="multiple"
+                showArrow
+                placeholder="LOB" 
+                tagRender={this.tagRender}
+                options={lobOptions}
+                className="advanced-grid-search__input"
+                suffixIcon={
+                  <svg
+                    className="ant-select-suffix"
+                    width="6"
+                    height="8"
+                    viewBox="0 0 6 3"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M5.79875 0H0.20125C0.0333594 0 -0.0603867 0.147179 0.0435863 0.247656L2.84234 2.94215C2.92245 3.01928 3.0767 3.01928 3.15766 2.94215L5.95641 0.247656C6.06039 0.147179 5.96664 0 5.79875 0Z"
+                      fill="#999999"
+                    />
+                  </svg>
+                }
+              />, */}
               <DropDown
                 placeholder="Status"
                 options={statusOptions}

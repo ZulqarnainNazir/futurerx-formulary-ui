@@ -108,6 +108,7 @@ GridAdvancedClaimsSearchState
         const LobOptions = ["Medicare", "Exchange", "Medicaid", "Commercial"] 
         const status = ["Paid", "Rejected", "Reversed"]
         const options = ["- NA -"]
+        const claimTypeOptions = ["Part B", "Part D"]
         const { 
             memberInfo,
             claimId,
@@ -159,8 +160,8 @@ GridAdvancedClaimsSearchState
                             className="advanced-grid-search__input"
                         />
                         <DropDown 
-                            placeholder="Claim type" 
-                            options={options} 
+                            placeholder="Claim Type" 
+                            options={claimTypeOptions} 
                             className="advanced-grid-search__input"
                         />
                          <div className="advanced-grid-search__input-field">

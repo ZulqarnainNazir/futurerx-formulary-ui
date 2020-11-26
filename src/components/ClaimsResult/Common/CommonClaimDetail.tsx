@@ -370,7 +370,7 @@ class CommonClaimDetail extends React.Component<ClaimDetailProps, any> {
                   ) : (
                     <span
                       className={
-                        label.label === "Drug Name" ||
+                        label.label === "Drug Label" ||
                         label.label === "NDC" ||
                         label.label === "GPI"
                           ? "higlighted-value"

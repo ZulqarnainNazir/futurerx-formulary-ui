@@ -51,11 +51,11 @@
           display: none;
         }
         .communication-root--legend__accordion {
-          margin-top: 24px;
+          margin-top: 20px;
         }
         .MuiAccordionSummary-root {
           border-bottom: 1px solid #e5e5e5;
-          // pointer-events: none;
+          pointer-events: none;
         }
         .MuiIconButton-edgeEnd {
           display: none;
@@ -242,10 +242,10 @@
         border-radius: 3px;
       }
 
-      button {
+      .btn-claims {
         text-transform: none;
         color: #2055b5;
-        width: 165px;
+        // width: 165px;
         height: 35px;
         border-radius: 3px;
 
@@ -256,7 +256,7 @@
         line-height: 35px;
         letter-spacing: 0.01em;
         text-align: left;
-        padding: 0px;
+        padding: 0px 20px;
         border: solid 1px;
         &:first-child {
           margin-right: 20px;
@@ -341,7 +341,7 @@
 // }
 
 .acc-barr-container {
-  height: 268px;
+  height: 100%;
 }
 
 // .claim-container {

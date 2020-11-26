@@ -33,7 +33,7 @@
     border-bottom: 1px solid #e5e5e5;
 
     .MuiButtonBase-root .MuiButton-root {
-       border: 1px solid red !important;
+      border: 1px solid red !important;
     }
   }
   .TabletDetailsHeading > h3 {
@@ -52,7 +52,7 @@
   }
   .Head-Btn {
     // border: 1px solid $primary-btn-color;
-    border:1px solid rgba($primary-btn-color, .3);
+    border: 1px solid rgba($primary-btn-color, 0.3);
     box-sizing: border-box;
     border-radius: 3px;
     background-color: $color-white;
@@ -105,9 +105,13 @@
         font-size: 12px;
         line-height: 14px;
         letter-spacing: 0.5px;
-        color: #f65a1c;
+
         margin-top: 10px;
         margin-bottom: 10px;
+        color: #323c47;
+        .astreak {
+          color: #f65a1c;
+        }
       }
       .TabletBodyDetails__leftside_typography {
         min-width: 268px;
@@ -141,12 +145,11 @@
       /* Handle */
       &::-webkit-scrollbar-thumb {
         background: #c4c4c4;
-        border-radius: 5px;        
+        border-radius: 5px;
       }
       /* Handle on hover */
       &::-webkit-scrollbar-thumb:hover {
         background: #c4c4c4;
-        
       }
       .TabletBodyDetails__rightside_box {
         display: block;
@@ -277,7 +280,7 @@
           line-height: 14px;
           color: #323c47;
           margin-top: 10px;
-          svg{
+          svg {
             cursor: pointer;
           }
         }
@@ -286,7 +289,6 @@
           margin-left: 8px;
           color: black;
         }
-        
       }
       .hr {
         position: absolute;

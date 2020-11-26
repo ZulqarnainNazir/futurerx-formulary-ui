@@ -54,7 +54,7 @@ interface MemberDetailsPopupProps {
 
 class ConnectedMemberDetailsPopup extends React.Component<
   MemberDetailsPopupProps
-> {
+  > {
   state = {
     isMemberNotificationsDialogOpen: this.props.isOpen,
     items: [],
@@ -96,7 +96,7 @@ class ConnectedMemberDetailsPopup extends React.Component<
       data,
       filteredData: data,
       filterCobData: cobData,
-      expand: this.props.panelName,
+      expand: this.props.panelName
     });
 
     const items: DialogListItemModel[] = [
@@ -406,7 +406,7 @@ class ConnectedMemberDetailsPopup extends React.Component<
                   <div>
                     <div className="accordion-container">
                       <Accordion
-                        expanded={this.state.expand == "demographics-tab"}
+                        expanded={this.state.expand === '*' || this.state.expand === "demographics-tab"}
                         onChange={this.handleChange("demographics-tab")}
                       >
                         <AccordionSummary
@@ -431,13 +431,13 @@ class ConnectedMemberDetailsPopup extends React.Component<
                                 this.props.memberSummary.memberAddress,
                               ]}
                               activeTabIndex={this.state.activeTabIndex}
-                              //  memberAddress={this.state.memberAddressData} activeTabIndex={this.state.activeTabIndex}
+                            //  memberAddress={this.state.memberAddressData} activeTabIndex={this.state.activeTabIndex}
                             />
                           </div>
                         </AccordionDetails>
                       </Accordion>
                       <Accordion
-                        expanded={this.state.expand == "eligibility-tab"}
+                        expanded={this.state.expand === '*' || this.state.expand === "eligibility-tab"}
                         onChange={this.handleChange("eligibility-tab")}
                       >
                         <AccordionSummary
@@ -469,32 +469,32 @@ class ConnectedMemberDetailsPopup extends React.Component<
                               </div>
                             </span>
                           ) : (
-                            ""
-                          )}
+                              ""
+                            )}
                           {this.state.isEligibilityInsuranceModelOpen ===
-                          true ? (
-                            <span>
-                              <div className="contact-minitabs">
-                                <FrxMiniTabs
-                                  tabList={this.state.miniTabsForEligibility}
-                                  activeTabIndex={
-                                    this.state.activeTabsForEligibility
-                                  }
-                                  onClickTab={this.onClickEligibilityTab}
-                                />
-                              </div>
-                              <div className="eligibility-popup">
-                                <EligibilityInsurancePopup
-                                  activeTabIndex={
-                                    this.state.activeTabsForEligibility
-                                  }
-                                  isClose={this.handleEligibilityDialogClose}
-                                />
-                              </div>
-                            </span>
-                          ) : (
-                            ""
-                          )}
+                            true ? (
+                              <span>
+                                <div className="contact-minitabs">
+                                  <FrxMiniTabs
+                                    tabList={this.state.miniTabsForEligibility}
+                                    activeTabIndex={
+                                      this.state.activeTabsForEligibility
+                                    }
+                                    onClickTab={this.onClickEligibilityTab}
+                                  />
+                                </div>
+                                <div className="eligibility-popup">
+                                  <EligibilityInsurancePopup
+                                    activeTabIndex={
+                                      this.state.activeTabsForEligibility
+                                    }
+                                    isClose={this.handleEligibilityDialogClose}
+                                  />
+                                </div>
+                              </span>
+                            ) : (
+                              ""
+                            )}
 
                           {this.state.isEligibilityGridOpen === true ? (
                             <span>
@@ -508,13 +508,13 @@ class ConnectedMemberDetailsPopup extends React.Component<
                                   </Grid>
                                   <Grid xs={12} sm={3}>
                                     <div className="keyValue">
-                                      <div>Member Id</div>
+                                      <div>Member ID</div>
                                       <div className="value">124563457432</div>
                                     </div>
                                   </Grid>
                                   <Grid xs={12} sm={3}>
                                     <div className="keyValue">
-                                      <div>RX Bin</div>
+                                      <div>RX BIN#</div>
                                       <div className="value">1578</div>
                                     </div>
                                   </Grid>
@@ -574,124 +574,124 @@ class ConnectedMemberDetailsPopup extends React.Component<
                               </div>
                             </span>
                           ) : (
-                            ""
-                          )}
+                              ""
+                            )}
                         </AccordionDetails>
                       </Accordion>
                       <Accordion
-                        expanded={this.state.expand === "providers-tab"}
+                        expanded={this.state.expand === '*' || this.state.expand === "providers-tab"}
                         onChange={this.handleChange("providers-tab")}
                       >
                         <AccordionSummary
-                          expandIcon={<ExpandMoreIcon />}
-                          aria-controls="panel2a-content"
-                          id="panel2a-header"
-                        >
-                          <Typography>PCP</Typography>
-                        </AccordionSummary>
-                        <AccordionDetails>
-                          <h3 className="pcp-title">Summary</h3>
-                          <PcpSummary />
-                          <div>
-                            <h3 className="conatct-info">
-                              Contact Information
+                        expandIcon={<ExpandMoreIcon />}
+                        aria-controls="panel2a-content"
+                        id="panel2a-header"
+                      >
+                        <Typography>PCP</Typography>
+                      </AccordionSummary>
+                      <AccordionDetails>
+                        <h3 className="pcp-title">Summary</h3>
+                        <PcpSummary />
+                        <div>
+                          <h3 className="conatct-info">
+                            Contact Information
                             </h3>
 
-                            <div
-                              className="contact-minitabs"
-                              style={{
-                                position: "unset",
-                                marginBottom: "20px",
-                              }}
-                            >
-                              <FrxMiniTabs
-                                tabList={this.state.miniTabs}
-                                activeTabIndex={this.state.activeTabIndex}
-                                onClickTab={this.onClickTab}
-                              />
-                            </div>
-                            <PcpContactInfo />
+                          <div
+                            className="contact-minitabs"
+                            style={{
+                              position: "unset",
+                              marginBottom: "20px",
+                            }}
+                          >
+                            <FrxMiniTabs
+                              tabList={this.state.miniTabs}
+                              activeTabIndex={this.state.activeTabIndex}
+                              onClickTab={this.onClickTab}
+                            />
                           </div>
+                          <PcpContactInfo />
+                        </div>
 
-                          <div>
-                            <h3 className="conatct-info">Specialty</h3>
-                            <PcpSpecialty />
-                          </div>
-                          <div>
-                            <h3 className="conatct-info">State Licensure</h3>
-                            <PcpStateLicensure />
-                          </div>
-                        </AccordionDetails>
+                        <div>
+                          <h3 className="conatct-info">Specialty</h3>
+                          <PcpSpecialty />
+                        </div>
+                        <div>
+                          <h3 className="conatct-info">State Licensure</h3>
+                          <PcpStateLicensure />
+                        </div>
+                      </AccordionDetails>
                       </Accordion>
-                      <Accordion
-                        expanded={this.state.expand === "preferences-tab"}
+                    <Accordion
+                      expanded={this.state.expand === '*' || this.state.expand === "preferences-tab"}
                         onChange={this.handleChange("preferences-tab")}
                       >
                         <AccordionSummary
-                          expandIcon={<ExpandMoreIcon />}
-                          aria-controls="panel2a-content"
-                          id="panel2a-header"
-                        >
-                          <Typography>Pharmacy</Typography>
-                        </AccordionSummary>
-                        <AccordionDetails>
-                          <div className="contact-minitabs">
-                            <FrxMiniTabs
-                              tabList={this.state.miniTabsForPharmacy}
-                              activeTabIndex={this.state.activeTabIndexPharmacy}
-                              onClickTab={this.onClickPharmacyTab}
-                            />
-                          </div>
-                          <h3 className="conatct-info">Demographics</h3>
-                          <Demographics />
-                          <div>
-                            <h3 className="conatct-info">
-                              Contact Information
+                      expandIcon={<ExpandMoreIcon />}
+                      aria-controls="panel2a-content"
+                      id="panel2a-header"
+                    >
+                      <Typography>Pharmacy</Typography>
+                    </AccordionSummary>
+                    <AccordionDetails>
+                      <div className="contact-minitabs">
+                        <FrxMiniTabs
+                          tabList={this.state.miniTabsForPharmacy}
+                          activeTabIndex={this.state.activeTabIndexPharmacy}
+                          onClickTab={this.onClickPharmacyTab}
+                        />
+                      </div>
+                      <h3 className="conatct-info">Demographics</h3>
+                      <Demographics />
+                      <div>
+                        <h3 className="conatct-info">
+                          Contact Information
                             </h3>
-                            <div
-                              className="contact-minitabs"
-                              style={{
-                                position: "unset",
-                                marginBottom: "20px",
-                              }}
-                            >
-                              <FrxMiniTabs
-                                tabList={this.state.miniTabsForPharmacyContact}
-                                activeTabIndex={
-                                  this.state.activeTabIndexPharmacyContact
-                                }
-                                onClickTab={this.onClickPharmacyContactTab}
-                              />
-                            </div>
-                            {/* <PcpContactInfo /> */}
-                            <PharmacyContactInfo
-                              activeTabIndex={
-                                this.state.activeTabIndexPharmacyContact
-                              }
-                            />
-                            <div>
-                              <h3 className="conatct-info">Specialty</h3>
-                              <PharmacySpecialty
-                                activeTabIndex={
-                                  this.state.activeTabIndexPharmacy
-                                }
-                              />
-                            </div>
-                            <div>
-                              <h3 className="conatct-info">State Licensure</h3>
-                              <PcpStateLicensure />
-                            </div>
-                          </div>
-                        </AccordionDetails>
+                        <div
+                          className="contact-minitabs"
+                          style={{
+                            position: "unset",
+                            marginBottom: "20px",
+                          }}
+                        >
+                          <FrxMiniTabs
+                            tabList={this.state.miniTabsForPharmacyContact}
+                            activeTabIndex={
+                              this.state.activeTabIndexPharmacyContact
+                            }
+                            onClickTab={this.onClickPharmacyContactTab}
+                          />
+                        </div>
+                        {/* <PcpContactInfo /> */}
+                        <PharmacyContactInfo
+                          activeTabIndex={
+                            this.state.activeTabIndexPharmacyContact
+                          }
+                        />
+                        <div>
+                          <h3 className="conatct-info">Specialty</h3>
+                          <PharmacySpecialty
+                            activeTabIndex={
+                              this.state.activeTabIndexPharmacy
+                            }
+                          />
+                        </div>
+                        <div>
+                          <h3 className="conatct-info">State Licensure</h3>
+                          <PcpStateLicensure />
+                        </div>
+                      </div>
+                    </AccordionDetails>
                       </Accordion>
-                    </div>
-                  </div>
                 </div>
+                  </div>
+            </div>
               </Spin>
             </div>
           </DialogPopup>
-        </React.Fragment>
-      </div>
+        </React.Fragment >
+      </div >
     );
   }
 }

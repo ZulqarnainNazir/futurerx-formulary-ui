@@ -90,7 +90,7 @@ class TabletDetailsPopup extends React.Component<TabletDetailsPopupProps> {
                                         <div className="TabletBodyDetails__leftside_bgimg">
                                             <img src={DrugPopup1} />
                                         </div>
-                                        <span>*Image may vary by manufacturer</span>
+                                        <span><span className="astreak">*</span>Image may vary by manufacturer </span>
                                         <div className="TabletBodyDetails__leftside_typography">
                                             <p>{this.props.description}</p>
                                         </div>
