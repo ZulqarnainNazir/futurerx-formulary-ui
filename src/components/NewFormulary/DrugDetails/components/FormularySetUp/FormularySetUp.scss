@@ -1,10 +1,13 @@
-.general-information-container {
+.general-information-container,
+.formulary-design-container {
   background: #ffffff;
   border: 1px solid #e5e5e5;
   border-radius: 5px;
+  margin-bottom: 15px;
 }
 
-.general-information-container h4 {
+.general-information-container h4,
+.formulary-design-container h4 {
   border-bottom: 1px solid #e5e5e5;
   font-weight: 500;
   font-size: 12px;
@@ -52,13 +55,20 @@ label {
   color: #707683;
 }
 
-.general-information-fields-wrapper {
+.general-information-fields-wrapper,
+.formulary-design-fields-wrapper {
   padding: 15px;
 }
 
 .radio-group {
   display: flex;
   &.marketing-material {
+    padding: 15px 0 20px;
+  }
+  &.marketing-usp {
+    padding: 15px 0 20px;
+  }
+  &.marketing-open {
     padding: 15px 0 20px;
   }
   label {
@@ -108,4 +118,67 @@ label {
 .reporting-tag-group {
   margin-top: 20px;
   position: relative;
+}
+
+.formulary-design-fields-wrapper ul {
+  list-style: none;
+  padding: 0px;
+  margin: 0px;
+}
+
+.checkbox-wrapper {
+  display: flex;
+}
+
+.uncheck-btn {
+  border-radius: 5px;
+  border: 1px solid #1d54b4;
+  background: #1d54b4;
+  padding: 0px;
+  width: 84px;
+  height: 25px;
+  color: #ffffff;
+  font-size: 12px;
+}
+
+.checkbox-label {
+  padding: 6px 12px;
+}
+
+.checkbox-ul {
+  padding-top: 35px !important;
+}
+
+.add-new-cbx {
+  margin-left: 10px;
+  width: 170px !important;
+  height: 30px !important;
+  border-radius: 3px !important;
+  margin-top: -5px !important;
+}
+
+.hide-cbx {
+  visibility: hidden;
+}
+
+.checkbox-wrapper span {
+  margin-left: 13px;
+  padding-top: 8px;
+}
+
+.add-new-cbx-btn-wrapper {
+  display: flex;
+  margin-top: 12px;
+  margin-left: 7px;
+}
+
+.add-new-text a {
+  font-size: 12px;
+  text-decoration: underline dashed;
+  color: #707683;
+  padding-left: 10px;
+}
+
+.add-new-cbx-btn {
+  padding-top: 2px;
 }
