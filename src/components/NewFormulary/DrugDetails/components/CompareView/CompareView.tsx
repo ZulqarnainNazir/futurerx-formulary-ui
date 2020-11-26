@@ -2,6 +2,7 @@ import React from 'react';
 import { TabInfo } from "../../../../../models/tab.model";
 import FrxTabs from '../../../../shared/FrxTabs/FrxTabs';
 import CompareFormularies from './components/CompareFormularies';
+import ViewFormularies from './components/ViewFormularies';
 
 const tabs = [
     { id: 1, text: "COMPARE FORMUARIES" },
@@ -37,7 +38,7 @@ export default class CompareView extends React.Component<configureProps,configur
             case 0:
                 return <div><CompareFormularies /> </div>
             case 1:
-                return <div>VIEW FORMULARIES</div>
+                return <div><ViewFormularies /></div>
             case 2:
                 return <div>HPMS SUMMARY</div>
             
