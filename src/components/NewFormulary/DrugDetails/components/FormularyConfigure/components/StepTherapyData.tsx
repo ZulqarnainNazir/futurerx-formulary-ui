@@ -13,7 +13,7 @@ import CBComponent from "./CB";
 import SSMComponent from "./SSM";
 import SOComponent from "./SO";
 import DrugGrid from "../../DrugGrid";
-import CustomizedSwitches from "./tt";
+import CustomizedSwitches from "./CustomizedSwitches";
 
 interface drugDetailsState {
   activeTabIndex: number;
