@@ -5,12 +5,12 @@ import CustomizedSwitches from './CustomizedSwitches';
 import { TabInfo } from "../../../../../../models/tab.model";
 import FrxMiniTabs from "../../../../../shared/FrxMiniTabs/FrxMiniTabs";
 
-export default class DrugDetailAF extends React.Component<any,any>{
+export default class DrugDetailLA extends React.Component<any,any>{
     state={
         panelGridTitle1: ['','NUMBER OF DRUGS','ADDED DRUGS','REMOVED DRUGS'],
         panelTitleAlignment1: ['left','center','center','center'],
         panelGridValue1: [
-          ['Abridged Formulary','0','0','0']
+          ['Limited Access','2','2','2']
         ],
         activeTabIndex: 0,
         tabs: [
@@ -43,8 +43,8 @@ export default class DrugDetailAF extends React.Component<any,any>{
         return (
             <div className="bordered">
                 <PanelHeader 
-                    title="Abridged Formulary"
-                    tooltip="Define Abridged Formulary inclusion in Drug Grid below for marketing material considerations." />
+                    title="Limited Access"
+                    tooltip="Add or delete Limited Access (LA) Indicators in Drug Grid below for the formulary HPMS submission file and marketing material display. Identified LA drugs must meet CMS' definition of a Limited Access drug." />
                 <div className="inner-container bg-light-grey">
                     <div className="mb-10">
                         <PanelGrid 

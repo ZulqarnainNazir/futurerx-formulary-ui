@@ -11,11 +11,14 @@ import Button from '../../../../../shared/Frx-components/button/Button';
 import RadioButton from '../../../../../shared/Frx-components/radio-button/RadioButton';
 import DropDown from '../../../../../shared/Frx-components/dropdown/DropDown';
 
-export default class DrugDetailIBF extends React.Component<any,any>{
+export default class CB extends React.Component<any,any>{
     state={
-        panelGridTitle1: ['INDICATION BASED COVRAGE', 'NUMBER OF DRUGS', 'ADDED DRUGS', 'REMOVED DRUGS'],
+        panelGridTitle1: ['','Number of Drugs','added drugs','removed drugs'],
         panelTitleAlignment1: ['left','center','center','center'],
-        panelGridValue1: [],
+        panelGridValue1: [
+            ['INCLUDED','0','0','0'],
+            ['EXCLUDED','0','0','0']
+        ],
         isNotesOpen: false,
         activeTabIndex: 0,
         tabs: [
@@ -49,8 +52,8 @@ export default class DrugDetailIBF extends React.Component<any,any>{
         return (
             <div className="bordered">
                 <PanelHeader 
-                    title="Indication Based Formulary"
-                    tooltip="Indication Based Formulary" />
+                    title="Capped Benefits"
+                    tooltip="Ability for system to display Capped Benefits section WHEN ‘Additional Demonstration Drugs (MMP Only)’ or ‘Excluded’ is selected in “Supplemental Benefits Or Alternative Models”." />
                 <div className="inner-container bg-light-grey">
                     <div className="mb-10">
                         <PanelGrid 
@@ -60,7 +63,7 @@ export default class DrugDetailIBF extends React.Component<any,any>{
                     </div>
                     <div className="modify-wrapper bordered white-bg">
                         <div className="header-with-notes">
-                            <PanelHeader title="INDICATION BASED FORMULARY SETTINGS" />
+                            <PanelHeader title="CAPPED BENEFITS SETTINGS" />
                             <svg onClick={this.handleNoteClick} className="note-icon" width="10" height="12" viewBox="0 0 10 12" fill="none"><path fill-rule="evenodd" clip-rule="evenodd" d="M7 0L10 3H7V0ZM6 0H1C0.447715 0 0 0.447715 0 1V11C0 11.5523 0.447715 12 1 12H9C9.55229 12 10 11.5523 10 11V4H7H6V0Z" fill="#2055B5"></path></svg>
                             {this.state.isNotesOpen ? (
                                 <NotesPopup
@@ -82,14 +85,33 @@ export default class DrugDetailIBF extends React.Component<any,any>{
                                     activeTabIndex={this.state.activeTabIndex}
                                     onClickTab={this.onClickTab}
                                     disabledIndex={1}
+                                    disabled
                                 />
                             </div>
                         </div>
                         <div className="settings-form">
+                            <label>What indicator will be configured for Marketing Material?</label>
+                            <div className="marketing-material radio-group">
+                                <RadioButton 
+                                    label="ADD File"
+                                    name="marketing-material-radio"
+                                />
+                                <RadioButton 
+                                    label="Excluded"
+                                    name="marketing-material-radio"
+                                    checked
+                                />
+                            </div>
                             <Grid container spacing={8}>
                                 <Grid item xs={4}>
                                     <div className="group">
-                                        <label>MeSH CUI</label>
+                                        <label>QUANTITY <span className="astrict">*</span></label>
+                                        <DropDown options={[1,2,3]}/>
+                                    </div>
+                                </Grid>
+                                <Grid item xs={4}>
+                                    <div className="group">
+                                        <label>DAYS</label>
                                         <DropDown options={[1,2,3]}/>
                                     </div>
                                 </Grid>

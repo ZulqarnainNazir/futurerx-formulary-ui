@@ -8,13 +8,10 @@ import FrxMiniTabs from "../../../../../shared/FrxMiniTabs/FrxMiniTabs";
 import NotesPopup from "../../../../../member/MemberNotesPopup";
 import Box from '@material-ui/core/Box';
 import Button from '../../../../../shared/Frx-components/button/Button';
-import RadioButton from '../../../../../shared/Frx-components/radio-button/RadioButton';
-import DropDown from '../../../../../shared/Frx-components/dropdown/DropDown';
-
-export default class DrugDetailIBF extends React.Component<any,any>{
+export default class VBID extends React.Component<any,any>{
     state={
-        panelGridTitle1: ['INDICATION BASED COVRAGE', 'NUMBER OF DRUGS', 'ADDED DRUGS', 'REMOVED DRUGS'],
-        panelTitleAlignment1: ['left','center','center','center'],
+        panelGridTitle1: ['Value Based Insurance','Number of Drugs','added drugs','removed drugs'],
+        panelTitleAlignment1: ['left','left','left','left'],
         panelGridValue1: [],
         isNotesOpen: false,
         activeTabIndex: 0,
@@ -22,7 +19,7 @@ export default class DrugDetailIBF extends React.Component<any,any>{
             {id: 1,text: "Replace"},
             {id: 2,text: "Append"},
             {id: 3,text: "Remove"}
-        ]
+        ]   
     }
     onClickTab = (selectedTabIndex: number) => {
         let activeTabIndex = 0;
@@ -49,8 +46,8 @@ export default class DrugDetailIBF extends React.Component<any,any>{
         return (
             <div className="bordered">
                 <PanelHeader 
-                    title="Indication Based Formulary"
-                    tooltip="Indication Based Formulary" />
+                    title="Value-Based Insurance Design"
+                    tooltip="ADD File or delete Value-Based Insurance Design Status in Drug Grid below for the supplemental HPMS submission file and marketing material display." />
                 <div className="inner-container bg-light-grey">
                     <div className="mb-10">
                         <PanelGrid 
@@ -60,7 +57,7 @@ export default class DrugDetailIBF extends React.Component<any,any>{
                     </div>
                     <div className="modify-wrapper bordered white-bg">
                         <div className="header-with-notes">
-                            <PanelHeader title="INDICATION BASED FORMULARY SETTINGS" />
+                            <PanelHeader title="VBID SETTINGS" />
                             <svg onClick={this.handleNoteClick} className="note-icon" width="10" height="12" viewBox="0 0 10 12" fill="none"><path fill-rule="evenodd" clip-rule="evenodd" d="M7 0L10 3H7V0ZM6 0H1C0.447715 0 0 0.447715 0 1V11C0 11.5523 0.447715 12 1 12H9C9.55229 12 10 11.5523 10 11V4H7H6V0Z" fill="#2055B5"></path></svg>
                             {this.state.isNotesOpen ? (
                                 <NotesPopup
@@ -81,16 +78,26 @@ export default class DrugDetailIBF extends React.Component<any,any>{
                                     tabList={this.state.tabs}
                                     activeTabIndex={this.state.activeTabIndex}
                                     onClickTab={this.onClickTab}
-                                    disabledIndex={1}
+                                    
                                 />
                             </div>
                         </div>
                         <div className="settings-form">
-                            <Grid container spacing={8}>
-                                <Grid item xs={4}>
+                            <Grid container>
+                                <Grid item xs={6}>
                                     <div className="group">
-                                        <label>MeSH CUI</label>
-                                        <DropDown options={[1,2,3]}/>
+                                        <label>Contract Id <span className="astrict">*</span></label>
+                                        <input type="text" />
+                                    </div>
+                                    <div className="group">
+                                        <label>PBP Id <span className="astrict">*</span></label>
+                                        <input type="text" />
+                                    </div>
+                                </Grid>
+                                <Grid item xs={6}>
+                                    <div className="group">
+                                        <label>package <span className="astrict">*</span></label>
+                                        <input type="text" />
                                     </div>
                                 </Grid>
                             </Grid>
