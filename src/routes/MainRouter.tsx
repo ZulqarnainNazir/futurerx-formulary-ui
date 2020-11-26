@@ -19,6 +19,7 @@ import PrescriberProfile from "../components/prescriber/PrescriberProfile/Prescr
 import PharmacyProfile from "../components/PharmacyProfile/PharmacyProfileInfo/PharmacyProfile";
 import AdvancedSearch from "../components/AdvancedSearch/AdvancdSearch";
 import Formulary from "../components/NewFormulary/NewFormulary";
+import SetupFormularyGrid from "../components/SetupFormularyGrid/SetupFormularyGrid";
 
 
 class MainRouter extends React.Component {
@@ -194,6 +195,11 @@ class MainRouter extends React.Component {
             exact
             path="/search/:type"
             render={props => <AdvancedSearch {...props} />}
+          ></Route>
+           <Route
+            exact
+            path="/setup/formularyGrid"
+            render={props => <SetupFormularyGrid {...props} />}
           ></Route>
           {/* <Route
             exact
