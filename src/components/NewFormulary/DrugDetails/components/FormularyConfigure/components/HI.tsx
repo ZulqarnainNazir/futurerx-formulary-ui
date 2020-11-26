@@ -1,7 +1,7 @@
 import React from 'react';
 import PanelHeader from './PanelHeader';
 import PanelGrid from './panelGrid';
-import CustomizedSwitches from './tt';
+import CustomizedSwitches from './CustomizedSwitches';
 import { TabInfo } from "../../../../../../models/tab.model";
 import FrxMiniTabs from "../../../../../shared/FrxMiniTabs/FrxMiniTabs";
 export default class HI extends React.Component<any,any>{

@@ -1,10 +1,8 @@
 import React from 'react';
 import FrxGridContainer from "../../../shared/FrxGrid/FrxGridContainer";
-import {
-  claimsGridColumnsForRejectedAndTotal,
-  claimsGridColumnsForPaid
-} from "../../../../utils/grid/columns";
-import { getClaimsGridData } from "../../../../mocks/grid/claims-mock";
+import FrxDrugGridContainer from "../../../shared/FrxGrid/FrxDrugGridContainer";
+import {getDrugDetailsColumn} from "./FormularyConfigure/DrugGridColumn";
+import { getDrugDetailData } from "../../../../mocks/DrugGridMock";
 import "../../../ClaimsGrid/ClaimsGrid.scss";
 
 import { GridMenu } from "../../../../models/grid.model";
@@ -13,13 +11,13 @@ export default class DrugGrid extends React.Component<any,any>{
         isFetchingData: false,
         data: [] as any[],
         filteredData: [] as any[]
-      };
+    };
     
-      componentDidMount() {
+    componentDidMount() {
         //fetch data from API
-        const data = getClaimsGridData();
+        const data = getDrugDetailData();
         this.setState({ data, filteredData: data });
-      }
+    }
     handleSearch = searchObject => {
         console.log(searchObject);
         this.setState({ isFetchingData: true });
@@ -35,42 +33,35 @@ export default class DrugGrid extends React.Component<any,any>{
         }
       };
     render(){
-        const columns = claimsGridColumnsForPaid();
+        const columns = getDrugDetailsColumn();
         return(
             <div className="bordered">
                 <div className="header">Drug Grid</div>
-                <FrxGridContainer
-                enableSearch={false}
-                enableColumnDrag
-                onSearch={this.handleSearch}
-                fixedColumnKeys={["claimId"]}
-                pagintionPosition="topRight"
-                gridName="CLAIMS"
-                enableSettings
-                isFetchingData={this.state.isFetchingData}
-                columns={columns}
-                isRowSelectionEnabled={true}
-                isRowSelectorCheckbox={true}
-                // expandable={{
-                //   isExpandable: true,
-                //   expandIconColumnIndex: 1,
-                //   expandedRowRender: props => <MemberCostshare {...props} />,
-
-                //   expandOpenIcon: <span>O</span>,
-                // expandCloseIcon: <span>X</span>
-                // }}
-                // settingsTriDotMenuClick={this.settingsTriDotMenuClick}
-                // settingsTriDotClick={this.settingsTriDotClick}
-                // onColumnCellClick={this.onColumnCellClick}
-                // summary={this.showSummary}
-                // isRowSelectionEnabled
-                // rowSelectionChange={this.rowSelectionChange}
-                // isRowSelectorCheckbox
-
-                scroll={{ x: 3800, y: 377 }}
-                enableResizingOfColumns
-                data={this.state.filteredData}
-                />
+                <div className="inner-container">
+                  <div className="pinned-table">
+                    <FrxDrugGridContainer
+                      enableSearch={false}
+                      enableColumnDrag
+                      onSearch={this.handleSearch}
+                      fixedColumnKeys={["claimId"]}
+                      pagintionPosition="topRight"
+                      gridName="CLAIMS"
+                      enableSettings={false}
+                      isFetchingData={this.state.isFetchingData}
+                      columns={columns}
+                      isRowSelectionEnabled={true}
+                      isRowSelectorCheckbox={true}
+                      isPinningEnabled={true}
+                      rowSelection={{
+                        fixed: true,
+                        type: 'checkbox',
+                      }}
+                      scroll={{ x: 3800, y: 377 }}
+                      enableResizingOfColumns
+                      data={this.state.filteredData}
+                    />
+                  </div>
+                </div>
             </div>
         )
     }

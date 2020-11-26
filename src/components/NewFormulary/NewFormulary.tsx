@@ -63,9 +63,10 @@ export default class Formulary extends React.Component<any,any>{
     render(){
         return (
             <div className="formulary-root">
-                <FormularyDashboardStats/>
+                
                 { this.state.showTabs ? (
                     <>
+                        <FormularyDashboardStats/>
                         <FrxTabs
                         tabList={this.state.tabs}
                         activeTabIndex={this.state.activeTabIndex}
