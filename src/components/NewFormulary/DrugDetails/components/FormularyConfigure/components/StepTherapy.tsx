@@ -6,7 +6,7 @@ import {
   getTapList,
   getMiniTabs,
 } from "../../../../../../mocks/formulary/mock-data";
-import CustomizedSwitches from "./tt";
+import CustomizedSwitches from "./CustomizedSwitches";
 import PanelHeader from "./PanelHeader";
 import PanelGrid from "./panelGrid";
 import STS from './STS';

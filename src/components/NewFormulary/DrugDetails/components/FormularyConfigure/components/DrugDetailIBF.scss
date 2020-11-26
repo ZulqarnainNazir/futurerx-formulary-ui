@@ -1,0 +1,213 @@
+@import "../../../../../../assets/style.scss";
+
+.drug-detail-IBF-root {
+  .drug-detail-ibf-container{
+    box-sizing: border-box;
+    border-radius: 5px 5px 0px 0px;
+    background: #FFFFFF;
+    .la-header{
+      height: 52px;
+      border-bottom: 1px solid #E5E5E5;
+      padding: 11px 0px 11px 20px;
+      span{
+        font-family: Roboto;
+        font-style: normal;
+        font-weight: 500;
+        font-size: 12px;
+        line-height: 30px;
+        text-transform: uppercase;
+        color: #1D54B4;
+      }
+    }
+    .drug-detail-ibf-inner{
+      .drug-type{
+        padding-top: 10px;
+        padding-bottom: 10px;
+      }
+      .indication-based-formulary{
+        background: #F9F9F9;
+        border: 1px solid #E5E5E5;
+        box-sizing: border-box;
+        border-radius: 5px;
+        .indication-based-formulary-header{
+          background: #FFFFFF;
+          border-bottom: 1px solid #E5E5E5;
+          box-sizing: border-box;
+          border-radius: 5px 5px 0px 0px;
+          padding-top: 10px;
+          padding-left: 19px;
+          span{
+            font-family: Roboto;
+            font-style: normal;
+            font-weight: 500;
+            font-size: 12px;
+            line-height: 30px;
+            text-transform: uppercase;
+            color: #1D54B4;
+          }
+        }
+
+        .inner-container{
+          .bottom{
+            .row span{
+              font-family: Roboto;
+              font-style: normal;
+              font-weight: normal;
+              font-size: 12px;
+              line-height: 40px;
+              display: flex;
+              justify-content: center;
+              align-items: center;
+              letter-spacing: 0.01em;
+              text-transform: uppercase;
+              color: #707683;
+              padding: 0 20px;
+              &.text-left{
+                justify-content: flex-start;
+              }
+            }
+          }
+        }
+        .indication-based-formulary-inner{
+          padding:10px;
+          // border:1px solid #E5E5E5;
+          // .first{
+          //   padding:10px;
+          //   .rowheader{
+          //     height: 40px;
+          //     border: 1px solid #E5E5E5;
+          //     box-sizing: border-box;  
+          //     border-radius: 3px 3px 0px 0px;
+          //     .MuiGrid-item{
+          //       border-right: 1px solid #e5e5e5;
+          //       height: 40px;
+          //     }
+          //   }
+          //   .rowcontent{
+          //     background: #FFFFFF;
+          //     height: 40px;
+          //     border: 1px solid #E5E5E5;
+          //     box-sizing: border-box;
+          //     border-radius: 0px 0px 3px 3px;
+          //     .MuiGrid-item{
+          //       border-right: 1px solid #e5e5e5;
+          //       height: 40px;
+          //     }
+          //   }
+          //   span{
+          //     font-family: Roboto;
+          //     font-style: normal;
+          //     font-weight: normal;
+          //     font-size: 12px;
+          //     line-height: 40px;
+          //     display: flex;
+          //     justify-content: center;
+          //     align-items: center;
+          //     letter-spacing: 0.01em;
+          //     text-transform: uppercase;
+          //     color: #707683;
+          //     padding: 0 20px;
+          //     &.text-left{
+          //       justify-content: flex-start;
+          //     }
+          //   }
+          // }
+
+          .Second{
+            background: #FFFFFF;
+            border: 1px solid #E5E5E5;
+            box-sizing: border-box;
+            border-radius: 5px;
+            .setting-header{
+              display: flex;
+              justify-content: space-between;
+              align-items: center;
+              span{
+                font-family: Roboto;
+                font-style: normal;
+                font-weight: 500;
+                font-size: 12px;
+                line-height: 30px;
+                text-transform: uppercase;
+                color: #1D54B4;
+                padding: 10px 15px 10px 20px;
+              }
+            }
+            .setting-header-inner{
+                border-top: 1px solid #E5E5E5;
+                .viewall{
+                  padding-top: 10px;
+                  padding-bottom: 10px;
+                }
+                span{
+                  font-family: Roboto;
+                  font-style: normal;
+                  font-weight: normal;
+                  font-size: 12px;
+                  line-height: 14px;
+                  display: flex;
+                  align-items: center;
+                  letter-spacing: 0.01em;
+                  text-transform: uppercase;
+                }
+                .switchoff,.switchon{
+                  font-family: Roboto;
+                  font-style: normal;
+                  font-weight: normal;
+                  font-size: 14px;
+                  line-height: 50px;
+                  text-align: right;
+                  text-transform: uppercase;
+                  color: #707683;
+                }
+                .tabs-with-count em{
+                  font-style: normal;
+                  background: #1FBBC4;
+                  color: white;
+                  width: 31px;
+                  height: 31px;
+                  font-weight: bold;
+                  border-radius: 50%;
+                  margin-left: 18px;
+                  justify-content: center;
+                  display: flex;
+                  align-items: center;
+                  font-family: Roboto;
+                  font-style: normal;
+                  font-weight: normal;
+                  font-size: 16px;
+                }
+              .content{
+                border-top: 1px solid #E5E5E5;
+                padding-top:20px;
+                .filetype,.radio-option{
+                  font-family: Roboto;
+                  font-style: normal;
+                  font-weight: normal;
+                  font-size: 12px;
+                  line-height: 20px;
+                  text-transform: uppercase;
+                  color: #707683;
+                  padding-left: 20px;
+                }
+                .input{
+                  background: #FFFFFF;
+                  border: 1px solid #E5E5E5;
+                  box-sizing: border-box;
+                  border-radius: 2px;
+                  width: 200px;
+                  margin-top: 10px;
+                }
+                .applybtn{
+                  display: flex;
+                  justify-content: flex-end;
+                  padding: 12px;
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
