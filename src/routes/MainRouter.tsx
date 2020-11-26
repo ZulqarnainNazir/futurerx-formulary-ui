@@ -20,6 +20,7 @@ import PharmacyProfile from "../components/PharmacyProfile/PharmacyProfileInfo/P
 import AdvancedSearch from "../components/AdvancedSearch/AdvancdSearch";
 import Formulary from "../components/NewFormulary/NewFormulary";
 
+
 class MainRouter extends React.Component {
   render() {
     return (
