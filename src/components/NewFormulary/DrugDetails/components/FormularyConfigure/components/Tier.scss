@@ -123,8 +123,16 @@
     padding: 20px;
     border-top: 1px solid #e5e5e5;
 
+    .select-box {
+      margin-right: 20px;
+    }
+
     .select-box .ant-select {
       width: 100%;
+    }
+
+    button {
+      margin: 24px 10px 10px 0;
     }
   }
 }

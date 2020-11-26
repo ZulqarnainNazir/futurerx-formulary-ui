@@ -11,6 +11,8 @@ import CustomizedSwitches from "./tt";
 import PanelHeader from "./PanelHeader";
 import PanelGrid from "./panelGrid";
 import DropDown from "../../../../../shared/Frx-components/dropdown/DropDown";
+import Button from "../../../../../shared/Frx-components/button/Button";
+import Box from "@material-ui/core/Box";
 
 interface tabsState {
   activeMiniTabIndex: number;
@@ -89,11 +91,18 @@ class Tier extends React.Component<any, tabsState> {
                     </div>
                   </div>
                   <div className="group tier-dropdown white-bg">
-                    <Grid item xs={4}>
-                      <label>
-                        TIER <span className="astrict">*</span>
-                      </label>
-                      <DropDown options={[1, 2, 3]} />
+                    <Grid container>
+                      <Grid item xs={4}>
+                        <label>
+                          TIER <span className="astrict">*</span>
+                        </label>
+                        <DropDown options={[1, 2, 3]} />
+                      </Grid>
+                      <Grid item xs={1}>
+                        <Box display="flex" justifyContent="flex-end">
+                          <Button label="Apply" />
+                        </Box>
+                      </Grid>
                     </Grid>
                   </div>
                 </div>
