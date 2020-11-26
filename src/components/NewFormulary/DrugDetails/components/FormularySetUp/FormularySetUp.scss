@@ -1,5 +1,6 @@
 .general-information-container,
-.formulary-design-container {
+.formulary-design-container,
+.tiers-information-container {
   background: #ffffff;
   border: 1px solid #e5e5e5;
   border-radius: 5px;
@@ -7,7 +8,8 @@
 }
 
 .general-information-container h4,
-.formulary-design-container h4 {
+.formulary-design-container h4,
+.tiers-information-container h4 {
   border-bottom: 1px solid #e5e5e5;
   font-weight: 500;
   font-size: 12px;
@@ -56,7 +58,8 @@ label {
 }
 
 .general-information-fields-wrapper,
-.formulary-design-fields-wrapper {
+.formulary-design-fields-wrapper,
+.tiers-information-fields-wrapper {
   padding: 15px;
 }
 
@@ -181,4 +184,44 @@ label {
 
 .add-new-cbx-btn {
   padding-top: 2px;
+}
+
+.tiers-dropdown-wrapper {
+  border: 1px solid #c4c4c4;
+  border-radius: 5px;
+}
+
+.tier {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px;
+}
+
+.formulary-tier-dropdown {
+  width: 200px !important;
+}
+
+.border-bottom {
+  border-bottom: 1px solid #c4c4c4;
+}
+
+.number-of-tier-dropdown {
+  width: 393px !important;
+}
+
+.tier-zero {
+  background: #e5e5e5;
+}
+
+.checkbox-wrapper .panel {
+  background: none !important;
+  margin-left: -25px;
+  margin-top: -3px;
+  border-bottom: none;
+  font-weight: normal;
+  font-size: 12px;
+  text-transform: uppercase;
+  color: #707683;
+  padding: 0px;
+  height: 35px;
 }

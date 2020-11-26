@@ -2,6 +2,7 @@ import React from "react";
 import Grid from "@material-ui/core/Grid";
 import Box from '@material-ui/core/Box';
 import Button from '../../../../../shared/Frx-components/button/Button';
+import PanelHeader from "../../FormularyConfigure/components/PanelHeader";
 
 
 export default class FormularyDesign extends React.Component<any, any> {
@@ -29,6 +30,9 @@ export default class FormularyDesign extends React.Component<any, any> {
                 <div className="checkbox-wrapper">
                     <input type="checkbox" id="vehicle1" name="N/A" value="N/A" />
                     <label htmlFor="N/A" className="checkbox-label"> Age Limit</label>
+                    <PanelHeader
+                        tooltip="AGE LIMIT"
+                    />
                 </div>
                 </li>
                 <li>
@@ -64,6 +68,9 @@ export default class FormularyDesign extends React.Component<any, any> {
                 <div className="checkbox-wrapper">
                     <input type="checkbox" id="vehicle1" name="N/A" value="N/A" />
                     <label htmlFor="N/A" className="checkbox-label"> Pharmacy Network</label>
+                    <PanelHeader
+                        tooltip="Pharmacy Network"
+                    />
                 </div>
                 </li>
                 <li>
