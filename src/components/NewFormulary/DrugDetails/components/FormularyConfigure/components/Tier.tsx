@@ -35,10 +35,10 @@ class Tier extends React.Component<any, tabsState> {
       "VALIDATION",
     ],
     panelGridValue: [
-      ["img", "Tier 0", "OTC", "2", "4", "2", "Tick"],
-      ["img", "Tier 1", "OTC", "2", "4", "2", "Tick"],
-      ["img", "Tier 2", "OTC", "2", "4", "2", "Tick"],
-      ["img", "Tier 3", "OTC", "2", "4", "2", "Tick"],
+      ["img", "Tier 0", "OTC", "2", "4", "2", "checkbox"],
+      ["img", "Tier 1", "OTC", "2", "4", "2", "checkbox"],
+      ["img", "Tier 2", "OTC", "2", "4", "2", "checkbox"],
+      ["img", "Tier 3", "OTC", "2", "4", "2", "checkbox"],
     ],
   };
   onClickMiniTab = (num: number) => {
