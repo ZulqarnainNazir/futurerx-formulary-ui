@@ -3,7 +3,7 @@ import { TabInfo } from "../../../../../models/tab.model";
 import FrxTabs from "../../../../shared/FrxTabs/FrxTabs";
 import DrugDetails from "./components/DrugDetails";
 import Tier from "./components/Tier";
-import StepTherapy from "./components/StepTherapy";
+import StepTherpayDetails from "./components/StepTherapyData";
 
 const tabs = [
   { id: 1, text: "TIER" },
@@ -53,7 +53,7 @@ export default class FormularyConfigure extends React.Component<
       case 2:
         return <div>PA</div>;
       case 3:
-        return <div><StepTherapy /></div>;
+        return <div><StepTherpayDetails /></div>;
       case 4:
         return <div>QL</div>;
       case 5:
