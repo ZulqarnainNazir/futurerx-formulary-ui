@@ -4,6 +4,7 @@ import PanelGrid from './panelGrid';
 import CustomizedSwitches from './CustomizedSwitches';
 import { TabInfo } from "../../../../../../models/tab.model";
 import FrxMiniTabs from "../../../../../shared/FrxMiniTabs/FrxMiniTabs";
+import DrugGrid from '../../DrugGrid';
 export default class FFF extends React.Component<any,any>{
     state={
         panelGridTitle1: ['Free First Fill','Number of Drugs','added drugs','removed drugs'],
@@ -39,7 +40,7 @@ export default class FFF extends React.Component<any,any>{
     render(){
         return (
             <>
-                <div className="bordered">
+                <div className="bordered mb-10">
                     <PanelHeader 
                         title="Free First Fill"
                         tooltip="ADD File or delete Free First Fill Status in Drug Grid below for the supplemental HPMS submission file and marketing material display." />
@@ -70,6 +71,7 @@ export default class FFF extends React.Component<any,any>{
                     </div>
                     
                 </div>
+                <DrugGrid />
             </>
         )
     }
