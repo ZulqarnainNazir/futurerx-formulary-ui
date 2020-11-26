@@ -1,7 +1,7 @@
 import React from "react";
 import { Grid } from "@material-ui/core";
 import FrxMiniTabs from "../../../../../shared/FrxMiniTabs/FrxMiniTabs";
-import "./DrugDetailLA.scss";
+import "./Tier.scss";
 
 import {
   getTapList,
@@ -10,6 +10,8 @@ import {
 import CustomizedSwitches from "./tt";
 import PanelHeader from "./PanelHeader";
 import PanelGrid from "./panelGrid";
+import DropDown from "../../../../../shared/Frx-components/dropdown/DropDown";
+
 interface tabsState {
   activeMiniTabIndex: number;
   miniTabs: any;
@@ -66,7 +68,7 @@ class Tier extends React.Component<any, tabsState> {
                 </div>
                 <div className="limited-access">
                   <PanelHeader title="Tier Definition Settings" />
-                  <div className="modify-wrapper bordered white-bg">
+                  <div className="modify-wrapper white-bg">
                     <div className="modify-panel">
                       <div className="icon">
                         <span>R</span>
@@ -77,7 +79,22 @@ class Tier extends React.Component<any, tabsState> {
                           rightTitle="view all"
                         />
                       </div>
+                      <div className="mini-tabs">
+                        <FrxMiniTabs
+                          tabList={this.state.miniTabs}
+                          activeTabIndex={this.state.activeMiniTabIndex}
+                          onClickTab={this.onClickMiniTab}
+                        />
+                      </div>
                     </div>
+                  </div>
+                  <div className="group tier-dropdown white-bg">
+                    <Grid item xs={4}>
+                      <label>
+                        TIER <span className="astrict">*</span>
+                      </label>
+                      <DropDown options={[1, 2, 3]} />
+                    </Grid>
                   </div>
                 </div>
               </Grid>
