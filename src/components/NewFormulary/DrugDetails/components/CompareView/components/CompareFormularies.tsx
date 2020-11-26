@@ -37,9 +37,6 @@ export default class CompareFormularies extends React.Component<any,any>{
                                         <Button label="Compare" disabled />
                                      </Box>
                                 </Grid>
-                                {/* <Box display="flex" justifyContent="flex-end">
-                                        <Button label="Compare" disabled onClick={this.settingFormApplyHandler}/>
-                                     </Box> */}
                             </Grid>
                         </div>
             </div>
