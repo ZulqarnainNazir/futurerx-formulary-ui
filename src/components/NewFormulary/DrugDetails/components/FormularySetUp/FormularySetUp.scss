@@ -225,3 +225,17 @@ label {
   padding: 0px;
   height: 35px;
 }
+
+.btn-action {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.save-and-continue-btn button {
+  width: 135px !important;
+  margin-right: 0px !important;
+}
+
+.save-btn button {
+  width: 70px !important;
+}
