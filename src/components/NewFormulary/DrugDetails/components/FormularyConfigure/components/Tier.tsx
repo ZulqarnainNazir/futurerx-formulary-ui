@@ -13,6 +13,8 @@ import PanelGrid from "./panelGrid";
 import DropDown from "../../../../../shared/Frx-components/dropdown/DropDown";
 import Button from "../../../../../shared/Frx-components/button/Button";
 import Box from "@material-ui/core/Box";
+import FrxDrugGridContainer from "../../../../../shared/FrxGrid/FrxDrugGridContainer";
+import DrugGrid from "../../DrugGrid";
 
 interface tabsState {
   activeMiniTabIndex: number;
@@ -23,6 +25,9 @@ interface tabsState {
 class Tier extends React.Component<any, tabsState> {
   state = {
     miniTabs: getMiniTabs(),
+    isFetchingData: false,
+    columns: null,
+    data: null,
     activeMiniTabIndex: 0,
     activeTabIndex: 0,
     tabs: getTapList(),
@@ -48,6 +53,8 @@ class Tier extends React.Component<any, tabsState> {
   };
 
   render() {
+    const { columns } = this.props;
+
     return (
       <div className="drug-detail-LA-root">
         <div className="drug-detail-la-container">
@@ -105,6 +112,38 @@ class Tier extends React.Component<any, tabsState> {
                       </Grid>
                     </Grid>
                   </div>
+                </div>
+                <div className="bordered">
+                  <div className="header space-between pr-10">
+                    Select Drugs From
+                    <div className="button-wrapper">
+                      <Button
+                        className="Button normal"
+                        label="Advance Search"
+                      />
+                      <Button label="Save" disabled />
+                    </div>
+                  </div>
+                  {/* <FrxDrugGridContainer
+                    enableSearch={false}
+                    enableColumnDrag
+                    onSearch={() => {}}
+                    fixedColumnKeys={["claimId"]}
+                    pagintionPosition="topRight"
+                    gridName="CLAIMS"
+                    enableSettings
+                    columns={columns}
+                    scroll={{ x: 3800, y: 377 }}
+                    isFetchingData={false}
+                    enableResizingOfColumns
+                    data={getFormularyDetails()}
+                    expandable={{
+                      isExpandable: true,
+                      expandedRowRender: (props) => (
+                        <FormularyExpandedDetails />
+                      ),
+                    }}
+                  /> */}
                 </div>
               </Grid>
             </Grid>
