@@ -351,7 +351,7 @@ class FrxDrugGrid extends Component<FrxDrugGridProps<any>, FrxDrugGridState<any>
     const columnWidth = Math.floor(
       Math.round(REST_OF_COLUMNS_WIDTH / numberOfVisibleColumns)
     );
-
+      console.log("*******",columnWidth)
     const columns = this.state.columns
       .filter((c: Column<any>) => !c.hidden)
       .map((c: Column<any>, index: number) => {
