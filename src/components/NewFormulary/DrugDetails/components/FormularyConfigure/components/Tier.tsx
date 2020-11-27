@@ -60,7 +60,7 @@ class Tier extends React.Component<any, tabsState> {
                       title="Tier Definition"
                       tooltip="This section allows for Addition or Removal of product only. To define coverage for all Medicare covered and/or Supplemental products, go to Drug Details"
                     />
-                    <div className="inner-container">
+                    <div className="inner-container tier-checkbox">
                       <PanelGrid
                         panelGridTitle={this.state.panelGridTitle}
                         panelGridValue={this.state.panelGridValue}
