@@ -1,19 +1,9 @@
 import React from "react";
 import { Grid } from "@material-ui/core";
 import FrxMiniTabs from "../../../../../shared/FrxMiniTabs/FrxMiniTabs";
-import "./DrugDetailLA.scss";
 import { TabInfo } from "../../../../../../models/tab.model";
 import { getStTabs } from "../../../../../../mocks/formulary/mock-data";
 import StepTherpay from "./StepTherapy";
-import FGCComponent from "./FGC";
-import FFFComponent from "./FFF";
-import HIComponent from "./HI";
-import VBIDComponent from "./VBID";
-import CBComponent from "./CB";
-import SSMComponent from "./SSM";
-import SOComponent from "./SO";
-import DrugGrid from "../../DrugGrid";
-import CustomizedSwitches from "./CustomizedSwitches";
 
 interface drugDetailsState {
   activeTabIndex: number;

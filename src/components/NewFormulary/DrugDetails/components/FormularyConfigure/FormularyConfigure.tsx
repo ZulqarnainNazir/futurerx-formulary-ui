@@ -53,7 +53,11 @@ export default class FormularyConfigure extends React.Component<
       case 2:
         return <div>PA</div>;
       case 3:
-        return <div><StepTherpayDetails /></div>;
+        return (
+          <div>
+            <StepTherpayDetails />
+          </div>
+        );
       case 4:
         return <div>QL</div>;
       case 5:

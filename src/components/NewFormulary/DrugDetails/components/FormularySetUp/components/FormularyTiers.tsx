@@ -1,9 +1,13 @@
-import React from "react";
+import React, { Fragment } from "react";
 import Grid from "@material-ui/core/Grid";
 import DropDown from "../../../../../shared/Frx-components/dropdown/DropDown";
+import Box from '@material-ui/core/Box';
+import Button from '../../../../../shared/Frx-components/button/Button';
+
 export default class FormularyTiers extends React.Component<any, any> {
   render() {
     return (
+      <Fragment>
       <div className="tiers-information-container">
         <h4>TIERS</h4>
         <div className="tiers-information-fields-wrapper">
@@ -53,6 +57,15 @@ export default class FormularyTiers extends React.Component<any, any> {
           </Grid>
         </div>
       </div>
+      <div className="btn-action">
+        <Box display="flex" justifyContent="flex-end" className="save-btn">
+          <Button label="Save" />
+        </Box>
+        <Box display="flex" justifyContent="flex-end" className="save-and-continue-btn">
+          <Button label="Save & Continue" />
+        </Box>
+      </div>
+      </Fragment>
     );
   }
 }
