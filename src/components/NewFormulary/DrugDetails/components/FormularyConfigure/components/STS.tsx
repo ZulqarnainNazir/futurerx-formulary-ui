@@ -1,8 +1,6 @@
 import React from 'react';
 import PanelHeader from './PanelHeader';
-import PanelGrid from './panelGrid';
 import CustomizedSwitches from './CustomizedSwitches';
-import LAComponent from "./DrugDetailLA";
 import { TabInfo } from "../../../../../../models/tab.model";
 import FrxMiniTabs from "../../../../../shared/FrxMiniTabs/FrxMiniTabs";
 import STF from './STF';
