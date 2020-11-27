@@ -5,8 +5,10 @@ import Medicare from "./Medicare/Medicare";
 import DrugDetails from "./DrugDetails/FormularyDetails";
 import DrugDetailsContext from "./FormularyDetailsContext";
 import MassMaintenanceContext from "./FormularyDetailsContext";
-import { getFormularyDetails } from "../../mocks/formulary/formularyDetails";
 import MassMaintenance from "./MassMaintenance/MassMaintenance";
+import FormularyDashboardStats from "./../FormularyDashboardStats/FormularyDashboardStats";
+import { getFormularyDetails } from "../../mocks/formulary/formularyDetails";
+
 import "./NewFormulary.scss";
 
 const tabs = [
@@ -20,8 +22,8 @@ interface State {
   tabs: Array<TabInfo>;
   activeTabIndex: number;
   showTabs: boolean;
-  showFormulary: boolean;
   showMassMaintenance: boolean;
+  showDrugDetails: boolean;
 }
 
 export default class Formulary extends React.Component<any, any> {
@@ -29,8 +31,8 @@ export default class Formulary extends React.Component<any, any> {
     activeTabIndex: 0,
     tabs: tabs,
     showTabs: true,
-    showFormulary: false,
     showMassMaintenance: false,
+    showDrugDetails: false,
   };
   onClickTab = (selectedTabIndex: number) => {
     let activeTabIndex = 0;
@@ -46,7 +48,7 @@ export default class Formulary extends React.Component<any, any> {
   drugDetailsClickHandler = () => {
     this.setState({
       showTabs: !this.state.showTabs,
-      showFormulary: !this.state.showFormulary,
+      showDrugDetails: !this.state.showDrugDetails,
     });
   };
 
@@ -80,6 +82,7 @@ export default class Formulary extends React.Component<any, any> {
       <div className="formulary-root">
         {this.state.showTabs ? (
           <>
+            <FormularyDashboardStats />
             <FrxTabs
               tabList={this.state.tabs}
               activeTabIndex={this.state.activeTabIndex}
@@ -89,7 +92,7 @@ export default class Formulary extends React.Component<any, any> {
               {this.renderActiveTabContent()}
             </div>
           </>
-        ) : this.state.showFormulary ? (
+        ) : this.state.showDrugDetails ? (
           <DrugDetailsContext.Provider
             value={{ showDetailHandler: this.drugDetailsClickHandler }}
           >

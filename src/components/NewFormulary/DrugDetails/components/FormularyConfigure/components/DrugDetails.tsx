@@ -1,12 +1,6 @@
 import React from "react";
 import { Grid } from "@material-ui/core";
 import FrxMiniTabs from "../../../../../shared/FrxMiniTabs/FrxMiniTabs";
-import "./DrugDetailLA.scss";
-import "./DrugDetailAF.scss";
-import "./DrugDetailPBST.scss";
-import "./DrugDetailPGC.scss";
-import "./DrugDetailMOMN.scss";
-import "./DrugDetailLIS.scss";
 import { TabInfo } from "../../../../../../models/tab.model";
 import {getTapList} from '../../../../../../mocks/formulary/mock-data';
 import LAComponent from './DrugDetailLA';
@@ -27,8 +21,8 @@ import DrugGrid from '../../DrugGrid';
 import CustomizedSwitches from './CustomizedSwitches';
 
 interface drugDetailsState {
-    activeTabIndex: number,
-    tabs:Array<TabInfo>
+  activeTabIndex: number;
+  tabs: Array<TabInfo>;
 }
 
 export default class DrugDetails extends React.Component<any,drugDetailsState>{
@@ -80,26 +74,24 @@ export default class DrugDetails extends React.Component<any,drugDetailsState>{
                 return <SOComponent />
         }
     }
-    render(){
-        return(
-            <>
-                <div className="bordered details-top">
-                    <div className="header">Drug Details</div>
-                    <div className="inner-container">
-                        <div className="configure-mini-tabs">
-                            <FrxMiniTabs
-                                tabList={this.state.tabs}
-                                activeTabIndex={this.state.activeTabIndex}
-                                onClickTab={this.onClickTab}
-                            />
-                        </div>
-                        <div className="tabs-info">
-                            {this.renderActiveTabContent()}
-                        </div>
-
-                    </div>
-                </div>
-            </>
-        )
-    }
+    
+  render() {
+    return (
+      <>
+        <div className="bordered details-top">
+          <div className="header">Drug Details</div>
+          <div className="inner-container">
+            <div className="configure-mini-tabs">
+              <FrxMiniTabs
+                tabList={this.state.tabs}
+                activeTabIndex={this.state.activeTabIndex}
+                onClickTab={this.onClickTab}
+              />
+            </div>
+            <div className="tabs-info">{this.renderActiveTabContent()}</div>
+          </div>
+        </div>
+      </>
+    );
+  }
 }
