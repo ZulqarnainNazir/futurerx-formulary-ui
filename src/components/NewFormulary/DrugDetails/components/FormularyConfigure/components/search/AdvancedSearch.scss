@@ -21,7 +21,6 @@
             // border-top: 1px solid $member-notes-border-color;
 
             .member-notes-popup-root__dialog__categories {
-                max-width: 239px;
                 margin-top: 20px;
 
                 .MuiList-padding {
@@ -159,7 +158,6 @@
                 }
 
                 .member-notes-popup-root__dialog__category-notes_form {
-                    height: 80px;
                     line-height: 80px;
                     margin: 0 0 0 auto;
                     display: flex;
@@ -215,7 +213,6 @@
                 padding: 0;
                 &--clearicon{
                     position: relative;
-                    top: 6px;
                 }
                 .MuiButton-label{
                     border: none !important;
@@ -223,7 +220,6 @@
                 }
                 span{
                     position: relative;
-                    top: 5px;
                     line-height: 14px;
                     text-transform: capitalize;
                     font-size: $font-12;
@@ -254,6 +250,45 @@
                 border: 1px solid rgb(113, 146, 209);
                 background: $white-color;
                 cursor: pointer;
+            }
+        }
+    }
+    .form-wrapper-root{
+        height: 100%;
+    }
+    .right-content{
+        height: 100%;
+        position: relative;
+        .noForms{
+            height: calc(100% - 80px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .formWrappers{
+            height: calc(100% - 80px);
+            overflow: auto;
+        }
+        .button-wrapper{
+            height: 80px;
+            border-top: 1px solid #e5e5e5;
+            display: flex;
+            align-items: center;
+            padding: 0 20px;
+            left: 0;
+            right: 0;
+            background: white;
+            bottom: 0;
+            position: absolute;
+            .Button{
+                background: #1D54B4;
+                color: white;
+                border-radius: 5px;
+                &.advanced-grid-search__btn-clear{
+                    background: none;
+                    border: none;
+                    align-items: center;
+                }
             }
         }
     }
