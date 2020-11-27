@@ -44,4 +44,26 @@ export const getDrugDetailData = (): any => {
           }
       ]
   }
+  export const stDataTableTwo = (): any => {
+    return [
+        {
+          STGROUPDESCRIPTION: 'Actos',
+          STTHERPYTYPE: '1',
+          STTHERPYVALUE: '1',
+          LABELNAME: 'Straterra Caps 10 Mg',
+          TIER:2,
+          FILETYPE:'ExD'
+
+        }
+        ,{
+            STGROUPDESCRIPTION: 'Actos',
+            STTHERPYTYPE: '1',
+            STTHERPYVALUE: '1',
+            LABELNAME: 'Straterra Caps 10 Mg',
+            TIER:2,
+            FILETYPE:'ExD'
+  
+          }
+    ]
+}
   
