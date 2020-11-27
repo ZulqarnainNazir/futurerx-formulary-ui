@@ -31,7 +31,7 @@ export default class StandardReporting extends Component {
                         </div>
                         <div style={{ textAlign: "center", backgroundColor: "#F9F9F9" }} className="grid-item">
                             <div >
-                                <input style={{ height: "25px" }} type="checkbox" />
+                                <input id="input" style={{ height: "25px" }} type="checkbox" />
                             </div>
                         </div>
                         <div style={{ backgroundColor: "#F9F9F9", borderRight: "0px solid white" }} className="grid-item">
@@ -76,7 +76,7 @@ export default class StandardReporting extends Component {
                             <img src={dots} alt="" />
                         </div>
                         <div className="grid-item">
-                            <input type="checkbox" />
+                            <input id="input" type="checkbox" />
                         </div>
                         <div style={{ borderRight: "0px solid white" }} className="grid-item">
                             <span style={{ display: "flex", justifyContent: "start", fontSize: "12px", color: "#666666", }}>Validation Summary Export</span>
@@ -87,7 +87,7 @@ export default class StandardReporting extends Component {
                         <div className="grid-item">
                             <img src={dots} alt="" /></div>
                         <div className="grid-item">
-                            <input type="checkbox" />
+                            <input id="input" type="checkbox" />
                         </div>
 
                         <div style={{ borderRight: "0px solid white" }} className="grid-item">
@@ -100,7 +100,7 @@ export default class StandardReporting extends Component {
                             <img src={dots} alt="" />
                         </div>
                         <div className="grid-item">
-                            <input type="checkbox" />
+                            <input id="input" type="checkbox" />
                         </div>
                         <div style={{ borderRight: "0px solid white" }} className="grid-item">
                             <span style={{ display: "flex", justifyContent: "start", color: "#666666", }}>Compare/Activity Export</span>
@@ -112,7 +112,7 @@ export default class StandardReporting extends Component {
                             <img src={dots} alt="" />
                         </div>
                         <div className="grid-item">
-                            <input type="checkbox" />
+                            <input id="input" type="checkbox" />
                         </div>
                         <div style={{ borderRight: "0px solid white" }} className="grid-item">
                             <span style={{ display: "flex", justifyContent: "start", color: "#666666", }}>FRX Standard Full Formulary File</span>
@@ -124,7 +124,7 @@ export default class StandardReporting extends Component {
                             <img src={dots} alt="" /></div>
 
                         <div className="grid-item">
-                            <input type="checkbox" />
+                            <input id="input" type="checkbox" />
                         </div>
 
                         <div style={{ borderRight: "0px solid white" }} className="grid-item">
@@ -137,7 +137,7 @@ export default class StandardReporting extends Component {
                             <img src={dots} alt="" />
                         </div>
                         <div className="grid-item">
-                            <input type="checkbox" />
+                            <input id="input" type="checkbox" />
                         </div>
                         <div style={{ borderRight: "0px solid white" }} className="grid-item">
                             <span style={{ display: "flex", justifyContent: "start", color: "#666666", }}>FRX Standard PA Criteria</span>
@@ -150,7 +150,7 @@ export default class StandardReporting extends Component {
                             <img src={dots} alt="" />
                         </div>
                         <div className="grid-item">
-                            <input type="checkbox" />
+                            <input id="input" type="checkbox" />
                         </div>
                         <div style={{ borderRight: "0px solid white" }} className="grid-item">
                             <span style={{ display: "flex", justifyContent: "start", color: "#666666", }}>FRX Standard ST Criteria</span>
