@@ -1,0 +1,91 @@
+.plain-language-container {
+  padding: 15px 0px;
+}
+
+.list-wrapper label {
+  display: block;
+  font-size: 12px;
+  color: #707683;
+  line-height: 20px;
+  margin-bottom: 5px;
+  text-transform: uppercase;
+  font-weight: normal;
+}
+
+.list-name-wrapper {
+  display: flex;
+}
+
+.list-wrapper input {
+  width: 270px;
+  height: 35px;
+  background: #ffffff;
+  border: 1px solid #c4c4c4;
+  border-radius: 3px;
+}
+
+.list-dropdown {
+  width: 270px !important;
+}
+
+.list-wrapper .create-list-btn button {
+  font-size: 12px;
+  color: #ffffff;
+  background: #1f55b6;
+  border-radius: 5px;
+  width: 99px;
+  height: 34px;
+  margin-top: 24px;
+  margin-right: 0px;
+}
+
+.apply-btn button {
+  font-size: 12px;
+  color: #ffffff;
+  background: #1f55b6;
+  border-radius: 5px;
+  width: 71px;
+  height: 34px;
+  margin-top: 24px;
+  margin-right: 10px;
+}
+
+.plain-language-headings {
+  border-left: 1px solid #e5e5e5;
+  border-right: 1px solid #e5e5e5;
+  border-top: 1px solid #e5e5e5;
+}
+
+.plain-item {
+  border-bottom: 1px solid #e5e5e5;
+}
+
+.class-descriptor-item {
+  border-right: 1px solid #e5e5e5;
+}
+
+.category-item {
+  border-left: 1px solid #e5e5e5 !important;
+}
+
+.category {
+  width: 200px;
+  padding: 0px 15px !important;
+}
+.class-desc {
+  width: 330px;
+}
+.class-item {
+  width: 210px;
+}
+.category-desc {
+  width: 230px;
+}
+
+.plain-lang-input {
+  padding: 0px 3px !important;
+}
+
+.plain-lang-input input {
+  width: 197px !important;
+}

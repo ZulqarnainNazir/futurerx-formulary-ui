@@ -7,6 +7,7 @@ import FrxInfoCard from "../../shared/FrxInfoCard/FrxInfoCard";
 import CustomAccordion from "../../shared/Frx-components/accordion/CustomAccordion";
 import SearchToolConfiguration from "./SearchToolConfiguration";
 import CostShareDetails from './CostShareDetails';
+import PlainLanguageDescriptor from './PlainLanguageDescriptor';
 
 const costShareData = [
   {tierNumber: 'Tier 0', tierDescription: 'Tier Description', costShare: 'Copay', costVal: 'Copay'},
@@ -33,7 +34,7 @@ class MarketingMaterial extends Component {
       case 0:
         return <div>Content 1</div>;
       case 1:
-        return <div>Content 2</div>;
+        return <PlainLanguageDescriptor />
       case 2:
         return <SearchToolConfiguration />;
       case 3:
