@@ -22,6 +22,8 @@ import Formulary from "../components/NewFormulary/NewFormulary";
 import EntityOwnershipContainer from "../components/NewFormulary/EntityOwnership/EntityOwnershipContainer";
 import PlanInformation from "../components/NewFormulary/EntityOwnership/PlanInformation/PlanInformation";
 import PlanInformationConfiguration from "../components/NewFormulary/EntityOwnership/PlanIfonmationConfiguaration/PlanInformationConfiguration";
+import SetupFormularyGrid from "../components/SetupFormularyGrid/SetupFormularyGrid";
+
 class MainRouter extends React.Component {
   render() {
     return (
@@ -220,6 +222,11 @@ class MainRouter extends React.Component {
             exact
             path="/search/:type"
             render={(props) => <AdvancedSearch {...props} />}
+          ></Route>
+           <Route
+            exact
+            path="/setup/formularyGrid"
+            render={props => <SetupFormularyGrid {...props} />}
           ></Route>
           {/* <Route
             exact
