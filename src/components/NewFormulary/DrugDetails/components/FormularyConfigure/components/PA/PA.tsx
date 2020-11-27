@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import PanelHeader from "../PanelHeader";
 import PanelGrid from "../panelGrid";
-import CustomizedSwitches from ".././tt";
+import CustomizedSwitches from "../CustomizedSwitches";
 import FrxMiniTabs from "../../../../../../shared/FrxMiniTabs/FrxMiniTabs";
 import {
   getTapList,
