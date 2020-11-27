@@ -5,12 +5,15 @@ import StarBorderOutlinedIcon from "@material-ui/icons/StarBorderOutlined";
 import "./BreadCrumPanel.scss";
 
 interface Props {
-  //   checked: boolean;
+  checked: boolean;
   //   arrowIconState: boolean;
   //   onHandleIcons: () => void;
   //   onHandleCheckBoxState: () => void;
   label: string;
   value: string | number;
+  id?: string;
+  // onChange?: (e, id, checked) => any;
+  item?: any;
   //   conen
 }
 interface State {}
@@ -31,7 +34,7 @@ class BreadCrumPanel extends Component<Props, State> {
 
   render() {
     return (
-      <div className="BreadCrumPanel">
+      <div className="BreadCrumPanel" id={this.props.id ? this.props.id : ""}>
         <Grid
           container
           alignItems="center"
@@ -39,7 +42,7 @@ class BreadCrumPanel extends Component<Props, State> {
         >
           <Grid item className="breadCrumPanel-grid-item-arrowIcon">
             <span className="arrow-icon-container">
-              {this.state.arrowIconState ? (
+              {this.props.checked ? (
                 <svg
                   className="arrow-icon"
                   onClick={this.onHandleIcons}
@@ -78,9 +81,16 @@ class BreadCrumPanel extends Component<Props, State> {
             <Checkbox
               color="primary"
               className="checkbox"
-              checked={this.state.checked}
-              onChange={this.onHandleCheckBoxState}
+              checked={
+                this.props.checked
+                // ? this.props.checked : this.state.checked
+              }
+              // onChange={(e) =>
+              //   this.props.onChange(e, this.props.item, this.props.checked)
+              // }
+              // {this.onHandleCheckBoxState}
               size="small"
+
               //   inputProps={{"aria-label": "primary checkbox"}}
             />
           </Grid>
@@ -90,7 +100,7 @@ class BreadCrumPanel extends Component<Props, State> {
               <span className="value">{this.props.value}</span>
               <span className="star-icon-container">
                 <svg
-                //   style={{backgrounColor: "#C4C4C4"}}
+                  //   style={{backgrounColor: "#C4C4C4"}}
                   width="14"
                   height="12"
                   viewBox="0 0 14 12"

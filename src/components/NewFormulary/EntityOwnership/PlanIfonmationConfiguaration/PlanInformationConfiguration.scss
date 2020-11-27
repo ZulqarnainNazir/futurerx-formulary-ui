@@ -1,5 +1,5 @@
 .PlanInformationConfiguration {
-  margin-top: 10px;
+  margin: 10px 30px;
   .planInformationConfiguration-card {
     .MuiCardHeader-title {
       font-family: "Roboto";
@@ -77,6 +77,7 @@
         box-sizing: border-box;
         border-radius: 3px;
         color: #2055b5;
+        text-transform:capitalize;
       }
       .btn-save {
         width: 67px;

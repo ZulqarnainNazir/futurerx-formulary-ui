@@ -20,7 +20,8 @@ import PharmacyProfile from "../components/PharmacyProfile/PharmacyProfileInfo/P
 import AdvancedSearch from "../components/AdvancedSearch/AdvancdSearch";
 import Formulary from "../components/NewFormulary/NewFormulary";
 import EntityOwnershipContainer from "../components/NewFormulary/EntityOwnership/EntityOwnershipContainer";
-
+import PlanInformation from "../components/NewFormulary/EntityOwnership/PlanInformation/PlanInformation";
+import PlanInformationConfiguration from "../components/NewFormulary/EntityOwnership/PlanIfonmationConfiguaration/PlanInformationConfiguration";
 class MainRouter extends React.Component {
   render() {
     return (
@@ -33,6 +34,17 @@ class MainRouter extends React.Component {
             path="/entityownership"
             render={(props) => <EntityOwnershipContainer {...props} />}
           />
+          <Route
+            exact
+            path="/planinformation"
+            render={(props) => <PlanInformation {...props} />}
+          />
+           <Route
+            exact
+            path="/planinformationconfig"
+            render={(props) => <PlanInformationConfiguration {...props} />}
+          />
+          
 
           <Route
             exact

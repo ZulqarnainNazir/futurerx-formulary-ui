@@ -7,6 +7,7 @@ import {
   Button,
   Input,
 } from "@material-ui/core";
+import {Link} from "react-router-dom";
 import "./PlanInformationConfiguration.scss";
 
 interface Props {}
@@ -112,7 +113,7 @@ class PlanInformationConfiguration extends Component<Props, State> {
                         disableUnderline={true}
                         // variant="outlined"
                         //   name="claimId"
-                        value={"North East PBPs"}
+                        value={"www.medicare1.com"}
                         //   onChange={(e) => this.handleInputChange(e)}
                       />
                     </div>
@@ -125,7 +126,7 @@ class PlanInformationConfiguration extends Component<Props, State> {
                         //   placeholder="First Name"
                         type="text"
                         multiline
-                        rowsMin={10}
+                        // rowsMin={10}
                         disableUnderline={true}
                         // variant="outlined"
                         //   name="claimId"
@@ -142,7 +143,10 @@ class PlanInformationConfiguration extends Component<Props, State> {
           </CardContent>
           <div className="btn-group">
             {/* <Button className="btn btn-cancel">Cancel</Button> */}
-            <Button className="btn btn-save">Save</Button>
+            {/* <Button className="btn btn-save">Save</Button> */}
+            <Link to={"/planinformation"} className="btn btn-save">
+              Save
+            </Link>
           </div>
         </Card>
       </div>

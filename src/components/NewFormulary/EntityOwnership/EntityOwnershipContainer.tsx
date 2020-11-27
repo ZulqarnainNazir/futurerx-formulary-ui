@@ -7,6 +7,7 @@ import {entityOwnershipData} from "./EnitityOwnershipMockData/MockDataForEntity"
 import PlanInformationConfiguration from "./PlanIfonmationConfiguaration/PlanInformationConfiguration";
 import DialogPopup from "../../shared/FrxDialogPopup/FrxDialogPopup";
 import CustomDatePicker from "./components/CustomDatePicker";
+import {Link} from "react-router-dom";
 
 import "./EntityOwnershipContainer.scss";
 
@@ -60,13 +61,21 @@ class EntityOwnershipContainer extends Component<Props, State> {
             <div className="entity-data-container">
               {entityData.map((entity, ind) => (
                 <>
-                  <BreadCrumPanel label={"customer"} value={entity.owner} />
+                  <BreadCrumPanel
+                    label={"customer"}
+                    value={entity.owner}
+                    checked={true}
+                  />
 
                   <div
                     // style={{marginLeft: "22px"}}
                     className="breadcrum-data client-info"
                   >
-                    <BreadCrumPanel label={"client"} value={entity.client} />
+                    <BreadCrumPanel
+                      label={"client"}
+                      value={entity.client}
+                      checked={true}
+                    />
                     <div
                       // style={{marginLeft: "22px"}}
                       className="breadcrum-data carrier-info"
@@ -74,6 +83,7 @@ class EntityOwnershipContainer extends Component<Props, State> {
                       <BreadCrumPanel
                         label={"Carrier"}
                         value={entity.carrier}
+                        checked={true}
                       />
                       <div
                         // style={{marginLeft: "22px"}}
@@ -82,6 +92,7 @@ class EntityOwnershipContainer extends Component<Props, State> {
                         <BreadCrumPanel
                           label={"Account"}
                           value={entity.account}
+                          checked={true}
                         />
                         <div
                           // style={{marginLeft: "22px"}}
@@ -92,6 +103,7 @@ class EntityOwnershipContainer extends Component<Props, State> {
                               <BreadCrumPanel
                                 label={`Group  ${ind + 1}`}
                                 value={group.id}
+                                checked={true}
                               />
                               <div
                                 className="breadcrum-data group-data-info"
@@ -130,10 +142,13 @@ class EntityOwnershipContainer extends Component<Props, State> {
           </CardContent>
           <div className="btn-group">
             <Button className="btn btn-cancel">Cancel</Button>
-            <Button className="btn btn-save">Save</Button>
+            <Link to={"/planinformation"} className="btn btn-save">
+              Save
+            </Link>
+            {/* <Button className="btn btn-save">Save</Button> */}
           </div>
         </Card>
-        {<PlanInformationConfiguration />}
+        {/* {<PlanInformationConfiguration />} */}
 
         <DialogPopup
           className="entity-diogPopup warning-popoup"
