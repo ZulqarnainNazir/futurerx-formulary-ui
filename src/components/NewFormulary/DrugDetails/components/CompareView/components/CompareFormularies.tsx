@@ -10,7 +10,7 @@ export default class CompareFormularies extends React.Component<any,any>{
         return (
             <div className="compare-formularies-container">
                 <h6>Select formularies for comparison</h6>
-                <div className="formulary-form">
+                <div className="formulary-form formulay-label">
                             <Grid container>
                                 <Grid item xs={4}>
                                     <div className="group">
