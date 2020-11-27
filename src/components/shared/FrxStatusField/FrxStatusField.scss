@@ -1,0 +1,134 @@
+$not-available: #E76262;
+$selling: #5F80B9;
+$sell: #1FBBC4;
+
+.status-field-block {
+  &__container {
+    height: 34px;
+    width: 77px;
+    box-sizing: border-box;
+    border-radius: 4px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  &__variant-1 {
+    &--outline {
+      background: #FFFFFF;
+      border: 1px solid $selling;
+      color: $selling;
+    }
+    
+    &--fill {
+      background: $selling;
+      border: 1px solid $selling;
+      color: #FFFFFF;
+    }
+  }
+
+  &__variant-2 {
+    &--outline {
+      background: #FFFFFF;
+      border: 1px solid $sell;
+      color: $sell;
+    }
+    
+    &--fill {
+      background: $sell;
+      border: 1px solid $sell;
+      color: #FFFFFF;
+    }
+  }
+
+  &__variant-3{
+    &--outline {
+      background: #FFFFFF;
+      border: 1px solid $not-available;
+      color: $not-available;
+    }
+    
+    &--fill {
+      background: $not-available;
+      border: 1px solid $not-available;
+      color: #FFFFFF;
+    }
+  }
+  
+  &__text {
+    font-family: Roboto;
+    font-style: normal;
+    font-weight: 500;
+    font-size: 14px;
+    line-height: 16px;
+    display: flex;
+    align-items: center;
+    text-align: center;
+    letter-spacing: 0.01em;
+  }
+}
+
+.status-field-pill {
+  &__container {
+    height: 20px;
+    width: 106px;
+    box-sizing: border-box;
+    border-radius: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  &__variant-1 {
+    &--outline {
+      background: #FFFFFF;
+      border: 1px solid $selling;
+      color: $selling;
+    }
+    
+    &--fill {
+      background: $selling;
+      border: 1px solid $selling;
+      color: #FFFFFF;
+    }
+  }
+
+  &__variant-2 {
+    &--outline {
+      background: #FFFFFF;
+      border: 1px solid $sell;
+      color: $sell;
+    }
+    
+    &--fill {
+      background: $sell;
+      border: 1px solid $sell;
+      color: #FFFFFF;
+    }
+  }
+
+  &__variant-3{
+    &--outline {
+      background: #FFFFFF;
+      border: 1px solid $not-available;
+      color: $not-available;
+    }
+    
+    &--fill {
+      background: $not-available;
+      border: 1px solid $not-available;
+      color: #FFFFFF;
+    }
+  }
+  
+  &__text {
+    font-family: Roboto;
+    font-style: normal;
+    font-weight: 500;
+    font-size: 12px;
+    line-height: 20px;
+    text-align: center;
+    letter-spacing: 0.2px;
+    text-transform: uppercase;
+  }
+}
