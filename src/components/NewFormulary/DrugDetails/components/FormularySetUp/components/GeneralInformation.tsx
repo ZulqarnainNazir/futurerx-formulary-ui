@@ -10,7 +10,7 @@ export default class GeneralInformation extends React.Component<any, any> {
     return (
       <div className="general-information-container">
         <h4>General information</h4>
-        <div className="general-information-fields-wrapper">
+        <div className="general-information-fields-wrapper setup-label">
           <Grid container>
             <Grid item xs={4}>
               <div className="group">
