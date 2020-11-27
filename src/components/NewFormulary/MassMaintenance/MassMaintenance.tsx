@@ -1,7 +1,9 @@
 import React from "react";
 import { TabInfo } from "../../../models/tab.model";
 import FrxTabs from "../../shared/FrxTabs/FrxTabs";
+import MassMaintenanceConfigure from "./configure/MassMaintenanceConfigure";
 import MassMaintenanceTop from "./MassMaintenanceTop";
+import MassMaintenanceSetup from "./setup/MassMaintenanceSetup";
 // import "./FormularyDetails.scss";
 
 const tabs = [
@@ -32,9 +34,9 @@ export default class MassMaintenance extends React.Component<any, any> {
     const tabIndex = this.state.activeTabIndex;
     switch (tabIndex) {
       case 0:
-        return <div>Setup</div>;
+        return <MassMaintenanceSetup />;
       case 1:
-        return <div>configure</div>;
+        return <MassMaintenanceConfigure />;
       case 2:
         return <div>Compare/View</div>;
       case 3:

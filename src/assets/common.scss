@@ -1,5 +1,24 @@
-/* SCROLL-BAR */
+.m-10 {
+  margin: 10px;
+}
+.m-20 {
+  margin: 20px;
+}
+.m-30 {
+  margin: 30px;
+}
 
+.p-10 {
+  padding: 10px;
+}
+.p-20 {
+  padding: 20px !important;
+}
+.p-30 {
+  padding: 30px;
+}
+
+/* SCROLL-BAR */
 .scroll-bar::-webkit-scrollbar {
   width: 6px;
   height: 6px;
@@ -41,24 +60,21 @@
   background: #999999;
 }
 
-
-
-
 // select drop down //
-.ant-select-dropdown{
-  background: #FFFFFF;
-  border: 1px solid #E5E5E5;
+.ant-select-dropdown {
+  background: #ffffff;
+  border: 1px solid #e5e5e5;
 
   box-sizing: border-box;
   box-shadow: 0px 15px 30px rgba(0, 0, 0, 0.1);
   border-radius: 3px;
-  .ant-select-item{
+  .ant-select-item {
     padding: 0 10px;
     background-color: #ffffff;
-    .ant-select-item-option-selected:not(.ant-select-item-option-disabled){
+    .ant-select-item-option-selected:not(.ant-select-item-option-disabled) {
       background-color: #ffffff;
     }
-    .ant-select-item-option-content{
+    .ant-select-item-option-content {
       color: #666666;
       background-color: #ffffff;
       font-weight: normal;
@@ -68,7 +84,7 @@
   }
 }
 
-.ant-select-open{
+.ant-select-open {
   outline: none;
   border: none;
 }
@@ -85,6 +101,6 @@
   box-shadow: none !important;
 }
 
-.ant-select:not(.ant-select-disabled):hover .ant-select-selector{
+.ant-select:not(.ant-select-disabled):hover .ant-select-selector {
   border-color: #e5e5e5;
 }
