@@ -3,21 +3,21 @@
  */
 
 import * as React from "react";
-import FrxGridContainer from "../shared/FrxGrid/FrxGridContainer";
+import FrxGridContainer from "../../../shared/FrxGrid/FrxGridContainer";
 import {
   _claimsGridColumns,
   _testClaimsGridColumns,
-} from "../../utils/grid/columns";
+} from "../../../../utils/grid/columns";
 // import { getClaimsGridData } from "../../mocks/grid/testClaims-mock";
-import { getClaimsGridData } from "../../mocks/grid/Claims-mockdata";
-import "./TestClaimsGrid.scss";
-import MemberCostshare from "../MemberCostshare/MemberCostshare";
-import { GridMenu } from "../../models/grid.model";
-import FrxGridCompare from "../shared/FrxGrid/FrxGridCompare/FrxGridCompare";
-import FrxLoader from "../shared/FrxLoader/FrxLoader";
-import AuthGridModel from "../AuthsAndOverrides/AuthsAndOverridesEditMode/AuthGridModel";
+import { getClaimsGridData } from "../../../../mocks/grid/Claims-mockdata";
+// import "./TestClaimsGrid.scss";
+import MemberCostshare from "../../../MemberCostshare/MemberCostshare";
+import { GridMenu } from "../../../../models/grid.model";
+import FrxGridCompare from "../../../shared/FrxGrid/FrxGridCompare/FrxGridCompare";
+import FrxLoader from "../../../shared/FrxLoader/FrxLoader";
+import AuthGridModel from "../../../AuthsAndOverrides/AuthsAndOverridesEditMode/AuthGridModel";
 
-export interface TestClaimsGridProps {
+export interface MassMaintenanceSetupGridProps {
   columns: any;
   data: any;
   type: string;
@@ -30,7 +30,7 @@ export interface TestClaimsGridProps {
   settingsWidth: any;
 }
 
-export interface TestClaimsGridState {
+export interface MassMaintenanceSetupGridState {
   isFetchingData: boolean;
   data: any;
   filteredData: any;
@@ -41,9 +41,9 @@ export interface TestClaimsGridState {
   openPopup: boolean;
 }
 
-class TestClaimsGrid extends React.Component<
-  TestClaimsGridProps,
-  TestClaimsGridState
+class MassMaintenanceSetupGrid extends React.Component<
+  MassMaintenanceSetupGridProps,
+  MassMaintenanceSetupGridState
 > {
   state = {
     isFetchingData: true,
@@ -129,7 +129,7 @@ class TestClaimsGrid extends React.Component<
         this.setState({
           isFetchingData: false,
         });
-      }, 2000);
+      }, 200);
     } else {
       this.setState({ isFetchingData: false });
     }
@@ -209,19 +209,19 @@ class TestClaimsGrid extends React.Component<
             }
           >
             <FrxGridContainer
-              enableSearch
+              enableSearch={true}
+              gridName={""}
               enableColumnDrag
               onSearch={this.handleSearch}
               fixedColumnKeys={["claimId"]}
               pagintionPosition="topRight"
-              gridName={"GENERIC"}
               isFetchingData={this.state.isFetchingData}
               columns={columns}
               enableSettings={!this.props.hideSettings}
               enableResizingOfColumns
               data={this.state.filteredData}
               onSettingsClick="grid-menu"
-              settingsWidth={28}
+              settingsWidth={this.props.settingsWidth}
               scroll={{ x: this.state.width, y: 400 }}
               settingsTriDotClick={this.settingsTriDotClick}
               settingsTriDotMenuClick={this.settingsTriDotMenuClick}
@@ -232,35 +232,9 @@ class TestClaimsGrid extends React.Component<
             />
           </div>
         </div>
-        {/* {this.state.isCompareOpen && (
-          <FrxGridCompare
-            onClose={() => {
-              this.setState({
-                isCompareOpen: !this.state.isCompareOpen,
-                selectedItem: undefined,
-              });
-            }}
-            type={
-              this.props.type === "CLAIMSHISTORY" ? "testClaimId" : "claimId"
-            }
-            openPopup={this.state.isCompareOpen}
-            mode={this.state.selectedItem ? "single" : "multi"}
-            selectedItem={this.state.selectedItem}
-          />
-        )}
-        {this.state.openPopup && (
-          <AuthGridModel
-            data={this.state.selectedItem}
-            isOpen={this.state.openPopup}
-            isEditCopy={false}
-            onClose={() => {
-              this.setState({openPopup: false, selectedItem: {}});
-            }}
-          />
-        )} */}
       </>
     );
   }
 }
 
-export default TestClaimsGrid;
+export default MassMaintenanceSetupGrid;

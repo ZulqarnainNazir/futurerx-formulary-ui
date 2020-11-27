@@ -1,7 +1,7 @@
-import React from 'react';
+import React from "react";
 
 const formularyDetailsContext = React.createContext({
-    showDetailHandler: () => {}
+  showDetailHandler: () => {},
 });
 
 export default formularyDetailsContext;

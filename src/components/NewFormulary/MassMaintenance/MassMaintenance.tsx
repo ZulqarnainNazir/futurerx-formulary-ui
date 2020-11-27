@@ -1,11 +1,10 @@
 import React from "react";
 import { TabInfo } from "../../../models/tab.model";
 import FrxTabs from "../../shared/FrxTabs/FrxTabs";
-import FormularyDetailsTop from "./components/FormularyDetailsTop/FormularyDetailsTop";
-import FormularyConfigure from "./components/FormularyConfigure/FormularyConfigure";
-import CompareView from "./components/CompareView/CompareView";
-import "./FormularyDetails.scss";
-import FormularySetUp from "./components/FormularySetUp/FormularySetUp";
+import MassMaintenanceConfigure from "./configure/MassMaintenanceConfigure";
+import MassMaintenanceTop from "./MassMaintenanceTop";
+import MassMaintenanceSetup from "./setup/MassMaintenanceSetup";
+// import "./FormularyDetails.scss";
 
 const tabs = [
   { id: 1, text: "Setup" },
@@ -13,9 +12,8 @@ const tabs = [
   { id: 3, text: "Compare/View" },
   { id: 4, text: "Validation" },
   { id: 5, text: "Complete" },
-  { id: 6, text: "Bazaar" },
 ];
-export default class FormularyDetails extends React.Component<any, any> {
+export default class MassMaintenance extends React.Component<any, any> {
   state = {
     tabs: tabs,
     activeTabIndex: 0,
@@ -35,28 +33,24 @@ export default class FormularyDetails extends React.Component<any, any> {
     const tabIndex = this.state.activeTabIndex;
     switch (tabIndex) {
       case 0:
-        return <FormularySetUp />;
+        return <MassMaintenanceSetup />;
       case 1:
-        return <FormularyConfigure />;
+        return <MassMaintenanceConfigure />;
       case 2:
-        return (
-          <div>
-            <CompareView />
-          </div>
-        );
+        return <div>Compare/View</div>;
       case 3:
         return <div>Validation</div>;
       case 4:
         return <div>Complete</div>;
-      case 5:
-        return <div>Bazaar</div>;
+      default:
+        return null;
     }
   };
   render() {
     const fData = this.props.data;
     return (
       <>
-        <FormularyDetailsTop formularyTopData={fData} />
+        <MassMaintenanceTop formularyTopData={fData} />
         <div className="drug-details-bottom">
           <FrxTabs
             tabList={this.state.tabs}

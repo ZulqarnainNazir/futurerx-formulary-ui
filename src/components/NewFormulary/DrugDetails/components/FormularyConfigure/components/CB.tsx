@@ -1,8 +1,9 @@
 import React from "react";
+
 import Grid from "@material-ui/core/Grid";
-import PanelHeader from './PanelHeader';
-import PanelGrid from './panelGrid';
-import CustomizedSwitches from './CustomizedSwitches';
+import PanelHeader from "./PanelHeader";
+import PanelGrid from "./panelGrid";
+import CustomizedSwitches from "./CustomizedSwitches";
 import { TabInfo } from "../../../../../../models/tab.model";
 import FrxMiniTabs from "../../../../../shared/FrxMiniTabs/FrxMiniTabs";
 import NotesPopup from "../../../../../member/MemberNotesPopup";

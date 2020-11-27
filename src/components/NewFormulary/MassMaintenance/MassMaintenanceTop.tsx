@@ -1,8 +1,8 @@
-import React, { useContext } from "react";
-import FormularyDetailsContext from "../../../FormularyDetailsContext";
+import React from "react";
+import MassMaintenanceContext from "../FormularyDetailsContext";
 
 export default function FormularyDetailsTop(props: any) {
-  const FormularyDetailsCont = useContext(FormularyDetailsContext);
+  const MassMaintenance = React.useContext(MassMaintenanceContext);
   console.log(props);
   return (
     <div className="drug-detail-top">
@@ -10,9 +10,9 @@ export default function FormularyDetailsTop(props: any) {
         <div className="breadcrum">
           <span
             className="color-blue"
-            onClick={FormularyDetailsCont.showDetailHandler}
+            onClick={MassMaintenance.showDetailHandler}
           >
-            Formulary Grid
+            Mass Maintenance Grid
           </span>
           <span>&gt;</span>
           <span className="active-state">

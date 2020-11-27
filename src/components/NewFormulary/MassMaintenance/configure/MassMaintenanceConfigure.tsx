@@ -1,26 +1,23 @@
-import React from "react";
-import { TabInfo } from "../../../../../models/tab.model";
-import FrxTabs from "../../../../shared/FrxTabs/FrxTabs";
-import DrugDetails from "./components/DrugDetails";
-import Tier from "./components/Tier";
-import StepTherpayDetails from "./components/StepTherapyData";
+import React, { Component } from "react";
+import { TabInfo } from "../../../../models/tab.model";
+import FrxTabs from "../../../shared/FrxTabs/FrxTabs";
+import MassMaintenancePA from "./MassMaintenancePA";
+import "./MassMaintenanceConfigure.scss";
 
 const tabs = [
   { id: 1, text: "TIER" },
-  { id: 2, text: "CATEGORY/CLASS" },
-  { id: 3, text: "PA" },
-  { id: 4, text: "ST" },
-  { id: 5, text: "QL" },
-  { id: 6, text: "DRUG DETAILS" },
+  { id: 2, text: "PA" },
+  { id: 3, text: "ST" },
+  { id: 4, text: "QL" },
+  { id: 5, text: "DRUG DETAILS" },
 ];
-
 interface configureState {
   tabs: Array<TabInfo>;
   activeTabIndex: number;
 }
 interface configureProps {}
 
-export default class FormularyConfigure extends React.Component<
+class MassMaintenanceConfigure extends Component<
   configureProps,
   configureState
 > {
@@ -43,25 +40,15 @@ export default class FormularyConfigure extends React.Component<
     const tabIndex = this.state.activeTabIndex;
     switch (tabIndex) {
       case 0:
-        return (
-          <div>
-            <Tier />
-          </div>
-        );
+        return <div>TIER</div>;
       case 1:
-        return <div>CATEGORY/CLASS</div>;
+        return <MassMaintenancePA />;
       case 2:
-        return <div>PA</div>;
+        return <div>ST</div>;
       case 3:
-        return (
-          <div>
-            <StepTherpayDetails />
-          </div>
-        );
-      case 4:
         return <div>QL</div>;
-      case 5:
-        return <DrugDetails />;
+      case 4:
+        return <div>DRUG DETAILS</div>;
     }
   };
   render() {
@@ -79,3 +66,5 @@ export default class FormularyConfigure extends React.Component<
     );
   }
 }
+
+export default MassMaintenanceConfigure;
