@@ -1,40 +1,35 @@
 .hmpsSubmissionTable {
-    padding: 10px;
-    // border: 5px solid gray ;
+  padding: 10px;
+  // border: 5px solid gray ;
 }
 
 .grid-container {
-    display: grid;
-    grid-template-columns: 80px 80px auto 350px;
-    // background-color: #2196F3;
-    padding: 10px;
-    border-radius: 80px;
-    margin-bottom: 80px;
+  display: grid;
+  grid-template-columns: 80px 80px auto 350px;
+  // background-color: #2196F3;
+  padding: 10px;
+  border-radius: 80px;
+  margin-bottom: 80px;
 }
 
 .grid-item {
-    background-color: rgba(255, 255, 255, 0.8);
-    border: 1px solid lightgrey;
-    padding: 20px;
-    font-size: 12px;
-    text-align: center;
+  background-color: rgba(255, 255, 255, 0.8);
+  border: 1px solid lightgrey;
+  padding: 20px;
+  font-size: 12px;
+  text-align: center;
 }
-
-input {
-    // position: fixed;
-    // left: 0%;
-    // right: 0%;
-    // top: 8px;
-    // bottom: 0%;
-
-    /* Background – White */
-
-    // background: #FFFFFF;
-    /* Border – Light Grey */
-
+.grid-container input{
+    position: relative;
+    left: 0%;
+    right: 0%;
+    top: 8px;
+    bottom: 0%;
+    // 
     width: 15px !important;
     height: 15px !important;
     border: 2px solid lightgrey;
     box-sizing: border-box;
     border-radius: 8px;
 }
+ 

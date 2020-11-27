@@ -23,7 +23,6 @@ export default class SetupFormularyGrid extends Component {
           className="FormularyHeading"
         >
           {/* <FormularyHeading/> */}
-
           <FormularyDetailsTop formularyTopData={getFormularyDetails()} />
         </div>
         <div className="formularyBody">

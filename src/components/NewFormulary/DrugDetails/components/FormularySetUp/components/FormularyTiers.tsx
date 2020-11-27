@@ -10,7 +10,7 @@ export default class FormularyTiers extends React.Component<any, any> {
       <Fragment>
       <div className="tiers-information-container">
         <h4>TIERS</h4>
-        <div className="tiers-information-fields-wrapper">
+        <div className="tiers-information-fields-wrapper setup-label">
           <Grid container>
           <Grid item xs={4}>
               <div className="group">

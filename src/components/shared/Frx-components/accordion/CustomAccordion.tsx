@@ -12,15 +12,16 @@ const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
       width: "100%",
+      marginBottom: "20px",
     },
     heading: {
       //   fontSize: theme.typography.pxToRem(15),
       //   fontWeight: theme.typography.fontWeightRegular,
       fontFamily: "Roboto",
       fontStyle: "normal",
-      fontWeight: 500,
+      fontWeight: 400,
       fontSize: "12px",
-      lineHeight: "30px",
+      // lineHeight: "30px",
 
       color: "#1D54B4",
     },
@@ -28,7 +29,14 @@ const useStyles = makeStyles((theme: Theme) =>
       background: "#FFFFFF",
       border: "1px solid #E5E5E5",
       boxSizing: "border-box",
-      borderRadius: "5px 5px 0px 0px",
+      borderRadius: "5px 5px 5px 5px",
+      minHeight: 56,
+      // height: 56,
+      // "&$expanded": {
+      //   minHeight: 50,
+      //   height: 50,
+      //   borderRadius: "5px 5px 0px 0px",
+      // },
     },
     accordionDetails: {
       background: "#FFFFFF",
@@ -42,6 +50,7 @@ const useStyles = makeStyles((theme: Theme) =>
 interface Props {
   children: any;
   name: string;
+  style?: any;
 }
 
 export default function CustomAccordion({
