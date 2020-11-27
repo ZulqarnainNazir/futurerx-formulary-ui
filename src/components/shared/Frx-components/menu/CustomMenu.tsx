@@ -1,5 +1,5 @@
-import React, {ReactElement} from "react";
-import {makeStyles, createStyles, Theme} from "@material-ui/core/styles";
+import React, { ReactElement } from "react";
+import { makeStyles, createStyles, Theme } from "@material-ui/core/styles";
 
 import Menu from "@material-ui/core/Menu";
 // import MenuItem from "@material-ui/core/MenuItem";
@@ -36,7 +36,7 @@ interface Props {
   children: any;
   open: any;
   anchorEl: any;
-  className:string;
+  className: string;
   //   handleClose: () => any;
 }
 
@@ -44,7 +44,7 @@ export default function CustomMenu({
   children,
   open,
   anchorEl,
-  className
+  className,
 }: //   handleClose,
 Props): ReactElement {
   const classes = useStyles();

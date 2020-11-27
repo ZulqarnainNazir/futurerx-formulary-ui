@@ -33,7 +33,7 @@ export interface Grid<RecordType = unknown> {
   onSettingsClick?: "grid-menu";
 	isRowSelectionEnabled?: boolean;
 	isRowSelectorCheckbox?:boolean;
-
+  rowSelection?: any;
   columns: Column<RecordType>[];
   data: RecordType[];
   fixedColumnKeys: string[];
@@ -69,6 +69,7 @@ export interface Grid<RecordType = unknown> {
   preferences?: { columnKey: string; hidden: boolean }[];
   settingsWidth?: number;
   searchOptions?: any;
+  isPinningEnabled?: any;
 }
 
 export interface ExpandableConfig<RecordType> {

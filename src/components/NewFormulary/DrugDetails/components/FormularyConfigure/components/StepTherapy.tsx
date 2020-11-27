@@ -1,14 +1,15 @@
 import React from "react";
 import { Grid } from "@material-ui/core";
 import FrxMiniTabs from "../../../../../shared/FrxMiniTabs/FrxMiniTabs";
-import "./DrugDetailLA.scss";
 import {
   getTapList,
   getMiniTabs,
 } from "../../../../../../mocks/formulary/mock-data";
-import CustomizedSwitches from "./tt";
+import CustomizedSwitches from "./CustomizedSwitches";
 import PanelHeader from "./PanelHeader";
 import PanelGrid from "./panelGrid";
+import STS from './STS';
+import STF from './STF';
 interface tabsState {
   activeMiniTabIndex: number;
   miniTabs: any;
@@ -21,18 +22,18 @@ class StepTherapy extends React.Component<any, tabsState> {
     activeMiniTabIndex: 0,
     tabs: getTapList(),
     panelGridTitle: [
-      "TIER NAME",
-      "TIER DESCRIPTION",
-      "CURRENT ACCOUNT",
-      "ADDED",
-      "REMOVED",
-      "VALIDATION",
+      "TYPE",
+      "NUMBER OF GROUPS",
+      "ADDED GROUPS",
+      "REMOVED GROUPS",
+      "NUMBER OF DRUGFS",
+      "ADDED DRUGS",
+      "REMOVED DRUGS",
     ],
     panelGridValue: [
-      ["Tier 0", "OTC", "2", "4", "2", "Tick"],
-      ["Tier 1", "OTC", "2", "4", "2", "Tick"],
-      ["Tier 2", "OTC", "2", "4", "2", "Tick"],
-      ["Tier 3", "OTC", "2", "4", "2", "Tick"],
+      ["ST Type 1", "2", "4", "2", "2", "2"],
+      ["ST Type 2", "3", "4", "1", "1", "1"],
+      ["ST Type 3", "4", "4", "2", "2", "Tick"],
     ],
   };
   onClickMiniTab = (num: number) => {
@@ -49,7 +50,7 @@ class StepTherapy extends React.Component<any, tabsState> {
               <Grid item xs={12}>
                 <div className="limited-access">
                   <PanelHeader
-                    title="Tier Definition"
+                    title="STEP THERAPY - DRUG SELECTION"
                   />
                   <div className="inner-container">
                     <PanelGrid
@@ -57,6 +58,10 @@ class StepTherapy extends React.Component<any, tabsState> {
                       panelGridValue={this.state.panelGridValue}
                     />
                   </div>
+                </div>
+                <div>
+                  <STS />
+                  {/* <STF /> */}
                 </div>
               </Grid>
             </Grid>

@@ -4,10 +4,10 @@ import PanelGrid from './panelGrid';
 import CustomizedSwitches from './CustomizedSwitches';
 import { TabInfo } from "../../../../../../models/tab.model";
 import FrxMiniTabs from "../../../../../shared/FrxMiniTabs/FrxMiniTabs";
-export default class HI extends React.Component<any,any>{
+
+export default class DrugDetailPBST extends React.Component<any,any>{
     state={
-        panelGridTitle1: ['Home Infusion','Number of Drugs','added drugs','removed drugs'],
-        panelTitleAlignment1: ['left','left','left','left'],
+        panelGridTitle1: ['PART B STEP THERAPY','NUMBER OF DRUGS','ADDED DRUGS','REMOVED DRUGS'],
         panelGridValue1: [],
         activeTabIndex: 0,
         tabs: [
@@ -40,14 +40,13 @@ export default class HI extends React.Component<any,any>{
         return (
             <div className="bordered">
                 <PanelHeader 
-                    title="Home Infusion"
-                    tooltip="Add or delete Home Infusion Status in Drug Grid below for the supplemental HPMS submission file and marketing material display." />
+                    title="Part B step Therapy"
+                    tooltip="Add or delete Part B Step Therapy Status in Drug Grid below for the marketing material display." />
                 <div className="inner-container bg-light-grey">
                     <div className="mb-10">
                         <PanelGrid 
                             panelGridTitle={this.state.panelGridTitle1} 
-                            panelGridValue={this.state.panelGridValue1}
-                            panelTitleAlignment={this.state.panelTitleAlignment1} />
+                            panelGridValue={this.state.panelGridValue1}/>
                     </div>
                     <div className="modify-wrapper bordered white-bg">
                         <div className="modify-panel">

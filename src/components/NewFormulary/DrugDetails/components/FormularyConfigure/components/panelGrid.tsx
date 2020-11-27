@@ -17,7 +17,7 @@ class PanelGrid extends React.Component<any,any>{
                         {e.map((text,index) => {
                             const classes = `item ${classesArray  ?  classesArray[index] : null}`;
                             const renderedText = text === 'checkbox' ? <Checkbox defaultChecked={false} /> : text;
-                            return <div className={classes}>{renderedText}</div>
+                            return <div className={classes}><span>{renderedText}</span></div>
                         })}
                     </div>
                 )

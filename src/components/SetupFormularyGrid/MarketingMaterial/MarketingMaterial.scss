@@ -1,0 +1,63 @@
+@import "../../../assets/style.scss";
+
+._marketing-material-root {
+  .MuiAccordion-root {
+    box-shadow: none;
+  }
+  .MuiAccordionDetails-root {
+    padding: 0 !important;
+    margin: 0;
+
+    .border-right {
+      border-right: 1px solid #e5e5e5;
+      .MuiList-padding {
+        margin: 10px 0;
+        padding: 0px;
+        // padding-top: 0px;
+        font-weight: $font-weight-normal;
+        font-size: $font-12;
+        line-height: 24px;
+
+        .marketing-material-list__item {
+          height: 30px;
+          cursor: pointer;
+          line-height: 24px;
+        }
+        .marketing-material-list__item--active {
+          height: 30px;
+          cursor: pointer;
+          line-height: 24px;
+          background: #edf3f6;
+        }
+        .MuiListItem-root {
+          .marketing-material-list__item__text {
+            .MuiTypography-root {
+              font-weight: $font-weight-normal;
+              font-size: $font-12;
+              //   line-height: 24px;
+              color: #707683;
+            }
+          }
+
+          .marketing-material-list__item__text--active {
+            .MuiTypography-root {
+              font-weight: $font-weight-normal;
+              font-size: $font-12;
+              //   line-height: 24px;
+              color: #707683;
+            }
+          }
+
+          .MuiTypography-body1 {
+            font-family: Roboto;
+            font-style: normal;
+            font-weight: 500;
+            font-size: 12px;
+            line-height: 14px;
+            color: #707683;
+          }
+        }
+      }
+    }
+  }
+}
