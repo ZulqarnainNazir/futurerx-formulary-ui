@@ -1,12 +1,6 @@
 import React from "react";
 import { Grid } from "@material-ui/core";
 import FrxMiniTabs from "../../../../../shared/FrxMiniTabs/FrxMiniTabs";
-import "./DrugDetailLA.scss";
-import "./DrugDetailAF.scss";
-import "./DrugDetailPBST.scss";
-import "./DrugDetailPGC.scss";
-import "./DrugDetailMOMN.scss";
-import "./DrugDetailLIS.scss";
 import { TabInfo } from "../../../../../../models/tab.model";
 import {getTapList} from '../../../../../../mocks/formulary/mock-data';
 import LAComponent from './DrugDetailLA';

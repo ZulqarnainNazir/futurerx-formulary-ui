@@ -102,11 +102,11 @@ export default class GeneralInformation extends React.Component<any, any> {
                   tooltip="FORMULARY CLASSIFICATION SYSTEM"
                 />
                 <div className="marketing-material radio-group">
-                  <RadioButton label="USP" name="marketing-material-radio" />
-                  <RadioButton label="AHFS" name="marketing-material-radio" />
+                  <RadioButton label="USP" name="marketing-usp-radio" />
+                  <RadioButton label="AHFS" name="marketing-usp-radio" />
                   <RadioButton
                     label="Medispan"
-                    name="marketing-material-radio"
+                    name="marketing-usp-radio"
                     checked
                   />
                 </div>
@@ -119,10 +119,10 @@ export default class GeneralInformation extends React.Component<any, any> {
                   tooltip="IS THIS A CLOSED OR OPEN FORMULARY"
                 />
                 <div className="marketing-material radio-group">
-                  <RadioButton label="Open" name="marketing-material-radio" />
+                  <RadioButton label="Open" name="marketing-open-radio" />
                   <RadioButton
                     label="Closed"
-                    name="marketing-material-radio"
+                    name="marketing-open-radio"
                     checked
                   />
                 </div>
