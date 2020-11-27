@@ -45,7 +45,7 @@ export default class HmpsSubmissionTable extends Component {
               className="grid-item"
             >
               <div>
-                <input type="checkbox" />
+                <input id="input" type="checkbox" />
               </div>
             </div>
             <div
@@ -120,7 +120,7 @@ export default class HmpsSubmissionTable extends Component {
               <img src={dots} alt="" />
             </div>
             <div className="grid-item">
-              <input type="checkbox" />
+              <input id="input" type="checkbox" />
             </div>
             <div
               style={{ borderRight: "0px solid white" }}
@@ -155,7 +155,7 @@ export default class HmpsSubmissionTable extends Component {
               <img src={dots} alt="" />
             </div>
             <div className="grid-item">
-              <input type="checkbox" />
+              <input id="input" type="checkbox" />
             </div>
 
             <div
@@ -190,7 +190,7 @@ export default class HmpsSubmissionTable extends Component {
               <img src={dots} alt="" />
             </div>
             <div className="grid-item">
-              <input type="checkbox" />
+              <input id="input" type="checkbox" />
             </div>
             <div
               style={{ borderRight: "0px solid white" }}
@@ -224,7 +224,7 @@ export default class HmpsSubmissionTable extends Component {
               <img src={dots} alt="" />
             </div>
             <div className="grid-item">
-              <input type="checkbox" />
+              <input id="input" type="checkbox" />
             </div>
             <div
               style={{ borderRight: "0px solid white" }}
@@ -259,7 +259,7 @@ export default class HmpsSubmissionTable extends Component {
             </div>
 
             <div className="grid-item">
-              <input type="checkbox" />
+              <input id="input" type="checkbox" />
             </div>
 
             <div
