@@ -1,0 +1,13 @@
+.PA-list {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  padding: 0 2rem;
+
+  span {
+    font-size: 12px;
+    font-weight: 400;
+    color: #707683;
+    margin-right: 2rem;
+  }
+}
