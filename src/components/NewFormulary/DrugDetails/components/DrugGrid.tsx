@@ -11,13 +11,10 @@ export default class DrugGrid extends React.Component<any,any>{
     };
     
     componentDidMount() {
-        //fetch data from API
         const data = this.props.data;
-        // const data = getClaimsGridData();
         this.setState({ data, filteredData: data });
     }
     handleSearch = searchObject => {
-        console.log(searchObject);
         this.setState({ isFetchingData: true });
         if (searchObject && searchObject.status) {
           setTimeout(() => {
@@ -32,7 +29,7 @@ export default class DrugGrid extends React.Component<any,any>{
       };
     render(){
         const {columns} = this.props;
-        // const columns = claimsGridColumnsForPaid();
+
         return(
           <div className="inner-container">
             <div className="pinned-table">
@@ -54,7 +51,7 @@ export default class DrugGrid extends React.Component<any,any>{
                   fixed: true,
                   type: 'checkbox'
                 }}
-                scroll={{ x: 5000, y: 377 }}
+                scroll={{ x: 5200, y: 377 }}
                 enableResizingOfColumns
                 data={this.state.filteredData}
               />

@@ -211,7 +211,6 @@ class FrxDrugGrid extends Component<FrxDrugGridProps<any>, FrxDrugGridState<any>
       this.gridRef && this.gridRef.current
         ? this.gridRef.current.clientWidth
         : DEFAULT_GRID_WIDTH;
-    console.log("width of grid ", gridWidth);
 
     const suggestionsForEachColumn = requiredColumns.reduce(
       (acc, c: Column<any>) => {
@@ -351,7 +350,6 @@ class FrxDrugGrid extends Component<FrxDrugGridProps<any>, FrxDrugGridState<any>
     const columnWidth = Math.floor(
       Math.round(REST_OF_COLUMNS_WIDTH / numberOfVisibleColumns)
     );
-      console.log("*******",columnWidth)
     const columns = this.state.columns
       .filter((c: Column<any>) => !c.hidden)
       .map((c: Column<any>, index: number) => {
@@ -2261,7 +2259,6 @@ class FrxDrugGrid extends Component<FrxDrugGridProps<any>, FrxDrugGridState<any>
   */
 
   render() {
-    console.log(this.props)
     const gridColumns = this.generateColumns();
     let columns = gridColumns;
     if (this.props.enableResizingOfColumns) {
@@ -2405,7 +2402,6 @@ class FrxDrugGrid extends Component<FrxDrugGridProps<any>, FrxDrugGridState<any>
                 <Table
                   className="frx-grid__grid-block__table-block"
                   rowClassName={(record, index) =>{
-                    console.log("=======",record)
                     return index % 2 === 0
                       ? "table-row-white"
                       : "table-row-lightskyblue"
@@ -2468,7 +2464,6 @@ class FrxDrugGrid extends Component<FrxDrugGridProps<any>, FrxDrugGridState<any>
                   <Table
                     className="frx-grid__grid-block__table-block"
                     rowClassName={(record, index) => {
-                      console.log(record) 
                         return index % 2 === 0
                           ? "table-row-white"
                           : "table-row-lightskyblue"
