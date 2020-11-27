@@ -5,7 +5,7 @@ import { Container, List, ListItem, ListItemText } from "@material-ui/core";
 import "./MarketingMaterial.scss";
 import FrxInfoCard from "../../shared/FrxInfoCard/FrxInfoCard";
 import CustomAccordion from "../../shared/Frx-components/accordion/CustomAccordion";
-
+import SearchToolConfiguration from "./SearchToolConfiguration";
 class MarketingMaterial extends Component {
   state = {
     activeListIndex: 0,
@@ -24,7 +24,7 @@ class MarketingMaterial extends Component {
       case 1:
         return <div>Content 2</div>;
       case 2:
-        return <div>Content 3</div>;
+        return <SearchToolConfiguration />;
       case 3:
         return <div>Content 4</div>;
       default:

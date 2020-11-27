@@ -26,6 +26,7 @@ class MassMaintenanceSetup extends Component {
       isFormularyGridShown: !this.state.isFormularyGridShown,
     });
   };
+
   render() {
     const { isFormularyGridShown } = this.state;
     return (
@@ -86,7 +87,7 @@ class MassMaintenanceSetup extends Component {
                 </div>
               </div>
               <div>
-                <label className="uppercase reset">submission month</label>
+                <label className="uppercase">submission month</label>
                 {/* <div className="submission-month-input"> */}
                 {/* <input
                   type="text"
