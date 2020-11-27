@@ -12,7 +12,6 @@ const tabs = [
   { id: 3, text: "Compare/View" },
   { id: 4, text: "Validation" },
   { id: 5, text: "Complete" },
-  { id: 6, text: "Bazaar" },
 ];
 export default class MassMaintenance extends React.Component<any, any> {
   state = {
@@ -43,8 +42,8 @@ export default class MassMaintenance extends React.Component<any, any> {
         return <div>Validation</div>;
       case 4:
         return <div>Complete</div>;
-      case 5:
-        return <div>Bazaar</div>;
+      default:
+        return null;
     }
   };
   render() {
