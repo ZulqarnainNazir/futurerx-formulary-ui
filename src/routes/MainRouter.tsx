@@ -21,45 +21,40 @@ import AdvancedSearch from "../components/AdvancedSearch/AdvancdSearch";
 import Formulary from "../components/NewFormulary/NewFormulary";
 import SetupFormularyGrid from "../components/SetupFormularyGrid/SetupFormularyGrid";
 
-
 class MainRouter extends React.Component {
   render() {
     return (
       <React.Fragment>
         <NavBar />
         <Switch>
-          <Route
-            exact
-            path="/"
-            render={props => <Formulary {...props} />}
-          />
+          <Route exact path="/" render={(props) => <Formulary {...props} />} />
           <Route
             exact
             path="/prescriber"
-            render={props => <PrescriberProfile {...props} />}
+            render={(props) => <PrescriberProfile {...props} />}
           />
-           <Route
+          <Route
             exact
             path="/pharmacy-profile"
-            render={props => <PharmacyProfile {...props} />}
+            render={(props) => <PharmacyProfile {...props} />}
           />
           <Route
             exact
             path="/:path"
-            render={props => <MemberProfile {...props} />}
+            render={(props) => <MemberProfile {...props} />}
           />
-          <Route exact path="/home" render={props => <Home {...props} />} />
+          <Route exact path="/home" render={(props) => <Home {...props} />} />
 
-          <Route exact path="/home" render={props => <Home {...props} />} />
+          <Route exact path="/home" render={(props) => <Home {...props} />} />
           <Route
             exact
             path="/dashboard"
-            render={props => <MemberProfile {...props} />}
+            render={(props) => <MemberProfile {...props} />}
           />
           <Route
             exact
             path="/grid"
-            render={props => <ClaimsGrid isPaid={false} {...props} />}
+            render={(props) => <ClaimsGrid isPaid={false} {...props} />}
           />
           <Route path="/demo">
             <FrxChart
@@ -68,138 +63,150 @@ class MainRouter extends React.Component {
                 january: [
                   {
                     key: "paid",
-                    value: 20
+                    value: 20,
                   },
                   {
                     key: "rejected",
-                    value: 6
-                  }
+                    value: 6,
+                  },
                 ],
                 feburary: [
                   {
                     key: "paid",
-                    value: 12
+                    value: 12,
                   },
                   {
                     key: "rejected",
-                    value: 4
-                  }
+                    value: 4,
+                  },
                 ],
                 march: [
                   {
                     key: "paid",
-                    value: 30
+                    value: 30,
                   },
                   {
                     key: "rejected",
-                    value: 6
-                  }
+                    value: 6,
+                  },
                 ],
                 april: [
                   {
                     key: "paid",
-                    value: 10
+                    value: 10,
                   },
                   {
                     key: "rejected",
-                    value: 2
-                  }
+                    value: 2,
+                  },
                 ],
                 may: [
                   {
                     key: "paid",
-                    value: 20
+                    value: 20,
                   },
                   {
                     key: "rejected",
-                    value: 4
-                  }
+                    value: 4,
+                  },
                 ],
                 june: [
                   {
                     key: "paid",
-                    value: 3
+                    value: 3,
                   },
                   {
                     key: "rejected",
-                    value: 7
-                  }
+                    value: 7,
+                  },
                 ],
                 july: [
                   {
                     key: "paid",
-                    value: 5
+                    value: 5,
                   },
                   {
                     key: "rejected",
-                    value: 5
-                  }
+                    value: 5,
+                  },
                 ],
                 august: [
                   {
                     key: "paid",
-                    value: 11
+                    value: 11,
                   },
                   {
                     key: "rejected",
-                    value: 9
-                  }
+                    value: 9,
+                  },
                 ],
                 september: [
                   {
                     key: "paid",
-                    value: 0
+                    value: 0,
                   },
                   {
                     key: "rejected",
-                    value: 0
-                  }
+                    value: 0,
+                  },
                 ],
                 october: [
                   {
                     key: "paid",
-                    value: 0
+                    value: 0,
                   },
                   {
                     key: "rejected",
-                    value: 0
-                  }
+                    value: 0,
+                  },
                 ],
                 november: [
                   {
                     key: "paid",
-                    value: 0
+                    value: 0,
                   },
                   {
                     key: "rejected",
-                    value: 0
-                  }
+                    value: 0,
+                  },
                 ],
                 december: [
                   {
                     key: "paid",
-                    value: 0
+                    value: 0,
                   },
                   {
                     key: "rejected",
-                    value: 0
-                  }
-                ]
+                    value: 0,
+                  },
+                ],
               }}
             />
           </Route>
-          <Route exact path="/static" render={props => <Static {...props} />} />
-          <Route exact path="/static" render={props => <Static {...props} />} />
-          <Route exact path="/static" render={props => <Static {...props} />} />
+          <Route
+            exact
+            path="/static"
+            render={(props) => <Static {...props} />}
+          />
+          <Route
+            exact
+            path="/static"
+            render={(props) => <Static {...props} />}
+          />
+          <Route
+            exact
+            path="/static"
+            render={(props) => <Static {...props} />}
+          />
           <Route
             exact
             path="/search/:type"
-            render={props => <AdvancedSearch {...props} />}
+            render={(props) => <AdvancedSearch {...props} />}
           ></Route>
-           <Route
+          <Route
             exact
             path="/setup/formularyGrid"
-            render={props => <SetupFormularyGrid {...props} />}
+            render={(props) => <SetupFormularyGrid {...props} />}
           ></Route>
           {/* <Route
             exact

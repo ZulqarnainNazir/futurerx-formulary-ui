@@ -4,6 +4,7 @@ import FrxTabs from "../../../../shared/FrxTabs/FrxTabs";
 import DrugDetails from "./components/DrugDetails";
 import Tier from "./components/Tier";
 import StepTherapy from "./components/StepTherapy";
+import PA from "./components/PA/PA";
 
 const tabs = [
   { id: 1, text: "TIER" },
@@ -51,7 +52,7 @@ export default class FormularyConfigure extends React.Component<
       case 1:
         return <div>CATEGORY/CLASS</div>;
       case 2:
-        return <div>PA</div>;
+        return <PA/>;
       case 3:
         return <div><StepTherapy /></div>;
       case 4:
