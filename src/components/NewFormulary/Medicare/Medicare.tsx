@@ -1,6 +1,10 @@
 import React from "react";
 import { TabInfo } from "../../../models/tab.model";
 import FrxMiniTabs from "../../shared/FrxMiniTabs/FrxMiniTabs";
+import { formularyDetailsGridColumns } from "../../../utils/grid/columns";
+import { getFormularyDetails } from "../../../mocks/formulary/formularyDetails";
+import FrxGridContainer from "../../shared/FrxGrid/FrxDrugGridContainer";
+import FormularyExpandedDetails from '../../FormularyExpandedDetails/FormularyExpandedDetails';
 
 interface State {
   miniTabs: Array<TabInfo>;
@@ -37,6 +41,24 @@ export default class Medicare extends React.Component<any, any> {
       case 0:
         return (
           <div>
+            <FrxGridContainer
+                enableSearch={false}
+                enableColumnDrag
+                onSearch={()=>{}}
+                fixedColumnKeys={["claimId"]}
+                pagintionPosition="topRight"
+                gridName="CLAIMS"
+                enableSettings
+                columns={formularyDetailsGridColumns()}
+                scroll={{ x: 3800, y: 377 }}
+                isFetchingData={false}
+                enableResizingOfColumns
+                data={getFormularyDetails()}
+                expandable={{
+                    isExpandable: true,
+                    expandedRowRender: props => <FormularyExpandedDetails/>
+                }}
+            />
             <div
               className="drug-detail"
               onClick={() => this.props.drugDetailClick()}
