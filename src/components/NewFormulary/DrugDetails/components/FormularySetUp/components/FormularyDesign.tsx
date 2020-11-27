@@ -10,25 +10,25 @@ export default class FormularyDesign extends React.Component<any, any> {
     return (
       <div className="formulary-design-container">
         <h4>FORMULARY DESIGN</h4>
-        <div className="formulary-design-fields-wrapper">
+        <div className="formulary-design-fields-wrapper setup-label">
         <Grid container>
         <Grid item xs={3}>
             <ul>
                 <li>
                 <div className="checkbox-wrapper">
-                    <input type="checkbox" id="vehicle1" name="N/A" value="N/A" />
+                    <input type="checkbox" className="checkbox-btn" name="N/A" value="N/A" />
                     <label htmlFor="N/A" className="checkbox-label"> N/A</label>
                 </div>
                 </li>
                 <li>
                 <div className="checkbox-wrapper">
-                    <input type="checkbox" id="vehicle1" name="N/A" value="N/A" />
+                    <input type="checkbox" className="checkbox-btn" name="N/A" value="N/A" />
                     <label htmlFor="N/A" className="checkbox-label"> Prior Authorization</label>
                 </div>
                 </li>
                 <li>
                 <div className="checkbox-wrapper">
-                    <input type="checkbox" id="vehicle1" name="N/A" value="N/A" />
+                    <input type="checkbox" className="checkbox-btn" name="N/A" value="N/A" />
                     <label htmlFor="N/A" className="checkbox-label"> Age Limit</label>
                     <PanelHeader
                         tooltip="AGE LIMIT"
@@ -37,13 +37,13 @@ export default class FormularyDesign extends React.Component<any, any> {
                 </li>
                 <li>
                 <div className="checkbox-wrapper">
-                    <input type="checkbox" id="vehicle1" name="N/A" value="N/A" />
+                    <input type="checkbox" className="checkbox-btn" name="N/A" value="N/A" />
                     <label htmlFor="N/A" className="checkbox-label"> Patient Residence</label>
                 </div>
                 </li>
                 <li>
                 <div className="checkbox-wrapper">
-                    <input type="checkbox" id="vehicle1" name="N/A" value="N/A" />
+                    <input type="checkbox" className="checkbox-btn" name="N/A" value="N/A" />
                     <label htmlFor="N/A" className="checkbox-label"> Place of Service</label>
                 </div>
                 </li>
@@ -54,19 +54,19 @@ export default class FormularyDesign extends React.Component<any, any> {
                 <li></li>
                 <li>
                 <div className="checkbox-wrapper">
-                    <input type="checkbox" id="vehicle1" name="N/A" value="N/A" />
+                    <input type="checkbox" className="checkbox-btn" name="N/A" value="N/A" />
                     <label htmlFor="N/A" className="checkbox-label"> Quantity Limits</label>
                 </div>
                 </li>
                 <li>
                 <div className="checkbox-wrapper">
-                    <input type="checkbox" id="vehicle1" name="N/A" value="N/A" />
+                    <input type="checkbox" className="checkbox-btn" name="N/A" value="N/A" />
                     <label htmlFor="N/A" className="checkbox-label"> Gender Limits</label>
                 </div>
                 </li>
                 <li>
                 <div className="checkbox-wrapper">
-                    <input type="checkbox" id="vehicle1" name="N/A" value="N/A" />
+                    <input type="checkbox" className="checkbox-btn" name="N/A" value="N/A" />
                     <label htmlFor="N/A" className="checkbox-label"> Pharmacy Network</label>
                     <PanelHeader
                         tooltip="Pharmacy Network"
@@ -75,7 +75,7 @@ export default class FormularyDesign extends React.Component<any, any> {
                 </li>
                 <li>
                 <div className="checkbox-wrapper">
-                    <input type="checkbox" id="vehicle1" name="N/A" value="N/A" />
+                    <input type="checkbox" className="checkbox-btn" name="N/A" value="N/A" />
                     <label htmlFor="N/A" className="checkbox-label"> Step Therapy</label>
                 </div>
                 </li>
@@ -86,25 +86,25 @@ export default class FormularyDesign extends React.Component<any, any> {
                 <li></li>
                 <li>
                 <div className="checkbox-wrapper">
-                    <input type="checkbox" id="vehicle1" name="N/A" value="N/A" />
+                    <input type="checkbox" className="checkbox-btn" name="N/A" value="N/A" />
                     <label htmlFor="N/A" className="checkbox-label"> ICD Limits</label>
                 </div>
                 </li>
                 <li>
                 <div className="checkbox-wrapper">
-                    <input type="checkbox" id="vehicle1" name="N/A" value="N/A" />
+                    <input type="checkbox" className="checkbox-btn" name="N/A" value="N/A" />
                     <label htmlFor="N/A" className="checkbox-label"> Prescriber Taxonomy</label>
                 </div>
                 </li>
                 <li>
                 <div className="checkbox-wrapper">
-                    <input type="checkbox" id="vehicle1" name="N/A" value="N/A" />
+                    <input type="checkbox" className="checkbox-btn" name="N/A" value="N/A" />
                     <label htmlFor="N/A" className="checkbox-label"> Other</label>
                 </div>
                 </li>
                 <li>
                 <div className="checkbox-wrapper">
-                    <input type="checkbox" id="vehicle1" name="N/A" value="N/A" className="hide-cbx" />
+                    <input type="checkbox" name="N/A" value="N/A" className="checkbox-btn hide-cbx" />
                     <input type="text" className="add-new-cbx" />
                     <span>
                     <svg width="13" height="15" viewBox="0 0 13 15" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -115,7 +115,7 @@ export default class FormularyDesign extends React.Component<any, any> {
                 </li>
                 <li>
                 <div className="checkbox-wrapper">
-                <input type="checkbox" id="vehicle1" name="N/A" value="N/A" className="hide-cbx" />
+                <input type="checkbox" name="N/A" value="N/A" className="checkbox-btn hide-cbx" />
                 <div className="add-new-cbx-btn-wrapper">
                     <div className="add-new-cbx-btn">
                         <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
