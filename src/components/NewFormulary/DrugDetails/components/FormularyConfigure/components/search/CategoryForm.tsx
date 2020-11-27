@@ -10,6 +10,8 @@ interface Props{
     title:string;
     deleteField?:any;
     index?: any;
+    checkBoxOpt?:any;
+    catid?:number;
 }
 
 export default class CategoryForm extends React.Component<Props, any>{
@@ -35,7 +37,7 @@ export default class CategoryForm extends React.Component<Props, any>{
                                             classes={{
                                                 tooltip: 'custom-tooltip panel-tooltip'
                                             }}
-                                            title='fsd'
+                                            title={this.props.title}
                                             placement="top-start"
                                             arrow>
                                             <svg className="info-icon" width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -51,9 +53,9 @@ export default class CategoryForm extends React.Component<Props, any>{
                             <div className="search-form">
                                 <div className="from-panel">
                                     <span>Select the formulary file:</span>
-                                    <Button variant="contained">Select all</Button>
+                                    {this.props.catid===2 && <Button variant="contained">Select all</Button>}
                                 </div>
-                                <CheckboxLabels />
+                                <CheckboxLabels checkBoxOpt={this.props.checkBoxOpt} />
                             </div>
                         </div>
                         <div className="delete-wrapper">

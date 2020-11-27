@@ -11,7 +11,7 @@ import SearchCategory from './SearchCategory';
 
 const { Option } = Select;
 
-interface MemberNotesPopupProps {
+interface AdvancedSearchPopupProps {
     openPopup: boolean;
     onClose: () => void;
     category: string;
@@ -22,24 +22,41 @@ interface CategoryData {
     category: string;
 }
 
-interface MemberNotesPopupState {
+interface AdvancedSearchPopupState {
     categoriesData: Array<CategoryData>;
     activeCategoryIndex: number;
     activeCategoryTitle: string;
     formArray: any;
-    formCount:number;
+    formCount: number;
+    checkBoxOpt:any;
 }
 
-class MemberNotesPopup extends React.Component<
-    MemberNotesPopupProps,
-    MemberNotesPopupState
+class AdvancedSearchPopup extends React.Component<
+    AdvancedSearchPopupProps,
+    AdvancedSearchPopupState
     > {
-    state: MemberNotesPopupState = {
+    state: AdvancedSearchPopupState = {
         categoriesData: getSearchMock(),
         activeCategoryIndex: 0,
         activeCategoryTitle: '',
-        formCount:0,
-        formArray: []
+        formCount: 0,
+        formArray: [],
+        checkBoxOpt: {
+            1:[
+                {id: 1,text: "Formulary File"},
+                {id: 2,text: "Prior Authorization File"},
+                {id: 3,text: "Step Therapy File"},
+                {id: 4,text: "Indication-Based Coverage File"}
+            ],
+            2:[
+                {id: 1,text: "Tire1"},
+                {id: 2,text: "Tire2"},
+                {id: 3,text: "Tire3"},
+                {id: 4,text: "Tire4"},
+                {id: 5,text: "Tire5"},
+                {id: 6,text: "Tire6"}
+            ]
+        }
     };
 
     /**
@@ -47,7 +64,7 @@ class MemberNotesPopup extends React.Component<
      *
      * Close the member notes popup
      *
-     * @memberof MemberNotesPopup
+     * @memberof AdvancedSearchPopup
      */
 
     onClose = () => {
@@ -57,7 +74,7 @@ class MemberNotesPopup extends React.Component<
     /**
      * Action method if any action is required for dialog popup
      *
-     * @memberof MemberNotesPopup
+     * @memberof AdvancedSearchPopup
      */
     action = () => {
         console.log("no action to perform");
@@ -69,22 +86,23 @@ class MemberNotesPopup extends React.Component<
      * @param {string} type
      * @param {number} index
      * @param {*} [item]
-     * @memberof MemberNotesPopup
+     * @memberof AdvancedSearchPopup
      */
     handleListItemClick = (e, index: any) => {
-        debugger;
         const title = index.category
-        this.setState({
-            formArray: [...this.state.formArray,{type:title}],
-            activeCategoryIndex:index.id
-        })
+        const catid = index.id
+        const checkIndex = this.state.formArray.findIndex(v => v.type === title);
+        if (checkIndex === -1) {
+            this.setState({
+                formArray: [...this.state.formArray, { type: title,id:catid }],
+                activeCategoryIndex: index.id
+            })
+        }
     };
-
-
 
     deleteFormHandler = (getIndex: number) => {
         let updatedForms = [...this.state.formArray];
-        updatedForms.splice(getIndex,1);
+        updatedForms.splice(getIndex, 1);
         this.setState({
             formArray: updatedForms
         });
@@ -99,10 +117,10 @@ class MemberNotesPopup extends React.Component<
 
     render() {
         let formContent = <div className="noForms">Drag the file type(s) from the list on the left to create a filter.</div>;
-        if(this.state.formArray.length > 0){
-            formContent = this.state.formArray.map((a,index:number)=><CategoryForm title={a.type} index={index} deleteField={this.deleteFormHandler}/>)
+        if (this.state.formArray.length > 0) {
+            formContent = this.state.formArray.map((a, index: number) => <CategoryForm title={a.type} index={index} deleteField={this.deleteFormHandler} checkBoxOpt={this.state.checkBoxOpt[a.id]} catid={a.id} />)
         }
-        
+
         return (
             <div>
                 <React.Fragment>
@@ -157,7 +175,7 @@ class MemberNotesPopup extends React.Component<
                             </Grid>
 
                         </Grid>
-                        
+
                     </FrxDialogPopup>
                 </React.Fragment>
             </div>
@@ -165,4 +183,4 @@ class MemberNotesPopup extends React.Component<
     }
 }
 
-export default MemberNotesPopup;
+export default AdvancedSearchPopup;
