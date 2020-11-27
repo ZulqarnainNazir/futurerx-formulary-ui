@@ -411,3 +411,21 @@ export const getDrugDetailsColumn: () => Column<any>[] = () => {
       },
     ];
   };
+
+  export const getStDetails : () => Column<any>[] = () => {
+    return [
+      {
+        position: 1,
+        sorter: {},
+        textCase: "upper",
+        pixelWidth: 230,
+        key: "STGROUPDESCRIPTION",
+        displayTitle: "ST GROUP DESCRIPTION",
+        isFilterable: true,
+        dataType: "string",
+        filters: textFilters,
+        hidden: false,
+        sortDirections: []
+      },
+    ]
+  }

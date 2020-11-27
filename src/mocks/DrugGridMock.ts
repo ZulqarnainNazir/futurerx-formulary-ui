@@ -35,4 +35,13 @@ export const getDrugDetailData = (): any => {
         }
     ];
   };
+
+
+  export const stData = (): any => {
+      return [
+          {
+            STGROUPDESCRIPTION: 'Actos',
+          }
+      ]
+  }
   

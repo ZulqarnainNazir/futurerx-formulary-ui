@@ -41,6 +41,7 @@ export default class DrugGrid extends React.Component<any,any>{
                   <div className="pinned-table">
                     <FrxDrugGridContainer
                       enableSearch={false}
+                      hideMultiSort={false}
                       enableColumnDrag
                       onSearch={this.handleSearch}
                       fixedColumnKeys={["claimId"]}
