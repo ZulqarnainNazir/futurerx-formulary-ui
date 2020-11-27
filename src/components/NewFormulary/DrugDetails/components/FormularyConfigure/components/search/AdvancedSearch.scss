@@ -1,6 +1,6 @@
 @import "../../../../../../../assets/style.scss";
 
-.member-notes-popup-root {
+.drug-grid-advance-search {
     z-index: 999 !important;
     .MuiDialog-paperWidthFalse {
         width: 1200px;
@@ -15,8 +15,9 @@
         padding-left: 20px;
         overflow-y: hidden;
 
-        .member-notes-popup-root__dialog {
+        .drug-grid-popup-root__dialog {
             padding: 0px;
+            height: 100%;
             // border-top: 1px solid $member-notes-border-color;
 
             .member-notes-popup-root__dialog__categories {

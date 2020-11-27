@@ -1,16 +1,12 @@
 import React from "react";
 import FrxDialogPopup from "../../../../../../shared/FrxDialogPopup/FrxDialogPopup";
-import { NoteItemModel } from "../../../../../../../models/note-item.model";
 import Grid from "@material-ui/core/Grid";
-import { List, ListItem, ListItemText } from "@material-ui/core";
 import { Button, Input, Box } from "@material-ui/core";
 import { Select } from "antd";
 import "./AdvancedSearch.scss";
 import { getSearchMock } from "../../../../../../../mocks/formulary/searchMock";
 import CategoryForm from './CategoryForm'
-import SearchCategory from './SearchCategory'
-import SelectedListItem from './tt'
-import { columnsCommercial } from "../../../../../../../mocks/ClaimGridModelMock";
+import SearchCategory from './SearchCategory';
 
 
 const { Option } = Select;
@@ -76,26 +72,12 @@ class MemberNotesPopup extends React.Component<
      * @memberof MemberNotesPopup
      */
     handleListItemClick = (e, index: any) => {
-        alert(index.id)
-        // const formList = this.state.formArray.map(e=>{
-        //     const title = (e==0)?'hello':'Hi'
-        //     return (
-        //         <CategoryForm title={title} />
-        //     )
-        // })
-        const title = this.state.categoriesData[index.id].category
+        debugger;
+        const title = index.category
         this.setState({
             formArray: [...this.state.formArray,{type:title}],
-            activeCategoryIndex:index
+            activeCategoryIndex:index.id
         })
-        // <CategoryForm title={title}/>
-        // let totalForms = this.state.formCount;
-        // totalForms += 1;
-        // this.setState({
-        //     activeCategoryIndex: index.id,
-        //     activeCategoryTitle: index.category,
-        //     formCount: totalForms
-        // })
         console.log(this.state.formArray)
     };
 
@@ -122,19 +104,19 @@ class MemberNotesPopup extends React.Component<
                     <FrxDialogPopup
                         positiveActionText=""
                         negativeActionText="Close"
-                        title="MEMBER NOTES"
+                        title="Advance Search"
                         handleClose={this.onClose}
                         handleAction={this.action}
                         open={this.props.openPopup}
                         showActions={false}
-                        className="member-notes-popup-root"
+                        className="drug-grid-advance-search member-notes-popup-root"
                         height="80%"
                         width="90%"
                     >
                         <Grid
                             container
                             spacing={0}
-                            className="member-notes-popup-root__dialog"
+                            className="drug-grid-popup-root__dialog"
                         >
                             <Grid
                                 xs={4}
