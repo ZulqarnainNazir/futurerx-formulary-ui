@@ -5,7 +5,18 @@ import { Container, List, ListItem, ListItemText } from "@material-ui/core";
 import "./MarketingMaterial.scss";
 import FrxInfoCard from "../../shared/FrxInfoCard/FrxInfoCard";
 import CustomAccordion from "../../shared/Frx-components/accordion/CustomAccordion";
+import SearchToolConfiguration from "./SearchToolConfiguration";
+import CostShareDetails from './CostShareDetails';
 
+const costShareData = [
+  {tierNumber: 'Tier 0', tierDescription: 'Tier Description', costShare: 'Copay', costVal: 'Copay'},
+  {tierNumber: 'Tier 1', tierDescription: 'Tier Description', costShare: 'Co-Insurance', costVal: 'Co-Insurance'},
+  {tierNumber: 'Tier 2', tierDescription: 'Tier Description', costShare: 'Copay', costVal: 'Copay'},
+  {tierNumber: 'Tier 3', tierDescription: 'Tier Description', costShare: 'Copay', costVal: 'Copay'},
+  {tierNumber: 'Tier 4', tierDescription: 'Tier Description', costShare: 'Co-Insurance', costVal: 'Co-Insurance'},
+  {tierNumber: 'Tier 5', tierDescription: 'Tier Description', costShare: 'Copay', costVal: 'Copay'},
+  {tierNumber: 'Tier 6', tierDescription: 'Tier Description', costShare: 'Copay', costVal: 'Copay'}
+]
 class MarketingMaterial extends Component {
   state = {
     activeListIndex: 0,
@@ -24,9 +35,9 @@ class MarketingMaterial extends Component {
       case 1:
         return <div>Content 2</div>;
       case 2:
-        return <div>Content 3</div>;
+        return <SearchToolConfiguration />;
       case 3:
-        return <div>Content 4</div>;
+        return <CostShareDetails costShareData={costShareData}/>;
       default:
         return <></>;
     }

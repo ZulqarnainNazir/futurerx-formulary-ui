@@ -61,9 +61,21 @@ class FrxGridContainer extends Component<FrxGridContainerProps<any>> {
       case "CLAIMSHISTORY":
         return <ClaimsHistorySearch onSearch={this.handleSearch} />;
       case "GENERIC":
-        return <FrxGenericSearch searchOptions={this.props.searchOptions ? this.props.searchOptions : []} onSearch={this.handleSearch} />
+        return (
+          <FrxGenericSearch
+            searchOptions={
+              this.props.searchOptions ? this.props.searchOptions : []
+            }
+            onSearch={this.handleSearch}
+          />
+        );
       case "PA":
-        return <FrxGenericSearch searchOptions={getPaCasesSearchData()} onSearch={this.handleSearch} />
+        return (
+          <FrxGenericSearch
+            searchOptions={getPaCasesSearchData()}
+            onSearch={this.handleSearch}
+          />
+        );
       case "GRIEVANCES":
         return <GrievancesDashboardSearch onSearch={this.handleSearch} />;
       case "PROFILE CLAIM":
@@ -115,7 +127,9 @@ class FrxGridContainer extends Component<FrxGridContainerProps<any>> {
           summary={this.props.summary ? this.props.summary : undefined}
           isRowSelectionEnabled={this.props.isRowSelectionEnabled}
           rowSelectionChange={this.props.rowSelectionChange}
-          settingsWidth={this.props.settingsWidth ? this.props.settingsWidth : undefined}
+          settingsWidth={
+            this.props.settingsWidth ? this.props.settingsWidth : undefined
+          }
           isRowSelectorCheckbox={this.props.isRowSelectorCheckbox}
           expandable={{
             isExpandable: this.props.expandable
@@ -138,7 +152,7 @@ class FrxGridContainer extends Component<FrxGridContainerProps<any>> {
                 : undefined,
             expandedRowClassName:
               this.props.expandable &&
-                this.props.expandable.expandedRowClassName
+              this.props.expandable.expandedRowClassName
                 ? this.props.expandable.expandedRowClassName
                 : undefined,
           }}
