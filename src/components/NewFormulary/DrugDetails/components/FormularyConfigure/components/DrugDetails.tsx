@@ -17,7 +17,6 @@ import VBIDComponent from './VBID';
 import CBComponent from './CB';
 import SSMComponent from './SSM';
 import SOComponent from './SO';
-import TT from './tt';
 import DrugGrid from '../../DrugGrid';
 import CustomizedSwitches from './CustomizedSwitches';
 
@@ -46,7 +45,7 @@ export default class DrugDetails extends React.Component<any,drugDetailsState>{
         const tabIndex = this.state.activeTabIndex;
         switch(tabIndex){
             case 0:
-                return <TT/>
+                return <LAComponent />
             case 1:
                 return <MOMNComponent/>
             case 2:
