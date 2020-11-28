@@ -122,17 +122,25 @@
     padding: 20px;
     border-top: 1px solid #e5e5e5;
 
+    .select-box {
+      margin-right: 20px;
+    }
+
     .select-box .ant-select {
       width: 100%;
+    }
+
+    button {
+      margin: 24px 10px 10px 0;
     }
   }
 }
 
-.inner-container .ant-checkbox-inner {
+.tier-checkbox .ant-checkbox-inner {
   padding: 0px !important;
   background: #80c483 !important;
-  border: 1px solid #80c483 !important;
-  border-radius: 50px !important;
   height: 20px !important;
   width: 20px !important;
+  border-radius: 50px !important;
+  border: 1px solid #80c483 !important;
 }
