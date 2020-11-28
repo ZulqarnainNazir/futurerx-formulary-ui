@@ -5,12 +5,19 @@ import CustomizedSwitches from './CustomizedSwitches';
 import { TabInfo } from "../../../../../../models/tab.model";
 import FrxMiniTabs from "../../../../../shared/FrxMiniTabs/FrxMiniTabs";
 import DrugGrid from '../../DrugGrid';
+import Button from '../../../../../shared/Frx-components/button/Button';
+import {getDrugDetailsColumn} from "../DrugGridColumn";
+import { getDrugDetailData } from "../../../../../../mocks/DrugGridMock";
+import { textFilters } from "../../../../../../utils/grid/filters";
+import FrxLoader from "../../../../../shared/FrxLoader/FrxLoader";
 export default class FFF extends React.Component<any,any>{
     state={
         panelGridTitle1: ['Free First Fill','Number of Drugs','added drugs','removed drugs'],
         panelTitleAlignment1: ['left','left','left','left'],
         panelGridValue1: [],
         activeTabIndex: 0,
+        columns: null,
+        data: null,
         tabs: [
             {
                 id: 1,
@@ -37,7 +44,45 @@ export default class FFF extends React.Component<any,any>{
         });
         this.setState({ tabs, activeTabIndex });
     };
+    advanceSearchClickHandler = () => {
+        console.log('Advance Search Button Click');
+    }
+    saveClickHandler = () => {
+        console.log('Save data');
+    }
+    componentDidMount(){
+        const data = getDrugDetailData();
+        const columns = getDrugDetailsColumn();
+        const FFFColumn: any = {
+            id:0,
+            position: 0,
+            textCase: "upper",
+            pixelWidth: 238,
+            sorter: {},
+            isFilterable: true,
+            showToolTip: false,
+            key: "fff",
+            displayTitle: "Free First Fill",
+            filters: textFilters,
+            dataType: "string",
+            hidden: false,
+            sortDirections: [],
+        }
+        columns.unshift(FFFColumn);
+        for(let el of data){
+            el['fff'] = 'Y';
+        }
+        this.setState({
+            columns: columns,
+            data: data
+        });
+        
+    }
     render(){
+        let dataGrid = <FrxLoader />;
+        if(this.state.data){
+            dataGrid = <DrugGrid columns={this.state.columns} data={this.state.data}/>
+        }
         return (
             <>
                 <div className="bordered mb-10">
@@ -71,7 +116,17 @@ export default class FFF extends React.Component<any,any>{
                     </div>
                     
                 </div>
-                <DrugGrid />
+                <div className="bordered">
+                    <div className="header space-between pr-10">
+                        Drug Grid
+                        <div className="button-wrapper">
+                            <Button className="Button normal" label="Advance Search" onClick={this.advanceSearchClickHandler}/>
+                            <Button label="Save" onClick={this.saveClickHandler} disabled/>
+                        </div>
+                    </div>
+                    {dataGrid}
+                        {/* <DrugGrid columns={this.state.columns} data={this.state.data}/> */}
+                </div>
             </>
         )
     }

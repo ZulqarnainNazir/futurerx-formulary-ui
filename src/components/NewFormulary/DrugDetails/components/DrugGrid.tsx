@@ -1,11 +1,8 @@
 import React from 'react';
-import FrxGridContainer from "../../../shared/FrxGrid/FrxGridContainer";
 import FrxDrugGridContainer from "../../../shared/FrxGrid/FrxDrugGridContainer";
-import {getDrugDetailsColumn} from "./FormularyConfigure/DrugGridColumn";
-import { getDrugDetailData } from "../../../../mocks/DrugGridMock";
 import "../../../ClaimsGrid/ClaimsGrid.scss";
 
-import { GridMenu } from "../../../../models/grid.model";
+
 export default class DrugGrid extends React.Component<any,any>{
     state = {
         isFetchingData: false,
@@ -14,12 +11,10 @@ export default class DrugGrid extends React.Component<any,any>{
     };
     
     componentDidMount() {
-        //fetch data from API
-        const data = getDrugDetailData();
+        const data = this.props.data;
         this.setState({ data, filteredData: data });
     }
     handleSearch = searchObject => {
-        console.log(searchObject);
         this.setState({ isFetchingData: true });
         if (searchObject && searchObject.status) {
           setTimeout(() => {
@@ -33,7 +28,8 @@ export default class DrugGrid extends React.Component<any,any>{
         }
       };
     render(){
-        const columns = getDrugDetailsColumn();
+        const {columns} = this.props;
+
         return(
             <div className="bordered">
                 <div className="header">Drug Grid</div>
@@ -64,6 +60,7 @@ export default class DrugGrid extends React.Component<any,any>{
                   </div>
                 </div>
             </div>
+          </div>
         )
     }
 }

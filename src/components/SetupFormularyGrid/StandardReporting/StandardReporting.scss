@@ -1,44 +1,57 @@
 .standardReporting {
-    padding: 10px;
-    // border: 5px solid gray ;
+  padding: 10px;
+  // border: 5px solid gray ;
 }
 
 .grid-container {
-    display: grid;
-    grid-template-columns: 80px 80px auto 350px;
-    // background-color: #2196F3;
-    padding: 10px;
+  display: grid;
+  grid-template-columns: 80px 80px auto 350px;
+  // background-color: #2196F3;
+  padding: 10px;
 
-    margin-bottom: 20px;
+  margin-bottom: 20px;
 }
 
 .grid-item {
-    background-color: rgba(255, 255, 255, 0.8);
-    border: 1px solid lightgrey;
-    padding: 20px;
-    font-size: 12px;
-    text-align: center;
+  background-color: rgba(255, 255, 255, 0.8);
+  border: 1px solid lightgrey;
+  padding: 20px;
+  font-size: 12px;
+  text-align: center;
 }
 
 .br {
-    border-radius: 80px;
+  border-radius: 80px;
 }
 
-input {
-
+.grid-container input{
+ 
     position: relative;
     left: 0%;
     right: 0%;
     top: 8px;
     bottom: 0%;
-
-    /* Background – White */
-
-    // background: #FFFFFF;
-    /* Border – Light Grey */
     width: 15px !important;
     height: 15px !important;
     border: 2px solid lightgrey;
     box-sizing: border-box;
     border-radius: 8px;
 }
+// #input {
+
+    // position: relative;
+    // left: 0%;
+    // right: 0%;
+    // top: 8px;
+    // bottom: 0%;
+
+    /* Background – White */
+
+    // background: #FFFFFF;
+    /* Border – Light Grey */
+//     width: 15px !important;
+//     height: 15px !important;
+//     border: 2px solid lightgrey;
+//     box-sizing: border-box;
+//     border-radius: 8px;
+// }

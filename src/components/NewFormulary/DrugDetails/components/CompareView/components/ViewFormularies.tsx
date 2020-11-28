@@ -9,7 +9,7 @@ export default class ViewFormularies extends React.Component<any,any>{
         return (
             <div className="compare-formularies-container">
                 <h6>Select formulary to view activity</h6>
-                <div className="view-formulary-form">
+                <div className="view-formulary-form formulay-label">
                     <Grid container>
                         <Grid item xs={4}>
                             <div className="group select-formulary-name">

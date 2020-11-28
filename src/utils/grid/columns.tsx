@@ -13,6 +13,8 @@ import {
 import { GridMemberLOBCustom } from "../../components/AdvancedSearch/SearchGridCustom/GridMemberLOBCustom";
 import AuthGridModel from "../../components/AuthsAndOverrides/AuthGridModel";
 import PharmacyProfile from "../../components/PharmacyProfile/PharmacyProfileInfo/PharmacyProfile";
+import FrxStatusField from "../../components/shared/FrxStatusField/FrxStatusField";
+import FrxTimeProgressBar from "../../components/shared/FrxTimeProgressBar/FrxTimeProgressBar";
 // REFERENCE COMPONENT THAT CAN BE PASSED TO componentToOpenOnClickingCell
 // const DummyComponent = props => {
 // console.log("inside dummy ", props);
@@ -20,6 +22,120 @@ import PharmacyProfile from "../../components/PharmacyProfile/PharmacyProfileInf
 // <div>claim id</div>
 // );
 // };
+
+
+export const formularyDetailsGridColumns: () => Column<any>[] = () => {
+  return [
+    {
+      position: 1,
+      sorter: {},
+      textCase: "upper",
+      pixelWidth: 133 ,
+      key: "serviceYear",
+      displayTitle: "service year",
+      isFilterable: true,
+      dataType: "string",
+      filters: textFilters,
+      hidden: false,
+      sortDirections: ["ascend", "descend"],
+    },
+    {
+      position:2,
+      sorter: {},
+      textCase: "upper",
+      pixelWidth: 122,
+      key: "bazaar",
+      displayTitle: "Bazaar",
+      customContent: (props) => (<FrxStatusField text={props.data.bazaar.label} type={props.data.bazaar.type} fill={props.data.bazaar.fill} variant={props.data.bazaar.variant}/>),
+      isFilterable: true,
+      dataType: "string",
+      filters: textFilters,
+      hidden: false,
+      sortDirections: ["ascend", "descend"],
+    },
+    {
+      position: 3,
+      sorter: {},
+      textCase: "upper",
+      pixelWidth: 137,
+      key: "origin",
+      displayTitle: "origin",
+      customContent: (props) => (<FrxStatusField text={props.data.origin.label} type={props.data.origin.type} fill={props.data.origin.fill} variant={props.data.origin.variant}/>),
+      isFilterable: true,
+      dataType: "string",
+      filters: textFilters,
+      hidden: false,
+      sortDirections: ["ascend", "descend"],
+    },
+    {
+      position:4,
+      sorter: {},
+      textCase: "upper",
+      pixelWidth: 163,
+      key: "formularyName",
+      displayTitle: "formulary name",
+      isFilterable: true,
+      dataType: "string",
+      filters: textFilters,
+      hidden: false,
+      sortDirections: ["ascend", "descend"],
+    },
+    {
+      position: 5,
+      sorter: {},
+      textCase: "upper",
+      pixelWidth: 145,
+      key: "formularyId",
+      displayTitle: "formulary id",
+      isFilterable: true,
+      dataType: "string",
+      filters: textFilters,
+      hidden: false,
+      sortDirections: ["ascend", "descend"],
+    },
+    {
+      position:6,
+      sorter: {},
+      textCase: "upper",
+      pixelWidth: 102,
+      key: "version",
+      displayTitle: "version",
+      isFilterable: true,
+      dataType: "string",
+      filters: textFilters,
+      hidden: false,
+      sortDirections: ["ascend", "descend"],
+    },
+    {
+      position:7,
+      sorter: {},
+      textCase: "upper",
+      pixelWidth: 242,
+      key: "timeRemaining",
+      displayTitle: "Time Remaining",
+      customContent: (props) => (<FrxTimeProgressBar {...props.data.timeRemaining}/>),
+      isFilterable: true,
+      dataType: "string",
+      filters: textFilters,
+      hidden: false,
+      sortDirections: ["ascend", "descend"],
+    },
+    {
+      position:8,
+      sorter: {},
+      textCase: "upper",
+      pixelWidth: 109,
+      key: "step",
+      displayTitle: "step",
+      isFilterable: true,
+      dataType: "string",
+      filters: textFilters,
+      hidden: false,
+      sortDirections: ["ascend", "descend"],
+    },
+  ]
+}
+
 export const claimsGridColumnsForPaid: () => Column<any>[] = () => {
   return [
     {

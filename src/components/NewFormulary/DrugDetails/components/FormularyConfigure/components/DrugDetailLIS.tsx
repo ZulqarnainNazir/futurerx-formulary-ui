@@ -8,6 +8,11 @@ import FrxMiniTabs from "../../../../../shared/FrxMiniTabs/FrxMiniTabs";
 import NotesPopup from "../../../../../member/MemberNotesPopup";
 import Box from '@material-ui/core/Box';
 import Button from '../../../../../shared/Frx-components/button/Button';
+import { textFilters } from "../../../../../../utils/grid/filters";
+import { getDrugDetailsColumn } from "../DrugGridColumn";
+import { getDrugDetailData } from "../../../../../../mocks/DrugGridMock";
+import FrxLoader from "../../../../../shared/FrxLoader/FrxLoader";
+import DrugGrid from '../../DrugGrid';
 
 export default class DrugDetailLIS extends React.Component<any,any>{
     state={
@@ -19,11 +24,47 @@ export default class DrugDetailLIS extends React.Component<any,any>{
         ],
         isNotesOpen: false,
         activeTabIndex: 0,
+        columns: null,
+        data: null,
         tabs: [
             {id: 1,text: "Replace"},
             {id: 2,text: "Append"},
             {id: 3,text: "Remove"}
         ]   
+    }
+    advanceSearchClickHandler = () => {
+        console.log('Advance Search Button Click');
+    }
+    saveClickHandler = () => {
+        console.log('Save data');
+    }
+    componentDidMount() {
+        const data = getDrugDetailData();
+        const columns = getDrugDetailsColumn();
+        const FFFColumn: any = {
+            id: 0,
+            position: 0,
+            textCase: "upper",
+            pixelWidth: 238,
+            sorter: {},
+            isFilterable: true,
+            showToolTip: false,
+            key: "fff",
+            displayTitle: "Free First Fill",
+            filters: textFilters,
+            dataType: "string",
+            hidden: false,
+            sortDirections: [],
+        }
+        columns.unshift(FFFColumn);
+        for (let el of data) {
+            el['fff'] = 'Y';
+        }
+        this.setState({
+            columns: columns,
+            data: data
+        });
+
     }
     onClickTab = (selectedTabIndex: number) => {
         let activeTabIndex = 0;
@@ -47,8 +88,13 @@ export default class DrugDetailLIS extends React.Component<any,any>{
         alert(1)
     }
     render(){
+        let dataGrid = <FrxLoader />;
+        if (this.state.data) {
+            dataGrid = <DrugGrid columns={this.state.columns} data={this.state.data} />
+        }
         return (
-            <div className="bordered">
+            <>
+            <div className="bordered mb-10">
                 <PanelHeader 
                     title="LIS Cost Sharing Reduction"
                     tooltip="Lis Cost Sharing Reduction" />
@@ -102,6 +148,17 @@ export default class DrugDetailLIS extends React.Component<any,any>{
                     </div>
                 </div>
             </div>
+            <div className="bordered">
+                    <div className="header space-between pr-10">
+                        Drug Grid
+                        <div className="button-wrapper">
+                            <Button className="Button normal" label="Advance Search" onClick={this.advanceSearchClickHandler} />
+                            <Button label="Save" onClick={this.saveClickHandler} disabled />
+                        </div>
+                    </div>
+                    {dataGrid}
+                </div>
+            </>
         )
     }
 }
