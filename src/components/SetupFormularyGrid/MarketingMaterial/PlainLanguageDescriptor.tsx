@@ -4,12 +4,9 @@ import DropDown from "../../shared/Frx-components/dropdown/DropDown";
 import Box from '@material-ui/core/Box';
 import Button from "../../shared/Frx-components/button/Button";
 import './PlainLanguageDescriptor.scss';
-import { Collapse } from 'antd';
-import './CostShareDetails.scss';
 
 export default class PlainLanguageDescriptor extends React.Component<any, any> {
   render() {
-    const { Panel } = Collapse;
     return (
       <div className="plain-language-container">
           <div className="list-wrapper">
@@ -49,7 +46,7 @@ export default class PlainLanguageDescriptor extends React.Component<any, any> {
                             </Box>
                         </Grid>
                         <Grid item xs={2}>
-                            <Box display="flex" justifyContent="flex-end" className="apply-btn">
+                            <Box display="flex" justifyContent="flex-end" className="apply-btn clone-btn">
                                 <Button label="Clone" />
                             </Box>
                         </Grid>
@@ -57,24 +54,37 @@ export default class PlainLanguageDescriptor extends React.Component<any, any> {
                 </Grid>
                 <Grid item xs={12}>
                     <div className="plain-language-grid-container">
-                        <div className="cost-share-details_content">
-                                <div className="headings plain-language-headings">
-                                    <div className="item category">category</div>
-                                    <div className="item category-desc">category descriptor</div>
-                                    <div className="item class-item">class</div>
-                                    <div className="item class-desc">class descriptor</div>
-                                </div>
-                                <div className="body">    
-                                    <div className="row">
-                                        <div className="item category plain-item category-item">Override Category</div>
-                                        <div className="item category-desc plain-item plain-lang-input"><input type="text" /></div>
-                                        <div className="item class-item plain-item">hd</div>
-                                        <div className="item class-desc plain-item class-descriptor-item plain-lang-input">
-                                            <span className="prefix percent">%</span>
-                                            {/* <DropDown options={['Copay','Co-Insurance']} value={e.costVal/> */}
-                                        </div>
-                                    </div>   
-                                </div>
+                        <div className="plain-category">
+                            <div className="plain-headings plain-border-bottm">Category</div>
+                            <div className="plain-border-bottm plain-text plain-height">Override Category</div>
+                            <div className="plain-border-bottm plain-text plain-height">Migraine Products</div>
+                            <div className="plain-border-bottm plain-text plain-height"></div>
+                            <div className="plain-border-bottm plain-text plain-height"></div>
+                            <div className="plain-border-bottm plain-text plain-height">Override Category</div>
+                        </div>
+                        <div className="plain-category-desc">
+                            <div className="plain-headings plain-border-bottm">Category descriptor</div>
+                            <div className="plain-border-bottm plain-input plain-height"><input type="text" /></div>
+                            <div className="plain-border-bottm plain-input plain-height"><input type="text" /></div>
+                            <div className="plain-border-bottm plain-input plain-height"><input type="text" /></div>
+                            <div className="plain-border-bottm plain-input plain-height"><input type="text" /></div>
+                            <div className="plain-border-bottm plain-input plain-height"><input type="text" /></div>
+                        </div>
+                        <div className="plain-class">
+                            <div className="plain-headings plain-border-bottm">class</div>
+                            <div className="plain-border-bottm plain-text plain-height">Override Category</div>
+                            <div className="plain-border-bottm plain-text plain-height">Antiperistaltic Agents</div>
+                            <div className="plain-border-bottm plain-text plain-height">Override Class</div>
+                            <div className="plain-border-bottm plain-text plain-height">Class</div>
+                            <div className="plain-border-bottm plain-text plain-height">Override Category</div>
+                        </div>
+                        <div className="plain-class-desc">
+                            <div className="plain-headings plain-border-bottm">class descriptor</div>
+                            <div className="plain-border-bottm plain-input plain-height"><input type="text" /></div>
+                            <div className="plain-border-bottm plain-input plain-height"><input type="text" /></div>
+                            <div className="plain-border-bottm plain-input plain-height"><input type="text" /></div>
+                            <div className="plain-border-bottm plain-input plain-height"><input type="text" /></div>
+                            <div className="plain-border-bottm plain-input plain-height"><input type="text" /></div>
                         </div>
                     </div>
                 </Grid>
