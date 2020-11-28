@@ -1,8 +1,73 @@
 export const getFormularyDetails = () => {
-    return {
-        formularyName: '2021Care926-1',
-        formularyID: 123456789123,
-        effectiveDate: '09/22/2019',
-        terminationDate: '09/22/2020'
-    }
-}
+  return [
+    {
+      serviceYear: "2021",
+      bazaar: {
+        label: "N/A",
+        type: "block",
+        variant: 3,
+        fill: "fill",
+      },
+      origin: {
+        label: "Purchased",
+        type: "pill",
+        variant: 1,
+        fill: "fill",
+      },
+      formularyName: "2021Care1234",
+      formularyId: "123",
+      version: "1",
+      timeRemaining: {
+        text: "09/04/2020  @ 9:00 AM",
+        progress: 25,
+      },
+      step: "2",
+    },
+    {
+      serviceYear: "2021",
+      bazaar: {
+        label: "SELL",
+        type: "block",
+        variant: 2,
+        fill: "outline",
+      },
+      origin: {
+        label: "Imported",
+        type: "pill",
+        variant: 2,
+        fill: "fill",
+      },
+      formularyName: "2021Care1234",
+      formularyId: "123",
+      version: "1",
+      timeRemaining: {
+        text: "09/04/2020  @ 9:00 AM",
+        progress: 65,
+      },
+      step: "2",
+    },
+    {
+      serviceYear: "2021",
+      bazaar: {
+        label: "SELLING",
+        type: "block",
+        variant: 1,
+        fill: "fill",
+      },
+      origin: {
+        label: "Purchased",
+        type: "pill",
+        variant: 3,
+        fill: "fill",
+      },
+      formularyName: "2021Care1234",
+      formularyId: "123",
+      version: "1",
+      timeRemaining: {
+        text: "09/04/2020  @ 9:00 AM",
+        progress: 80,
+      },
+      step: "2",
+    },
+  ];
+};

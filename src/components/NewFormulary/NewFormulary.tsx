@@ -4,6 +4,8 @@ import FrxTabs from "../shared/FrxTabs/FrxTabs";
 import Medicare from "./Medicare/Medicare";
 import DrugDetails from "./DrugDetails/FormularyDetails";
 import DrugDetailsContext from "./FormularyDetailsContext";
+import MassMaintenanceContext from "./FormularyDetailsContext";
+import MassMaintenance from "./MassMaintenance/MassMaintenance";
 import FormularyDashboardStats from "./../FormularyDashboardStats/FormularyDashboardStats";
 import { getFormularyDetails } from "../../mocks/formulary/formularyDetails";
 
@@ -20,6 +22,7 @@ interface State {
   tabs: Array<TabInfo>;
   activeTabIndex: number;
   showTabs: boolean;
+  showMassMaintenance: boolean;
   showDrugDetails: boolean;
 }
 
@@ -28,6 +31,7 @@ export default class Formulary extends React.Component<any, any> {
     activeTabIndex: 0,
     tabs: tabs,
     showTabs: true,
+    showMassMaintenance: false,
     showDrugDetails: false,
   };
   onClickTab = (selectedTabIndex: number) => {
@@ -47,11 +51,24 @@ export default class Formulary extends React.Component<any, any> {
       showDrugDetails: !this.state.showDrugDetails,
     });
   };
+
+  massMaintenanceCLickHandler = () => {
+    this.setState({
+      showTabs: !this.state.showTabs,
+      showMassMaintenance: !this.state.showMassMaintenance,
+    });
+  };
+
   renderActiveTabContent = () => {
     const tabIndex = this.state.activeTabIndex;
     switch (tabIndex) {
       case 0:
-        return <Medicare drugDetailClick={this.drugDetailsClickHandler} />;
+        return (
+          <Medicare
+            drugDetailClick={this.drugDetailsClickHandler}
+            onMassMaintenanceCLick={this.massMaintenanceCLickHandler}
+          />
+        );
       case 1:
         return <div>MEDICAID</div>;
       case 2:
@@ -81,6 +98,12 @@ export default class Formulary extends React.Component<any, any> {
           >
             <DrugDetails data={getFormularyDetails()} />
           </DrugDetailsContext.Provider>
+        ) : this.state.showMassMaintenance ? (
+          <MassMaintenanceContext.Provider
+            value={{ showDetailHandler: this.massMaintenanceCLickHandler }}
+          >
+            <MassMaintenance data={getFormularyDetails()} />
+          </MassMaintenanceContext.Provider>
         ) : null}
       </div>
     );

@@ -85,7 +85,6 @@ class FrxDrugGridContainer extends Component<FrxDrugGridContainerProps<any>> {
   };
 
   render() {
-    console.log("****************",this.props)
     return (
       <div className="frx-grid-container">
         {this.props.enableSearch ? this.getSearchComponent() : null}
