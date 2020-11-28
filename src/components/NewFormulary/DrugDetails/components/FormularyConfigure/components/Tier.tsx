@@ -14,7 +14,8 @@ import DropDown from "../../../../../shared/Frx-components/dropdown/DropDown";
 import Button from "../../../../../shared/Frx-components/button/Button";
 import Box from "@material-ui/core/Box";
 import FrxDrugGridContainer from "../../../../../shared/FrxGrid/FrxDrugGridContainer";
-import DrugGrid from "../../DrugGrid";
+import { tierColumns } from "../../../../../../utils/grid/columns";
+import { TierMockData } from "../../../../../../mocks/TierMock";
 
 interface tabsState {
   activeMiniTabIndex: number;
@@ -26,8 +27,6 @@ class Tier extends React.Component<any, tabsState> {
   state = {
     miniTabs: getMiniTabs(),
     isFetchingData: false,
-    columns: null,
-    data: null,
     activeMiniTabIndex: 0,
     activeTabIndex: 0,
     tabs: getTapList(),
@@ -46,6 +45,7 @@ class Tier extends React.Component<any, tabsState> {
       ["img", "Tier 3", "OTC", "2", "4", "2", "checkbox"],
     ],
   };
+
   onClickMiniTab = (num: number) => {
     this.setState({
       activeMiniTabIndex: num,
@@ -53,8 +53,6 @@ class Tier extends React.Component<any, tabsState> {
   };
 
   render() {
-    const { columns } = this.props;
-
     return (
       <div className="drug-detail-LA-root">
         <div className="drug-detail-la-container">
@@ -75,42 +73,44 @@ class Tier extends React.Component<any, tabsState> {
                     </div>
                   </div>
                 </div>
-                <div className="limited-access">
-                  <PanelHeader title="Tier Definition Settings" />
-                  <div className="modify-wrapper white-bg">
-                    <div className="modify-panel">
-                      <div className="icon">
-                        <span>R</span>
-                      </div>
-                      <div className="switch-box">
-                        <CustomizedSwitches
-                          leftTitle="Modify"
-                          rightTitle="view all"
-                        />
-                      </div>
-                      <div className="mini-tabs">
-                        <FrxMiniTabs
-                          tabList={this.state.miniTabs}
-                          activeTabIndex={this.state.activeMiniTabIndex}
-                          onClickTab={this.onClickMiniTab}
-                        />
+                <div className="mb-10">
+                  <div className="limited-access">
+                    <PanelHeader title="Tier Definition Settings" />
+                    <div className="modify-wrapper white-bg">
+                      <div className="modify-panel">
+                        <div className="icon">
+                          <span>R</span>
+                        </div>
+                        <div className="switch-box">
+                          <CustomizedSwitches
+                            leftTitle="Modify"
+                            rightTitle="view all"
+                          />
+                        </div>
+                        <div className="mini-tabs">
+                          <FrxMiniTabs
+                            tabList={this.state.miniTabs}
+                            activeTabIndex={this.state.activeMiniTabIndex}
+                            onClickTab={this.onClickMiniTab}
+                          />
+                        </div>
                       </div>
                     </div>
-                  </div>
-                  <div className="group tier-dropdown white-bg">
-                    <Grid container>
-                      <Grid item xs={4}>
-                        <label>
-                          TIER <span className="astrict">*</span>
-                        </label>
-                        <DropDown options={[1, 2, 3]} />
+                    <div className="group tier-dropdown white-bg">
+                      <Grid container>
+                        <Grid item xs={4}>
+                          <label>
+                            TIER <span className="astrict">*</span>
+                          </label>
+                          <DropDown options={[1, 2, 3]} />
+                        </Grid>
+                        <Grid item xs={1}>
+                          <Box display="flex" justifyContent="flex-end">
+                            <Button label="Apply" />
+                          </Box>
+                        </Grid>
                       </Grid>
-                      <Grid item xs={1}>
-                        <Box display="flex" justifyContent="flex-end">
-                          <Button label="Apply" />
-                        </Box>
-                      </Grid>
-                    </Grid>
+                    </div>
                   </div>
                 </div>
                 <div className="bordered">
@@ -124,26 +124,21 @@ class Tier extends React.Component<any, tabsState> {
                       <Button label="Save" disabled />
                     </div>
                   </div>
-                  {/* <FrxDrugGridContainer
+                  <FrxDrugGridContainer
+                    isRowSelectorCheckbox
                     enableSearch={false}
                     enableColumnDrag
                     onSearch={() => {}}
-                    fixedColumnKeys={["claimId"]}
+                    fixedColumnKeys={[]}
                     pagintionPosition="topRight"
-                    gridName="CLAIMS"
+                    gridName="TIER"
                     enableSettings
-                    columns={columns}
-                    scroll={{ x: 3800, y: 377 }}
+                    columns={tierColumns()}
+                    scroll={{ x: 2000, y: 377 }}
                     isFetchingData={false}
                     enableResizingOfColumns
-                    data={getFormularyDetails()}
-                    expandable={{
-                      isExpandable: true,
-                      expandedRowRender: (props) => (
-                        <FormularyExpandedDetails />
-                      ),
-                    }}
-                  /> */}
+                    data={TierMockData()}
+                  />
                 </div>
               </Grid>
             </Grid>
