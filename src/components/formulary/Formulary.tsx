@@ -10,7 +10,7 @@ import FormularyTable from "./Components/FormularyTable/FormularyTable";
 import {
   formularyGridData,
   formularyGenericGridData,
-  formularyAlternativeGridData
+  formularyAlternativeGridData,
 } from "../../mocks/grid/formulary-table";
 import { formularyGridColumns } from "../../utils/grid/columns";
 import FormularyDetailedTable from "./Components/FormularyTable/FormularyDetailedTable";
@@ -18,8 +18,6 @@ import FormularyDetailedTable from "./Components/FormularyTable/FormularyDetaile
 export interface FormularyProps {
   history: any;
 }
-
-
 
 class Formulary extends React.Component<FormularyProps> {
   state = {
@@ -42,12 +40,12 @@ class Formulary extends React.Component<FormularyProps> {
   }
 
   onSearchHistoryCreation = (data: any) => {
-		if (this.state.searchHistory.length >= 2) return;
-	
+    if (this.state.searchHistory.length >= 2) return;
+
     this.setState({
       searchHistory: [...this.state.searchHistory, data],
       selectedData: data,
-      mainTableView: false
+      mainTableView: false,
     });
   };
 
@@ -67,7 +65,7 @@ class Formulary extends React.Component<FormularyProps> {
     this.setState({
       searchHistory: [...history],
       mainTableView,
-      selectedData: item
+      selectedData: item,
     });
   };
 
@@ -78,13 +76,13 @@ class Formulary extends React.Component<FormularyProps> {
    * TODO: fix a type for the searchObject
    * @author Deepak_T
    */
-  handleSearch = searchObject => {
+  handleSearch = (searchObject) => {
     console.log(searchObject);
     this.setState({ isFetchingData: true });
     if (searchObject && searchObject.status) {
       setTimeout(() => {
         const newData = this.state.data.filter(
-          d => d.status === searchObject.status
+          (d) => d.status === searchObject.status
         );
         this.setState({ isFetchingData: false, filteredData: newData });
       }, 2000);
@@ -93,7 +91,7 @@ class Formulary extends React.Component<FormularyProps> {
     }
   };
 
-  handleChange = event => {
+  handleChange = (event) => {
     // this.setState({ searchInput: event.target.value });
     //   () => {
     //   this.globalSearch();
@@ -106,13 +104,14 @@ class Formulary extends React.Component<FormularyProps> {
     //     .indexOf(searchInput.toLowerCase())> -1;
     // });
     const filteredOptions = data.filter(
-      (option) => option.labelname.toLowerCase().indexOf(searchInput.toLowerCase()) > -1
+      (option) =>
+        option.labelname.toLowerCase().indexOf(searchInput.toLowerCase()) > -1
     );
     this.setState({
       activeOption: 0,
       filteredOptions,
       showOptions: true,
-      searchInput: event.target.value
+      searchInput: event.target.value,
     });
   };
 
@@ -121,7 +120,7 @@ class Formulary extends React.Component<FormularyProps> {
       activeOption: 0,
       filteredOptions: [],
       showOptions: false,
-      searchInput: e.target.innerText
+      searchInput: e.target.innerText,
     });
   };
 
@@ -131,7 +130,7 @@ class Formulary extends React.Component<FormularyProps> {
       this.setState({
         activeOption: 0,
         showOptions: false,
-        searchInput: filteredOptions[activeOption].labelname
+        searchInput: filteredOptions[activeOption].labelname,
       });
     } else if (e.keyCode === 38) {
       if (activeOption === 0) {
@@ -147,19 +146,18 @@ class Formulary extends React.Component<FormularyProps> {
     }
   };
 
-
   globalSearch = () => {
     let { searchInput, data, filteredData } = this.state;
     let validate = this.searchValidate();
     if (validate) {
-      let filteredData = data.filter(value => {
+      let filteredData = data.filter((value) => {
         return value.labelname
           .toLowerCase()
           .includes(searchInput.toLowerCase());
       });
       this.setState({
         filteredData,
-        searchData: true
+        searchData: true,
       });
       console.log("filteredData", filteredData);
     }
@@ -182,16 +180,12 @@ class Formulary extends React.Component<FormularyProps> {
       data,
       searchData,
       searchHistory,
-      activeOption, 
-      filteredOptions, 
-      showOptions, 
-      searchInput
+      activeOption,
+      filteredOptions,
+      showOptions,
+      searchInput,
     } = this.state;
-    const {
-      handleChange,
-      handleOptionOnClick,
-      handleOnKeyDown,
-    } = this;
+    const { handleChange, handleOptionOnClick, handleOnKeyDown } = this;
     let optionList;
     if (showOptions && searchInput) {
       if (filteredOptions.length) {
@@ -200,10 +194,14 @@ class Formulary extends React.Component<FormularyProps> {
             {filteredOptions.map((optionName, index) => {
               let className;
               if (index === activeOption) {
-                className = 'option-active';
+                className = "option-active";
               }
               return (
-                <li className={className} key={index} onClick={handleOptionOnClick}>
+                <li
+                  className={className}
+                  key={index}
+                  onClick={handleOptionOnClick}
+                >
                   {optionName.labelname}
                 </li>
               );
