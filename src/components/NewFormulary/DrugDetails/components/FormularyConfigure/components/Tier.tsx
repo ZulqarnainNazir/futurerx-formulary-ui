@@ -125,7 +125,7 @@ class Tier extends React.Component<any, tabsState> {
                     </div>
                   </div>
                   <FrxDrugGridContainer
-                    isRowSelectorCheckbox
+                    isPinningEnabled={true}
                     enableSearch={false}
                     enableColumnDrag
                     onSearch={() => {}}
@@ -138,6 +138,11 @@ class Tier extends React.Component<any, tabsState> {
                     isFetchingData={false}
                     enableResizingOfColumns
                     data={TierMockData()}
+                    rowSelection={{
+                      columnWidth: 50,
+                      fixed: true,
+                      type: "checkbox",
+                    }}
                   />
                 </div>
               </Grid>
