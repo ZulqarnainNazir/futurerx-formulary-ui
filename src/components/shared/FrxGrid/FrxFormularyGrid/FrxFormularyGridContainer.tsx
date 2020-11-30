@@ -6,25 +6,25 @@
 
 import * as React from "react";
 import { Component } from "react";
-import FrxLoader from "../FrxLoader/FrxLoader";
+import FrxLoader from "../../FrxLoader/FrxLoader";
 
-import FrxDrugGrid from "./FrxDrugGrid";
-import "./FrxGridContainer.scss";
-import { Column, PagintionPosition, Grid } from "../../../models/grid.model";
+import FrxFormularyGrid from "./FrxFormularyGrid";
+import "./FrxFormularyGridContainer.scss";
+import { Column, PagintionPosition, Grid } from "../../../../models/grid.model";
 
-import ClaimsSearch from "../../ClaimsSearch/ClaimsSearch";
-import AuthsAndOverridesSearch from "../../AuthsAndOverridesSearch/AuthsAndOverridesSearch";
-import CallsSearch from "../../communication/Search/CallsSearch/CallsSearch";
-import DocumentsSearch from "../../communication/Search/DocumentsSearch/DocumentsSearch";
-import OtherSearch from "../../communication/Search/OtherSearch/OtherSearch";
-import ClaimsHistorySearch from "../../ClaimsGridModel/Components/ClaimsHistory/ClaimsHistorySearch";
-import PaDashboardSearch from "../../PA-Dashboard/Components/PaDashboardGrid/PaDashboardSearch";
-import GrievancesDashboardSearch from "../../GrivencesDashboard/Components/GrivencesDashboardGrid/GrivencesDashboardSearch";
-import FrxGenericSearch from "../FrxGenericSearch/FrxGenericSearch";
-import { getPaCasesSearchData } from "../../../mocks/search/pa-cases-search-mock";
-import PrescriberProfileSearch from "../../prescriber/ClaimGridComponent/ProfileClaimGridSearch";
+import ClaimsSearch from "../../../ClaimsSearch/ClaimsSearch";
+import AuthsAndOverridesSearch from "../../../AuthsAndOverridesSearch/AuthsAndOverridesSearch";
+import CallsSearch from "../../../communication/Search/CallsSearch/CallsSearch";
+import DocumentsSearch from "../../../communication/Search/DocumentsSearch/DocumentsSearch";
+import OtherSearch from "../../../communication/Search/OtherSearch/OtherSearch";
+import ClaimsHistorySearch from "../../../ClaimsGridModel/Components/ClaimsHistory/ClaimsHistorySearch";
+import PaDashboardSearch from "../../../PA-Dashboard/Components/PaDashboardGrid/PaDashboardSearch";
+import GrievancesDashboardSearch from "../../../GrivencesDashboard/Components/GrivencesDashboardGrid/GrivencesDashboardSearch";
+import FrxGenericSearch from "../../FrxGenericSearch/FrxGenericSearch";
+import { getPaCasesSearchData } from "../../../../mocks/search/pa-cases-search-mock";
+import PrescriberProfileSearch from "../../../prescriber/ClaimGridComponent/ProfileClaimGridSearch";
 
-interface FrxDrugGridContainerProps<T> extends Grid<T> {
+interface FrxGridContainerProps<T> extends Grid<T> {
   // data: any[];
   // columns: Column<any>[];
   //
@@ -39,52 +39,53 @@ interface FrxDrugGridContainerProps<T> extends Grid<T> {
   isFetchingData: boolean;
   onSearch: (searchObject: any) => void;
   searchOptions?: any;
-  isPinningEnabled?: boolean;
 }
-class FrxDrugGridContainer extends Component<FrxDrugGridContainerProps<any>> {
+class FrxFormularyGridContainer extends Component<FrxGridContainerProps<any>> {
   /**
    * @function getSearchComponent
    * to render appropriate search component
    */
-  getSearchComponent = () => {
-    const componentType = this.props.gridName;
-    switch (componentType) {
-      case "CLAIMS":
-        return <ClaimsSearch onSearch={this.handleSearch} />;
-      case "AuthsAndOverrides":
-        return <AuthsAndOverridesSearch onSearch={this.handleSearch} />;
-      case "CALLS":
-        return <CallsSearch onSearch={this.handleSearch} />;
-      case "DOCUMENTS":
-        return <DocumentsSearch onSearch={this.handleSearch} />;
-      case "OTHER":
-        return <OtherSearch onSearch={this.handleSearch} />;
-      case "CLAIMSHISTORY":
-        return <ClaimsHistorySearch onSearch={this.handleSearch} />;
-      case "GENERIC":
-        return (
-          <FrxGenericSearch
-            searchOptions={
-              this.props.searchOptions ? this.props.searchOptions : []
-            }
-            onSearch={this.handleSearch}
-          />
-        );
-      case "PA":
-        return (
-          <FrxGenericSearch
-            searchOptions={getPaCasesSearchData()}
-            onSearch={this.handleSearch}
-          />
-        );
-      case "GRIEVANCES":
-        return <GrievancesDashboardSearch onSearch={this.handleSearch} />;
-      case "PROFILE CLAIM":
-        return <PrescriberProfileSearch onSearch={this.handleSearch} />;
-      default:
-        console.log("No matching component");
-    }
-  };
+  //getSearchComponent = () => {
+  // const componentType = this.props.gridName;
+  // switch (componentType) {
+  //   case "FORMULARY":
+  //     return <ClaimsSearch onSearch={this.handleSearch} />;
+  //   case "CLAIMS":
+  //     return <ClaimsSearch onSearch={this.handleSearch} />;
+  //   case "AuthsAndOverrides":
+  //     return <AuthsAndOverridesSearch onSearch={this.handleSearch} />;
+  //   case "CALLS":
+  //     return <CallsSearch onSearch={this.handleSearch} />;
+  //   case "DOCUMENTS":
+  //     return <DocumentsSearch onSearch={this.handleSearch} />;
+  //   case "OTHER":
+  //     return <OtherSearch onSearch={this.handleSearch} />;
+  //   case "CLAIMSHISTORY":
+  //     return <ClaimsHistorySearch onSearch={this.handleSearch} />;
+  //   case "GENERIC":
+  //     return (
+  //       <FrxGenericSearch
+  //         searchOptions={
+  //           this.props.searchOptions ? this.props.searchOptions : []
+  //         }
+  //         onSearch={this.handleSearch}
+  //       />
+  //     );
+  //   case "PA":
+  //     return (
+  //       <FrxGenericSearch
+  //         searchOptions={getPaCasesSearchData()}
+  //         onSearch={this.handleSearch}
+  //       />
+  //     );
+  //   case "GRIEVANCES":
+  //     return <GrievancesDashboardSearch onSearch={this.handleSearch} />;
+  //   case "PROFILE CLAIM":
+  //     return <PrescriberProfileSearch onSearch={this.handleSearch} />;
+  //   default:
+  //     console.log("No matching component");
+  // }
+  //   };
   /**
    * @function handleSearch
    * to handle the search from FrxSearch and pass it to parent to handle data fetching
@@ -99,9 +100,9 @@ class FrxDrugGridContainer extends Component<FrxDrugGridContainerProps<any>> {
   render() {
     return (
       <div className="frx-grid-container">
-        {this.props.enableSearch ? this.getSearchComponent() : null}
-        <FrxDrugGrid
-          bordered={false}
+        {/* {this.props.enableSearch ? this.getSearchComponent() : null} */}
+        <FrxFormularyGrid
+          bordered={this.props.bordered}
           columns={this.props.columns}
           gridName={this.props.gridName}
           fixedColumnKeys={this.props.fixedColumnKeys}
@@ -133,9 +134,6 @@ class FrxDrugGridContainer extends Component<FrxDrugGridContainerProps<any>> {
             this.props.settingsWidth ? this.props.settingsWidth : undefined
           }
           isRowSelectorCheckbox={this.props.isRowSelectorCheckbox}
-          isPinningEnabled={this.props.isPinningEnabled}
-          rowSelection={this.props.rowSelection}
-          // isSeparateCheckboxColumn={this.props.isSeparateCheckboxColumn}
           expandable={{
             isExpandable: this.props.expandable
               ? this.props.expandable.isExpandable
@@ -167,4 +165,4 @@ class FrxDrugGridContainer extends Component<FrxDrugGridContainerProps<any>> {
   }
 }
 
-export default FrxDrugGridContainer;
+export default FrxFormularyGridContainer;

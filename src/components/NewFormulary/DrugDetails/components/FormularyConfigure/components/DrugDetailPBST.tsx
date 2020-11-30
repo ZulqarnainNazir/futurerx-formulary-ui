@@ -10,9 +10,10 @@ import { getDrugDetailsColumn } from "../DrugGridColumn";
 import { getDrugDetailData } from "../../../../../../mocks/DrugGridMock";
 import FrxLoader from "../../../../../shared/FrxLoader/FrxLoader";
 import DrugGrid from '../../DrugGrid';
-
+import AdvancedSearch from './search/AdvancedSearch';
 export default class DrugDetailPBST extends React.Component<any,any>{
     state={
+        isSearchOpen: false,
         panelGridTitle1: ['PART B STEP THERAPY','NUMBER OF DRUGS','ADDED DRUGS','REMOVED DRUGS'],
         panelGridValue1: [],
         activeTabIndex: 0,
@@ -33,8 +34,12 @@ export default class DrugDetailPBST extends React.Component<any,any>{
             },
         ]  
     }
-    advanceSearchClickHandler = () => {
-        console.log('Advance Search Button Click');
+    advanceSearchClickHandler = (event) => {
+        event.stopPropagation();
+        this.setState({isSearchOpen: !this.state.isSearchOpen})
+    }
+    advanceSearchClosekHandler = () =>{
+        this.setState({isSearchOpen: !this.state.isSearchOpen})
     }
     saveClickHandler = () => {
         console.log('Save data');
@@ -124,6 +129,14 @@ export default class DrugDetailPBST extends React.Component<any,any>{
                         </div>
                     </div>
                     {dataGrid}
+                    {this.state.isSearchOpen ? (
+                        <AdvancedSearch
+                                category="Grievances"
+                                openPopup={this.state.isSearchOpen}
+                                onClose={this.advanceSearchClosekHandler}/>
+                    ) : (
+                        null
+                    )}
                 </div>
             </>
         )
