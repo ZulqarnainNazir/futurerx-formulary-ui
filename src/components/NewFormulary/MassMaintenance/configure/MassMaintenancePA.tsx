@@ -9,9 +9,6 @@ import {
 
 import SimpleGrid from "../../../shared/Frx-formulary/SimpleGrid/SimpleGrid";
 
-// import
-import "./MassMaintenancePA.scss";
-
 export interface FormularyGridDS {
   key: string;
   formularyName: string;
@@ -60,7 +57,7 @@ class MassMaintenancePA extends Component<any, MassMaintenancePAState> {
   render() {
     const { gridData, gridColumns } = this.state;
     return (
-      <>
+      <div className="mm-pa-root">
         <div className="bordered details-top">
           <div className="header">
             SELECTED FORMULARIES
@@ -96,7 +93,7 @@ class MassMaintenancePA extends Component<any, MassMaintenancePAState> {
           <div className="header">PRIOR AUTHORIZATION</div>
           <div className="inner-container p-20">Lob</div>
         </div>
-      </>
+      </div>
     );
   }
 }

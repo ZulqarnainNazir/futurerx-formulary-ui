@@ -10,17 +10,32 @@ import {
 import SimpleGrid from "../../../shared/Frx-formulary/SimpleGrid/SimpleGrid";
 import FrxMiniTabs from "../../../shared/FrxMiniTabs/FrxMiniTabs";
 import CustomizedSwitches from "../../DrugDetails/components/FormularyConfigure/components/CustomizedSwitches";
-
 class MassMaintenanceTier extends Component {
   state = {
     gridData: getData(),
     gridColumns: getColumns(),
+    miniTabs: [
+      {
+        id: 1,
+        text: "Replace",
+      },
+      {
+        id: 2,
+        text: "Append",
+      },
+      {
+        id: 3,
+        text: "Remove",
+      },
+    ],
+    activeMiniTabIndex: 0,
   };
   addNew = () => {};
+  onClickMiniTab = () => {};
   render() {
-    const { gridData, gridColumns } = this.state;
+    const { gridData, gridColumns, miniTabs, activeMiniTabIndex } = this.state;
     return (
-      <>
+      <div className="mm-tier-root">
         <div className="bordered details-top">
           <div className="header">
             SELECTED FORMULARIES FOR TIER ASSIGNMENT
@@ -42,26 +57,26 @@ class MassMaintenanceTier extends Component {
             </div>
           </div>
         </div>
-        <div className="bordered details-top">
+        <div className="bordered white-bg details-top">
           <div className="header">MANUAL MAINTENANCE SETTINGS</div>
-          <div className="inner-container">
-            <div className="modify-panel">
-              <div className="icon">
-                <span>R</span>
-              </div>
-              <div className="switch-box">
-                <CustomizedSwitches leftTitle="Modify" rightTitle="view all" />
-              </div>
-              <div className="mini-tabs">
-                {/* <FrxMiniTabs
-                  tabList={this.state.miniTabs}
-                  activeTabIndex={this.state.activeMiniTabIndex}
-                  onClickTab={this.onClickMiniTab}
-                /> */}
-              </div>
+
+          <div className="modify-panel">
+            <div className="icon">
+              <span>R</span>
+            </div>
+            <div className="switch-box">
+              <CustomizedSwitches leftTitle="Modify" rightTitle="view all" />
+            </div>
+            <div className="mini-tabs">
+              <FrxMiniTabs
+                tabList={miniTabs}
+                activeTabIndex={activeMiniTabIndex}
+                onClickTab={this.onClickMiniTab}
+              />
             </div>
           </div>
         </div>
+
         <div className="bordered details-top">
           <div className="header">tier Assignment</div>
           <div className="inner-container p-20"></div>
@@ -70,7 +85,7 @@ class MassMaintenanceTier extends Component {
           <div className="header">tier definition</div>
           <div className="inner-container p-20"></div>
         </div>
-      </>
+      </div>
     );
   }
 }

@@ -60,7 +60,7 @@ class MassMaintenanceConfigure extends Component<
           activeTabIndex={this.state.activeTabIndex}
           onClickTab={this.onClickTab}
         />
-        <div className="inner-container white-bg">
+        <div className="inner-container mm-configure-root white-bg">
           {this.renderActiveTabContent()}
         </div>
       </div>

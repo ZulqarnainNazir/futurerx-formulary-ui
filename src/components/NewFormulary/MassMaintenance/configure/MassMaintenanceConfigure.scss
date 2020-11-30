@@ -1,1 +1,71 @@
 @import "../../../../assets/style.scss";
+
+.mm-configure-root {
+  .mm-pa-root,
+  .mm-tier-root {
+    .dynamic-row-addition {
+      margin: 5px 0 0 0;
+      text-align: end;
+      cursor: pointer;
+      .__add-new-row {
+        font-family: Roboto;
+        font-style: normal;
+        font-weight: normal;
+        font-size: 12px;
+        line-height: 14px;
+        color: #707683;
+        border-bottom: 1px dashed #707683;
+      }
+    }
+  }
+  .mm-tier-root {
+    .modify-panel {
+      padding: 0 20px;
+      display: flex;
+      .icon {
+        display: flex;
+        height: 50px;
+        padding-right: 18px;
+        border-right: 1px solid #e5e5e5;
+        align-items: center;
+        span {
+          display: block;
+          border-radius: 50%;
+          height: 31px;
+          width: 31px;
+          background: #1fbbc4;
+          color: white;
+          font-size: 16px;
+          line-height: 31px;
+          text-align: center;
+        }
+      }
+      .switch-box {
+        display: flex;
+        align-items: center;
+        padding: 0 40px;
+        border-right: 1px solid #e5e5e5;
+        .label {
+          font-size: 14px;
+          text-transform: uppercase;
+          color: #707683;
+        }
+      }
+      .mini-tabs {
+        display: flex;
+        padding: 0 40px;
+        border-right: 1px solid #e5e5e5;
+        align-items: center;
+      }
+    }
+    .header-with-notes {
+      position: relative;
+      svg.note-icon {
+        position: absolute;
+        right: 20px;
+        top: 50%;
+        transform: translateY(-50%);
+      }
+    }
+  }
+}
