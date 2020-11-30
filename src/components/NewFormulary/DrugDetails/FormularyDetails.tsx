@@ -6,6 +6,7 @@ import FormularyConfigure from "./components/FormularyConfigure/FormularyConfigu
 import CompareView from "./components/CompareView/CompareView";
 import "./FormularyDetails.scss";
 import FormularySetUp from "./components/FormularySetUp/FormularySetUp";
+import Validation from "../../Validation/Validation";
 
 const tabs = [
   { id: 1, text: "Setup" },
@@ -35,7 +36,7 @@ export default class FormularyDetails extends React.Component<any, any> {
     const tabIndex = this.state.activeTabIndex;
     switch (tabIndex) {
       case 0:
-        return <FormularySetUp />
+        return <FormularySetUp />;
       case 1:
         return <FormularyConfigure />;
       case 2:
@@ -45,7 +46,11 @@ export default class FormularyDetails extends React.Component<any, any> {
           </div>
         );
       case 3:
-        return <div>Validation</div>;
+        return (
+          <div>
+            <Validation />
+          </div>
+        );
       case 4:
         return <div>Complete</div>;
       case 5:

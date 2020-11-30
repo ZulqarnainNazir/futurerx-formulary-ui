@@ -1,24 +1,48 @@
-import React, {ReactElement} from "react";
+import React, { ReactElement } from "react";
 
-import {Theme, createStyles, makeStyles} from "@material-ui/core/styles";
+import { Theme, createStyles, makeStyles } from "@material-ui/core/styles";
 import Accordion from "@material-ui/core/Accordion";
 import AccordionSummary from "@material-ui/core/AccordionSummary";
 import AccordionDetails from "@material-ui/core/AccordionDetails";
 import Typography from "@material-ui/core/Typography";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
+import ExpandLessIcon from "@material-ui/icons/ExpandLess";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
       width: "100%",
+      marginBottom: "20px",
     },
     heading: {
       //   fontSize: theme.typography.pxToRem(15),
       //   fontWeight: theme.typography.fontWeightRegular,
+      fontFamily: "Roboto",
+      fontStyle: "normal",
+      fontWeight: 400,
+      fontSize: "12px",
+      // lineHeight: "30px",
+
       color: "#1D54B4",
     },
     accordionSummary: {
-      borderBottom: "1px sold black",
+      background: "#FFFFFF",
+      border: "1px solid #E5E5E5",
+      boxSizing: "border-box",
+      borderRadius: "5px 5px 5px 5px",
+      minHeight: 56,
+      // height: 56,
+      // "&$expanded": {
+      //   minHeight: 50,
+      //   height: 50,
+      //   borderRadius: "5px 5px 0px 0px",
+      // },
+    },
+    accordionDetails: {
+      background: "#FFFFFF",
+      border: "1px solid #E5E5E5",
+      boxSizing: "border-box",
+      borderRadius: "0 0 5px 5px",
     },
   })
 );
@@ -26,26 +50,32 @@ const useStyles = makeStyles((theme: Theme) =>
 interface Props {
   children: any;
   name: string;
+  style?: any;
 }
 
-export default function CustomAccordion({children, name}: Props): ReactElement {
+export default function CustomAccordion({
+  children,
+  name,
+}: Props): ReactElement {
   const classes = useStyles();
 
   return (
     <div className={classes.root}>
       <Accordion>
         <AccordionSummary
-        //   className={classes.accordionSummary}
-          expandIcon={<ExpandMoreIcon />}
+          className={classes.accordionSummary}
+          expandIcon={<ExpandLessIcon />}
           aria-controls="panel1a-content"
           id="panel1a-header"
         >
           <Typography className={classes.heading}>{name}</Typography>
         </AccordionSummary>
-        <hr/>
+        {/* <hr/> */}
         {/* {children.map((chilElement: any, index: number) => ( */}
         {/* <React.Fragment key={index}> */}
-        <AccordionDetails>{children}</AccordionDetails>
+        <AccordionDetails className={classes.accordionDetails}>
+          {children}
+        </AccordionDetails>
         {/* </React.Fragment> */}
         {/* ))} */}
       </Accordion>

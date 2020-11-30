@@ -1,0 +1,124 @@
+.formulary-expanded-details {
+  &__container {
+    display: flex;
+  }
+}
+
+
+.formulary-expanded-details-left {
+  max-width: 137px;
+  width: 100%;
+  border-right:1px solid #E5E5E5;
+  
+  &__title {
+    font-family: Roboto;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 12px;
+    line-height: 20px;
+    text-transform: uppercase;
+    color: #707683;
+    padding-top: 53px;
+    padding-left: 30px;
+  }
+  
+  &__list {
+    margin-top: 8px;
+  }
+  
+  &__list-item {
+    font-family: Roboto;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 12px;
+    line-height: 20px;
+    color: #323C47;
+    cursor: pointer;
+    width: 137px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    padding-left: 14px;
+    
+    &:hover {
+      background-color: #EEF3F7;
+    }
+  }  
+  
+  &__list-item-indicator {
+    width: 8px;
+    height: 8px;
+    display: inline-block;
+    border-radius: 8px;
+    margin-right: 8px;
+    
+    &--active {
+      background: #80C483;
+    }
+
+    &--inactive {
+      background: #C4C4C4;
+    }
+  }  
+  
+  &__list-add-item {
+    font-family: Roboto;
+    font-style: normal;
+    font-weight: bold;
+    font-size: 12px;
+    line-height: 20px;
+    color: #1D54B4;
+    margin-top: 24px;
+    margin-left: 30px;
+    cursor: pointer;
+  }
+}
+
+.formulary-expanded-details-right {
+  width: 100%;
+  &__header {
+    height: 66px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-bottom: 1px solid #E5E5E5;;
+  }
+  
+  &__content {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-row-gap: 30px;
+    padding: 24px 23px 22px 19px ;
+  }
+  
+  &__tabs {
+    padding: 24px 23px 0px 19px ;
+  }
+}
+
+.formulary-info-field {
+  &__label {
+    font-family: Roboto;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 12px;
+    line-height: 20px;
+    text-transform: uppercase;
+    color: #707683;
+    margin-bottom: 10px;
+  }
+
+  &__value {
+    font-family: Roboto;
+    font-style: normal;
+    font-weight: 500;
+    font-size: 12px;
+    line-height: 14px;
+    color: #323C47;
+  }
+  
+  &__required {
+    color: #f65a1c;
+    margin-left: 2px;
+  }
+}

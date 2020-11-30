@@ -1,10 +1,15 @@
-.general-information-container {
+.general-information-container,
+.formulary-design-container,
+.tiers-information-container {
   background: #ffffff;
   border: 1px solid #e5e5e5;
   border-radius: 5px;
+  margin-bottom: 15px;
 }
 
-.general-information-container h4 {
+.general-information-container h4,
+.formulary-design-container h4,
+.tiers-information-container h4 {
   border-bottom: 1px solid #e5e5e5;
   font-weight: 500;
   font-size: 12px;
@@ -15,7 +20,7 @@
   padding: 15px;
 }
 
-label {
+.setup-label label {
   display: block;
   font-size: 12px;
   color: #707683;
@@ -52,7 +57,9 @@ label {
   color: #707683;
 }
 
-.general-information-fields-wrapper {
+.general-information-fields-wrapper,
+.formulary-design-fields-wrapper,
+.tiers-information-fields-wrapper {
   padding: 15px;
 }
 
@@ -61,13 +68,19 @@ label {
   &.marketing-material {
     padding: 15px 0 20px;
   }
+  &.marketing-usp {
+    padding: 15px 0 20px;
+  }
+  &.marketing-open {
+    padding: 15px 0 20px;
+  }
   label {
     display: flex;
     align-items: center;
     padding-right: 0;
     margin-right: 60px;
     span.label {
-      top: 1px;
+      top: -2px;
       color: #c4c4c4;
     }
     input:checked ~ span.label {
@@ -108,4 +121,126 @@ label {
 .reporting-tag-group {
   margin-top: 20px;
   position: relative;
+}
+
+.formulary-design-fields-wrapper ul {
+  list-style: none;
+  padding: 0px;
+  margin: 0px;
+}
+
+.checkbox-wrapper {
+  display: flex;
+}
+
+.checkbox-btn {
+  margin-top: 9px;
+}
+
+.uncheck-btn {
+  border-radius: 5px;
+  border: 1px solid #1d54b4;
+  background: #1d54b4;
+  padding: 0px;
+  width: 84px;
+  height: 25px;
+  color: #ffffff;
+  font-size: 12px;
+}
+
+.checkbox-label {
+  padding: 6px 12px;
+}
+
+.checkbox-ul {
+  padding-top: 35px !important;
+}
+
+.add-new-cbx {
+  margin-left: 10px;
+  width: 170px !important;
+  height: 30px !important;
+  border-radius: 3px !important;
+  margin-top: -5px !important;
+  border: 1px solid #c4c4c4 !important;
+}
+
+.hide-cbx {
+  visibility: hidden;
+}
+
+.checkbox-wrapper span {
+  margin-left: 13px;
+  padding-top: 2px;
+}
+
+.add-new-cbx-btn-wrapper {
+  display: flex;
+  margin-top: 10px;
+  margin-left: 7px;
+}
+
+.add-new-text a {
+  font-size: 12px;
+  text-decoration: underline dashed;
+  color: #707683;
+  padding-left: 10px;
+}
+
+.add-new-cbx-btn {
+  padding-top: 2px;
+}
+
+.tiers-dropdown-wrapper {
+  border: 1px solid #c4c4c4;
+  border-radius: 5px;
+}
+
+.tier {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px;
+}
+
+.formulary-tier-dropdown {
+  width: 200px !important;
+}
+
+.border-bottom {
+  border-bottom: 1px solid #c4c4c4;
+}
+
+.number-of-tier-dropdown {
+  width: 393px !important;
+}
+
+.tier-zero {
+  background: #e5e5e5;
+}
+
+.checkbox-wrapper .panel {
+  background: none !important;
+  margin-left: -25px;
+  margin-top: -3px;
+  border-bottom: none;
+  font-weight: normal;
+  font-size: 12px;
+  text-transform: uppercase;
+  color: #707683;
+  padding: 0px;
+  height: 35px;
+}
+
+.btn-action {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.save-and-continue-btn button {
+  width: 135px !important;
+  margin-right: 0px !important;
+}
+
+.save-btn button {
+  width: 70px !important;
 }

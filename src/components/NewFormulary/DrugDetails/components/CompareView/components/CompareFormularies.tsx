@@ -10,7 +10,7 @@ export default class CompareFormularies extends React.Component<any,any>{
         return (
             <div className="compare-formularies-container">
                 <h6>Select formularies for comparison</h6>
-                <div className="formulary-form">
+                <div className="formulary-form formulay-label">
                             <Grid container>
                                 <Grid item xs={4}>
                                     <div className="group">
@@ -37,9 +37,6 @@ export default class CompareFormularies extends React.Component<any,any>{
                                         <Button label="Compare" disabled />
                                      </Box>
                                 </Grid>
-                                {/* <Box display="flex" justifyContent="flex-end">
-                                        <Button label="Compare" disabled onClick={this.settingFormApplyHandler}/>
-                                     </Box> */}
                             </Grid>
                         </div>
             </div>
