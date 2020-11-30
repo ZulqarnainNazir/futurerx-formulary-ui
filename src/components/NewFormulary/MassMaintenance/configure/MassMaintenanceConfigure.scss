@@ -18,7 +18,70 @@
       }
     }
   }
-  .mm-tier-root {
+  .mm-tier-root,
+  .mm-pa-root {
+    .mm-configure {
+      .header {
+        display: flex;
+        justify-content: space-between;
+        .mini-container {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+        }
+        .select-box {
+          margin-left: 2rem;
+          .ant-select {
+            .ant-select-selector {
+              // width: 200px;
+              height: 35px;
+              box-sizing: border-box;
+              border-radius: 3px;
+            }
+          }
+        }
+      }
+
+      &-grid {
+        // ####### START TABLE ##########
+        .frx-grid-container {
+          .frx-grid {
+            .frx-grid__grid-block {
+              padding: 0;
+
+              .frx-grid__grid-block__table-block {
+                .ant-table {
+                  .ant-table-header {
+                    border: 1px solid #e5e5e5;
+                    border-bottom-left-radius: 0;
+                    border-bottom-right-radius: 0;
+                    // background-color: #fff;
+                  }
+                  .ant-table-body > table {
+                    border-spacing: 0;
+                    // background-color: #fff;
+                  }
+                  .ant-table-body > table > tbody > tr > td {
+                    border-radius: 0 !important;
+                    // background-color: #fff;
+                  }
+
+                  .ant-table-body > table > tbody > tr > td:first-child {
+                    padding: 0 18px 0 18px;
+                  }
+
+                  .ant-table-body > thead {
+                    border-radius: 0;
+                    // background-color: #fff;
+                  }
+                }
+              }
+            }
+          }
+        }
+        // ####### END TABLE ##########
+      }
+    }
     .modify-panel {
       padding: 0 20px;
       display: flex;

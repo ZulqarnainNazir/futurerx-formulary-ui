@@ -40,6 +40,7 @@ export default class FFF extends React.Component<any, any> {
       },
     ],
   };
+
   onClickTab = (selectedTabIndex: number) => {
     let activeTabIndex = 0;
 
@@ -51,16 +52,20 @@ export default class FFF extends React.Component<any, any> {
     });
     this.setState({ tabs, activeTabIndex });
   };
+
   advanceSearchClickHandler = (event) => {
     event.stopPropagation();
     this.setState({ isSearchOpen: !this.state.isSearchOpen });
   };
+
   advanceSearchClosekHandler = () => {
     this.setState({ isSearchOpen: !this.state.isSearchOpen });
   };
+
   saveClickHandler = () => {
     console.log("Save data");
   };
+
   componentDidMount() {
     const data = getDrugDetailData();
     const columns = getDrugDetailsColumn();
