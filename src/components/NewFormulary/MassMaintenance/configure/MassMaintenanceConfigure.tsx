@@ -3,6 +3,7 @@ import { TabInfo } from "../../../../models/tab.model";
 import FrxTabs from "../../../shared/FrxTabs/FrxTabs";
 import MassMaintenancePA from "./MassMaintenancePA";
 import "./MassMaintenanceConfigure.scss";
+import MassMaintenanceTier from "./MassMaintenanceTier";
 
 const tabs = [
   { id: 1, text: "TIER" },
@@ -40,7 +41,7 @@ class MassMaintenanceConfigure extends Component<
     const tabIndex = this.state.activeTabIndex;
     switch (tabIndex) {
       case 0:
-        return <div>TIER</div>;
+        return <MassMaintenanceTier />;
       case 1:
         return <MassMaintenancePA />;
       case 2:

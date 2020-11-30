@@ -31,8 +31,8 @@ export interface Grid<RecordType = unknown> {
   enableSettings?: boolean;
   showSettingsMenu?: boolean;
   onSettingsClick?: "grid-menu";
-	isRowSelectionEnabled?: boolean;
-	isRowSelectorCheckbox?:boolean;
+  isRowSelectionEnabled?: boolean;
+  isRowSelectorCheckbox?: boolean;
   rowSelection?: any;
   columns: Column<RecordType>[];
   data: RecordType[];
@@ -44,7 +44,7 @@ export interface Grid<RecordType = unknown> {
   enableResizingOfColumns?: boolean;
   summary?: (data: RecordType[]) => React.ReactNode; // to add a summary row in grid
   settingsTriDotMenuClick?: (item: GridMenu) => void;
-  rowSelectionChange?: (data: any, isMultiple?:boolean) => void;
+  rowSelectionChange?: (data: any, isMultiple?: boolean) => void;
   settingsTriDotClick?: (data: RecordType) => void;
   onColumnCellClick?: (record, key) => void;
 
@@ -136,8 +136,8 @@ export interface Column<RecordType> {
   filters?: ColumnFilterItem[];
   filteredValue?: any;
   filterDropdown?:
-  | React.ReactNode
-  | ((props: FilterDropdownProps) => React.ReactNode);
+    | React.ReactNode
+    | ((props: FilterDropdownProps) => React.ReactNode);
   filterMultiple?: boolean;
 
   filterIcon?: (filtered: any) => JSX.Element;
