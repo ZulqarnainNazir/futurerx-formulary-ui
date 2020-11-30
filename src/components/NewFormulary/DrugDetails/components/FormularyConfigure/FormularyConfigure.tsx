@@ -5,6 +5,7 @@ import DrugDetails from "./components/DrugDetails";
 import Tier from "./components/Tier";
 import PA from "./components/PA/PA";
 import StepTherpayDetails from "./components/StepTherapyData";
+import CategoryClass from "./components/CategoryClass";
 
 const tabs = [
   { id: 1, text: "TIER" },
@@ -50,9 +51,13 @@ export default class FormularyConfigure extends React.Component<
           </div>
         );
       case 1:
-        return <div>CATEGORY/CLASS</div>;
+        return (
+          <div>
+            <CategoryClass />
+          </div>
+        );
       case 2:
-        return <PA/>;
+        return <PA />;
       case 3:
         return (
           <div>
