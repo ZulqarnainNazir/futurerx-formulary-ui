@@ -1,24 +1,33 @@
 import React, { Component } from "react";
 import "./MassMaintenanceSetup.scss";
-import MassMaintenanceSetupGrid from "./MassMaintenanceSetupGrid";
-import { getClaimsGridData } from "../../../../mocks/grid/claims-mock";
-import {
-  claimsGridColumnsForRejectedAndTotal,
-  _claimsGridColumns,
-  _grievancesGridColumns,
-  _pacases_initial,
-  _testClaimsGridColumns,
-} from "../../../../utils/grid/columns";
-import { getTestClaimsSearchData } from "../../../../mocks/search/test-claims-search-mock-data";
+// import {
+//   _claimsGridColumns,
+//   _grievancesGridColumns,
+//   _pacases_initial,
+//   _testClaimsGridColumns,
+// } from "../../../../utils/grid/columns";
 import DropDown from "../../../shared/Frx-components/dropdown/DropDown";
 import Button from "../../../shared/Frx-components/button/Button";
 import RadioButton from "../../../shared/Frx-components/radio-button/RadioButton";
 import CustomDatePicker from "../../../shared/Frx-components/date-picker/CustomDatePicker";
 import { Input } from "antd";
+import FrxLoader from "../../../shared/FrxLoader/FrxLoader";
+
+import { getFormularyGridData } from "../../../../mocks/formulary-grid/FormularyGridData";
+import FormularyGrid from "./FormularyGrid";
+import DrugGrid from "../../DrugDetails/components/DrugGrid";
+import { getFormularyGridColumns } from "../../../../mocks/formulary-grid/FormularyGridColumn";
 
 class MassMaintenanceSetup extends Component {
   state = {
     isFormularyGridShown: false,
+    columns: null,
+    data: null,
+    isPinningEnabled: false,
+    scroll: {
+      x: 960,
+      y: 450,
+    },
   };
 
   showFormularyGrid = () => {
@@ -26,9 +35,30 @@ class MassMaintenanceSetup extends Component {
       isFormularyGridShown: !this.state.isFormularyGridShown,
     });
   };
+  rowSelectionChange = (r) => {
+    console.log(r);
+  };
+  componentDidMount() {
+    this.setState({
+      columns: getFormularyGridColumns(),
+      data: getFormularyGridData(),
+    });
+  }
 
   render() {
-    const { isFormularyGridShown } = this.state;
+    const { isFormularyGridShown, columns, data, scroll } = this.state;
+    let dataGrid = <FrxLoader />;
+    if (this.state.data) {
+      // dataGrid = (
+      //   <FormularyGrid
+      //     columns={columns}
+      //     data={data}
+      //     bordered={false}
+      //     rowSelectionChange={this.rowSelectionChange}
+      //   />
+      // );
+      dataGrid = <DrugGrid columns={columns} data={data} scroll={scroll} />;
+    }
     return (
       <div className="_mass-maintainance-setup-root">
         <div className="bordered details-top">
@@ -95,7 +125,9 @@ class MassMaintenanceSetup extends Component {
                   value=""
                   className="submission-month-input"
                 /> */}
-                <Input placeholder="" className="submission-month-input" />
+                <div>
+                  <Input placeholder="" className="submission-month-input" />
+                </div>
                 {/* </div> */}
               </div>
               <div>
@@ -133,6 +165,9 @@ class MassMaintenanceSetup extends Component {
                 label={
                   isFormularyGridShown ? "Hide Formularies" : "Show Formularies"
                 }
+                style={{
+                  cursor: "pointer",
+                }}
                 onClick={this.showFormularyGrid}
               />
             </div>
@@ -141,20 +176,7 @@ class MassMaintenanceSetup extends Component {
         {isFormularyGridShown ? (
           <div className="bordered details-top">
             <div className="header">Select Formularies to apply updates to</div>
-            <div className="inner-container p-20">
-              <MassMaintenanceSetupGrid
-                header={() => {
-                  return null;
-                }}
-                type="CLAIMSHISTORY"
-                data={getClaimsGridData}
-                settingsTriDotMenuClick={() => {}}
-                settingsWidth={20}
-                columns={_testClaimsGridColumns}
-                searchOptions={getTestClaimsSearchData}
-                onColumnCellClick={""}
-              />
-            </div>
+            <div className="inner-container">{dataGrid}</div>
           </div>
         ) : null}
       </div>

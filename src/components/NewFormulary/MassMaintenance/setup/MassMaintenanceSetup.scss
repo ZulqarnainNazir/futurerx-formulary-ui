@@ -7,6 +7,60 @@
 // }
 
 ._mass-maintainance-setup-root {
+  // ####### START TABLE ##########
+  .frx-grid-container {
+    .frx-grid {
+      .frx-grid__grid-block {
+        padding: 0;
+
+        .frx-grid__grid-block__table-block {
+          .ant-table {
+            .ant-table-header {
+              border: 1px solid #e5e5e5;
+              border-bottom-left-radius: 0;
+              border-bottom-right-radius: 0;
+              // background-color: #fff;
+            }
+            .ant-table-body > table {
+              border-spacing: 0;
+              // background-color: #fff;
+            }
+            .ant-table-body > table > tbody > tr > td {
+              border-radius: 0 !important;
+              // background-color: #fff;
+            }
+
+            .ant-table-body > table > tbody > tr > td:first-child {
+              padding: 0 18px 0 18px;
+              // position: relative;
+              // left: 19px;
+              border-right: 1px solid #e5e5e5;
+              // border
+              // padding: 0 18px;
+              // border-bottom: 1px solid rgb(131, 19, 19);
+              // border-top: 1px solid rgb(131, 19, 19);
+              // border-top: 1px solid rgb(131, 19, 19);
+              // border-bottom: 1px solid greenyellow !important;
+              // margin-right: 10px;
+              // padding: 0 1px;
+              // border: 1px solid #e5e5e5;
+              // border-radius: 0 !important;
+              // background-color: #fff;
+            }
+
+            .ant-table-body > thead {
+              border-radius: 0;
+              // background-color: #fff;
+            }
+          }
+        }
+      }
+    }
+  }
+  // ####### END TABLE ##########
+  .bordered {
+    background-color: #fff;
+  }
   .m-t-30 {
     margin-top: 30px;
   }

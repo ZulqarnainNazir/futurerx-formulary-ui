@@ -23,14 +23,13 @@ import FrxTimeProgressBar from "../../components/shared/FrxTimeProgressBar/FrxTi
 // );
 // };
 
-
 export const formularyDetailsGridColumns: () => Column<any>[] = () => {
   return [
     {
       position: 1,
       sorter: {},
       textCase: "upper",
-      pixelWidth: 133 ,
+      pixelWidth: 133,
       key: "serviceYear",
       displayTitle: "service year",
       isFilterable: true,
@@ -40,13 +39,20 @@ export const formularyDetailsGridColumns: () => Column<any>[] = () => {
       sortDirections: ["ascend", "descend"],
     },
     {
-      position:2,
+      position: 2,
       sorter: {},
       textCase: "upper",
       pixelWidth: 122,
       key: "bazaar",
       displayTitle: "Bazaar",
-      customContent: (props) => (<FrxStatusField text={props.data.bazaar.label} type={props.data.bazaar.type} fill={props.data.bazaar.fill} variant={props.data.bazaar.variant}/>),
+      customContent: (props) => (
+        <FrxStatusField
+          text={props.data.bazaar.label}
+          type={props.data.bazaar.type}
+          fill={props.data.bazaar.fill}
+          variant={props.data.bazaar.variant}
+        />
+      ),
       isFilterable: true,
       dataType: "string",
       filters: textFilters,
@@ -60,7 +66,14 @@ export const formularyDetailsGridColumns: () => Column<any>[] = () => {
       pixelWidth: 137,
       key: "origin",
       displayTitle: "origin",
-      customContent: (props) => (<FrxStatusField text={props.data.origin.label} type={props.data.origin.type} fill={props.data.origin.fill} variant={props.data.origin.variant}/>),
+      customContent: (props) => (
+        <FrxStatusField
+          text={props.data.origin.label}
+          type={props.data.origin.type}
+          fill={props.data.origin.fill}
+          variant={props.data.origin.variant}
+        />
+      ),
       isFilterable: true,
       dataType: "string",
       filters: textFilters,
@@ -68,7 +81,7 @@ export const formularyDetailsGridColumns: () => Column<any>[] = () => {
       sortDirections: ["ascend", "descend"],
     },
     {
-      position:4,
+      position: 4,
       sorter: {},
       textCase: "upper",
       pixelWidth: 163,
@@ -94,7 +107,7 @@ export const formularyDetailsGridColumns: () => Column<any>[] = () => {
       sortDirections: ["ascend", "descend"],
     },
     {
-      position:6,
+      position: 6,
       sorter: {},
       textCase: "upper",
       pixelWidth: 102,
@@ -107,13 +120,15 @@ export const formularyDetailsGridColumns: () => Column<any>[] = () => {
       sortDirections: ["ascend", "descend"],
     },
     {
-      position:7,
+      position: 7,
       sorter: {},
       textCase: "upper",
       pixelWidth: 242,
       key: "timeRemaining",
       displayTitle: "Time Remaining",
-      customContent: (props) => (<FrxTimeProgressBar {...props.data.timeRemaining}/>),
+      customContent: (props) => (
+        <FrxTimeProgressBar {...props.data.timeRemaining} />
+      ),
       isFilterable: true,
       dataType: "string",
       filters: textFilters,
@@ -121,7 +136,7 @@ export const formularyDetailsGridColumns: () => Column<any>[] = () => {
       sortDirections: ["ascend", "descend"],
     },
     {
-      position:8,
+      position: 8,
       sorter: {},
       textCase: "upper",
       pixelWidth: 109,
@@ -133,8 +148,8 @@ export const formularyDetailsGridColumns: () => Column<any>[] = () => {
       hidden: false,
       sortDirections: ["ascend", "descend"],
     },
-  ]
-}
+  ];
+};
 
 export const claimsGridColumnsForPaid: () => Column<any>[] = () => {
   return [
@@ -892,7 +907,9 @@ export const accumulatorGridColumns: () => Column<any>[] = () => {
   ];
 };
 
-export const authOveridesGridColumns: (callBackFuns?: any) => Column<any>[] = (callBackFuns?: any) => {
+export const authOveridesGridColumns: (callBackFuns?: any) => Column<any>[] = (
+  callBackFuns?: any
+) => {
   return [
     {
       position: 1,
@@ -901,7 +918,9 @@ export const authOveridesGridColumns: (callBackFuns?: any) => Column<any>[] = (c
       sorter: {},
       className: "entry-component",
       isFilterable: true,
-      componentToOpenOnClickingCell: (props) => <AuthGridModel {...props} callBacks={callBackFuns} />,
+      componentToOpenOnClickingCell: (props) => (
+        <AuthGridModel {...props} callBacks={callBackFuns} />
+      ),
       key: "authOverrideId",
       displayTitle: "AUTH/OVERRIDE ID",
 
@@ -8806,27 +8825,25 @@ export const PrescriberProfileClaimGridColumns: () => Column<any>[] = () => {
 // claimPopup mini grids //
 export const claimsPopupRejectedGrid = [
   {
-    title: 'Reject Code',
-    dataIndex: 'rejectCode',
-    key: 'rejectCode',
+    title: "Reject Code",
+    dataIndex: "rejectCode",
+    key: "rejectCode",
   },
   {
-    title: 'Description',
-    dataIndex: 'description',
-    key: 'description',
+    title: "Description",
+    dataIndex: "description",
+    key: "description",
   },
   {
-    title: 'Submitted Value',
-    dataIndex: 'submittedValue',
-    key: 'submittedValue',
-    render: submittedValue => (
+    title: "Submitted Value",
+    dataIndex: "submittedValue",
+    key: "submittedValue",
+    render: (submittedValue) => (
       <>
-        {submittedValue.map(submittedValueag => {
+        {submittedValue.map((submittedValueag) => {
           return (
             <div className="submitted-value">
-              <span>
-                {submittedValueag}
-              </span>
+              <span>{submittedValueag}</span>
             </div>
           );
         })}
@@ -8834,12 +8851,12 @@ export const claimsPopupRejectedGrid = [
     ),
   },
   {
-    title: 'Expected Value (if available)',
-    dataIndex: 'expectedValue',
-    key: 'expectedValue',
-    render: expectedValue => (
+    title: "Expected Value (if available)",
+    dataIndex: "expectedValue",
+    key: "expectedValue",
+    render: (expectedValue) => (
       <>
-        {expectedValue.map(expectedValuetag => {
+        {expectedValue.map((expectedValuetag) => {
           return (
             <div className="expected-value">
               <span>{expectedValuetag}</span>
@@ -8850,35 +8867,33 @@ export const claimsPopupRejectedGrid = [
     ),
   },
   {
-    title: 'Status',
-    dataIndex: 'status',
-    key: 'status',
+    title: "Status",
+    dataIndex: "status",
+    key: "status",
   },
-]
+];
 
 export const claimsPopupErrorMsgGrid = [
   {
-    title: 'Error Code',
-    dataIndex: 'errorCode',
-    key: 'errorCode',
+    title: "Error Code",
+    dataIndex: "errorCode",
+    key: "errorCode",
   },
   {
-    title: 'Description',
-    dataIndex: 'description',
-    key: 'description',
+    title: "Description",
+    dataIndex: "description",
+    key: "description",
   },
   {
-    title: 'Submitted Value',
-    dataIndex: 'submittedValue',
-    key: 'submittedValue',
-    render: submittedValue => (
+    title: "Submitted Value",
+    dataIndex: "submittedValue",
+    key: "submittedValue",
+    render: (submittedValue) => (
       <>
-        {submittedValue.map(submittedValueag => {
+        {submittedValue.map((submittedValueag) => {
           return (
             <div className="submitted-value">
-              <span>
-                {submittedValueag}
-              </span>
+              <span>{submittedValueag}</span>
             </div>
           );
         })}
@@ -8886,12 +8901,12 @@ export const claimsPopupErrorMsgGrid = [
     ),
   },
   {
-    title: 'Expected Value (if available)',
-    dataIndex: 'expectedValue',
-    key: 'expectedValue',
-    render: expectedValue => (
+    title: "Expected Value (if available)",
+    dataIndex: "expectedValue",
+    key: "expectedValue",
+    render: (expectedValue) => (
       <>
-        {expectedValue.map(expectedValuetag => {
+        {expectedValue.map((expectedValuetag) => {
           return (
             <div className="expected-value">
               <span>{expectedValuetag}</span>
@@ -8902,8 +8917,8 @@ export const claimsPopupErrorMsgGrid = [
     ),
   },
   {
-    title: 'Status',
-    dataIndex: 'status',
-    key: 'status',
+    title: "Status",
+    dataIndex: "status",
+    key: "status",
   },
-]
+];
