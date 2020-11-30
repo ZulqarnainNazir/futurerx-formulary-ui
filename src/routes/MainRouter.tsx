@@ -23,6 +23,7 @@ import EntityOwnershipContainer from "../components/NewFormulary/EntityOwnership
 import PlanInformation from "../components/NewFormulary/EntityOwnership/PlanInformation/PlanInformation";
 import PlanInformationConfiguration from "../components/NewFormulary/EntityOwnership/PlanIfonmationConfiguaration/PlanInformationConfiguration";
 import SetupFormularyGrid from "../components/SetupFormularyGrid/SetupFormularyGrid";
+import MassMaintenanceTier from "../components/NewFormulary/MassMaintenance/configure/MassMaintenanceTier";
 
 class MainRouter extends React.Component {
   render() {
@@ -233,6 +234,7 @@ class MainRouter extends React.Component {
             path="/setup/formularyGrid"
             render={(props) => <SetupFormularyGrid {...props} />}
           ></Route>
+
           {/* <Route
             exact
             path="/pie"
