@@ -19,46 +19,43 @@ export default class SetupGeneralComponent extends React.Component<any, any> {
                    MEDICARE CONTRACT TYPE <span className="astrict">*</span>
                 </label>
                 <ul>
-                    <li>
-                    <div className="checkbox-wrapper">
-                        <input type="checkbox" id="vehicle1" name="N/A" value="N/A" />
-                        <label htmlFor="N/A" className="checkbox-label"> S - PDP</label>
-                    </div>
-                    </li>
-                    <li>
-                    <div className="checkbox-wrapper">
-                        <input type="checkbox" id="vehicle1" name="N/A" value="N/A" />
-                        <label htmlFor="N/A" className="checkbox-label"> H - MAPD</label>
-                    </div>
-                    </li>
-                    <li>
-                    <div className="checkbox-wrapper">
-                        <input type="checkbox" id="vehicle1" name="N/A" value="N/A" />
-                        <label htmlFor="N/A" className="checkbox-label"> E - Employer/Union</label>
-                        {/* <PanelHeader
-                            tooltip="AGE LIMIT"
-                        /> */}
-                    </div>
-                    </li>
-                    <li>
-                    <div className="checkbox-wrapper">
-                        <input type="checkbox" id="vehicle1" name="N/A" value="N/A" />
-                        <label htmlFor="N/A" className="checkbox-label"> R - Regional/CCP</label>
-                    </div>
-                    </li>
-                    <li>
-                    <div className="checkbox-wrapper">
-                        <input type="checkbox" id="vehicle1" name="N/A" value="N/A" />
-                        <label htmlFor="N/A" className="checkbox-label"> Other</label>
-                    </div>
-                    </li>
-                </ul>
+                <li>
+                <div className="checkbox-wrapper">
+                    <input type="checkbox" className="checkbox-btn" name="N/A" value="N/A" />
+                    <label htmlFor="N/A" className="checkbox-label"> S -PDP</label>
+                </div>
+                </li>
+                <li>
+                <div className="checkbox-wrapper">
+                    <input type="checkbox" className="checkbox-btn" name="N/A" value="N/A" />
+                    <label htmlFor="N/A" className="checkbox-label"> H - MAPD</label>
+                </div>
+                </li>
+                <li>
+                <div className="checkbox-wrapper">
+                    <input type="checkbox" className="checkbox-btn" name="N/A" value="N/A" />
+                    <label htmlFor="N/A" className="checkbox-label"> E - Employer/Union</label>
+                </div>
+                </li>
+                <li>
+                <div className="checkbox-wrapper">
+                    <input type="checkbox" className="checkbox-btn" name="N/A" value="N/A" />
+                    <label htmlFor="N/A" className="checkbox-label"> R - Regional/CCP</label>
+                </div>
+                </li>
+                <li>
+                <div className="checkbox-wrapper">
+                    <input type="checkbox" className="checkbox-btn" name="N/A" value="N/A" />
+                    <label htmlFor="N/A" className="checkbox-label"> Other</label>
+                    <br />
+                    <input type="text" className="setup-input-fields" />
+                </div>
+                </li>
+            </ul>
               </div>
             </Grid>
             <Grid item xs={6}>
-                <ul className="checkbox-ul">
-                    <li></li>
-                    <li>
+
                     <div className="group">
                         <label>
                         FORMULARY NAME <span className="astrict">*</span>
@@ -66,7 +63,6 @@ export default class SetupGeneralComponent extends React.Component<any, any> {
                         <input type="text" className="setup-input-fields" />
                         <p>NOTE: Formulary ID assigned by CMS fter initial submission in HPMS</p>
               </div>
-                    </li>
                     <div className="group setup-panel">
                 <PanelHeader
                   title="OPTIONAL ABRIDGED FORMULARY CLASSIFICATION"
@@ -77,7 +73,6 @@ export default class SetupGeneralComponent extends React.Component<any, any> {
                   <RadioButton label="NO" name="NO" />
                 </div>
               </div>
-                </ul>
             </Grid>
             </Grid>
             </div>

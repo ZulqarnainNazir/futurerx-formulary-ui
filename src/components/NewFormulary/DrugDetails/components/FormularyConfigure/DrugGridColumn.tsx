@@ -5,7 +5,6 @@ import { dateFilters, textFilters } from "../../../../../utils/grid/filters";
 export const getDrugDetailsColumn: () => Column<any>[] = () => {
     return [
       {
-        id:1,
         position: 1,
         sorter: {},
         textCase: "upper",
@@ -19,7 +18,6 @@ export const getDrugDetailsColumn: () => Column<any>[] = () => {
         sortDirections: []
       },
       {
-        id:2,
         position: 2,
         sorter: {},
         textCase: "upper",
@@ -34,7 +32,6 @@ export const getDrugDetailsColumn: () => Column<any>[] = () => {
         sortDirections: []
       },
       {
-        id:3,
         position: 3,
         sorter: {},
         textCase: "upper",
@@ -49,7 +46,6 @@ export const getDrugDetailsColumn: () => Column<any>[] = () => {
         showToolTip: false,
       },
       {
-        id:4,
         position: 4,
         textCase: "upper",
         pixelWidth: 180,
@@ -64,7 +60,6 @@ export const getDrugDetailsColumn: () => Column<any>[] = () => {
         sortDirections: [],
       },
       {
-        id:5,
         position: 5,
         textCase: "upper",
         pixelWidth: 125,
@@ -79,7 +74,6 @@ export const getDrugDetailsColumn: () => Column<any>[] = () => {
         sortDirections: [],
       },
       {
-        id:6,
         position: 6,
         textCase: "upper",
         pixelWidth: 125,
@@ -94,7 +88,6 @@ export const getDrugDetailsColumn: () => Column<any>[] = () => {
         sortDirections: [],
       },
       {
-        id:7,
         position: 7,
         textCase: "upper",
         pixelWidth: 135,
@@ -109,7 +102,6 @@ export const getDrugDetailsColumn: () => Column<any>[] = () => {
         sortDirections: [],
       },
       {
-        id:8,
         position: 8,
         textCase: "upper",
         pixelWidth: 125,
@@ -124,7 +116,6 @@ export const getDrugDetailsColumn: () => Column<any>[] = () => {
         sortDirections: [],
       },
       {
-        id:9,
         position: 9,
         textCase: "upper",
         pixelWidth: 160,
@@ -139,7 +130,6 @@ export const getDrugDetailsColumn: () => Column<any>[] = () => {
         sortDirections: [],
       },
       {
-        id:10,
         position: 10,
         textCase: "upper",
         pixelWidth: 170,
@@ -154,7 +144,6 @@ export const getDrugDetailsColumn: () => Column<any>[] = () => {
         sortDirections: [],
       },
       {
-        id:11,
         position: 11,
         textCase: "upper",
         pixelWidth: 220,
@@ -169,7 +158,6 @@ export const getDrugDetailsColumn: () => Column<any>[] = () => {
         sortDirections: [],
       },
       {
-        id:12,
         position: 12,
         textCase: "upper",
         pixelWidth: 280,
@@ -184,7 +172,6 @@ export const getDrugDetailsColumn: () => Column<any>[] = () => {
         sortDirections: [],
       },
       {
-        id:13,
         position: 13,
         textCase: "upper",
         pixelWidth: 170,
@@ -199,7 +186,6 @@ export const getDrugDetailsColumn: () => Column<any>[] = () => {
         sortDirections: [],
       },
       {
-        id:14,
         position: 14,
         textCase: "upper",
         pixelWidth: 205,
@@ -214,7 +200,6 @@ export const getDrugDetailsColumn: () => Column<any>[] = () => {
         sortDirections: [],
       },
       {
-        id:15,
         position: 15,
         textCase: "upper",
         pixelWidth: 170,
@@ -229,7 +214,6 @@ export const getDrugDetailsColumn: () => Column<any>[] = () => {
         sortDirections: [],
       },
       {
-        id:16,
         position: 16,
         textCase: "upper",
         pixelWidth: 205,
@@ -244,7 +228,6 @@ export const getDrugDetailsColumn: () => Column<any>[] = () => {
         sortDirections: [],
       },
       {
-        id:17,
         position: 17,
         textCase: "upper",
         pixelWidth: 235,
@@ -259,10 +242,9 @@ export const getDrugDetailsColumn: () => Column<any>[] = () => {
         sortDirections: [],
       },
       {
-        id:18,
         position: 18,
         textCase: "upper",
-        pixelWidth: 235,
+        pixelWidth: 150,
         sorter: {},
         isFilterable: true,
         showToolTip: false,
@@ -274,7 +256,6 @@ export const getDrugDetailsColumn: () => Column<any>[] = () => {
         sortDirections: [],
       },
       {
-        id:19,
         position: 19,
         textCase: "upper",
         pixelWidth: 235,
@@ -289,7 +270,6 @@ export const getDrugDetailsColumn: () => Column<any>[] = () => {
         sortDirections: [],
       },
       {
-        id:20,
         position: 20,
         textCase: "upper",
         pixelWidth: 215,
@@ -304,7 +284,6 @@ export const getDrugDetailsColumn: () => Column<any>[] = () => {
         sortDirections: [],
       },
       {
-        id:21,
         position: 21,
         textCase: "upper",
         pixelWidth: 225,
@@ -319,7 +298,6 @@ export const getDrugDetailsColumn: () => Column<any>[] = () => {
         sortDirections: [],
       },
       {
-        id:22,
         position: 22,
         textCase: "upper",
         pixelWidth: 150,
@@ -334,7 +312,6 @@ export const getDrugDetailsColumn: () => Column<any>[] = () => {
         sortDirections: [],
       },
       {
-        id:23,
         position: 23,
         textCase: "upper",
         pixelWidth: 170,
@@ -349,7 +326,6 @@ export const getDrugDetailsColumn: () => Column<any>[] = () => {
         sortDirections: [],
       },
       {
-        id:24,
         position: 24,
         textCase: "upper",
         pixelWidth: 182,
@@ -364,7 +340,6 @@ export const getDrugDetailsColumn: () => Column<any>[] = () => {
         sortDirections: [],
       },
       {
-        id:25,
         position: 25,
         textCase: "upper",
         pixelWidth: 182,
@@ -379,7 +354,6 @@ export const getDrugDetailsColumn: () => Column<any>[] = () => {
         sortDirections: [],
       },
       {
-        id:26,
         position: 26,
         textCase: "upper",
         pixelWidth: 240,
@@ -394,7 +368,6 @@ export const getDrugDetailsColumn: () => Column<any>[] = () => {
         sortDirections: [],
       },
       {
-        id:27,
         position: 27,
         textCase: "upper",
         pixelWidth: 265,
@@ -409,7 +382,6 @@ export const getDrugDetailsColumn: () => Column<any>[] = () => {
         sortDirections: [],
       },
       {
-        id:28,
         position: 28,
         textCase: "upper",
         pixelWidth: 155,
@@ -424,7 +396,6 @@ export const getDrugDetailsColumn: () => Column<any>[] = () => {
         sortDirections: [],
       },
       {
-        id:29,
         position: 29,
         textCase: "upper",
         pixelWidth: 236,
@@ -455,21 +426,7 @@ export const getDrugDetailsColumn: () => Column<any>[] = () => {
         filters: textFilters,
         hidden: false,
         sortDirections: []
-      },
-
-      // {
-      //   position: 2,
-      //   sorter: {},
-      //   textCase: "upper",
-      //   pixelWidth: 230,
-      //   key: "STGROUPDESCRIPTION",
-      //   displayTitle: "ST GROUP DESCRIPTION",
-      //   isFilterable: true,
-      //   dataType: "string",
-      //   filters: textFilters,
-      //   hidden: false,
-      //   sortDirections: []
-      // },
+      }
 
     ]
   }

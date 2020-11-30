@@ -30,7 +30,7 @@ export default class FD extends React.Component<any, any> {
                 <label htmlFor="N/A" className="checkbox-label"> Type 3</label>
 
                 <input type="checkbox" id="vehicle1" name="N/A" value="N/A" />
-                <label htmlFor="N/A" className="checkbox-label"> N/A</label>
+                <label htmlFor="N/A" className="checkbox-label"> Type 4</label>
                 </div>
               </div>
               </div>
@@ -71,7 +71,7 @@ export default class FD extends React.Component<any, any> {
               <label>
                    ARE PART D DRUGS REQUIRED IN PART B STEP THERAPY PROTOCOLS <span className="astrict">*</span>
                 </label>
-                <div className="marketing-material radio-group2">
+                <div className="marketing-material radio-group">
                   <RadioButton label="YES" name="YES" checked/>
                   <RadioButton label="NO" name="NO" />
                 </div>
@@ -98,7 +98,7 @@ export default class FD extends React.Component<any, any> {
 
               <div className="group setup-panel">
               <label>
-                   ARE OTCS INCLUDED AS PART OF A STEP THERAPY PROTOCOL? <span className="astrict">*</span>
+              ARE OTCS INCLUDED AS PART OF A STEP THERAPY PROTOCOL? <span className="astrict">*</span>
                 </label>
                 <div className="marketing-material radio-group">
                   <RadioButton label="YES" name="YES" checked/>
