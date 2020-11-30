@@ -29,6 +29,7 @@ export default class GeneralInformation extends React.Component<any, any> {
                 <label>
                   FORMULARY NAME <span className="astrict">*</span>
                 </label>
+                <br />
                 <input type="text" className="setup-input-fields" />
               </div>
             </Grid>
