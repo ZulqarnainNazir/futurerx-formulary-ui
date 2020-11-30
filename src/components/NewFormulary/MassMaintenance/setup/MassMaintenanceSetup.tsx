@@ -23,7 +23,9 @@ class MassMaintenanceSetup extends Component {
     isFormularyGridShown: false,
     columns: null,
     data: null,
-    isPinningEnabled: false,
+    pinData: {
+      value: false,
+    },
     scroll: {
       x: 960,
       y: 450,
@@ -46,13 +48,7 @@ class MassMaintenanceSetup extends Component {
   }
 
   render() {
-    const {
-      isFormularyGridShown,
-      columns,
-      data,
-      scroll,
-      isPinningEnabled,
-    } = this.state;
+    const { isFormularyGridShown, columns, data, scroll, pinData } = this.state;
     let dataGrid = <FrxLoader />;
     if (this.state.data) {
       // dataGrid = (
@@ -68,7 +64,7 @@ class MassMaintenanceSetup extends Component {
           columns={columns}
           data={data}
           scroll={scroll}
-          isPinningEnabled={isPinningEnabled}
+          pinData={pinData}
         />
       );
     }

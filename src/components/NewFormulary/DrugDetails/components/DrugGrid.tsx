@@ -27,7 +27,7 @@ export default class DrugGrid extends React.Component<any, any> {
     }
   };
   render() {
-    const { columns, enableSettings, isPinningEnabled, scroll } = this.props;
+    const { columns, enableSettings, pinData, scroll } = this.props;
 
     return (
       <div className="inner-container">
@@ -44,9 +44,8 @@ export default class DrugGrid extends React.Component<any, any> {
             columns={columns}
             isRowSelectionEnabled={true}
             isRowSelectorCheckbox={true}
-            isPinningEnabled={
-              Boolean(isPinningEnabled) ? true : isPinningEnabled
-            }
+            isPinningEnabled={Boolean(pinData) ? pinData.value : true}
+            // pinData = {value: boolean}
             rowSelection={{
               columnWidth: 50,
               fixed: true,
