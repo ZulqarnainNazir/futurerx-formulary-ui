@@ -17,6 +17,7 @@ import VBIDComponent from './VBID';
 import CBComponent from './CB';
 import SSMComponent from './SSM';
 import SOComponent from './SO';
+import AdvanceSearch from './advanceSearch';
 import DrugGrid from '../../DrugGrid';
 import CustomizedSwitches from './CustomizedSwitches';
 

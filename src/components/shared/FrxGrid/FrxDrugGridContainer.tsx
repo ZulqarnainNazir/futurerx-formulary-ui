@@ -62,9 +62,21 @@ class FrxDrugGridContainer extends Component<FrxDrugGridContainerProps<any>> {
       case "CLAIMSHISTORY":
         return <ClaimsHistorySearch onSearch={this.handleSearch} />;
       case "GENERIC":
-        return <FrxGenericSearch searchOptions={this.props.searchOptions ? this.props.searchOptions : []} onSearch={this.handleSearch} />
+        return (
+          <FrxGenericSearch
+            searchOptions={
+              this.props.searchOptions ? this.props.searchOptions : []
+            }
+            onSearch={this.handleSearch}
+          />
+        );
       case "PA":
-        return <FrxGenericSearch searchOptions={getPaCasesSearchData()} onSearch={this.handleSearch} />
+        return (
+          <FrxGenericSearch
+            searchOptions={getPaCasesSearchData()}
+            onSearch={this.handleSearch}
+          />
+        );
       case "GRIEVANCES":
         return <GrievancesDashboardSearch onSearch={this.handleSearch} />;
       case "PROFILE CLAIM":
@@ -85,11 +97,11 @@ class FrxDrugGridContainer extends Component<FrxDrugGridContainerProps<any>> {
   };
 
   render() {
-    console.log("****************",this.props)
     return (
       <div className="frx-grid-container">
         {this.props.enableSearch ? this.getSearchComponent() : null}
         <FrxDrugGrid
+          bordered={false}
           columns={this.props.columns}
           gridName={this.props.gridName}
           fixedColumnKeys={this.props.fixedColumnKeys}
@@ -117,9 +129,11 @@ class FrxDrugGridContainer extends Component<FrxDrugGridContainerProps<any>> {
           summary={this.props.summary ? this.props.summary : undefined}
           isRowSelectionEnabled={this.props.isRowSelectionEnabled}
           rowSelectionChange={this.props.rowSelectionChange}
-          settingsWidth={this.props.settingsWidth ? this.props.settingsWidth : undefined}
+          settingsWidth={
+            this.props.settingsWidth ? this.props.settingsWidth : undefined
+          }
           isRowSelectorCheckbox={this.props.isRowSelectorCheckbox}
-          isPinningEnabled={this.props.isPinningEnabled ? this.props.isPinningEnabled : false}
+          isPinningEnabled={this.props.isPinningEnabled}
           rowSelection={this.props.rowSelection}
           // isSeparateCheckboxColumn={this.props.isSeparateCheckboxColumn}
           expandable={{
@@ -143,7 +157,7 @@ class FrxDrugGridContainer extends Component<FrxDrugGridContainerProps<any>> {
                 : undefined,
             expandedRowClassName:
               this.props.expandable &&
-                this.props.expandable.expandedRowClassName
+              this.props.expandable.expandedRowClassName
                 ? this.props.expandable.expandedRowClassName
                 : undefined,
           }}

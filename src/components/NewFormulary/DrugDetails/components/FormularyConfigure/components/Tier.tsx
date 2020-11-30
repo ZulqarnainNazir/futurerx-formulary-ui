@@ -11,6 +11,10 @@ import CustomizedSwitches from "./CustomizedSwitches";
 import PanelHeader from "./PanelHeader";
 import PanelGrid from "./panelGrid";
 import DropDown from "../../../../../shared/Frx-components/dropdown/DropDown";
+import Button from "../../../../../shared/Frx-components/button/Button";
+import Box from "@material-ui/core/Box";
+import FrxDrugGridContainer from "../../../../../shared/FrxGrid/FrxDrugGridContainer";
+import DrugGrid from "../../DrugGrid";
 
 interface tabsState {
   activeMiniTabIndex: number;
@@ -21,6 +25,9 @@ interface tabsState {
 class Tier extends React.Component<any, tabsState> {
   state = {
     miniTabs: getMiniTabs(),
+    isFetchingData: false,
+    columns: null,
+    data: null,
     activeMiniTabIndex: 0,
     activeTabIndex: 0,
     tabs: getTapList(),
@@ -33,10 +40,10 @@ class Tier extends React.Component<any, tabsState> {
       "VALIDATION",
     ],
     panelGridValue: [
-      ["img", "Tier 0", "OTC", "2", "4", "2", "Tick"],
-      ["img", "Tier 1", "OTC", "2", "4", "2", "Tick"],
-      ["img", "Tier 2", "OTC", "2", "4", "2", "Tick"],
-      ["img", "Tier 3", "OTC", "2", "4", "2", "Tick"],
+      ["img", "Tier 0", "OTC", "2", "4", "2", "checkbox"],
+      ["img", "Tier 1", "OTC", "2", "4", "2", "checkbox"],
+      ["img", "Tier 2", "OTC", "2", "4", "2", "checkbox"],
+      ["img", "Tier 3", "OTC", "2", "4", "2", "checkbox"],
     ],
   };
   onClickMiniTab = (num: number) => {
@@ -46,6 +53,8 @@ class Tier extends React.Component<any, tabsState> {
   };
 
   render() {
+    const { columns } = this.props;
+
     return (
       <div className="drug-detail-LA-root">
         <div className="drug-detail-la-container">
@@ -58,7 +67,7 @@ class Tier extends React.Component<any, tabsState> {
                       title="Tier Definition"
                       tooltip="This section allows for Addition or Removal of product only. To define coverage for all Medicare covered and/or Supplemental products, go to Drug Details"
                     />
-                    <div className="inner-container">
+                    <div className="inner-container tier-checkbox">
                       <PanelGrid
                         panelGridTitle={this.state.panelGridTitle}
                         panelGridValue={this.state.panelGridValue}
@@ -89,13 +98,52 @@ class Tier extends React.Component<any, tabsState> {
                     </div>
                   </div>
                   <div className="group tier-dropdown white-bg">
-                    <Grid item xs={4}>
-                      <label>
-                        TIER <span className="astrict">*</span>
-                      </label>
-                      <DropDown options={[1, 2, 3]} />
+                    <Grid container>
+                      <Grid item xs={4}>
+                        <label>
+                          TIER <span className="astrict">*</span>
+                        </label>
+                        <DropDown options={[1, 2, 3]} />
+                      </Grid>
+                      <Grid item xs={1}>
+                        <Box display="flex" justifyContent="flex-end">
+                          <Button label="Apply" />
+                        </Box>
+                      </Grid>
                     </Grid>
                   </div>
+                </div>
+                <div className="bordered">
+                  <div className="header space-between pr-10">
+                    Select Drugs From
+                    <div className="button-wrapper">
+                      <Button
+                        className="Button normal"
+                        label="Advance Search"
+                      />
+                      <Button label="Save" disabled />
+                    </div>
+                  </div>
+                  {/* <FrxDrugGridContainer
+                    enableSearch={false}
+                    enableColumnDrag
+                    onSearch={() => {}}
+                    fixedColumnKeys={["claimId"]}
+                    pagintionPosition="topRight"
+                    gridName="CLAIMS"
+                    enableSettings
+                    columns={columns}
+                    scroll={{ x: 3800, y: 377 }}
+                    isFetchingData={false}
+                    enableResizingOfColumns
+                    data={getFormularyDetails()}
+                    expandable={{
+                      isExpandable: true,
+                      expandedRowRender: (props) => (
+                        <FormularyExpandedDetails />
+                      ),
+                    }}
+                  /> */}
                 </div>
               </Grid>
             </Grid>

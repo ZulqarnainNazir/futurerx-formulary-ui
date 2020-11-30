@@ -39,9 +39,14 @@ class MainRouter extends React.Component {
           <Route
             exact
             path="/planinformation"
-            render={(props) => <PlanInformation {...props} />}
+            render={(props) => <PlanInformation {...props} /> }
           />
-           <Route
+          <Route
+            exact
+            path="/prescriber"
+            render={(props) => <PrescriberProfile {...props} />}
+          />
+          <Route
             exact
             path="/planinformationconfig"
             render={(props) => <PlanInformationConfiguration {...props} />}
@@ -223,10 +228,10 @@ class MainRouter extends React.Component {
             path="/search/:type"
             render={(props) => <AdvancedSearch {...props} />}
           ></Route>
-           <Route
+          <Route
             exact
             path="/setup/formularyGrid"
-            render={props => <SetupFormularyGrid {...props} />}
+            render={(props) => <SetupFormularyGrid {...props} />}
           ></Route>
           {/* <Route
             exact
