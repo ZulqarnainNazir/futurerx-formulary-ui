@@ -2,6 +2,10 @@ import React, { Component } from "react";
 
 import IconInfo from "../../../../assets/icons/IconInfo.svg";
 import PlusIcon from "../../../../assets/icons/PlusIcon.svg";
+import {
+  getColumns,
+  getData,
+} from "../../../../mocks/formulary-grid/FormularySimpleGridMock";
 
 import SimpleGrid from "../../../shared/Frx-formulary/SimpleGrid/SimpleGrid";
 
@@ -23,6 +27,7 @@ interface MassMaintenancePAState {
 class MassMaintenancePA extends Component<any, MassMaintenancePAState> {
   state = {
     gridData: getData(),
+    gridColumns: getColumns(),
   };
 
   addNew = () => {
@@ -38,23 +43,24 @@ class MassMaintenancePA extends Component<any, MassMaintenancePAState> {
     //     effectiveDate: "01/01/2021",
     //   }),
     // }));
-    this.setState({
-      gridData: this.state.gridData.concat({
-        key: "4",
-        formularyName: "Care987",
-        formularyId: "192039483745",
-        formularyVersion: 5,
-        contractYeat: "2021",
-        formularyType: "Medicare",
-        effectiveDate: "01/01/2021",
-      }),
-    });
+    // ###############################
+    // this.setState({
+    //   gridData: this.state.gridData.concat({
+    //     key: "4",
+    //     formularyName: "Care987",
+    //     formularyId: "192039483745",
+    //     formularyVersion: 5,
+    //     contractYeat: "2021",
+    //     formularyType: "Medicare",
+    //     effectiveDate: "01/01/2021",
+    //   }),
+    // });
   };
 
   render() {
-    const { gridData } = this.state;
+    const { gridData, gridColumns } = this.state;
     return (
-      <div>
+      <>
         <div className="bordered details-top">
           <div className="header">
             SELECTED FORMULARIES
@@ -65,7 +71,7 @@ class MassMaintenancePA extends Component<any, MassMaintenancePAState> {
           </div>
           <div className="inner-container p-20">
             <div>
-              <SimpleGrid columns={getColumns()} data={gridData} />
+              <SimpleGrid columns={gridColumns} data={gridData} />
             </div>
             <div className="dynamic-row-addition">
               <span onClick={this.addNew}>
@@ -90,90 +96,9 @@ class MassMaintenancePA extends Component<any, MassMaintenancePAState> {
           <div className="header">PRIOR AUTHORIZATION</div>
           <div className="inner-container p-20">Lob</div>
         </div>
-      </div>
+      </>
     );
   }
 }
-
-const getColumns = () => [
-  {
-    title: "FORMULARY NAME",
-    dataIndex: "formularyName",
-    key: "formularyName",
-    className: "table-head-color",
-  },
-  {
-    title: "FORMULARY ID",
-    dataIndex: "formularyId",
-    key: "formularyId",
-    className: "table-head-color",
-  },
-  {
-    title: "FORMULARY VERSION",
-    dataIndex: "formularyVersion",
-    key: "formularyVersion",
-    className: "table-head-center",
-  },
-  {
-    title: "CONTRACT YEAR",
-    dataIndex: "contractYeat",
-    key: "contractYeat",
-    className: "table-head-center",
-  },
-  {
-    title: "FORMULARY TYPE",
-    dataIndex: "formularyType",
-    key: "formularyType",
-    className: "table-head-center",
-  },
-
-  {
-    title: "EFFECTIVE DATE",
-    dataIndex: "effectiveDate",
-    key: "formularyName",
-    className: "table-head-center",
-  },
-];
-
-const getData = () => {
-  return [
-    {
-      key: "1",
-      formularyName: "2021Care1234",
-      formularyId: "123456789123",
-      formularyVersion: 2,
-      contractYeat: "2021",
-      formularyType: "Medicare",
-      effectiveDate: "01/01/2021",
-    },
-    {
-      key: "2",
-      formularyName: "Medicare12",
-      formularyId: "123456789124",
-      formularyVersion: 3,
-      contractYeat: "2021",
-      formularyType: "Medicare",
-      effectiveDate: "01/01/2021",
-    },
-    {
-      key: "3",
-      formularyName: "2021Care4321",
-      formularyId: "980765854321",
-      formularyVersion: 4,
-      contractYeat: "2021",
-      formularyType: "Medicare",
-      effectiveDate: "01/01/2021",
-    },
-    {
-      key: "4",
-      formularyName: "Care987",
-      formularyId: "192039483745",
-      formularyVersion: 5,
-      contractYeat: "2021",
-      formularyType: "Medicare",
-      effectiveDate: "01/01/2021",
-    },
-  ];
-};
 
 export default MassMaintenancePA;
