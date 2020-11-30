@@ -1,34 +1,33 @@
-import React from 'react';
+import React from "react";
 import FrxDrugGridContainer from "../../../shared/FrxGrid/FrxDrugGridContainer";
 import "../../../ClaimsGrid/ClaimsGrid.scss";
 
+export default class DrugGrid extends React.Component<any, any> {
+  state = {
+    isFetchingData: false,
+    data: [] as any[],
+    filteredData: [] as any[],
+  };
 
-export default class DrugGrid extends React.Component<any,any>{
-    state = {
-        isFetchingData: false,
-        data: [] as any[],
-        filteredData: [] as any[]
-    };
-    
-    componentDidMount() {
-        const data = this.props.data;
-        this.setState({ data, filteredData: data });
+  componentDidMount() {
+    const data = this.props.data;
+    this.setState({ data, filteredData: data });
+  }
+  handleSearch = (searchObject) => {
+    this.setState({ isFetchingData: true });
+    if (searchObject && searchObject.status) {
+      setTimeout(() => {
+        const newData = this.state.data.filter(
+          (d) => d.status === searchObject.status
+        );
+        this.setState({ isFetchingData: false, filteredData: newData });
+      }, 2000);
+    } else {
+      this.setState({ isFetchingData: false });
     }
-    handleSearch = searchObject => {
-        this.setState({ isFetchingData: true });
-        if (searchObject && searchObject.status) {
-          setTimeout(() => {
-            const newData = this.state.data.filter(
-              d => d.status === searchObject.status
-            );
-            this.setState({ isFetchingData: false, filteredData: newData });
-          }, 2000);
-        } else {
-          this.setState({ isFetchingData: false });
-        }
-      };
-    render(){
-        const {columns} = this.props;
+  };
+  render() {
+    const { columns } = this.props;
 
         return(
           <div className="inner-container">
@@ -55,8 +54,8 @@ export default class DrugGrid extends React.Component<any,any>{
                 enableResizingOfColumns
                 data={this.state.filteredData}
               />
-            </div>
-          </div>
-        )
-    }
+        </div>
+      </div>
+    );
+  }
 }

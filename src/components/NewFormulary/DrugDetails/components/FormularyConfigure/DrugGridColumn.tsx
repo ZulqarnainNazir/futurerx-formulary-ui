@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 import { Column } from "../../../../../models/grid.model";
 import { dateFilters, textFilters } from "../../../../../utils/grid/filters";
 
@@ -427,95 +427,95 @@ export const getDrugDetailsColumn: () => Column<any>[] = () => {
         hidden: false,
         sortDirections: []
       }
-
     ]
+
   }
 
-  export const getStDetailsCol2 : () => Column<any>[] = () => {
-    return [
-      {
-        position: 1,
-        sorter: {},
-        textCase: "upper",
-        pixelWidth: 230,
-        key: "STGROUPDESCRIPTION",
-        displayTitle: "ST GROUP DESCRIPTION",
-        isFilterable: true,
-        dataType: "string",
-        filters: textFilters,
-        hidden: false,
-        sortDirections: []
-      },
+export const getStDetailsCol2 : () => Column<any>[] = () => {
+  return [
+    {
+      position: 1,
+      sorter: {},
+      textCase: "upper",
+      pixelWidth: 230,
+      key: "STGROUPDESCRIPTION",
+      displayTitle: "ST GROUP DESCRIPTION",
+      isFilterable: true,
+      dataType: "string",
+      filters: textFilters,
+      hidden: false,
+      sortDirections: []
+    },
 
-      {
-        position: 2,
-        sorter: {},
-        textCase: "upper",
-        pixelWidth: 230,
-        key: "STTHERPYTYPE",
-        displayTitle: "ST THERPY TYPE",
-        isFilterable: true,
-        dataType: "string",
-        filters: textFilters,
-        hidden: false,
-        sortDirections: []
-      },
+    {
+      position: 2,
+      sorter: {},
+      textCase: "upper",
+      pixelWidth: 230,
+      key: "STTHERPYTYPE",
+      displayTitle: "ST THERPY TYPE",
+      isFilterable: true,
+      dataType: "string",
+      filters: textFilters,
+      hidden: false,
+      sortDirections: []
+    },
 
-      {
-        position: 3,
-        sorter: {},
-        textCase: "upper",
-        pixelWidth: 230,
-        key: "STTHERPYVALUE",
-        displayTitle: "ST THERPY VALUE",
-        isFilterable: true,
-        dataType: "string",
-        filters: textFilters,
-        hidden: false,
-        sortDirections: []
-      },
+    {
+      position: 3,
+      sorter: {},
+      textCase: "upper",
+      pixelWidth: 230,
+      key: "STTHERPYVALUE",
+      displayTitle: "ST THERPY VALUE",
+      isFilterable: true,
+      dataType: "string",
+      filters: textFilters,
+      hidden: false,
+      sortDirections: []
+    },
 
-      {
-        position: 4,
-        sorter: {},
-        textCase: "upper",
-        pixelWidth: 230,
-        key: "LABELNAME",
-        displayTitle: "LABEL",
-        isFilterable: true,
-        dataType: "string",
-        filters: textFilters,
-        hidden: false,
-        sortDirections: []
-      },
+    {
+      position: 4,
+      sorter: {},
+      textCase: "upper",
+      pixelWidth: 230,
+      key: "LABELNAME",
+      displayTitle: "LABEL",
+      isFilterable: true,
+      dataType: "string",
+      filters: textFilters,
+      hidden: false,
+      sortDirections: []
+    },
 
-      {
-        position: 5,
-        sorter: {},
-        textCase: "upper",
-        pixelWidth: 230,
-        key: "TIER",
-        displayTitle: "TIER",
-        isFilterable: true,
-        dataType: "string",
-        filters: textFilters,
-        hidden: false,
-        sortDirections: []
-      },
+    {
+      position: 5,
+      sorter: {},
+      textCase: "upper",
+      pixelWidth: 230,
+      key: "TIER",
+      displayTitle: "TIER",
+      isFilterable: true,
+      dataType: "string",
+      filters: textFilters,
+      hidden: false,
+      sortDirections: []
+    },
 
-      {
-        position: 6,
-        sorter: {},
-        textCase: "upper",
-        pixelWidth: 230,
-        key: "FILETYPE",
-        displayTitle: "FILE TYPE",
-        isFilterable: true,
-        dataType: "string",
-        filters: textFilters,
-        hidden: false,
-        sortDirections: []
-      },
+    {
+      position: 6,
+      sorter: {},
+      textCase: "upper",
+      pixelWidth: 230,
+      key: "FILETYPE",
+      displayTitle: "FILE TYPE",
+      isFilterable: true,
+      dataType: "string",
+      filters: textFilters,
+      hidden: false,
+      sortDirections: []
+    },
 
-    ]
-  }
+  ]
+}
