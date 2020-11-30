@@ -133,7 +133,7 @@ class FrxDrugGridContainer extends Component<FrxDrugGridContainerProps<any>> {
             this.props.settingsWidth ? this.props.settingsWidth : undefined
           }
           isRowSelectorCheckbox={this.props.isRowSelectorCheckbox}
-          isPinningEnabled={false}
+          isPinningEnabled={this.props.isPinningEnabled}
           rowSelection={this.props.rowSelection}
           // isSeparateCheckboxColumn={this.props.isSeparateCheckboxColumn}
           expandable={{

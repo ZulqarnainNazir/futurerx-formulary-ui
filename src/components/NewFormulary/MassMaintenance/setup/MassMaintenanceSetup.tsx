@@ -46,7 +46,13 @@ class MassMaintenanceSetup extends Component {
   }
 
   render() {
-    const { isFormularyGridShown, columns, data, scroll } = this.state;
+    const {
+      isFormularyGridShown,
+      columns,
+      data,
+      scroll,
+      isPinningEnabled,
+    } = this.state;
     let dataGrid = <FrxLoader />;
     if (this.state.data) {
       // dataGrid = (
@@ -57,7 +63,14 @@ class MassMaintenanceSetup extends Component {
       //     rowSelectionChange={this.rowSelectionChange}
       //   />
       // );
-      dataGrid = <DrugGrid columns={columns} data={data} scroll={scroll} />;
+      dataGrid = (
+        <DrugGrid
+          columns={columns}
+          data={data}
+          scroll={scroll}
+          isPinningEnabled={isPinningEnabled}
+        />
+      );
     }
     return (
       <div className="_mass-maintainance-setup-root">
