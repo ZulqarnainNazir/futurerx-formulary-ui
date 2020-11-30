@@ -12,8 +12,8 @@ import DropDown from "../../../../../shared/Frx-components/dropdown/DropDown";
 import Button from "../../../../../shared/Frx-components/button/Button";
 import Box from "@material-ui/core/Box";
 import FrxDrugGridContainer from "../../../../../shared/FrxGrid/FrxDrugGridContainer";
-import { tierColumns } from "../../../../../../utils/grid/columns";
-import { TierMockData } from "../../../../../../mocks/TierMock";
+import { categoryClassColumns } from "../../../../../../utils/grid/columns";
+import { categoryClassMock } from "../../../../../../mocks/categoryClassMock";
 
 interface tabsState {
   activeMiniTabIndex: number;
@@ -71,11 +71,11 @@ class CategoryClass extends React.Component<any, tabsState> {
                     pagintionPosition="topRight"
                     gridName="TIER"
                     enableSettings
-                    columns={tierColumns()}
-                    scroll={{ x: 2000, y: 377 }}
+                    columns={categoryClassColumns()}
+                    scroll={{ x: 1000, y: 377 }}
                     isFetchingData={false}
                     enableResizingOfColumns
-                    data={TierMockData()}
+                    data={categoryClassMock()}
                     rowSelection={{
                       columnWidth: 50,
                       fixed: true,
