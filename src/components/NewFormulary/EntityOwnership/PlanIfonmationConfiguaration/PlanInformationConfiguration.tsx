@@ -122,11 +122,11 @@ class PlanInformationConfiguration extends Component<Props, State> {
                     <div className="label-div">Days/Hours of Operation</div>
                     <div className="input-div">
                       <Input
-                        className="input-element"
+                        className="input-element input-multiline"
                         //   placeholder="First Name"
                         type="text"
                         multiline
-                        // rowsMin={10}
+                        rows={10}
                         disableUnderline={true}
                         // variant="outlined"
                         //   name="claimId"

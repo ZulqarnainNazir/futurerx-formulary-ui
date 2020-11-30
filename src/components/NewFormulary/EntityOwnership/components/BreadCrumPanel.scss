@@ -10,9 +10,20 @@
         }
       }
     }
+
+    .breadCrumPanel-grid-item-arrowIcon {
+      .arrow-icon-container {
+        .arrow-icon {
+          // background-color: red;
+          // padding: 10px;
+        }
+      }
+    }
+
     .breadCrumPanel-grid-label-starIcon-container {
       .label-starIcon-container {
         .label {
+          display: inline;
           color: #1d54b4;
           border-bottom: 1px dotted blue;
           text-transform: capitalize;

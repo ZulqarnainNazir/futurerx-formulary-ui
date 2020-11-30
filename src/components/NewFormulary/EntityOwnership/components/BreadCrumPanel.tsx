@@ -2,6 +2,7 @@ import React, {Component} from "react";
 import Checkbox from "@material-ui/core/Checkbox";
 import {Grid} from "@material-ui/core";
 import StarBorderOutlinedIcon from "@material-ui/icons/StarBorderOutlined";
+import {IconButton} from "@material-ui/core";
 import "./BreadCrumPanel.scss";
 
 interface Props {
@@ -14,13 +15,15 @@ interface Props {
   id?: string;
   // onChange?: (e, id, checked) => any;
   item?: any;
+  children?: any;
+  collaps?: any;
   //   conen
 }
 interface State {}
 
 class BreadCrumPanel extends Component<Props, State> {
   state = {
-    arrowIconState: true,
+    arrowIconState: false,
     checked: false,
   };
 
@@ -32,7 +35,26 @@ class BreadCrumPanel extends Component<Props, State> {
     this.setState({checked: !this.state.checked});
   };
 
+  // componentDidMount() {
+  //   this.props.collaps
+  //     ? this.setState({checked: !this.props.collaps})
+  //     : console.log("[comdidmount]:", this.props.collaps);
+  // }
+  // componentDidUpdate() {
+  //   this.props.collaps
+  //     ? this.setState({checked: !this.props.collaps})
+  //     : console.log("[comdidmount]:", this.props.collaps);
+
+  //   console.log("[update phase]:");
+  // }
+
   render() {
+    // const temp = this.state.arrowIconState && this.props.collaps;
+    // ? this.props.collaps
+    // : this.state.arrowIconState;
+
+    // console.log("[temp:" + temp);
+
     return (
       <div className="BreadCrumPanel" id={this.props.id ? this.props.id : ""}>
         <Grid
@@ -42,39 +64,43 @@ class BreadCrumPanel extends Component<Props, State> {
         >
           <Grid item className="breadCrumPanel-grid-item-arrowIcon">
             <span className="arrow-icon-container">
-              {this.props.checked ? (
-                <svg
-                  className="arrow-icon"
-                  onClick={this.onHandleIcons}
-                  style={{cursor: "pointer"}}
-                  width="10"
-                  height="5"
-                  viewBox="0 0 10 5"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    d="M1.40104 0.333374H8.70308C9.20824 0.333374 9.46082 0.854386 9.10324 1.15972L5.45363 4.27853C5.23227 4.46754 4.87185 4.46754 4.65049 4.27853L1.00089 1.15972C0.643307 0.854386 0.895884 0.333374 1.40104 0.333374Z"
-                    fill="#707683"
-                  />
-                </svg>
-              ) : (
-                <svg
-                  className="arrow-icon"
-                  style={{cursor: "pointer"}}
-                  onClick={this.onHandleIcons}
-                  width="5"
-                  height="10"
-                  viewBox="0 0 5 10"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    d="M0.333344 8.59902L0.333344 1.29698C0.333344 0.791821 0.854356 0.539244 1.15969 0.896825L4.27849 4.54643C4.46751 4.76779 4.46751 5.12821 4.27849 5.34957L1.15969 8.99917C0.854356 9.35675 0.333344 9.10418 0.333344 8.59902Z"
-                    fill="#707683"
-                  />
-                </svg>
-              )}
+              <IconButton onClick={this.onHandleIcons} className="arrow-icon">
+                {this.state.arrowIconState ? (
+                  // temp
+
+                  <svg
+                    className="arrow-icon"
+                    onClick={this.onHandleIcons}
+                    style={{cursor: "pointer"}}
+                    width="10"
+                    height="5"
+                    viewBox="0 0 10 5"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M1.40104 0.333374H8.70308C9.20824 0.333374 9.46082 0.854386 9.10324 1.15972L5.45363 4.27853C5.23227 4.46754 4.87185 4.46754 4.65049 4.27853L1.00089 1.15972C0.643307 0.854386 0.895884 0.333374 1.40104 0.333374Z"
+                      fill="#707683"
+                    />
+                  </svg>
+                ) : (
+                  <svg
+                    className="arrow-icon"
+                    style={{cursor: "pointer"}}
+                    onClick={this.onHandleIcons}
+                    width="5"
+                    height="10"
+                    viewBox="0 0 5 10"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M0.333344 8.59902L0.333344 1.29698C0.333344 0.791821 0.854356 0.539244 1.15969 0.896825L4.27849 4.54643C4.46751 4.76779 4.46751 5.12821 4.27849 5.34957L1.15969 8.99917C0.854356 9.35675 0.333344 9.10418 0.333344 8.59902Z"
+                      fill="#707683"
+                    />
+                  </svg>
+                )}
+              </IconButton>
             </span>
           </Grid>
           <Grid item className="breadCrumPanel-grid-item-checkbox">
@@ -82,13 +108,14 @@ class BreadCrumPanel extends Component<Props, State> {
               color="primary"
               className="checkbox"
               checked={
-                this.props.checked
+                this.state.checked
+                // this.props.checked
                 // ? this.props.checked : this.state.checked
               }
               // onChange={(e) =>
               //   this.props.onChange(e, this.props.item, this.props.checked)
               // }
-              // {this.onHandleCheckBoxState}
+              onChange={this.onHandleCheckBoxState}
               size="small"
 
               //   inputProps={{"aria-label": "primary checkbox"}}
@@ -116,6 +143,12 @@ class BreadCrumPanel extends Component<Props, State> {
             </div>
           </Grid>
         </Grid>
+        {/* <div> */}
+        {this.state.arrowIconState
+          ? // temp
+            this.props.children
+          : null}
+        {/* </div> */}
         {/* <div className="hirarchy">{content}</div> */}
       </div>
     );

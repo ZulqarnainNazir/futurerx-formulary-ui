@@ -17,7 +17,7 @@ interface State {}
 class EntityOwnershipContainer extends Component<Props, State> {
   state = {
     arrowIconState: false,
-    checked: false,
+    isAllCollaps: false,
     data: entityOwnershipData(),
     breadCrumbStatus: {},
     effectiveDate: "",
@@ -26,10 +26,13 @@ class EntityOwnershipContainer extends Component<Props, State> {
   onHandleIcons = () => {
     this.setState({arrowIconState: !this.state.arrowIconState});
   };
-  handleChange = () => {
-    this.setState({checked: !this.state.checked});
+  onHandleCollaps = () => {
+    this.setState({isAllCollaps: !this.state.isAllCollaps});
   };
 
+  onHandleCheckboxlist = (e, list) => {
+    console.log("[list]:", list);
+  };
   handleEffectiveDate = (date) => {
     this.setState({effectiveDate: date});
   };
@@ -55,7 +58,9 @@ class EntityOwnershipContainer extends Component<Props, State> {
               <span className="info-tag">
                 *Grey stars indicate this formulary is set as the default.
               </span>
-              <span className="collapse-label">Collapse All</span>
+              <span className="collapse-label" onClick={this.onHandleCollaps}>
+                Collapse All
+              </span>
             </Grid>
 
             <div className="entity-data-container">
@@ -65,77 +70,98 @@ class EntityOwnershipContainer extends Component<Props, State> {
                     label={"customer"}
                     value={entity.owner}
                     checked={true}
-                  />
-
-                  <div
-                    // style={{marginLeft: "22px"}}
-                    className="breadcrum-data client-info"
+                    collaps={this.state.isAllCollaps}
                   >
-                    <BreadCrumPanel
-                      label={"client"}
-                      value={entity.client}
-                      checked={true}
-                    />
                     <div
                       // style={{marginLeft: "22px"}}
-                      className="breadcrum-data carrier-info"
+                      className="breadcrum-data client-info"
                     >
                       <BreadCrumPanel
-                        label={"Carrier"}
-                        value={entity.carrier}
+                        label={"client"}
+                        value={entity.client}
                         checked={true}
-                      />
-                      <div
-                        // style={{marginLeft: "22px"}}
-                        className="breadcrum-data account-info"
                       >
-                        <BreadCrumPanel
-                          label={"Account"}
-                          value={entity.account}
-                          checked={true}
-                        />
                         <div
                           // style={{marginLeft: "22px"}}
-                          className="breadcrum-data group-info"
+                          className="breadcrum-data carrier-info"
                         >
-                          {entity.groups.map((group, ind) => (
-                            <>
+                          <BreadCrumPanel
+                            label={"Carrier"}
+                            value={entity.carrier}
+                            checked={true}
+                          >
+                            <div
+                              // style={{marginLeft: "22px"}}
+                              className="breadcrum-data account-info"
+                            >
                               <BreadCrumPanel
-                                label={`Group  ${ind + 1}`}
-                                value={group.id}
+                                label={"Account"}
+                                value={entity.account}
                                 checked={true}
-                              />
-                              <div
-                                className="breadcrum-data group-data-info"
-                                // style={{marginLeft: "22px"}}
                               >
-                                <Grid container className="data-list-container">
-                                  {/* <Grid container item sm={4}> */}
-                                  {group.list.map((li) => (
-                                    // <div>
-                                    <Grid item sm={3} className="data-list">
-                                      <div>
-                                        <Checkbox
-                                          color="primary"
-                                          className="checkbox1"
-                                          size="small"
-                                        />
-                                        {/* <span className="list"> */}
-                                        <span className="list">{li}</span>
-                                        {/* </span> */}
-                                      </div>
-                                    </Grid>
-                                    // </div>
+                                <div
+                                  // style={{marginLeft: "22px"}}
+                                  className="breadcrum-data group-info"
+                                >
+                                  {entity.groups.map((group, ind) => (
+                                    <>
+                                      <BreadCrumPanel
+                                        label={`Group  ${ind + 1}`}
+                                        value={group.id}
+                                        checked={true}
+                                      >
+                                        <div
+                                          className="breadcrum-data group-data-info"
+                                          // style={{marginLeft: "22px"}}
+                                        >
+                                          <Grid
+                                            container
+                                            className="data-list-container"
+                                          >
+                                            {/* <Grid container item sm={4}> */}
+                                            {group.list.map((li) => (
+                                              // <div>
+                                              // <Grid item sm={3} className="data-list">
+                                              <div
+                                                style={{
+                                                  minWidth: "250px",
+                                                  marginLeft: "2rem",
+                                                }}
+                                              >
+                                                <Checkbox
+                                                  color="primary"
+                                                  className="checkbox1"
+                                                  size="small"
+                                                  onChange={(e) =>
+                                                    this.onHandleCheckboxlist(
+                                                      e,
+                                                      li
+                                                    )
+                                                  }
+                                                />
+                                                {/* <span className="list"> */}
+                                                <span className="list">
+                                                  {li}
+                                                </span>
+                                                {/* </span> */}
+                                              </div>
+                                              // </Grid>
+                                              // </div>
+                                            ))}
+                                            {/* </Grid> */}
+                                          </Grid>
+                                        </div>
+                                      </BreadCrumPanel>
+                                    </>
                                   ))}
-                                  {/* </Grid> */}
-                                </Grid>
-                              </div>
-                            </>
-                          ))}
+                                </div>
+                              </BreadCrumPanel>
+                            </div>
+                          </BreadCrumPanel>
                         </div>
-                      </div>
+                      </BreadCrumPanel>
                     </div>
-                  </div>
+                  </BreadCrumPanel>
                 </>
               ))}
             </div>
