@@ -1,6 +1,8 @@
 export const getFormularyDetails = () => {
   return [
     {
+      id: 1,
+      key: 1,
       serviceYear: "2021",
       bazaar: {
         label: "N/A",
@@ -24,6 +26,8 @@ export const getFormularyDetails = () => {
       step: "2",
     },
     {
+      id: 2,
+      key: 2,
       serviceYear: "2021",
       bazaar: {
         label: "SELL",
@@ -47,6 +51,8 @@ export const getFormularyDetails = () => {
       step: "2",
     },
     {
+      id: 3,
+      key: 3,
       serviceYear: "2021",
       bazaar: {
         label: "SELLING",

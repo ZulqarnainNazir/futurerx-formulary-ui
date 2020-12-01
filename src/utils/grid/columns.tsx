@@ -218,7 +218,7 @@ export const tierColumns: () => Column<any>[] = () => {
   ]
 }
 
-export const formularyDetailsGridColumns: () => Column<any>[] = () => {
+export const formularyDetailsGridColumns: (data) => Column<any>[] = (data) => {
   return [
     {
       position: 1,
@@ -282,6 +282,11 @@ export const formularyDetailsGridColumns: () => Column<any>[] = () => {
       pixelWidth: 163,
       key: "formularyName",
       displayTitle: "formulary name",
+      customContent: (props) => (
+        <div className="input-link" onClick={()=> data.onFormularyNameClick()}>
+          {props.data.formularyName}
+        </div>
+      ),
       isFilterable: true,
       dataType: "string",
       filters: textFilters,
@@ -337,6 +342,11 @@ export const formularyDetailsGridColumns: () => Column<any>[] = () => {
       pixelWidth: 109,
       key: "step",
       displayTitle: "step",
+      customContent: (props) => (
+        <div className="formulary-step">
+          {props.data.step}
+        </div>
+      ),
       isFilterable: true,
       dataType: "string",
       filters: textFilters,
