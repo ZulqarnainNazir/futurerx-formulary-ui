@@ -23,6 +23,90 @@ import FrxTimeProgressBar from "../../components/shared/FrxTimeProgressBar/FrxTi
 // );
 // };
 
+export const categoryClassColumns: () => Column<any>[] = () => {
+  return [
+    {
+      position: 1,
+      sorter: {},
+      textCase: "upper",
+      pixelWidth: 100 ,
+      key: "overrideCategory",
+      displayTitle: "override category",
+      isFilterable: true,
+      dataType: "string",
+      filters: textFilters,
+      hidden: false,
+      sortDirections: ["ascend", "descend"],
+    },
+    {
+      position:2,
+      sorter: {},
+      textCase: "upper",
+      pixelWidth: 100,
+      key: "overRideClass",
+      displayTitle: "File Type",
+      isFilterable: true,
+      dataType: "string",
+      filters: textFilters,
+      hidden: false,
+      sortDirections: ["ascend", "descend"],
+    },
+    {
+      position: 3,
+      sorter: {},
+      textCase: "upper",
+      pixelWidth: 100,
+      key: "databaseCategory",
+      displayTitle: "Database Category",
+      isFilterable: true,
+      dataType: "string",
+      filters: textFilters,
+      hidden: false,
+      sortDirections: ["ascend", "descend"],
+    },
+    {
+      position:4,
+      sorter: {},
+      textCase: "upper",
+      pixelWidth: 100,
+      key: "databaseClass",
+      displayTitle: "Database Class",
+      isFilterable: true,
+      dataType: "string",
+      filters: textFilters,
+      hidden: false,
+      sortDirections: ["ascend", "descend"],
+    },
+    
+    {
+      position:5,
+      sorter: {},
+      textCase: "upper",
+      pixelWidth: 100,
+      key: "labelName",
+      displayTitle: "Label Name",
+      isFilterable: true,
+      dataType: "string",
+      filters: textFilters,
+      hidden: false,
+      sortDirections: ["ascend", "descend"],
+    },
+    {
+      position:6,
+      sorter: {},
+      textCase: "upper",
+      pixelWidth: 100,
+      key: "fileType",
+      displayTitle: "File Type",
+      isFilterable: true,
+      dataType: "string",
+      filters: textFilters,
+      hidden: false,
+      sortDirections: ["ascend", "descend"],
+    },
+    
+  ]
+}
 
 export const tierColumns: () => Column<any>[] = () => {
   return [

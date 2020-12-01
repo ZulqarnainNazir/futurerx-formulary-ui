@@ -125,7 +125,7 @@ class Tier extends React.Component<any, tabsState> {
                     </div>
                   </div>
                   <FrxDrugGridContainer
-                    isPinningEnabled={true}
+                    isPinningEnabled={false}
                     enableSearch={false}
                     enableColumnDrag
                     onSearch={() => {}}
