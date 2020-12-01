@@ -1,3 +1,26 @@
+export const getDrugsList = () => [
+  { drug: "Lipitor 20mg" },
+  { drug: "Lipitor 40mg" },
+  { drug: "Lipitor 60mg" },
+  { drug: "Lipitor 80mg" },
+  { drug: "Lipitor 120mg" },
+  { drug: "Lipitor 20mg" },
+  { drug: "Lipitor 40mg" },
+  { drug: "Lipitor 60mg" },
+  { drug: "Lipitor 80mg" },
+  { drug: "Lipitor 120mg" },
+  { drug: "Lipitor 20mg" },
+  { drug: "Lipitor 40mg" },
+  { drug: "Lipitor 60mg" },
+  { drug: "Lipitor 80mg" },
+  { drug: "Lipitor 120mg" },
+  { drug: "Lipitor 20mg" },
+  { drug: "Lipitor 40mg" },
+  { drug: "Lipitor 60mg" },
+  { drug: "Lipitor 80mg" },
+  { drug: "Lipitor 120mg" },
+];
+
 export const getColumns = () => [
   {
     title: "FORMULARY NAME",
@@ -48,6 +71,11 @@ export const getData = () => {
       contractYeat: "2021",
       formularyType: "Medicare",
       effectiveDate: "01/01/2021",
+      tier: {
+        tierId: "1",
+        tierNumber: "Tier 1",
+        tierDescription: "Generic Brand",
+      },
     },
     {
       key: "2",
@@ -57,6 +85,11 @@ export const getData = () => {
       contractYeat: "2021",
       formularyType: "Medicare",
       effectiveDate: "01/01/2021",
+      tier: {
+        tierId: "1",
+        tierNumber: "Tier 1",
+        tierDescription: "Generic Brand",
+      },
     },
     {
       key: "3",
@@ -66,6 +99,11 @@ export const getData = () => {
       contractYeat: "2021",
       formularyType: "Medicare",
       effectiveDate: "01/01/2021",
+      tier: {
+        tierId: "1",
+        tierNumber: "Tier 1",
+        tierDescription: "Generic Brand",
+      },
     },
     {
       key: "4",
@@ -75,6 +113,11 @@ export const getData = () => {
       contractYeat: "2021",
       formularyType: "Medicare",
       effectiveDate: "01/01/2021",
+      tier: {
+        tierId: "1",
+        tierNumber: "Tier 1",
+        tierDescription: "Generic Brand",
+      },
     },
   ];
 };

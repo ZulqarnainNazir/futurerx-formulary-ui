@@ -5,6 +5,7 @@ import PlusIcon from "../../../../assets/icons/PlusIcon.svg";
 import {
   getColumns,
   getData,
+  getDrugsList,
 } from "../../../../mocks/formulary-grid/FormularySimpleGridMock";
 import { TabInfo } from "../../../../models/tab.model";
 import SimpleGrid from "../../../shared/Frx-formulary/SimpleGrid/SimpleGrid";
@@ -17,17 +18,27 @@ import RadioButton from "../../../shared/Frx-components/radio-button/RadioButton
 import CustomDatePicker from "../../../shared/Frx-components/date-picker/CustomDatePicker";
 import { Input } from "antd";
 import FrxLoader from "../../../shared/FrxLoader/FrxLoader";
+import SimpleSearch from "../../../communication/Search/SimpleSearch/SimpleSearch";
 
-import { getFormularyGridData } from "../../../../mocks/formulary-grid/FormularyGridData";
+import {
+  getFormularyGridData,
+  getTierAssignmentGridData,
+} from "../../../../mocks/formulary-grid/FormularyGridData";
 // import FormularyGrid from "./FormularyGrid";
 import DrugGrid from "../../DrugDetails/components/DrugGrid";
-import { getFormularyGridColumns } from "../../../../mocks/formulary-grid/FormularyGridColumn";
+import {
+  getFormularyGridColumns,
+  getTierAssignmentGridColumns,
+} from "../../../../mocks/formulary-grid/FormularyGridColumn";
+import RoundedSimpleSearch from "../../../communication/Search/SimpleSearch/RoundedSimpleSearch";
+import { drugData } from "../../../../mocks/BestPriceDrugMock";
 
 class MassMaintenanceTier extends Component {
   state = {
     isSearchOpen: false,
     gridData: getData(),
     gridColumns: getColumns(),
+    drugsList: getDrugsList(),
     miniTabs: [
       {
         id: 1,
@@ -81,10 +92,30 @@ class MassMaintenanceTier extends Component {
   };
   componentDidMount() {
     this.setState({
-      columns: getFormularyGridColumns(),
-      data: getFormularyGridData(),
+      columns: getTierAssignmentGridColumns(),
+      data: getTierAssignmentGridData(),
     });
   }
+  handleSearch = (searchObject: any) => {
+    // this.setState({ isFetchingData: true });
+    // if (searchObject) {
+    // setTimeout(() => {
+    //   const newData = this.state.data.filter((item: any) =>
+    //     Object.keys(item)
+    //       .map((_item: any) =>
+    //         item[_item]
+    //           .toString()
+    //           .toLocaleLowerCase()
+    //           .includes(searchObject.searchText.toLocaleLowerCase())
+    //       )
+    //       .includes(true)
+    //   );
+    //   this.setState({ isFetchingData: false, filteredData: newData });
+    // }, 2000);
+    // } else {
+    // this.setState({ isFetchingData: false });
+    // }
+  };
   render() {
     const {
       gridData,
@@ -92,6 +123,7 @@ class MassMaintenanceTier extends Component {
       miniTabs,
       activeMiniTabIndex,
       isSearchOpen,
+      drugsList,
     } = this.state;
 
     const { isFormularyGridShown, columns, data, scroll, pinData } = this.state;
@@ -191,11 +223,83 @@ class MassMaintenanceTier extends Component {
             ) : null}
           </div>
         </div>
-        <div className="bordered details-top">
+        <div className="bordered sections-root details-top">
           <div className="header">tier definition</div>
-          <div className="inner-container p-20">
-            <div></div>
+          <div className="inner-container">
+            <div className="sections-root-grid-container">
+              <div className="bordered drugs-list-container">
+                <div className="header">selected drugs</div>
+                <div className="inner-container drugs-list scroll-bar">
+                  <RoundedSimpleSearch
+                    onSearch={this.handleSearch}
+                    placeholder="Search..."
+                  />
+                  {drugsList.map((el) => (
+                    <div className="list-items">{el.drug}</div>
+                  ))}
+                </div>
+              </div>
+              <div className="drug-tiers-card p-7">
+                {gridData.map((drug) => (
+                  <div className="bordered m-b-5">
+                    <div className="header">{drug.formularyName}</div>
+                    <div className="inner-container drugs-flex-container">
+                      <div className="p-b-15 font-style">New Tier</div>
+                      <div>
+                        <div className="mini-flex-container">
+                          <input type="checkbox" name="" id="" />
+                          <span className="font-style">Keep current tier?</span>
+                        </div>
+                        <SimpleGrid
+                          columns={[
+                            {
+                              title: "TIER NUMBER",
+                              dataIndex: "tierNumber",
+                              key: "tierNumber",
+                              className: "table-head-color",
+                              render: (tierNumber) => (
+                                <DropDown
+                                  placeholder={tierNumber}
+                                  options={[0, 1, 2, 3]}
+                                />
+                              ),
+                            },
+                            {
+                              title: "TIER DESCRIPTION",
+                              dataIndex: "tierDesc",
+                              key: "tierDesc",
+                              className: "table-head-color large-width",
+                            },
+                          ]}
+                          data={[
+                            {
+                              tierNumber: drug.tier.tierId,
+                              tierDesc: drug.tier.tierDescription,
+                            },
+                          ]}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
+          <div className="button-container-right">
+            <span className="white-bg-btn">
+              <Button label="Cancel" onClick={() => {}} />
+            </span>
+            <Button label="Save" onClick={() => {}} />
+          </div>
+        </div>
+        <div className="button-container-right-root">
+          <span className="white-bg-btn">
+            <Button
+              label="Assign Additional Drugs to Tier"
+              onClick={() => {}}
+            />
+          </span>
+          <Button label="Continue to Drug Edits" onClick={() => {}} />
         </div>
       </div>
     );
