@@ -32,20 +32,6 @@
 
             .ant-table-body > table > tbody > tr > td:first-child {
               padding: 0 18px 0 18px;
-              // position: relative;
-              // left: 19px;
-              border-right: 1px solid #e5e5e5;
-              // border
-              // padding: 0 18px;
-              // border-bottom: 1px solid rgb(131, 19, 19);
-              // border-top: 1px solid rgb(131, 19, 19);
-              // border-top: 1px solid rgb(131, 19, 19);
-              // border-bottom: 1px solid greenyellow !important;
-              // margin-right: 10px;
-              // padding: 0 1px;
-              // border: 1px solid #e5e5e5;
-              // border-radius: 0 !important;
-              // background-color: #fff;
             }
 
             .ant-table-body > thead {
@@ -60,6 +46,56 @@
   // ####### END TABLE ##########
   .bordered {
     background-color: #fff;
+    .inner-container {
+      .modify-panel {
+        padding: 0 20px;
+        display: flex;
+        .icon {
+          display: flex;
+          height: 50px;
+          padding-right: 18px;
+          border-right: 1px solid #e5e5e5;
+          align-items: center;
+          span {
+            display: block;
+            border-radius: 50%;
+            height: 31px;
+            width: 31px;
+            background: #1fbbc4;
+            color: white;
+            font-size: 16px;
+            line-height: 31px;
+            text-align: center;
+          }
+        }
+        .switch-box {
+          display: flex;
+          align-items: center;
+          padding: 0 40px;
+          border-right: 1px solid #e5e5e5;
+          .label {
+            font-size: 14px;
+            text-transform: uppercase;
+            color: #707683;
+          }
+        }
+        .mini-tabs {
+          display: flex;
+          padding: 0 40px;
+          border-right: 1px solid #e5e5e5;
+          align-items: center;
+        }
+      }
+    }
+    // .header-with-notes {
+    //   position: relative;
+    //   svg.note-icon {
+    //     position: absolute;
+    //     right: 20px;
+    //     top: 50%;
+    //     transform: translateY(-50%);
+    //   }
+    // }
   }
   .m-t-30 {
     margin-top: 30px;

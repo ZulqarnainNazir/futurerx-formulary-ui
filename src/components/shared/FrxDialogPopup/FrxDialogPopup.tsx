@@ -11,8 +11,8 @@ const styles = (theme: Theme) => ({
   root: {
     //minWidth: "640px" //  @mk
     height: "100%",
-    width: "100%"
-  }
+    width: "100%",
+  },
 });
 
 interface DialogPopupProps {
@@ -29,6 +29,7 @@ interface DialogPopupProps {
   headChildren?: Element;
   componentTitle?: any;
   // classes: Partial<Record<DialogClassKey, string>>;
+  disablePortal?: boolean;
 
   handleClose: () => void;
   handleAction: (action: string) => void;
@@ -49,13 +50,15 @@ class DialogPopup extends React.Component<DialogPopupProps> {
       width,
       componentTitle,
       showCloseIcon,
-      headChildren
+      headChildren,
+      disablePortal,
     } = this.props;
     return (
       <Dialog
         disableEnforceFocus
         disableBackdropClick
         disableEscapeKeyDown
+        disablePortal={disablePortal ? disablePortal : false}
         open={open}
         maxWidth={false}
         className={this.props.className ? this.props.className : "dialog-popup"}
@@ -81,7 +84,7 @@ class DialogPopup extends React.Component<DialogPopupProps> {
           {!showActions ? (
             <span
               className="frx-dialog-root__close-icon"
-              onClick={e => handleClose()}
+              onClick={(e) => handleClose()}
             >
               <svg
                 width="10"
@@ -102,7 +105,7 @@ class DialogPopup extends React.Component<DialogPopupProps> {
           {showCloseIcon ? (
             <span
               className="frx-dialog-root__close-icon"
-              onClick={e => handleClose()}
+              onClick={(e) => handleClose()}
             >
               <svg
                 width="10"
@@ -126,13 +129,13 @@ class DialogPopup extends React.Component<DialogPopupProps> {
           <DialogActions className="frx-dialog-root__btn-actions">
             <Button
               className="frx-dialog-root__cancel-btn"
-              onClick={e => handleAction("negative")}
+              onClick={(e) => handleAction("negative")}
             >
               {negativeActionText}
             </Button>
             <Button
               className="frx-dialog-root__save-btn"
-              onClick={e => handleAction("positive")}
+              onClick={(e) => handleAction("positive")}
               autoFocus
             >
               {positiveActionText}

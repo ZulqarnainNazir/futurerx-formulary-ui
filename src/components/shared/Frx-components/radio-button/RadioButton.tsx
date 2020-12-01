@@ -7,9 +7,10 @@ export default function RadioButton(props: any) {
       <label className="container">
         <input
           type="radio"
-          checked={props.checked}
+          defaultChecked={props.checked}
           name={props.name}
           className={props.className}
+          {...props}
         />
         <span className="label">{props.label}</span>
         <span className="checkmark"></span>
