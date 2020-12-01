@@ -3,7 +3,10 @@ import {Card, CardHeader, CardContent, Grid, Button} from "@material-ui/core";
 import Checkbox from "@material-ui/core/Checkbox";
 import StarBorderOutlinedIcon from "@material-ui/icons/StarBorderOutlined";
 import BreadCrumPanel from "./components/BreadCrumPanel";
-import {entityOwnershipData} from "./EnitityOwnershipMockData/MockDataForEntity";
+import {
+  entityOwnershipData,
+  entityOwnershipData1,
+} from "./EnitityOwnershipMockData/MockDataForEntity";
 import PlanInformationConfiguration from "./PlanIfonmationConfiguaration/PlanInformationConfiguration";
 import DialogPopup from "../../shared/FrxDialogPopup/FrxDialogPopup";
 import CustomDatePicker from "./components/CustomDatePicker";
@@ -18,7 +21,7 @@ class EntityOwnershipContainer extends Component<Props, State> {
   state = {
     arrowIconState: false,
     isAllCollaps: false,
-    data: entityOwnershipData(),
+    data: entityOwnershipData1(), // entityOwnershipData(),
     breadCrumbStatus: {},
     effectiveDate: "",
   };
@@ -68,9 +71,10 @@ class EntityOwnershipContainer extends Component<Props, State> {
                 <>
                   <BreadCrumPanel
                     label={"customer"}
-                    value={entity.owner}
+                    value={entity.owner.value}
                     checked={true}
                     collaps={this.state.isAllCollaps}
+                    isDefault={entity.owner.default}
                   >
                     <div
                       // style={{marginLeft: "22px"}}
@@ -78,8 +82,9 @@ class EntityOwnershipContainer extends Component<Props, State> {
                     >
                       <BreadCrumPanel
                         label={"client"}
-                        value={entity.client}
+                        value={entity.client.value}
                         checked={true}
+                        isDefault={entity.client.default}
                       >
                         <div
                           // style={{marginLeft: "22px"}}
@@ -87,8 +92,9 @@ class EntityOwnershipContainer extends Component<Props, State> {
                         >
                           <BreadCrumPanel
                             label={"Carrier"}
-                            value={entity.carrier}
+                            value={entity.carrier.value}
                             checked={true}
+                            isDefault={entity.carrier.default}
                           >
                             <div
                               // style={{marginLeft: "22px"}}
@@ -96,8 +102,9 @@ class EntityOwnershipContainer extends Component<Props, State> {
                             >
                               <BreadCrumPanel
                                 label={"Account"}
-                                value={entity.account}
+                                value={entity.account.value}
                                 checked={true}
+                                isDefault={entity.account.default}
                               >
                                 <div
                                   // style={{marginLeft: "22px"}}
@@ -109,6 +116,7 @@ class EntityOwnershipContainer extends Component<Props, State> {
                                         label={`Group  ${ind + 1}`}
                                         value={group.id}
                                         checked={true}
+                                        isDefault={group.default}
                                       >
                                         <div
                                           className="breadcrum-data group-data-info"
@@ -117,6 +125,7 @@ class EntityOwnershipContainer extends Component<Props, State> {
                                           <Grid
                                             container
                                             className="data-list-container"
+                                            // justify="space-between"
                                           >
                                             {/* <Grid container item sm={4}> */}
                                             {group.list.map((li) => (
@@ -125,7 +134,7 @@ class EntityOwnershipContainer extends Component<Props, State> {
                                               <div
                                                 style={{
                                                   minWidth: "250px",
-                                                  marginLeft: "2rem",
+                                                  // marginLeft: "2rem",
                                                 }}
                                               >
                                                 <Checkbox
@@ -140,7 +149,16 @@ class EntityOwnershipContainer extends Component<Props, State> {
                                                   }
                                                 />
                                                 {/* <span className="list"> */}
-                                                <span className="list">
+                                                <span
+                                                  className="list"
+                                                  style={{
+                                                    display: "inline-block",
+                                                    maxWidth: "210px",
+                                                    // textAlign:"center"
+                                                    // minHeight: "50px",
+                                                    // border: "1px solid red",
+                                                  }}
+                                                >
                                                   {li}
                                                 </span>
                                                 {/* </span> */}

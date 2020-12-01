@@ -14,9 +14,30 @@ interface Props {}
 interface State {}
 
 class PlanInformationConfiguration extends Component<Props, State> {
-  state = {};
+  state = {
+    planConfigObject: {
+      planInfoConfigName: "North East PBPs",
+      planName: "Medicare 1",
+      phonNumber: "888-888-8888",
+      ttyValue: "888-888-8888",
+      website: "www.medicare1.com",
+      operationinfo:
+        "From October 1 to March 31, we are open 7 days a week, from 8 a.m. to 8 p.m. EST. From April 1 to September 30, we are open Monday through Friday, from 8 a.m. to 8 p.m. EST.",
+    },
+  };
+
+  handleInputChange(e) {
+    console.log(e.target.name);
+    this.setState({
+      planConfigObject: {
+        ...this.state.planConfigObject,
+        [e.target.name]: e.target.value,
+      },
+    });
+  }
 
   render() {
+    const {planConfigObject} = this.state;
     return (
       <div className="PlanInformationConfiguration">
         <Card className="planInformationConfiguration-card">
@@ -46,9 +67,9 @@ class PlanInformationConfiguration extends Component<Props, State> {
                         type="text"
                         disableUnderline={true}
                         // variant="outlined"
-                        //   name="claimId"
-                        value={"North East PBPs"}
-                        //   onChange={(e) => this.handleInputChange(e)}
+                        name="planInfoConfigName"
+                        value={planConfigObject.planInfoConfigName}
+                        onChange={(e) => this.handleInputChange(e)}
                       />
                     </div>
                   </Grid>
@@ -61,9 +82,9 @@ class PlanInformationConfiguration extends Component<Props, State> {
                         type="text"
                         disableUnderline={true}
                         // variant="outlined"
-                        //   name="claimId"
-                        value={"Medicare 1"}
-                        //   onChange={(e) => this.handleInputChange(e)}
+                        name="planName"
+                        value={planConfigObject.planName}
+                        onChange={(e) => this.handleInputChange(e)}
                       />
                     </div>
                   </Grid>
@@ -76,9 +97,9 @@ class PlanInformationConfiguration extends Component<Props, State> {
                         type="text"
                         disableUnderline={true}
                         // variant="outlined"
-                        //   name="claimId"
-                        value={"888-888-8888"}
-                        //   onChange={(e) => this.handleInputChange(e)}
+                        name="phonNumber"
+                        value={planConfigObject.phonNumber}
+                        onChange={(e) => this.handleInputChange(e)}
                       />
                     </div>
                   </Grid>
@@ -91,9 +112,9 @@ class PlanInformationConfiguration extends Component<Props, State> {
                         type="text"
                         disableUnderline={true}
                         // variant="outlined"
-                        //   name="claimId"
-                        value={"888-888-8888"}
-                        //   onChange={(e) => this.handleInputChange(e)}
+                        name="ttyValue"
+                        value={planConfigObject.ttyValue}
+                        onChange={(e) => this.handleInputChange(e)}
                       />
                     </div>
                   </Grid>
@@ -112,9 +133,9 @@ class PlanInformationConfiguration extends Component<Props, State> {
                         type="text"
                         disableUnderline={true}
                         // variant="outlined"
-                        //   name="claimId"
-                        value={"www.medicare1.com"}
-                        //   onChange={(e) => this.handleInputChange(e)}
+                        name="website"
+                        value={planConfigObject.website}
+                        onChange={(e) => this.handleInputChange(e)}
                       />
                     </div>
                   </Grid>
@@ -129,11 +150,9 @@ class PlanInformationConfiguration extends Component<Props, State> {
                         rows={10}
                         disableUnderline={true}
                         // variant="outlined"
-                        //   name="claimId"
-                        value={
-                          "From October 1 to March 31, we are open 7 days a week, from 8 a.m. to 8 p.m. EST. From April 1 to September 30, we are open Monday through Friday, from 8 a.m. to 8 p.m. EST."
-                        }
-                        //   onChange={(e) => this.handleInputChange(e)}
+                        name="operationinfo"
+                        value={planConfigObject.operationinfo}
+                        onChange={(e) => this.handleInputChange(e)}
                       />
                     </div>
                   </Grid>

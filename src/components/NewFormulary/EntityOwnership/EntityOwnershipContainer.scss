@@ -52,7 +52,9 @@
         .breadcrum-data {
           margin-left: 2%;
           .data-list-container {
-            // max-width: 90%;
+            // max-width: 80%;
+            margin-left: 2rem;
+            // border: 1px solid green;
             // div {
             //   display: inline-block;
             // }
@@ -95,7 +97,7 @@
         box-sizing: border-box;
         border-radius: 3px;
         color: #2055b5;
-        text-transform:capitalize;
+        text-transform: capitalize;
       }
       .btn-save {
         width: 67px;
