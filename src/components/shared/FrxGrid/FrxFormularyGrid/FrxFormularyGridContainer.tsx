@@ -134,6 +134,8 @@ class FrxFormularyGridContainer extends Component<FrxGridContainerProps<any>> {
             this.props.settingsWidth ? this.props.settingsWidth : undefined
           }
           isRowSelectorCheckbox={this.props.isRowSelectorCheckbox}
+          isPinningEnabled={this.props.isPinningEnabled}
+          rowSelection={this.props.rowSelection}
           expandable={{
             isExpandable: this.props.expandable
               ? this.props.expandable.isExpandable
