@@ -50,13 +50,15 @@ class MassMaintenanceSetup extends Component {
   render() {
     const { isFormularyGridShown, columns, data, scroll, pinData } = this.state;
     let dataGrid = <FrxLoader />;
-    if (this.state.data) {
+    if (data) {
       // dataGrid = (
       //   <FormularyGrid
       //     columns={columns}
       //     data={data}
       //     bordered={false}
       //     rowSelectionChange={this.rowSelectionChange}
+      //     enableSettings={false}
+      //     isPinningEnabled={false}
       //   />
       // );
       dataGrid = (

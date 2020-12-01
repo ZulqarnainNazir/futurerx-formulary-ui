@@ -20,6 +20,7 @@ import PharmacyProfile from "../components/PharmacyProfile/PharmacyProfileInfo/P
 import AdvancedSearch from "../components/AdvancedSearch/AdvancdSearch";
 import Formulary from "../components/NewFormulary/NewFormulary";
 import SetupFormularyGrid from "../components/SetupFormularyGrid/SetupFormularyGrid";
+import MassMaintenanceTier from "../components/NewFormulary/MassMaintenance/configure/MassMaintenanceTier";
 
 class MainRouter extends React.Component {
   render() {
@@ -208,6 +209,7 @@ class MainRouter extends React.Component {
             path="/setup/formularyGrid"
             render={(props) => <SetupFormularyGrid {...props} />}
           ></Route>
+
           {/* <Route
             exact
             path="/pie"

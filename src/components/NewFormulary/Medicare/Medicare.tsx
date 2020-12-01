@@ -5,6 +5,7 @@ import { formularyDetailsGridColumns } from "../../../utils/grid/columns";
 import { getFormularyDetails } from "../../../mocks/formulary/formularyDetails";
 import FrxGridContainer from "../../shared/FrxGrid/FrxDrugGridContainer";
 import FormularyExpandedDetails from '../../FormularyExpandedDetails/FormularyExpandedDetails';
+import Alternatives from '../Alternatives/Alternatives';
 
 interface State {
   miniTabs: Array<TabInfo>;
@@ -76,7 +77,7 @@ export default class Medicare extends React.Component<any, any> {
           </div>
         );
       case 2:
-        return <div>Alternatives</div>;
+        return <Alternatives />;
       case 3:
         return <div>Decision Tree</div>;
       case 4:
