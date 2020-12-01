@@ -8,6 +8,7 @@ import {
   entityOwnershipData1,
 } from "./EnitityOwnershipMockData/MockDataForEntity";
 import PlanInformationConfiguration from "./PlanIfonmationConfiguaration/PlanInformationConfiguration";
+import PlanInformation from "./PlanInformation/PlanInformation";
 import DialogPopup from "../../shared/FrxDialogPopup/FrxDialogPopup";
 import CustomDatePicker from "./components/CustomDatePicker";
 import {Link} from "react-router-dom";
@@ -24,6 +25,8 @@ class EntityOwnershipContainer extends Component<Props, State> {
     data: entityOwnershipData1(), // entityOwnershipData(),
     breadCrumbStatus: {},
     effectiveDate: "",
+    isPlanInfoCardShown: false,
+    isPlanConfigCardShow: false,
   };
 
   onHandleIcons = () => {
@@ -38,6 +41,17 @@ class EntityOwnershipContainer extends Component<Props, State> {
   };
   handleEffectiveDate = (date) => {
     this.setState({effectiveDate: date});
+  };
+
+  onSavePlanInfoCard = () => {
+    this.setState({isPlanInfoCardShown: true});
+  };
+  onCancelPlanInfoCard = () => {
+    this.setState({isPlanInfoCardShown: false});
+  };
+
+  onPlanConfig = () => {
+    this.setState({isPlanConfigCardShow: true});
   };
 
   render() {
@@ -186,13 +200,20 @@ class EntityOwnershipContainer extends Component<Props, State> {
           </CardContent>
           <div className="btn-group">
             <Button className="btn btn-cancel">Cancel</Button>
-            <Link to={"/planinformation"} className="btn btn-save">
+            {/* <Link to={"/planinformation"} className="btn btn-save">
               Save
-            </Link>
-            {/* <Button className="btn btn-save">Save</Button> */}
+            </Link> */}
+            <Button className="btn btn-save" onClick={this.onSavePlanInfoCard}>
+              Save
+            </Button>
           </div>
         </Card>
-        {/* {<PlanInformationConfiguration />} */}
+        {this.state.isPlanInfoCardShown ? (
+          <PlanInformation onSave={this.onPlanConfig} />
+        ) : null}
+        {this.state.isPlanConfigCardShow ? (
+          <PlanInformationConfiguration />
+        ) : null}
 
         <DialogPopup
           className="entity-diogPopup warning-popoup"

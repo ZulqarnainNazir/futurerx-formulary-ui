@@ -37,11 +37,11 @@ class MainRouter extends React.Component {
             path="/entityownership"
             render={(props) => <EntityOwnershipContainer {...props} />}
           />
-          <Route
+          {/* <Route
             exact
             path="/planinformation"
             render={(props) => <PlanInformation {...props} /> }
-          />
+          /> */}
           <Route
             exact
             path="/prescriber"

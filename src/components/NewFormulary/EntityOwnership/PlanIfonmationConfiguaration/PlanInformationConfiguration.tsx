@@ -162,10 +162,10 @@ class PlanInformationConfiguration extends Component<Props, State> {
           </CardContent>
           <div className="btn-group">
             {/* <Button className="btn btn-cancel">Cancel</Button> */}
-            {/* <Button className="btn btn-save">Save</Button> */}
-            <Link to={"/planinformation"} className="btn btn-save">
+            <Button className="btn btn-save">Save</Button>
+            {/* <Link to={"/planinformation"} className="btn btn-save">
               Save
-            </Link>
+            </Link> */}
           </div>
         </Card>
       </div>

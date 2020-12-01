@@ -109,14 +109,17 @@ class BreadCrumPanel extends Component<Props, State> {
               color="primary"
               className="checkbox"
               checked={
-                this.state.checked
+                this.state.arrowIconState
                 // this.props.checked
                 // ? this.props.checked : this.state.checked
               }
               // onChange={(e) =>
               //   this.props.onChange(e, this.props.item, this.props.checked)
               // }
-              onChange={this.onHandleCheckBoxState}
+              onChange={
+                this.onHandleIcons
+                // .onHandleCheckBoxState
+              }
               size="small"
 
               //   inputProps={{"aria-label": "primary checkbox"}}

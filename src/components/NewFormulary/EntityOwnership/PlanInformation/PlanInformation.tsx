@@ -12,7 +12,9 @@ import PlanInformationConfiguration from "../PlanIfonmationConfiguaration/PlanIn
 import {Link} from "react-router-dom";
 import "./PlanInformation.scss";
 
-interface Props {}
+interface Props {
+  onSave: () => any;
+}
 interface State {}
 
 class PlanInformation extends Component<Props, State> {
@@ -31,10 +33,12 @@ class PlanInformation extends Component<Props, State> {
           </CardContent>
           <div className="btn-group">
             {/* <Button className="btn btn-cancel">Cancel</Button> */}
-            {/* <Button className="btn btn-save">Configure</Button> */}
-            <Link to={"/planinformationconfig"} className="btn btn-save">
+            <Button className="btn btn-save" onClick={this.props.onSave}>
               Configure
-            </Link>
+            </Button>
+            {/* <Link to={"/planinformationconfig"} className="btn btn-save">
+              Configure
+            </Link> */}
           </div>
         </Card>
       </div>
