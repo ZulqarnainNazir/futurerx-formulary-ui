@@ -21,9 +21,9 @@ export default class TT extends React.Component<any,any>{
                     <AdvancedSearch
                             category="Grievances"
                             openPopup={this.state.isSearchOpen}
-                            onClose={this.handleCloseSearchPopup}
-                    />) : (
-                        ""
+                            onClose={this.handleCloseSearchPopup}/>
+                ) : (
+                    null
                 )}
             </div>
         )
