@@ -45,7 +45,7 @@ export default class DrugGrid extends React.Component<any, any> {
             isRowSelectionEnabled={true}
             isRowSelectorCheckbox={true}
             isPinningEnabled={Boolean(pinData) ? pinData.value : true}
-            // pinData = {value: boolean}
+            // [DATASTRUCTURE] pinData = {value: boolean}
             rowSelection={{
               columnWidth: 50,
               fixed: true,

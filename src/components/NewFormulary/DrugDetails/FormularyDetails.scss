@@ -97,6 +97,10 @@
         &.bg-light-grey{
             background: #F9F9F9;
         }
+        &.display-flex{
+            display: flex;
+            justify-content: space-between;
+        }
         .bottom{
             .row span{
                 font-family: Roboto;
@@ -115,6 +119,150 @@
                 }
             }
         }
+        .group-des{
+            background: #FFFFFF;
+            width: 361px;
+            height: 426px;
+            border: 1px solid #E5E5E5;
+            box-sizing: border-box;
+            border-radius: 5px;
+            .panel{
+                display: flex;
+                justify-content: space-between;
+            }
+            .Button{
+                background: none;
+                color: #C2CFE0;
+                border: 1px solid #C2CFE0;
+                width: auto;
+                padding: 0 20px;
+            }
+            .search-input{
+                input{
+                    background: #FFFFFF;
+                    border: 1px solid #DDDDDD;
+                    box-sizing: border-box;
+                    border-radius: 20px;
+                    height: 30px;
+                    width: 341px;
+                    padding-left:10px;
+                }
+            }
+            .inner-container{
+                .mini-tabs{
+                    margin-top:15px;
+                }
+            }
+            .group-wrapper{
+                margin-top:15px;
+                .list{
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    padding: 6px;
+                    width: 339px;
+                    height: 40px;
+                    margin-bottom: 5px;
+                    &.orange{
+                        background: #FFF5F0;
+                        border: 1px solid #F65A1C;
+                        box-sizing: border-box;
+                        border-radius: 3px;
+                        color: #F65A1C;
+                    }
+                    &.green{
+                        background: #D5FFD7;
+                        border: 1px solid #80C483;
+                        box-sizing: border-box;
+                        border-radius: 3px;
+                        color: #219653;
+                    }
+                    .group{
+                        font-family: Roboto;
+                        font-style: normal;
+                        font-weight: normal;
+                        font-size: 12px;
+                        line-height: 14px;
+                        display: flex;
+                        align-items: center;
+                        letter-spacing: 0.01em;
+                        .group-title{
+                            margin-left: 10px;
+                        }
+                    }
+                }
+            }
+        }
+        .new-group-des{
+            width: 889px;
+            height: 699px;
+            background: #FFFFFF;
+            border: 1px solid #E5E5E5;
+            box-sizing: border-box;
+            border-radius: 5px;
+            margin-left: 10px;
+            .inner-container{
+                .setting-1{
+                    span{
+                        font-family: Roboto;
+                        font-style: normal;
+                        font-weight: normal;
+                        font-size: 12px;
+                        line-height: 20px;
+                        text-transform: uppercase;
+                        color: #707683;
+                    }
+                    .MuiGrid-container{
+                        label{
+                            display: block;
+                            font-size: 12px;
+                            color: #707683;
+                            line-height: 20px;
+                            margin-bottom: 5px;
+                            text-transform: uppercase;
+                            font-weight: normal;
+                        }
+                        input{
+                            background: #FFFFFF;
+                            border: 1px solid #C4C4C4;
+                            box-sizing: border-box;
+                            border-radius: 3px;
+                            width: 695px;
+                        }
+                    }
+                    .marketing-material-chk{
+                        label:first-child{
+                            display: block;
+                        }
+                    }
+                    .panel-tooltip{
+                        margin-left: 10px;
+                        line-height: 0;
+                        display: inline;
+                    }
+                }
+                .button-wrapper{
+                    display: flex;
+                    justify-content: flex-end;
+                    .Button{
+                        width: auto;
+                        font-family: Roboto;
+                        font-style: normal;
+                        font-weight: normal;
+                        font-size: 12px;
+                        line-height: 14px;
+                        display: flex;
+                        align-items: center;
+                        text-align: center;
+                        letter-spacing: 0.01em;
+                        color: #FFFFFF;
+                    }
+                }
+            }
+        }
+    }
+    .mb-20{
+        margin-top:20px;
     }
     .Button{
         background: #1F55B6;

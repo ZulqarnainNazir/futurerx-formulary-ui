@@ -4,6 +4,7 @@ import FrxMiniTabs from "../../../../../shared/FrxMiniTabs/FrxMiniTabs";
 import { TabInfo } from "../../../../../../models/tab.model";
 import { getStTabs } from "../../../../../../mocks/formulary/mock-data";
 import StepTherpay from "./StepTherapy";
+import GPM from './GPM'
 
 interface drugDetailsState {
   activeTabIndex: number;
@@ -33,9 +34,9 @@ export default class StepTherpayDetails extends React.Component<
     const tabIndex = this.state.activeTabIndex;
     switch (tabIndex) {
       case 0:
-        return <StepTherpay />;
+        return <GPM/>;
       case 1:
-        return <div>MO/NM</div>;
+        return <StepTherpay/>
       case 2:
         return <div>IBF</div>;
 
