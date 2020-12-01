@@ -67,6 +67,20 @@
   padding: 15px;
 }
 
+.upload-button {
+  margin-bottom: 20px !important;
+  margin-top: 0px !important;
+}
+
+.input-link {
+  text-decoration: underline dashed !important;
+  color: #1d54b4;
+  font-weight: 500;
+  font-size: 12px;
+  display: block;
+  margin-top: 18px;
+}
+
 .radio-group {
   display: flex;
   &.marketing-material {
