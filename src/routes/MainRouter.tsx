@@ -1,5 +1,5 @@
 import React from "react";
-import { Route, Switch } from "react-router-dom";
+import {Route, Switch} from "react-router-dom";
 import Home from "../components/home/Home";
 import MemberProfile from "../components/MemberProfile/MemberProfile";
 import FrxGridContainer from "../components/shared/FrxGrid/FrxGridContainer";
@@ -19,6 +19,9 @@ import PrescriberProfile from "../components/prescriber/PrescriberProfile/Prescr
 import PharmacyProfile from "../components/PharmacyProfile/PharmacyProfileInfo/PharmacyProfile";
 import AdvancedSearch from "../components/AdvancedSearch/AdvancdSearch";
 import Formulary from "../components/NewFormulary/NewFormulary";
+import EntityOwnershipContainer from "../components/NewFormulary/EntityOwnership/EntityOwnershipContainer";
+import PlanInformation from "../components/NewFormulary/EntityOwnership/PlanInformation/PlanInformation";
+import PlanInformationConfiguration from "../components/NewFormulary/EntityOwnership/PlanIfonmationConfiguaration/PlanInformationConfiguration";
 import SetupFormularyGrid from "../components/SetupFormularyGrid/SetupFormularyGrid";
 import MassMaintenanceTier from "../components/NewFormulary/MassMaintenance/configure/MassMaintenanceTier";
 
@@ -29,6 +32,28 @@ class MainRouter extends React.Component {
         <NavBar />
         <Switch>
           <Route exact path="/" render={(props) => <Formulary {...props} />} />
+          <Route
+            exact
+            path="/entityownership"
+            render={(props) => <EntityOwnershipContainer {...props} />}
+          />
+          <Route
+            exact
+            path="/planinformation"
+            render={(props) => <PlanInformation {...props} /> }
+          />
+          <Route
+            exact
+            path="/prescriber"
+            render={(props) => <PrescriberProfile {...props} />}
+          />
+          <Route
+            exact
+            path="/planinformationconfig"
+            render={(props) => <PlanInformationConfiguration {...props} />}
+          />
+          
+
           <Route
             exact
             path="/prescriber"
