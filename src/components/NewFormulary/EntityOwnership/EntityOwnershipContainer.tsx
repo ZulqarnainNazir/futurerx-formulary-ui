@@ -27,6 +27,8 @@ class EntityOwnershipContainer extends Component<Props, State> {
     effectiveDate: "",
     isPlanInfoCardShown: false,
     isPlanConfigCardShow: false,
+    showUpdateDefaultPopup: false,
+    showSelecteffectiveDatePopup: false,
   };
 
   onHandleIcons = () => {
@@ -36,8 +38,8 @@ class EntityOwnershipContainer extends Component<Props, State> {
     this.setState({isAllCollaps: !this.state.isAllCollaps});
   };
 
-  onHandleCheckboxlist = (e, list) => {
-    console.log("[list]:", list);
+  onHandleCheckboxlist = (e, list, group) => {
+    console.log("[group]:" + group + "[list]:" + list);
   };
   handleEffectiveDate = (date) => {
     this.setState({effectiveDate: date});
@@ -52,6 +54,32 @@ class EntityOwnershipContainer extends Component<Props, State> {
 
   onPlanConfig = () => {
     this.setState({isPlanConfigCardShow: true});
+  };
+
+  onUpdateDefault = () => {
+    console.log("default popup");
+
+    this.setState({showUpdateDefaultPopup: !this.state.showUpdateDefaultPopup});
+  };
+  onCloseUpdateDefaultPopUp = () => {
+    this.setState({showUpdateDefaultPopup: false});
+  };
+  onOveride = () => {
+    this.onUpdateDefault();
+    this.setState({
+      showSelecteffectiveDatePopup: !this.state.showSelecteffectiveDatePopup,
+    });
+  };
+
+  onOverideSave = () => {
+    this.setState({
+      showSelecteffectiveDatePopup: false,
+    });
+  };
+  onCloseOveride = () => {
+    this.setState({
+      showSelecteffectiveDatePopup: false,
+    });
   };
 
   render() {
@@ -89,6 +117,8 @@ class EntityOwnershipContainer extends Component<Props, State> {
                     checked={true}
                     collaps={this.state.isAllCollaps}
                     isDefault={entity.owner.default}
+                    updateDefault={this.onUpdateDefault}
+                    isCollalpseTointitialState={this.onHandleCollaps}
                   >
                     <div
                       // style={{marginLeft: "22px"}}
@@ -99,6 +129,8 @@ class EntityOwnershipContainer extends Component<Props, State> {
                         value={entity.client.value}
                         checked={true}
                         isDefault={entity.client.default}
+                        updateDefault={this.onUpdateDefault}
+                        isCollalpseTointitialState={() => {}}
                       >
                         <div
                           // style={{marginLeft: "22px"}}
@@ -109,6 +141,8 @@ class EntityOwnershipContainer extends Component<Props, State> {
                             value={entity.carrier.value}
                             checked={true}
                             isDefault={entity.carrier.default}
+                            updateDefault={this.onUpdateDefault}
+                            isCollalpseTointitialState={() => {}}
                           >
                             <div
                               // style={{marginLeft: "22px"}}
@@ -119,6 +153,8 @@ class EntityOwnershipContainer extends Component<Props, State> {
                                 value={entity.account.value}
                                 checked={true}
                                 isDefault={entity.account.default}
+                                updateDefault={this.onUpdateDefault}
+                                isCollalpseTointitialState={() => {}}
                               >
                                 <div
                                   // style={{marginLeft: "22px"}}
@@ -131,6 +167,8 @@ class EntityOwnershipContainer extends Component<Props, State> {
                                         value={group.id}
                                         checked={true}
                                         isDefault={group.default}
+                                        updateDefault={this.onUpdateDefault}
+                                        isCollalpseTointitialState={() => {}}
                                       >
                                         <div
                                           className="breadcrum-data group-data-info"
@@ -147,9 +185,10 @@ class EntityOwnershipContainer extends Component<Props, State> {
                                               // <Grid item sm={3} className="data-list">
                                               <div
                                                 style={{
-                                                  minWidth: "250px",
+                                                  minWidth: "200px",
                                                   // marginLeft: "2rem",
                                                 }}
+                                                className="data-list  checbox-list-container"
                                               >
                                                 <Checkbox
                                                   color="primary"
@@ -158,7 +197,8 @@ class EntityOwnershipContainer extends Component<Props, State> {
                                                   onChange={(e) =>
                                                     this.onHandleCheckboxlist(
                                                       e,
-                                                      li
+                                                      li,
+                                                      group
                                                     )
                                                   }
                                                 />
@@ -167,7 +207,7 @@ class EntityOwnershipContainer extends Component<Props, State> {
                                                   className="list"
                                                   style={{
                                                     display: "inline-block",
-                                                    maxWidth: "210px",
+                                                    maxWidth: "150px",
                                                     // textAlign:"center"
                                                     // minHeight: "50px",
                                                     // border: "1px solid red",
@@ -217,35 +257,59 @@ class EntityOwnershipContainer extends Component<Props, State> {
 
         <DialogPopup
           className="entity-diogPopup warning-popoup"
-          open={false}
+          open={this.state.showUpdateDefaultPopup}
           positiveActionText="Yes, Override"
           negativeActionText="No, Cancel"
           title="WARNING"
           showCloseIcon
           showActions={true}
-          handleClose={() => {}}
-          handleAction={() => {}}
+          handleClose={this.onUpdateDefault}
+          handleAction={this.onOveride}
         >
-          <div style={{minWidth: "600px", minHeight: "180px"}}>
+          <div
+            // style={{minWidth: "600px", minHeight: "180px"}}
+            className="info-container"
+          >
             <p className="info-heading">
               Group has <span>Formulary 1 </span> currently set as default. Do
               you want to override?
             </p>
+            <div className="btn-group">
+              <Button
+                className="btn btn-cancel"
+                onClick={this.onCloseUpdateDefaultPopUp}
+              >
+                No, Cancel
+              </Button>
+              {/* <Link to={"/planinformation"} className="btn btn-save">
+              Save
+            </Link> */}
+              <Button className="btn btn-save" onClick={this.onOveride}>
+                Yes, Override
+              </Button>
+            </div>
           </div>
         </DialogPopup>
 
         <DialogPopup
           className="entity-diogPopup effective-date-selection-popup"
-          open={false}
+          open={
+            this.state.showSelecteffectiveDatePopup
+            // false
+            // this.state.showUpdateDefaultPopup
+          }
           positiveActionText="Save"
           negativeActionText="Cancel"
           title="EFFECTIVE DATE"
           showCloseIcon
           showActions={true}
-          handleClose={() => {}}
+          handleClose={this.onCloseOveride}
           handleAction={() => {}}
         >
-          <div style={{minWidth: "600px", minHeight: "180px"}}>
+          <div
+            // style={{minWidth: "600px", minHeight: "180px"}}
+            className="info-effective-date-container"
+          >
             <p className="info-heading">
               Select the Effective Date for the override.
             </p>
@@ -255,6 +319,17 @@ class EntityOwnershipContainer extends Component<Props, State> {
               value={this.state.effectiveDate}
               placeholder="Effective Date"
             />
+            <div className="btn-group">
+              <Button className="btn btn-cancel" onClick={this.onCloseOveride}>
+                Cancel
+              </Button>
+              {/* <Link to={"/planinformation"} className="btn btn-save">
+              Save
+            </Link> */}
+              <Button className="btn btn-save" onClick={this.onOverideSave}>
+                Save
+              </Button>
+            </div>
           </div>
         </DialogPopup>
       </div>
