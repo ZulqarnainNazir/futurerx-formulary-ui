@@ -16,12 +16,15 @@ import Box from "@material-ui/core/Box";
 import FrxDrugGridContainer from "../../../../../shared/FrxGrid/FrxDrugGridContainer";
 import { tierColumns } from "../../../../../../utils/grid/columns";
 import { TierMockData } from "../../../../../../mocks/TierMock";
+import { TabInfo } from "../../../../../../models/tab.model";
+import TierReplace from "./TierReplace";
 
 interface tabsState {
   activeMiniTabIndex: number;
   miniTabs: any;
   tabs: any;
   tierGridContainer: boolean;
+  activeTabIndex: any;
 }
 
 class Tier extends React.Component<any, tabsState> {
@@ -31,7 +34,11 @@ class Tier extends React.Component<any, tabsState> {
     isFetchingData: false,
     activeMiniTabIndex: 0,
     activeTabIndex: 0,
-    tabs: getTapList(),
+    tabs: [
+      { id: 1, text: "Replace" },
+      { id: 2, text: "Append" },
+      { id: 3, text: "Remove" },
+    ],
     panelGridTitle: [
       "TIER NAME",
       "TIER DESCRIPTION",
@@ -46,6 +53,33 @@ class Tier extends React.Component<any, tabsState> {
       ["img", "Tier 2", "OTC", "2", "4", "2", "checkbox"],
       ["img", "Tier 3", "OTC", "2", "4", "2", "checkbox"],
     ],
+  };
+
+  onClickTab = (selectedTabIndex: number) => {
+    let activeTabIndex = 0;
+
+    const tabs = this.state.tabs.map((tab: TabInfo, index: number) => {
+      if (index === selectedTabIndex) {
+        activeTabIndex = index;
+      }
+      return tab;
+    });
+    this.setState({ tabs, activeTabIndex });
+  };
+  renderTabContent = () => {
+    const activeTabIndex = this.state.activeTabIndex;
+    switch (activeTabIndex) {
+      case 0:
+        return (
+          <div>
+            <TierReplace />
+          </div>
+        );
+      case 1:
+        return <div>Append</div>;
+      case 2:
+        return <div>Remove</div>;
+    }
   };
 
   onClickMiniTab = (num: number) => {
@@ -95,70 +129,16 @@ class Tier extends React.Component<any, tabsState> {
                         </div>
                         <div className="mini-tabs">
                           <FrxMiniTabs
-                            tabList={this.state.miniTabs}
-                            activeTabIndex={this.state.activeMiniTabIndex}
-                            onClickTab={this.onClickMiniTab}
+                            tabList={this.state.tabs}
+                            activeTabIndex={this.state.activeTabIndex}
+                            onClickTab={this.onClickTab}
                           />
                         </div>
                       </div>
                     </div>
-                    <div className="group tier-dropdown white-bg">
-                      <Grid container>
-                        <Grid item xs={4}>
-                          <label>
-                            TIER <span className="astrict">*</span>
-                          </label>
-                          <DropDown options={[1, 2, 3]} />
-                        </Grid>
-                        <Grid item xs={1}>
-                          <Box display="flex" justifyContent="flex-end">
-                            <Button
-                              label="Apply"
-                              onClick={this.openTierGridContainer}
-                            />
-                          </Box>
-                        </Grid>
-                      </Grid>
-                    </div>
+                    <div className="tab-content">{this.renderTabContent()}</div>
                   </div>
                 </div>
-                {this.state.tierGridContainer && (
-                  <div className="bordered">
-                    <div className="header space-between pr-10">
-                      Select Drugs From
-                      <div className="button-wrapper">
-                        <Button
-                          className="Button normal"
-                          label="Advance Search"
-                        />
-                        <Button label="Save" disabled />
-                      </div>
-                    </div>
-
-                    <div className="tier-grid-container">
-                      <FrxDrugGridContainer
-                        isPinningEnabled={false}
-                        enableSearch={false}
-                        enableColumnDrag
-                        onSearch={() => {}}
-                        fixedColumnKeys={[]}
-                        pagintionPosition="topRight"
-                        gridName="TIER"
-                        enableSettings
-                        columns={tierColumns()}
-                        scroll={{ x: 2000, y: 377 }}
-                        isFetchingData={false}
-                        enableResizingOfColumns
-                        data={TierMockData()}
-                        rowSelection={{
-                          columnWidth: 50,
-                          fixed: true,
-                          type: "checkbox",
-                        }}
-                      />
-                    </div>
-                  </div>
-                )}
               </Grid>
             </Grid>
           </div>
