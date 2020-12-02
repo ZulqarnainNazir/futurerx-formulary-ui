@@ -29,7 +29,7 @@ export const categoryClassColumns: () => Column<any>[] = () => {
       position: 1,
       sorter: {},
       textCase: "upper",
-      pixelWidth: 100 ,
+      pixelWidth: 100,
       key: "overrideCategory",
       displayTitle: "override category",
       isFilterable: true,
@@ -39,7 +39,7 @@ export const categoryClassColumns: () => Column<any>[] = () => {
       sortDirections: ["ascend", "descend"],
     },
     {
-      position:2,
+      position: 2,
       sorter: {},
       textCase: "upper",
       pixelWidth: 100,
@@ -65,7 +65,7 @@ export const categoryClassColumns: () => Column<any>[] = () => {
       sortDirections: ["ascend", "descend"],
     },
     {
-      position:4,
+      position: 4,
       sorter: {},
       textCase: "upper",
       pixelWidth: 100,
@@ -77,9 +77,9 @@ export const categoryClassColumns: () => Column<any>[] = () => {
       hidden: false,
       sortDirections: ["ascend", "descend"],
     },
-    
+
     {
-      position:5,
+      position: 5,
       sorter: {},
       textCase: "upper",
       pixelWidth: 100,
@@ -92,7 +92,7 @@ export const categoryClassColumns: () => Column<any>[] = () => {
       sortDirections: ["ascend", "descend"],
     },
     {
-      position:6,
+      position: 6,
       sorter: {},
       textCase: "upper",
       pixelWidth: 100,
@@ -104,9 +104,26 @@ export const categoryClassColumns: () => Column<any>[] = () => {
       hidden: false,
       sortDirections: ["ascend", "descend"],
     },
-    
-  ]
-}
+  ];
+};
+
+export const PaRemoveColumns: () => Column<any>[] = () => {
+  return [
+    {
+      position: 1,
+      sorter: {},
+      textCase: "upper",
+      pixelWidth: 100,
+      key: "paGroupDescription",
+      displayTitle: "pa group description",
+      isFilterable: true,
+      dataType: "string",
+      filters: textFilters,
+      hidden: false,
+      sortDirections: ["ascend", "descend"],
+    },
+  ];
+};
 
 export const tierColumns: () => Column<any>[] = () => {
   return [
@@ -114,7 +131,7 @@ export const tierColumns: () => Column<any>[] = () => {
       position: 1,
       sorter: {},
       textCase: "upper",
-      pixelWidth: 100 ,
+      pixelWidth: 100,
       key: "tier",
       displayTitle: "tier",
       isFilterable: true,
@@ -124,7 +141,7 @@ export const tierColumns: () => Column<any>[] = () => {
       sortDirections: ["ascend", "descend"],
     },
     {
-      position:2,
+      position: 2,
       sorter: {},
       textCase: "upper",
       pixelWidth: 122,
@@ -150,7 +167,7 @@ export const tierColumns: () => Column<any>[] = () => {
       sortDirections: ["ascend", "descend"],
     },
     {
-      position:4,
+      position: 4,
       sorter: {},
       textCase: "upper",
       pixelWidth: 163,
@@ -162,9 +179,9 @@ export const tierColumns: () => Column<any>[] = () => {
       hidden: false,
       sortDirections: ["ascend", "descend"],
     },
-    
+
     {
-      position:5,
+      position: 5,
       sorter: {},
       textCase: "upper",
       pixelWidth: 242,
@@ -177,7 +194,7 @@ export const tierColumns: () => Column<any>[] = () => {
       sortDirections: ["ascend", "descend"],
     },
     {
-      position:6,
+      position: 6,
       sorter: {},
       textCase: "upper",
       pixelWidth: 109,
@@ -190,7 +207,7 @@ export const tierColumns: () => Column<any>[] = () => {
       sortDirections: ["ascend", "descend"],
     },
     {
-      position:7,
+      position: 7,
       sorter: {},
       textCase: "upper",
       pixelWidth: 109,
@@ -203,7 +220,7 @@ export const tierColumns: () => Column<any>[] = () => {
       sortDirections: ["ascend", "descend"],
     },
     {
-      position:8,
+      position: 8,
       sorter: {},
       textCase: "upper",
       pixelWidth: 109,
@@ -215,8 +232,8 @@ export const tierColumns: () => Column<any>[] = () => {
       hidden: false,
       sortDirections: ["ascend", "descend"],
     },
-  ]
-}
+  ];
+};
 
 export const formularyDetailsGridColumns: (data) => Column<any>[] = (data) => {
   return [
@@ -283,7 +300,7 @@ export const formularyDetailsGridColumns: (data) => Column<any>[] = (data) => {
       key: "formularyName",
       displayTitle: "formulary name",
       customContent: (props) => (
-        <div className="input-link" onClick={()=> data.onFormularyNameClick()}>
+        <div className="input-link" onClick={() => data.onFormularyNameClick()}>
           {props.data.formularyName}
         </div>
       ),
@@ -343,9 +360,7 @@ export const formularyDetailsGridColumns: (data) => Column<any>[] = (data) => {
       key: "step",
       displayTitle: "step",
       customContent: (props) => (
-        <div className="formulary-step">
-          {props.data.step}
-        </div>
+        <div className="formulary-step">{props.data.step}</div>
       ),
       isFilterable: true,
       dataType: "string",
