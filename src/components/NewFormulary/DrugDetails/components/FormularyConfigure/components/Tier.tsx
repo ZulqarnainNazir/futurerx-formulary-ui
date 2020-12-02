@@ -21,10 +21,12 @@ interface tabsState {
   activeMiniTabIndex: number;
   miniTabs: any;
   tabs: any;
+  tierGridContainer: boolean;
 }
 
 class Tier extends React.Component<any, tabsState> {
   state = {
+    tierGridContainer: false,
     miniTabs: getMiniTabs(),
     isFetchingData: false,
     activeMiniTabIndex: 0,
@@ -50,6 +52,10 @@ class Tier extends React.Component<any, tabsState> {
     this.setState({
       activeMiniTabIndex: num,
     });
+  };
+
+  openTierGridContainer = () => {
+    this.setState({ tierGridContainer: true });
   };
 
   render() {
@@ -106,45 +112,53 @@ class Tier extends React.Component<any, tabsState> {
                         </Grid>
                         <Grid item xs={1}>
                           <Box display="flex" justifyContent="flex-end">
-                            <Button label="Apply" />
+                            <Button
+                              label="Apply"
+                              onClick={this.openTierGridContainer}
+                            />
                           </Box>
                         </Grid>
                       </Grid>
                     </div>
                   </div>
                 </div>
-                <div className="bordered">
-                  <div className="header space-between pr-10">
-                    Select Drugs From
-                    <div className="button-wrapper">
-                      <Button
-                        className="Button normal"
-                        label="Advance Search"
+                {this.state.tierGridContainer && (
+                  <div className="bordered">
+                    <div className="header space-between pr-10">
+                      Select Drugs From
+                      <div className="button-wrapper">
+                        <Button
+                          className="Button normal"
+                          label="Advance Search"
+                        />
+                        <Button label="Save" disabled />
+                      </div>
+                    </div>
+
+                    <div className="tier-grid-container">
+                      <FrxDrugGridContainer
+                        isPinningEnabled={false}
+                        enableSearch={false}
+                        enableColumnDrag
+                        onSearch={() => {}}
+                        fixedColumnKeys={[]}
+                        pagintionPosition="topRight"
+                        gridName="TIER"
+                        enableSettings
+                        columns={tierColumns()}
+                        scroll={{ x: 2000, y: 377 }}
+                        isFetchingData={false}
+                        enableResizingOfColumns
+                        data={TierMockData()}
+                        rowSelection={{
+                          columnWidth: 50,
+                          fixed: true,
+                          type: "checkbox",
+                        }}
                       />
-                      <Button label="Save" disabled />
                     </div>
                   </div>
-                  <FrxDrugGridContainer
-                    isPinningEnabled={false}
-                    enableSearch={false}
-                    enableColumnDrag
-                    onSearch={() => {}}
-                    fixedColumnKeys={[]}
-                    pagintionPosition="topRight"
-                    gridName="TIER"
-                    enableSettings
-                    columns={tierColumns()}
-                    scroll={{ x: 2000, y: 377 }}
-                    isFetchingData={false}
-                    enableResizingOfColumns
-                    data={TierMockData()}
-                    rowSelection={{
-                      columnWidth: 50,
-                      fixed: true,
-                      type: "checkbox",
-                    }}
-                  />
-                </div>
+                )}
               </Grid>
             </Grid>
           </div>
