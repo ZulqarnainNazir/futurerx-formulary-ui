@@ -50,7 +50,7 @@ class TierReplace extends React.Component<any, tabsState> {
           </Grid>
         </div>
         {this.state.tierGridContainer && (
-          <div className="bordered">
+          <div className="bordered white-bg">
             <div className="header space-between pr-10">
               Select Drugs From
               <div className="button-wrapper">

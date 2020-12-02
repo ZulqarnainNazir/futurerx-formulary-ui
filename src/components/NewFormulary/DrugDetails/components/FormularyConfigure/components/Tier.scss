@@ -158,3 +158,16 @@
   border-radius: 50px !important;
   border: 1px solid #80c483 !important;
 }
+
+.tier-grid-container {
+  padding: 0px 20px;
+}
+
+.tier-checkbox .top {
+  background: #f9f9f9;
+}
+
+.tier-grid-container .ant-checkbox.ant-checkbox-checked .ant-checkbox-inner {
+  background-color: #1d54b4;
+  border: 2px solid #1d54b4;
+}
