@@ -1,70 +1,54 @@
 import React from "react";
 
 import "./Tier.scss";
-import {Table} from 'antd';
-import FrxDrugGridContainer from "../../../../../shared/FrxGrid/FrxDrugGridContainer";
-import { tierRemoveColumns } from "../../../../../../utils/grid/columns";
-import { TierRemoveMockData } from "../../../../../../mocks/TierMock";
+import { Table } from "antd";
+import Grid from "@material-ui/core/Grid";
 
 class TierRemove extends React.Component {
   render() {
     const dataSource = [
       {
-        key: '1',
-        tierName: 'Tier 0',
+        key: "1",
+        tierName: "Tier 0",
       },
       {
-        key: '2',
-        tierName: 'Tier 1',
+        key: "2",
+        tierName: "Tier 1",
+      },
+      {
+        key: "3",
+        tierName: "Tier 2",
+      },
+      {
+        key: "4",
+        tierName: "Tier 3",
       },
     ];
-    
+
     const columns = [
       {
-        title: 'Tier Name',
-        dataIndex: 'tierName',
-        key: 'tierName',
+        title: "Tier Name",
+        dataIndex: "tierName",
+        key: "tierName",
       },
-      
     ];
     return (
       <>
-        <div className="tier-grid-remove-container">
-          <Table 
-            columns={columns} 
-            dataSource={dataSource}
-            pagination={false}
-            rowSelection={{
-              columnWidth: 20,
-              fixed: true,
-              type: "checkbox",
-            }} />
-          <FrxDrugGridContainer
-            hideClearFilter
-            isPinningEnabled={false}
-            enableSearch={false}
-            enableColumnDrag={false}
-            onSearch={() => {}}
-            fixedColumnKeys={["tierName"]}
-            pagintionPosition="topRight"
-            gridName="TIER REMOVE"
-            enableSettings={false}
-            columns={tierRemoveColumns()}
-            scroll={{ y: 377 }}
-            isFetchingData={false}
-            enableResizingOfColumns={false}
-            data={TierRemoveMockData()}
-            rowSelection={{
-              columnWidth: 20,
-              fixed: true,
-              type: "checkbox",
-            }}
-            hideItemsPerPage
-            hideMultiSort
-            hideResults
-            hidePagination
-            hidePageJumper
-          />
+        <div className="white-bg">
+          <Grid item xs={5}>
+            <div className="tier-grid-remove-container">
+              <Table
+                columns={columns}
+                dataSource={dataSource}
+                pagination={false}
+                rowSelection={{
+                  columnWidth: 20,
+                  fixed: true,
+                  type: "checkbox",
+                }}
+              />
+            </div>
+          </Grid>
         </div>
       </>
     );

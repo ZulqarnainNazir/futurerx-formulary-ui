@@ -125,25 +125,6 @@ export const PaRemoveColumns: () => Column<any>[] = () => {
   ];
 };
 
-export const tierRemoveColumns: () => Column<any>[] = () => {
-  return [
-    {
-      position: 1,
-      sorter: {},
-      textCase: "upper",
-      pixelWidth: 100,
-      key: "tierName",
-      displayTitle: "tier name",
-      isFilterable: false,
-      dataType: "string",
-      filters: textFilters,
-      hidden: false,
-      sortDirections: [],
-    }
-  ]
-
-}
-
 export const NOCMarketingColumns: () => Column<any>[] = () => {
   return [
     {
@@ -160,7 +141,7 @@ export const NOCMarketingColumns: () => Column<any>[] = () => {
       sortDirections: ["ascend", "descend"],
     },
     {
-      position:2,
+      position: 2,
       sorter: {},
       textCase: "upper",
       pixelWidth: 122,
@@ -186,7 +167,7 @@ export const NOCMarketingColumns: () => Column<any>[] = () => {
       sortDirections: ["ascend", "descend"],
     },
     {
-      position:4,
+      position: 4,
       sorter: {},
       textCase: "upper",
       pixelWidth: 163,
@@ -198,9 +179,9 @@ export const NOCMarketingColumns: () => Column<any>[] = () => {
       hidden: false,
       sortDirections: ["ascend", "descend"],
     },
-    
+
     {
-      position:5,
+      position: 5,
       sorter: {},
       textCase: "upper",
       pixelWidth: 242,
@@ -213,7 +194,7 @@ export const NOCMarketingColumns: () => Column<any>[] = () => {
       sortDirections: ["ascend", "descend"],
     },
     {
-      position:6,
+      position: 6,
       sorter: {},
       textCase: "upper",
       pixelWidth: 242,
@@ -225,8 +206,8 @@ export const NOCMarketingColumns: () => Column<any>[] = () => {
       hidden: false,
       sortDirections: ["ascend", "descend"],
     },
-  ]
-}
+  ];
+};
 
 export const addFileMarketingColumns: () => Column<any>[] = () => {
   return [
@@ -234,7 +215,7 @@ export const addFileMarketingColumns: () => Column<any>[] = () => {
       position: 1,
       sorter: {},
       textCase: "upper",
-      pixelWidth: 100 ,
+      pixelWidth: 100,
       key: "templateGroupName",
       displayTitle: "template group name",
       isFilterable: true,
@@ -244,7 +225,7 @@ export const addFileMarketingColumns: () => Column<any>[] = () => {
       sortDirections: ["ascend", "descend"],
     },
     {
-      position:2,
+      position: 2,
       sorter: {},
       textCase: "upper",
       pixelWidth: 122,
@@ -270,7 +251,7 @@ export const addFileMarketingColumns: () => Column<any>[] = () => {
       sortDirections: ["ascend", "descend"],
     },
     {
-      position:4,
+      position: 4,
       sorter: {},
       textCase: "upper",
       pixelWidth: 163,
@@ -282,9 +263,9 @@ export const addFileMarketingColumns: () => Column<any>[] = () => {
       hidden: false,
       sortDirections: ["ascend", "descend"],
     },
-    
+
     {
-      position:5,
+      position: 5,
       sorter: {},
       textCase: "upper",
       pixelWidth: 242,
@@ -296,8 +277,8 @@ export const addFileMarketingColumns: () => Column<any>[] = () => {
       hidden: false,
       sortDirections: ["ascend", "descend"],
     },
-  ]
-}
+  ];
+};
 
 export const marketingColumns: () => Column<any>[] = () => {
   return [
@@ -305,7 +286,7 @@ export const marketingColumns: () => Column<any>[] = () => {
       position: 1,
       sorter: {},
       textCase: "upper",
-      pixelWidth: 100 ,
+      pixelWidth: 100,
       key: "file",
       displayTitle: "file",
       isFilterable: true,
@@ -315,7 +296,7 @@ export const marketingColumns: () => Column<any>[] = () => {
       sortDirections: ["ascend", "descend"],
     },
     {
-      position:2,
+      position: 2,
       sorter: {},
       textCase: "upper",
       pixelWidth: 122,
@@ -341,7 +322,7 @@ export const marketingColumns: () => Column<any>[] = () => {
       sortDirections: ["ascend", "descend"],
     },
     {
-      position:4,
+      position: 4,
       sorter: {},
       textCase: "upper",
       pixelWidth: 163,
@@ -353,9 +334,9 @@ export const marketingColumns: () => Column<any>[] = () => {
       hidden: false,
       sortDirections: ["ascend", "descend"],
     },
-    
+
     {
-      position:5,
+      position: 5,
       sorter: {},
       textCase: "upper",
       pixelWidth: 242,
@@ -367,8 +348,8 @@ export const marketingColumns: () => Column<any>[] = () => {
       hidden: false,
       sortDirections: ["ascend", "descend"],
     },
-  ]
-}
+  ];
+};
 
 export const tierColumns: () => Column<any>[] = () => {
   return [

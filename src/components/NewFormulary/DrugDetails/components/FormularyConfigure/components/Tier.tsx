@@ -122,7 +122,7 @@ class Tier extends React.Component<any, tabsState> {
                 <div className="mb-10">
                   <div className="limited-access">
                     <PanelHeader title="Tier Definition Settings" />
-                    <div className="modify-wrapper white-bg">
+                    <div className="modify-wrapper white-bg tier-modify-panel">
                       <div className="modify-panel">
                         <div className="icon">
                           <span>R</span>
