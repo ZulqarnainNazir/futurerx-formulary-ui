@@ -19,6 +19,44 @@ import RadioButton from '../../../../../shared/Frx-components/radio-button/Radio
 import Groups from './Groups'
 import NewGroup from './NewGroup'
 
+const groupsData = [
+    {
+        id: 1,
+        label: 'Group 1',
+        status: 'warning'
+    },
+    {
+        id: 2,
+        label: 'Group 2',
+        status: 'completed'
+    },
+    {
+        id: 3,
+        label: 'Group 3',
+        status: 'warning'
+    },
+    {
+        id: 4,
+        label: 'Group 4',
+        status: 'selected'
+    },
+    {
+        id: 5,
+        label: 'Group 5',
+        status: 'warning'
+    },
+    {
+        id: 6,
+        label: 'Group 6',
+        status: 'warning'
+    },
+    {
+        id: 7,
+        label: 'Group 7',
+        status: 'warning'
+    },
+]
+
 export default class GPM extends React.Component<any, any>{
     state = {
         activeTabIndex: 0,
@@ -62,6 +100,7 @@ export default class GPM extends React.Component<any, any>{
         return (
             <>
                 <div className="bordered">
+                    
                     <PanelHeader
                         title="STEP THERAPY - Group Description Management" />
                     <div className="inner-container bg-light-grey display-flex">
@@ -100,12 +139,17 @@ export default class GPM extends React.Component<any, any>{
                                         />
                                     </div>
                                     <div className="group-wrapper">
-                                        <Groups title={'Group1'} statusType={1} selectGroup={this.selectGroup}/>
+                                        {
+                                            groupsData.map((group,key) => (
+                                            <Groups key={key} id={group.id} title={group.label} statusType={group.status} selectGroup={this.selectGroup}/>        
+                                            ))    
+                                        }
+                                        {/* <Groups title={'Group1'} statusType={1} selectGroup={this.selectGroup}/>
                                         <Groups title={'Group2'} statusType={2} selectGroup={this.selectGroup}/>
                                         <Groups title={'Group3'} statusType={1} selectGroup={this.selectGroup}/>
                                         <Groups title={'Group4'} statusType={1} selectGroup={this.selectGroup}/>
                                         <Groups title={'Group5'} statusType={1} selectGroup={this.selectGroup}/>
-                                        <Groups title={'Group6'} statusType={1} selectGroup={this.selectGroup}/>
+                                        <Groups title={'Group6'} statusType={1} selectGroup={this.selectGroup}/> */}
                                     </div>
                                 </div>
                         </div>
