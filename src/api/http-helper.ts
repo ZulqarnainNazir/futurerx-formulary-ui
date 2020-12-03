@@ -9,3 +9,4 @@ export default axios.create({
 });
 
 export const BASE_URL = "http://52.45.123.6:9002/api/v1/";
+export const BASE_URL1 = "https://api-dev-config-formulary.futurerx.com/";

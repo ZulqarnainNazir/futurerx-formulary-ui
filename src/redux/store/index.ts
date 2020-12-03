@@ -1,7 +1,14 @@
 import { configureStore, getDefaultMiddleware } from "@reduxjs/toolkit";
 import { memberSummarySlice } from "../slices/member-summary/MemberSummarySlice";
 import { userPrefsSlice } from "../slices/users/UserPrefsSlice";
+import { formularySummarySlice } from "../slices/formulary/formularySummarySlice";
 import  formulary  from '../formulary/Reducer/index'
+import { combineReducers } from 'redux'
+
+
+const reducer = combineReducers({
+  // here we will be adding reducers
+})
 
 const middleware = [
   ...getDefaultMiddleware(),
@@ -10,12 +17,14 @@ const middleware = [
 
 const memberSummaryReducer = memberSummarySlice.reducer;
 const userPrefsReducer = userPrefsSlice.reducer;
+const formularySummaryReducer = formularySummarySlice.reducer;
 
 // The store is configured with the state and the corresponding reducers.
 const store = configureStore({
   reducer: {
     member_summary: memberSummaryReducer,
     user_prefs: userPrefsReducer,
+    formulary2:formularySummaryReducer,
     formulary:formulary
   },
   middleware,

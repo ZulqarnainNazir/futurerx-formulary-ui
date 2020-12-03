@@ -19,17 +19,18 @@ import FrxLoader from "../../../../../shared/FrxLoader/FrxLoader";
 import DrugGrid from '../../DrugGrid';
 import AdvancedSearch from './search/AdvancedSearch';
 import {getData} from '../../../../../../redux/formulary/Actions/index'
+import { getFormularySummary } from "../../../../../../redux/slices/formulary/formularySummaryActionCreation";
 
 
 const mapStateToProps = (state) => {
   return {
-    memberSummary: state
+    formularySummary: state
   };
 };
 
 function mapDispatchToProps(dispatch) {
   return {
-    getData:(a)=>dispatch(getData(a))
+    getFormularySummary:(a)=>dispatch(getFormularySummary(a))
   };
 }
 
@@ -100,7 +101,7 @@ class CB extends React.Component<any, any> {
         activeTabIndex = index;
       }
       if(index === 2){
-        const result = this.props.getData('1')
+        const result = this.props.getFormularySummary('1')
         console.log(result)
       }
       return tab;
