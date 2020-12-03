@@ -22,7 +22,7 @@ class TierRemove extends React.Component {
             gridName="TIER REMOVE"
             enableSettings={false}
             columns={tierRemoveColumns()}
-            scroll={{ x: 0, y: 0 }}
+            scroll={{ y: 377 }}
             isFetchingData={false}
             enableResizingOfColumns={false}
             data={TierRemoveMockData()}
