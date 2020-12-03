@@ -18,7 +18,6 @@ import { getDrugDetailData } from "../../../../../../mocks/DrugGridMock";
 import FrxLoader from "../../../../../shared/FrxLoader/FrxLoader";
 import DrugGrid from '../../DrugGrid';
 import AdvancedSearch from './search/AdvancedSearch';
-import {getData} from '../../../../../../redux/formulary/Actions/index'
 import { getFormularySummary } from "../../../../../../redux/slices/formulary/formularySummaryActionCreation";
 
 
