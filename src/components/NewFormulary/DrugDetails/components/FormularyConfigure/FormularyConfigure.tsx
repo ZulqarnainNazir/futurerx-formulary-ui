@@ -4,6 +4,7 @@ import FrxTabs from "../../../../shared/FrxTabs/FrxTabs";
 import DrugDetails from "./components/DrugDetails";
 import Tier from "./components/Tier";
 import PA from "./components/PA/PA";
+import PaData from './components/PA/PaData';
 import StepTherpayDetails from "./components/StepTherapyData";
 import CategoryClass from "./components/CategoryClass";
 
@@ -57,7 +58,7 @@ export default class FormularyConfigure extends React.Component<
           </div>
         );
       case 2:
-        return <PA />;
+        return <PaData />;
       case 3:
         return (
           <div>
