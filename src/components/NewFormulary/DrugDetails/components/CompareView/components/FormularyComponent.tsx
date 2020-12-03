@@ -45,335 +45,372 @@ export default function ControlledAccordions() {
           <Grid item xs={12}>
             <div className="limited-access">
               <PanelHeader title="SUMMARY OF RXCUI COUNT" />
-              <div>
-                <Accordion
-                defaultExpanded
-                //   expanded={expanded === "panel1"}
-                //   onChange={handleChange("panel1")}
-                >
-                  <AccordionSummary
-                    expandIcon={<ExpandMoreIcon />}
-                    aria-controls="panel1bh-content"
-                    id="panel1bh-header"
-                  >
+              
+            
+              <Grid container>
+                <Grid item xs={3}>
+                <div className="main-container-formulary border-right">
+                   <Grid container>
+                    
+                      <Grid item xs={6}>
+                        <span className="checkbox-text"><i className="fa fa-eye" aria-hidden="true"></i>Show Checkboxes</span>
+                      </Grid>
+                      <Grid item xs={6}>
+                        <span  className="checkbox-text">Collapse All</span>
+                      </Grid>
+                   </Grid>
+                   </div>
+                  <Accordion>
+                    <AccordionSummary
+                      expandIcon={<ExpandMoreIcon />}
+                      aria-controls="panel1a-content"
+                      id="panel1a-header"
+                    >
                     <table>
                      <tr>
                         <th className="tb-tier">TIER</th>
-                        <th>11</th>
                       </tr>
                     </table>
-                  </AccordionSummary>
-                  <AccordionDetails>
+                    </AccordionSummary>
+                    <AccordionDetails>
                     <table className="top-table1">
                       <tr>
                         <td>TIER 1</td>
-                        <td>11</td>
                       </tr>
                       <tr>
                       <td>TIER 2</td>
-                        <td>25</td>
                       </tr>
                       <tr>
                       <td>TIER 3</td>
-                        <td>44</td>
                       </tr>
                       <tr>
                       <td>TIER 1</td>
-                        <td>23</td>
                       </tr>
                     </table>
-                  </AccordionDetails>
-                </Accordion>
+                    </AccordionDetails>
+                  </Accordion>
 
-                <Accordion
-                defaultExpanded
-                //   expanded={expanded === "panel2"}
-                //   onChange={handleChange("panel2")}
-                >
-                  <AccordionSummary
-                    expandIcon={<ExpandMoreIcon />}
-                    aria-controls="panel1bh-content"
-                    id="panel1bh-header"
-                  >
+                  <Accordion
+                     
+                   >
+                    <AccordionSummary
+                      expandIcon={<ExpandMoreIcon />}
+                      aria-controls="panel1a-content"
+                      id="panel1a-header"
+                    >
                     <table>
                      <tr>
-                        <th className="tb-category">CATEGORY/VIEW</th>
-                        <th></th>
+                     <th className="tb-category">CATEGORY/VIEW</th>
                       </tr>
                     </table>
-                  </AccordionSummary>
-                  <AccordionDetails>
+                    </AccordionSummary>
+                    <AccordionDetails>
                     <table className="top-table1">
                       <tr>
-                        <td>TX CATEGORY</td>
-                        <td>25</td>
+                      <td>TX CATEGORY</td>
                       </tr>
                       <tr>
                       <td>TX CLASS</td>
-                        <td>23</td>
                       </tr>
                     </table>
-                  </AccordionDetails>
-                </Accordion>
+                    </AccordionDetails>
+                  </Accordion>
 
-                <Accordion
-                defaultExpanded
-                //   expanded={expanded === "panel2"}
-                //   onChange={handleChange("panel2")}
-                >
-                  <AccordionSummary
-                    expandIcon={<ExpandMoreIcon />}
-                    aria-controls="panel1bh-content"
-                    id="panel1bh-header"
+                  <Accordion
                   >
+                    <AccordionSummary
+                      expandIcon={<ExpandMoreIcon />}
+                      aria-controls="panel1a-content"
+                      id="panel1a-header"
+                    >
                     <table>
                      <tr>
-                        <th className="tb-pa">PRIOR AUTHORIZATION (PA)</th>
-                        <th>77</th>
+                     <th className="tb-pa">PRIOR AUTHORIZATION (PA)</th>
                       </tr>
                     </table>
-                  </AccordionSummary>
-                  <AccordionDetails>
+                    </AccordionSummary>
+                    <AccordionDetails>
                     <table className="top-table1">
                       <tr>
-                        <td>PA TYPE 1</td>
-                        <td>32</td>
+                      <td>PA TYPE 1</td>
                       </tr>
                       <tr>
                       <td>PA TYPE 2</td>
-                        <td>32</td>
                       </tr>
                       <tr>
                       <td>PA TYPE 3</td>
-                        <td>11</td>
                       </tr>
                       <tr>
-                      <td>PA GROUP DESCRIPTION</td>
-                        <td>11</td>
+                      <td>PA TYPE 4</td>
                       </tr>
                     </table>
-                  </AccordionDetails>
-                </Accordion>
+                    </AccordionDetails>
+                  </Accordion>
 
-                <Accordion
-                defaultExpanded
-                //   expanded={expanded === "panel2"}
-                //   onChange={handleChange("panel2")}
-                >
-                  <AccordionSummary
-                    expandIcon={<ExpandMoreIcon />}
-                    aria-controls="panel1bh-content"
-                    id="panel1bh-header"
-                  >
+                  <Accordion>
+                    <AccordionSummary
+                      expandIcon={<ExpandMoreIcon />}
+                      aria-controls="panel1a-content"
+                      id="panel1a-header"
+                    >
                     <table>
                      <tr>
-                        <th className="tb-st">STEP THERAPY (ST)</th>
-                        <th>31</th>
+                     <th className="tb-st">STEP THERAPY (ST)</th>
                       </tr>
                     </table>
-                  </AccordionSummary>
-                  <AccordionDetails>
+                    </AccordionSummary>
+                    <AccordionDetails>
                     <table className="top-table1">
                       <tr>
-                        <td>ST TYPE 1</td>
-                        <td>19</td>
+                      <td>ST TYPE 1</td>
                       </tr>
                       <tr>
                       <td>ST TYPE 2</td>
-                        <td>31</td>
                       </tr>
                       <tr>
                       <td>ST TYPE 3</td>
-                        <td>11</td>
                       </tr>
                       <tr>
                       <td>ST TYPE 4</td>
-                        <td>17</td>
                       </tr>
                     </table>
-                  </AccordionDetails>
-                </Accordion>
+                    </AccordionDetails>
+                  </Accordion>
 
-                <Accordion
-                defaultExpanded
-                >
-                  <AccordionSummary
-                    expandIcon={<ExpandMoreIcon />}
-                    aria-controls="panel1bh-content"
-                    id="panel1bh-header"
-                  >
+                  <Accordion>
+                    <AccordionSummary
+                      expandIcon={<ExpandMoreIcon />}
+                      aria-controls="panel1a-content"
+                      id="panel1a-header"
+                    >
                     <table>
                      <tr>
-                        <th className="tb-ql">QUANTITY LIMITS (QL)</th>
-                        <th>94</th>
+                     <th className="tb-ql">QUANTITY LIMITS (QL)</th>
                       </tr>
                     </table>
-                  </AccordionSummary>
-                  <AccordionDetails>
+                    </AccordionSummary>
+                    <AccordionDetails>
                     <table className="top-table1">
                       <tr>
-                        <td>QL TYPE  1</td>
-                        <td>94</td>
+                      <td>QL TYPE 1</td>
                       </tr>
                       <tr>
-                      <td>QL TYPE 2</td>
-                        <td>64</td>
+                      <td>QL TYPE 1</td>
+                      </tr>
+                    
+                    </table>
+                    </AccordionDetails>
+                  </Accordion>
+
+                  <Accordion>
+                    <AccordionSummary
+                      expandIcon={<ExpandMoreIcon />}
+                      aria-controls="panel1a-content"
+                      id="panel1a-header"
+                    >
+                    <table>
+                     <tr>
+                     <th className="tb-add">ADDITIONAL DEMONSTRATION DRUG (ADD)</th>
+                      </tr>
+                    </table>
+                    </AccordionSummary>
+                    <AccordionDetails>
+                    <table className="top-table1">
+                      <tr>
+                     <td>MMP QL</td>
+                      </tr>
+                      <tr>
+                      <td>MMP CAPPED BENEFITS</td>
+                      </tr>
+                      <tr>
+                      <td>MMPA</td>
                       </tr>
                       <tr>
                       <td>TIER 1</td>
-                        <td>11</td>
-                      </tr>
-                      <tr>
-                      <td>TIER 1</td>
-                        <td>11</td>
                       </tr>
                     </table>
-                  </AccordionDetails>
-                </Accordion>
+                    </AccordionDetails>
+                  </Accordion>
 
-                <Accordion
-                //   expanded={expanded === "panel2"}
-                //   onChange={handleChange("panel2")}
-                >
-                  <AccordionSummary
-                    expandIcon={<ExpandMoreIcon />}
-                    aria-controls="panel1bh-content"
-                    id="panel1bh-header"
-                  >
+                  <Accordion>
+                    <AccordionSummary
+                      expandIcon={<ExpandMoreIcon />}
+                      aria-controls="panel1a-content"
+                      id="panel1a-header"
+                    >
                     <table>
                      <tr>
-                        <th className="tb-add">ADDITIONAL DEMONSTRATION DRUG (ADD)</th>
-                        <th>94</th>
+                     <th className="tb-dd">DRUG DETAILS</th>
                       </tr>
                     </table>
-                  </AccordionSummary>
-                  <AccordionDetails>
-                    <table className="top-table1">
-                      <tr>
-                        <td>MMP QL</td>
-                        <td>94</td>
-                      </tr>
-                      <tr>
-                      <td>MMP CAPPED BENEFIT</td>
-                        <td>11</td>
-                      </tr>
-                      <tr>
-                      <td>MMP PA</td>
-                        <td>11</td>
-                      </tr>
-                      <tr>
-                      <td>MMP</td>
-                        <td>11</td>
-                      </tr>
-                      <tr>
-                      <td>MMP</td>
-                        <td>11</td>
-                      </tr>
-                    </table>
-                  </AccordionDetails>
-                </Accordion>
-                <Accordion
-                //   expanded={expanded === "panel2"}
-                //   onChange={handleChange("panel2")}
-                >
-                  <AccordionSummary
-                    expandIcon={<ExpandMoreIcon />}
-                    aria-controls="panel1bh-content"
-                    id="panel1bh-header"
-                  >
-                    <table>
-                     <tr>
-                        <th className="tb-dd">DRUG DETAILS</th>
-                        <th></th>
-                      </tr>
-                    </table>
-                  </AccordionSummary>
-                  <AccordionDetails>
+                    </AccordionSummary>
+                    <AccordionDetails>
                     <table className="top-table1">
                       <tr>
                         <td>TIER 1</td>
-                        <td>11</td>
+                      </tr>
+                      <tr>
+                      <td>TIER 2</td>
+                      </tr>
+                      <tr>
+                      <td>TIER 3</td>
                       </tr>
                       <tr>
                       <td>TIER 1</td>
-                        <td>11</td>
                       </tr>
                     </table>
-                  </AccordionDetails>
-                </Accordion>
-                <Accordion
-                >
-                  <AccordionSummary
-                    expandIcon={<ExpandMoreIcon />}
-                    aria-controls="panel1bh-content"
-                    id="panel1bh-header"
-                  >
+                    </AccordionDetails>
+                  </Accordion>
+
+                  <Accordion
+                  defaultExpanded>
+                    <AccordionSummary
+                      expandIcon={<ExpandMoreIcon />}
+                      aria-controls="panel1a-content"
+                      id="panel1a-header"
+                    >
                     <table>
                      <tr>
-                        <th className="tb-otc">OVER THE COUNTER (OTC)</th>
-                        <th>11</th>
+                     <th className="tb-otc">OVER THE COUNTER (OTC)</th>
                       </tr>
                     </table>
-                  </AccordionSummary>
-                  <AccordionDetails>
-                    <table className="top-table1">
-                      <tr>
-                        <td>OTC GERNERAL 1</td>
-                        <td>94</td>
-                      </tr>
-                      <tr>
-                      <td>TIER 1</td>
-                        <td>11</td>
-                      </tr>
-                      <tr>
-                      <td>TIER 1</td>
-                        <td>11</td>
-                      </tr>
-                      <tr>
-                      <td>TIER 1</td>
-                        <td>11</td>
-                      </tr>
-                    </table>
-                  </AccordionDetails>
-                </Accordion>
-                <Accordion
-                //   expanded={expanded === "panel2"}
-                //   onChange={handleChange("panel2")}
-                >
-                  <AccordionSummary
-                    expandIcon={<ExpandMoreIcon />}
-                    aria-controls="panel1bh-content"
-                    id="panel1bh-header"
-                  >
-                    <table>
-                     <tr>
-                        <th className="tb-ed">EXCLUDED DRUG</th>
-                        <th></th>
-                      </tr>
-                    </table>
-                  </AccordionSummary>
-                  <AccordionDetails>
+                    </AccordionSummary>
+                    <AccordionDetails>
                     <table className="top-table1">
                       <tr>
                         <td>TIER 1</td>
-                        <td>11</td>
+                      </tr>
+                      <tr>
+                      <td>TIER 2</td>
+                      </tr>
+                      <tr>
+                      <td>TIER 3</td>
                       </tr>
                       <tr>
                       <td>TIER 1</td>
-                        <td>11</td>
-                      </tr>
-                      <tr>
-                      <td>TIER 1</td>
-                        <td>11</td>
-                      </tr>
-                      <tr>
-                      <td>TIER 1</td>
-                        <td>11</td>
                       </tr>
                     </table>
-                  </AccordionDetails>
-                </Accordion>
-              </div>
+                    </AccordionDetails>
+                  </Accordion>
+
+
+                </Grid>
+
+                <Grid item xs={9}>
+
+                  <Grid container>
+                    <div className="main-container-formulary bg-formulary">
+                    <Grid item xs={12}>
+                      <p className="base-formulary">BASE FORMULARY</p>
+                    </Grid>
+                    </div>
+
+                  </Grid>
+
+                  <div>
+                <table className="custom-table">
+                      <tr>  
+                        <td>11</td>
+                      </tr>
+                      <tr>
+                        <td>140</td>
+                      </tr>
+                      <tr>
+                        <td>44</td>
+                      </tr>
+                      <tr>
+                        <td>46</td>
+                      </tr>
+                    </table>
+                  </div>
+
+                  <div>
+                <table className="custom-table">
+                      <tr>  
+                        <td>11</td>
+                      </tr>
+                      <tr>
+                        <td>25</td>
+                      </tr>
+                      <tr>
+                        <td>44</td>
+                      </tr>
+                      <tr>
+                        <td>23</td>
+                      </tr>
+                    </table>
+                  </div>
+
+                  <div>
+                <table className="custom-table">
+                      <tr>  
+                        <td>11</td>
+                      </tr>
+                      <tr>
+                        <td>25</td>
+                      </tr>
+                      <tr>
+                        <td>44</td>
+                      </tr>
+                      <tr>
+                        <td>23</td>
+                      </tr>
+
+                      <tr>  
+                        <td>11</td>
+                      </tr>
+                      <tr>
+                        <td>94</td>
+                      </tr>
+                      <tr>
+                        <td>32</td>
+                      </tr>
+                      <tr>
+                        <td>32</td>
+                      </tr>
+
+                      <tr>  
+                        <td>22</td>
+                      </tr>
+                      <tr>
+                        <td>25</td>
+                      </tr>
+                      <tr>
+                        <td>44</td>
+                      </tr>
+                      <tr>
+                        <td>23</td>
+                      </tr>
+
+                      <tr>  
+                        <td>11</td>
+                      </tr>
+                      <tr>
+                        <td>25</td>
+                      </tr>
+                      <tr>
+                        <td>44</td>
+                      </tr>
+                      <tr>
+                        <td>23</td>
+                      </tr>
+
+                      <tr>  
+                        <td>11</td>
+                      </tr>
+                      <tr>
+                        <td>25</td>
+                      </tr>
+                      <tr>
+                        <td>44</td>
+                      </tr>
+                      <tr>
+                        <td>23</td>
+                      </tr>
+                    </table>
+                  </div>
+                </Grid>
+              </Grid>
             </div>
           </Grid>
         </Grid>
