@@ -35,7 +35,10 @@ class BreadCrumPanel extends Component<Props, State> {
     if (this.props.collaps) {
       this.props.isCollalpseTointitialState();
     } else {
-      this.setState({arrowIconState: !this.state.arrowIconState});
+      this.setState({
+        arrowIconState: !this.state.arrowIconState,
+        checked: !this.state.checked,
+      });
     }
     // this.setState({arrowIconState: !this.state.arrowIconState});
   };
@@ -65,7 +68,9 @@ class BreadCrumPanel extends Component<Props, State> {
     // console.log("[temp:" + temp);
     const showChild = this.props.collaps
       ? !this.props.collaps
-      : this.state.arrowIconState;
+      : this.state.arrowIconState || this.state.checked;
+
+    console.log("[showChild]: ", showChild);
 
     return (
       <div className="BreadCrumPanel" id={this.props.id ? this.props.id : ""}>
@@ -177,7 +182,7 @@ class BreadCrumPanel extends Component<Props, State> {
           </Grid>
         </Grid>
         {/* <div> */}
-        {showChild || this.state.checked
+        {showChild
           ? // temp
             this.props.children
           : null}

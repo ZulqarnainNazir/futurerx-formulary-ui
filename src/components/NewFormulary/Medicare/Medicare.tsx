@@ -1,23 +1,23 @@
 import React from "react";
-import { TabInfo } from "../../../models/tab.model";
+import {TabInfo} from "../../../models/tab.model";
 import FrxMiniTabs from "../../shared/FrxMiniTabs/FrxMiniTabs";
-import { formularyDetailsGridColumns } from "../../../utils/grid/columns";
-import { getFormularyDetails } from "../../../mocks/formulary/formularyDetails";
+import {formularyDetailsGridColumns} from "../../../utils/grid/columns";
+import {getFormularyDetails} from "../../../mocks/formulary/formularyDetails";
 import FrxGridContainer from "../../shared/FrxGrid/FrxDrugGridContainer";
-import FormularyExpandedDetails from '../../FormularyExpandedDetails/FormularyExpandedDetails';
-import Alternatives from '../Alternatives/Alternatives';
-
+import FormularyExpandedDetails from "../../FormularyExpandedDetails/FormularyExpandedDetails";
+import Alternatives from "../Alternatives/Alternatives";
+import MaintenanceMassUpdate from "../MassMaintenance/MaintenanceMassUpdate/MaintenanceMassUpdate";
 interface State {
   miniTabs: Array<TabInfo>;
   activeMiniTabIndex: number;
 }
 
 const miniTabs = [
-  { id: 1, text: "Formulary" },
-  { id: 2, text: "Mass Maintenance" },
-  { id: 3, text: "Alternatives" },
-  { id: 4, text: "Decision Tree" },
-  { id: 5, text: "Group Description Management" },
+  {id: 1, text: "Formulary"},
+  {id: 2, text: "Mass Maintenance"},
+  {id: 3, text: "Alternatives"},
+  {id: 4, text: "Decision Tree"},
+  {id: 5, text: "Group Description Management"},
 ];
 
 export default class Medicare extends React.Component<any, any> {
@@ -34,7 +34,7 @@ export default class Medicare extends React.Component<any, any> {
       }
       return tab;
     });
-    this.setState({ tabs, activeMiniTabIndex });
+    this.setState({tabs, activeMiniTabIndex});
   };
   renderActiveMiniTabContent = () => {
     const miniTabIndex = this.state.activeMiniTabIndex;
@@ -43,22 +43,22 @@ export default class Medicare extends React.Component<any, any> {
         return (
           <div>
             <FrxGridContainer
-                enableSearch={false}
-                enableColumnDrag
-                onSearch={()=>{}}
-                fixedColumnKeys={["claimId"]}
-                pagintionPosition="topRight"
-                gridName="CLAIMS"
-                enableSettings
-                columns={formularyDetailsGridColumns()}
-                scroll={{ x: 3800, y: 377 }}
-                isFetchingData={false}
-                enableResizingOfColumns
-                data={getFormularyDetails()}
-                expandable={{
-                    isExpandable: true,
-                    expandedRowRender: props => <FormularyExpandedDetails/>
-                }}
+              enableSearch={false}
+              enableColumnDrag
+              onSearch={() => {}}
+              fixedColumnKeys={["claimId"]}
+              pagintionPosition="topRight"
+              gridName="CLAIMS"
+              enableSettings
+              columns={formularyDetailsGridColumns()}
+              scroll={{x: 3800, y: 377}}
+              isFetchingData={false}
+              enableResizingOfColumns
+              data={getFormularyDetails()}
+              expandable={{
+                isExpandable: true,
+                expandedRowRender: (props) => <FormularyExpandedDetails />,
+              }}
             />
             <div
               className="drug-detail"
@@ -71,9 +71,10 @@ export default class Medicare extends React.Component<any, any> {
       case 1:
         return (
           <div>
-            <div onClick={this.props.onMassMaintenanceCLick}>
+            <MaintenanceMassUpdate onClickAddNew={this.props.onMassMaintenanceCLick}/>
+            {/* <div onClick={this.props.onMassMaintenanceCLick}>
               Mass Maintenance
-            </div>
+            </div> */}
           </div>
         );
       case 2:
