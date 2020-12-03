@@ -163,6 +163,7 @@ export default class MaterialSearchTool extends React.Component<any, any> {
                       className="frx-claims-result-root"
                       open= {this.state.materialPopupInd}
                       positiveActionText="Upload Icon"
+                      title="available icons"
                       ulpoadIconBtnText="Select"
                       showCloseIcon={true}
                       showActions={false}

@@ -37,7 +37,7 @@ const styles = (theme: Theme) => ({
     render() {
       const {
         open,
-        title="available icons",
+        title,
         children,
         handleClose,
         handleAction,
@@ -56,7 +56,7 @@ const styles = (theme: Theme) => ({
           disableBackdropClick
           disableEscapeKeyDown
           open={open}
-          className="dialog-popup material-icon-popup"
+          className="material-icon-popup"
           onClose={handleClose}
           aria-labelledby="simple-modal-title"
           aria-describedby="simple-modal-description"
