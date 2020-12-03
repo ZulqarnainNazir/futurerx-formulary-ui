@@ -29,7 +29,7 @@ export const categoryClassColumns: () => Column<any>[] = () => {
       position: 1,
       sorter: {},
       textCase: "upper",
-      pixelWidth: 100 ,
+      pixelWidth: 100,
       key: "overrideCategory",
       displayTitle: "override category",
       isFilterable: true,
@@ -39,7 +39,7 @@ export const categoryClassColumns: () => Column<any>[] = () => {
       sortDirections: ["ascend", "descend"],
     },
     {
-      position:2,
+      position: 2,
       sorter: {},
       textCase: "upper",
       pixelWidth: 100,
@@ -65,7 +65,7 @@ export const categoryClassColumns: () => Column<any>[] = () => {
       sortDirections: ["ascend", "descend"],
     },
     {
-      position:4,
+      position: 4,
       sorter: {},
       textCase: "upper",
       pixelWidth: 100,
@@ -77,9 +77,9 @@ export const categoryClassColumns: () => Column<any>[] = () => {
       hidden: false,
       sortDirections: ["ascend", "descend"],
     },
-    
+
     {
-      position:5,
+      position: 5,
       sorter: {},
       textCase: "upper",
       pixelWidth: 100,
@@ -92,7 +92,7 @@ export const categoryClassColumns: () => Column<any>[] = () => {
       sortDirections: ["ascend", "descend"],
     },
     {
-      position:6,
+      position: 6,
       sorter: {},
       textCase: "upper",
       pixelWidth: 100,
@@ -104,9 +104,252 @@ export const categoryClassColumns: () => Column<any>[] = () => {
       hidden: false,
       sortDirections: ["ascend", "descend"],
     },
-    
-  ]
-}
+  ];
+};
+
+export const PaRemoveColumns: () => Column<any>[] = () => {
+  return [
+    {
+      position: 1,
+      sorter: {},
+      textCase: "upper",
+      pixelWidth: 100,
+      key: "paGroupDescription",
+      displayTitle: "pa group description",
+      isFilterable: true,
+      dataType: "string",
+      filters: textFilters,
+      hidden: false,
+      sortDirections: ["ascend", "descend"],
+    },
+  ];
+};
+
+export const NOCMarketingColumns: () => Column<any>[] = () => {
+  return [
+    {
+      position: 1,
+      sorter: {},
+      textCase: "upper",
+      pixelWidth: 100,
+      key: "drugName",
+      displayTitle: "drug name",
+      isFilterable: true,
+      dataType: "string",
+      filters: textFilters,
+      hidden: false,
+      sortDirections: ["ascend", "descend"],
+    },
+    {
+      position: 2,
+      sorter: {},
+      textCase: "upper",
+      pixelWidth: 122,
+      key: "descriptionOfChange",
+      displayTitle: "Description of change",
+      isFilterable: true,
+      dataType: "string",
+      filters: textFilters,
+      hidden: false,
+      sortDirections: ["ascend", "descend"],
+    },
+    {
+      position: 3,
+      sorter: {},
+      textCase: "upper",
+      pixelWidth: 137,
+      key: "reasonforchange",
+      displayTitle: "Reason for Change",
+      isFilterable: true,
+      dataType: "string",
+      filters: textFilters,
+      hidden: false,
+      sortDirections: ["ascend", "descend"],
+    },
+    {
+      position: 4,
+      sorter: {},
+      textCase: "upper",
+      pixelWidth: 163,
+      key: "changeType",
+      displayTitle: "Change Type",
+      isFilterable: true,
+      dataType: "string",
+      filters: textFilters,
+      hidden: false,
+      sortDirections: ["ascend", "descend"],
+    },
+
+    {
+      position: 5,
+      sorter: {},
+      textCase: "upper",
+      pixelWidth: 242,
+      key: "alternativeDrugName",
+      displayTitle: "Alternative Drug Name",
+      isFilterable: true,
+      dataType: "string",
+      filters: textFilters,
+      hidden: false,
+      sortDirections: ["ascend", "descend"],
+    },
+    {
+      position: 6,
+      sorter: {},
+      textCase: "upper",
+      pixelWidth: 242,
+      key: "costShareType",
+      displayTitle: "Cost share type",
+      isFilterable: true,
+      dataType: "string",
+      filters: textFilters,
+      hidden: false,
+      sortDirections: ["ascend", "descend"],
+    },
+  ];
+};
+
+export const addFileMarketingColumns: () => Column<any>[] = () => {
+  return [
+    {
+      position: 1,
+      sorter: {},
+      textCase: "upper",
+      pixelWidth: 100,
+      key: "templateGroupName",
+      displayTitle: "template group name",
+      isFilterable: true,
+      dataType: "string",
+      filters: textFilters,
+      hidden: false,
+      sortDirections: ["ascend", "descend"],
+    },
+    {
+      position: 2,
+      sorter: {},
+      textCase: "upper",
+      pixelWidth: 122,
+      key: "deliveryMethod",
+      displayTitle: "Delivery Method",
+      isFilterable: true,
+      dataType: "string",
+      filters: textFilters,
+      hidden: false,
+      sortDirections: ["ascend", "descend"],
+    },
+    {
+      position: 3,
+      sorter: {},
+      textCase: "upper",
+      pixelWidth: 137,
+      key: "tags",
+      displayTitle: "tags",
+      isFilterable: true,
+      dataType: "string",
+      filters: textFilters,
+      hidden: false,
+      sortDirections: ["ascend", "descend"],
+    },
+    {
+      position: 4,
+      sorter: {},
+      textCase: "upper",
+      pixelWidth: 163,
+      key: "targetAudience",
+      displayTitle: "target Audience",
+      isFilterable: true,
+      dataType: "string",
+      filters: textFilters,
+      hidden: false,
+      sortDirections: ["ascend", "descend"],
+    },
+
+    {
+      position: 5,
+      sorter: {},
+      textCase: "upper",
+      pixelWidth: 242,
+      key: "numberOfTemplate",
+      displayTitle: "Number of Templates",
+      isFilterable: true,
+      dataType: "string",
+      filters: textFilters,
+      hidden: false,
+      sortDirections: ["ascend", "descend"],
+    },
+  ];
+};
+
+export const marketingColumns: () => Column<any>[] = () => {
+  return [
+    {
+      position: 1,
+      sorter: {},
+      textCase: "upper",
+      pixelWidth: 100,
+      key: "file",
+      displayTitle: "file",
+      isFilterable: true,
+      dataType: "string",
+      filters: textFilters,
+      hidden: false,
+      sortDirections: ["ascend", "descend"],
+    },
+    {
+      position: 2,
+      sorter: {},
+      textCase: "upper",
+      pixelWidth: 122,
+      key: "language",
+      displayTitle: "language",
+      isFilterable: true,
+      dataType: "string",
+      filters: textFilters,
+      hidden: false,
+      sortDirections: ["ascend", "descend"],
+    },
+    {
+      position: 3,
+      sorter: {},
+      textCase: "upper",
+      pixelWidth: 137,
+      key: "template",
+      displayTitle: "template",
+      isFilterable: true,
+      dataType: "string",
+      filters: textFilters,
+      hidden: false,
+      sortDirections: ["ascend", "descend"],
+    },
+    {
+      position: 4,
+      sorter: {},
+      textCase: "upper",
+      pixelWidth: 163,
+      key: "liveUrlPublishDateAndTime",
+      displayTitle: "Live Url publish date and time",
+      isFilterable: true,
+      dataType: "string",
+      filters: textFilters,
+      hidden: false,
+      sortDirections: ["ascend", "descend"],
+    },
+
+    {
+      position: 5,
+      sorter: {},
+      textCase: "upper",
+      pixelWidth: 242,
+      key: "archiveUrlPublishDateAndTime",
+      displayTitle: "Archive Url publish date and time",
+      isFilterable: true,
+      dataType: "string",
+      filters: textFilters,
+      hidden: false,
+      sortDirections: ["ascend", "descend"],
+    },
+  ];
+};
 
 export const tierColumns: () => Column<any>[] = () => {
   return [
@@ -114,7 +357,7 @@ export const tierColumns: () => Column<any>[] = () => {
       position: 1,
       sorter: {},
       textCase: "upper",
-      pixelWidth: 100 ,
+      pixelWidth: 100,
       key: "tier",
       displayTitle: "tier",
       isFilterable: true,
@@ -124,7 +367,7 @@ export const tierColumns: () => Column<any>[] = () => {
       sortDirections: ["ascend", "descend"],
     },
     {
-      position:2,
+      position: 2,
       sorter: {},
       textCase: "upper",
       pixelWidth: 122,
@@ -150,7 +393,7 @@ export const tierColumns: () => Column<any>[] = () => {
       sortDirections: ["ascend", "descend"],
     },
     {
-      position:4,
+      position: 4,
       sorter: {},
       textCase: "upper",
       pixelWidth: 163,
@@ -162,12 +405,12 @@ export const tierColumns: () => Column<any>[] = () => {
       hidden: false,
       sortDirections: ["ascend", "descend"],
     },
-    
+
     {
-      position:5,
+      position: 5,
       sorter: {},
       textCase: "upper",
-      pixelWidth: 242,
+      pixelWidth: 100,
       key: "ndc",
       displayTitle: "NDC",
       isFilterable: true,
@@ -177,7 +420,7 @@ export const tierColumns: () => Column<any>[] = () => {
       sortDirections: ["ascend", "descend"],
     },
     {
-      position:6,
+      position: 6,
       sorter: {},
       textCase: "upper",
       pixelWidth: 109,
@@ -190,7 +433,7 @@ export const tierColumns: () => Column<any>[] = () => {
       sortDirections: ["ascend", "descend"],
     },
     {
-      position:7,
+      position: 7,
       sorter: {},
       textCase: "upper",
       pixelWidth: 109,
@@ -203,7 +446,7 @@ export const tierColumns: () => Column<any>[] = () => {
       sortDirections: ["ascend", "descend"],
     },
     {
-      position:8,
+      position: 8,
       sorter: {},
       textCase: "upper",
       pixelWidth: 109,
@@ -215,8 +458,8 @@ export const tierColumns: () => Column<any>[] = () => {
       hidden: false,
       sortDirections: ["ascend", "descend"],
     },
-  ]
-}
+  ];
+};
 
 export const setupHmpsColumns: () => Column<any>[] = () => {
   return [
@@ -315,7 +558,7 @@ export const formularyDetailsGridColumns: (data) => Column<any>[] = (data) => {
       key: "formularyName",
       displayTitle: "formulary name",
       customContent: (props) => (
-        <div className="input-link" onClick={()=> data.onFormularyNameClick()}>
+        <div className="input-link" onClick={() => data.onFormularyNameClick()}>
           {props.data.formularyName}
         </div>
       ),
@@ -375,9 +618,7 @@ export const formularyDetailsGridColumns: (data) => Column<any>[] = (data) => {
       key: "step",
       displayTitle: "step",
       customContent: (props) => (
-        <div className="formulary-step">
-          {props.data.step}
-        </div>
+        <div className="formulary-step">{props.data.step}</div>
       ),
       isFilterable: true,
       dataType: "string",
