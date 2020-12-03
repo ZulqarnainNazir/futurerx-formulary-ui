@@ -28,7 +28,7 @@ const costShareDetails = (props:any) => {
                                         ) : (
                                             <span className="prefix">$</span>  
                                         )}
-                                        <DropDown options={['Copay','Co-Insurance']} value={e.costVal}/>
+                                        <input type="text" placeholder={e.costVal}/>
                                     </div>
                                 </div>
                             )

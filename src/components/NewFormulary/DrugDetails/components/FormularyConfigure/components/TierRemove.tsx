@@ -48,18 +48,10 @@ class Tier extends React.Component<any, tabsState> {
       "VALIDATION",
     ],
     panelGridValue: [
-      [
-        "img",
-        "Tier 0",
-        "OTC",
-        "2",
-        "4",
-        "2",
-        <img src="../../../../../../../assets/img/checkbox.png" />,
-      ],
-      ["img", "Tier 1", "OTC", "2", "4", "2", ""],
-      ["img", "Tier 2", "OTC", "2", "4", "2", ""],
-      ["img", "Tier 3", "OTC", "2", "4", "2", ""],
+      ["img", "Tier 0", "OTC", "2", "4", "2", "checkbox"],
+      ["img", "Tier 1", "OTC", "2", "4", "2", "checkbox"],
+      ["img", "Tier 2", "OTC", "2", "4", "2", "checkbox"],
+      ["img", "Tier 3", "OTC", "2", "4", "2", "checkbox"],
     ],
   };
 
@@ -74,7 +66,6 @@ class Tier extends React.Component<any, tabsState> {
     });
     this.setState({ tabs, activeTabIndex });
   };
-  
   renderTabContent = () => {
     const activeTabIndex = this.state.activeTabIndex;
     switch (activeTabIndex) {
@@ -114,38 +105,12 @@ class Tier extends React.Component<any, tabsState> {
                       title="Tier Definition"
                       tooltip="This section allows for Addition or Removal of product only. To define coverage for all Medicare covered and/or Supplemental products, go to Drug Details"
                     />
-                    <div className="inner-container tier-checkbox white-bg">
+                    <div className="inner-container tier-checkbox">
                       <PanelGrid
                         panelGridTitle={this.state.panelGridTitle}
                         panelGridValue={this.state.panelGridValue}
                       />
                     </div>
-                  </div>
-                </div>
-                <div className="mb-10">
-                  <div className="limited-access">
-                    <PanelHeader title="Tier Definition Settings" />
-                    <div className="modify-wrapper white-bg">
-                      <div className="modify-panel">
-                        <div className="icon">
-                          <span>R</span>
-                        </div>
-                        <div className="switch-box">
-                          <CustomizedSwitches
-                            leftTitle="Modify"
-                            rightTitle="view all"
-                          />
-                        </div>
-                        <div className="mini-tabs">
-                          <FrxMiniTabs
-                            tabList={this.state.tabs}
-                            activeTabIndex={this.state.activeTabIndex}
-                            onClickTab={this.onClickTab}
-                          />
-                        </div>
-                      </div>
-                    </div>
-                    <div className="tab-content">{this.renderTabContent()}</div>
                   </div>
                 </div>
               </Grid>
