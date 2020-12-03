@@ -34,7 +34,9 @@ class FormularyGrid extends React.Component<any, any> {
       bordered,
       data,
       rowSelectionChange,
-      ...props
+      enableSettings,
+      isPinningEnabled,
+      scroll,
     } = this.props;
 
     return (
@@ -48,18 +50,18 @@ class FormularyGrid extends React.Component<any, any> {
             fixedColumnKeys={[]}
             pagintionPosition="topRight"
             gridName="CLAIMS"
-            enableSettings={true}
+            enableSettings={enableSettings ? enableSettings : false}
             isFetchingData={this.state.isFetchingData}
             columns={columns}
-            // isRowSelectionEnabled={true}
+            isRowSelectionEnabled={true}
             // rowSelectionChange={rowSelectionChange}
-            // isRowSelectorCheckbox={true}
-            isPinningEnabled={false}
-            // rowSelection={{
-            //   fixed: false,
-            //   type: "checkbox",
-            // }}
-            scroll={{ x: 980, y: 450 }}
+            isRowSelectorCheckbox={true}
+            isPinningEnabled={isPinningEnabled ? isPinningEnabled : false}
+            rowSelection={{
+              fixed: true,
+              type: "checkbox",
+            }}
+            scroll={Boolean(scroll) ? scroll : { x: 980, y: 450 }}
             enableResizingOfColumns={false}
             data={data}
           />

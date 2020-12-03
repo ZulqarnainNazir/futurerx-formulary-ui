@@ -31,9 +31,9 @@ class StepTherapy extends React.Component<any, tabsState> {
       "REMOVED DRUGS",
     ],
     panelGridValue: [
-      ["ST Type 1", "2", "4", "2", "2", "2"],
-      ["ST Type 2", "3", "4", "1", "1", "1"],
-      ["ST Type 3", "4", "4", "2", "2", "Tick"],
+      ["ST Type 1", "2", "4", "2", "2", "2","2"],
+      ["ST Type 2", "3", "4", "1", "1", "1","1"],
+      ["ST Type 3", "4", "4", "2", "2", "2","2"],
     ],
   };
   onClickMiniTab = (num: number) => {
@@ -48,15 +48,15 @@ class StepTherapy extends React.Component<any, tabsState> {
           <div className="drug-detail-la-inner">
             <Grid container spacing={2}>
               <Grid item xs={12}>
-                <div className="limited-access">
-                  <PanelHeader
-                    title="STEP THERAPY - DRUG SELECTION"
-                  />
-                  <div className="inner-container">
-                    <PanelGrid
-                      panelGridTitle={this.state.panelGridTitle}
-                      panelGridValue={this.state.panelGridValue}
-                    />
+              <div className="mb-10">
+                  <div className="limited-access">
+                    <PanelHeader title="Prior Authorization - DRUG SELECTION" />
+                    <div className="inner-container">
+                      <PanelGrid
+                        panelGridTitle={this.state.panelGridTitle}
+                        panelGridValue={this.state.panelGridValue}
+                      />
+                    </div>
                   </div>
                 </div>
                 <div>

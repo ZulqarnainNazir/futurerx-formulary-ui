@@ -4,8 +4,18 @@ import CustomizedSwitches from './CustomizedSwitches';
 import { TabInfo } from "../../../../../../models/tab.model";
 import FrxMiniTabs from "../../../../../shared/FrxMiniTabs/FrxMiniTabs";
 import STF from './STF';
+import STRemove from './StepTherpyRemove'
 import FrxGrid from '../../../../../shared/FrxGrid/FrxGrid'
+import { getClaimsGridData } from "../../../../../../mocks/grid/claims-mock";
 import { getAuditMockColumns } from "../../../../../../utils/grid/columns";
+import { getClaimsSearchData } from "../../../../../../mocks/search/claims-search-mock";
+import {
+    claimsGridColumnsForRejectedAndTotal,
+    _claimsGridColumns,
+    _grievancesGridColumns,
+    _pacases_initial,
+    _testClaimsGridColumns,
+  } from "../../../../../../utils/grid/columns";
 
 interface MemberAuditPopupState {
     activeMiniTabIndex: number;
@@ -59,23 +69,25 @@ export default class STS extends React.Component<any,any>{
             return <STF />;
 
         case 2:
-            return <FrxGrid
-            showSettingsMenu={false}
-            enableColumnDrag={false}
-            pagintionPosition="topRight"
-            columns={columns}
-            data={this.state.filteredData}
-            gridName={"Audit"}
-            fixedColumnKeys={['record_type']}
-            hideClearFilter={true}
-            hideItemsPerPage={true}
-            hideMultiSort={true}
-            hidePageJumper={true}
-            hideResults={true}
-            scroll={{ x: 300, y: 400 }}
-            enableSettings={false}
-            hidePagination={true}
-        />
+        //     return <FrxGrid
+        //     showSettingsMenu={false}
+        //     enableColumnDrag={false}
+        //     pagintionPosition="topRight"
+        //     columns={columns}
+        //     data={this.state.filteredData}
+        //     gridName={"Audit"}
+        //     fixedColumnKeys={['record_type']}
+        //     hideClearFilter={true}
+        //     hideItemsPerPage={true}
+        //     hideMultiSort={true}
+        //     hidePageJumper={true}
+        //     hideResults={true}
+        //     scroll={{ x: 300, y: 400 }}
+        //     enableSettings={false}
+        //     hidePagination={true}
+        // />
+
+        return <STRemove />
         }
       };
       

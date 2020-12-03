@@ -23,7 +23,202 @@ import FrxTimeProgressBar from "../../components/shared/FrxTimeProgressBar/FrxTi
 // );
 // };
 
-export const formularyDetailsGridColumns: () => Column<any>[] = () => {
+export const categoryClassColumns: () => Column<any>[] = () => {
+  return [
+    {
+      position: 1,
+      sorter: {},
+      textCase: "upper",
+      pixelWidth: 100 ,
+      key: "overrideCategory",
+      displayTitle: "override category",
+      isFilterable: true,
+      dataType: "string",
+      filters: textFilters,
+      hidden: false,
+      sortDirections: ["ascend", "descend"],
+    },
+    {
+      position:2,
+      sorter: {},
+      textCase: "upper",
+      pixelWidth: 100,
+      key: "overRideClass",
+      displayTitle: "File Type",
+      isFilterable: true,
+      dataType: "string",
+      filters: textFilters,
+      hidden: false,
+      sortDirections: ["ascend", "descend"],
+    },
+    {
+      position: 3,
+      sorter: {},
+      textCase: "upper",
+      pixelWidth: 100,
+      key: "databaseCategory",
+      displayTitle: "Database Category",
+      isFilterable: true,
+      dataType: "string",
+      filters: textFilters,
+      hidden: false,
+      sortDirections: ["ascend", "descend"],
+    },
+    {
+      position:4,
+      sorter: {},
+      textCase: "upper",
+      pixelWidth: 100,
+      key: "databaseClass",
+      displayTitle: "Database Class",
+      isFilterable: true,
+      dataType: "string",
+      filters: textFilters,
+      hidden: false,
+      sortDirections: ["ascend", "descend"],
+    },
+    
+    {
+      position:5,
+      sorter: {},
+      textCase: "upper",
+      pixelWidth: 100,
+      key: "labelName",
+      displayTitle: "Label Name",
+      isFilterable: true,
+      dataType: "string",
+      filters: textFilters,
+      hidden: false,
+      sortDirections: ["ascend", "descend"],
+    },
+    {
+      position:6,
+      sorter: {},
+      textCase: "upper",
+      pixelWidth: 100,
+      key: "fileType",
+      displayTitle: "File Type",
+      isFilterable: true,
+      dataType: "string",
+      filters: textFilters,
+      hidden: false,
+      sortDirections: ["ascend", "descend"],
+    },
+    
+  ]
+}
+
+export const tierColumns: () => Column<any>[] = () => {
+  return [
+    {
+      position: 1,
+      sorter: {},
+      textCase: "upper",
+      pixelWidth: 100 ,
+      key: "tier",
+      displayTitle: "tier",
+      isFilterable: true,
+      dataType: "string",
+      filters: textFilters,
+      hidden: false,
+      sortDirections: ["ascend", "descend"],
+    },
+    {
+      position:2,
+      sorter: {},
+      textCase: "upper",
+      pixelWidth: 122,
+      key: "fileType",
+      displayTitle: "File Type",
+      isFilterable: true,
+      dataType: "string",
+      filters: textFilters,
+      hidden: false,
+      sortDirections: ["ascend", "descend"],
+    },
+    {
+      position: 3,
+      sorter: {},
+      textCase: "upper",
+      pixelWidth: 137,
+      key: "dataSource",
+      displayTitle: "Data Source",
+      isFilterable: true,
+      dataType: "string",
+      filters: textFilters,
+      hidden: false,
+      sortDirections: ["ascend", "descend"],
+    },
+    {
+      position:4,
+      sorter: {},
+      textCase: "upper",
+      pixelWidth: 163,
+      key: "labelName",
+      displayTitle: "Label Name",
+      isFilterable: true,
+      dataType: "string",
+      filters: textFilters,
+      hidden: false,
+      sortDirections: ["ascend", "descend"],
+    },
+    
+    {
+      position:5,
+      sorter: {},
+      textCase: "upper",
+      pixelWidth: 242,
+      key: "ndc",
+      displayTitle: "NDC",
+      isFilterable: true,
+      dataType: "string",
+      filters: textFilters,
+      hidden: false,
+      sortDirections: ["ascend", "descend"],
+    },
+    {
+      position:6,
+      sorter: {},
+      textCase: "upper",
+      pixelWidth: 109,
+      key: "gpi",
+      displayTitle: "GPI",
+      isFilterable: true,
+      dataType: "string",
+      filters: textFilters,
+      hidden: false,
+      sortDirections: ["ascend", "descend"],
+    },
+    {
+      position:7,
+      sorter: {},
+      textCase: "upper",
+      pixelWidth: 109,
+      key: "trademark",
+      displayTitle: "Trademark",
+      isFilterable: true,
+      dataType: "string",
+      filters: textFilters,
+      hidden: false,
+      sortDirections: ["ascend", "descend"],
+    },
+    {
+      position:8,
+      sorter: {},
+      textCase: "upper",
+      pixelWidth: 109,
+      key: "databaseCategory",
+      displayTitle: "Database Category",
+      isFilterable: true,
+      dataType: "string",
+      filters: textFilters,
+      hidden: false,
+      sortDirections: ["ascend", "descend"],
+    },
+  ]
+}
+
+export const formularyDetailsGridColumns: (data) => Column<any>[] = (data) => {
   return [
     {
       position: 1,
@@ -87,6 +282,11 @@ export const formularyDetailsGridColumns: () => Column<any>[] = () => {
       pixelWidth: 163,
       key: "formularyName",
       displayTitle: "formulary name",
+      customContent: (props) => (
+        <div className="input-link" onClick={()=> data.onFormularyNameClick()}>
+          {props.data.formularyName}
+        </div>
+      ),
       isFilterable: true,
       dataType: "string",
       filters: textFilters,
@@ -142,6 +342,11 @@ export const formularyDetailsGridColumns: () => Column<any>[] = () => {
       pixelWidth: 109,
       key: "step",
       displayTitle: "step",
+      customContent: (props) => (
+        <div className="formulary-step">
+          {props.data.step}
+        </div>
+      ),
       isFilterable: true,
       dataType: "string",
       filters: textFilters,

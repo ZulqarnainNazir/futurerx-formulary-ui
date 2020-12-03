@@ -1,11 +1,60 @@
-import React from "react";
+import React, { useState } from "react";
 import Grid from "@material-ui/core/Grid";
 import DropDown from "../../../../../shared/Frx-components/dropdown/DropDown";
 import RadioButton from "../../../../../shared/Frx-components/radio-button/RadioButton";
-import { Button, DatePicker, Select } from "antd";
+import { DatePicker, Select } from "antd";
 import PanelHeader from "../../FormularyConfigure/components/PanelHeader";
+import Button from '../../../../../shared/Frx-components/button/Button';
 
-export default class GeneralInformation extends React.Component<any, any> {
+const FormularyMethod = () => {
+  const [selectedMethod, setSelectedMethod] = useState('');
+  
+  const handleRadioOptionChange = (e) => {
+    setSelectedMethod(e.target.value)
+  }
+  
+  return (
+    <>
+      <Grid item xs={selectedMethod === 'clone' ? 4 : 8}>
+        <div className="group">
+          <label>
+            Method of Formulary Build <span className="astrict">*</span>
+          </label>
+          <div className="marketing-material radio-group">
+            <RadioButton label="Clone" checked={selectedMethod === 'clone'} value="clone" onChange={handleRadioOptionChange} name="marketing-material-radio" />
+            <RadioButton label="Upload" checked={selectedMethod === 'upload'} value="upload" onChange={handleRadioOptionChange} name="marketing-material-radio" />
+            <RadioButton
+              label="Create New"
+              value="create-new"
+              name="marketing-material-radio"
+              onChange={handleRadioOptionChange}
+              checked={selectedMethod === 'create-new'}
+            />
+          </div>
+          
+          {
+            selectedMethod === 'upload' && 
+            <div>
+              <Button label="Upload" htmlFor="upload-file" className="upload-button"/>
+            </div>
+          }
+        </div>
+      </Grid>
+      
+      { 
+        selectedMethod === 'clone' && 
+        <Grid item xs={4}>
+          <div className="group">
+            <label>CLONE FORMULARY <span className="astrict">*</span></label>
+            <a href="" className="input-link ">Clone Formulary</a>
+          </div>
+        </Grid>
+      }
+  </>
+  )
+}
+
+export default class GeneralInformation extends React.Component<any, any> {  
   render() {
     return (
       <div className="general-information-container">
@@ -29,6 +78,7 @@ export default class GeneralInformation extends React.Component<any, any> {
                 <label>
                   FORMULARY NAME <span className="astrict">*</span>
                 </label>
+                <br />
                 <input type="text" className="setup-input-fields" />
               </div>
             </Grid>
@@ -64,22 +114,7 @@ export default class GeneralInformation extends React.Component<any, any> {
                 }
               />
             </Grid>
-            <Grid item xs={8}>
-              <div className="group">
-                <label>
-                  Method of Formulary Build <span className="astrict">*</span>
-                </label>
-                <div className="marketing-material radio-group">
-                  <RadioButton label="Clone" name="marketing-material-radio" />
-                  <RadioButton label="Upload" name="marketing-material-radio" />
-                  <RadioButton
-                    label="Create New"
-                    name="marketing-material-radio"
-                    checked
-                  />
-                </div>
-              </div>
-            </Grid>
+            <FormularyMethod/>
             <Grid item xs={4}>
               <div className="group">
                 <label>
@@ -91,10 +126,16 @@ export default class GeneralInformation extends React.Component<any, any> {
                 />
               </div>
             </Grid>
-            <Grid item xs={8}>
+            <Grid item xs={4}>
               <div className="group">
                 <label>FORMULARY DESCRIPTION</label>
                 <input type="text" className="setup-input-fields" />
+              </div>
+            </Grid>
+            <Grid item xs={4}>
+              <div className="group">
+                <label>Which prior year's formulary does this most closely resemble?</label>
+                <a href="" className="input-link ">Select Formulary</a>
               </div>
             </Grid>
             <Grid item xs={4}>
@@ -109,22 +150,6 @@ export default class GeneralInformation extends React.Component<any, any> {
                   <RadioButton
                     label="Medispan"
                     name="marketing-usp-radio"
-                    checked
-                  />
-                </div>
-              </div>
-            </Grid>
-            <Grid item xs={4}>
-              <div className="group setup-panel">
-                <PanelHeader
-                  title="IS THIS A CLOSED OR OPEN FORMULARY "
-                  tooltip="IS THIS A CLOSED OR OPEN FORMULARY"
-                />
-                <div className="marketing-material radio-group">
-                  <RadioButton label="Open" name="marketing-open-radio" />
-                  <RadioButton
-                    label="Closed"
-                    name="marketing-open-radio"
                     checked
                   />
                 </div>
