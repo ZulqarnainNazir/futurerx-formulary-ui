@@ -76,6 +76,19 @@ export const getMiniTabs = () => {
     ]
 }
 
+export const getMaterialTableTab = () => {
+    return [
+        {
+            id: 1,
+            text: "DMS Templates"
+        },
+        {
+            id: 2,
+            text: "Upload Files"
+        }
+    ]
+}
+
 export const getStTabs = () => {
     return [
         {
