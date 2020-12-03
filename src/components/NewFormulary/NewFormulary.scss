@@ -42,3 +42,33 @@
         }
     }
 }
+
+.ant-table-row-expand-icon-cell {
+    position: sticky !important;
+    right: 0;
+    background-color: #ffffff;
+    z-index: 10;
+}
+
+.input-link {
+    margin-top: 0px !important;
+    cursor: pointer;
+}
+
+.formulary-step {
+    width: 30.04px;
+    height: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #1F55B6;
+    border-radius: 50px;
+    font-family: Roboto;
+    font-style: normal;
+    font-weight: bold;
+    font-size: 12px;
+    line-height: 30px;
+    letter-spacing: 0.2px;
+
+    color: #FFFFFF;
+}
