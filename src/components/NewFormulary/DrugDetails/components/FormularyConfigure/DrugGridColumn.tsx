@@ -244,7 +244,7 @@ export const getDrugDetailsColumn: () => Column<any>[] = () => {
       {
         position: 18,
         textCase: "upper",
-        pixelWidth: 150,
+        pixelWidth: 235,
         sorter: {},
         isFilterable: true,
         showToolTip: false,
