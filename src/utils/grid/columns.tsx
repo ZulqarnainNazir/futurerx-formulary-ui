@@ -218,6 +218,38 @@ export const tierColumns: () => Column<any>[] = () => {
   ]
 }
 
+export const setupHmpsColumns: () => Column<any>[] = () => {
+  return [
+    {
+      position: 1,
+      sorter: {},
+      textCase: "upper",
+      pixelWidth: 100 ,
+      key: "files",
+      displayTitle: "Files",
+      isFilterable: true,
+      dataType: "string",
+      filters: textFilters,
+      hidden: false,
+      sortDirections: ["ascend", "descend"],
+    },
+    {
+      position:2,
+      sorter: {},
+      textCase: "upper",
+      pixelWidth: 122,
+      key: "lastGenerated",
+      displayTitle: "Last Generated",
+      isFilterable: true,
+      dataType: "string",
+      filters: textFilters,
+      hidden: false,
+      sortDirections: ["ascend", "descend"],
+    },
+    
+  ]
+}
+
 export const formularyDetailsGridColumns: (data) => Column<any>[] = (data) => {
   return [
     {
