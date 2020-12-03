@@ -125,6 +125,24 @@ export const PaRemoveColumns: () => Column<any>[] = () => {
   ];
 };
 
+export const tierRemoveColumns: () => Column<any>[] = () => {
+  return [
+    {
+      position: 1,
+      sorter: {},
+      textCase: "upper",
+      pixelWidth: 100,
+      key: "tierName",
+      displayTitle: "Tier Name",
+      isFilterable: false,
+      dataType: "string",
+      filters: textFilters,
+      hidden: false,
+      sortDirections: ["ascend", "descend"],
+    },
+  ]
+}
+
 export const tierColumns: () => Column<any>[] = () => {
   return [
     {
@@ -184,7 +202,7 @@ export const tierColumns: () => Column<any>[] = () => {
       position: 5,
       sorter: {},
       textCase: "upper",
-      pixelWidth: 242,
+      pixelWidth: 100,
       key: "ndc",
       displayTitle: "NDC",
       isFilterable: true,

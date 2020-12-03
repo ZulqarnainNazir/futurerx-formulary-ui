@@ -1,22 +1,13 @@
 import React from "react";
 import { Grid } from "@material-ui/core";
-import FrxMiniTabs from "../../../../../shared/FrxMiniTabs/FrxMiniTabs";
 import "./Tier.scss";
 
-import {
-  getTapList,
-  getMiniTabs,
-} from "../../../../../../mocks/formulary/mock-data";
-import CustomizedSwitches from "./CustomizedSwitches";
-import PanelHeader from "./PanelHeader";
-import PanelGrid from "./panelGrid";
 import DropDown from "../../../../../shared/Frx-components/dropdown/DropDown";
 import Button from "../../../../../shared/Frx-components/button/Button";
 import Box from "@material-ui/core/Box";
 import FrxDrugGridContainer from "../../../../../shared/FrxGrid/FrxDrugGridContainer";
 import { tierColumns } from "../../../../../../utils/grid/columns";
 import { TierMockData } from "../../../../../../mocks/TierMock";
-import { TabInfo } from "../../../../../../models/tab.model";
 
 interface tabsState {
   tierGridContainer: boolean;
@@ -68,7 +59,7 @@ class TierReplace extends React.Component<any, tabsState> {
                 fixedColumnKeys={[]}
                 pagintionPosition="topRight"
                 gridName="TIER"
-                enableSettings
+                enableSettings={false}
                 columns={tierColumns()}
                 scroll={{ x: 2000, y: 377 }}
                 isFetchingData={false}
