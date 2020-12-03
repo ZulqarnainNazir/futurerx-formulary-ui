@@ -144,7 +144,6 @@
         .group-des{
             background: #FFFFFF;
             width: 361px;
-            height: 426px;
             border: 1px solid #E5E5E5;
             box-sizing: border-box;
             border-radius: 5px;
@@ -224,7 +223,6 @@
         }
         .new-group-des{
             width: 889px;
-            height: 699px;
             background: #FFFFFF;
             border: 1px solid #E5E5E5;
             box-sizing: border-box;
@@ -638,3 +636,59 @@
     }
     
 }
+
+.pa-new-group-form {
+    .group-padding {
+        padding-right: 20px !important;
+    }
+    
+    .setup-input-fields {
+        width: 100% !important;
+    }
+}
+
+.pa-form-information-panel {
+    width: 414px;
+    background: #F9F9F9;
+    border: 1px solid #E5E5E5;
+    box-sizing: border-box;
+    border-radius: 3px;
+    padding-right: 10px;
+    height: 280px;
+    &__criteria {
+        font-family: Roboto;
+        font-style: normal;
+        font-weight: normal;
+        font-size: 12px;
+        line-height: 14px;
+        color: #323C47 !important;
+        padding: 10px;
+        padding-top: 0px;
+    }
+
+    &__indication {
+        padding: 10px;
+        padding-top: 0px;
+    }
+
+    &__indication-text {
+        font-family: Roboto;
+        font-style: normal;
+        font-weight: normal;
+        font-size: 12px;
+        line-height: 14px;
+        color: #323C47 !important;
+        margin-bottom: 11px;
+        display: flex;
+        align-items: baseline;
+    }
+    .prefix-text {
+        font-weight: 800 !important;
+        color: #323C47 !important;
+        margin-right: 10px;
+    }
+}
+
+.astrict{
+    color: red;
+}   
