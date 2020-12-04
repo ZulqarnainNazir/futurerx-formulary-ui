@@ -29,6 +29,15 @@ class EntityOwnershipContainer extends Component<Props, State> {
     isPlanConfigCardShow: false,
     showUpdateDefaultPopup: false,
     showSelecteffectiveDatePopup: false,
+    planConfigObject: {
+      planInfoConfigName: "North East PBPs",
+      planName: "Medicare 1",
+      phonNumber: "888-888-8888",
+      ttyValue: "888-888-8888",
+      website: "www.medicare1.com",
+      operationinfo:
+        "From October 1 to March 31, we are open 7 days a week, from 8 a.m. to 8 p.m. EST. From April 1 to September 30, we are open Monday through Friday, from 8 a.m. to 8 p.m. EST.",
+    },
   };
 
   onHandleIcons = () => {
@@ -249,10 +258,13 @@ class EntityOwnershipContainer extends Component<Props, State> {
           </div>
         </Card>
         {this.state.isPlanInfoCardShown ? (
-          <PlanInformation onSave={this.onPlanConfig} />
+          <PlanInformation onConfigure={this.onPlanConfig} />
         ) : null}
         {this.state.isPlanConfigCardShow ? (
-          <PlanInformationConfiguration />
+          <PlanInformationConfiguration
+            planConfigObject={this.state.planConfigObject}
+            onSave={this.onCancelPlanInfoCard}
+          />
         ) : null}
 
         <DialogPopup
