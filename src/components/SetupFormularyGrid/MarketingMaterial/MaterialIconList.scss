@@ -174,8 +174,18 @@
   font-size: 12px;
 }
 
+.accordian-btn-wrapper {
+  width: 450px;
+  text-align: end;
+  margin-left: 50%;
+}
+
 .MuiAccordionSummary-content .first {
-  margin-left: 55%;
+  width: 85px;
+  height: 34px;
+}
+
+.MuiAccordionSummary-content .add-file {
   width: 85px;
   height: 34px;
 }
@@ -199,8 +209,9 @@
   }
 
   .header {
-    margin-left: 10px;
-    margin-top: 6px;
+    height: 15px;
+    padding: 0px;
+    border-bottom: none;
   }
 }
 

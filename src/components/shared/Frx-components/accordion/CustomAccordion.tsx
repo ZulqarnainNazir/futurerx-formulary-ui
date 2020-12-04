@@ -76,6 +76,7 @@ export default function CustomAccordion({
           <Typography className={classes.heading}>{name}</Typography>
           {btnAcordian ? (
             <Fragment>
+              <div className="accordian-btn-wrapper">
             <Button className="popup-btn file-btn first search-btn">Search Tool</Button>
             {name === "Group 1" ? (
               <Button className="popup-btn file-btn publish-btn">Publish URL</Button>
@@ -87,7 +88,8 @@ export default function CustomAccordion({
               Publish URL Pending<PanelHeader className="field-group__label-special-character" tooltip="12/15/2020 12:24:30 PM"  />
             </Button>
             ) : ("")}
-            <Button className="popup-btn file-btn ">Add File</Button>
+            <Button className="popup-btn file-btn add-file">Add File</Button>
+            </div>
             </Fragment>
           ) : (
             ""
