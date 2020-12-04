@@ -4,7 +4,6 @@
   height: 30px;
   outline: none;
   box-sizing: border-box;
-  border-radius: 30px;
 }
 .SearchBox > input {
   border: 1px soild green;
@@ -13,12 +12,18 @@
   height: 100%;
   border: 1px solid #c4c4c4;
   box-sizing: border-box;
-  border-radius: 30px;
   padding: 15px;
   outline: none;
 }
 .SearchBox > .SearchBox-Icon {
   position: absolute;
-  right: 10px;
   top: 5px;
+}
+
+.SearchBox > .icon-right {
+  right: 10px;
+}
+
+.SearchBox > .icon-left {
+  left: 10px;
 }

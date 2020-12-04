@@ -655,6 +655,20 @@
     border-radius: 3px;
     padding-right: 10px;
     height: 280px;
+    
+    .inner-container {
+        .configure-mini-tabs {
+            .frx-mini-tabs-root {
+                background-color: transparent;
+                
+                .Mui-selected {
+                    span {
+                        color: #ffffff !important;
+                    }
+                }
+            }
+        }
+    }
     &__criteria {
         font-family: Roboto;
         font-style: normal;
