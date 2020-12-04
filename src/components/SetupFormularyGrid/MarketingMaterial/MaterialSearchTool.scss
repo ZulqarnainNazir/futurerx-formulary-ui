@@ -47,6 +47,11 @@
     color: #707683;
   }
 
+  .special-character-heading {
+    display: flex;
+    padding: 7px 15px;
+  }
+
   .legend-abbrevation input,
   .material-special-characters input {
     width: 107px;
@@ -75,7 +80,11 @@
   }
 
   .panel.header.field-group__label-special-character {
-    display: flex;
+    display: block;
+    background: none;
+    padding: 0px;
+    border-bottom: none;
+    margin-left: -3px;
   }
 
   span.ant-select-selection-placeholder {

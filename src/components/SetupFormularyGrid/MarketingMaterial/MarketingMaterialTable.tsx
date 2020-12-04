@@ -55,7 +55,9 @@ export default class MarketingMaterialTable extends React.Component<any, any> {
     materialPopupInd: false,    
     show:false,
     popUpIdn:"",
-    title:""
+    title:"",
+    communicationPopupHeader: false,
+    btnAcordian: false
   };
 
   onClose = () => {
@@ -66,10 +68,11 @@ export default class MarketingMaterialTable extends React.Component<any, any> {
   closeClaimsResult = () => {
     this.setState({ materialPopupInd: false });
   };
-  handleIconClick = (param,title) => {
+  handleIconClick = (param,title,headerData) => {
     this.setState({ materialPopupInd: true });
     this.setState({ popUpIdn: param });
     this.setState({ title: title });
+    this.setState({ communicationPopupHeader: headerData });
   }
 
   onClickMiniTab = (num: number) => {
@@ -87,8 +90,8 @@ export default class MarketingMaterialTable extends React.Component<any, any> {
           <div className="header-material space-between pr-10">
             MATERIALS AND SEARCH TOOLS
             <div className="button-wrapper">
-              <Button label="NOC Report" onClick={(e) => this.handleIconClick("noc", "Noc report")} />
-              <Button label="Website Analytics" onClick={(e) => this.handleIconClick("web", "Website traffic analysis")} className="web-anylaytic-btn" />
+              <Button label="NOC Report" onClick={(e) => this.handleIconClick("noc", "Noc report",false)} />
+              <Button label="Website Analytics" onClick={(e) => this.handleIconClick("web", "Website traffic analysis",false)} className="web-anylaytic-btn" />
               <img
               style={{ marginRight: "20px" }}
               src={downloadIcon}
@@ -138,7 +141,7 @@ export default class MarketingMaterialTable extends React.Component<any, any> {
           <div className="header space-between pr-10">
             COMMON MATERIALS
             <div className="button-wrapper">
-              <Button label="Add File" onClick={(e) => this.handleIconClick("addFile","communication")} />
+              <Button label="Add File" onClick={(e) => this.handleIconClick("addFile","communication",true)} />
             </div>
           </div>
           <div className="mini-tabs">
@@ -157,6 +160,7 @@ export default class MarketingMaterialTable extends React.Component<any, any> {
             positiveActionText="Communication"
             ulpoadIconBtnText="Select"
             title={this.state.title}
+            communicationPopupHeader={this.state.communicationPopupHeader}
             showCloseIcon={true}
             showActions={false}
             handleClose={() => {
@@ -198,12 +202,12 @@ export default class MarketingMaterialTable extends React.Component<any, any> {
             }}
           />
             <div className="group-accordian">
-            <CustomAccordion name="Group 1">
+            <CustomAccordion name="Group 1" btnAcordian={true}>
 
             </CustomAccordion>
             </div>
             <div className="group-accordian">
-            <CustomAccordion name="Group 2">
+            <CustomAccordion name="Group 2" btnAcordian={true}>
 
             </CustomAccordion>
           </div>

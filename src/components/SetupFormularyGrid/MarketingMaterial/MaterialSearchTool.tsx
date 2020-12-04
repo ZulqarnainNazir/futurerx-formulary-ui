@@ -76,7 +76,7 @@ export default class MaterialSearchTool extends React.Component<any, any> {
                             <div className="plain-border-bottm plain-input plain-height"><input type="text" value="PA Type 2" /></div>
                         </div>
                         <div className="plain-category material-special-characters">
-                            <div className="material-search-headings plain-border-bottm"><PanelHeader className="field-group__label-special-character" title="special characters" tooltip="special characters"  /></div>
+                            <div className="material-search-headings plain-border-bottm special-character-heading">special characters<PanelHeader className="field-group__label-special-character" tooltip="special characters"  /></div>
                             <div className="plain-border-bottm plain-input plain-height"><input type="text" /></div>
                             <div className="plain-border-bottm plain-input plain-height"><input type="text" /></div>
                             <div className="plain-border-bottm plain-input plain-height"><input type="text" /></div>
