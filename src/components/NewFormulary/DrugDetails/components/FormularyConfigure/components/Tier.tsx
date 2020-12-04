@@ -24,10 +24,12 @@ import { TabInfo } from "../../../../../../models/tab.model";
 import TierReplace from "./TierReplace";
 import TierRemove from "./TierRemove";
 import { getTier,getTierLabels } from "../../../../../../redux/slices/formulary/tier/tierActionCreation";
+import { getFormularySetup } from "../../../../../../redux/slices/formulary/formularySummaryActionCreation";
 function mapDispatchToProps(dispatch) {
   return {
     getTier:(a)=>dispatch(getTier(a)),
-    getTierLabels:(a)=>dispatch(getTierLabels(a))
+    getTierLabels:(a)=>dispatch(getTierLabels(a)),
+    getFormularySetup:(a)=>dispatch(getFormularySetup(a))
   };
 }
 
@@ -111,6 +113,9 @@ class Tier extends React.Component<any, tabsState> {
   };
 
   componentDidMount() {
+    this.props.getFormularySetup("1").then((json) => {
+      //this.setState({panelGridValue: json.payload.data});
+    });
     this.props.getTier("1").then((json) => {
       //this.setState({panelGridValue: json.payload.data});
     });
