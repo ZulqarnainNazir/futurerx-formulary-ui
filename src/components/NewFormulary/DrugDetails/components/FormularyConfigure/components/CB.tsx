@@ -90,6 +90,7 @@ class CB extends React.Component<any, any> {
       columns: columns,
       data: data
     });
+    this.props.getFormularySummary('1')
   }
 
   onClickTab = (selectedTabIndex: number) => {
