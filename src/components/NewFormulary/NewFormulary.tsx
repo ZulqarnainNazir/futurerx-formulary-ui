@@ -1,4 +1,6 @@
 import React from "react";
+import {connect} from "react-redux";
+
 import { TabInfo } from "../../models/tab.model";
 import FrxTabs from "../shared/FrxTabs/FrxTabs";
 import Medicare from "./Medicare/Medicare";
@@ -8,6 +10,7 @@ import MassMaintenanceContext from "./FormularyDetailsContext";
 import MassMaintenance from "./MassMaintenance/MassMaintenance";
 import FormularyDashboardStats from "./../FormularyDashboardStats/FormularyDashboardStats";
 import { getFormularyDetails } from "../../mocks/formulary/formularyDetails";
+import { getBase } from "../.././redux/slices/formulary/formularyBase/formularyBaseActionCreator";
 
 import "./NewFormulary.scss";
 
@@ -24,16 +27,40 @@ interface State {
   showTabs: boolean;
   showMassMaintenance: boolean;
   showDrugDetails: boolean;
+  baseData: any;
 }
 
-export default class Formulary extends React.Component<any, any> {
+  
+const mapStateToProps = (state) => {
+  return {
+    getBase: state
+  };
+};
+
+function mapDispatchToProps(dispatch) {
+  return {
+    getBase:(a)=>dispatch(getBase(a))
+  };
+}
+
+class Formulary extends React.Component<any, any> {
   state = {
     activeTabIndex: 0,
     tabs: tabs,
     showTabs: true,
     showMassMaintenance: false,
     showDrugDetails: false,
+    baseData: null
   };
+
+
+  componentDidMount(){
+    console.log("************************************");
+    let resp = this.props.getBase("ASD");
+    console.log(resp);
+    this.setState({baseData:resp});
+  }
+
   onClickTab = (selectedTabIndex: number) => {
     let activeTabIndex = 0;
 
@@ -78,6 +105,11 @@ export default class Formulary extends React.Component<any, any> {
     }
   };
   render() {
+
+    console.log("---------------------- RENDER");
+    console.log(this.state.baseData);
+    console.log("---------------------- RENDER");
+
     return (
       <div className="formulary-root">
         {this.state.showTabs ? (
@@ -96,7 +128,7 @@ export default class Formulary extends React.Component<any, any> {
           <DrugDetailsContext.Provider
             value={{ showDetailHandler: this.drugDetailsClickHandler }}
           >
-            <DrugDetails data={getFormularyDetails()} />
+            <DrugDetails data={getFormularyDetails()} baseData={this.state.baseData} />
           </DrugDetailsContext.Provider>
         ) : this.state.showMassMaintenance ? (
           <MassMaintenanceContext.Provider
@@ -109,3 +141,5 @@ export default class Formulary extends React.Component<any, any> {
     );
   }
 }
+
+export default connect(mapStateToProps, mapDispatchToProps )(Formulary);

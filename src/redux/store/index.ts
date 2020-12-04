@@ -3,6 +3,7 @@ import { memberSummarySlice } from "../slices/member-summary/MemberSummarySlice"
 import { userPrefsSlice } from "../slices/users/UserPrefsSlice";
 import { formularySummarySlice } from "../slices/formulary/formularySummarySlice";
 import { combineReducers } from 'redux'
+import { formularyBaseSlice } from "../slices/formulary/formularyBase/formularyBaseSlice";
 
 
 const reducer = combineReducers({
@@ -24,6 +25,7 @@ const store = configureStore({
     member_summary: memberSummaryReducer,
     user_prefs: userPrefsReducer,
     formulary2:formularySummaryReducer,
+    formularBase: formularyBaseSlice.reducer
   },
   middleware,
 });
