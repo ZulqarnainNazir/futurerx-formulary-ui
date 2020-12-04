@@ -1,7 +1,11 @@
 import React from "react";
+import { connect } from "react-redux";
+
 import { Grid } from "@material-ui/core";
 import FrxMiniTabs from "../../../../../shared/FrxMiniTabs/FrxMiniTabs";
 import "./Tier.scss";
+
+
 
 import {
   getTapList,
@@ -19,6 +23,12 @@ import { TierMockData } from "../../../../../../mocks/TierMock";
 import { TabInfo } from "../../../../../../models/tab.model";
 import TierReplace from "./TierReplace";
 import TierRemove from "./TierRemove";
+import { getTier } from "../../../../../../redux/slices/formulary/tier/tierActionCreation";
+function mapDispatchToProps(dispatch) {
+  return {
+    getTier:(a)=>dispatch(getTier(a))
+  };
+}
 
 interface tabsState {
   activeMiniTabIndex: number;
@@ -26,6 +36,7 @@ interface tabsState {
   tabs: any;
   tierGridContainer: boolean;
   activeTabIndex: any;
+  panelGridValue: any;
 }
 
 class Tier extends React.Component<any, tabsState> {
@@ -98,6 +109,16 @@ class Tier extends React.Component<any, tabsState> {
     this.setState({ tierGridContainer: true });
   };
 
+  componentDidMount() {
+    this.props.getTier("1").then((json) => {
+      
+      console.log("*******************************" + json);
+      console.log(json.payload.data);
+      //this.setState({panelGridValue: json.payload.data});
+    });
+   
+  }
+
   render() {
     return (
       <div className="drug-detail-LA-root">
@@ -154,4 +175,8 @@ class Tier extends React.Component<any, tabsState> {
   }
 }
 
-export default Tier;
+export default connect(
+  null,
+  mapDispatchToProps
+)(Tier);
+
