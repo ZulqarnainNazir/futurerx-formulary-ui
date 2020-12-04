@@ -1,14 +1,14 @@
-import React, {Component} from "react";
-import FrxDrugGridContainer from "../../../shared/FrxGrid/FrxDrugGridContainer";
+import React, { Component } from "react";
+import FrxGridContainer from "../../../shared/FrxGrid/FrxGridContainer";
 //   ../../../shared/FrxGrid/FrxDrugGridContainer";
-import {getDrugDetailsColumn} from "../../DrugDetails/components/FormularyConfigure/DrugGridColumn";
+import { getDrugDetailsColumn } from "../../DrugDetails/components/FormularyConfigure/DrugGridColumn";
 // "../DrugDetails/components/FormularyConfigure/DrugGridColumn";
-import {getMaintenacneMassUpdateColumns} from "./components/MaintenanceMassUpdateColumn";
-import {getDrugDetailData} from "../../../../mocks/DrugGridMock";
+import { getMaintenacneMassUpdateColumns } from "./components/MaintenanceMassUpdateColumn";
+import { getDrugDetailData } from "../../../../mocks/DrugGridMock";
 // ("../../../mocks/DrugGridMock");
-import {getMaintenanceMassUpdateData} from "../../../../mocks/MaintenanceMassUpdateMockData";
+import { getMaintenanceMassUpdateData } from "../../../../mocks/MaintenanceMassUpdateMockData";
 
-import {Box} from "@material-ui/core";
+import { Box } from "@material-ui/core";
 import Button from "../../../shared/Frx-components/button/Button";
 // "../../shared/Frx-components/button/Button";
 import DropDown from "../../../shared/Frx-components/dropdown/DropDown";
@@ -45,10 +45,14 @@ class MaintenanceMassUpdate extends Component<Props, State> {
   };
   advanceSearchClickHandler = (event) => {
     event.stopPropagation();
-    this.setState({isSearchOpen: !this.state.isSearchOpen});
+    this.setState({ isSearchOpen: !this.state.isSearchOpen });
   };
   advanceSearchClosekHandler = () => {
-    this.setState({isSearchOpen: !this.state.isSearchOpen});
+    this.setState({ isSearchOpen: !this.state.isSearchOpen });
+  };
+
+  rowSelectionChange = (record) => {
+    console.log(record);
   };
 
   render() {
@@ -97,36 +101,27 @@ class MaintenanceMassUpdate extends Component<Props, State> {
               onClose={this.advanceSearchClosekHandler}
             />
           ) : null} */}
-          <div className="mass-maintenance-update-grid ">
-            <FrxDrugGridContainer
+          <div className="mass-maintenance-update-grid">
+            <FrxGridContainer
               enableSearch={false}
-              enableColumnDrag
+              enableColumnDrag={false}
               onSearch={this.handleSearch}
               fixedColumnKeys={[]}
               pagintionPosition="topRight"
               gridName=""
-            //   enableSettings={true}
+              enableSettings={true}
               isFetchingData={this.state.isFetchingData}
               columns={this.state.columns}
-              isRowSelectionEnabled={true}
-              isRowSelectorCheckbox={true}
               isPinningEnabled={false}
-              rowSelection={{
-                // columnWidth: 50,
-                fixed: false,
-                type: "checkbox",
-              }}
-              scroll={{x: 0, y: 377}}
-              enableResizingOfColumns
+              scroll={{ x: 0, y: 377 }}
+              enableResizingOfColumns={false}
               data={this.state.filteredData}
+              isCustomCheckboxEnabled={true}
+              handleCustomRowSelectionChange={this.rowSelectionChange}
+              settingsTriDotClick={() => {
+                console.log("object");
+              }}
             />
-            {/* <Box display="flex" justifyContent="flex-end">
-              <Button
-                className="Button mr-0"
-                label="Apply"
-                onClick={() => this.props.applyClick()}
-              />
-            </Box> */}
           </div>
         </div>
       );

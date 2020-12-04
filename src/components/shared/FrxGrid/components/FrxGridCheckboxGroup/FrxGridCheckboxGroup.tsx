@@ -7,6 +7,7 @@
 import * as React from "react";
 import FrxGridCheckboxHeaderCell from "../FrxGridCheckboxHeaderCell/FrxGridCheckboxHeaderCell";
 import FrxGridRowSelectionCell from "../FrxGridRowSelectionCell/FrxGridRowSelectionCell";
+import "./FrxGridCheckboxGroup.scss";
 
 interface FrxGridCheckboxGroupCellProps {
   isHeaderCell: boolean;
@@ -45,7 +46,7 @@ export default function FrxGridCheckboxGroupCell(
     isChecked = currentRowRecord.checked || false;
   }
   return (
-    <>
+    <div className="frx-grid-checkbox-group-root">
       {isHeaderCell ? (
         <FrxGridCheckboxHeaderCell
           onSelectAll={onSelectAll}
@@ -60,6 +61,6 @@ export default function FrxGridCheckboxGroupCell(
           isChecked={isChecked}
         />
       )}
-    </>
+    </div>
   );
 }

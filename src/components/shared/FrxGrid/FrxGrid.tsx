@@ -253,7 +253,7 @@ class FrxGrid extends Component<FrxGridProps<any>, FrxGridState<any>> {
           displayTitle: " ",
           hidden: false,
           fixed: "left",
-          width: 20,
+          width: 40,
 
           render: (record) => <></>,
         },
@@ -593,7 +593,7 @@ class FrxGrid extends Component<FrxGridProps<any>, FrxGridState<any>> {
             );
           };
         } else if (c.key === "checkbox") {
-          c["width"] = 20;
+          c["width"] = 60;
           c["render"] = (record: any) => {
             return (
               <>

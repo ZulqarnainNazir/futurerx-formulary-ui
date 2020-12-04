@@ -3,14 +3,17 @@
 .frx-grid-settings-cell__icon {
   display: flex;
   justify-content: center;
+  align-items: center;
   .frx-grid-settings-cell__icon--expanded {
     display: flex;
     justify-content: center;
+    align-items: center;
     transform: rotate(90deg);
   }
   .frx-grid-settings-cell__icon--non-expanded {
     display: flex;
     justify-content: center;
+    align-items: center;
     -webkit-transition: -webkit-transform 0.8s ease-in-out;
     transition: transform 0.8s ease-in-out;
     cursor: pointer;

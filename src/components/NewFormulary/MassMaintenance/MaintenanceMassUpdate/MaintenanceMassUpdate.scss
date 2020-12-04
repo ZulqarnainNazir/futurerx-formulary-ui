@@ -4,6 +4,47 @@
   margin-top: 10px;
   padding: 0 10px;
   border: 1px solid #e5e5e5;
+
+  .mass-maintenance-update-grid {
+    // ####### START TABLE ##########
+    .frx-grid-container {
+      .frx-grid {
+        .frx-grid__grid-block {
+          padding: 0;
+
+          .frx-grid__grid-block__table-block {
+            .ant-table {
+              .ant-table-header {
+                border: 1px solid #e5e5e5;
+                border-bottom-left-radius: 0;
+                border-bottom-right-radius: 0;
+                // background-color: #fff;
+              }
+              .ant-table-body > table {
+                border-spacing: 0;
+                // background-color: #fff;
+              }
+              .ant-table-body > table > tbody > tr > td {
+                border-radius: 0 !important;
+                // background-color: #fff;
+              }
+
+              .ant-table-body > table > tbody > tr > td:first-child {
+                // padding: 0 18px 0 18px;
+              }
+
+              .ant-table-body > thead {
+                border-radius: 0;
+                // background-color: #fff;
+              }
+            }
+          }
+        }
+      }
+    }
+    margin-bottom: 10px;
+    // ####### END TABLE ##########
+  }
   .header-container {
     padding: 10px;
     display: flex;

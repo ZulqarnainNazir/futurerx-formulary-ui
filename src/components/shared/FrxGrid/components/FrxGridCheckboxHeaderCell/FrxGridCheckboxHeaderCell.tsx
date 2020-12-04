@@ -7,7 +7,7 @@ import * as React from "react";
 import { Checkbox } from "antd";
 
 //style imports
-import "../FrxGridSettingsHeaderCell/FrxGridSettingsHederCell.scss";
+// import "../FrxGridSettingsHeaderCell/FrxGridSettingsHederCell.scss";
 
 interface FrxGridCheckboxHeaderCellProps {
   onSelectAll: (e) => void;
@@ -20,7 +20,7 @@ export default function FrxGridCheckboxHeaderCell(
 ) {
   const { onSelectAll, isIndeterminate, isChecked } = props;
   return (
-    <span className="frx-grid-settings-header-cell">
+    <span className="header-checkbox">
       <Checkbox
         indeterminate={isIndeterminate}
         onChange={(e) => onSelectAll(e)}
@@ -29,19 +29,3 @@ export default function FrxGridCheckboxHeaderCell(
     </span>
   );
 }
-// class FrxGridCheckboxHeaderCell extends Component<FrxGridCheckboxHeaderCellProps> {
-//   render() {
-//     const { onSelectAll, isIndeterminate, isChecked } = this.props;
-//     return (
-//       <span className="frx-grid-settings-header-cell">
-//         <Checkbox
-//           indeterminate={isIndeterminate}
-//           onChange={(e) => onSelectAll(e)}
-//           checked={isChecked}
-//         ></Checkbox>
-//       </span>
-//     );
-//   }
-// }
-
-// export default FrxGridCheckboxHeaderCell;

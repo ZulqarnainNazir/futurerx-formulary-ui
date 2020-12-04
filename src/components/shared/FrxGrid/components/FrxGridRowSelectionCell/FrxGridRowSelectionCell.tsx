@@ -21,7 +21,7 @@ export default function FrxGridRowSelectionCell(
 ) {
   const { onSelectMulitple, currentRowRecord, isChecked } = props;
   return (
-    <span className="frx-grid-settings-header-cell">
+    <span className="body-checkbox">
       <Checkbox
         onChange={(e) => onSelectMulitple(e, currentRowRecord)}
         checked={isChecked}
