@@ -33,7 +33,6 @@ class StepTherapy extends React.Component<any, tabsState> {
     panelGridValue: [
       ["ST Type 1", "2", "4", "2", "2", "2","2"],
       ["ST Type 2", "3", "4", "1", "1", "1","1"],
-      ["ST Type 3", "4", "4", "2", "2", "2","2"],
     ],
   };
   onClickMiniTab = (num: number) => {

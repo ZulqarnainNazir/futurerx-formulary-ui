@@ -142,3 +142,13 @@ export const TierMockData = (): any => {
     },
   ];
 };
+
+export const TierRemoveMockData = (): any => {
+  return [
+    {
+      id: 1,
+      key: 1,
+      displayTitle: "Tier 0",
+    },
+  ];
+};

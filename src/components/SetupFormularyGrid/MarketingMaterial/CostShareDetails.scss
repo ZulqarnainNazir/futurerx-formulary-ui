@@ -3,6 +3,29 @@
 .cost-share-details_content{
     padding: 50px 0 30px;
 
+    .row input::placeholder
+    {
+        font-family: Roboto;
+        font-style: normal;
+        font-weight: normal;
+        font-size: 12px;
+    }
+    .row input {
+        width: 170px;
+        height: 35px;
+        border: 1px solid #e5e5e5;
+        border-radius: 3px;
+        left: 748px;
+        top: 44px;        
+
+        font-family: Roboto;
+        font-style: normal;
+        font-weight: normal;
+        font-size: 12px;
+        line-height: 35px;
+        color: #999999;
+    }
+
     .ant-collapse-content-box{
         padding: 0;
     }
@@ -45,6 +68,10 @@
         }
         .cost-share{
             width: 211px;
+        }
+
+        .cost-share *{            
+            text-transform: none;
         }
         .cost-val{
             width: 225px;
