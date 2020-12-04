@@ -2,6 +2,57 @@
 .mb-10{
     margin-bottom: 10px;
 }
+
+.version-wrapper {
+    border: 1px solid #F65A1C;
+    height: 37px;
+    max-width: 890px;
+    width: 100%;
+    background: #FFF5F0;
+    border-radius: 3px;
+    display: flex;
+    justify-content: space-around;
+    
+    .version-dd {
+        width: 295px;
+        border-right: 1px solid #F65A1C;
+        height: 35px;
+        margin-right: 10px;
+        padding-left: 20px;
+        display: flex;
+        justify-content: space-between;
+        padding-right: 6px;
+    }
+    
+    .item-text {
+        font-family: Roboto;
+        font-style: normal;
+        font-weight: 500;
+        font-size: 13px;
+        line-height: 20px;
+        display: flex;
+        align-items: center;
+        text-decoration-line: underline;
+        color: #F65A1C;
+    }
+    
+    .item {
+        display: flex;
+        line-height: 35px;
+        font-size: 12px;
+        color: #F65A1C;
+        text-decoration-line: underline;
+        font-weight: $font-weight-500;
+        align-items: center;
+        svg {
+            margin-right: 5px;
+        }
+        &:last-child {
+            margin-right: 0;
+        }
+    }
+}
+
 .drug-detail-top{
     background: white;
     padding: 22px 20px 30px 30px;
@@ -27,35 +78,6 @@
                 &.active-state{
                     font-size: 18px;
                     font-weight: $font-weight-500;
-                }
-            }
-        }
-        .version-wrapper{
-            border: 1px solid #F65A1C;
-            height: 37px;
-            width: 890px;
-            background: #FFF5F0;
-            border-radius: 3px;
-            display: flex;
-            .version-dd{
-                width: 295px;
-                border-right: 1px solid #F65A1C;
-                height: 35px;
-                margin-right: 10px;
-            }
-            .item{
-                margin-right: 53px;
-                display: flex;
-                line-height: 35px;
-                font-size: 12px;
-                color: #F65A1C;
-                font-weight: $font-weight-500;
-                align-items: center;
-                svg{
-                    margin-right: 5px;
-                }
-                &:last-child{
-                    margin-right: 0;
                 }
             }
         }
@@ -122,7 +144,6 @@
         .group-des{
             background: #FFFFFF;
             width: 361px;
-            height: 426px;
             border: 1px solid #E5E5E5;
             box-sizing: border-box;
             border-radius: 5px;
@@ -170,6 +191,13 @@
                         border-radius: 3px;
                         color: #F65A1C;
                     }
+                    &.orange-fill{
+                        background: #F65A1C;
+                        border: 1px solid #F65A1C;
+                        box-sizing: border-box;
+                        border-radius: 3px;
+                        color: #ffffff;
+                    }
                     &.green{
                         background: #D5FFD7;
                         border: 1px solid #80C483;
@@ -195,7 +223,6 @@
         }
         .new-group-des{
             width: 889px;
-            height: 699px;
             background: #FFFFFF;
             border: 1px solid #E5E5E5;
             box-sizing: border-box;
@@ -609,3 +636,59 @@
     }
     
 }
+
+.pa-new-group-form {
+    .group-padding {
+        padding-right: 20px !important;
+    }
+    
+    .setup-input-fields {
+        width: 100% !important;
+    }
+}
+
+.pa-form-information-panel {
+    width: 414px;
+    background: #F9F9F9;
+    border: 1px solid #E5E5E5;
+    box-sizing: border-box;
+    border-radius: 3px;
+    padding-right: 10px;
+    height: 280px;
+    &__criteria {
+        font-family: Roboto;
+        font-style: normal;
+        font-weight: normal;
+        font-size: 12px;
+        line-height: 14px;
+        color: #323C47 !important;
+        padding: 10px;
+        padding-top: 0px;
+    }
+
+    &__indication {
+        padding: 10px;
+        padding-top: 0px;
+    }
+
+    &__indication-text {
+        font-family: Roboto;
+        font-style: normal;
+        font-weight: normal;
+        font-size: 12px;
+        line-height: 14px;
+        color: #323C47 !important;
+        margin-bottom: 11px;
+        display: flex;
+        align-items: baseline;
+    }
+    .prefix-text {
+        font-weight: 800 !important;
+        color: #323C47 !important;
+        margin-right: 10px;
+    }
+}
+
+.astrict{
+    color: red;
+}   
