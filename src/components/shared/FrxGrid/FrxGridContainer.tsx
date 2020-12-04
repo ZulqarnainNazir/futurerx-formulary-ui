@@ -39,6 +39,8 @@ interface FrxGridContainerProps<T> extends Grid<T> {
   isFetchingData: boolean;
   onSearch: (searchObject: any) => void;
   searchOptions?: any;
+  isCustomCheckboxEnabled?: boolean;
+  handleCustomRowSelectionChange?: any;
 }
 class FrxGridContainer extends Component<FrxGridContainerProps<any>> {
   /**
@@ -100,6 +102,9 @@ class FrxGridContainer extends Component<FrxGridContainerProps<any>> {
       <div className="frx-grid-container">
         {this.props.enableSearch ? this.getSearchComponent() : null}
         <FrxGrid
+          customCheckbox={this.props.isCustomCheckboxEnabled}
+          isPinningEnabled={this.props.isPinningEnabled}
+          customRowSelectionChange={this.props.handleCustomRowSelectionChange}
           columns={this.props.columns}
           gridName={this.props.gridName}
           fixedColumnKeys={this.props.fixedColumnKeys}

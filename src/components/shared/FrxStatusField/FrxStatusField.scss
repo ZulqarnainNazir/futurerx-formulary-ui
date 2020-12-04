@@ -1,6 +1,6 @@
-$not-available: #E76262;
-$selling: #5F80B9;
-$sell: #1FBBC4;
+$not-available: #e76262;
+$selling: #5f80b9;
+$sell: #1fbbc4;
 
 .status-field-block {
   &__container {
@@ -12,49 +12,49 @@ $sell: #1FBBC4;
     justify-content: center;
     align-items: center;
   }
-  
+
   &__variant-1 {
     &--outline {
-      background: #FFFFFF;
+      background: #ffffff;
       border: 1px solid $selling;
       color: $selling;
     }
-    
+
     &--fill {
       background: $selling;
       border: 1px solid $selling;
-      color: #FFFFFF;
+      color: #ffffff;
     }
   }
 
   &__variant-2 {
     &--outline {
-      background: #FFFFFF;
+      background: #ffffff;
       border: 1px solid $sell;
       color: $sell;
     }
-    
+
     &--fill {
       background: $sell;
       border: 1px solid $sell;
-      color: #FFFFFF;
+      color: #ffffff;
     }
   }
 
-  &__variant-3{
+  &__variant-3 {
     &--outline {
-      background: #FFFFFF;
+      background: #ffffff;
       border: 1px solid $not-available;
       color: $not-available;
     }
-    
+
     &--fill {
       background: $not-available;
       border: 1px solid $not-available;
-      color: #FFFFFF;
+      color: #ffffff;
     }
   }
-  
+
   &__text {
     font-family: Roboto;
     font-style: normal;
@@ -78,49 +78,63 @@ $sell: #1FBBC4;
     justify-content: center;
     align-items: center;
   }
-  
+
   &__variant-1 {
     &--outline {
-      background: #FFFFFF;
+      background: #ffffff;
       border: 1px solid $selling;
       color: $selling;
     }
-    
+
     &--fill {
       background: $selling;
       border: 1px solid $selling;
-      color: #FFFFFF;
+      color: #ffffff;
     }
   }
 
   &__variant-2 {
     &--outline {
-      background: #FFFFFF;
+      background: #ffffff;
       border: 1px solid $sell;
       color: $sell;
     }
-    
+
     &--fill {
       background: $sell;
       border: 1px solid $sell;
-      color: #FFFFFF;
+      color: #ffffff;
     }
   }
 
-  &__variant-3{
+  &__variant-3 {
     &--outline {
-      background: #FFFFFF;
+      background: #ffffff;
       border: 1px solid $not-available;
       color: $not-available;
     }
-    
+
     &--fill {
       background: $not-available;
       border: 1px solid $not-available;
-      color: #FFFFFF;
+      color: #ffffff;
     }
   }
-  
+
+  &__variant-4 {
+    &--outline {
+      background: #ffffff;
+      border: 1px solid $not-available;
+      color: $not-available;
+    }
+
+    &--fill {
+      background: #684999; //$not-available;
+      border: 1px solid #684999;//$not-available;
+      color: #ffffff;
+    }
+  }
+
   &__text {
     font-family: Roboto;
     font-style: normal;

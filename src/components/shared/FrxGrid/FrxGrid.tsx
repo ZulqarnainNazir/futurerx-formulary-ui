@@ -19,6 +19,7 @@ import ReactDragListView from "react-drag-listview/lib/index.js";
 import { Resizable } from "react-resizable";
 //data models imports
 import { Column, Grid, GridMenu } from "../../../models/grid.model";
+// import { Column } from "./ColumnModel";
 import FrxGridCell from "./components/FrxGridCell/FrxGridCell";
 import FrxGridDateFilter from "./components/FrxGridDateFilter/FrxGridDateFilter";
 import FrxGridFilterDropDown from "./components/FrxGridFilterDropDown/FrxGridFilterDropdown";
@@ -36,6 +37,13 @@ import {
   tooltipMock2,
   tooltipMock3,
 } from "../../../mocks/GridDrugLabelTooltip";
+import { JsxElement } from "typescript";
+import FrxGridRowSelectionCell from "./components/FrxGridRowSelectionCell/FrxGridRowSelectionCell";
+import FrxGridCheckboxHeaderCell from "./components/FrxGridCheckboxHeaderCell/FrxGridCheckboxHeaderCell";
+import FrxGridCheckboxGroupCell from "./components/FrxGridCheckboxGroup/FrxGridCheckboxGroup";
+import { RecordVoiceOverRounded } from "@material-ui/icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faThumbtack } from "@fortawesome/free-solid-svg-icons";
 
 /**
  * @component getResizableTitle
@@ -76,7 +84,9 @@ const CLAIMS_GRID_SETTINGS_WIDTH = 28;
 const DEFAULT_GRID_WIDTH = 1284;
 
 interface FrxGridProps<T> extends Grid<T> {
-  handleCheck?:any
+  handleCheck?: any;
+  customCheckbox?: boolean;
+  customRowSelectionChange?: any;
 }
 interface FrxGridState<T> {
   filteredInfo: null;
@@ -101,6 +111,7 @@ interface FrxGridState<T> {
   settingsMenuItems: GridMenu[];
   goToPageValue: number;
   suggestions: { [key: string]: string[] };
+  rowSelectionArr: any[];
   openDialogOnClickingCell: {
     isOpen: boolean;
     component?: (props) => JSX.Element;
@@ -131,6 +142,7 @@ class FrxGrid extends Component<FrxGridProps<any>, FrxGridState<any>> {
     goToPageValue: 1,
     settingsAnchor: null,
     settingsMenuItems: [],
+    rowSelectionArr: [],
     openDialogOnClickingCell: {
       isOpen: false,
       component: undefined,
@@ -144,17 +156,47 @@ class FrxGrid extends Component<FrxGridProps<any>, FrxGridState<any>> {
     order: string;
     type: string;
   }> = [];
+  pinnedCount: number;
+  pinnedIndexMap: Map<string, number>;
   multiSortArray: any[] = [];
   gridRef: React.RefObject<HTMLDivElement>;
 
   constructor(props) {
     super(props);
     this.gridRef = React.createRef();
+    if (props.customCheckbox && props.enableSettings) {
+      this.pinnedCount = 2;
+    } else if (
+      (props.enableSettings === true && props.customCheckbox === false) ||
+      (props.enableSettings === false && props.customCheckbox === true)
+    ) {
+      this.pinnedCount = 1;
+    } else {
+      this.pinnedCount = 0;
+    }
+    this.pinnedIndexMap = new Map<string, number>();
   }
 
   componentDidMount() {
     this.initializeColumns();
+    if (this.props.customCheckbox) {
+      this.initializeData();
+    }
   }
+
+  /**
+   * @function initializeData
+   * to initialize grid with columns
+   * @author Santosh_JS
+   */
+  initializeData = () => {
+    const { data } = this.props;
+
+    data.map((d) => {
+      d["checked"] = false;
+      d["headChecked"] = false;
+    });
+  };
 
   /**
    * @function initializeColumns
@@ -162,17 +204,25 @@ class FrxGrid extends Component<FrxGridProps<any>, FrxGridState<any>> {
    * @author Deepak_T
    */
   initializeColumns = () => {
-    const { enableSettings } = this.props;
+    const { enableSettings, customCheckbox } = this.props;
     let { columns } = this.props;
-    const settingsWidth = this.props.settingsWidth ? this.props.settingsWidth : this.props.gridName === "CLAIMS" ? CLAIMS_GRID_SETTINGS_WIDTH : SETTINGS_WIDTH;
-    let modifiedSettingsEnabledColumns: Column<any>[] = [];
-    if (enableSettings) {
+    const settingsWidth = this.props.settingsWidth
+      ? this.props.settingsWidth
+      : this.props.gridName === "CLAIMS"
+      ? CLAIMS_GRID_SETTINGS_WIDTH
+      : SETTINGS_WIDTH;
+
+    let modifiedColumns: Column<any>[] = [];
+    let requiredColumns: Column<any>[] = [];
+    if (enableSettings === true && customCheckbox === false) {
+      // let modifiedSettingsEnabledColumns: Column<any>[] = [];
+
       const settingsEnabledColumns = columns.map((c: Column<any>) => {
         c.position += 1;
         return c;
       });
 
-      modifiedSettingsEnabledColumns = [
+      modifiedColumns = [
         {
           position: 1,
           key: "settings",
@@ -186,12 +236,75 @@ class FrxGrid extends Component<FrxGridProps<any>, FrxGridState<any>> {
 
         ...settingsEnabledColumns,
       ];
+
+      requiredColumns = _.cloneDeep(modifiedColumns);
+    } else if (enableSettings === false && customCheckbox === true) {
+      // let modifiedCheckboxEnabledColumns: Column<any>[] = [];
+
+      const checkboxEnabledColumns = columns.map((c: Column<any>) => {
+        c.position += 1;
+        return c;
+      });
+
+      modifiedColumns = [
+        {
+          position: 1,
+          key: "checkbox",
+          displayTitle: " ",
+          hidden: false,
+          fixed: "left",
+          width: 40,
+
+          render: (record) => <></>,
+        },
+
+        ...checkboxEnabledColumns,
+      ];
+      requiredColumns = _.cloneDeep(modifiedColumns);
+    } else if (enableSettings && customCheckbox) {
+      // let modifiedSettingsAndCheckboxEnabledColumns: Column<any>[] = [];
+
+      const settingsAndcheckboxEnabledColumns = columns.map(
+        (c: Column<any>) => {
+          c.position += 2;
+          return c;
+        }
+      );
+
+      modifiedColumns = [
+        {
+          position: 1,
+          key: "settings",
+          displayTitle: " ",
+          hidden: false,
+          fixed: "left",
+          width: settingsWidth,
+
+          render: (record) => <></>,
+        },
+        {
+          position: 2,
+          key: "checkbox",
+          displayTitle: " ",
+          hidden: false,
+          fixed: "left",
+          width: 8,
+
+          render: (record) => <></>,
+        },
+
+        ...settingsAndcheckboxEnabledColumns,
+      ];
+      requiredColumns = _.cloneDeep(modifiedColumns);
+    } else {
+      modifiedColumns = [...columns];
+      requiredColumns = _.cloneDeep(modifiedColumns);
     }
 
-    let requiredColumns: Column<any>[] = [];
-    if (enableSettings)
-      requiredColumns = _.cloneDeep(modifiedSettingsEnabledColumns);
-    else requiredColumns = _.cloneDeep(columns);
+    // if (enableSettings) requiredColumns = _.cloneDeep(modifiedColumns);
+    // if (customCheckbox)
+    //   requiredColumns = _.cloneDeep(modifiedCheckboxEnabledColumns);
+    // else requiredColumns = _.cloneDeep(columns);
 
     const visibleColumns = requiredColumns.filter((c) => !c.hidden);
     const hiddenColumns = requiredColumns.filter((c) => c.hidden);
@@ -221,6 +334,9 @@ class FrxGrid extends Component<FrxGridProps<any>, FrxGridState<any>> {
     if (previousProps.columns && this.props.columns) {
       if (previousProps.columns.length !== this.props.columns.length) {
         this.initializeColumns();
+        if (this.props.customCheckbox) {
+          this.initializeData();
+        }
       }
     }
   }
@@ -309,6 +425,72 @@ class FrxGrid extends Component<FrxGridProps<any>, FrxGridState<any>> {
   };
 
   /**
+   * @function handleAllCheckboxSelection
+   * to update all the rows checked and header checked
+   * @author Santosh_JS
+   */
+  handleAllCheckboxSelection = (e) => {
+    let updatedRowRecords: any[] = [];
+    if (e.target.checked) {
+      updatedRowRecords = this.props.data.map((d) => {
+        d.checked = e.target.checked;
+        d.headChecked = e.target.checked;
+        return d;
+      });
+      this.setState(
+        {
+          rowSelectionArr: updatedRowRecords,
+        },
+        () => {
+          this.props.customRowSelectionChange(this.state.rowSelectionArr);
+        }
+      );
+    } else {
+      this.props.data.forEach((d) => {
+        d.checked = e.target.checked;
+        d.headChecked = e.target.checked;
+        return d;
+      });
+      this.setState(
+        {
+          // rowSelectionArr: updatedRowRecords,
+          rowSelectionArr: [],
+        },
+        () => {
+          this.props.customRowSelectionChange(this.state.rowSelectionArr);
+        }
+      );
+    }
+  };
+
+  /**
+   * @function handleCheckboxRowSelection
+   * to update the checked & unchecked record
+   * @author Santosh_JS
+   */
+  handleCheckboxRowSelection = (event, record) => {
+    let newArray = [...this.state.rowSelectionArr];
+    const filteredArr = newArray;
+    if (event.target.checked) {
+      record["checked"] = event.target.checked;
+      newArray.push(record);
+    } else {
+      record["checked"] = event.target.checked;
+      // this.handleAllCheckboxSelection(event);
+      if (record.headChecked) {
+        this.props.data.forEach((d) => (d.headChecked = false));
+      }
+      newArray = filteredArr.filter((r) => r.id !== record.id);
+      newArray.forEach((r) => {
+        record.headChecked = false;
+      });
+    }
+    this.setState({ rowSelectionArr: newArray }, () => {
+      this.props.customRowSelectionChange(this.state.rowSelectionArr);
+    });
+  };
+
+  /**
    * @function generateColumns
    * to generate column title and render jsx elements
    * @author Deepak_T
@@ -327,7 +509,11 @@ class FrxGrid extends Component<FrxGridProps<any>, FrxGridState<any>> {
     //   this.props.gridName === "CLAIMS"
     //     ? CLAIMS_GRID_SETTINGS_WIDTH
     //     : SETTINGS_WIDTH;
-    const settingsWidth = this.props.settingsWidth ? this.props.settingsWidth : this.props.gridName === "CLAIMS" ? CLAIMS_GRID_SETTINGS_WIDTH : SETTINGS_WIDTH;
+    const settingsWidth = this.props.settingsWidth
+      ? this.props.settingsWidth
+      : this.props.gridName === "CLAIMS"
+      ? CLAIMS_GRID_SETTINGS_WIDTH
+      : SETTINGS_WIDTH;
     let REST_OF_COLUMNS_WIDTH = this.props.enableSettings
       ? gridWidth - settingsWidth
       : gridWidth;
@@ -349,7 +535,11 @@ class FrxGrid extends Component<FrxGridProps<any>, FrxGridState<any>> {
           //   this.props.gridName === "CLAIMS"
           //     ? CLAIMS_GRID_SETTINGS_WIDTH
           //     : SETTINGS_WIDTH;
-          const settingsWidth = this.props.settingsWidth ? this.props.settingsWidth : this.props.gridName === "CLAIMS" ? CLAIMS_GRID_SETTINGS_WIDTH : SETTINGS_WIDTH;
+          const settingsWidth = this.props.settingsWidth
+            ? this.props.settingsWidth
+            : this.props.gridName === "CLAIMS"
+            ? CLAIMS_GRID_SETTINGS_WIDTH
+            : SETTINGS_WIDTH;
           c["width"] = settingsWidth;
           c["render"] = (record: any) => {
             const { showSettingsMenu } = this.props;
@@ -368,10 +558,10 @@ class FrxGrid extends Component<FrxGridProps<any>, FrxGridState<any>> {
                     expanded={isExpanded}
                     settingsMenuItems={this.state.settingsMenuItems}
                     onSettingsTriDotClick={this.onSettingsTriDotClick}
-										handleMenuClick={this.settingsTriDotMenuClick}
-										handleCheck={this.props.handleCheck}
-										rowSelectionChange={this.rowSelectionChange}
-										isRowSelectorCheckbox={this.props.isRowSelectorCheckbox}
+                    handleMenuClick={this.settingsTriDotMenuClick}
+                    handleCheck={this.props.handleCheck}
+                    rowSelectionChange={this.rowSelectionChange}
+                    isRowSelectorCheckbox={this.props.isRowSelectorCheckbox}
                     handleSettingsComponentMenuClose={
                       settingsComponentEnabled
                         ? this.handleSettingsComponentMenuClose
@@ -402,15 +592,36 @@ class FrxGrid extends Component<FrxGridProps<any>, FrxGridState<any>> {
               />
             );
           };
+        } else if (c.key === "checkbox") {
+          c["width"] = 60;
+          c["render"] = (record: any) => {
+            return (
+              <>
+                <FrxGridCheckboxGroupCell
+                  onSelectMulitple={this.handleCheckboxRowSelection}
+                  isHeaderCell={false}
+                  currentRowRecord={record}
+                />
+              </>
+            );
+          };
+          c["title"] = () => {
+            return (
+              <FrxGridCheckboxGroupCell
+                isHeaderCell={true}
+                onSelectAll={this.handleAllCheckboxSelection}
+                allRecordsLength={this.props.data.length}
+                selectedRowArrLength={this.state.rowSelectionArr.length}
+              />
+            );
+          };
         } else {
           const key = c.key;
           const width =
             c.pixelWidth && totalColumnWidthSetByContainer > 0
               ? REST_OF_COLUMNS_WIDTH *
-              (c.pixelWidth / totalColumnWidthSetByContainer)
+                (c.pixelWidth / totalColumnWidthSetByContainer)
               : columnWidth;
-
-          // c["width"] = width > columnWidth ? width : columnWidth;
           c["width"] = width;
           if (c.isFilterable) {
             c["filterIcon"] = (filtered) => {
@@ -446,7 +657,9 @@ class FrxGrid extends Component<FrxGridProps<any>, FrxGridState<any>> {
               const customToolTip = c.toolTip
                 ? this.withDataToolTip(c.toolTip, record)
                 : undefined;
-              const customContent = c.customContent ? this.withDataContent(c.customContent, record) : undefined
+              const customContent = c.customContent
+                ? this.withDataContent(c.customContent, record)
+                : undefined;
               return (
                 <c.cellWrapper>
                   <FrxGridCell
@@ -469,7 +682,9 @@ class FrxGrid extends Component<FrxGridProps<any>, FrxGridState<any>> {
               const customToolTip = c.toolTip
                 ? this.withDataToolTip(c.toolTip, record)
                 : undefined;
-              const customContent = c.customContent ? this.withDataContent(c.customContent, record) : undefined
+              const customContent = c.customContent
+                ? this.withDataContent(c.customContent, record)
+                : undefined;
               return (
                 <FrxGridCell
                   customToolTip={customToolTip}
@@ -493,7 +708,8 @@ class FrxGrid extends Component<FrxGridProps<any>, FrxGridState<any>> {
             return (
               <>
                 <FrxGridHeaderCell
-                  isPinningEnabled={false}
+                  isPinningEnabled={this.props.isPinningEnabled}
+                  // isPinningEnabled={true}
                   textCase={c.textCase}
                   column={c}
                   multiSortOrder={this.getMultisortOrderByColKey(c.key)}
@@ -560,20 +776,15 @@ class FrxGrid extends Component<FrxGridProps<any>, FrxGridState<any>> {
   };
 
   /**
- * @function withDataContent
- * wrapper component for passing data to dynamic cell content
- * @param data the row data
- * @author Deepak_T
- */
+   * @function withDataContent
+   * wrapper component for passing data to dynamic cell content
+   * @param data the row data
+   * @author Deepak_T
+   */
   withDataContent = (WrappedComponent: any, data: any) => {
     if (!WrappedComponent) return;
 
-    return (
-      <WrappedComponent
-
-        data={data}
-      />
-    );
+    return <WrappedComponent data={data} />;
   };
 
   /**
@@ -636,10 +847,10 @@ class FrxGrid extends Component<FrxGridProps<any>, FrxGridState<any>> {
       this.state.sortedInfo && !this.state.filteredInfo
         ? [...this.state.sortedTable]
         : this.state.filteredInfo && !this.state.sortedInfo
-          ? this.state.filterTable
-          : this.state.filteredInfo && this.state.sortedInfo
-            ? this.state.sortedTable
-            : [...this.props.data];
+        ? this.state.filterTable
+        : this.state.filteredInfo && this.state.sortedInfo
+        ? this.state.sortedTable
+        : [...this.props.data];
 
     const from = (this.state.currentPage - 1) * +this.state.pageSize + 1;
     const to =
@@ -853,11 +1064,12 @@ class FrxGrid extends Component<FrxGridProps<any>, FrxGridState<any>> {
    * @param dataRow data row
    * @author Deepak_T
    */
-	rowSelectionChange = (dataRow:any) => {
-		const isCheckBox =  this.props.isRowSelectorCheckbox;
-		if (this.props.rowSelectionChange)
-			this.props.rowSelectionChange(dataRow ,isCheckBox);
-	}
+  rowSelectionChange = (dataRow: any) => {
+    const isCheckBox = this.props.isRowSelectorCheckbox;
+    console.log(dataRow);
+    if (this.props.rowSelectionChange)
+      this.props.rowSelectionChange(dataRow, isCheckBox);
+  };
 
   /**
    * @function handleSettingsComponentMenuClose
@@ -874,6 +1086,12 @@ class FrxGrid extends Component<FrxGridProps<any>, FrxGridState<any>> {
   ==================================================================================================
   */
 
+  /*
+  ==================================================================================================
+   BEGINNING OF COLUMN PINNING RELATED METHODS
+  ==================================================================================================
+  */
+
   /**
    * @function unpinColumn
    * to unpin a column
@@ -881,7 +1099,45 @@ class FrxGrid extends Component<FrxGridProps<any>, FrxGridState<any>> {
    * NOTE: no implementation as not in screens shared
    */
   unpinColumn = (column: Column<any>) => {
-    console.log("unpin column");
+    if (column.key === "name") {
+      console.log("Cannot unpin name");
+      return;
+    }
+    // if (this.state.showSecondaryColumns) return;
+    let isColumnUnpinned = false;
+    let idxOfCol = -1;
+    const columns = this.state.columns.map((c: any, idx: number) => {
+      if (c.displayTitle === column.displayTitle && c.fixed === "left") {
+        if (column.key !== "name" && column.key !== "settings") {
+          c["fixed"] = undefined;
+          this.pinnedCount--;
+          isColumnUnpinned = true;
+          idxOfCol = idx;
+        }
+      }
+      return c;
+    });
+    // Remove entry from map.
+    if (isColumnUnpinned) {
+      let oldIndex = this.pinnedIndexMap.get(column.displayTitle);
+      this.pinnedIndexMap.delete(column.displayTitle);
+      if (oldIndex !== undefined) {
+        console.log(
+          "old index of " + column.displayTitle + ": " + oldIndex.toString()
+        );
+        console.log("current index: " + idxOfCol);
+        // move back to old position.
+        if (oldIndex <= columns.length - 1) {
+          if (this.pinnedCount > oldIndex) {
+            oldIndex = this.pinnedCount!;
+          }
+          columns.splice(oldIndex, 0, columns.splice(idxOfCol, 1)[0]);
+        }
+      }
+    }
+    this.setState({ columns: columns }, () => {
+      this.updatePinIcon();
+    });
   };
 
   /**
@@ -891,8 +1147,232 @@ class FrxGrid extends Component<FrxGridProps<any>, FrxGridState<any>> {
    * NOTE: no implementation as not in screens shared
    */
   pinColumnToLeft = (column: Column<any>) => {
-    console.log("pin column");
+    console.log("column: " + column.displayTitle);
+    // if (this.state.showSecondaryColumns) return;
+    let isColumnToMove = false;
+    let idxOfCol = -1;
+    // let indexToInsertPinned = 1000; // some high num
+    const columns = this.state.columns.map((c: any, idx: number) => {
+      if (c.displayTitle === column.displayTitle && !c.fixed) {
+        isColumnToMove = true;
+        idxOfCol = idx;
+        c["fixed"] = "left";
+        this.pinnedCount++;
+      }
+
+      return c;
+    });
+    console.log("pincount: " + this.pinnedCount);
+    console.log("actual index: " + idxOfCol);
+    if (this.pinnedCount <= 1) {
+      console.log("Something wrong: Pinned count is: " + this.pinnedCount);
+      this.pinnedCount = 1; // Hack. But protects the Name column from moving.
+    }
+
+    // Move column at index to this.pinnedCount-1
+    if (isColumnToMove) {
+      columns.splice(this.pinnedCount - 1, 0, columns.splice(idxOfCol, 1)[0]);
+      console.log(
+        "moved column to index: " + (this.pinnedCount - 1).toString()
+      );
+      // Insert index into map
+      this.pinnedIndexMap.set(column.displayTitle, idxOfCol);
+    }
+    this.setState({ columns: columns }, () => {
+      this.updatePinIcon();
+    });
   };
+
+  updatePinIcon = () => {
+    const columns = this.state.columns.map((c, index) => {
+      if (c.key === "settings") {
+        c["render"] = (record) => this.renderActionMenu(record);
+      }
+      c["title"] = () => {
+        return (
+          <>
+            {c.key === "settings" ? (
+              <span className="action-settingicon">
+                <svg
+                  onClick={(e) => this.openSettingsModal(e)}
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 20"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M19.2057 7.15888L18.8982 7.69517C18.7857 7.89394 18.5456 7.97644 18.3319 7.89769C17.8893 7.73267 17.4843 7.49641 17.128 7.20013C16.9555 7.05762 16.9105 6.80635 17.023 6.61133L17.3305 6.07504C17.0718 5.77501 16.8692 5.42623 16.7342 5.04745H16.1154C15.8904 5.04745 15.6954 4.88619 15.6579 4.66117C15.5829 4.21113 15.5791 3.73859 15.6579 3.26981C15.6954 3.04479 15.8904 2.87977 16.1154 2.87977H16.7342C16.8692 2.50099 17.0718 2.15221 17.3305 1.85219L17.023 1.31589C16.9105 1.12088 16.9518 0.869607 17.128 0.727096C17.4843 0.430821 17.8931 0.194552 18.3319 0.0295381C18.5456 -0.0492184 18.7857 0.0332884 18.8982 0.232055L19.2057 0.768349C19.5995 0.697093 20.0008 0.697093 20.3945 0.768349L20.7021 0.232055C20.8146 0.0332884 21.0546 -0.0492184 21.2684 0.0295381C21.7109 0.194552 22.1159 0.430821 22.4722 0.727096C22.6447 0.869607 22.6897 1.12088 22.5772 1.31589L22.2697 1.85219C22.5285 2.15221 22.731 2.50099 22.866 2.87977H23.4848C23.7098 2.87977 23.9048 3.04104 23.9423 3.26606C24.0173 3.71609 24.0211 4.18863 23.9423 4.65742C23.9048 4.88244 23.7098 5.04745 23.4848 5.04745H22.866C22.731 5.42623 22.5285 5.77501 22.2697 6.07504L22.5772 6.61133C22.6897 6.80635 22.6485 7.05762 22.4722 7.20013C22.1159 7.49641 21.7071 7.73267 21.2684 7.89769C21.0546 7.97644 20.8146 7.89394 20.7021 7.69517L20.3945 7.15888C20.0045 7.23013 19.5995 7.23013 19.2057 7.15888ZM18.8119 4.95369C20.2558 6.06379 21.9022 4.4174 20.7921 2.97353C19.3482 1.85969 17.7018 3.50983 18.8119 4.95369ZM14.4878 10.7254L15.7517 11.3555C16.1304 11.573 16.2954 12.0343 16.1454 12.4468C15.8117 13.3544 15.1554 14.187 14.5478 14.9145C14.2703 15.2483 13.7902 15.3308 13.4115 15.1133L12.3201 14.4832C11.7201 14.997 11.0225 15.4058 10.2612 15.6721V16.9322C10.2612 17.3672 9.94992 17.7423 9.52239 17.8173C8.59981 17.9748 7.63223 17.9823 6.6759 17.8173C6.24462 17.7423 5.92584 17.371 5.92584 16.9322V15.6721C5.16453 15.4021 4.46697 14.997 3.86692 14.4832L2.77558 15.1095C2.40055 15.3271 1.91676 15.2445 1.63924 14.9108C1.03169 14.1832 0.390384 13.3506 0.0566068 12.4468C-0.0934056 12.038 0.071608 11.5767 0.450389 11.3555L1.69924 10.7254C1.55298 9.94161 1.55298 9.13529 1.69924 8.34772L0.450389 7.71392C0.071608 7.49641 -0.0971559 7.03512 0.0566068 6.62633C0.390384 5.71876 1.03169 4.88619 1.63924 4.15863C1.91676 3.82485 2.3968 3.74234 2.77558 3.95986L3.86692 4.58991C4.46697 4.07612 5.16453 3.66734 5.92584 3.40107V2.13721C5.92584 1.70593 6.23337 1.3309 6.6609 1.25589C7.58348 1.09838 8.55481 1.09088 9.51114 1.25214C9.94242 1.32715 10.2612 1.69843 10.2612 2.13721V3.39732C11.0225 3.66734 11.7201 4.07237 12.3201 4.58616L13.4115 3.95611C13.7865 3.73859 14.2703 3.8211 14.5478 4.15488C15.1554 4.88244 15.7929 5.71501 16.1267 6.62258C16.2767 7.03137 16.1304 7.49265 15.7517 7.71392L14.4878 8.34398C14.6341 9.13154 14.6341 9.93786 14.4878 10.7254ZM10.0774 11.5167C12.2976 8.629 9.00109 5.33248 6.11336 7.55266C3.89317 10.4404 7.1897 13.7369 10.0774 11.5167ZM19.2057 18.3686L18.8982 18.9048C18.7857 19.1036 18.5456 19.1861 18.3319 19.1074C17.8893 18.9424 17.4843 18.7061 17.128 18.4098C16.9555 18.2673 16.9105 18.016 17.023 17.821L17.3305 17.2847C17.0718 16.9847 16.8692 16.6359 16.7342 16.2571H16.1154C15.8904 16.2571 15.6954 16.0959 15.6579 15.8708C15.5829 15.4208 15.5791 14.9483 15.6579 14.4795C15.6954 14.2545 15.8904 14.0894 16.1154 14.0894H16.7342C16.8692 13.7107 17.0718 13.3619 17.3305 13.0619L17.023 12.5256C16.9105 12.3306 16.9518 12.0793 17.128 11.9368C17.4843 11.6405 17.8931 11.4042 18.3319 11.2392C18.5456 11.1605 18.7857 11.243 18.8982 11.4417L19.2057 11.978C19.5995 11.9068 20.0008 11.9068 20.3945 11.978L20.7021 11.4417C20.8146 11.243 21.0546 11.1605 21.2684 11.2392C21.7109 11.4042 22.1159 11.6405 22.4722 11.9368C22.6447 12.0793 22.6897 12.3306 22.5772 12.5256L22.2697 13.0619C22.5285 13.3619 22.731 13.7107 22.866 14.0894H23.4848C23.7098 14.0894 23.9048 14.2507 23.9423 14.4757C24.0173 14.9258 24.0211 15.3983 23.9423 15.8671C23.9048 16.0921 23.7098 16.2571 23.4848 16.2571H22.866C22.731 16.6359 22.5285 16.9847 22.2697 17.2847L22.5772 17.821C22.6897 18.016 22.6485 18.2673 22.4722 18.4098C22.1159 18.7061 21.7071 18.9424 21.2684 19.1074C21.0546 19.1861 20.8146 19.1036 20.7021 18.9048L20.3945 18.3686C20.0045 18.4398 19.5995 18.4398 19.2057 18.3686ZM18.8119 16.1596C20.2558 17.2697 21.9022 15.6233 20.7921 14.1795C19.3482 13.0694 17.7018 14.7158 18.8119 16.1596Z"
+                    fill="#fff"
+                  />
+                </svg>
+              </span>
+            ) : (
+              <>
+                <span
+                  style={{
+                    marginLeft:
+                      c.key === "detail"
+                        ? "0px"
+                        : // : c.key === "name"
+                          // ? "-30px"
+                          "-10px",
+                    marginRight: "0px",
+                    position: "relative",
+                    bottom: c.key === "name" ? "" : "-1px",
+                    // top: 1,
+                    cursor: "pointer",
+                    fontSize: "11px",
+                  }}
+                >
+                  {c.fixed ? (
+                    <FontAwesomeIcon
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        this.unpinColumn(c);
+                      }}
+                      icon={faThumbtack}
+                      className="unpin-icon"
+                    />
+                  ) : (
+                    // <PushpinFilled onClick={() => this.unpinColumn(c, index)} />
+                    <FontAwesomeIcon
+                      style={{
+                        color: "#4b93e5",
+                        position: "relative",
+                        top: 0,
+                        marginRight: "5px",
+                      }}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        this.pinColumnToLeft(c);
+                      }}
+                      icon={faThumbtack}
+                    />
+                    // <PushpinOutlined
+                    //   onClick={() => this.pinColumnToLeft(c, index)}
+                    // />
+                  )}
+                </span>
+                <span
+                  style={{
+                    marginBottom: c.key === "name" ? "10px" : "",
+                    position: "relative",
+                    bottom: c.key === "name" ? "" : "-1px",
+                  }}
+                  className="header-labels common-label-text-fields-f12"
+                >
+                  {c.displayTitle}
+                </span>
+              </>
+            )}
+          </>
+        );
+      };
+      return c;
+    });
+
+    this.setState({ columns: columns });
+  };
+
+  renderExpandedEllipses = (record) => {
+    return (
+      <>
+        <svg
+          className="vertical-ellipsis"
+          width="22"
+          height="6"
+          viewBox="0 0 22 6"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <circle cx="19.1552" cy="2.58853" r="2.58853" fill="#FFFFFF" />
+          <circle cx="10.8717" cy="2.58853" r="2.58853" fill="#FFFFFF" />
+          <circle cx="2.58853" cy="2.58853" r="2.58853" fill="#FFFFFF" />
+        </svg>
+        <p className="expand-action-icons d-flex expanded-cell-icons">
+          <span className="action-editicon">
+            <svg
+              width="17"
+              height="15"
+              viewBox="0 0 17 15"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M11.6493 2.43854L14.2593 5.08111C14.3692 5.19244 14.3692 5.37408 14.2593 5.48541L7.93981 11.8838L5.25463 12.1856C4.89583 12.2266 4.59201 11.919 4.63252 11.5557L4.93056 8.83697L11.25 2.43854C11.36 2.32721 11.5394 2.32721 11.6493 2.43854ZM16.3368 1.76764L14.9248 0.337951C14.485 -0.107361 13.7703 -0.107361 13.3275 0.337951L12.3032 1.37506C12.1933 1.48639 12.1933 1.66803 12.3032 1.77936L14.9132 4.42193C15.0231 4.53326 15.2025 4.53326 15.3125 4.42193L16.3368 3.38482C16.7766 2.93658 16.7766 2.21295 16.3368 1.76764ZM11.1111 10.1436V13.126H1.85185V3.75103H8.50116C8.59375 3.75103 8.68056 3.71295 8.74711 3.6485L9.90451 2.47662C10.1244 2.25397 9.96817 1.87604 9.65856 1.87604H1.38889C0.622106 1.87604 0 2.50592 0 3.28228V13.5948C0 14.3711 0.622106 15.001 1.38889 15.001H11.5741C12.3409 15.001 12.963 14.3711 12.963 13.5948V8.97173C12.963 8.65826 12.5897 8.50298 12.3698 8.72271L11.2124 9.89458C11.1487 9.96197 11.1111 10.0499 11.1111 10.1436Z"
+                fill="#ffffff"
+              />
+            </svg>
+          </span>
+        </p>
+      </>
+    );
+  };
+
+  renderActionMenu = (record: any) => {
+    const isExpanded = this.state.expandedKeys.includes(record.key);
+    return (
+      <div
+        id="action-menu"
+        className={`expand-cell ${isExpanded ? "expanded-ellipses" : ""}`}
+        // style={{ border: "1px solid yellow", display:'flex' }}
+        onMouseOver={(e) => {
+          e.stopPropagation();
+
+          if (!isExpanded) this.onExpand(true, record);
+          // else this.onExpand(false, record);
+          else return false;
+        }}
+        onMouseLeave={(e) => {
+          e.stopPropagation();
+
+          if (isExpanded) this.onExpand(false, record);
+          else return false;
+        }}
+      >
+        {isExpanded
+          ? this.renderExpandedEllipses(record)
+          : this.renderEllipses(record)}
+      </div>
+    );
+  };
+
+  renderEllipses = (record) => {
+    return (
+      <svg
+        className="ellipsi-img"
+        width="22"
+        height="6"
+        viewBox="0 0 22 6"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <circle cx="19.1552" cy="2.58853" r="2.58853" fill="#A5A5A5" />
+        <circle cx="10.8717" cy="2.58853" r="2.58853" fill="#C1C2C4" />
+        <circle cx="2.58853" cy="2.58853" r="2.58853" fill="#E1E1E1" />
+      </svg>
+    );
+  };
+  // /**
+  //  * @function unpinColumn
+  //  * to unpin a column
+  //  *
+  //  * NOTE: no implementation as not in screens shared
+  //  */
+  // unpinColumn = (column: Column<any>) => {
+  //   console.log("unpin column");
+  // };
+
+  // /**
+  //  * @function pinColumnToLeft
+  //  * to pin a column
+  //  *
+  //  * NOTE: no implementation as not in screens shared
+  //  */
+  // pinColumnToLeft = (column: Column<any>) => {
+  //   console.log("pin column");
+  // };
 
   /*
   ==================================================================================================
@@ -921,10 +1401,10 @@ class FrxGrid extends Component<FrxGridProps<any>, FrxGridState<any>> {
       this.state.sortedInfo && !this.state.filteredInfo
         ? [...this.state.sortedTable]
         : this.state.filteredInfo && !this.state.sortedInfo
-          ? this.state.filterTable
-          : this.state.filteredInfo && this.state.sortedInfo
-            ? this.state.sortedTable
-            : [...this.props.data];
+        ? this.state.filterTable
+        : this.state.filteredInfo && this.state.sortedInfo
+        ? this.state.sortedTable
+        : [...this.props.data];
 
     const toData = to < data.length ? to : data.length;
     const length =
@@ -960,10 +1440,10 @@ class FrxGrid extends Component<FrxGridProps<any>, FrxGridState<any>> {
       this.state.sortedInfo && !this.state.filteredInfo
         ? [...this.state.sortedTable]
         : this.state.filteredInfo && !this.state.sortedInfo
-          ? this.state.filterTable
-          : this.state.filteredInfo && this.state.sortedInfo
-            ? this.state.sortedTable
-            : [...this.props.data];
+        ? this.state.filterTable
+        : this.state.filteredInfo && this.state.sortedInfo
+        ? this.state.sortedTable
+        : [...this.props.data];
     return Math.ceil(data.length / this.state.pageSize);
   };
 
@@ -1098,10 +1578,10 @@ class FrxGrid extends Component<FrxGridProps<any>, FrxGridState<any>> {
       this.state.sortedInfo && !this.state.filteredInfo
         ? [...this.state.sortedTable]
         : this.state.filteredInfo && !this.state.sortedInfo
-          ? this.state.filterTable
-          : this.state.filteredInfo && this.state.sortedInfo
-            ? this.state.sortedTable
-            : [...this.props.data];
+        ? this.state.filterTable
+        : this.state.filteredInfo && this.state.sortedInfo
+        ? this.state.sortedTable
+        : [...this.props.data];
 
     const lastPage = Math.ceil(data.length / this.state.pageSize);
 
@@ -1550,10 +2030,10 @@ class FrxGrid extends Component<FrxGridProps<any>, FrxGridState<any>> {
       this.state.sortedInfo && !this.state.filteredInfo
         ? [...this.state.sortedTable]
         : this.state.filteredInfo && !this.state.sortedInfo
-          ? this.state.filterTable
-          : this.state.filteredInfo && this.state.sortedInfo
-            ? this.state.sortedTable
-            : [...this.props.data];
+        ? this.state.filterTable
+        : this.state.filteredInfo && this.state.sortedInfo
+        ? this.state.sortedTable
+        : [...this.props.data];
 
     let sortedData; // = _.cloneDeep(data);
 
@@ -1668,10 +2148,10 @@ class FrxGrid extends Component<FrxGridProps<any>, FrxGridState<any>> {
         this.state.sortedInfo && !this.state.filteredInfo
           ? [...this.state.sortedTable]
           : this.state.filteredInfo && !this.state.sortedInfo
-            ? this.state.filterTable
-            : this.state.filteredInfo && this.state.sortedInfo
-              ? this.state.sortedTable
-              : [...this.props.data];
+          ? this.state.filterTable
+          : this.state.filteredInfo && this.state.sortedInfo
+          ? this.state.sortedTable
+          : [...this.props.data];
 
       let sortedData = _.cloneDeep(data);
       this.setState({
@@ -1901,20 +2381,15 @@ class FrxGrid extends Component<FrxGridProps<any>, FrxGridState<any>> {
   };
 
   /**
-* @function withDataExpandedRow
-* wrapper component for passing data to expanded row
-* @param data the row data
-* @author Deepak_T
-*/
+   * @function withDataExpandedRow
+   * wrapper component for passing data to expanded row
+   * @param data the row data
+   * @author Deepak_T
+   */
   withDataExpandedRow = (WrappedComponent: any, data: any) => {
     if (!WrappedComponent) return;
 
-    return (
-      <WrappedComponent
-
-        data={data}
-      />
-    );
+    return <WrappedComponent data={data} />;
   };
 
   /**
@@ -1927,7 +2402,15 @@ class FrxGrid extends Component<FrxGridProps<any>, FrxGridState<any>> {
       this.props.expandable && this.props.expandable.isExpandable
         ? this.props.expandable.expandedRowRender
         : null;
-    return <>{expandedRowComponent ? this.withDataExpandedRow(expandedRowComponent, record) : <></>}</>;
+    return (
+      <>
+        {expandedRowComponent ? (
+          this.withDataExpandedRow(expandedRowComponent, record)
+        ) : (
+          <></>
+        )}
+      </>
+    );
   };
 
   /*
@@ -1964,9 +2447,9 @@ class FrxGrid extends Component<FrxGridProps<any>, FrxGridState<any>> {
 
       let pixelWidth =
         col.pixelWidth &&
-          !isDeltaTooLarge &&
-          ((delta < 0 && col.pixelWidth + delta > 50) ||
-            (delta > 0 && col.pixelWidth < 300))
+        !isDeltaTooLarge &&
+        ((delta < 0 && col.pixelWidth + delta > 50) ||
+          (delta > 0 && col.pixelWidth < 300))
           ? col.pixelWidth + delta
           : col.pixelWidth;
       // let width = col.width && !isDeltaTooLarge ? size.width : col.width;
@@ -2098,35 +2581,35 @@ class FrxGrid extends Component<FrxGridProps<any>, FrxGridState<any>> {
             {/* PAGINATION */}
 
             {!this.props.hidePagination &&
-              this.props.pagintionPosition === "topRight" ? (
-                <FrxGridPagination
-                  hideClearFilter={hideClearFilter}
-                  hideItemsPerPage={hideItemsPerPage}
-                  hideMultiSort={hideMultiSort}
-                  hidePageJumper={hidePageJumper}
-                  hideResults={hideResults}
-                  filterTable={this.state.filterTable}
-                  position={this.props.pagintionPosition}
-                  data={this.props.data}
-                  isMultiSort={this.state.isMultiSort}
-                  sortedInfo={this.state.sortedInfo}
-                  filteredInfo={this.state.filteredInfo}
-                  pageSize={this.state.pageSize}
-                  currentPage={this.state.currentPage}
-                  showTotal={this.getShowTotal()}
-                  pages={this.getTotalPages()}
-                  lastPage={this.getLastPage()}
-                  goToPageValue={this.state.goToPageValue}
-                  onToggleMultiSort={this.onToggleMultiSort}
-                  onClearAll={this.onClearAll}
-                  onGoToPageValueChange={this.onGoToPageValueChange}
-                  onPageChange={this.onPageChange}
-                  onPageSizeChange={this.onPageSizeChange}
-                  onGoToSpecificPage={this.onGoToSpecificPage}
-                  onGotToFirstPage={this.onGotToFirstPage}
-                  onGotToLastPage={this.onGotToLastPage}
-                />
-              ) : null}
+            this.props.pagintionPosition === "topRight" ? (
+              <FrxGridPagination
+                hideClearFilter={hideClearFilter}
+                hideItemsPerPage={hideItemsPerPage}
+                hideMultiSort={hideMultiSort}
+                hidePageJumper={hidePageJumper}
+                hideResults={hideResults}
+                filterTable={this.state.filterTable}
+                position={this.props.pagintionPosition}
+                data={this.props.data}
+                isMultiSort={this.state.isMultiSort}
+                sortedInfo={this.state.sortedInfo}
+                filteredInfo={this.state.filteredInfo}
+                pageSize={this.state.pageSize}
+                currentPage={this.state.currentPage}
+                showTotal={this.getShowTotal()}
+                pages={this.getTotalPages()}
+                lastPage={this.getLastPage()}
+                goToPageValue={this.state.goToPageValue}
+                onToggleMultiSort={this.onToggleMultiSort}
+                onClearAll={this.onClearAll}
+                onGoToPageValueChange={this.onGoToPageValueChange}
+                onPageChange={this.onPageChange}
+                onPageSizeChange={this.onPageSizeChange}
+                onGoToSpecificPage={this.onGoToSpecificPage}
+                onGotToFirstPage={this.onGotToFirstPage}
+                onGotToLastPage={this.onGotToLastPage}
+              />
+            ) : null}
             {/* -----------------End Pagination--------------------*/}
 
             {/* ----------------- Table body--------------------*/}
@@ -2176,14 +2659,14 @@ class FrxGrid extends Component<FrxGridProps<any>, FrxGridState<any>> {
                   }
                   expandedRowClassName={
                     this.props.expandable &&
-                      this.props.expandable.expandedRowClassName
+                    this.props.expandable.expandedRowClassName
                       ? this.props.expandable.expandedRowClassName
                       : undefined
                   }
                   expandedRowRender={(record) => (
                     <>
                       {this.props.expandable &&
-                        this.props.expandable.isExpandable
+                      this.props.expandable.isExpandable
                         ? this.renderExpandedRowContent(record)
                         : undefined}
                     </>
@@ -2194,66 +2677,66 @@ class FrxGrid extends Component<FrxGridProps<any>, FrxGridState<any>> {
                   }}
                 />
               ) : (
-                  <Table
-                    className="frx-grid__grid-block__table-block"
-                    rowClassName={(record, index) =>
-                      index % 2 === 0
-                        ? "table-row-white"
-                        : "table-row-lightskyblue"
-                    }
-                    showSorterTooltip={false}
-                    columns={columns}
-                    components={this.components}
-                    dataSource={this.getGridData()}
-                    onChange={this.onTableStateChange}
-                    loading={this.props.loading}
-                    // isExpandable={
-                    //   this.props.expandable && this.props.expandable.isExpandable
-                    //     ? true
-                    //     : false
-                    // }
-                    bordered={this.props.bordered}
-                    pagination={false}
-                    summary={this.props.summary ? this.props.summary : undefined}
-                    scroll={{
-                      y: this.props.scroll ? this.props.scroll.y : 420,
-                      x: this.props.scroll ? this.props.scroll.x : 400
-                    }}
-                  />
-                )}
+                <Table
+                  className="frx-grid__grid-block__table-block"
+                  rowClassName={(record, index) =>
+                    index % 2 === 0
+                      ? "table-row-white"
+                      : "table-row-lightskyblue"
+                  }
+                  showSorterTooltip={false}
+                  columns={columns}
+                  components={this.components}
+                  dataSource={this.getGridData()}
+                  onChange={this.onTableStateChange}
+                  loading={this.props.loading}
+                  // isExpandable={
+                  //   this.props.expandable && this.props.expandable.isExpandable
+                  //     ? true
+                  //     : false
+                  // }
+                  bordered={this.props.bordered}
+                  pagination={false}
+                  summary={this.props.summary ? this.props.summary : undefined}
+                  scroll={{
+                    y: this.props.scroll ? this.props.scroll.y : 420,
+                    x: this.props.scroll ? this.props.scroll.x : 400,
+                  }}
+                />
+              )}
             </ReactDragListView.DragColumn>
             {/* -----------------End Table body--------------------*/}
 
             {!this.props.hidePagination &&
-              this.props.pagintionPosition === "bottomRight" ? (
-                <FrxGridPagination
-                  hideClearFilter={hideClearFilter}
-                  hideItemsPerPage={hideItemsPerPage}
-                  hideMultiSort={hideMultiSort}
-                  hidePageJumper={hidePageJumper}
-                  hideResults={hideResults}
-                  filterTable={this.state.filterTable}
-                  position={this.props.pagintionPosition}
-                  data={this.props.data}
-                  isMultiSort={this.state.isMultiSort}
-                  sortedInfo={this.state.sortedInfo}
-                  filteredInfo={this.state.filteredInfo}
-                  pageSize={this.state.pageSize}
-                  currentPage={this.state.currentPage}
-                  showTotal={this.getShowTotal()}
-                  pages={this.getTotalPages()}
-                  lastPage={this.getLastPage()}
-                  goToPageValue={this.state.goToPageValue}
-                  onToggleMultiSort={this.onToggleMultiSort}
-                  onClearAll={this.onClearAll}
-                  onGoToPageValueChange={this.onGoToPageValueChange}
-                  onPageChange={this.onPageChange}
-                  onPageSizeChange={this.onPageSizeChange}
-                  onGoToSpecificPage={this.onGoToSpecificPage}
-                  onGotToFirstPage={this.onGotToFirstPage}
-                  onGotToLastPage={this.onGotToLastPage}
-                />
-              ) : null}
+            this.props.pagintionPosition === "bottomRight" ? (
+              <FrxGridPagination
+                hideClearFilter={hideClearFilter}
+                hideItemsPerPage={hideItemsPerPage}
+                hideMultiSort={hideMultiSort}
+                hidePageJumper={hidePageJumper}
+                hideResults={hideResults}
+                filterTable={this.state.filterTable}
+                position={this.props.pagintionPosition}
+                data={this.props.data}
+                isMultiSort={this.state.isMultiSort}
+                sortedInfo={this.state.sortedInfo}
+                filteredInfo={this.state.filteredInfo}
+                pageSize={this.state.pageSize}
+                currentPage={this.state.currentPage}
+                showTotal={this.getShowTotal()}
+                pages={this.getTotalPages()}
+                lastPage={this.getLastPage()}
+                goToPageValue={this.state.goToPageValue}
+                onToggleMultiSort={this.onToggleMultiSort}
+                onClearAll={this.onClearAll}
+                onGoToPageValueChange={this.onGoToPageValueChange}
+                onPageChange={this.onPageChange}
+                onPageSizeChange={this.onPageSizeChange}
+                onGoToSpecificPage={this.onGoToSpecificPage}
+                onGotToFirstPage={this.onGotToFirstPage}
+                onGotToLastPage={this.onGotToLastPage}
+              />
+            ) : null}
             {/* -----------------End Pagination--------------------*/}
 
             {/* -----------------Grid bar--------------------*/}

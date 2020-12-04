@@ -1,6 +1,7 @@
 import React, {Component} from "react";
 import {Table, Button} from "antd";
 
+import "./EntityTable.scss";
 interface Props {}
 interface State {}
 
@@ -8,17 +9,17 @@ const columns = [
   {
     title: "Contract/PBP",
     dataIndex: "name",
-    className:"collumn-class"
+    className: "collumn-class",
   },
   {
     title: "File Commonality",
     dataIndex: "age",
-    className:"collumn-class"
+    className: "collumn-class",
   },
   {
     title: "Plan Information Commonality",
     dataIndex: "address",
-    className:"collumn-class",
+    className: "collumn-class",
     render: (address, data) => {
       console.log(data);
 
@@ -94,7 +95,7 @@ class EntityTable extends Component<Props, State> {
     }, 1000);
   };
 
-  onSelectChange = (selectedRowKeys,selectedRows) => {
+  onSelectChange = (selectedRowKeys, selectedRows) => {
     console.log("selectedRowKeys changed: ", selectedRowKeys);
     console.log("selectedRows: ", selectedRows);
     this.setState({selectedRowKeys});
