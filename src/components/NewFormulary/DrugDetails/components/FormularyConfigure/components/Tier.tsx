@@ -23,10 +23,11 @@ import { TierMockData } from "../../../../../../mocks/TierMock";
 import { TabInfo } from "../../../../../../models/tab.model";
 import TierReplace from "./TierReplace";
 import TierRemove from "./TierRemove";
-import { getTier } from "../../../../../../redux/slices/formulary/tier/tierActionCreation";
+import { getTier,getTierLabels } from "../../../../../../redux/slices/formulary/tier/tierActionCreation";
 function mapDispatchToProps(dispatch) {
   return {
-    getTier:(a)=>dispatch(getTier(a))
+    getTier:(a)=>dispatch(getTier(a)),
+    getTierLabels:(a)=>dispatch(getTierLabels(a))
   };
 }
 
@@ -111,9 +112,9 @@ class Tier extends React.Component<any, tabsState> {
 
   componentDidMount() {
     this.props.getTier("1").then((json) => {
-      
-      console.log("*******************************" + json);
-      console.log(json.payload.data);
+      //this.setState({panelGridValue: json.payload.data});
+    });
+    this.props.getTierLabels("1").then((json) => {
       //this.setState({panelGridValue: json.payload.data});
     });
    
