@@ -64,6 +64,7 @@
     
     .MuiAccordionSummary-root {
         padding: 0px !important;
+        justify-content: flex-end !important;
     }
 
     .custom-table tr td:nth-child(1),table tr th:nth-child(2) {
@@ -102,39 +103,20 @@
     }
 
     .MuiAccordionDetails-root {
-        // padding-top: 0px !important;
-        // padding-bottom: 0px !important;
-        // padding-right: 0px !important;
         padding: 0px !important;
     }
 
-    // .MuiAccordionDetails-root {
-    //     padding-top: 0px !important;
-    //     min-height: 0px !important;
-    // }
-
-    // .MuiCollapse-entered {
-    //     margin-top:-32px !important;
-    // }
 
     .MuiIconButton-root {
         position: absolute !important;
-        left: 384px !important
     }
 
     .MuiAccordionSummary-content {
         width:100% !important;
     }
 
-    // .Mui-expanded {
-    //     margin: 0px !important;
-    //     margin-bottom: -10px !important;
-    // }
 
     .top-table1 {
 
-    // td {
-    //     width: 30% !important;
-    // }
 }
 }
