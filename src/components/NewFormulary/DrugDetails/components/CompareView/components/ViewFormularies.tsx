@@ -2,6 +2,7 @@ import React from 'react';
 import Grid from "@material-ui/core/Grid";
 import Box from '@material-ui/core/Box';
 import Button from '../../../../../shared/Frx-components/button/Button';
+import FormularyComponent from './FormularyComponent'
 import './CompareView.scss';
 
 export default class ViewFormularies extends React.Component<any,any>{
@@ -26,6 +27,10 @@ export default class ViewFormularies extends React.Component<any,any>{
                             <Box display="flex" justifyContent="flex-end" className="view-formulary-btn">
                                 <Button label="View" />
                             </Box>
+                        </Grid>
+
+                        <Grid item xs={12}>
+                           <FormularyComponent />
                         </Grid>
                     </Grid>
                 </div>

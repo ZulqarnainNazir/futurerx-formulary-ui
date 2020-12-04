@@ -12,142 +12,129 @@ import { Grid } from "@material-ui/core";
 import { Row, Col, Space } from "antd";
 import RadioButton from "../../../../../../shared/Frx-components/radio-button/RadioButton";
 import Button from "../../../../../../shared/Frx-components/button/Button";
+import { TabInfo } from "../../../../../../../models/tab.model";
+import PaReplace from "./PaReplace";
+import PaRemove from "./PaRemove";
 
 import "../Tier.scss";
 import "./PA.scss";
 
-const panelGridTitle = [
-  "TYPE",
-  "NUMBER OF GROUPS",
-  "ADDED GROUPS",
-  "REMOVED GROUPS",
-  "NUMER OF DRUGS",
-  "ADDED DRUGS",
-  "REMOVED DRUGS",
-];
-
-const panelGridValue = [
-  ["PA Type 1", "1", "2", "3", "4", "5", "6"],
-  ["PA Type 2", "1", "2", "3", "4", "5", "6"],
-  ["PA Type 3", "1", "2", "3", "4", "5", "6"],
-];
-
-function PA() {
-  const [miniTabs, setMiniTabs] = useState(getMiniTabs());
-  const [activeMiniTabIndex, setAMTI] = useState(0);
-
-  const handleMiniTabClick = (number) => {
-    setAMTI(number);
+class PA extends React.Component {
+  state = {
+    tierGridContainer: false,
+    miniTabs: getMiniTabs(),
+    isFetchingData: false,
+    activeMiniTabIndex: 0,
+    activeTabIndex: 0,
+    tabs: [
+      { id: 1, text: "Replace" },
+      { id: 2, text: "Append" },
+      { id: 3, text: "Remove" },
+    ],
+    panelGridTitle: [
+      "TYPE",
+      "NUMBER OF GROUPS",
+      "ADDED GROUPS",
+      "REMOVED GROUPS",
+      "NUMBER OF DRUGS",
+      "ADDED DRUGS",
+      "REMOVED DRUGS",
+    ],
+    panelGridValue: [
+      ["PA Type 1", "1", "2", "3", "4", "5", "6"],
+      ["PA Type 2", "1", "2", "3", "4", "5", "6"],
+      ["PA Type 3", "1", "2", "3", "4", "5", "6"],
+    ],
   };
 
-  return (
-    <>
-      <div className="drug-detail-LA-root">
-        <div className="drug-detail-la-container">
-          <div className="drug-detail-la-inner">
-            <Grid container spacing={2}>
-              <Grid item xs={12}>
-                <div className="mb-10">
-                  <div className="limited-access">
-                    <PanelHeader title="Prior Authorization - DRUG SELECTION" />
-                    <div className="inner-container">
-                      <PanelGrid
-                        panelGridTitle={panelGridTitle}
-                        panelGridValue={panelGridValue}
-                      />
+  onClickTab = (selectedTabIndex: number) => {
+    let activeTabIndex = 0;
+
+    const tabs = this.state.tabs.map((tab: TabInfo, index: number) => {
+      if (index === selectedTabIndex) {
+        activeTabIndex = index;
+      }
+      return tab;
+    });
+    this.setState({ tabs, activeTabIndex });
+  };
+
+  renderTabContent = () => {
+    const activeTabIndex = this.state.activeTabIndex;
+    switch (activeTabIndex) {
+      case 0:
+        return <PaReplace />;
+      case 1:
+        return <div>Append</div>;
+      case 2:
+        return <PaRemove />;
+    }
+  };
+
+  render() {
+    return (
+      <>
+        <div className="drug-detail-LA-root">
+          <div className="drug-detail-la-container">
+            <div className="drug-detail-la-inner">
+              <Grid container spacing={2}>
+                <Grid item xs={12}>
+                  <div className="mb-10">
+                    <div className="limited-access">
+                      <PanelHeader title="Prior Authorization - DRUG SELECTION" />
+                      <div className="inner-container">
+                        <PanelGrid
+                          panelGridTitle={this.state.panelGridTitle}
+                          panelGridValue={this.state.panelGridValue}
+                        />
+                      </div>
                     </div>
                   </div>
-                </div>
-                <div className="limited-access">
-                  <PanelHeader title="Tier Definition Settings" />
-                  <div className="modify-wrapper white-bg">
-                    <div className="modify-panel">
-                      <div className="icon">
-                        <span>R</span>
-                      </div>
-                      <div className="switch-box">
-                        <CustomizedSwitches
-                          leftTitle="Modify"
-                          rightTitle="view all"
-                        />
-                      </div>
-                      <div className="mini-tabs">
-                        <FrxMiniTabs
-                          tabList={miniTabs}
-                          activeTabIndex={activeMiniTabIndex}
-                          onClickTab={handleMiniTabClick}
-                        />
-                      </div>
-                      <div>
-                        <div className="PA-list">
-                          <span>LIST</span>
-                          <DropDown options={[1, 2, 3]} />
+                  <div className="limited-access">
+                    <PanelHeader title="Prior Authorization Settings" />
+                    <div className="modify-wrapper white-bg">
+                      <div className="modify-panel">
+                        <div className="icon">
+                          <span>R</span>
+                        </div>
+                        <div className="switch-box">
+                          <CustomizedSwitches
+                            leftTitle="Modify"
+                            rightTitle="view all"
+                          />
+                        </div>
+                        <div className="mini-tabs">
+                          <FrxMiniTabs
+                            tabList={this.state.tabs}
+                            activeTabIndex={this.state.activeTabIndex}
+                            onClickTab={this.onClickTab}
+                          />
+                        </div>
+                        <div>
+                          <div className="PA-list">
+                            <span>LIST</span>
+                            <DropDown options={[1, 2, 3]} />
+                          </div>
                         </div>
                       </div>
                     </div>
-                  </div>
-                  <div className="group tier-dropdown white-bg">
-                    <Row gutter={[{ xs: 0, lg: 128 }, 32]}>
-                      <Col xs={24} lg={8}>
-                        <label>
-                          PA GROUP DESCRIPTION{" "}
-                          <span className="astrict">*</span>
-                        </label>
-                        <DropDown options={[1, 2, 3]} />
-                      </Col>
-                      <Col xs={24} lg={8}>
-                        <label>
-                          PA GROUP DESCRIPTION{" "}
-                          <span className="astrict">*</span>
-                        </label>
-                        <DropDown options={[1, 2, 3]} />
-                      </Col>
-                    </Row>
-                    <Row gutter={[{ xs: 0, lg: 128 }, 32]}>
-                      <Col xs={24} lg={8}>
-                        <label>
-                          Do you want to view existing PA configurations in
-                          another formulary? <span className="astrict">*</span>
-                        </label>
-                        <Space size="large">
-                          <RadioButton label="Yes" />
-                          <RadioButton label="No" />
-                        </Space>
-                      </Col>
-                      <Col xs={24} lg={8}>
-                        <label>
-                          Select Related Formulary to View Existing
-                          configuration? <span className="astrict">*</span>
-                        </label>
-                        <DropDown options={[1, 2, 3]} />
-                      </Col>
-                    </Row>
-                    <Row gutter={[{ xs: 0, lg: 128 }, 32]}>
-                      <Col xs={24} lg={8}>
-                        <label>
-                          do you want to add additional criteria?{" "}
-                          <span className="astrict">*</span>
-                        </label>
-                        <Space size="large">
-                          <RadioButton label="Yes" />
-                          <RadioButton label="No" />
-                        </Space>
-                      </Col>
-                    </Row>
-                    <Row gutter={[{ xs: 0, lg: 128 }, 32]} justify="end">
+                    <div className="pa-tab-content">
+                      {this.renderTabContent()}
+                    </div>
+                    <Row justify="end">
                       <Col>
                         <Button label="Apply"></Button>
                       </Col>
                     </Row>
                   </div>
-                </div>
+                </Grid>
               </Grid>
-            </Grid>
+            </div>
           </div>
         </div>
-      </div>
-    </>
-  );
+      </>
+    );
+  }
 }
 
 export default PA;
