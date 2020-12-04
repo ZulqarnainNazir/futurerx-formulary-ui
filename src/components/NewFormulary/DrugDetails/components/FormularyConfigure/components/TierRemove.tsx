@@ -3,6 +3,8 @@ import React from "react";
 import "./Tier.scss";
 import { Table } from "antd";
 import Grid from "@material-ui/core/Grid";
+import { Row, Col } from "antd";
+import Button from "../../../../../shared/Frx-components/button/Button";
 
 class TierRemove extends React.Component {
   render() {
@@ -49,6 +51,11 @@ class TierRemove extends React.Component {
               />
             </div>
           </Grid>
+          <Row justify="end">
+            <Col>
+              <Button label="Apply"></Button>
+            </Col>
+          </Row>
         </div>
       </>
     );
