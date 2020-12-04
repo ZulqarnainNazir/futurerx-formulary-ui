@@ -1,4 +1,5 @@
 import React from "react";
+import { connect } from "react-redux";
 
 import Grid from "@material-ui/core/Grid";
 import PanelHeader from "./PanelHeader";
@@ -17,8 +18,23 @@ import { getDrugDetailData } from "../../../../../../mocks/DrugGridMock";
 import FrxLoader from "../../../../../shared/FrxLoader/FrxLoader";
 import DrugGrid from '../../DrugGrid';
 import AdvancedSearch from './search/AdvancedSearch';
+import { getFormularySummary } from "../../../../../../redux/slices/formulary/formularySummaryActionCreation";
 
-export default class CB extends React.Component<any, any> {
+
+const mapStateToProps = (state) => {
+  return {
+    formularySummary: state
+  };
+};
+
+function mapDispatchToProps(dispatch) {
+  return {
+    getFormularySummary:(a)=>dispatch(getFormularySummary(a))
+  };
+}
+
+
+class CB extends React.Component<any, any> {
   state = {
     isSearchOpen: false,
     panelGridTitle1: ["", "Number of Drugs", "added drugs", "removed drugs"],
@@ -74,7 +90,6 @@ export default class CB extends React.Component<any, any> {
       columns: columns,
       data: data
     });
-
   }
 
   onClickTab = (selectedTabIndex: number) => {
@@ -83,6 +98,10 @@ export default class CB extends React.Component<any, any> {
     const tabs = this.state.tabs.map((tab: TabInfo, index: number) => {
       if (index === selectedTabIndex) {
         activeTabIndex = index;
+      }
+      if(index === 2){
+        const result = this.props.getFormularySummary('1')
+        console.log(result)
       }
       return tab;
     });
@@ -224,3 +243,8 @@ export default class CB extends React.Component<any, any> {
     );
   }
 }
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(CB);
