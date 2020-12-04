@@ -13,7 +13,7 @@ import {Link} from "react-router-dom";
 import "./PlanInformation.scss";
 
 interface Props {
-  onSave: () => any;
+  onConfigure: () => any;
 }
 interface State {}
 
@@ -29,11 +29,11 @@ class PlanInformation extends Component<Props, State> {
             title="PLAN INFORMATION"
           />
           <CardContent className="planInformation-card-container">
-            <EntityTable />
+            <EntityTable  />
           </CardContent>
           <div className="btn-group">
             {/* <Button className="btn btn-cancel">Cancel</Button> */}
-            <Button className="btn btn-save" onClick={this.props.onSave}>
+            <Button className="btn btn-save" onClick={this.props.onConfigure}>
               Configure
             </Button>
             {/* <Link to={"/planinformationconfig"} className="btn btn-save">

@@ -64,17 +64,24 @@
               // border: 1px solid blue;
               // width: auto !important;
               // width: 100%;
+              // border: 1px solid red;
+              text-align: left;
+              .MuiIconButton-root {
+                border-radius: 4px;
+              }
               .list {
+                // border: 1px solid green;
                 display: inline-block;
                 // width: 100%;
-                color: red;
+                // color: red;
                 font-family: "Roboto";
                 font-style: normal;
                 font-weight: normal;
-                font-size: 13px;
+                font-size: 12px;
                 line-height: 16px;
 
                 color: #323c47;
+                // 323C47, 100%
                 div {
                   width: 150px;
                 }
@@ -130,6 +137,54 @@
       font-weight: bolder;
     }
   }
+
+  // .warning-popoup {
+  .info-container,
+  .info-effective-date-container {
+    width: 600px;
+    height: 246px;
+    // border: 1px solid green;
+    .btn-group {
+      // border: 1px solid blue;
+      display: flex;
+      justify-content: flex-end;
+      margin: 10px;
+      position: absolute;
+      bottom: 10px;
+      right: 0;
+      // margin-left: auto;
+      .btn {
+        padding: 6px 10px;
+        // width: 78px;
+        width: 113px;
+
+        height: 35px;
+        background: #ffffff;
+        border: 1px solid #2055b5;
+        box-sizing: border-box;
+        border-radius: 3px;
+        color: #2055b5;
+        text-transform: capitalize;
+        font-family: "Roboto";
+        font-style: normal;
+        font-weight: bold;
+        font-size: 12px;
+        line-height: 35px;
+      }
+      .btn-save {
+        // width: 113px;
+        height: 35px;
+        background: #2055b5;
+        color: #ffffff;
+        margin-left: 10px;
+        margin-right: 10px;
+      }
+      .btn-cancel {
+      }
+    }
+  }
+  // }
+
   .date-select__input {
     width: 210px;
     height: 35px;
@@ -137,6 +192,7 @@
 
   .frx-dialog-root__cancel-btn,
   .frx-dialog-root__save-btn {
+    display: none;
     width: 100px;
     height: 35px;
   }
