@@ -10,14 +10,9 @@ import {
 import CustomizedSwitches from "./CustomizedSwitches";
 import PanelHeader from "./PanelHeader";
 import PanelGrid from "./panelGrid";
-import DropDown from "../../../../../shared/Frx-components/dropdown/DropDown";
-import Button from "../../../../../shared/Frx-components/button/Button";
-import Box from "@material-ui/core/Box";
-import FrxDrugGridContainer from "../../../../../shared/FrxGrid/FrxDrugGridContainer";
-import { tierColumns } from "../../../../../../utils/grid/columns";
-import { TierMockData } from "../../../../../../mocks/TierMock";
 import { TabInfo } from "../../../../../../models/tab.model";
 import TierReplace from "./TierReplace";
+import TierRemove from "./TierRemove";
 
 interface tabsState {
   activeMiniTabIndex: number;
@@ -74,20 +69,16 @@ class Tier extends React.Component<any, tabsState> {
     });
     this.setState({ tabs, activeTabIndex });
   };
-  
+
   renderTabContent = () => {
     const activeTabIndex = this.state.activeTabIndex;
     switch (activeTabIndex) {
       case 0:
-        return (
-          <div>
-            <TierReplace />
-          </div>
-        );
+        return <TierReplace />;
       case 1:
         return <div>Append</div>;
       case 2:
-        return <div>Remove</div>;
+        return <TierRemove />;
     }
   };
 
@@ -125,7 +116,7 @@ class Tier extends React.Component<any, tabsState> {
                 <div className="mb-10">
                   <div className="limited-access">
                     <PanelHeader title="Tier Definition Settings" />
-                    <div className="modify-wrapper white-bg">
+                    <div className="modify-wrapper white-bg tier-modify-panel">
                       <div className="modify-panel">
                         <div className="icon">
                           <span>R</span>

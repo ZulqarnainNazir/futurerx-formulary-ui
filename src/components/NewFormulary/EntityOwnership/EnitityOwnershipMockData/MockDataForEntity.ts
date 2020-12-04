@@ -152,10 +152,10 @@ export const entityOwnershipData1 = () => {
       owner: {value: "Your Own PBM", default: false},
       client: {value: "Medicare", default: false},
       carrier: {value: "Medicare S1234", default: false},
-      account: {value: "1234", default: false},
+      account: {value: "s1234", default: false},
       groups: [
         {
-          id: 123,
+          id: 111,
           list: [
             "Free First Fill",
             "Home Infusion",
@@ -199,7 +199,7 @@ export const entityOwnershipData1 = () => {
           default: false,
         },
         {
-          id: 112,
+          id: 122,
           list: [
             "Free First Fill",
             "Home Infusion",

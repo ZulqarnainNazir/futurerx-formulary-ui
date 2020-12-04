@@ -102,6 +102,20 @@ export const getStTabs = () => {
     ]
 }
 
+
+export const getPaTabs = () => {
+    return [
+        {
+            id: 1,
+            text: "Group Description Management"
+        },
+        {
+            id: 2,
+            text: "Drug Selection"
+        },
+    ]
+}
+
 // table //
 export const columns = [
     {
