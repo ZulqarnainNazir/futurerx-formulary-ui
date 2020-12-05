@@ -7,6 +7,7 @@ import CompareView from "./components/CompareView/CompareView";
 import "./FormularyDetails.scss";
 import FormularySetUp from "./components/FormularySetUp/FormularySetUp";
 import Validation from "../../Validation/Validation";
+import {connect} from 'react-redux';
 
 const tabs = [
   { id: 1, text: "Setup" },
@@ -16,7 +17,13 @@ const tabs = [
   { id: 5, text: "Complete" },
   { id: 6, text: "Bazaar" },
 ];
-export default class FormularyDetails extends React.Component<any, any> {
+const mapStateToProps = (state) => {
+  console.log(state)
+  return{
+    current_formulary: state.formularBase.current_formulary
+  }
+}
+class FormularyDetails extends React.Component<any, any> {
   state = {
     tabs: tabs,
     activeTabIndex: 0,
@@ -32,6 +39,11 @@ export default class FormularyDetails extends React.Component<any, any> {
     });
     this.setState({ tabs, activeTabIndex });
   };
+  componentDidMount(){
+    console.log("====== Reeta's code ========")
+    console.log(this.props)
+    console.log("====== Reeta's code ========")
+  }
   renderActiveTabContent = () => {
     const tabIndex = this.state.activeTabIndex;
     switch (tabIndex) {
@@ -58,6 +70,7 @@ export default class FormularyDetails extends React.Component<any, any> {
     }
   };
   render() {
+    console.log("=============",this.props)
     const fData = this.props.data;
     return (
       <>
@@ -75,3 +88,4 @@ export default class FormularyDetails extends React.Component<any, any> {
     );
   }
 }
+export default connect(mapStateToProps)(FormularyDetails);

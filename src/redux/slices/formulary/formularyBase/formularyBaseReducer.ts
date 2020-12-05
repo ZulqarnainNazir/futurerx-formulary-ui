@@ -10,7 +10,7 @@ export const getActionFulfilled = (state, action) => {
     console.log("getBaseFulfilled: Payload invalid");
     return;
   }
-  const data = action.payload.data[0];
+  const data = action.payload.data;
   // Response stored in the redux store.
   state.data = data;
   

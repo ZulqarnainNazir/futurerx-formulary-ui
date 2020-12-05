@@ -6,7 +6,7 @@ import { getFormularyDetails } from "../../../mocks/formulary/formularyDetails";
 import FrxGridContainer from "../../shared/FrxGrid/FrxDrugGridContainer";
 import FormularyExpandedDetails from "../../FormularyExpandedDetails/FormularyExpandedDetails";
 import Alternatives from "../Alternatives/Alternatives";
-
+import FrxLoader from '../.././shared/FrxLoader/FrxLoader';
 interface State {
   miniTabs: Array<TabInfo>;
   activeMiniTabIndex: number;
@@ -21,13 +21,13 @@ const miniTabs = [
   { id: 4, text: "Decision Tree" },
   { id: 5, text: "Group Description Management" },
 ];
-
+const steps = ["Setup","Construct","Compare","Validation","Complete","Bazaar"];
 export default class Medicare extends React.Component<any, any> {
   state = {
     miniTabs: miniTabs,
     activeMiniTabIndex: 0,
     gridData: [],
-    gridColumn: []
+    gridColumn: [],
   };
   onClickMiniTab = (selectedTabIndex: number) => {
     let activeMiniTabIndex = 0;
@@ -44,9 +44,6 @@ export default class Medicare extends React.Component<any, any> {
     const miniTabIndex = this.state.activeMiniTabIndex;
     switch (miniTabIndex) {
       case 0:
-        console.log("IN CASE 0");
-        console.log(this.props)
-        console.log("IN CASE 0");
         return this.getGridData(this.props.baseData)
       case 1:
         return (
@@ -65,34 +62,9 @@ export default class Medicare extends React.Component<any, any> {
     }
   };
   getGridData = (baseData) => {
-    // {
-    //   id: 1,
-    //   key: 1,
-    //   contract_year: "2021",
-    //   bazaar: {
-    //     label: "N/A",
-    //     type: "block",
-    //     variant: 3,
-    //     fill: "fill",
-    //   },
-    //   origin: {
-    //     label: "Purchased",
-    //     type: "pill",
-    //     variant: 1,
-    //     fill: "fill",
-    //   },
-    //   formulary_name: "2021Care1234",
-    //   id_formulary: "123",
-    //   version_number: "1",
-    //   timeRemaining: {
-    //     text: "09/04/2020  @ 9:00 AM",
-    //     progress: 25,
-    //   },
-    //   step: "2",
-    // }
-
-    const gridData = baseData ? baseData.map((e,index: any) => {
-      console.log(e)
+    let grid = <FrxLoader />;
+    let gridData = null;
+    gridData = baseData ? baseData.map((e,index: any) => {
       return {
         "id": index + 1,
         "key": index + 1,
@@ -116,10 +88,10 @@ export default class Medicare extends React.Component<any, any> {
           "text": "09/04/2020  @ 9:00 AM",
           "progress": 25,
         },
-        "step":"2"
+        "step": steps.indexOf(e.step) + 1
       }
     }) : null;
-    console.log(gridData)
+    
     return (gridData ? (
       <div>
         <FrxGridContainer
@@ -131,7 +103,7 @@ export default class Medicare extends React.Component<any, any> {
           gridName="MEDICARE"
           enableSettings
           columns={formularyDetailsGridColumns({
-            onFormularyNameClick: this.props.drugDetailClick,
+            onFormularyNameClick: (id: any) => this.props.drugDetailClick(id),
           })}
           scroll={{ y: 377 }}
           isFetchingData={false}
@@ -178,7 +150,7 @@ export default class Medicare extends React.Component<any, any> {
           }}
         />
       </div>
-      ) : []
+      ) : grid
     )
   }
   render() {

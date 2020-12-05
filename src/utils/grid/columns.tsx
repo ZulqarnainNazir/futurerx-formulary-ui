@@ -526,7 +526,7 @@ export const formularyDetailsGridColumns: (data) => Column<any>[] = (data) => {
       key: "formulary_name",
       displayTitle: "formulary name",
       customContent: (props) => (
-        <div className="input-link" onClick={() => data.onFormularyNameClick(props.data.id_formulary)}>
+        <div className="input-link" onClick={() => data.onFormularyNameClick(props.data.key)}>
           {props.data.formulary_name}
         </div>
       ),

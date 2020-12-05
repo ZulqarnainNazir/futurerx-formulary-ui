@@ -11,6 +11,7 @@ import MassMaintenance from "./MassMaintenance/MassMaintenance";
 import FormularyDashboardStats from "./../FormularyDashboardStats/FormularyDashboardStats";
 import { getFormularyDetails } from "../../mocks/formulary/formularyDetails";
 import { getBase } from "../.././redux/slices/formulary/formularyBase/formularyBaseActionCreator";
+import { formularyBaseSlice } from "../.././redux/slices/formulary/formularyBase/formularyBaseSlice";
 
 import "./NewFormulary.scss";
 
@@ -28,11 +29,11 @@ interface State {
   showMassMaintenance: boolean;
   showDrugDetails: boolean;
   baseData: any;
+  current_formulary: any;
 }
 
   
 const mapStateToProps = (state) => {
-  console.log(state.data)
   return {
     data: state.data
   };
@@ -40,7 +41,8 @@ const mapStateToProps = (state) => {
 
 function mapDispatchToProps(dispatch) {
   return {
-    getBase:(a)=>dispatch(getBase(a))
+    getBase:(a)=>dispatch(getBase(a)),
+    setCurrentForumulary: (selectedFormulary) => dispatch(formularyBaseSlice.actions.getCurrentFormulary(selectedFormulary))
   };
 }
 
@@ -51,13 +53,15 @@ class Formulary extends React.Component<any, any> {
     showTabs: true,
     showMassMaintenance: false,
     showDrugDetails: false,
-    baseData: null
+    baseData: [],
+    current_formulary: null
   };
 
 
   componentDidMount(){
     this.props.getBase("1").then((json) => {
       let resp = json.payload.data
+      console.log(resp);
       this.setState({baseData: resp})
     });
   }
@@ -73,8 +77,14 @@ class Formulary extends React.Component<any, any> {
     });
     this.setState({ tabs, activeTabIndex });
   };
-  drugDetailsClickHandler = () => {
+  drugDetailsClickHandler = (id: any) => {
+    let selectedRow:any;
+    if(id !== undefined){
+      selectedRow = this.state.baseData[id-1];
+    }
+    this.props.setCurrentForumulary(selectedRow)
     this.setState({
+      current_formulary: selectedRow,
       showTabs: !this.state.showTabs,
       showDrugDetails: !this.state.showDrugDetails,
     });
@@ -123,9 +133,9 @@ class Formulary extends React.Component<any, any> {
           </>
         ) : this.state.showDrugDetails ? (
           <DrugDetailsContext.Provider
-            value={{ showDetailHandler: this.drugDetailsClickHandler }}
+            value={{ showDetailHandler: () => this.drugDetailsClickHandler }}
           >
-            <DrugDetails data={getFormularyDetails()} />
+            <DrugDetails data={getFormularyDetails()}/>
           </DrugDetailsContext.Provider>
         ) : this.state.showMassMaintenance ? (
           <MassMaintenanceContext.Provider

@@ -23,13 +23,10 @@ export const getBase = createAsyncThunk("formularyBase",
         (response) => {
         if (!response.ok) throw Error(response.statusText);
         return response.json();
-      })
-      .then((json) => {
-        return json;
-      }).catch(()=>{
-        console.log("=======================================")
+      }).catch((error)=>{
+        console.log(error)
       });
       return fetchData;
     }
-  );
+);
   

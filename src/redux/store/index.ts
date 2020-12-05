@@ -17,15 +17,14 @@ const middleware = [
 
 const memberSummaryReducer = memberSummarySlice.reducer;
 const userPrefsReducer = userPrefsSlice.reducer;
-const formularySummaryReducer = formularySummarySlice.reducer;
+const formularyBaseReducer = formularyBaseSlice.reducer;
 
 // The store is configured with the state and the corresponding reducers.
 const store = configureStore({
   reducer: {
     member_summary: memberSummaryReducer,
     user_prefs: userPrefsReducer,
-    formulary2:formularySummaryReducer,
-    formularBase: formularyBaseSlice.reducer
+    formularBase: formularyBaseReducer
   },
   middleware,
 });
