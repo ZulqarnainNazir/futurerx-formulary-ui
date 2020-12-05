@@ -1,4 +1,5 @@
 import React from "react";
+import { connect}  from 'react-redux'
 import { withStyles, Theme, createStyles } from "@material-ui/core/styles";
 import { purple } from "@material-ui/core/colors";
 import FormGroup from "@material-ui/core/FormGroup";
@@ -6,6 +7,7 @@ import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Switch, { SwitchClassKey, SwitchProps } from "@material-ui/core/Switch";
 import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
+import { switchSlice } from '../../../../../../redux/slices/formulary/switch/switchSlice'
 
 interface Styles extends Partial<Record<SwitchClassKey, string>> {
   focusVisible?: string;
@@ -13,6 +15,12 @@ interface Styles extends Partial<Record<SwitchClassKey, string>> {
 
 interface Props extends SwitchProps {
   classes: Styles;
+}
+
+const mapPropToState = (dispatch) =>{
+ return{
+  switchBtn:(switchValue)=>dispatch(switchSlice.actions.switchButton(switchValue))
+ }
 }
 
 const AntSwitch = withStyles((theme: Theme) =>
@@ -51,15 +59,16 @@ const AntSwitch = withStyles((theme: Theme) =>
   })
 )(Switch);
 
-export default function CustomizedSwitches(props: any) {
+function CustomizedSwitches(props: any) {
   const [state, setState] = React.useState({
     checkedC: true,
   });
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setState({ ...state, [event.target.name]: event.target.checked });
+    props.switchBtn(event.target.checked)
   };
-
+  
   return (
     <FormGroup>
       <Typography component="div">
@@ -82,3 +91,5 @@ export default function CustomizedSwitches(props: any) {
     </FormGroup>
   );
 }
+
+export default connect(null,mapPropToState)(CustomizedSwitches)

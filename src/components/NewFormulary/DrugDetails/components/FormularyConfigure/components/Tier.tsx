@@ -49,6 +49,7 @@ interface tabsState {
   columns: any;
   data: any;
   openPopup: boolean;
+  tierOption:any[];
 }
 
 class Tier extends React.Component<any, tabsState> {
@@ -60,6 +61,7 @@ class Tier extends React.Component<any, tabsState> {
     activeTabIndex: 0,
     columns: [],
     data: [],
+    tierOption:[],
     tierDefinationColumns: [],
     tierDefinationData: [],
     openPopup: false,
@@ -74,25 +76,23 @@ class Tier extends React.Component<any, tabsState> {
     const TierDefinationData = this.props.getTier("1").then((json => {
       debugger;
       let tmpData = json.payload.data;
-
+      var tierOption:any[] = [];
       var result = tmpData.map(function(el) {
         var element = Object.assign({}, el);
+        tierOption.push(el.tier_name)
         element.is_validated = "false";
         if(element.added_count>0){
           element.is_validated = "true";
         }
         return element;
       })
-      
-      console.log(result);
       this.setState({
         tierDefinationColumns: TierColumns,
-        tierDefinationData: result
+        tierDefinationData: result,
+        tierOption: tierOption
       })
     }))
-   
-
-   
+  
   }
   onClickTab = (selectedTabIndex: number) => {
     let activeTabIndex = 0;
@@ -110,7 +110,7 @@ class Tier extends React.Component<any, tabsState> {
     const activeTabIndex = this.state.activeTabIndex;
     switch (activeTabIndex) {
       case 0:
-        return <TierReplace />;
+        return <TierReplace tierOptions={this.state.tierOption}/>;
       case 1:
         return <div>Append</div>;
       case 2:
@@ -128,7 +128,7 @@ class Tier extends React.Component<any, tabsState> {
     this.setState({ tierGridContainer: true });
   };
 
-   handleSearch = () => {
+  handleSearch = () => {
     console.log("work")
   }
   settingsTriDotClick = (data: any) => {

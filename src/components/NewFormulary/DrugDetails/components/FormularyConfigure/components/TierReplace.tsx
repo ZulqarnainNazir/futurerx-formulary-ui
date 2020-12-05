@@ -1,4 +1,5 @@
 import React from "react";
+import { connect } from 'react-redux'
 import { Grid } from "@material-ui/core";
 import "./Tier.scss";
 
@@ -9,9 +10,16 @@ import FrxDrugGridContainer from "../../../../../shared/FrxGrid/FrxDrugGridConta
 import { tierColumns } from "../../../../../../utils/grid/columns";
 import { TierMockData } from "../../../../../../mocks/TierMock";
 import AdvancedSearch from './search/AdvancedSearch';
+
 interface tabsState {
   tierGridContainer: boolean;
   isSearchOpen: boolean;
+}
+
+const mapStateToProps = (state) =>{
+  return{
+    configureSwitch:state.switchReducer.configureSwitch
+  }
 }
 
 class TierReplace extends React.Component<any, tabsState> {
@@ -39,11 +47,11 @@ class TierReplace extends React.Component<any, tabsState> {
               <label>
                 TIER <span className="astrict">*</span>
               </label>
-              <DropDown options={[1, 2, 3]} />
+              <DropDown options={this.props.tierOptions} disabled={this.props.configureSwitch}/>
             </Grid>
             <Grid item xs={1}>
               <Box display="flex" justifyContent="flex-end">
-                <Button label="Apply" onClick={this.openTierGridContainer} />
+                <Button label="Apply" onClick={this.openTierGridContainer} disabled={this.props.configureSwitch}/>
               </Box>
             </Grid>
           </Grid>
@@ -95,4 +103,4 @@ class TierReplace extends React.Component<any, tabsState> {
   }
 }
 
-export default TierReplace;
+export default connect(mapStateToProps)(TierReplace);
