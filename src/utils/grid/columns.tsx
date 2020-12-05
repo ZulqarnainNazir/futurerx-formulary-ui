@@ -125,6 +125,232 @@ export const PaRemoveColumns: () => Column<any>[] = () => {
   ];
 };
 
+export const NOCMarketingColumns: () => Column<any>[] = () => {
+  return [
+    {
+      position: 1,
+      sorter: {},
+      textCase: "upper",
+      pixelWidth: 100,
+      key: "drugName",
+      displayTitle: "drug name",
+      isFilterable: true,
+      dataType: "string",
+      filters: textFilters,
+      hidden: false,
+      sortDirections: ["ascend", "descend"],
+    },
+    {
+      position: 2,
+      sorter: {},
+      textCase: "upper",
+      pixelWidth: 122,
+      key: "descriptionOfChange",
+      displayTitle: "Description of change",
+      isFilterable: true,
+      dataType: "string",
+      filters: textFilters,
+      hidden: false,
+      sortDirections: ["ascend", "descend"],
+    },
+    {
+      position: 3,
+      sorter: {},
+      textCase: "upper",
+      pixelWidth: 137,
+      key: "reasonforchange",
+      displayTitle: "Reason for Change",
+      isFilterable: true,
+      dataType: "string",
+      filters: textFilters,
+      hidden: false,
+      sortDirections: ["ascend", "descend"],
+    },
+    {
+      position: 4,
+      sorter: {},
+      textCase: "upper",
+      pixelWidth: 163,
+      key: "changeType",
+      displayTitle: "Change Type",
+      isFilterable: true,
+      dataType: "string",
+      filters: textFilters,
+      hidden: false,
+      sortDirections: ["ascend", "descend"],
+    },
+
+    {
+      position: 5,
+      sorter: {},
+      textCase: "upper",
+      pixelWidth: 242,
+      key: "alternativeDrugName",
+      displayTitle: "Alternative Drug Name",
+      isFilterable: true,
+      dataType: "string",
+      filters: textFilters,
+      hidden: false,
+      sortDirections: ["ascend", "descend"],
+    },
+    {
+      position: 6,
+      sorter: {},
+      textCase: "upper",
+      pixelWidth: 242,
+      key: "costShareType",
+      displayTitle: "Cost share type",
+      isFilterable: true,
+      dataType: "string",
+      filters: textFilters,
+      hidden: false,
+      sortDirections: ["ascend", "descend"],
+    },
+  ];
+};
+
+export const addFileMarketingColumns: () => Column<any>[] = () => {
+  return [
+    {
+      position: 1,
+      sorter: {},
+      textCase: "upper",
+      pixelWidth: 100,
+      key: "templateGroupName",
+      displayTitle: "template group name",
+      isFilterable: true,
+      dataType: "string",
+      filters: textFilters,
+      hidden: false,
+      sortDirections: ["ascend", "descend"],
+    },
+    {
+      position: 2,
+      sorter: {},
+      textCase: "upper",
+      pixelWidth: 122,
+      key: "deliveryMethod",
+      displayTitle: "Delivery Method",
+      isFilterable: true,
+      dataType: "string",
+      filters: textFilters,
+      hidden: false,
+      sortDirections: ["ascend", "descend"],
+    },
+    {
+      position: 3,
+      sorter: {},
+      textCase: "upper",
+      pixelWidth: 137,
+      key: "tags",
+      displayTitle: "tags",
+      isFilterable: true,
+      dataType: "string",
+      filters: textFilters,
+      hidden: false,
+      sortDirections: ["ascend", "descend"],
+    },
+    {
+      position: 4,
+      sorter: {},
+      textCase: "upper",
+      pixelWidth: 163,
+      key: "targetAudience",
+      displayTitle: "target Audience",
+      isFilterable: true,
+      dataType: "string",
+      filters: textFilters,
+      hidden: false,
+      sortDirections: ["ascend", "descend"],
+    },
+
+    {
+      position: 5,
+      sorter: {},
+      textCase: "upper",
+      pixelWidth: 242,
+      key: "numberOfTemplate",
+      displayTitle: "Number of Templates",
+      isFilterable: true,
+      dataType: "string",
+      filters: textFilters,
+      hidden: false,
+      sortDirections: ["ascend", "descend"],
+    },
+  ];
+};
+
+export const marketingColumns: () => Column<any>[] = () => {
+  return [
+    {
+      position: 1,
+      sorter: {},
+      textCase: "upper",
+      pixelWidth: 100,
+      key: "file",
+      displayTitle: "file",
+      isFilterable: true,
+      dataType: "string",
+      filters: textFilters,
+      hidden: false,
+      sortDirections: ["ascend", "descend"],
+    },
+    {
+      position: 2,
+      sorter: {},
+      textCase: "upper",
+      pixelWidth: 122,
+      key: "language",
+      displayTitle: "language",
+      isFilterable: true,
+      dataType: "string",
+      filters: textFilters,
+      hidden: false,
+      sortDirections: ["ascend", "descend"],
+    },
+    {
+      position: 3,
+      sorter: {},
+      textCase: "upper",
+      pixelWidth: 137,
+      key: "template",
+      displayTitle: "template",
+      isFilterable: true,
+      dataType: "string",
+      filters: textFilters,
+      hidden: false,
+      sortDirections: ["ascend", "descend"],
+    },
+    {
+      position: 4,
+      sorter: {},
+      textCase: "upper",
+      pixelWidth: 163,
+      key: "liveUrlPublishDateAndTime",
+      displayTitle: "Live Url publish date and time",
+      isFilterable: true,
+      dataType: "string",
+      filters: textFilters,
+      hidden: false,
+      sortDirections: ["ascend", "descend"],
+    },
+
+    {
+      position: 5,
+      sorter: {},
+      textCase: "upper",
+      pixelWidth: 242,
+      key: "archiveUrlPublishDateAndTime",
+      displayTitle: "Archive Url publish date and time",
+      isFilterable: true,
+      dataType: "string",
+      filters: textFilters,
+      hidden: false,
+      sortDirections: ["ascend", "descend"],
+    },
+  ];
+};
+
 export const tierColumns: () => Column<any>[] = () => {
   return [
     {
@@ -184,7 +410,7 @@ export const tierColumns: () => Column<any>[] = () => {
       position: 5,
       sorter: {},
       textCase: "upper",
-      pixelWidth: 242,
+      pixelWidth: 100,
       key: "ndc",
       displayTitle: "NDC",
       isFilterable: true,
@@ -234,6 +460,38 @@ export const tierColumns: () => Column<any>[] = () => {
     },
   ];
 };
+
+export const setupHmpsColumns: () => Column<any>[] = () => {
+  return [
+    {
+      position: 1,
+      sorter: {},
+      textCase: "upper",
+      pixelWidth: 100 ,
+      key: "files",
+      displayTitle: "Files",
+      isFilterable: true,
+      dataType: "string",
+      filters: textFilters,
+      hidden: false,
+      sortDirections: ["ascend", "descend"],
+    },
+    {
+      position:2,
+      sorter: {},
+      textCase: "upper",
+      pixelWidth: 122,
+      key: "lastGenerated",
+      displayTitle: "Last Generated",
+      isFilterable: true,
+      dataType: "string",
+      filters: textFilters,
+      hidden: false,
+      sortDirections: ["ascend", "descend"],
+    },
+    
+  ]
+}
 
 export const formularyDetailsGridColumns: (data) => Column<any>[] = (data) => {
   return [

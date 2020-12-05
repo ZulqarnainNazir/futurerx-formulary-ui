@@ -1,10 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 import PanelHeader from './PanelHeader';
 import PanelGrid from './panelGrid';
 import CustomizedSwitches from './CustomizedSwitches';
 import { TabInfo } from "../../../../../../models/tab.model";
 import FrxMiniTabs from "../../../../../shared/FrxMiniTabs/FrxMiniTabs";
 import Button from '../../../../../shared/Frx-components/button/Button';
+import DropDown from "../../../../../shared/Frx-components/dropdown/DropDown";
 import FormGroup from '@material-ui/core/FormGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
@@ -20,6 +21,92 @@ import RadioButton from '../../../../../shared/Frx-components/radio-button/Radio
 interface Props{
     tooltip?:string;
     formType?:number;
+}
+
+const formInformationPanelTabs = [
+  {
+    id: 1,
+    text: "PA Criteria Change Indicator"
+  },
+  {
+      id: 2,
+      text: "PA Indication Indicator"
+  },
+]
+
+const FormInformationPanel = (props: any) => {
+  const [activeTabIndex, setActiveTabIndex] = useState(0)
+
+  const onClickTab = (selectedTabIndex: number) => {
+    let activeTabIndex = 0;
+
+    const tabs = formInformationPanelTabs.map((tab: TabInfo, index: number) => {
+      if (index === selectedTabIndex) {
+        activeTabIndex = index;
+      }
+      return tab;
+    });
+    
+    setActiveTabIndex(activeTabIndex);
+  }
+  
+  const renderActiveTabContent = () => {
+    switch (activeTabIndex) {
+      case 0:
+        return  <div className="pa-form-information-panel__criteria">
+          Value is assigned based on a comparison of the current criteria and criteria applied to the previous year's formulary that the current year most closely resembles, defined in the Formulary General Information Page. Any difference will result in the value to be 1.
+        </div>
+      case 1:
+        return ( 
+        <div className="pa-form-information-panel__indication">
+          <div>
+            <div className="pa-form-information-panel__indication-text">
+              <span className="prefix-text">1</span>
+              <div>
+                All FDA-approved Indications. This value cannot be used if the drug that requires PA is subject to Indication-Based Coverage (IBC).
+              </div>
+            </div>
+            <div className="pa-form-information-panel__indication-text">
+              <span className="prefix-text">2</span>
+              <div>
+                Some FDA-approved Indications Only. This value is to be submitted for drugs that are subject to IBC.
+              </div>
+            </div>
+            <div className="pa-form-information-panel__indication-text">
+              <span className="prefix-text">3</span>
+              <div>
+                All Medically-accepted Indications. Drugs for which the PA will be approved for all Part D medically-accepted indications (FDA-approved and compendia-supported) should be submitted with a 3.
+              </div>
+            </div>
+            <div className="pa-form-information-panel__indication-text">
+              <span className="prefix-text">4</span>
+              <div>
+                All FDA-approved Indications, Some Medically-accepted Indications. If the PA will only be approved for specific off-label uses, a 4 should be submitted. The additional off-label uses should be submitted in the subsequent Off-Label Uses field.
+              </div>
+            </div>
+          </div>
+        </div>
+        );
+    }
+  };
+  
+  
+  return (
+    <div className="pa-form-information-panel">
+      <div className="inner-container">   
+        <div className="configure-mini-tabs">
+          <FrxMiniTabs
+            tabList={formInformationPanelTabs}
+            activeTabIndex={activeTabIndex}
+            onClickTab={onClickTab}
+          />
+        </div>  
+      </div>
+      <div>
+        {renderActiveTabContent()}
+      </div>
+    </div>
+  )
 }
 
 export default function NewGroup(props: any) {
@@ -114,7 +201,8 @@ export default function NewGroup(props: any) {
                 Archive
               </div>
             </div>
-            <div className="inner-container">
+            
+            <div className="inner-container pa-new-group-form">
                 <div className="setting-1">
                     <span>What file type is this group description for? *</span>
                     <div className="marketing-material radio-group">
@@ -123,59 +211,91 @@ export default function NewGroup(props: any) {
                         <RadioButton label="ADD" name="marketing-material-radio1" />
                     </div>
                     <Grid container>
-                        <Grid item xs={6}>
+                      <Grid container item xs={6}>
+                        <Grid item xs={12}>
+                              <div className="group group-padding">
+                                  <label>PA GROUP DESCRIPTION <span className="astrict">*</span></label>
+                                  <input type="textarea" className="setup-input-fields" />
+                              </div>
+                          </Grid>
+                          <Grid item xs={12}>
+                              <div className="group group-padding">
+                                  <label>PA Criteria Change Indicator <span className="astrict">*</span></label>
+                                  <DropDown
+                                    className="formulary-type-dropdown"
+                                    placeholder="Commercial"
+                                    options={["Commercial", "Medicare", 3]}
+                                  />
+                              </div>
+                          </Grid>
+                          <Grid item xs={12}>
+                              <div className="group group-padding">
+                                  <label>PA INDICATION Indicator<span className="astrict">*</span></label>
+                                  <DropDown
+                                    className="formulary-type-dropdown"
+                                    placeholder="Commercial"
+                                    options={["Commercial", "Medicare", 3]}
+                                  />
+                              </div>
+                          </Grid>
+                      </Grid>
+                      
+                      <Grid item xs={6}>
+                        <FormInformationPanel/>
+                      </Grid>
+                      
+                        <Grid item xs={12}>
                             <div className="group">
-                                <label>ST GROUP DESCRIPTION<span className="astrict">*</span></label>
-                                <input type="text" />
+                                <label>Off-LABEL USES</label>
+                                <input type="textarea" className="setup-input-fields" />
+                            </div>
+                        </Grid>
+                        <Grid item xs={12}>
+                            <div className="group">
+                                <label>EXCLUSION CRITERIA</label>
+                                <input type="textarea" className="setup-input-fields" />
+                            </div>
+                        </Grid>
+                        <Grid item xs={12}>
+                            <div className="group">
+                                <label>REQUIRED MEDICAL INFORMATION</label>
+                                <input type="textarea" className="setup-input-fields" />
+                            </div>
+                        </Grid>
+                        <Grid item xs={12}>
+                            <div className="group">
+                                <label>AGE RESTRICTIONS</label>
+                                <input type="textarea" className="setup-input-fields" />
+                            </div>
+                        </Grid>
+                        <Grid item xs={12}>
+                            <div className="group">
+                                <label>PRESCRIBER RESTRICTIONS</label>
+                                <input type="textarea" className="setup-input-fields" />
+                            </div>
+                        </Grid>
+                        <Grid item xs={12}>
+                            <div className="group">
+                                <label>COVERAGE DURATION<span className="astrict">*</span></label>
+                                <input type="textarea" className="setup-input-fields" />
+                            </div>
+                        </Grid>
+                        <Grid item xs={12}>
+                            <div className="group">
+                                <label>OTHER CRITERIA</label>
+                                <input type="textarea" className="setup-input-fields" />
                             </div>
                         </Grid>
                     </Grid>
-                    {props.formType>0 && (<Grid container className="mb-20">
+                    {/* {props.formType>0 && (<Grid container className="mb-20">
                         <Grid item xs={6}>
                             <div className="group">
                                 <label>EXCLUDED DRUG FILE</label>
                                 <input type="text" />
                             </div>
                         </Grid>
-                    </Grid>)}
+                    </Grid>)} */}
                 </div>
-                {props.formType===0 && (<div className="setting-1 mb-20">
-                    <span>What type of drugs will this group contain? Select all that apply.</span>
-                    <div className="marketing-material-chk radio-group">
-                        <FormControlLabel control={<Checkbox />} label='RX' />
-                        <FormControlLabel control={<Checkbox />} label='OTC' />
-                    </div>
-                    <Grid container>
-                        <Grid item xs={6}>
-                            <div className="group">
-                                <label>ST CRITERIA<span className="astrict">*</span>
-                                    <div className="panel-tooltip">
-                                        <Tooltip
-                                            classes={{
-                                                tooltip: 'custom-tooltip panel-tooltip'
-                                            }}
-                                            title={props.tooltip}
-                                            placement="top-start"
-                                            arrow>
-                                            <svg className="info-icon" width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                <path d="M6.3335 3.66732H7.66683V5.00065H6.3335V3.66732ZM6.3335 6.33398H7.66683V10.334H6.3335V6.33398ZM7.00016 0.333984C3.32016 0.333984 0.333496 3.32065 0.333496 7.00065C0.333496 10.6807 3.32016 13.6673 7.00016 13.6673C10.6802 13.6673 13.6668 10.6807 13.6668 7.00065C13.6668 3.32065 10.6802 0.333984 7.00016 0.333984ZM7.00016 12.334C4.06016 12.334 1.66683 9.94065 1.66683 7.00065C1.66683 4.06065 4.06016 1.66732 7.00016 1.66732C9.94016 1.66732 12.3335 4.06065 12.3335 7.00065C12.3335 9.94065 9.94016 12.334 7.00016 12.334Z" fill="#1D54B4" />
-                                            </svg>
-                                        </Tooltip>
-                                    </div>
-                                </label>
-                                <input type="text" />
-                            </div>
-                        </Grid>
-                    </Grid>
-                    <Grid container className="mb-20">
-                        <Grid item xs={6}>
-                            <div className="group">
-                                <label>ST CRITERIA CHANGE INDICATOR<span className="astrict">*</span></label>
-                                <input type="text" />
-                            </div>
-                        </Grid>
-                    </Grid>
-                </div>)}
                 <div className="setting-1 mb-20">
                     <span>MARKETING MATERIAL CONSIDERATIONS</span>
                     <div className="marketing-material-chk">

@@ -1,14 +1,17 @@
-import React, { Component } from "react";
+import React, { Component, Fragment } from "react";
 import CustomMenu from "../../shared/Frx-components/menu/CustomMenu";
 import Grid, { GridSpacing } from "@material-ui/core/Grid";
 import { Container, List, ListItem, ListItemText } from "@material-ui/core";
 import "./MarketingMaterial.scss";
 import FrxInfoCard from "../../shared/FrxInfoCard/FrxInfoCard";
 import CustomAccordion from "../../shared/Frx-components/accordion/CustomAccordion";
+import FrxDrugGridContainer from "../../shared/FrxGrid/FrxDrugGridContainer";
+import Button from "../../shared/Frx-components/button/Button";
 import SearchToolConfiguration from "./SearchToolConfiguration";
 import CostShareDetails from './CostShareDetails';
 import PlainLanguageDescriptor from './PlainLanguageDescriptor';
 import MaterialSearchTool from "./MaterialSearchTool";
+import MarketingMaterialTable from "./MarketingMaterialTable"
 
 const costShareData = [
   {tierNumber: 'Tier 0', tierDescription: 'Tier Description', costShare: 'Copay', costVal: 'Copay'},
@@ -46,6 +49,7 @@ class MarketingMaterial extends Component {
   };
   render() {
     return (
+      <Fragment>
       <div className="_marketing-material-root">
         <CustomAccordion name="CONFIGURATION">
           <Grid container className="reset">
@@ -142,6 +146,8 @@ class MarketingMaterial extends Component {
           </Grid>
         </CustomAccordion>
       </div>
+      <MarketingMaterialTable />
+    </Fragment>
     );
   }
 }

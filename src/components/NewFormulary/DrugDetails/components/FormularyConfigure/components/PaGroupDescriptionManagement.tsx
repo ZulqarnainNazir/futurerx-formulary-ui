@@ -17,7 +17,7 @@ import Tooltip from '@material-ui/core/Tooltip';
 import { Box, Grid, Input } from '@material-ui/core';
 import RadioButton from '../../../../../shared/Frx-components/radio-button/RadioButton';
 import Groups from './Groups'
-import NewGroup from './NewGroup'
+import PaNewGroupForm from './PaNewGroupForm';
 
 const groupsData = [
     {
@@ -57,7 +57,7 @@ const groupsData = [
     },
 ]
 
-export default class GPM extends React.Component<any, any>{
+export default class PaGroupDescriptionManagement extends React.Component<any, any>{
     state = {
         activeTabIndex: 0,
         tooltip:"ST CRITERIA",
@@ -100,9 +100,7 @@ export default class GPM extends React.Component<any, any>{
         return (
             <>
                 <div className="bordered">
-                    
-                    <PanelHeader
-                        title="STEP THERAPY - Group Description Management" />
+                    <PanelHeader title="Prior Authorization - Group Description Management" />
                     <div className="inner-container bg-light-grey display-flex">
                         <div className="group-des">
                                 <div className="panel header">
@@ -141,7 +139,7 @@ export default class GPM extends React.Component<any, any>{
                                     <div className="group-wrapper">
                                         {
                                             groupsData.map((group,key) => (
-                                            <Groups key={key} id={group.id} title={group.label} statusType={group.status} selectGroup={this.selectGroup}/>        
+                                                <Groups key={key} id={group.id} title={group.label} statusType={group.status} selectGroup={this.selectGroup}/>        
                                             ))    
                                         }
                                         {/* <Groups title={'Group1'} statusType={1} selectGroup={this.selectGroup}/>
@@ -153,9 +151,10 @@ export default class GPM extends React.Component<any, any>{
                                     </div>
                                 </div>
                         </div>
-                        {this.state.newGroup ? <NewGroup tooltip={this.state.tooltip} formType={1}/>: (
+                        <PaNewGroupForm/>
+                        {/* {this.state.newGroup ? <NewGroup tooltip={this.state.tooltip} formType={1}/>: (
                             <NewGroup tooltip={this.state.tooltip} formType={0}/>
-                        ) }
+                        ) } */}
                         {/* <div className="new-group-des">
                             <div className="panel header">
                                 <span>NEW GROUP DESCRIPTION</span>
