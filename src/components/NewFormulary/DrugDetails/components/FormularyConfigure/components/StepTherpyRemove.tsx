@@ -50,7 +50,7 @@ export default class DrugGrid extends React.Component<any, any> {
                 enableSearch={false}
                 enableColumnDrag
                 onSettingsClick="grid-menu"
-                settingsWidth={28}
+                settingsWidth={40}
                 onSearch={this.handleSearch}
                 fixedColumnKeys={["claimId"]}
                 pagintionPosition="topRight"
@@ -76,12 +76,12 @@ export default class DrugGrid extends React.Component<any, any> {
         <div className="bordered ns-border">
           <div className="header">Drug Grid</div>
           <div className="inner-container">
-            <div className="pinned-table-2">
+            <div className="pinned-table pinned-table-2">
               <FrxDrugGridContainer
                 enableSearch={false}
                 enableColumnDrag
                 onSettingsClick="grid-menu"
-                settingsWidth={28}
+                settingsWidth={40}
                 onSearch={this.handleSearch}
                 fixedColumnKeys={["claimId"]}
                 pagintionPosition="topRight"

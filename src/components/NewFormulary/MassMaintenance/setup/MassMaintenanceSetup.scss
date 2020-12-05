@@ -31,8 +31,12 @@
             }
 
             .ant-table-body > table > tbody > tr > td:first-child {
-              padding: 0 18px 0 18px;
+              // border-bottom: 1px solid #e5e5e5;
             }
+
+            // .ant-table-body > table > tbody > tr > td {
+            //   border-bottom: 1px solid #e5e5e5;
+            // }
 
             .ant-table-body > thead {
               border-radius: 0;

@@ -10,6 +10,7 @@ import FormularyDashboardStats from "./../FormularyDashboardStats/FormularyDashb
 import { getFormularyDetails } from "../../mocks/formulary/formularyDetails";
 
 import "./NewFormulary.scss";
+import Medicaid from "./Medicaid/Medicaid";
 
 const tabs = [
   { id: 1, text: "MEDICARE" },
@@ -70,7 +71,7 @@ export default class Formulary extends React.Component<any, any> {
           />
         );
       case 1:
-        return <div>MEDICAID</div>;
+        return <Medicaid />;
       case 2:
         return <div>COMMERCIAL</div>;
       case 3:
