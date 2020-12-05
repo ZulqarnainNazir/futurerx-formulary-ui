@@ -4,7 +4,6 @@
 export const getActionFulfilled = (state, action) => {
   console.log("Reducer::getTierFulfilled");
   state.isLoading = false;
-  //debugger;
   console.log(action)
 
   if(action.payload.data === undefined || !Array.isArray(action.payload.data) || (action.payload.data.length === 0)) {
@@ -13,13 +12,12 @@ export const getActionFulfilled = (state, action) => {
   }
   const data = action.payload.data[0];
   // Response stored in the redux store.
-  state.baseState = data;
+  state.data = data;
   
 }
 
 export const getActionRejected = (state, action) => {
   console.log("Reducer::get Base");
   state.isLoading = false;
-  state.baseState = {};
-
+  state.data = {};
 }

@@ -32,8 +32,9 @@ interface State {
 
   
 const mapStateToProps = (state) => {
+  console.log(state.data)
   return {
-    getBase: state
+    data: state.data
   };
 };
 
@@ -55,10 +56,10 @@ class Formulary extends React.Component<any, any> {
 
 
   componentDidMount(){
-    console.log("************************************");
-    let resp = this.props.getBase("ASD");
-    console.log(resp);
-    this.setState({baseData:resp});
+    this.props.getBase("1").then((json) => {
+      let resp = json.payload.data
+      this.setState({baseData: resp})
+    });
   }
 
   onClickTab = (selectedTabIndex: number) => {
@@ -94,6 +95,7 @@ class Formulary extends React.Component<any, any> {
           <Medicare
             drugDetailClick={this.drugDetailsClickHandler}
             onMassMaintenanceCLick={this.massMaintenanceCLickHandler}
+            baseData={this.state.baseData}
           />
         );
       case 1:
@@ -105,11 +107,6 @@ class Formulary extends React.Component<any, any> {
     }
   };
   render() {
-
-    console.log("---------------------- RENDER");
-    console.log(this.state.baseData);
-    console.log("---------------------- RENDER");
-
     return (
       <div className="formulary-root">
         {this.state.showTabs ? (
@@ -128,7 +125,7 @@ class Formulary extends React.Component<any, any> {
           <DrugDetailsContext.Provider
             value={{ showDetailHandler: this.drugDetailsClickHandler }}
           >
-            <DrugDetails data={getFormularyDetails()} baseData={this.state.baseData} />
+            <DrugDetails data={getFormularyDetails()} />
           </DrugDetailsContext.Provider>
         ) : this.state.showMassMaintenance ? (
           <MassMaintenanceContext.Provider

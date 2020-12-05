@@ -18,20 +18,18 @@ export const getBase = createAsyncThunk("formularyBase",
           }
       }
       console.log("List....");
-      return fetch(URL ,requestHeaders)
-        .then(
-          (response) => {
-          console.log("GET FL List: A --------------------------------------");
-          if (!response.ok) throw Error(response.statusText);
-          return response.json();
-        })
-        .then((json) => {
-          console.log("GET FL List: B ------------------------------", json);
-          return json;
-        }).catch(()=>{
-          console.log("=======================================")
-        })
-        ;
+      var fetchData = fetch(URL ,requestHeaders)
+      .then(
+        (response) => {
+        if (!response.ok) throw Error(response.statusText);
+        return response.json();
+      })
+      .then((json) => {
+        return json;
+      }).catch(()=>{
+        console.log("=======================================")
+      });
+      return fetchData;
     }
   );
   

@@ -2123,7 +2123,6 @@ class FrxDrugGrid extends Component<FrxDrugGridProps<any>, FrxDrugGridState<any>
    * @author Deepak_T
    */
   renderExpanderIcon = (props) => {
-    console.log("props ", this.props.expandable, this.props.gridName);
     const closeIcon =
       this.props.expandable && this.props.expandable.isExpandable
         ? this.props.expandable.expandCloseIcon

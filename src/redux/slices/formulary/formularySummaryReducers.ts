@@ -4,7 +4,6 @@ import { FORMULARY_SUMMARY_TYPE } from "./formularySummaryModel";
 export const getFormularySummaryFulfilled = (state, action) => {
   console.log("Reducer::getFormularySummaryFulfilled");
   state.isLoading = false;
-  debugger;
   console.log(action)
   if(action.payload.data === undefined || !Array.isArray(action.payload.data) || (action.payload.data.length === 0)) {
     console.log("getFormularySummaryFulfilled: Payload invalid");
