@@ -468,7 +468,7 @@ export const formularyDetailsGridColumns: (data) => Column<any>[] = (data) => {
       sorter: {},
       textCase: "upper",
       pixelWidth: 133,
-      key: "serviceYear",
+      key: "contract_year",
       displayTitle: "service year",
       isFilterable: true,
       dataType: "string",
@@ -523,11 +523,11 @@ export const formularyDetailsGridColumns: (data) => Column<any>[] = (data) => {
       sorter: {},
       textCase: "upper",
       pixelWidth: 163,
-      key: "formularyName",
+      key: "formulary_name",
       displayTitle: "formulary name",
       customContent: (props) => (
-        <div className="input-link" onClick={() => data.onFormularyNameClick()}>
-          {props.data.formularyName}
+        <div className="input-link" onClick={() => data.onFormularyNameClick(props.data.id_formulary)}>
+          {props.data.formulary_name}
         </div>
       ),
       isFilterable: true,
@@ -541,7 +541,7 @@ export const formularyDetailsGridColumns: (data) => Column<any>[] = (data) => {
       sorter: {},
       textCase: "upper",
       pixelWidth: 145,
-      key: "formularyId",
+      key: "id_formulary",
       displayTitle: "formulary id",
       isFilterable: true,
       dataType: "string",
@@ -554,7 +554,7 @@ export const formularyDetailsGridColumns: (data) => Column<any>[] = (data) => {
       sorter: {},
       textCase: "upper",
       pixelWidth: 102,
-      key: "version",
+      key: "version_number",
       displayTitle: "version",
       isFilterable: true,
       dataType: "string",

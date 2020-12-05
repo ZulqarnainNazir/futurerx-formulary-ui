@@ -9,8 +9,8 @@ export const getBase = createAsyncThunk("formularyBase",
     async (argASD: string) => {
       //console.log("getFormularySummary action creator:: url: " + TIERS_URL + summary_id);
       const requestHeaders  = {
-          // method: 'POST',
-          // body: JSON.stringify(summary_id),
+          method: 'POST',
+          body: JSON.stringify({}),
           headers: {
               'Authorization': 'Bearer 1e05ff8b-a0af-4a8f-8915-487321900f21',
               'Accept': 'application/json',
