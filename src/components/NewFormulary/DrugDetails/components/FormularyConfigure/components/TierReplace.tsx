@@ -8,20 +8,28 @@ import Box from "@material-ui/core/Box";
 import FrxDrugGridContainer from "../../../../../shared/FrxGrid/FrxDrugGridContainer";
 import { tierColumns } from "../../../../../../utils/grid/columns";
 import { TierMockData } from "../../../../../../mocks/TierMock";
-
+import AdvancedSearch from './search/AdvancedSearch';
 interface tabsState {
   tierGridContainer: boolean;
+  isSearchOpen: boolean;
 }
 
 class TierReplace extends React.Component<any, tabsState> {
   state = {
     tierGridContainer: false,
+    isSearchOpen: false
   };
 
   openTierGridContainer = () => {
     this.setState({ tierGridContainer: true });
   };
-
+  advanceSearchClickHandler = (event) => {
+    event.stopPropagation();
+    this.setState({isSearchOpen: !this.state.isSearchOpen})
+  }
+  advanceSearchClosekHandler = () =>{
+      this.setState({isSearchOpen: !this.state.isSearchOpen})
+  }
   render() {
     return (
       <>
@@ -45,7 +53,7 @@ class TierReplace extends React.Component<any, tabsState> {
             <div className="header space-between pr-10">
               Select Drugs From
               <div className="button-wrapper">
-                <Button className="Button normal" label="Advance Search" />
+                <Button className="Button normal" label="Advance Search" onClick={this.advanceSearchClickHandler}/>
                 <Button label="Save" disabled />
               </div>
             </div>
@@ -72,6 +80,14 @@ class TierReplace extends React.Component<any, tabsState> {
                 }}
               />
             </div>
+            {this.state.isSearchOpen ? (
+                <AdvancedSearch
+                        category="Grievances"
+                        openPopup={this.state.isSearchOpen}
+                        onClose={this.advanceSearchClosekHandler}/>
+            ) : (
+                null
+            )}
           </div>
         )}
       </>

@@ -17,18 +17,26 @@ import PanelGrid from "./panelGrid";
 import DropDown from "../../../../../shared/Frx-components/dropdown/DropDown";
 import Button from "../../../../../shared/Frx-components/button/Button";
 import Box from "@material-ui/core/Box";
-import FrxDrugGridContainer from "../../../../../shared/FrxGrid/FrxDrugGridContainer";
+import FrxGridContainer from "../../../../../shared/FrxGrid/FrxGridContainer";
 import { tierColumns } from "../../../../../../utils/grid/columns";
 import { TierMockData } from "../../../../../../mocks/TierMock";
+import {tierDefinationColumns} from './TierDefinationGridColumn';
+import {getTierDefinationData} from '../../../../../../mocks/formulary/tierDefinationMock';
 import { TabInfo } from "../../../../../../models/tab.model";
 import TierReplace from "./TierReplace";
 import TierRemove from "./TierRemove";
-import { getTier } from "../../../../../../redux/slices/formulary/tier/tierActionCreation";
+import { getTier,getTierLabels } from "../../../../../../redux/slices/formulary/tier/tierActionCreation";
+import { getFormularySetup } from "../../../../../../redux/slices/formulary/formularySummaryActionCreation";
+import { GridMenu } from "../../../../../../models/grid.model";
+
 function mapDispatchToProps(dispatch) {
   return {
-    getTier:(a)=>dispatch(getTier(a))
+    getTier:(a)=>dispatch(getTier(a)),
+    getTierLabels:(a)=>dispatch(getTierLabels(a)),
+    getFormularySetup:(a)=>dispatch(getFormularySetup(a))
   };
 }
+
 
 interface tabsState {
   activeMiniTabIndex: number;
@@ -36,7 +44,11 @@ interface tabsState {
   tabs: any;
   tierGridContainer: boolean;
   activeTabIndex: any;
-  panelGridValue: any;
+  tierDefinationColumns: any;
+  tierDefinationData: any;
+  columns: any;
+  data: any;
+  openPopup: boolean;
 }
 
 class Tier extends React.Component<any, tabsState> {
@@ -46,35 +58,42 @@ class Tier extends React.Component<any, tabsState> {
     isFetchingData: false,
     activeMiniTabIndex: 0,
     activeTabIndex: 0,
+    columns: [],
+    data: [],
+    tierDefinationColumns: [],
+    tierDefinationData: [],
+    openPopup: false,
     tabs: [
       { id: 1, text: "Replace" },
       { id: 2, text: "Append" },
       { id: 3, text: "Remove" },
-    ],
-    panelGridTitle: [
-      "TIER NAME",
-      "TIER DESCRIPTION",
-      "CURRENT ACCOUNT",
-      "ADDED",
-      "REMOVED",
-      "VALIDATION",
-    ],
-    panelGridValue: [
-      [
-        "img",
-        "Tier 0",
-        "OTC",
-        "2",
-        "4",
-        "2",
-        <img src="../../../../../../../assets/img/checkbox.png" />,
-      ],
-      ["img", "Tier 1", "OTC", "2", "4", "2", ""],
-      ["img", "Tier 2", "OTC", "2", "4", "2", ""],
-      ["img", "Tier 3", "OTC", "2", "4", "2", ""],
-    ],
+    ]
   };
+  componentDidMount() {
+    const TierColumns = tierDefinationColumns();
+    const TierDefinationData = this.props.getTier("1").then((json => {
+      debugger;
+      let tmpData = json.payload.data;
 
+      var result = tmpData.map(function(el) {
+        var element = Object.assign({}, el);
+        element.is_validated = "false";
+        if(element.added_count>0){
+          element.is_validated = "true";
+        }
+        return element;
+      })
+      
+      console.log(result);
+      this.setState({
+        tierDefinationColumns: TierColumns,
+        tierDefinationData: result
+      })
+    }))
+   
+
+   
+  }
   onClickTab = (selectedTabIndex: number) => {
     let activeTabIndex = 0;
 
@@ -109,17 +128,28 @@ class Tier extends React.Component<any, tabsState> {
     this.setState({ tierGridContainer: true });
   };
 
-  componentDidMount() {
-    this.props.getTier("1").then((json) => {
-      
-      console.log("*******************************" + json);
-      console.log(json.payload.data);
-      //this.setState({panelGridValue: json.payload.data});
-    });
-   
+   handleSearch = () => {
+    console.log("work")
   }
-
+  settingsTriDotClick = (data: any) => {
+    console.log("tri dot clicked ", data);
+  };
+  settingsTriDotMenuClick = (menuItem: GridMenu) => {
+    if (menuItem.title === "Modify Auth or Override") {
+      this.setState({
+        openPopup: true,
+      });
+    }
+    if (this.props.settingsTriDotMenuClick) {
+      console.log("tridot menu clicked", menuItem);
+    }
+  };
+  onNewDefinationAddHandler = () => {
+    console.log('add new click')
+  }
   render() {
+    const tierDefinationColumns = this.state.tierDefinationColumns;
+    const tierDefinationData = this.state.tierDefinationData;
     return (
       <div className="drug-detail-LA-root">
         <div className="drug-detail-la-container">
@@ -132,12 +162,40 @@ class Tier extends React.Component<any, tabsState> {
                       title="Tier Definition"
                       tooltip="This section allows for Addition or Removal of product only. To define coverage for all Medicare covered and/or Supplemental products, go to Drug Details"
                     />
-                    <div className="inner-container tier-checkbox white-bg">
-                      <PanelGrid
-                        panelGridTitle={this.state.panelGridTitle}
-                        panelGridValue={this.state.panelGridValue}
+                    <div className="inner-container tier-defination-grid white-bg">
+                      <FrxGridContainer
+                        enableSearch={false}
+                        enableColumnDrag={false}
+                        onSearch={() => {}}
+                        fixedColumnKeys={[]}
+                        pagintionPosition="topRight"
+                        gridName="TIERDEFINATIONGRID"
+                        enableSettings
+                        isFetchingData={false}
+                        columns={tierDefinationColumns}
+                        settingsTriDotClick={this.settingsTriDotClick}
+                        settingsTriDotMenuClick={this.settingsTriDotMenuClick}
+                        isPinningEnabled={false}
+                        onSettingsClick="grid-menu"
+                        scroll={{y: 377 }}
+                        enableResizingOfColumns
+                        hideClearFilter
+                        hideMultiSort
+                        hideItemsPerPage
+                        hidePageJumper
+                        hidePagination
+                        hideResults
+                        data={tierDefinationData}
                       />
+                      <Box display="flex" justifyContent="flex-end">
+                        <Button 
+                          label="add new"
+                          icon=""
+                          className="add-new-defination" 
+                          onClick={this.onNewDefinationAddHandler} />
+                      </Box>
                     </div>
+                    
                   </div>
                 </div>
                 <div className="mb-10">
