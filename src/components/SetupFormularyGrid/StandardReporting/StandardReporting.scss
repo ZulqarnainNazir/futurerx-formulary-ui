@@ -36,8 +36,8 @@
   
 }
 
-.frx-grid-container .frx-grid .frx-grid__grid-block .frx-grid__grid-block__table-block .ant-table .ant-table-header .ant-table-thead > tr > th:nth-last-child(3) *{   
-   margin-left: 3px;
+.frx-grid-container .frx-grid .frx-grid__grid-block .frx-grid__grid-block__table-block .ant-table .ant-table-header .ant-table-thead > tr > th:nth-last-child(3) .ant-table-column-sorters{   
+   margin-left: 10px;
 }
 .ant-table-thead tr .ant-table-cell-fix-left-last{
   left:inherit !important;
