@@ -12,6 +12,7 @@ import FormularyDashboardStats from "./../FormularyDashboardStats/FormularyDashb
 import { getFormularyDetails } from "../../mocks/formulary/formularyDetails";
 import { getBase } from "../.././redux/slices/formulary/formularyBase/formularyBaseActionCreator";
 import { formularyBaseSlice } from "../.././redux/slices/formulary/formularyBase/formularyBaseSlice";
+import { fetchFormularies } from "../.././redux/slices/formulary/dashboard/dashboardSlice";
 
 import "./NewFormulary.scss";
 
@@ -34,6 +35,8 @@ interface State {
 
   
 const mapStateToProps = (state) => {
+  console.log("- - - - - - - - - - - - - - - - - - -");
+  console.log(state);
   return {
     data: state.data
   };
@@ -42,7 +45,8 @@ const mapStateToProps = (state) => {
 function mapDispatchToProps(dispatch) {
   return {
     getBase:(a)=>dispatch(getBase(a)),
-    setCurrentForumulary: (selectedFormulary) => dispatch(formularyBaseSlice.actions.getCurrentFormulary(selectedFormulary))
+    setCurrentForumulary: (selectedFormulary) => dispatch(formularyBaseSlice.actions.getCurrentFormulary(selectedFormulary)),
+    fetchFormularies:(a)=>dispatch(fetchFormularies(a)),
   };
 }
 
@@ -64,6 +68,7 @@ class Formulary extends React.Component<any, any> {
       console.log(resp);
       this.setState({baseData: resp})
     });
+    this.props.fetchFormularies({lob:1});
   }
 
   onClickTab = (selectedTabIndex: number) => {
