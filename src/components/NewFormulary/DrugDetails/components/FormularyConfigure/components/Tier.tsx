@@ -26,14 +26,14 @@ import { TabInfo } from "../../../../../../models/tab.model";
 import TierReplace from "./TierReplace";
 import TierRemove from "./TierRemove";
 import { getTier,getTierLabels } from "../../../../../../redux/slices/formulary/tier/tierActionCreation";
-import { getFormularySetup } from "../../../../../../redux/slices/formulary/formularySummaryActionCreation";
+//import { getFormularySetup } from "../../../../../../redux/slices/formulary/formularySummaryActionCreation";
 import { GridMenu } from "../../../../../../models/grid.model";
 
 function mapDispatchToProps(dispatch) {
   return {
     getTier:(a)=>dispatch(getTier(a)),
     getTierLabels:(a)=>dispatch(getTierLabels(a)),
-    getFormularySetup:(a)=>dispatch(getFormularySetup(a))
+    //getFormularySetup:(a)=>dispatch(getFormularySetup(a))
   };
 }
 
