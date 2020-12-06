@@ -45,6 +45,20 @@ function mapDispatchToProps(dispatch) {
   };
 }
 
+// REFERENCE :: 
+// listPayload = {
+//   index: 0,
+//   limit: 10,
+//   filter: [],
+//   id_lob: 4,
+//   search_by: null,
+//   search_key: "",
+//   search_value: [],
+//   sort_by: ['contract_year','lob_name','formulary_name','status'],
+//   sort_order: ['asc','asc','asc','asc'],
+// }
+
+
 class Formulary extends React.Component<any, any> {
   state = {
     activeTabIndex: 0,
@@ -55,13 +69,15 @@ class Formulary extends React.Component<any, any> {
   };
 
   listPayload = {
-    filter:[],
-    id_lob : 4,
-    search_by : null,
-    search_key:"",
-    search_value : [],
-    sort_by:['contract_year','lob_name','formulary_name','status'],
-    sort_order:['asc','asc','asc','asc'],
+    index: 0,
+    limit: 10,
+    filter: [],
+    id_lob: 4,
+    search_by: null,
+    search_key: "",
+    search_value: [],
+    sort_by: ["cms_formulary_id"],
+    sort_order: ["desc"],
   }
 
   componentDidMount(){
@@ -124,7 +140,7 @@ class Formulary extends React.Component<any, any> {
           <>
             <FormularyDashboardStats />
             <div>
-                COUNT : {this.props.formulary_count} ?
+                COUNT: {this.props.formulary_count} 
             </div>
             <FrxTabs
               tabList={this.state.tabs}

@@ -9,7 +9,7 @@ const headers = {
 };
 
 export async function getformularies(payload: any): Promise<DashboardResult> {
-  let url = BASE_URL1 + "/api/1/formularies/1?index=0&limit=10";
+  let url = `${BASE_URL1}api/1/formularies/1?index=${payload.index}&limit=${payload.limit}`
   try {
     const response = await axios.post(url, payload, {
       headers: headers,
