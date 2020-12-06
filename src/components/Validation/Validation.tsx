@@ -29,15 +29,20 @@ function Validation(props) {
   let total1, passed1, failed1, warning1, comment = '';
 
   if (Object.keys(props.validationData).length > 0) {
+    total1 = props.validationData.validation_summary && props.validationData.validation_summary.total;
+    failed1 = props.validationData.validation_summary && props.validationData.validation_summary.failed;
+    passed1 = props.validationData.validation_summary && props.validationData.validation_summary.passed;
+    warning1 = props.validationData.validation_summary && props.validationData.validation_summary.warning;
+
     comment = props.validationData.validations.map(element => {
-      let logo_path, usersList, failed, warning, passed;
+      let users, usersList, failed, warning, passed;
       if (element.users && element.users.length > 0) {
         usersList = element.users.filter(x => x.name != null)
         usersList.length > 0 && usersList.map(user => {
-          logo_path = {
+          users= [{
             ...user,
-            logo_path: user.logo_path
-          }
+            logo_path: user.logo_path//environment.awsFileURL + user.logo_path
+          }]
         });
       }
       const display_date = element.latest_note_added_time != null ? dateFormat.dateFormat(element.latest_note_added_time) : 'No notes'
@@ -85,16 +90,12 @@ function Validation(props) {
         passed: 0,
         notesFormgroup: '',
         notes: [],
-        logo_path: logo_path,
+        users: users,
         notesControlObj: { display_label: "", maxlength: 500, label: "", type: "text", is_required: false, formcontrol: '' },
         display_date: display_date
       }
       return <Comment element={list} />
     })
-    total1 = props.validationData.validation_summary.total;
-    failed1 = props.validationData.validation_summary.failed;
-    passed1 = props.validationData.validation_summary.passed;
-    warning1 = props.validationData.validation_summary.warning;
   }
 
   return (
@@ -102,7 +103,7 @@ function Validation(props) {
       <Paper elevation={0} style={{ marginBottom: "3rem" }}>
         <div className="title">Summary of Checks and Validations</div>
         <div className="container">
-          <ValidationStartsCard />
+          <ValidationStartsCard total={total1}/>
           <Card label="Failed" value={failed1} color="rgba(252,120,120,0.75)" />
           <Card label="Warning" value={warning1} color="rgba(245,195,140,0.75)" />
           <Card label="Passed" value={passed1} color="rgba(176,223,165,0.75)" />
