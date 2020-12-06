@@ -1,4 +1,6 @@
 import React from 'react';
+import { connect } from "react-redux";
+
 import PanelHeader from './PanelHeader';
 import PanelGrid from './panelGrid';
 import CustomizedSwitches from './CustomizedSwitches';
@@ -18,46 +20,18 @@ import { Box, Grid, Input } from '@material-ui/core';
 import RadioButton from '../../../../../shared/Frx-components/radio-button/RadioButton';
 import Groups from './Groups'
 import PaNewGroupForm from './PaNewGroupForm';
+import { getPaSummary,getPaGrouptDescriptions, getPaTypes, getDrugLists } from "../../../../../../redux/slices/formulary/pa/paActionCreation";
 
-const groupsData = [
-    {
-        id: 1,
-        label: 'Group 1',
-        status: 'warning'
-    },
-    {
-        id: 2,
-        label: 'Group 2',
-        status: 'completed'
-    },
-    {
-        id: 3,
-        label: 'Group 3',
-        status: 'warning'
-    },
-    {
-        id: 4,
-        label: 'Group 4',
-        status: 'selected'
-    },
-    {
-        id: 5,
-        label: 'Group 5',
-        status: 'warning'
-    },
-    {
-        id: 6,
-        label: 'Group 6',
-        status: 'warning'
-    },
-    {
-        id: 7,
-        label: 'Group 7',
-        status: 'warning'
-    },
-]
+function mapDispatchToProps(dispatch) {
+    return {
+      getPaSummary:(a)=>dispatch(getPaSummary(a)),
+      getPaGrouptDescriptions:(a)=>dispatch(getPaGrouptDescriptions(a)),
+      getPaTypes:(a)=>dispatch(getPaTypes(a)),
+      getDrugLists:(a)=>dispatch(getDrugLists(a)),
+    };
+  }
 
-export default class PaGroupDescriptionManagement extends React.Component<any, any>{
+ class PaGroupDescriptionManagement extends React.Component<any, any>{
     state = {
         activeTabIndex: 0,
         tooltip:"ST CRITERIA",
@@ -70,6 +44,13 @@ export default class PaGroupDescriptionManagement extends React.Component<any, a
             {
                 id: 2,
                 text: "Archived"
+            }
+        ],
+        groupsData : [
+            {
+                id: 1,
+                label: 'Group 1',
+                status: 'warning'
             }
         ]
     }
@@ -94,6 +75,40 @@ export default class PaGroupDescriptionManagement extends React.Component<any, a
         this.setState({
             newGroup:false
         })
+    }
+
+    componentDidMount() {
+                   
+        this.props.getPaGrouptDescriptions("1").then((json) =>{
+            debugger;
+
+            let tmpData = json.payload.data;
+
+            var result = tmpData.map(function(el) {
+                var element = {};
+                element["id"] = el.id_pa_group_description;
+                element["label"] = el.pa_group_description_name;
+                element["status"] = el.is_setup_complete;
+                return element;
+            })
+
+            this.setState({
+                groupsData: result,
+              });
+            
+        });
+
+        this.props.getPaTypes("3132").then((json) =>{
+            debugger;
+            this.setState({
+                stTypes: json.payload.data,
+              });
+            
+        });
+
+        
+
+
     }
 
     render() {
@@ -138,7 +153,7 @@ export default class PaGroupDescriptionManagement extends React.Component<any, a
                                     </div>
                                     <div className="group-wrapper">
                                         {
-                                            groupsData.map((group,key) => (
+                                            this.state.groupsData.map((group,key) => (
                                                 <Groups key={key} id={group.id} title={group.label} statusType={group.status} selectGroup={this.selectGroup}/>        
                                             ))    
                                         }
@@ -240,3 +255,9 @@ export default class PaGroupDescriptionManagement extends React.Component<any, a
         )
     }
 }
+
+
+export default connect(
+    null,
+    mapDispatchToProps
+  )(PaGroupDescriptionManagement);

@@ -1,4 +1,5 @@
 import React from "react";
+import { connect } from "react-redux";
 import { Grid } from "@material-ui/core";
 import FrxMiniTabs from "../../../../../shared/FrxMiniTabs/FrxMiniTabs";
 import {
@@ -10,10 +11,23 @@ import PanelHeader from "./PanelHeader";
 import PanelGrid from "./panelGrid";
 import STS from './STS';
 import STF from './STF';
+import { getStSummary,getStGrouptDescriptions, getStTypes, getDrugLists } from "../../../../../../redux/slices/formulary/stepTherapy/stepTherapyActionCreation";
+
+function mapDispatchToProps(dispatch) {
+  return {
+    getStSummary:(a)=>dispatch(getStSummary(a)),
+    getStGrouptDescriptions:(a)=>dispatch(getStGrouptDescriptions(a)),
+    getStTypes:(a)=>dispatch(getStTypes(a)),
+    getDrugLists:(a)=>dispatch(getDrugLists(a)),
+  };
+}
+
 interface tabsState {
   activeMiniTabIndex: number;
   miniTabs: any;
   tabs: any;
+  panelGridValue:any;
+  
 }
 
 class StepTherapy extends React.Component<any, tabsState> {
@@ -22,24 +36,47 @@ class StepTherapy extends React.Component<any, tabsState> {
     activeMiniTabIndex: 0,
     tabs: getTapList(),
     panelGridTitle: [
-      "TYPE",
-      "NUMBER OF GROUPS",
-      "ADDED GROUPS",
-      "REMOVED GROUPS",
-      "NUMBER OF DRUGFS",
-      "ADDED DRUGS",
-      "REMOVED DRUGS",
+      "Type",
+      "Number Of Groups",
+      "Added Groups",
+      "Removed Groups",
+      "Number OF Drugs",
+      "Added Drugs",
+      "Removed Drugs",
     ],
-    panelGridValue: [
-      ["ST Type 1", "2", "4", "2", "2", "2","2"],
-      ["ST Type 2", "3", "4", "1", "1", "1","1"],
-    ],
+    panelGridValue: [ ],
   };
   onClickMiniTab = (num: number) => {
     this.setState({
       activeMiniTabIndex: num,
     });
   };
+  componentDidMount() {
+    
+    const TierDefinationData = this.props.getStSummary("3132").then((json => {
+      debugger;
+      let tmpData = json.payload.result;
+      var rows = tmpData.map(function(el) {
+        var curRow=[ el["st_type_name"],
+        el["total_group_description_count"],
+        el["added_group_description_count"],
+        el["removed_group_description_count"],
+        el["total_drug_count"],
+        el["added_drug_count"],
+        el["removed_drug_count"]
+      ]
+        return curRow;
+      })
+      
+      console.log(rows);
+      this.setState({
+        panelGridValue: rows,
+      })
+    }))
+    
+
+   
+  }
   render() {
     return (
       <div className="drug-detail-LA-root">
@@ -71,4 +108,7 @@ class StepTherapy extends React.Component<any, tabsState> {
   }
 }
 
-export default StepTherapy;
+export default connect(
+  null,
+  mapDispatchToProps
+)(StepTherapy);

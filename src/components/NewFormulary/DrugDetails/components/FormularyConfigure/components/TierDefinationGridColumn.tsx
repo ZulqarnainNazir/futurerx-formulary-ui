@@ -71,7 +71,7 @@ export const tierDefinationColumns: () => Column<any>[] = () => {
         textCase: "upper",
         pixelWidth: 109,
         key: "is_validated",
-        displayTitle: "VALIDATION 1",
+        displayTitle: "Validation",
         isFilterable: false,
         dataType: "string",
         hidden: false,

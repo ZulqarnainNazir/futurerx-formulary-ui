@@ -63,8 +63,8 @@ export default function DropDown(props: any) {
       >
         {/* <option>{props.option || "select"}</option> */}
         {props.options.map((opt, ind) => (
-          <Option key={ind} value={opt}>
-            {opt}
+          <Option key={ind} value={opt[props.valueProp]}>
+            {opt[props.valueProp]}
           </Option>
         ))}
       </Select>

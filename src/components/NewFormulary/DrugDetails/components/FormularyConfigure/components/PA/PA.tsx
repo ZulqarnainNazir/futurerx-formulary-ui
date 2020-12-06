@@ -1,6 +1,9 @@
 import React, { useState } from "react";
+
 import PanelHeader from "../PanelHeader";
 import PanelGrid from "../panelGrid";
+import { connect } from "react-redux";
+
 import CustomizedSwitches from "../CustomizedSwitches";
 import FrxMiniTabs from "../../../../../../shared/FrxMiniTabs/FrxMiniTabs";
 import {
@@ -15,11 +18,22 @@ import Button from "../../../../../../shared/Frx-components/button/Button";
 import { TabInfo } from "../../../../../../../models/tab.model";
 import PaReplace from "./PaReplace";
 import PaRemove from "./PaRemove";
-
+import { getPaSummary,getPaGrouptDescriptions, getPaTypes, getDrugLists } from "../../../../../../../redux/slices/formulary/pa/paActionCreation";
 import "../Tier.scss";
 import "./PA.scss";
 
-class PA extends React.Component {
+function mapDispatchToProps(dispatch) {
+  return {
+    getPaSummary:(a)=>dispatch(getPaSummary(a)),
+    getPaGrouptDescriptions:(a)=>dispatch(getPaGrouptDescriptions(a)),
+    getPaTypes:(a)=>dispatch(getPaTypes(a)),
+    getDrugLists:(a)=>dispatch(getDrugLists(a)),
+  };
+}
+
+
+
+class PA extends React.Component<any, any>  {
   state = {
     tierGridContainer: false,
     miniTabs: getMiniTabs(),
@@ -32,18 +46,16 @@ class PA extends React.Component {
       { id: 3, text: "Remove" },
     ],
     panelGridTitle: [
-      "TYPE",
-      "NUMBER OF GROUPS",
-      "ADDED GROUPS",
-      "REMOVED GROUPS",
-      "NUMBER OF DRUGS",
-      "ADDED DRUGS",
-      "REMOVED DRUGS",
+      "Type",
+      "Number Of Groups",
+      "Added Groups",
+      "Removed Groups",
+      "NUMBER OF Drugs",
+      "Added Drugs",
+      "Removed Drugs",
     ],
     panelGridValue: [
-      ["PA Type 1", "1", "2", "3", "4", "5", "6"],
-      ["PA Type 2", "1", "2", "3", "4", "5", "6"],
-      ["PA Type 3", "1", "2", "3", "4", "5", "6"],
+     
     ],
   };
 
@@ -71,6 +83,32 @@ class PA extends React.Component {
     }
   };
 
+  componentDidMount() {
+    
+    const TierDefinationData = this.props.getPaSummary("3132").then((json => {
+      debugger;
+      let tmpData = json.payload.result;
+      var rows = tmpData.map(function(el) {
+        var curRow=[ el["pa_type_name"],
+        el["total_group_description_count"],
+        el["added_group_description_count"],
+        el["removed_group_description_count"],
+        el["total_drug_count"],
+        el["added_drug_count"],
+        el["removed_drug_count"]
+      ]
+        return curRow;
+      })
+      
+      console.log(rows);
+      this.setState({
+        panelGridValue: rows,
+      })
+    }))
+    
+
+   
+  }
   render() {
     return (
       <>
@@ -137,4 +175,10 @@ class PA extends React.Component {
   }
 }
 
-export default PA;
+
+export default connect(
+  null,
+  mapDispatchToProps
+)(PA);
+
+
