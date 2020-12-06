@@ -10,10 +10,8 @@ import MassMaintenanceContext from "./FormularyDetailsContext";
 import MassMaintenance from "./MassMaintenance/MassMaintenance";
 import FormularyDashboardStats from "./../FormularyDashboardStats/FormularyDashboardStats";
 import { getFormularyDetails } from "../../mocks/formulary/formularyDetails";
-import { getBase } from "../.././redux/slices/formulary/formularyBase/formularyBaseActionCreator";
-import { formularyBaseSlice } from "../.././redux/slices/formulary/formularyBase/formularyBaseSlice";
 import { fetchFormularies } from "../.././redux/slices/formulary/dashboard/dashboardSlice";
-
+import { setFormulary } from "../.././redux/slices/formulary/application/applicationSlice";
 import "./NewFormulary.scss";
 
 const tabs = [
@@ -29,24 +27,21 @@ interface State {
   showTabs: boolean;
   showMassMaintenance: boolean;
   showDrugDetails: boolean;
-  baseData: any;
-  current_formulary: any;
 }
-
   
 const mapStateToProps = (state) => {
-  console.log("- - - - - - - - - - - - - - - - - - -");
+  //console.log("***** DB");
   console.log(state);
   return {
-    data: state.data
+    formulary_count: state?.dashboard?.formulary_count,
+    formulary_list: state?.dashboard?.formulary_list,
   };
 };
 
 function mapDispatchToProps(dispatch) {
   return {
-    getBase:(a)=>dispatch(getBase(a)),
-    setCurrentForumulary: (selectedFormulary) => dispatch(formularyBaseSlice.actions.getCurrentFormulary(selectedFormulary)),
     fetchFormularies:(a)=>dispatch(fetchFormularies(a)),
+    setFormulary:(arg)=>dispatch(setFormulary(arg)),
   };
 }
 
@@ -57,17 +52,10 @@ class Formulary extends React.Component<any, any> {
     showTabs: true,
     showMassMaintenance: false,
     showDrugDetails: false,
-    baseData: [],
-    current_formulary: null
   };
 
 
   componentDidMount(){
-    this.props.getBase("1").then((json) => {
-      let resp = json.payload.data
-      console.log(resp);
-      this.setState({baseData: resp})
-    });
     this.props.fetchFormularies({lob:1});
   }
 
@@ -83,13 +71,12 @@ class Formulary extends React.Component<any, any> {
     this.setState({ tabs, activeTabIndex });
   };
   drugDetailsClickHandler = (id: any) => {
-    let selectedRow:any;
+    let selectedRow:any = null;
     if(id !== undefined){
-      selectedRow = this.state.baseData[id-1];
+      selectedRow = this.props.formulary_list[id-1];
     }
-    this.props.setCurrentForumulary(selectedRow)
+    this.props.setFormulary(selectedRow);
     this.setState({
-      current_formulary: selectedRow,
       showTabs: !this.state.showTabs,
       showDrugDetails: !this.state.showDrugDetails,
     });
@@ -110,7 +97,7 @@ class Formulary extends React.Component<any, any> {
           <Medicare
             drugDetailClick={this.drugDetailsClickHandler}
             onMassMaintenanceCLick={this.massMaintenanceCLickHandler}
-            baseData={this.state.baseData}
+            baseData={this.props.formulary_list}
           />
         );
       case 1:
@@ -127,6 +114,9 @@ class Formulary extends React.Component<any, any> {
         {this.state.showTabs ? (
           <>
             <FormularyDashboardStats />
+            <div>
+                COUNT : {this.props.formulary_count} ?
+            </div>
             <FrxTabs
               tabList={this.state.tabs}
               activeTabIndex={this.state.activeTabIndex}

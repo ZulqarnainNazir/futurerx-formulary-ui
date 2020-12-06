@@ -4,7 +4,7 @@ import { userPrefsSlice } from "../slices/users/UserPrefsSlice";
 import { formularySummarySlice } from "../slices/formulary/formularySummarySlice";
 import { combineReducers } from 'redux'
 import { formularyBaseSlice } from "../slices/formulary/formularyBase/formularyBaseSlice";
-import { applicationSlice } from "../slices/formulary/application/applicationSlice";
+import applicationReducer from "../slices/formulary/application/applicationSlice";
 import dashboardReducer from "../slices/formulary/dashboard/dashboardSlice";
 
 
@@ -27,7 +27,7 @@ const store = configureStore({
     member_summary: memberSummaryReducer,
     user_prefs: userPrefsReducer,
     formularBase: formularyBaseReducer,
-    application:applicationSlice.reducer,
+    application: applicationReducer,
     dashboard: dashboardReducer
   },
   middleware,
