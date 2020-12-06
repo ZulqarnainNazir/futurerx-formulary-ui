@@ -1,7 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import axios from "axios";
-import { BASE_URL1 } from "../../../../api/http-helper";
 import { createAsyncThunk } from "@reduxjs/toolkit";
+import { getformularies } from "./dashboardService";
 
 interface DashboardState {
   formulary_count: number;
@@ -17,7 +16,7 @@ const dashboardInitialState: DashboardState = {
   error: null,
 };
 
-interface DashboardResult {
+export interface DashboardResult {
   list: any[];
   count: number;
 }
@@ -64,36 +63,11 @@ export const fetchFormularies = createAsyncThunk(
     // console.log("***** fetchFormularies ");
     try {
       dispatch(getformulariesStart());
-      let url = BASE_URL1 + "/api/1/formularies/1?index=0&limit=10";
-      const FLs = await getformularies(url);
-      dispatch(getFormulariesSuccess(FLs));
+      const formularies = await getformularies(arg);
+      dispatch(getFormulariesSuccess(formularies));
     } catch (err) {
       // console.log("***** fetchFormularies - ERROR ");
       dispatch(getFormalariesFailure(err.toString()));
     }
   }
 );
-
-async function getformularies(url: string): Promise<DashboardResult> {
-  const headers = {
-    Authorization: "Bearer 1e05ff8b-a0af-4a8f-8915-487321900f21",
-    Accept: "application/json",
-    "Content-Type": "application/json;charset=UTF-8",
-  };
-  try {
-    const response = await axios.post(url, JSON.stringify({}), {
-      headers: headers,
-    });
-    // console.log("***** getformularies - Success");
-    // console.log(response);
-    let count = 11;
-    return {
-      list: response.data.data,
-      count: response.data.count,
-    };
-  } catch (error) {
-    // console.log("***** getformularies - Error");
-    // console.log(error);
-    throw error;
-  }
-}

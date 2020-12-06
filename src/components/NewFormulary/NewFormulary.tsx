@@ -54,9 +54,18 @@ class Formulary extends React.Component<any, any> {
     showDrugDetails: false,
   };
 
+  listPayload = {
+    filter:[],
+    id_lob : 4,
+    search_by : null,
+    search_key:"",
+    search_value : [],
+    sort_by:['contract_year','lob_name','formulary_name','status'],
+    sort_order:['asc','asc','asc','asc'],
+  }
 
   componentDidMount(){
-    this.props.fetchFormularies({lob:1});
+    this.props.fetchFormularies(this.listPayload);
   }
 
   onClickTab = (selectedTabIndex: number) => {
