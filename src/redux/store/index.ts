@@ -6,6 +6,8 @@ import { combineReducers } from 'redux'
 import { formularyBaseSlice } from "../slices/formulary/formularyBase/formularyBaseSlice";
 import { applicationSlice } from "../slices/formulary/application/applicationSlice";
 import dashboardReducer from "../slices/formulary/dashboard/dashboardSlice";
+import { tierSlice } from '../slices/formulary/tier/tierSlice'
+import { switchSlice } from '../slices/formulary/switch/switchSlice'
 
 
 const reducer = combineReducers({
@@ -20,6 +22,8 @@ const middleware = [
 const memberSummaryReducer = memberSummarySlice.reducer;
 const userPrefsReducer = userPrefsSlice.reducer;
 const formularyBaseReducer = formularyBaseSlice.reducer;
+const tierSliceReducer = tierSlice.reducer
+const switchReducer = switchSlice.reducer
 
 // The store is configured with the state and the corresponding reducers.
 const store = configureStore({
@@ -28,7 +32,9 @@ const store = configureStore({
     user_prefs: userPrefsReducer,
     formularBase: formularyBaseReducer,
     application:applicationSlice.reducer,
-    dashboard: dashboardReducer
+    dashboard: dashboardReducer,
+    tierSliceReducer: tierSliceReducer,
+    switchReducer: switchReducer
   },
   middleware,
 });

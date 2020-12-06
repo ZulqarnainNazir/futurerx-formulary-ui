@@ -204,3 +204,30 @@
   color: #707683 !important;
   font-weight: 400 !important;
 }
+.tier-defination-grid{
+  .frx-grid-settings-header-cell{
+    display: none;
+  }
+  .ant-table-header{
+    border-radius: 0 !important;
+    border-bottom: none !important;
+    th:first-child{
+      border-radius: 0 !important;
+      border-right: none !important;
+    }
+  }
+  .ant-table-body{
+    table{
+      border-spacing: 0 !important;
+      td{
+        border-right: 1px solid #e5e5e5 !important;
+      }
+      td:first-child, td:last-child{
+        border-radius: 0 !important;
+      }
+      td:first-child{
+        border-right: 1px solid #e5e5e5 !important;
+      }
+    }
+  }
+}
