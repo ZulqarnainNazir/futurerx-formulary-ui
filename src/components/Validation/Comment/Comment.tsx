@@ -2,7 +2,12 @@ import React from 'react'
 import {Row, Col, Avatar,Space} from "antd";
 import "./Comment.css";
 
-function Comment() {
+interface Props{
+  element:any
+}
+
+function Comment(props:Props) {
+  const {validation_name,notes_count,display_date} = props.element
   return (
     <Row className="Comment-card" align="middle">
       <Col xs={24} lg={12}>
@@ -10,18 +15,18 @@ function Comment() {
         <Avatar style={{ backgroundColor: "#EE5959", verticalAlign: 'middle' }}>
         {1}
       </Avatar>
-      <span className="title">Formulary setup</span>
+      <span className="title">{validation_name}</span>
         </Space>
       </Col>
       <Col xs={24} lg={4} style={{textAlign:"center"}}>
         <Space size="large">
           <Avatar src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"/>
-          <span className="date">August 11, 2020</span>
+          <span className="date">{display_date}</span>
         </Space>
       </Col>
       <Col xs={24} lg={4} style={{textAlign:"center"}}>
         <Space size="small">
-          {1}
+          {notes_count}
           <img src="/images/comment.png" alt=""/>
         </Space>
       </Col>

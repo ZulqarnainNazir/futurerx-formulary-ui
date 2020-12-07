@@ -46,6 +46,7 @@ export default function DropDown(props: any) {
           </>
         }
         id=""
+        disabled={props.disabled}
         className={props.className}
         placeholder={props.placeholder}
         value={props.value}
