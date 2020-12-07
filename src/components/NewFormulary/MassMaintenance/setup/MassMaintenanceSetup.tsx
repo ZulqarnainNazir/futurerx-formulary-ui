@@ -17,12 +17,13 @@ import { getFormularyGridData } from "../../../../mocks/formulary-grid/Formulary
 import FormularyGrid from "./FormularyGrid";
 import DrugGrid from "../../DrugDetails/components/DrugGrid";
 import { getFormularyGridColumns } from "../../../../mocks/formulary-grid/FormularyGridColumn";
+import FrxGridContainer from "../../../shared/FrxGrid/FrxGridContainer";
 
 class MassMaintenanceSetup extends Component {
   state = {
     isFormularyGridShown: false,
-    columns: null,
-    data: null,
+    columns: [],
+    data: [],
     pinData: {
       value: false,
     },
@@ -61,12 +62,38 @@ class MassMaintenanceSetup extends Component {
       //     isPinningEnabled={false}
       //   />
       // );
+      // dataGrid = (
+      //   <DrugGrid
+      //     columns={columns}
+      //     data={data}
+      //     scroll={scroll}
+      //     pinData={pinData}
+      //   />
+      // );
+
       dataGrid = (
-        <DrugGrid
+        <FrxGridContainer
+          enableSearch={false}
+          enableColumnDrag
+          onSearch={() => {}}
+          fixedColumnKeys={[]}
+          pagintionPosition="topRight"
+          gridName=""
+          isFetchingData={false}
           columns={columns}
-          data={data}
           scroll={scroll}
-          pinData={pinData}
+          enableResizingOfColumns={false}
+          data={data}
+          // pinning columns
+          isPinningEnabled={false}
+          // setting gear 1st column
+          enableSettings={true}
+          // checkbox 2nd column
+          isCustomCheckboxEnabled={true}
+          // event reference for checkbox (mandotory if checkbox is true)
+          handleCustomRowSelectionChange={(r) => {
+            console.log(r);
+          }}
         />
       );
     }

@@ -14,12 +14,6 @@ import {
 import CustomizedSwitches from "./CustomizedSwitches";
 import PanelHeader from "./PanelHeader";
 import PanelGrid from "./panelGrid";
-import DropDown from "../../../../../shared/Frx-components/dropdown/DropDown";
-import Button from "../../../../../shared/Frx-components/button/Button";
-import Box from "@material-ui/core/Box";
-import FrxDrugGridContainer from "../../../../../shared/FrxGrid/FrxDrugGridContainer";
-import { tierColumns } from "../../../../../../utils/grid/columns";
-import { TierMockData } from "../../../../../../mocks/TierMock";
 import { TabInfo } from "../../../../../../models/tab.model";
 import TierReplace from "./TierReplace";
 import TierRemove from "./TierRemove";

@@ -13,6 +13,7 @@ import { getFormularyDetails } from "../../mocks/formulary/formularyDetails";
 import { fetchFormularies } from "../.././redux/slices/formulary/dashboard/dashboardSlice";
 import { setFormulary } from "../.././redux/slices/formulary/application/applicationSlice";
 import "./NewFormulary.scss";
+import Medicaid from "./Medicaid/Medicaid";
 
 const tabs = [
   { id: 1, text: "MEDICARE" },
@@ -126,7 +127,7 @@ class Formulary extends React.Component<any, any> {
           />
         );
       case 1:
-        return <div>MEDICAID</div>;
+        return <Medicaid />;
       case 2:
         return <div>COMMERCIAL</div>;
       case 3:

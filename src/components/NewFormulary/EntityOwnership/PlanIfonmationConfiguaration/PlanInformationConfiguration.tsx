@@ -10,19 +10,21 @@ import {
 import {Link} from "react-router-dom";
 import "./PlanInformationConfiguration.scss";
 
-interface Props {}
+interface Props {
+  planConfigObject: any;
+  onSave: () => any;
+}
 interface State {}
 
 class PlanInformationConfiguration extends Component<Props, State> {
   state = {
     planConfigObject: {
-      planInfoConfigName: "North East PBPs",
-      planName: "Medicare 1",
-      phonNumber: "888-888-8888",
-      ttyValue: "888-888-8888",
-      website: "www.medicare1.com",
-      operationinfo:
-        "From October 1 to March 31, we are open 7 days a week, from 8 a.m. to 8 p.m. EST. From April 1 to September 30, we are open Monday through Friday, from 8 a.m. to 8 p.m. EST.",
+      planInfoConfigName: "",
+      planName: "",
+      phonNumber: "",
+      ttyValue: "",
+      website: "",
+      operationinfo: "",
     },
   };
 
@@ -35,6 +37,10 @@ class PlanInformationConfiguration extends Component<Props, State> {
       },
     });
   }
+
+  componentDidMount = () => {
+    this.setState({planConfigObject: this.props.planConfigObject});
+  };
 
   render() {
     const {planConfigObject} = this.state;
@@ -162,7 +168,9 @@ class PlanInformationConfiguration extends Component<Props, State> {
           </CardContent>
           <div className="btn-group">
             {/* <Button className="btn btn-cancel">Cancel</Button> */}
-            <Button className="btn btn-save">Save</Button>
+            <Button className="btn btn-save" onClick={this.props.onSave}>
+              Save
+            </Button>
             {/* <Link to={"/planinformation"} className="btn btn-save">
               Save
             </Link> */}

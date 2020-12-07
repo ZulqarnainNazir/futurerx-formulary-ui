@@ -121,11 +121,6 @@ class PA extends React.Component {
                     <div className="pa-tab-content">
                       {this.renderTabContent()}
                     </div>
-                    <Row justify="end">
-                      <Col>
-                        <Button label="Apply"></Button>
-                      </Col>
-                    </Row>
                   </div>
                 </Grid>
               </Grid>
