@@ -38,9 +38,11 @@ function mapDispatchToProps(dispatch) {
             {
                 id: 1,
                 label: 'Group 1',
-                status: 'warning'
+                status: 'warning',
+                is_archived:false,
             }
-        ]
+        ],
+        searchInput:"",
     }
     onClickTab = (selectedTabIndex: number) => {
         let activeTabIndex = 0;
@@ -76,7 +78,8 @@ function mapDispatchToProps(dispatch) {
                 var element = {};
                 element["id"] = el.id_pa_group_description;
                 element["label"] = el.pa_group_description_name;
-                element["status"] = el.is_setup_complete;
+                element["status"] = el.is_setup_complete?"completed":"warning";
+                element["is_archived"] = el.is_archived;
                 return element;
             })
 
@@ -98,6 +101,12 @@ function mapDispatchToProps(dispatch) {
 
 
     }
+
+    handleInputChange = (event) => {
+        this.setState({
+          searchInput: event.currentTarget.value,
+        });
+      };
 
     render() {
         return (
@@ -130,7 +139,7 @@ function mapDispatchToProps(dispatch) {
                                                 />
                                                 </svg>
                                             }</span>
-                                        }}/>
+                                        }} onChange={this.handleInputChange}/>
                                     </div>
                                     <div className="mini-tabs">
                                         <FrxMiniTabs
@@ -141,9 +150,17 @@ function mapDispatchToProps(dispatch) {
                                     </div>
                                     <div className="group-wrapper">
                                         {
+                                            
                                             this.state.groupsData.map((group,key) => (
-                                                <Groups key={key} id={group.id} title={group.label} statusType={group.status} selectGroup={this.selectGroup}/>        
-                                            ))    
+                                                (this.state.searchInput=="" || (this.state.searchInput !="" && group.label.indexOf(this.state.searchInput)>-1))?
+                                                (
+                                                    (this.state.activeTabIndex==0 && group.is_archived==false) ?
+                                                        <Groups key={key} id={group.id} title={group.label} statusType={group.status} selectGroup={this.selectGroup}/>        
+                                                    : (this.state.activeTabIndex==1 && group.is_archived==true) ?
+                                                        <Groups key={key} id={group.id} title={group.label} statusType={group.status} selectGroup={this.selectGroup}/>
+                                                    : ""
+                                                ) : "" 
+                                            ))
                                         }
                                         {/* <Groups title={'Group1'} statusType={1} selectGroup={this.selectGroup}/>
                                         <Groups title={'Group2'} statusType={2} selectGroup={this.selectGroup}/>
