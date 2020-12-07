@@ -12,7 +12,7 @@ interface DashboardState {
 const dashboardInitialState: DashboardState = {
   formulary_count: 0,
   formulary_list: [],
-  isLoading: false,
+  isLoading: true,
   error: null,
 };
 

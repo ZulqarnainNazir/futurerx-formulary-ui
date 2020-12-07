@@ -83,7 +83,10 @@ const DEFAULT_GRID_WIDTH = 1284;
 interface FrxDrugGridProps<T> extends Grid<T> {
   handleCheck?:any;
   getPerPageItemSize?:any;
+  onGridPageChangeHandler?: any;
   totalRowsCount?: any;
+  pageSize?: any;
+  selectedCurrentPage?: any;
 }
 interface FrxDrugGridState<T> {
   filteredInfo: null;
@@ -127,7 +130,7 @@ class FrxDrugGrid extends Component<FrxDrugGridProps<any>, FrxDrugGridState<any>
     columns: [],
     visibleColumns: [],
     hiddenColumns: [],
-    pageSize: 10,
+    pageSize: this.props.pageSize ? this.props.pageSize : 10,
 
     filterDropdownVisible: false,
     showGridSettingsModal: false,
@@ -167,6 +170,7 @@ class FrxDrugGrid extends Component<FrxDrugGridProps<any>, FrxDrugGridState<any>
 
   componentDidMount() {
     this.initializeColumns();
+    console.log(this.props)
   }
 
   /**
@@ -1169,11 +1173,12 @@ class FrxDrugGrid extends Component<FrxDrugGridProps<any>, FrxDrugGridState<any>
    * @author Deepak_T
    */
   getShowTotal: () => string = () => {
-    const from = (this.state.currentPage - 1) * this.state.pageSize + 1;
+    const currPage = this.state.currentPage;
+    const from = (currPage - 1) * this.state.pageSize + 1;
     const to =
-      (this.state.currentPage - 1) * +this.state.pageSize +
+      (currPage - 1) * +this.state.pageSize +
       +this.state.pageSize;
-
+    
     const data =
       this.state.sortedInfo && !this.state.filteredInfo
         ? [...this.state.sortedTable]
@@ -1183,12 +1188,12 @@ class FrxDrugGrid extends Component<FrxDrugGridProps<any>, FrxDrugGridState<any>
             ? this.state.sortedTable
             : [...this.props.data];
 
-    const toData = to < data.length ? to : data.length;
-    const length =
+    const toData = (to < (this.props.totalRowsCount ? this.props.totalRowsCount : data.length)) ? to : (this.props.totalRowsCount ? this.props.totalRowsCount : data.length);
+    
+    const length = this.props.totalRowsCount ? this.props.totalRowsCount : 
       this.state.filterTable && this.state.filterTable.length > 0
         ? this.state.filterTable.length
         : this.props.data.length;
-
     return `${from} to ${toData} of ${length}`;
   };
 
@@ -1315,7 +1320,9 @@ class FrxDrugGrid extends Component<FrxDrugGridProps<any>, FrxDrugGridState<any>
    * @author Deepak _T
    */
   onPageChange: (p: number) => void = (pageNumber: number) => {
-    this.setState({ currentPage: pageNumber, goToPageValue: pageNumber });
+    this.setState({ currentPage: pageNumber, goToPageValue: pageNumber }, () => {
+      this.props.onGridPageChangeHandler(pageNumber)
+    });
   };
 
   /**
@@ -2383,7 +2390,7 @@ class FrxDrugGrid extends Component<FrxDrugGridProps<any>, FrxDrugGridState<any>
                   hideResults={hideResults}
                   filterTable={this.state.filterTable}
                   position={this.props.pagintionPosition}
-                  data={this.props.data}
+                  data={this.props.totalRowsCount ? this.props.totalRowsCount : this.props.data}
                   isMultiSort={this.state.isMultiSort}
                   sortedInfo={this.state.sortedInfo}
                   filteredInfo={this.state.filteredInfo}

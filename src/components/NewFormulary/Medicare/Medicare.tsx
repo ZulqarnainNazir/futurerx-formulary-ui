@@ -12,6 +12,7 @@ import FrxLoader from '../.././shared/FrxLoader/FrxLoader';
 import MaintenanceMassUpdate from "../MassMaintenance/MaintenanceMassUpdate/MaintenanceMassUpdate";
 import PanelHeader from '../../shared/Frx-components/panel-header/PanelHeader';
 import SearchBox from '../../shared/Frx-components/search-box/SearchBox';
+import { fetchFormularies } from "../../.././redux/slices/formulary/dashboard/dashboardSlice";
 
 import './Medicare.scss';
 import DropDown from "../../shared/Frx-components/dropdown/DropDown";
@@ -52,11 +53,7 @@ class Medicare extends React.Component<any, any> {
     const miniTabIndex = this.state.activeMiniTabIndex;
     switch (miniTabIndex) {
       case 0:
-        let gElement = <FrxLoader />;
-        if(this.props.baseData){
-          gElement = this.getGridData(this.props.baseData)
-        }
-        return gElement
+        return this.props.dashboardGrid.isLoading ? <FrxLoader /> : this.getGridData();
       case 1:
         return (
           <div>
@@ -74,14 +71,11 @@ class Medicare extends React.Component<any, any> {
         return <div>Group Description Management</div>;
     }
   };
-  getGridData = (baseData) => {
-    let grid = <FrxLoader />;
-    let gridData = null;
-    if(baseData){
-      console.log("======= Get total number",this.props.dashboardGrid)
-    }
-    // debugger;
-    gridData = baseData ? baseData.map((e,index: any) => {
+  getGridData = () => {
+    const baseData = [...this.props.dashboardGrid.list];
+    console.log(baseData)
+    
+    const gridData = baseData.map((e,index: any) => {
       return {
         "id": index + 1,
         "key": index + 1,
@@ -107,9 +101,9 @@ class Medicare extends React.Component<any, any> {
         },
         "step": steps.indexOf(e.step) + 1
       }
-    }) : null;
-    
-    return (gridData ? (
+    });
+    console.log(gridData)
+    return (
       <div className="formulary-grid">
         <div className="bordered">
           <div className="formulary-grid-panel-header-container">
@@ -151,10 +145,12 @@ class Medicare extends React.Component<any, any> {
               scroll={{ y: 377 }}
               isFetchingData={false}
               enableResizingOfColumns
-              getPerPageItemSize={this.onPageSize}
-              totalRowsCount={80}
+              getPerPageItemSize={this.props.onPageSize}
+              onGridPageChangeHandler={this.props.onPageChangeHandler}
+              totalRowsCount={this.props.dashboardGrid.count}
+              pageSize={this.props.pageSize}
+              selectedCurrentPage={this.props.selectedCurrentPage}
               data={gridData}
-              // data={this.state.gridData}
               expandable={{
                 isExpandable: true,
                 expandIconColumnIndex:
@@ -197,14 +193,11 @@ class Medicare extends React.Component<any, any> {
           </div>
         </div>
       </div>
-      ) : grid
     )
   }
-  onPageSize = (pageSize) => {
-    console.log("========", pageSize)
-  }
+  
   componentDidMount(){
-    console.log(this.props.dashboardGrid)
+    console.log("****** Component Did Mount",this.props.dashboardGrid)
   }
   render() {
     return (
@@ -225,8 +218,10 @@ const mapStateToProps = (state) => {
   return {
     dashboardGrid: {
       count: state.dashboard.formulary_count,
-      list: state.dashboard.formulary_list
+      list: state.dashboard.formulary_list,
+      isLoading: state.dashboard.isLoading
     } 
   }
 }
+
 export default connect(mapStateToProps)(Medicare)
