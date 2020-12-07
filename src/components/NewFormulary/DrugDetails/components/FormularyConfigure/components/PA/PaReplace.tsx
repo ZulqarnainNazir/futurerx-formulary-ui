@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import React, { useState } from "react";
 import { connect } from "react-redux";
 
@@ -9,12 +10,14 @@ import {
   getTapList,
   getMiniTabs,
 } from "../../../../../../../mocks/formulary/mock-data";
+=======
+import React from "react";
+
+>>>>>>> dev
 import DropDown from "../../../../../../shared/Frx-components/dropdown/DropDown";
-import { Grid } from "@material-ui/core";
 import { Row, Col, Space } from "antd";
 import RadioButton from "../../../../../../shared/Frx-components/radio-button/RadioButton";
 import Button from "../../../../../../shared/Frx-components/button/Button";
-import { TabInfo } from "../../../../../../../models/tab.model";
 
 import "../Tier.scss";
 import "./PA.scss";
@@ -99,6 +102,13 @@ class PaReplace extends React.Component<any,any> {
                 <RadioButton label="Yes" />
                 <RadioButton label="No" />
               </Space>
+            </Col>
+          </Row>
+        </div>
+        <div className="white-bg">
+          <Row justify="end">
+            <Col>
+              <Button label="Apply"></Button>
             </Col>
           </Row>
         </div>

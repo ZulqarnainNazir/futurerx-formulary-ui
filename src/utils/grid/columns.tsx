@@ -461,6 +461,71 @@ export const tierColumns: () => Column<any>[] = () => {
   ];
 };
 
+export const setupHmpsColumns: () => Column<any>[] = () => {
+  return [
+    {
+      position: 1,
+      sorter: {},
+      textCase: "upper",
+      pixelWidth: 100 ,
+      key: "files",
+      displayTitle: "Files",
+      isFilterable: true,
+      dataType: "string",
+      filters: textFilters,
+      hidden: false,
+      sortDirections: ["ascend", "descend"],
+    },
+    {
+      position:2,
+      sorter: {},
+      textCase: "upper",
+      pixelWidth: 122,
+      key: "lastGenerated",
+      displayTitle: "Last Generated",
+      isFilterable: true,
+      dataType: "string",
+      filters: textFilters,
+      hidden: false,
+      sortDirections: ["ascend", "descend"],
+    },
+    
+  ]
+}
+
+export const setupStandardReportingColumns: () => Column<any>[] = () => {
+  return [
+    {
+      position: 1,
+      sorter: {},
+      textCase: "upper",
+      pixelWidth: 100 ,
+      key: "items",
+      displayTitle: "Items",
+      //isFilterable: true,
+      dataType: "string",
+      //filters: textFilters,
+      hidden: false,
+      sortDirections: ["ascend", "descend"],
+    },
+    {
+      position:2,
+      sorter: {},
+      textCase: "upper",
+      pixelWidth: 122,
+      key: "lastGenerated",
+      displayTitle: "Last Generated",
+      //isFilterable: true,
+      dataType: "string",
+      //filters: textFilters,
+      hidden: false,
+      sortDirections: ["ascend", "descend"],
+    },
+    
+  ]
+}
+
+
 export const formularyDetailsGridColumns: (data) => Column<any>[] = (data) => {
   return [
     {
@@ -468,7 +533,7 @@ export const formularyDetailsGridColumns: (data) => Column<any>[] = (data) => {
       sorter: {},
       textCase: "upper",
       pixelWidth: 133,
-      key: "serviceYear",
+      key: "contract_year",
       displayTitle: "service year",
       isFilterable: true,
       dataType: "string",
@@ -523,11 +588,11 @@ export const formularyDetailsGridColumns: (data) => Column<any>[] = (data) => {
       sorter: {},
       textCase: "upper",
       pixelWidth: 163,
-      key: "formularyName",
+      key: "formulary_name",
       displayTitle: "formulary name",
       customContent: (props) => (
-        <div className="input-link" onClick={() => data.onFormularyNameClick()}>
-          {props.data.formularyName}
+        <div className="input-link" onClick={() => data.onFormularyNameClick(props.data.key)}>
+          {props.data.formulary_name}
         </div>
       ),
       isFilterable: true,
@@ -541,7 +606,7 @@ export const formularyDetailsGridColumns: (data) => Column<any>[] = (data) => {
       sorter: {},
       textCase: "upper",
       pixelWidth: 145,
-      key: "formularyId",
+      key: "id_formulary",
       displayTitle: "formulary id",
       isFilterable: true,
       dataType: "string",
@@ -554,7 +619,7 @@ export const formularyDetailsGridColumns: (data) => Column<any>[] = (data) => {
       sorter: {},
       textCase: "upper",
       pixelWidth: 102,
-      key: "version",
+      key: "version_number",
       displayTitle: "version",
       isFilterable: true,
       dataType: "string",

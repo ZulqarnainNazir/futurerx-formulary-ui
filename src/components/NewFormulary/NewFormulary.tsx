@@ -1,4 +1,6 @@
 import React from "react";
+import {connect} from "react-redux";
+
 import { TabInfo } from "../../models/tab.model";
 import FrxTabs from "../shared/FrxTabs/FrxTabs";
 import Medicare from "./Medicare/Medicare";
@@ -8,8 +10,10 @@ import MassMaintenanceContext from "./FormularyDetailsContext";
 import MassMaintenance from "./MassMaintenance/MassMaintenance";
 import FormularyDashboardStats from "./../FormularyDashboardStats/FormularyDashboardStats";
 import { getFormularyDetails } from "../../mocks/formulary/formularyDetails";
-
+import { fetchFormularies } from "../.././redux/slices/formulary/dashboard/dashboardSlice";
+import { setFormulary } from "../.././redux/slices/formulary/application/applicationSlice";
 import "./NewFormulary.scss";
+import Medicaid from "./Medicaid/Medicaid";
 
 const tabs = [
   { id: 1, text: "MEDICARE" },
@@ -25,8 +29,38 @@ interface State {
   showMassMaintenance: boolean;
   showDrugDetails: boolean;
 }
+  
+const mapStateToProps = (state) => {
+  //console.log("***** DB");
+  console.log(state);
+  return {
+    formulary_count: state?.dashboard?.formulary_count,
+    formulary_list: state?.dashboard?.formulary_list,
+  };
+};
 
-export default class Formulary extends React.Component<any, any> {
+function mapDispatchToProps(dispatch) {
+  return {
+    fetchFormularies:(a)=>dispatch(fetchFormularies(a)),
+    setFormulary:(arg)=>dispatch(setFormulary(arg)),
+  };
+}
+
+// REFERENCE :: 
+// listPayload = {
+//   index: 0,
+//   limit: 10,
+//   filter: [],
+//   id_lob: 4,
+//   search_by: null,
+//   search_key: "",
+//   search_value: [],
+//   sort_by: ['contract_year','lob_name','formulary_name','status'],
+//   sort_order: ['asc','asc','asc','asc'],
+// }
+
+
+class Formulary extends React.Component<any, any> {
   state = {
     activeTabIndex: 0,
     tabs: tabs,
@@ -34,6 +68,23 @@ export default class Formulary extends React.Component<any, any> {
     showMassMaintenance: false,
     showDrugDetails: false,
   };
+
+  listPayload = {
+    index: 0,
+    limit: 10,
+    filter: [],
+    id_lob: 4,
+    search_by: null,
+    search_key: "",
+    search_value: [],
+    sort_by: ["cms_formulary_id"],
+    sort_order: ["desc"],
+  }
+
+  componentDidMount(){
+    this.props.fetchFormularies(this.listPayload);
+  }
+
   onClickTab = (selectedTabIndex: number) => {
     let activeTabIndex = 0;
 
@@ -45,7 +96,12 @@ export default class Formulary extends React.Component<any, any> {
     });
     this.setState({ tabs, activeTabIndex });
   };
-  drugDetailsClickHandler = () => {
+  drugDetailsClickHandler = (id: any) => {
+    let selectedRow:any = null;
+    if(id !== undefined){
+      selectedRow = this.props.formulary_list[id-1];
+    }
+    this.props.setFormulary(selectedRow);
     this.setState({
       showTabs: !this.state.showTabs,
       showDrugDetails: !this.state.showDrugDetails,
@@ -67,10 +123,11 @@ export default class Formulary extends React.Component<any, any> {
           <Medicare
             drugDetailClick={this.drugDetailsClickHandler}
             onMassMaintenanceCLick={this.massMaintenanceCLickHandler}
+            baseData={this.props.formulary_list}
           />
         );
       case 1:
-        return <div>MEDICAID</div>;
+        return <Medicaid />;
       case 2:
         return <div>COMMERCIAL</div>;
       case 3:
@@ -83,6 +140,9 @@ export default class Formulary extends React.Component<any, any> {
         {this.state.showTabs ? (
           <>
             <FormularyDashboardStats />
+            <div>
+                COUNT: {this.props.formulary_count} 
+            </div>
             <FrxTabs
               tabList={this.state.tabs}
               activeTabIndex={this.state.activeTabIndex}
@@ -94,9 +154,9 @@ export default class Formulary extends React.Component<any, any> {
           </>
         ) : this.state.showDrugDetails ? (
           <DrugDetailsContext.Provider
-            value={{ showDetailHandler: this.drugDetailsClickHandler }}
+            value={{ showDetailHandler: () => this.drugDetailsClickHandler }}
           >
-            <DrugDetails data={getFormularyDetails()} />
+            <DrugDetails data={getFormularyDetails()}/>
           </DrugDetailsContext.Provider>
         ) : this.state.showMassMaintenance ? (
           <MassMaintenanceContext.Provider
@@ -109,3 +169,5 @@ export default class Formulary extends React.Component<any, any> {
     );
   }
 }
+
+export default connect(mapStateToProps, mapDispatchToProps )(Formulary);

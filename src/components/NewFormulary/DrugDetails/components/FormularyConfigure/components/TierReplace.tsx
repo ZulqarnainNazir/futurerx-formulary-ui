@@ -49,36 +49,38 @@ class TierReplace extends React.Component<any, tabsState> {
           </Grid>
         </div>
         {this.state.tierGridContainer && (
-          <div className="bordered white-bg">
-            <div className="header space-between pr-10">
-              Select Drugs From
-              <div className="button-wrapper">
-                <Button className="Button normal" label="Advance Search" onClick={this.advanceSearchClickHandler}/>
-                <Button label="Save" disabled />
+          <div className="select-drug-from-table">
+            <div className="bordered white-bg">
+              <div className="header space-between pr-10">
+                Select Drugs From
+                <div className="button-wrapper">
+                  <Button className="Button normal" label="Advance Search" />
+                  <Button label="Save" disabled />
+                </div>
               </div>
-            </div>
 
-            <div className="tier-grid-container">
-              <FrxDrugGridContainer
-                isPinningEnabled={false}
-                enableSearch={false}
-                enableColumnDrag
-                onSearch={() => {}}
-                fixedColumnKeys={[]}
-                pagintionPosition="topRight"
-                gridName="TIER"
-                enableSettings={false}
-                columns={tierColumns()}
-                scroll={{ x: 2000, y: 377 }}
-                isFetchingData={false}
-                enableResizingOfColumns
-                data={TierMockData()}
-                rowSelection={{
-                  columnWidth: 50,
-                  fixed: true,
-                  type: "checkbox",
-                }}
-              />
+              <div className="tier-grid-container">
+                <FrxDrugGridContainer
+                  isPinningEnabled={false}
+                  enableSearch={false}
+                  enableColumnDrag
+                  onSearch={() => {}}
+                  fixedColumnKeys={[]}
+                  pagintionPosition="topRight"
+                  gridName="TIER"
+                  enableSettings={false}
+                  columns={tierColumns()}
+                  scroll={{ x: 2000, y: 377 }}
+                  isFetchingData={false}
+                  enableResizingOfColumns
+                  data={TierMockData()}
+                  rowSelection={{
+                    columnWidth: 50,
+                    fixed: true,
+                    type: "checkbox",
+                  }}
+                />
+              </div>
             </div>
             {this.state.isSearchOpen ? (
                 <AdvancedSearch

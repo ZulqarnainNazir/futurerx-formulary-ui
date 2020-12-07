@@ -4,9 +4,6 @@ import { connect } from "react-redux";
 import { Grid } from "@material-ui/core";
 import FrxMiniTabs from "../../../../../shared/FrxMiniTabs/FrxMiniTabs";
 import "./Tier.scss";
-
-
-
 import {
   getTapList,
   getMiniTabs,

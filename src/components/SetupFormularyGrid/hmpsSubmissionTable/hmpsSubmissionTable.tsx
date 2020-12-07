@@ -1,299 +1,61 @@
-import { Card, Input } from "@material-ui/core";
-import { ArrowDownward, ArrowDropDown, ExpandLess } from "@material-ui/icons";
+import { Card, Grid, Input } from "@material-ui/core";
 import React, { Component } from "react";
-import Table from "../../shared/Frx-components/table/Table";
-import actions from "../../../assets/icons/Actions.png";
-import dots from "../../../assets/icons/dots1.png";
-import settingsLogo from "../../../assets/icons/Settings.png";
-import filter from "../../../assets/icons/Filter.png";
-import downloadIcon from "../../../assets/icons/download.png";
 import "./hmpsSubmissionTable.scss";
+
+import FrxDrugGridContainer from "../../shared/FrxGrid/FrxDrugGridContainer";
+import { setupHmpsColumns } from "../../../utils/grid/columns";
+import { SetupHmpsMockData } from "../../../mocks/HmpsFilesMock";
 
 export default class HmpsSubmissionTable extends Component {
   render() {
     return (
-      <div className="hmpsSubmissionTable">
-        <Card style={{ border: "1px solid lightgrey" }} className="header">
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-            }}
-          >
-            <div style={{ padding: "10px", color: "#1D54B4", fontWeight: 500 }}>
+      <Grid item xs={12}>
+        <div className="hmps-container">
+          <div className="bordered">
+            <div className="header space-between pr-10">
               HMPS SUBMISSION AND SUPPLEMENTAL OR ALTERNATIVE MODAL FORMULARY
               FILES
-            </div>
-            <img
-              style={{ marginRight: "20px" }}
-              src={downloadIcon}
-              alt=""
-              width="16px"
-              height="16px"
-            />
-          </div>
-
-          <hr style={{ border: "1px solid lightgrey" }} />
-
-          <div className="grid-container">
-            <div style={{ backgroundColor: "#F9F9F9" }} className="grid-item">
-              <img src={settingsLogo} alt="" />
-            </div>
-            <div
-              style={{ textAlign: "center", backgroundColor: "#F9F9F9" }}
-              className="grid-item"
-            >
-              <div>
-                <input id="input" type="checkbox" />
-              </div>
-            </div>
-            <div
-              style={{
-                backgroundColor: "#F9F9F9",
-                borderRight: "0px solid white",
-              }}
-              className="grid-item"
-            >
-              <div>
-                <div
-                  style={{ display: "flex", justifyContent: "space-between" }}
+              <div className="float-right">
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 16 16"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
                 >
-                  <div
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                    }}
-                  >
-                    <div>
-                      <span style={{ color: "#666666" }}>FILES</span>
-                    </div>
-                    <div>
-                      <ArrowDropDown
-                        style={{ color: "#666666" }}
-                        fontSize="small"
-                      />
-                    </div>
-                  </div>
-                  <div>
-                    <img src={filter} alt="" />
-                  </div>
-                </div>
+                  <path
+                    d="M6.75 0H9.25C9.66562 0 10 0.334375 10 0.75V6H12.7406C13.2969 6 13.575 6.67188 13.1812 7.06563L8.42813 11.8219C8.19375 12.0562 7.80937 12.0562 7.575 11.8219L2.81562 7.06563C2.42188 6.67188 2.7 6 3.25625 6H6V0.75C6 0.334375 6.33437 0 6.75 0ZM16 11.75V15.25C16 15.6656 15.6656 16 15.25 16H0.75C0.334375 16 0 15.6656 0 15.25V11.75C0 11.3344 0.334375 11 0.75 11H5.33437L6.86562 12.5312C7.49375 13.1594 8.50625 13.1594 9.13437 12.5312L10.6656 11H15.25C15.6656 11 16 11.3344 16 11.75ZM12.125 14.5C12.125 14.1562 11.8438 13.875 11.5 13.875C11.1562 13.875 10.875 14.1562 10.875 14.5C10.875 14.8438 11.1562 15.125 11.5 15.125C11.8438 15.125 12.125 14.8438 12.125 14.5ZM14.125 14.5C14.125 14.1562 13.8438 13.875 13.5 13.875C13.1562 13.875 12.875 14.1562 12.875 14.5C12.875 14.8438 13.1562 15.125 13.5 15.125C13.8438 15.125 14.125 14.8438 14.125 14.5Z"
+                    fill="#C2CFE0"
+                  />
+                </svg>
               </div>
             </div>
-            <div
-              style={{
-                backgroundColor: "#F9F9F9",
-                borderLeft: "0px solid white",
-              }}
-              className="grid-item"
-            >
-              <div>
-                <div
-                  style={{ display: "flex", justifyContent: "space-between" }}
-                >
-                  <div
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                    }}
-                  >
-                    <div>
-                      <span style={{ color: "#666666" }}>LAST GENERATED</span>
-                    </div>
-                    <div>
-                      <ArrowDropDown
-                        style={{ color: "#666666" }}
-                        fontSize="small"
-                      />
-                    </div>
-                  </div>
-                  <div>
-                    <img src={filter} alt="" />
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div className="grid-item">
-              <img src={dots} alt="" />
-            </div>
-            <div className="grid-item">
-              <input id="input" type="checkbox" />
-            </div>
-            <div
-              style={{ borderRight: "0px solid white" }}
-              className="grid-item"
-            >
-              <span
-                style={{
-                  display: "flex",
-                  justifyContent: "start",
-                  fontSize: "12px",
-                  color: "#666666",
+            <div className="hmps-wrapper">
+              <FrxDrugGridContainer
+                isPinningEnabled={false}
+                enableSearch={false}
+                enableColumnDrag
+                onSearch={() => {}}
+                fixedColumnKeys={[]}
+                pagintionPosition="topRight"
+                hidePagination={true}
+                gridName=""
+                enableSettings
+                columns={setupHmpsColumns()}
+                scroll={{ x: 2000, y: 377 }}
+                isFetchingData={false}
+                enableResizingOfColumns
+                data={SetupHmpsMockData()}
+                rowSelection={{
+                  columnWidth: 50,
+                  fixed: true,
+                  type: "checkbox",
                 }}
-              >
-                Excluded Drug
-              </span>
-            </div>
-            <div
-              style={{ borderLeft: "0px solid white" }}
-              className="grid-item"
-            >
-              <span
-                style={{
-                  display: "flex",
-                  justifyContent: "start",
-                  color: "#666666",
-                }}
-              >
-                label
-              </span>
-            </div>
-            <div className="grid-item">
-              <img src={dots} alt="" />
-            </div>
-            <div className="grid-item">
-              <input id="input" type="checkbox" />
-            </div>
-
-            <div
-              style={{ borderRight: "0px solid white" }}
-              className="grid-item"
-            >
-              <span
-                style={{
-                  display: "flex",
-                  justifyContent: "start",
-                  color: "#666666",
-                }}
-              >
-                Free First Fill
-              </span>
-            </div>
-            <div
-              style={{ borderLeft: "0px solid white" }}
-              className="grid-item"
-            >
-              <span
-                style={{
-                  display: "flex",
-                  justifyContent: "start",
-                  color: "#666666",
-                }}
-              >
-                label
-              </span>
-            </div>
-            <div className="grid-item">
-              <img src={dots} alt="" />
-            </div>
-            <div className="grid-item">
-              <input id="input" type="checkbox" />
-            </div>
-            <div
-              style={{ borderRight: "0px solid white" }}
-              className="grid-item"
-            >
-              <span
-                style={{
-                  display: "flex",
-                  justifyContent: "start",
-                  color: "#666666",
-                }}
-              >
-                Home Infusion
-              </span>
-            </div>
-            <div
-              style={{ borderLeft: "0px solid white" }}
-              className="grid-item"
-            >
-              <span
-                style={{
-                  display: "flex",
-                  justifyContent: "start",
-                  color: "#666666",
-                }}
-              >
-                label
-              </span>
-            </div>
-            <div className="grid-item">
-              <img src={dots} alt="" />
-            </div>
-            <div className="grid-item">
-              <input id="input" type="checkbox" />
-            </div>
-            <div
-              style={{ borderRight: "0px solid white" }}
-              className="grid-item"
-            >
-              <span
-                style={{
-                  display: "flex",
-                  justifyContent: "start",
-                  color: "#666666",
-                }}
-              >
-                HPMS Delta Formulary File
-              </span>
-            </div>
-            <div
-              style={{ borderLeft: "0px solid white" }}
-              className="grid-item"
-            >
-              <span
-                style={{
-                  display: "flex",
-                  justifyContent: "start",
-                  color: "#666666",
-                }}
-              >
-                label
-              </span>
-            </div>
-            <div className="grid-item">
-              <img src={dots} alt="" />
-            </div>
-
-            <div className="grid-item">
-              <input id="input" type="checkbox" />
-            </div>
-
-            <div
-              style={{ borderRight: "0px solid white" }}
-              className="grid-item"
-            >
-              <span
-                style={{
-                  display: "flex",
-                  justifyContent: "start",
-                  color: "#666666",
-                }}
-              >
-                {" "}
-                HPMS Full Formulary File
-              </span>
-            </div>
-            <div
-              style={{ borderLeft: "0px solid white" }}
-              className="grid-item"
-            >
-              <span
-                style={{
-                  display: "flex",
-                  justifyContent: "start",
-                  color: "#666666",
-                }}
-              >
-                label
-              </span>
+              />
             </div>
           </div>
-        </Card>
-      </div>
+        </div>
+      </Grid>
     );
   }
 }

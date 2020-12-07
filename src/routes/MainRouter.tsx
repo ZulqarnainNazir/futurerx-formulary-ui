@@ -47,11 +47,11 @@ class MainRouter extends React.Component {
             path="/prescriber"
             render={(props) => <PrescriberProfile {...props} />}
           />
-          <Route
+          {/* <Route
             exact
             path="/planinformationconfig"
             render={(props) => <PlanInformationConfiguration {...props} />}
-          />
+          /> */}
           
 
           <Route
