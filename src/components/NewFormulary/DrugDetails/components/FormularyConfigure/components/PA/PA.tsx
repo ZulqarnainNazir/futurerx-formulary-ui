@@ -30,7 +30,11 @@ function mapDispatchToProps(dispatch) {
     getDrugLists:(a)=>dispatch(getDrugLists(a)),
   };
 }
-
+function mapStateToProps(state){
+  return {
+    current_formulary: state.formularBase.current_formulary,
+  }
+}
 
 
 class PA extends React.Component<any, any>  {
@@ -57,6 +61,7 @@ class PA extends React.Component<any, any>  {
     panelGridValue: [
      
     ],
+    paList: [],
   };
 
   onClickTab = (selectedTabIndex: number) => {
@@ -85,9 +90,10 @@ class PA extends React.Component<any, any>  {
 
   componentDidMount() {
     
-    const TierDefinationData = this.props.getPaSummary("3132").then((json => {
+    this.props.getPaSummary(this.props.current_formulary.id_formulary).then((json => {
       debugger;
       let tmpData = json.payload.result;
+      
       var rows = tmpData.map(function(el) {
         var curRow=[ el["pa_type_name"],
         el["total_group_description_count"],
@@ -103,6 +109,14 @@ class PA extends React.Component<any, any>  {
       console.log(rows);
       this.setState({
         panelGridValue: rows,
+      })
+    }))
+
+    this.props.getDrugLists("0").then((json => {
+      debugger;
+      let tmpData = json.payload.data;
+      this.setState({
+        paList: tmpData,
       })
     }))
     
@@ -151,7 +165,7 @@ class PA extends React.Component<any, any>  {
                         <div>
                           <div className="PA-list">
                             <span>LIST</span>
-                            <DropDown options={[1, 2, 3]} />
+                            <DropDown options={this.state.paList} valueProp="text" />
                           </div>
                         </div>
                       </div>
@@ -172,7 +186,7 @@ class PA extends React.Component<any, any>  {
 
 
 export default connect(
-  null,
+  mapStateToProps,
   mapDispatchToProps
 )(PA);
 
