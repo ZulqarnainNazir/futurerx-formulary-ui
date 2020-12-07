@@ -58,7 +58,17 @@ function mapDispatchToProps(dispatch) {
 //   sort_by: ['contract_year','lob_name','formulary_name','status'],
 //   sort_order: ['asc','asc','asc','asc'],
 // }
-
+const defaultListPayload = {
+  index: 0,
+  limit: 10,
+  filter: [],
+  id_lob: 4,
+  search_by: null,
+  search_key: "",
+  search_value: [],
+  sort_by: ["cms_formulary_id"],
+  sort_order: ["desc"],
+}
 
 class Formulary extends React.Component<any, any> {
   state = {
@@ -67,6 +77,7 @@ class Formulary extends React.Component<any, any> {
     showTabs: true,
     showMassMaintenance: false,
     showDrugDetails: false,
+    pageSize: 10
   };
 
   listPayload = {
@@ -123,7 +134,10 @@ class Formulary extends React.Component<any, any> {
           <Medicare
             drugDetailClick={this.drugDetailsClickHandler}
             onMassMaintenanceCLick={this.massMaintenanceCLickHandler}
-            baseData={this.props.formulary_list}
+            onPageSize={this.onPageSize}
+            pageSize={this.listPayload.limit}
+            selectedCurrentPage={(this.listPayload.index/this.listPayload.limit + 1)}
+            onPageChangeHandler={this.onGridPageChangeHandler}
           />
         );
       case 1:
@@ -134,6 +148,15 @@ class Formulary extends React.Component<any, any> {
         return <div>EXCHANGE</div>;
     }
   };
+  onPageSize = (pageSize) => {
+    this.listPayload.limit = pageSize
+    this.props.fetchFormularies(this.listPayload);
+  }
+  onGridPageChangeHandler = (pageNumber: any) => {
+    this.listPayload.index = (pageNumber - 1) * this.listPayload.limit;
+    console.log(this.listPayload.index/this.listPayload.limit + 1);
+    this.props.fetchFormularies(this.listPayload);
+  }
   render() {
     return (
       <div className="formulary-root">

@@ -1,4 +1,5 @@
 import React from "react";
+import { connect } from 'react-redux'
 
 import "./Tier.scss";
 import { Table } from "antd";
@@ -6,26 +7,22 @@ import Grid from "@material-ui/core/Grid";
 import { Row, Col } from "antd";
 import Button from "../../../../../shared/Frx-components/button/Button";
 
+
+const mapStateToProps = (state) => {
+  return {
+    tierData: state.tierSliceReducer.data
+  }
+}
+
 class TierRemove extends React.Component {
   render() {
-    const dataSource = [
-      {
-        key: "1",
-        tierName: "Tier 0",
-      },
-      {
-        key: "2",
-        tierName: "Tier 1",
-      },
-      {
-        key: "3",
-        tierName: "Tier 2",
-      },
-      {
-        key: "4",
-        tierName: "Tier 3",
-      },
-    ];
+    const dataSource: any[] = [];
+
+    if (this.props['tierData'].length > 0) {
+      this.props['tierData'].map(tier => {
+        dataSource.push({ 'key': tier.id_tier, 'tierName': tier.tier_name })
+      })
+    }
 
     const columns = [
       {
@@ -62,4 +59,4 @@ class TierRemove extends React.Component {
   }
 }
 
-export default TierRemove;
+export default connect(mapStateToProps)(TierRemove);

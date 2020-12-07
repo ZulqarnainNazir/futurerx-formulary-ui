@@ -74,7 +74,6 @@ class FrxGridPagination extends Component<FrxGridPaginationProps<any>> {
       onGotToFirstPage,
       onGotToLastPage
     } = this.props;
-
     return (
       <div className="frx-grid-pagination">
         {!hideMultiSort && (
@@ -181,6 +180,7 @@ class FrxGridPagination extends Component<FrxGridPaginationProps<any>> {
 
             {/* <FirstPageIcon  /> */}
           </Button>
+          
           <div>
             <Pagination
               defaultPageSize={10}
@@ -192,7 +192,7 @@ class FrxGridPagination extends Component<FrxGridPaginationProps<any>> {
               total={
                 filterTable && filterTable.length > 0
                   ? filterTable.length
-                  : data.length
+                  : typeof data === "number" ? data : data.length
               }
             />
           </div>
