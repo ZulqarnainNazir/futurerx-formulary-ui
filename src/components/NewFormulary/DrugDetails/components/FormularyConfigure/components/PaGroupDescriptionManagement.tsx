@@ -43,6 +43,7 @@ function mapDispatchToProps(dispatch) {
             }
         ],
         searchInput:"",
+        selectedGroup: -1,
     }
     onClickTab = (selectedTabIndex: number) => {
         let activeTabIndex = 0;
@@ -56,14 +57,19 @@ function mapDispatchToProps(dispatch) {
         this.setState({ tabs, activeTabIndex });
     };
 
-    selectGroup = (text:string) =>{
+    selectGroup = (text:any) =>{
+        
+        console.log(text);
+        debugger;
         this.setState({
-            newGroup:true
+            newGroup:text,
+            selectedGroup:text
         })
     }
     addNewGroup = () =>{
         this.setState({
-            newGroup:false
+            newGroup:false,
+            selectedGroup:-1
         })
     }
 
@@ -76,10 +82,12 @@ function mapDispatchToProps(dispatch) {
 
             var result = tmpData.map(function(el) {
                 var element = {};
-                element["id"] = el.id_pa_group_description;
+                element["id"] = el.id_base_pa_group_description;
                 element["label"] = el.pa_group_description_name;
                 element["status"] = el.is_setup_complete?"completed":"warning";
                 element["is_archived"] = el.is_archived;
+                console.log(element);
+                debugger;
                 return element;
             })
 
@@ -157,7 +165,7 @@ function mapDispatchToProps(dispatch) {
                                                     (this.state.activeTabIndex==0 && group.is_archived==false) ?
                                                         <Groups key={key} id={group.id} title={group.label} statusType={group.status} selectGroup={this.selectGroup}/>        
                                                     : (this.state.activeTabIndex==1 && group.is_archived==true) ?
-                                                        <Groups key={key} id={group.id} title={group.label} statusType={group.status} selectGroup={this.selectGroup}/>
+                                                        <Groups key={key} id={group.id} title={group.label} statusType={group.status} selectGroup={this.selectGroup} />
                                                     : ""
                                                 ) : "" 
                                             ))
@@ -171,7 +179,7 @@ function mapDispatchToProps(dispatch) {
                                     </div>
                                 </div>
                         </div>
-                        <PaNewGroupForm/>
+                        <PaNewGroupForm selectedGroupId={this.state.selectedGroup}/>
                         {/* {this.state.newGroup ? <NewGroup tooltip={this.state.tooltip} formType={1}/>: (
                             <NewGroup tooltip={this.state.tooltip} formType={0}/>
                         ) } */}

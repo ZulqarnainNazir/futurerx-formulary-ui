@@ -109,8 +109,13 @@ const FormInformationPanel = (props: any) => {
   )
 }
 
-export default function NewGroup(props: any) {
-    console.log(props)
+class NewGroup extends React.Component <any ,any> {
+   
+    
+    render (){
+      debugger;
+      console.log(this.props.selectedGroupId);
+    
     return (
         <div className="new-group-des">
             <div className="panel header">
@@ -317,4 +322,7 @@ export default function NewGroup(props: any) {
 
         </div>
     )
+    }
 }
+
+export default NewGroup;
