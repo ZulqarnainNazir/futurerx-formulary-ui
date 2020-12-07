@@ -81,7 +81,9 @@ const CLAIMS_GRID_SETTINGS_WIDTH = 28;
 const DEFAULT_GRID_WIDTH = 1284;
 
 interface FrxDrugGridProps<T> extends Grid<T> {
-  handleCheck?:any
+  handleCheck?:any;
+  getPerPageItemSize?:any;
+  totalRowsCount?: any;
 }
 interface FrxDrugGridState<T> {
   filteredInfo: null;
@@ -1196,11 +1198,16 @@ class FrxDrugGrid extends Component<FrxDrugGridProps<any>, FrxDrugGridState<any>
    * @author Deepak_T
    */
   getTotalPages: () => number = () => {
-    const totalRows =
-      this.state.filterTable && this.state.filterTable.length > 0
-        ? this.state.filterTable.length
-        : this.props.data.length;
+    let totalRows: any;
+    if(this.props.totalRowsCount){
+      totalRows = this.props.totalRowsCount;
+    }else{
+      totalRows =
+        this.state.filterTable && this.state.filterTable.length > 0
+          ? this.state.filterTable.length
+          : this.props.data.length;
 
+    }
     const currentPageSize = this.state.pageSize;
     return Math.ceil(totalRows / currentPageSize);
   };
@@ -1318,7 +1325,10 @@ class FrxDrugGrid extends Component<FrxDrugGridProps<any>, FrxDrugGridState<any>
    * @author Deepak _T
    */
   onPageSizeChange: (v: number) => void = (value: number) => {
-    this.setState({ pageSize: value, currentPage: 1, goToPageValue: 1 });
+    this.setState({ pageSize: value, currentPage: 1, goToPageValue: 1 }, () => {
+      this.props.getPerPageItemSize(value)
+    });
+
   };
 
   /**
@@ -2258,6 +2268,7 @@ class FrxDrugGrid extends Component<FrxDrugGridProps<any>, FrxDrugGridState<any>
   */
 
   render() {
+    
     const gridColumns = this.generateColumns();
     let columns = gridColumns;
     if (this.props.enableResizingOfColumns) {

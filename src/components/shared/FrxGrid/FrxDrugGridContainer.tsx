@@ -40,6 +40,8 @@ interface FrxDrugGridContainerProps<T> extends Grid<T> {
   onSearch: (searchObject: any) => void;
   searchOptions?: any;
   isPinningEnabled?: boolean;
+  getPerPageItemSize?: any;
+  totalRowsCount?:any;
 }
 class FrxDrugGridContainer extends Component<FrxDrugGridContainerProps<any>> {
   /**
@@ -129,6 +131,8 @@ class FrxDrugGridContainer extends Component<FrxDrugGridContainerProps<any>> {
           summary={this.props.summary ? this.props.summary : undefined}
           isRowSelectionEnabled={this.props.isRowSelectionEnabled}
           rowSelectionChange={this.props.rowSelectionChange}
+          getPerPageItemSize={this.props.getPerPageItemSize}
+          totalRowsCount={this.props.totalRowsCount}
           settingsWidth={
             this.props.settingsWidth ? this.props.settingsWidth : undefined
           }
