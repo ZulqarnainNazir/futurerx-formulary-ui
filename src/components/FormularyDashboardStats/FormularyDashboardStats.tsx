@@ -14,10 +14,10 @@ const FormularyDashboardStats = () => {
           <FormularyDashboardStatsChart/>
           
           <div className="stats-card-container">  
-            <FormularyDashboardStatsCard variant="1"/>
-            <FormularyDashboardStatsCard variant="2"/>
-            <FormularyDashboardStatsCard variant="3"/>
-            <FormularyDashboardStatsCard variant="4"/>
+            <FormularyDashboardStatsCard title="MEDICARE" variant="1"/>
+            <FormularyDashboardStatsCard title="MEDICAID" variant="2"/>
+            <FormularyDashboardStatsCard title="COMMERCIAL" variant="3"/>
+            <FormularyDashboardStatsCard title="EXCHANGE" variant="4"/>
           </div>
         </div>
       </Paper>

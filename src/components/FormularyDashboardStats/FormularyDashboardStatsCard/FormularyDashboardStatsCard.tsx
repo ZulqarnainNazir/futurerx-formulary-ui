@@ -4,7 +4,7 @@ import { getStats } from '../../../mocks/formulary/dashboardStats';
 import './FormularyDashboardStatsCard.scss';
 
 const FormularyDashboardStatsCard = (props) => {
-  const { variant = 1 } = props;
+  const { variant = 1, title } = props;
   
   
   return (
@@ -19,7 +19,7 @@ const FormularyDashboardStatsCard = (props) => {
           ))
         }
       </div>
-      <div className="formulary-dashboard-stats-card__footer">MEDICARE</div>
+      <div className="formulary-dashboard-stats-card__footer">{title}</div>
     </div>
   )
 }
