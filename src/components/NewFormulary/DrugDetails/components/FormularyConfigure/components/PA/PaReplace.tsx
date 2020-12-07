@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+
 import React, { useState } from "react";
 import { connect } from "react-redux";
 
@@ -10,10 +10,9 @@ import {
   getTapList,
   getMiniTabs,
 } from "../../../../../../../mocks/formulary/mock-data";
-=======
-import React from "react";
 
->>>>>>> dev
+
+
 import DropDown from "../../../../../../shared/Frx-components/dropdown/DropDown";
 import { Row, Col, Space } from "antd";
 import RadioButton from "../../../../../../shared/Frx-components/radio-button/RadioButton";
