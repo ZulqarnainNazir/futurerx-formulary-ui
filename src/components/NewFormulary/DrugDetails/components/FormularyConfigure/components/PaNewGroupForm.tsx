@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { connect } from "react-redux";
 import PanelHeader from './PanelHeader';
 import PanelGrid from './panelGrid';
 import CustomizedSwitches from './CustomizedSwitches';
@@ -17,6 +18,7 @@ import DrugGrid from '../../DrugGrid';
 import Tooltip from '@material-ui/core/Tooltip';
 import { Box, Grid, Input } from '@material-ui/core';
 import RadioButton from '../../../../../shared/Frx-components/radio-button/RadioButton';
+import { getPaGrouptDescription, getPaTypes, getDrugLists } from "../../../../../../redux/slices/formulary/pa/paActionCreation";
 
 interface Props{
     tooltip?:string;
@@ -109,8 +111,28 @@ const FormInformationPanel = (props: any) => {
   )
 }
 
+
+
+function mapDispatchToProps(dispatch) {
+  return {
+    getPaGrouptDescription:(a)=>dispatch(getPaGrouptDescription(a)),
+  };
+}
+
+function mapStateToProps(state){
+  return {
+    
+  }
+}
 class NewGroup extends React.Component <any ,any> {
-   
+  state = {
+
+  }
+  componentDidMount() {
+    debugger;               
+    console.log("##################");
+    this.props.getPaGrouptDescription(this.props.selectedGroupId);
+  }
     
     render (){
       debugger;
@@ -325,4 +347,7 @@ class NewGroup extends React.Component <any ,any> {
     }
 }
 
-export default NewGroup;
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(NewGroup);
