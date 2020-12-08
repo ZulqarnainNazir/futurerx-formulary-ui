@@ -9,6 +9,8 @@ import dashboardReducer from "../slices/formulary/dashboard/dashboardSlice";
 import { tierSlice } from '../slices/formulary/tier/tierSlice'
 import { switchSlice } from '../slices/formulary/switch/switchSlice'
 import { validationList } from "../slices/formulary/validation/validationSlice";
+import setupReducer from "../slices/formulary/setup/setupSlice";
+import headerReducer from "../slices/formulary/setup/headerSlice";
 
 
 const reducer = combineReducers({
@@ -37,7 +39,9 @@ const store = configureStore({
     tierSliceReducer: tierSliceReducer,
     switchReducer: switchReducer,
     validationReducer: validationReducer,
-    application: applicationReducer
+    application: applicationReducer,
+    setup: setupReducer,
+    header: headerReducer
   },
   middleware,
 });

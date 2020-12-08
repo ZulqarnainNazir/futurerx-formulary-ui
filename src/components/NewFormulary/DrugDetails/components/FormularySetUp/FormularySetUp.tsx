@@ -7,7 +7,15 @@ import MedicareInformation from "./components/MedicareInformation";
 import SupplementalModels from "./components/SupplementalModels";
 import Box from '@material-ui/core/Box';
 import Button from '../../../../shared/Frx-components/button/Button';
+//import { fetchSelectedFormulary } from "../.././redux/slices/formulary/dashboard/dashboardSlice";
+
+
 export default class FormularySetUp extends React.Component<any, any> {
+
+  componentDidMount(){
+    //this.props.fetchSelectedFormulary();
+  }
+
   render() {
     return(
       <div>
