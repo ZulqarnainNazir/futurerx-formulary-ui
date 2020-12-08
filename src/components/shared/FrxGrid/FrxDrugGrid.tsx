@@ -137,7 +137,7 @@ class FrxDrugGrid extends Component<FrxDrugGridProps<any>, FrxDrugGridState<any>
     showSecondaryColumns: false,
     placement: "left",
     expandedKeys: [],
-    currentPage: 1,
+    currentPage: this.props.selectedCurrentPage ? this.props.selectedCurrentPage : 1,
 
     goToPageValue: 1,
     settingsAnchor: null,
@@ -659,13 +659,20 @@ class FrxDrugGrid extends Component<FrxDrugGridProps<any>, FrxDrugGridState<any>
             ? this.state.sortedTable
             : [...this.props.data];
 
-    const from = (this.state.currentPage - 1) * +this.state.pageSize + 1;
+    // const from = (this.state.currentPage - 1) * +this.state.pageSize + 1;
+    // Modify this in future
+    const from = 1;
+
     const to =
       (this.state.currentPage - 1) * +this.state.pageSize +
       +this.state.pageSize;
 
-    let toData = to < data.length ? to : data.length;
+    // const to = this.state.pageSize;
+    
+    // let toData = to < data.length ? to : data.length;
 
+    // Need to modify this in future
+    let toData = (to < (this.props.totalRowsCount ? this.props.totalRowsCount : data.length)) ? to : (this.props.totalRowsCount ? this.props.totalRowsCount : data.length);
     return data.slice(from - 1, toData);
   };
 
@@ -2525,7 +2532,7 @@ class FrxDrugGrid extends Component<FrxDrugGridProps<any>, FrxDrugGridState<any>
                   sortedInfo={this.state.sortedInfo}
                   filteredInfo={this.state.filteredInfo}
                   pageSize={this.state.pageSize}
-                  currentPage={this.state.currentPage}
+                  currentPage={this.props.selectedCurrentPage ? this.props.selectedCurrentPage : this.state.currentPage}
                   showTotal={this.getShowTotal()}
                   pages={this.getTotalPages()}
                   lastPage={this.getLastPage()}
