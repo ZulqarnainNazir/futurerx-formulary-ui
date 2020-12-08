@@ -17,9 +17,9 @@ class FormularySetUp extends React.Component<any, any> {
   formulary_details: Formulary | any;
   
   componentDidMount(){
-    //console.log("SP  -  -  -  -  -  -  -  -  -  -  -  - M. "+this.props.mode);
+    console.log("SP : "+this.props.mode+" - "+this.props.formulary_id);
     if(this.props.mode === "EXISTING") {
-      this.props.fetchSelectedFormulary();
+      this.props.fetchSelectedFormulary(this.props.formulary_id);
     } else {
       this.formulary_details = {};
     }

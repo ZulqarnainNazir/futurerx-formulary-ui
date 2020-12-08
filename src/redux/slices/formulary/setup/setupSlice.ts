@@ -38,7 +38,7 @@ const setup = createSlice({
     getFormularySuccess(state, { payload }: PayloadAction<Formulary>) {
       // console.log("***** getFormulariesSuccess ");
       state.formulary = payload;
-      state.mode="NEW"
+      state.mode="EXISTING"
       state.isLoading = false;
       state.error = null;
     },
@@ -56,11 +56,11 @@ export default setup.reducer;
 
 export const fetchSelectedFormulary = createAsyncThunk(
   "setup",
-  async (arg: any, { dispatch }) => {
+  async (arg: number, { dispatch }) => {
     console.log("***** fetchSelectedFormulary ");
     try {
       dispatch(getformularyStart());
-      const formulary: Formulary = await getformulary(3079);
+      const formulary: Formulary = await getformulary(arg);
       dispatch(getFormularySuccess(formulary));
     } catch (err) {
       console.log("***** fetchFormularies - ERROR ");

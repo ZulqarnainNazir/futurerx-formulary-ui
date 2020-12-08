@@ -16,7 +16,7 @@ let url = `${BASE_URL1}api/1/formulary-setup/${formulary_id}?entity_id=${formula
     });
     //console.log("***** SETUP getformulary  - Success");
     //console.log(response);
-    if(response?.data?.code === 200) {
+    if(response?.data?.code === "200") {
         return response?.data?.result
     }
     return null;
