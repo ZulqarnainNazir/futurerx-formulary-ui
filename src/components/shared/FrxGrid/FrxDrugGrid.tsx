@@ -88,6 +88,8 @@ interface FrxDrugGridProps<T> extends Grid<T> {
   totalRowsCount?: any;
   pageSize?: any;
   selectedCurrentPage?: any;
+  applyFilter?:any;
+  getColumnSettings?:any;
 }
 interface FrxDrugGridState<T> {
   filteredInfo: null;
@@ -659,7 +661,7 @@ class FrxDrugGrid extends Component<FrxDrugGridProps<any>, FrxDrugGridState<any>
           : this.state.filteredInfo && this.state.sortedInfo
             ? this.state.sortedTable
             : [...this.props.data];
-
+    console.log(this.state.filteredInfo)
     // const from = (this.state.currentPage - 1) * +this.state.pageSize + 1;
     // Modify this in future
     const from = 1;
@@ -714,7 +716,9 @@ class FrxDrugGrid extends Component<FrxDrugGridProps<any>, FrxDrugGridState<any>
     }
 
     if (filters && extra.action === "filter") {
-      this.getDataOnFilter(filters);
+      console.log(filters)
+      this.props.applyFilter(filters)
+      // this.getDataOnFilter(filters);
     }
 
     //ADD NOT MULTISORT CHECK
@@ -2105,6 +2109,8 @@ class FrxDrugGrid extends Component<FrxDrugGridProps<any>, FrxDrugGridState<any>
       visibleColumns: columns.filter((c) => !c.hidden),
       hiddenColumns: columns.filter((c) => c.hidden),
       showGridSettingsModal: false,
+    },() => {
+      this.props.getColumnSettings(columns.filter((c) => c.hidden),columns.filter((c) => !c.hidden));
     });
   };
 
