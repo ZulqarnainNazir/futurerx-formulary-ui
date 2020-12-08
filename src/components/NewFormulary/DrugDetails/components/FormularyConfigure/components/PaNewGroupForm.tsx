@@ -18,7 +18,7 @@ import DrugGrid from '../../DrugGrid';
 import Tooltip from '@material-ui/core/Tooltip';
 import { Box, Grid, Input } from '@material-ui/core';
 import RadioButton from '../../../../../shared/Frx-components/radio-button/RadioButton';
-import { getPaGrouptDescription, getPaTypes, getDrugLists } from "../../../../../../redux/slices/formulary/pa/paActionCreation";
+import { getPaGrouptDescription, getPaTypes, getDrugLists,postPAGroupDescription } from "../../../../../../redux/slices/formulary/pa/paActionCreation";
 
 interface Props{
     tooltip?:string;
@@ -113,29 +113,98 @@ const FormInformationPanel = (props: any) => {
 
 
 
+
+
+
 function mapDispatchToProps(dispatch) {
   return {
     getPaGrouptDescription:(a)=>dispatch(getPaGrouptDescription(a)),
+    postPAGroupDescription:(a)=>dispatch(postPAGroupDescription(a)),
   };
 }
 
 function mapStateToProps(state){
   return {
-    
+    formulary_count:state?.dashboard?.formulary_count,
   }
 }
 class NewGroup extends React.Component <any ,any> {
   state = {
-
+    pa_group_description:"",
+    file_type:"FA",
+    is_rx_drug_type:false,
+    is_otc_drug_type:false,
+    id_indication_indicator:false,
+    change_indicator:null,
+    off_label_uses:null,
+    exclusion_criteria:null,
+    required_medical_info:null,
+    age_restrictions:null,
+    prescriber_restrictions:null,
+    coverage_restrictions:null,
+    other_criteria:null,
+    excluded_drug_file:null,
+    mmp_pa_criteria:null,
+    is_suppress_criteria_dispaly_cms_approval:false,
+    is_display_criteria_drugs_not_frf:false,
+    is_additional_criteria_defined:false,
   }
+
+  onNewDefinationAddHandler = () => {
+    console.log(this.props.formulary_count)
+  }
+  saveGroupDescription = () =>{
+    console.log(this.props.formulary_count);
+    let requestData = {};
+    debugger;
+    requestData['apiPart'] = 'api/1/mcr-pa-group-description/1';
+    requestData['pathParams'] = '/3086?entity_id=0';
+    requestData['keyVals'] = [{key: 'index', value: 0},{key: 'limit', value: 10},{key: 'entity_id', value: 1262}];
+    let data = {};
+    data["pa_group_description_name"]=this.state.pa_group_description;
+    //data["id_pa_type"]=8;
+    data["is_validation_required"]=true;
+    data["pa_group_description_name"]=this.state.pa_group_description;
+    data["file_type"]=this.state.file_type;
+    data["is_rx_drug_type"]=this.state.is_rx_drug_type;
+    data["is_otc_drug_type"]=this.state.is_otc_drug_type;
+    data["id_indication_indicator"]=this.state.id_indication_indicator;
+    data["change_indicator"]=this.state.change_indicator;
+    data["off_label_uses"]=this.state.off_label_uses;
+    data["exclusion_criteria"]=this.state.exclusion_criteria;
+    data["required_medical_info"]=this.state.required_medical_info
+    data["age_restrictions"]=this.state.age_restrictions
+    data["prescriber_restrictions"]=this.state.prescriber_restrictions;
+data["coverage_restrictions"]=this.state.coverage_restrictions;
+data["other_criteria"]=this.state.other_criteria
+data["excluded_drug_file"]=this.state.excluded_drug_file;
+data["mmp_pa_criteria"]=this.state.mmp_pa_criteria;
+data["is_suppress_criteria_dispaly_cms_approval"]=this.state.is_suppress_criteria_dispaly_cms_approval;
+data["is_display_criteria_drugs_not_frf"]=this.state.is_display_criteria_drugs_not_frf;
+data["is_additional_criteria_defined"]=this.state.is_additional_criteria_defined;
+
+    requestData['messageBody'] = data;
+    this.props.postPAGroupDescription(requestData);
+  };
+
   componentDidMount() {
     debugger;               
-    console.log("##################");
+    console.log("##################" );
     this.props.getPaGrouptDescription(this.props.selectedGroupId);
   }
-    
+  componentDidUpdate(){
+    debugger;               
+    console.log("##################" );
+    this.props.getPaGrouptDescription(this.props.selectedGroupId);
+  }
+  handleChange(changeObject) {
+    debugger;
+    this.setState(changeObject)
+  }
     render (){
       debugger;
+      console.log("*************" );
+
       console.log(this.props.selectedGroupId);
     
     return (
@@ -232,17 +301,17 @@ class NewGroup extends React.Component <any ,any> {
             <div className="inner-container pa-new-group-form">
                 <div className="setting-1">
                     <span>What file type is this group description for? *</span>
-                    <div className="marketing-material radio-group">
-                        <RadioButton label="Formulary/OTC" name="marketing-material-radio1" checked />
-                        <RadioButton label="Excluded" name="marketing-material-radio1" />
-                        <RadioButton label="ADD" name="marketing-material-radio1" />
+                    <div className="marketing-material radio-group" >
+                        <RadioButton label="Formulary/OTC" name="marketing-material-radio1" checked value="FA"  onChange={(e) => this.handleChange({ file_type: e.target.value })}/>
+                        <RadioButton label="Excluded" name="marketing-material-radio1" value="ExD"  onChange={(e) => this.handleChange({ file_type: e.target.value })}/>
+                        <RadioButton label="ADD" name="marketing-material-radio1" value="ADD" onChange={(e) => this.handleChange({ file_type: e.target.value })}/>
                     </div>
                     <Grid container>
                       <Grid container item xs={6}>
                         <Grid item xs={12}>
                               <div className="group group-padding">
                                   <label>PA GROUP DESCRIPTION <span className="astrict">*</span></label>
-                                  <input type="textarea" className="setup-input-fields" />
+                                  <input type="textarea" className="setup-input-fields"  onChange={(e) => this.handleChange({ pa_group_description: e.target.value })} />
                               </div>
                           </Grid>
                           <Grid item xs={12}>
@@ -250,8 +319,10 @@ class NewGroup extends React.Component <any ,any> {
                                   <label>PA Criteria Change Indicator <span className="astrict">*</span></label>
                                   <DropDown
                                     className="formulary-type-dropdown"
-                                    placeholder="Commercial"
-                                    options={["Commercial", "Medicare", 3]}
+                                    placeholder=""
+                                    options={[{key:0,value:0}, {key:1,value:1}]}
+                                    valueProp="key" dispProp="value"
+                                    onChange={(e) => this.handleChange({"change_indicator": e.target.value })}
                                   />
                               </div>
                           </Grid>
@@ -260,8 +331,10 @@ class NewGroup extends React.Component <any ,any> {
                                   <label>PA INDICATION Indicator<span className="astrict">*</span></label>
                                   <DropDown
                                     className="formulary-type-dropdown"
-                                    placeholder="Commercial"
-                                    options={["Commercial", "Medicare", 3]}
+                                    placeholder=""
+                                    options={[{key:1,value:1}, {key:2,value:2},{key:3,value:3},{key:4,value:4}]}
+                                    valueProp="key" dispProp="value"
+                                    onChange={(e) => this.handleChange({id_indication_indicator: e.target.value })}
                                   />
                               </div>
                           </Grid>
@@ -274,43 +347,43 @@ class NewGroup extends React.Component <any ,any> {
                         <Grid item xs={12}>
                             <div className="group">
                                 <label>Off-LABEL USES</label>
-                                <input type="textarea" className="setup-input-fields" />
+                                <input type="textarea" className="setup-input-fields" onChange={(e) => this.handleChange({"off_label_uses": e.target.value })}/>
                             </div>
                         </Grid>
                         <Grid item xs={12}>
                             <div className="group">
                                 <label>EXCLUSION CRITERIA</label>
-                                <input type="textarea" className="setup-input-fields" />
+                                <input type="textarea" className="setup-input-fields" onChange={(e) => this.handleChange({"exclusion_criteria": e.target.value })} />
                             </div>
                         </Grid>
                         <Grid item xs={12}>
                             <div className="group">
                                 <label>REQUIRED MEDICAL INFORMATION</label>
-                                <input type="textarea" className="setup-input-fields" />
+                                <input type="textarea" className="setup-input-fields" onChange={(e) => this.handleChange({"required_medical_info": e.target.value })} />
                             </div>
                         </Grid>
                         <Grid item xs={12}>
                             <div className="group">
                                 <label>AGE RESTRICTIONS</label>
-                                <input type="textarea" className="setup-input-fields" />
+                                <input type="textarea" className="setup-input-fields" onChange={(e) => this.handleChange({"age_restrictions": e.target.value })} />
                             </div>
                         </Grid>
                         <Grid item xs={12}>
                             <div className="group">
                                 <label>PRESCRIBER RESTRICTIONS</label>
-                                <input type="textarea" className="setup-input-fields" />
+                                <input type="textarea" className="setup-input-fields" onChange={(e) => this.handleChange({"prescriber_restrictions": e.target.value })}/>
                             </div>
                         </Grid>
                         <Grid item xs={12}>
                             <div className="group">
                                 <label>COVERAGE DURATION<span className="astrict">*</span></label>
-                                <input type="textarea" className="setup-input-fields" />
+                                <input type="textarea" className="setup-input-fields" onChange={(e) => this.handleChange({"coverage_restrictions": e.target.value })} />
                             </div>
                         </Grid>
                         <Grid item xs={12}>
                             <div className="group">
                                 <label>OTHER CRITERIA</label>
-                                <input type="textarea" className="setup-input-fields" />
+                                <input type="textarea" className="setup-input-fields" onChange={(e) => this.handleChange({"other_criteria": e.target.value })}/>
                             </div>
                         </Grid>
                     </Grid>
@@ -326,19 +399,19 @@ class NewGroup extends React.Component <any ,any> {
                 <div className="setting-1 mb-20">
                     <span>MARKETING MATERIAL CONSIDERATIONS</span>
                     <div className="marketing-material-chk">
-                        <FormControlLabel control={<Checkbox />} label='Supress Criteria and Display: Pending CMS Approval' />
-                        <FormControlLabel control={<Checkbox />} label='Display Criteria for Drugs not on FRF' />
+                        <FormControlLabel control={<Checkbox onChange={(e) => this.handleChange({"is_suppress_criteria_dispaly_cmsroval": e.target.value })}/>} label='Supress Criteria and Display: Pending CMS Approval' />
+                        <FormControlLabel control={<Checkbox onChange={(e) => this.handleChange({"is_display_criteria_drugs_not_frf": e.target.value })} />} label='Display Criteria for Drugs not on FRF' />
                     </div>
                     <span>do you want to add additional criteria?<span className="astrict">*</span></span>
                     <div className="marketing-material radio-group">
-                        <RadioButton label="Yes" name="marketing-material-radio" checked />
-                        <RadioButton label="No" name="marketing-material-radio" />
+                        <RadioButton label="Yes" name="marketing-material-radio" value="true" checked onChange={(e) => this.handleChange({"is_additional_criteria_defined": e.target.value })}/>
+                        <RadioButton label="No" name="marketing-material-radio" value="false" onChange={(e) => this.handleChange({"is_additional_criteria_defined": e.target.value })}/>
                     </div>
                 </div>
                 <div className="button-wrapper">
                     <Button label="Save Version Progress" className="Button" />
                     <Button label="Version to Initiate Change Request" className="Button" />
-                    <Button label="Version Submitted to CMS" className="Button" />
+                    <Button label="Version Submitted to CMS" className="Button"  onClick={this.saveGroupDescription} />
                 </div>
             </div>
 
