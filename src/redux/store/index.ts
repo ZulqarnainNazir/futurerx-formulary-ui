@@ -10,7 +10,7 @@ import { tierSlice } from '../slices/formulary/tier/tierSlice'
 import { switchSlice } from '../slices/formulary/switch/switchSlice'
 import { validationList } from "../slices/formulary/validation/validationSlice";
 import setupReducer from "../slices/formulary/setup/setupSlice";
-import headerReducer from "../slices/formulary/setup/headerSlice";
+import headerReducer from "../slices/formulary/header/headerSlice";
 
 
 const reducer = combineReducers({
