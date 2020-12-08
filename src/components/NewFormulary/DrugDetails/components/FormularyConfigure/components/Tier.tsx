@@ -12,6 +12,7 @@ import CustomizedSwitches from "./CustomizedSwitches";
 import PanelHeader from "./PanelHeader";
 import PanelGrid from "./panelGrid";
 import DropDown from "../../../../../shared/Frx-components/dropdown/DropDown";
+import getLobCode from "../../../../Utils/LobUtils";
 import Button from "../../../../../shared/Frx-components/button/Button";
 import Box from "@material-ui/core/Box";
 import FrxGridContainer from "../../../../../shared/FrxGrid/FrxGridContainer";
@@ -26,6 +27,8 @@ import { getTier,getTierLabels } from "../../../../../../redux/slices/formulary/
 //import { getFormularySetup } from "../../../../../../redux/slices/formulary/formularySummaryActionCreation";
 import { GridMenu } from "../../../../../../models/grid.model";
 
+import * as tierConstants from "../../../../../../api/http-tier";
+
 function mapDispatchToProps(dispatch) {
   return {
     getTier:(a)=>dispatch(getTier(a)),
@@ -33,6 +36,15 @@ function mapDispatchToProps(dispatch) {
     //getFormularySetup:(a)=>dispatch(getFormularySetup(a))
   };
 }
+
+const mapStateToProps = (state) => {
+  return {
+    formulary_id: state?.application?.formulary_id,
+    formulary: state?.application?.formulary,
+    formulary_lob_id: state?.application?.formulary_lob_id,
+    formulary_type_id: state?.application?.formulary_type_id
+  };
+};
 
 
 interface tabsState {
@@ -58,7 +70,9 @@ class Tier extends React.Component<any, tabsState> {
     activeTabIndex: 0,
     columns: [],
     data: [],
+    lobCode: "",
     tierOption:[],
+    tierData:[],
     tierDefinationColumns: [],
     tierDefinationData: [],
     openPopup: false,
@@ -68,15 +82,20 @@ class Tier extends React.Component<any, tabsState> {
       { id: 3, text: "Remove" },
     ]
   };
-  componentDidMount() {
-    const TierColumns = tierDefinationColumns();
-    const TierDefinationData = this.props.getTier("1").then((json => {
-      debugger;
+
+  populateTierDetails = (TierColumns) => {
+    let apiDetails = {};
+    apiDetails['apiPart'] = tierConstants.FORMULARY_TIERS;
+    apiDetails['pathParams'] = this.props?.formulary_id;
+    apiDetails['keyVals'] = [{key: tierConstants.KEY_ENTITY_ID, value: this.props?.formulary_id}];
+
+    const TierDefinationData = this.props.getTier(apiDetails).then((json => {
+      //debugger;
       let tmpData = json.payload.data;
       var tierOption:any[] = [];
       var result = tmpData.map(function(el) {
         var element = Object.assign({}, el);
-        tierOption.push(el.tier_name)
+        tierOption.push(element)
         element.is_validated = "false";
         if(element.added_count>0){
           element.is_validated = "true";
@@ -89,7 +108,13 @@ class Tier extends React.Component<any, tabsState> {
         tierOption: tierOption
       })
     }))
-  
+  }
+  componentDidMount() {
+    const TierColumns = tierDefinationColumns();
+    if(this.props.formulary_id){
+      this.populateTierDetails(TierColumns);
+      this.state.lobCode = getLobCode(this.props.formulary_lob_id);
+    }
   }
   onClickTab = (selectedTabIndex: number) => {
     let activeTabIndex = 0;
@@ -107,7 +132,7 @@ class Tier extends React.Component<any, tabsState> {
     const activeTabIndex = this.state.activeTabIndex;
     switch (activeTabIndex) {
       case 0:
-        return <TierReplace tierOptions={this.state.tierOption}/>;
+        return <TierReplace tierOptions={this.state.tierOption} formularyId={this.props?.formulary_id} formulary={this.props?.formulary} lobCode={this.state.lobCode}/>;
       case 1:
         return <div>Append</div>;
       case 2:
@@ -231,7 +256,7 @@ class Tier extends React.Component<any, tabsState> {
 }
 
 export default connect(
-  null,
+  mapStateToProps,
   mapDispatchToProps
 )(Tier);
 

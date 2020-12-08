@@ -7,7 +7,20 @@ import "./AdvancedSearch.scss";
 import { getSearchMock } from "../../../../../../../mocks/formulary/searchMock";
 import CategoryForm from './CategoryForm'
 import SearchCategory from './SearchCategory';
+import { setAdvancedSearch } from "../../../../../../../redux/slices/formulary/advancedSearch/advancedSearchSlice";
+import { connect } from "react-redux";
 
+function mapDispatchToProps(dispatch) {
+    return {
+      setAdvancedSearch:(a)=>dispatch(setAdvancedSearch(a))
+    };
+  }
+  
+  const mapStateToProps = (state) => {
+    return {
+      tierAdvancedSearchBody: state?.advancedSearch?.tierAdvancedSearchBody
+    };
+  };
 
 const { Option } = Select;
 
@@ -58,6 +71,11 @@ class AdvancedSearchPopup extends React.Component<
             ]
         }
     };
+
+    constructor(props){
+        super(props);
+        console.log("ADVANCED SEARCH PROPS:"+JSON.stringify(props));
+    }
 
     /**
      *@function onClose
@@ -183,4 +201,7 @@ class AdvancedSearchPopup extends React.Component<
     }
 }
 
-export default AdvancedSearchPopup;
+export default connect(
+    mapStateToProps,
+    mapDispatchToProps
+  )(AdvancedSearchPopup);

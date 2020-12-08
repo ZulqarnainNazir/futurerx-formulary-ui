@@ -9,6 +9,7 @@ import dashboardReducer from "../slices/formulary/dashboard/dashboardSlice";
 import { tierSlice } from '../slices/formulary/tier/tierSlice'
 import { switchSlice } from '../slices/formulary/switch/switchSlice'
 import { validationList } from "../slices/formulary/validation/validationSlice";
+import  advancedSearchReducer from "../slices/formulary/advancedSearch/advancedSearchSlice";
 import setupReducer from "../slices/formulary/setup/setupSlice";
 import headerReducer from "../slices/formulary/header/headerSlice";
 
@@ -41,7 +42,8 @@ const store = configureStore({
     validationReducer: validationReducer,
     application: applicationReducer,
     setup: setupReducer,
-    header: headerReducer
+    header: headerReducer,
+    advancedSearch: advancedSearchReducer
   },
   middleware,
 });
