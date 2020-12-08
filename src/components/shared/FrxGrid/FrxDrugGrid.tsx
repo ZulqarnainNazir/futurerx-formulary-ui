@@ -84,9 +84,12 @@ interface FrxDrugGridProps<T> extends Grid<T> {
   handleCheck?:any;
   getPerPageItemSize?:any;
   onGridPageChangeHandler?: any;
+  clearFilterHandler?: any;
   totalRowsCount?: any;
   pageSize?: any;
   selectedCurrentPage?: any;
+  applyFilter?:any;
+  getColumnSettings?:any;
 }
 interface FrxDrugGridState<T> {
   filteredInfo: null;
@@ -137,9 +140,9 @@ class FrxDrugGrid extends Component<FrxDrugGridProps<any>, FrxDrugGridState<any>
     showSecondaryColumns: false,
     placement: "left",
     expandedKeys: [],
-    currentPage: 1,
+    currentPage: this.props.selectedCurrentPage ? this.props.selectedCurrentPage : 1,
 
-    goToPageValue: 1,
+    goToPageValue: this.props.selectedCurrentPage ? this.props.selectedCurrentPage : 1,
     settingsAnchor: null,
     settingsMenuItems: [],
     selectedRowKeys: [],
@@ -658,14 +661,21 @@ class FrxDrugGrid extends Component<FrxDrugGridProps<any>, FrxDrugGridState<any>
           : this.state.filteredInfo && this.state.sortedInfo
             ? this.state.sortedTable
             : [...this.props.data];
+    console.log(this.state.filteredInfo)
+    // const from = (this.state.currentPage - 1) * +this.state.pageSize + 1;
+    // Modify this in future
+    const from = 1;
 
-    const from = (this.state.currentPage - 1) * +this.state.pageSize + 1;
     const to =
       (this.state.currentPage - 1) * +this.state.pageSize +
       +this.state.pageSize;
 
-    let toData = to < data.length ? to : data.length;
+    // const to = this.state.pageSize;
+    
+    // let toData = to < data.length ? to : data.length;
 
+    // Need to modify this in future
+    let toData = (to < (this.props.totalRowsCount ? this.props.totalRowsCount : data.length)) ? to : (this.props.totalRowsCount ? this.props.totalRowsCount : data.length);
     return data.slice(from - 1, toData);
   };
 
@@ -706,7 +716,9 @@ class FrxDrugGrid extends Component<FrxDrugGridProps<any>, FrxDrugGridState<any>
     }
 
     if (filters && extra.action === "filter") {
-      this.getDataOnFilter(filters);
+      console.log(filters)
+      this.props.applyFilter(filters)
+      // this.getDataOnFilter(filters);
     }
 
     //ADD NOT MULTISORT CHECK
@@ -1290,7 +1302,9 @@ class FrxDrugGrid extends Component<FrxDrugGridProps<any>, FrxDrugGridState<any>
       return c;
     });
 
-    this.setState({ columns: columns });
+    this.setState({ columns: columns },() => {
+      this.props.clearFilterHandler()
+    });
   };
 
   /**
@@ -1348,6 +1362,8 @@ class FrxDrugGrid extends Component<FrxDrugGridProps<any>, FrxDrugGridState<any>
     this.setState({
       goToPageValue: +this.state.goToPageValue,
       currentPage: +this.state.goToPageValue,
+    },() => {
+      this.props.onGridPageChangeHandler(this.state.goToPageValue)
     });
   };
 
@@ -2093,6 +2109,8 @@ class FrxDrugGrid extends Component<FrxDrugGridProps<any>, FrxDrugGridState<any>
       visibleColumns: columns.filter((c) => !c.hidden),
       hiddenColumns: columns.filter((c) => c.hidden),
       showGridSettingsModal: false,
+    },() => {
+      this.props.getColumnSettings(columns.filter((c) => c.hidden),columns.filter((c) => !c.hidden));
     });
   };
 
@@ -2525,7 +2543,7 @@ class FrxDrugGrid extends Component<FrxDrugGridProps<any>, FrxDrugGridState<any>
                   sortedInfo={this.state.sortedInfo}
                   filteredInfo={this.state.filteredInfo}
                   pageSize={this.state.pageSize}
-                  currentPage={this.state.currentPage}
+                  currentPage={this.props.selectedCurrentPage ? this.props.selectedCurrentPage : this.state.currentPage}
                   showTotal={this.getShowTotal()}
                   pages={this.getTotalPages()}
                   lastPage={this.getLastPage()}

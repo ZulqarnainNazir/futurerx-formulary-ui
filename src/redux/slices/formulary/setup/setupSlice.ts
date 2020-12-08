@@ -1,21 +1,24 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { createAsyncThunk } from "@reduxjs/toolkit";
-//import { getformularies } from "./dashboardService";
+import { Formulary } from "./formulary";
+import { getformulary } from "./setupService";
 
 interface SetupState {
-  formulary: any;
+  formulary: Formulary | any;
+  mode: string;
   isLoading: boolean;
   error: string | null;
 }
 
 const setupInitialState: SetupState = {
   formulary: null,
+  mode:"",
   isLoading: true,
   error: null,
 };
 
 export interface SetupResult {
-  formulary: any;
+  formulary: Formulary | any;
 }
 
 function startLoading(state: SetupState) {
@@ -32,12 +35,10 @@ const setup = createSlice({
   initialState: setupInitialState,
   reducers: {
     getformularyStart: startLoading,
-    getFormularySuccess(state, { payload }: PayloadAction<SetupResult>) {
+    getFormularySuccess(state, { payload }: PayloadAction<Formulary>) {
       // console.log("***** getFormulariesSuccess ");
-      const { formulary } = payload;
-      // console.log("COUNT : ", count);
-      // console.log("LIST : ", list);
-      state.formulary = formulary;
+      state.formulary = payload;
+      state.mode="NEW"
       state.isLoading = false;
       state.error = null;
     },
@@ -56,14 +57,14 @@ export default setup.reducer;
 export const fetchSelectedFormulary = createAsyncThunk(
   "setup",
   async (arg: any, { dispatch }) => {
-     console.log("***** fetchSelectedFormulary ");
+    console.log("***** fetchSelectedFormulary ");
     try {
       dispatch(getformularyStart());
-      //const formulary = await getformulary(arg);
-      //dispatch(getFormularySuccess(formulary));
+      const formulary: Formulary = await getformulary(3079);
+      dispatch(getFormularySuccess(formulary));
     } catch (err) {
-      // console.log("***** fetchFormularies - ERROR ");
-      //dispatch(getFormalaryFailure(err.toString()));
+      console.log("***** fetchFormularies - ERROR ");
+      dispatch(getFormalaryFailure(err.toString()));
     }
   }
 );
