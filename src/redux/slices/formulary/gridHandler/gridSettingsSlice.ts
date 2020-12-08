@@ -16,7 +16,6 @@ export const gridSettingsSlice = createSlice({
     },
     clearHiddenColumns: (state,action) => {
         console.log(action.payload)
-        debugger;
         state.hiddenColumns = action.payload ? [] : [];
     }
   }

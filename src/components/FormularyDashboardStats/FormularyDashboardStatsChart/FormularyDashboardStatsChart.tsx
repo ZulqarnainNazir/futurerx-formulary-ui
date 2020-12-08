@@ -4,7 +4,7 @@ import { getStatsChart } from './../../../mocks/formulary/dashboardStats';
 
 import './FormularyDashboardStatsChart.scss';
 
-const FormularyDashboardStatsChart = () => {
+const FormularyDashboardStatsChart = (props) => {
   const stats = getStatsChart()
   return (
   <div className="circle-charts-container">
@@ -31,7 +31,7 @@ const FormularyDashboardStatsChart = () => {
       
       <div className="chart-data">
         <div className="chart-data__container">  
-          <div className="chart-data__value">{stats.average}</div>
+          <div className="chart-data__value">{props.total?props.total:stats.average}</div>
           <div className="chart-data__label">Validations</div>
         </div>
       </div>

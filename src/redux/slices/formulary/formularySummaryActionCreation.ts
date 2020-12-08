@@ -9,8 +9,6 @@ export const getFormularySummary = createAsyncThunk(
   async (summary_id: string) => {
     console.log("getFormularySummary action creator:: url: " + URL + summary_id);
     const requestHeaders  = {
-        // method: 'POST',
-        // body: JSON.stringify(summary_id),
         headers: {
             'Authorization': 'Bearer 1e05ff8b-a0af-4a8f-8915-487321900f21',
             'Accept': 'application/json',
@@ -28,18 +26,3 @@ export const getFormularySummary = createAsyncThunk(
       });
   }
 );
-
-// export const getFormularySummary = createAsyncThunk(
-//     "formulary_summary/getFormularySummary",
-//     async (summary_id: number) => {
-//        await FormularyServices.getSummary(summary_id)
-//         .then((response) => {
-//             console.log(response)
-//            // return response.data
-//         })
-//         .then((json) => {
-//           console.log("getFormularySummary: ", json);
-//           return json;
-//         });
-//     }
-//   );

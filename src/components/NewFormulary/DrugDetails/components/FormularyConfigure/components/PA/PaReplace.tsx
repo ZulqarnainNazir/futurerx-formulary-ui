@@ -1,4 +1,17 @@
-import React from "react";
+
+import React, { useState } from "react";
+import { connect } from "react-redux";
+
+import PanelHeader from "../PanelHeader";
+import PanelGrid from "../panelGrid";
+import CustomizedSwitches from "../CustomizedSwitches";
+import FrxMiniTabs from "../../../../../../shared/FrxMiniTabs/FrxMiniTabs";
+import {
+  getTapList,
+  getMiniTabs,
+} from "../../../../../../../mocks/formulary/mock-data";
+
+
 
 import DropDown from "../../../../../../shared/Frx-components/dropdown/DropDown";
 import { Row, Col, Space } from "antd";
@@ -7,8 +20,40 @@ import Button from "../../../../../../shared/Frx-components/button/Button";
 
 import "../Tier.scss";
 import "./PA.scss";
+import { getPaSummary,getPaGrouptDescriptions, getPaTypes, getDrugLists } from "../../../../../../../redux/slices/formulary/pa/paActionCreation";
 
-class PaReplace extends React.Component {
+function mapDispatchToProps(dispatch) {
+  return {
+    getPaSummary:(a)=>dispatch(getPaSummary(a)),
+    getPaGrouptDescriptions:(a)=>dispatch(getPaGrouptDescriptions(a)),
+    getPaTypes:(a)=>dispatch(getPaTypes(a)),
+    getDrugLists:(a)=>dispatch(getDrugLists(a)),
+  };
+}
+
+class PaReplace extends React.Component<any,any> {
+  state={
+    paTypes:[],
+    paGroupDescriptions:[]
+  }
+  componentDidMount() {
+                   
+    this.props.getPaGrouptDescriptions("1").then((json) =>{
+        debugger;
+        this.setState({
+          paGroupDescriptions: json.payload.data,
+          });
+        
+    });
+
+    this.props.getPaTypes("3132").then((json) =>{
+        debugger;
+        this.setState({
+          paTypes: json.payload.data,
+          });
+        
+    });
+}
   render() {
     return (
       <>
@@ -16,16 +61,17 @@ class PaReplace extends React.Component {
           <Row>
             <Col lg={8}>
               <label>
-                PA GROUP DESCRIPTION <span className="astrict">*</span>
+                PA GROUP DESCRIPTION ---<span className="astrict">*</span>
               </label>
-              <DropDown options={[1, 2, 3]} />
+              <DropDown options={this.state.paGroupDescriptions} valueProp="text" />
             </Col>
             <Col lg={4}></Col>
             <Col lg={8}>
               <label>
                 PA GROUP DESCRIPTION <span className="astrict">*</span>
               </label>
-              <DropDown options={[1, 2, 3]} />
+              <DropDown options={this.state.paTypes} valueProp="text" />
+
             </Col>
             <Col lg={8}>
               <label>
@@ -70,4 +116,8 @@ class PaReplace extends React.Component {
   }
 }
 
-export default PaReplace;
+export default connect(
+  null,
+  mapDispatchToProps
+)(PaReplace);
+

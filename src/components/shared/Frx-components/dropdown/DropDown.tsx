@@ -46,6 +46,7 @@ export default function DropDown(props: any) {
           </>
         }
         id=""
+        disabled={props.disabled}
         className={props.className}
         placeholder={props.placeholder}
         value={props.value}
@@ -63,8 +64,8 @@ export default function DropDown(props: any) {
       >
         {/* <option>{props.option || "select"}</option> */}
         {props.options.map((opt, ind) => (
-          <Option key={ind} value={opt}>
-            {opt}
+          <Option key={ind} value={opt[props.valueProp]}>
+            {opt[props.valueProp]}
           </Option>
         ))}
       </Select>

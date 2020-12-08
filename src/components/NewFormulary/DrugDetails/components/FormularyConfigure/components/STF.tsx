@@ -1,18 +1,32 @@
 import React from 'react';
+import { connect } from "react-redux";
+
 import Grid from "@material-ui/core/Grid";
 import { TabInfo } from "../../../../../../models/tab.model";
 import Box from '@material-ui/core/Box';
 import Button from '../../../../../shared/Frx-components/button/Button';
 import DropDown from '../../../../../shared/Frx-components/dropdown/DropDown';
 import RadioButton from '../../../../../shared/Frx-components/radio-button/RadioButton';
+import { getStSummary,getStGrouptDescriptions, getStTypes, getDrugLists } from "../../../../../../redux/slices/formulary/stepTherapy/stepTherapyActionCreation";
 import "./STF.scss";
 
-export default class STF extends React.Component<any,any>{
+function mapDispatchToProps(dispatch) {
+    return {
+      getStSummary:(a)=>dispatch(getStSummary(a)),
+      getStGrouptDescriptions:(a)=>dispatch(getStGrouptDescriptions(a)),
+      getStTypes:(a)=>dispatch(getStTypes(a)),
+      getDrugLists:(a)=>dispatch(getDrugLists(a)),
+    };
+  }
+
+ class STF extends React.Component<any,any>{
     state={
         panelGridTitle1: ['Value Based Insurance','Number of Drugs','added drugs','removed drugs'],
         panelTitleAlignment1: ['left','left','left','left'],
         panelGridValue1: [],
         isNotesOpen: false,
+        stGroupDescription: [],
+        stTypes:[],
         activeTabIndex: 0,
         tabs: [
             {id: 1,text: "Replace"},
@@ -41,6 +55,24 @@ export default class STF extends React.Component<any,any>{
     settingFormApplyHandler = () => {
         alert(1)
     }
+    componentDidMount() {
+                   
+        this.props.getStGrouptDescriptions("3132").then((json) =>{
+            debugger;
+            this.setState({
+                stGroupDescription: json.payload.data,
+              });
+            
+        });
+
+        this.props.getStTypes("3132").then((json) =>{
+            debugger;
+            this.setState({
+                stTypes: json.payload.data,
+              });
+            
+        });
+    }
     render(){
         return (
             <div className="bordered stf-root">
@@ -50,7 +82,7 @@ export default class STF extends React.Component<any,any>{
                                 <Grid item xs={4}>
                                     <div className="group">
                                         <label>ST GROUP DESCRIPTION<span className="astrict">*</span></label>
-                                        <DropDown options={[1,2,3]}/>
+                                        <DropDown options={this.state.stGroupDescription} valueProp="text" />
                                     </div>
 
                                     <div className="group mt-10">
@@ -86,13 +118,13 @@ export default class STF extends React.Component<any,any>{
                                 <Grid item xs={4}>
                                    
                                     <div className="group">
-                                        <label>ST TYPE <span className="astrict">*</span></label>
-                                        <DropDown options={[1,2,3]}/>
+                                        <label>ST Type <span className="astrict">*</span></label>
+                                        <DropDown options={this.state.stTypes} valueProp="st_type_name"/>
                                     </div>
 
                                     <div className="group">
-                                        <label>ST TYPE <span className="astrict">*</span></label>
-                                        <DropDown options={[1,2,3]}/>
+                                        <label>ST Value <span className="astrict">*</span></label>
+                                        <input type="text" />
                                     </div>
                                 </Grid>
 
@@ -113,3 +145,8 @@ export default class STF extends React.Component<any,any>{
         )
     }
 }
+
+export default connect(
+    null,
+    mapDispatchToProps
+  )(STF);

@@ -13,6 +13,7 @@ import { getFormularyDetails } from "../../mocks/formulary/formularyDetails";
 import { fetchFormularies } from "../.././redux/slices/formulary/dashboard/dashboardSlice";
 import { setFormulary } from "../.././redux/slices/formulary/application/applicationSlice";
 import { gridSettingsSlice } from "../.././redux/slices/formulary/gridHandler/gridSettingsSlice";
+import { addNewFormulary } from "../.././redux/slices/formulary/application/applicationSlice";
 import "./NewFormulary.scss";
 import Medicaid from "./Medicaid/Medicaid";
 
@@ -45,7 +46,8 @@ function mapDispatchToProps(dispatch) {
     fetchFormularies:(a)=>dispatch(fetchFormularies(a)),
     setFormulary:(arg)=>dispatch(setFormulary(arg)),
     setHiddenColumn: (hiddenColumns) => dispatch(gridSettingsSlice.actions.setHiddenColum(hiddenColumns)),
-    clearHiddenColumns: () => dispatch(gridSettingsSlice.actions.clearHiddenColumns(true))
+    clearHiddenColumns: () => dispatch(gridSettingsSlice.actions.clearHiddenColumns(true)),
+    addNewFormulary:(arg)=>dispatch(addNewFormulary(arg)),
   };
 }
 
@@ -100,6 +102,13 @@ class Formulary extends React.Component<any, any> {
     this.props.fetchFormularies(this.listPayload);
   }
 
+  addNewFormulary = (id: any) => {
+    this.props.addNewFormulary();
+    this.setState({
+      showTabs: !this.state.showTabs,
+      showDrugDetails: !this.state.showDrugDetails,
+    });
+  };
   onClickTab = (selectedTabIndex: number) => {
     let activeTabIndex = 0;
 
@@ -130,22 +139,7 @@ class Formulary extends React.Component<any, any> {
       showMassMaintenance: !this.state.showMassMaintenance,
     });
   };
-  onSettingsIconHandler = (hiddenColumn,visibleColumn) => {
-    console.log(hiddenColumn,visibleColumn);
-    this.props.setHiddenColumn(hiddenColumn)
-  }
-  onApplyFilterHandler = (filters) => {
-    const fetchedProps = Object.keys(filters)[0];
-    const fetchedOperator = filters[fetchedProps][0].condition === 'is like' ? 'is_like' : 
-    filters[fetchedProps][0].condition === 'is not' ? 'is_not' : 
-    filters[fetchedProps][0].condition === 'is not like' ? 'is_not_like' : 
-    filters[fetchedProps][0].condition === 'does not exist' ? 'does_not_exist' : 
-    filters[fetchedProps][0].condition;
-    const fetchedValues = filters[fetchedProps][0].value !== '' ? [filters[fetchedProps][0].value.toString()] : [];
-    const newFilters = [{ prop: fetchedProps, operator: fetchedOperator,values: fetchedValues}];
-    this.listPayload.filter = newFilters;
-    this.props.fetchFormularies(this.listPayload);
-  }
+  
   renderActiveTabContent = () => {
     const tabIndex = this.state.activeTabIndex;
     switch (tabIndex) {
@@ -171,6 +165,22 @@ class Formulary extends React.Component<any, any> {
         return <div>EXCHANGE</div>;
     }
   };
+  onSettingsIconHandler = (hiddenColumn,visibleColumn) => {
+    console.log(hiddenColumn,visibleColumn);
+    this.props.setHiddenColumn(hiddenColumn)
+  }
+  onApplyFilterHandler = (filters) => {
+    const fetchedProps = Object.keys(filters)[0];
+    const fetchedOperator = filters[fetchedProps][0].condition === 'is like' ? 'is_like' : 
+    filters[fetchedProps][0].condition === 'is not' ? 'is_not' : 
+    filters[fetchedProps][0].condition === 'is not like' ? 'is_not_like' : 
+    filters[fetchedProps][0].condition === 'does not exist' ? 'does_not_exist' : 
+    filters[fetchedProps][0].condition;
+    const fetchedValues = filters[fetchedProps][0].value !== '' ? [filters[fetchedProps][0].value.toString()] : [];
+    const newFilters = [{ prop: fetchedProps, operator: fetchedOperator,values: fetchedValues}];
+    this.listPayload.filter = newFilters;
+    this.props.fetchFormularies(this.listPayload);
+  }
   onPageSize = (pageSize) => {
     this.listPayload = defaultListPayload;
     this.listPayload.limit = pageSize
@@ -192,7 +202,8 @@ class Formulary extends React.Component<any, any> {
           <>
             <FormularyDashboardStats />
             <div>
-                COUNT: {this.props.formulary_count} 
+                COUNT: {this.props.formulary_count}  
+                <button onClick={this.addNewFormulary}> + </button>
             </div>
             <FrxTabs
               tabList={this.state.tabs}

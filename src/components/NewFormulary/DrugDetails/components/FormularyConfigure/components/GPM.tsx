@@ -1,4 +1,6 @@
 import React from 'react';
+import { connect } from "react-redux";
+
 import PanelHeader from './PanelHeader';
 import PanelGrid from './panelGrid';
 import CustomizedSwitches from './CustomizedSwitches';
@@ -19,49 +21,26 @@ import RadioButton from '../../../../../shared/Frx-components/radio-button/Radio
 import Groups from './Groups'
 import NewGroup from './NewGroup'
 
-const groupsData = [
-    {
-        id: 1,
-        label: 'Group 1',
-        status: 'warning'
-    },
-    {
-        id: 2,
-        label: 'Group 2',
-        status: 'completed'
-    },
-    {
-        id: 3,
-        label: 'Group 3',
-        status: 'warning'
-    },
-    {
-        id: 4,
-        label: 'Group 4',
-        status: 'selected'
-    },
-    {
-        id: 5,
-        label: 'Group 5',
-        status: 'warning'
-    },
-    {
-        id: 6,
-        label: 'Group 6',
-        status: 'warning'
-    },
-    {
-        id: 7,
-        label: 'Group 7',
-        status: 'warning'
-    },
-]
+import { getStSummary,getStGrouptDescriptions, getStTypes, getStGrouptDescriptionVersions,getStGrouptDescription } from "../../../../../../redux/slices/formulary/stepTherapy/stepTherapyActionCreation";
 
-export default class GPM extends React.Component<any, any>{
+function mapDispatchToProps(dispatch) {
+    return {
+      getStSummary:(a)=>dispatch(getStSummary(a)),
+      getStGrouptDescriptions:(a)=>dispatch(getStGrouptDescriptions(a)),
+      getStTypes:(a)=>dispatch(getStTypes(a)),
+      getStGrouptDescriptionVersions:(a)=>dispatch(getStGrouptDescriptionVersions(a)),
+      getStGrouptDescription:(a)=>dispatch(getStGrouptDescription(a)),
+    };
+  }
+
+class GPM extends React.Component<any, any>{
     state = {
         activeTabIndex: 0,
         tooltip:"ST CRITERIA",
         newGroup: false,
+        stGroupDescriptions:[],
+        stTypes:[],
+        stGroupDescriptionVersion:null,
         tabs: [
             {
                 id: 1,
@@ -71,7 +50,15 @@ export default class GPM extends React.Component<any, any>{
                 id: 2,
                 text: "Archived"
             }
+        ],
+        groupsData : [
+            {
+                id: 1,
+                label: 'Group 1',
+                status: 'warning'
+            }
         ]
+
     }
     onClickTab = (selectedTabIndex: number) => {
         let activeTabIndex = 0;
@@ -96,6 +83,39 @@ export default class GPM extends React.Component<any, any>{
         })
     }
 
+    componentDidMount() {
+                   
+        this.props.getStGrouptDescriptions("3132").then((json) =>{
+            debugger;
+
+            let tmpData = json.payload.data;
+
+            var result = tmpData.map(function(el) {
+                var element = {};
+                element["id"] = el.id_st_group_description;
+                element["label"] = el.st_group_description_name;
+                element["status"] = el.is_setup_complete;
+                return element;
+            })
+
+            this.setState({
+                groupsData: result,
+              });
+            
+        });
+
+        this.props.getStTypes("3132").then((json) =>{
+            debugger;
+            this.setState({
+                stTypes: json.payload.data,
+              });
+            
+        });
+
+        
+
+
+    }
     render() {
         return (
             <>
@@ -140,7 +160,7 @@ export default class GPM extends React.Component<any, any>{
                                     </div>
                                     <div className="group-wrapper">
                                         {
-                                            groupsData.map((group,key) => (
+                                            this.state.groupsData.map((group,key) => (
                                             <Groups key={key} id={group.id} title={group.label} statusType={group.status} selectGroup={this.selectGroup}/>        
                                             ))    
                                         }
@@ -241,3 +261,9 @@ export default class GPM extends React.Component<any, any>{
         )
     }
 }
+
+
+export default connect(
+    null,
+    mapDispatchToProps
+  )(GPM);
