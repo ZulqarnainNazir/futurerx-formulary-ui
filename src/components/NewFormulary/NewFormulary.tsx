@@ -12,6 +12,7 @@ import FormularyDashboardStats from "./../FormularyDashboardStats/FormularyDashb
 import { getFormularyDetails } from "../../mocks/formulary/formularyDetails";
 import { fetchFormularies } from "../.././redux/slices/formulary/dashboard/dashboardSlice";
 import { setFormulary } from "../.././redux/slices/formulary/application/applicationSlice";
+import { addNewFormulary } from "../.././redux/slices/formulary/application/applicationSlice";
 import "./NewFormulary.scss";
 import Medicaid from "./Medicaid/Medicaid";
 
@@ -43,6 +44,7 @@ function mapDispatchToProps(dispatch) {
   return {
     fetchFormularies:(a)=>dispatch(fetchFormularies(a)),
     setFormulary:(arg)=>dispatch(setFormulary(arg)),
+    addNewFormulary:(arg)=>dispatch(addNewFormulary(arg)),
   };
 }
 
@@ -95,6 +97,16 @@ class Formulary extends React.Component<any, any> {
   componentDidMount(){
     this.props.fetchFormularies(this.listPayload);
   }
+
+  addNewFormulary = (id: any) => {
+    this.props.addNewFormulary();
+    this.setState({
+      showTabs: !this.state.showTabs,
+      showDrugDetails: !this.state.showDrugDetails,
+    });
+  };
+
+
 
   onClickTab = (selectedTabIndex: number) => {
     let activeTabIndex = 0;
@@ -164,7 +176,8 @@ class Formulary extends React.Component<any, any> {
           <>
             <FormularyDashboardStats />
             <div>
-                COUNT: {this.props.formulary_count} 
+                COUNT: {this.props.formulary_count}  
+                <button onClick={this.addNewFormulary}> + </button>
             </div>
             <FrxTabs
               tabList={this.state.tabs}
