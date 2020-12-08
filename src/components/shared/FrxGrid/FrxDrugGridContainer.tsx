@@ -42,6 +42,7 @@ interface FrxDrugGridContainerProps<T> extends Grid<T> {
   isPinningEnabled?: boolean;
   getPerPageItemSize?: any;
   onGridPageChangeHandler?: any;
+  clearFilterHandler?:any;
   totalRowsCount?:any;
   pageSize?: any;
   selectedCurrentPage?: any;
@@ -136,6 +137,7 @@ class FrxDrugGridContainer extends Component<FrxDrugGridContainerProps<any>> {
           rowSelectionChange={this.props.rowSelectionChange}
           getPerPageItemSize={this.props.getPerPageItemSize}
           onGridPageChangeHandler={this.props.onGridPageChangeHandler}
+          clearFilterHandler={this.props.clearFilterHandler}
           pageSize={this.props.pageSize ? this.props.pageSize : 10}
           selectedCurrentPage={this.props.selectedCurrentPage ? this.props.selectedCurrentPage : 1}
           totalRowsCount={this.props.totalRowsCount}

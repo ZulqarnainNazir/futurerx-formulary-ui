@@ -147,6 +147,7 @@ class Medicare extends React.Component<any, any> {
               enableResizingOfColumns
               getPerPageItemSize={this.props.onPageSize}
               onGridPageChangeHandler={this.props.onPageChangeHandler}
+              clearFilterHandler={this.props.onClearFilterHandler}
               totalRowsCount={this.props.dashboardGrid.count}
               pageSize={this.props.pageSize}
               selectedCurrentPage={this.props.selectedCurrentPage}

@@ -84,6 +84,7 @@ interface FrxDrugGridProps<T> extends Grid<T> {
   handleCheck?:any;
   getPerPageItemSize?:any;
   onGridPageChangeHandler?: any;
+  clearFilterHandler?: any;
   totalRowsCount?: any;
   pageSize?: any;
   selectedCurrentPage?: any;
@@ -139,7 +140,7 @@ class FrxDrugGrid extends Component<FrxDrugGridProps<any>, FrxDrugGridState<any>
     expandedKeys: [],
     currentPage: this.props.selectedCurrentPage ? this.props.selectedCurrentPage : 1,
 
-    goToPageValue: 1,
+    goToPageValue: this.props.selectedCurrentPage ? this.props.selectedCurrentPage : 1,
     settingsAnchor: null,
     settingsMenuItems: [],
     selectedRowKeys: [],
@@ -1297,7 +1298,9 @@ class FrxDrugGrid extends Component<FrxDrugGridProps<any>, FrxDrugGridState<any>
       return c;
     });
 
-    this.setState({ columns: columns });
+    this.setState({ columns: columns },() => {
+      this.props.clearFilterHandler()
+    });
   };
 
   /**
@@ -1355,6 +1358,8 @@ class FrxDrugGrid extends Component<FrxDrugGridProps<any>, FrxDrugGridState<any>
     this.setState({
       goToPageValue: +this.state.goToPageValue,
       currentPage: +this.state.goToPageValue,
+    },() => {
+      this.props.onGridPageChangeHandler(this.state.goToPageValue)
     });
   };
 

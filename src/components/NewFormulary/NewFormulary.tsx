@@ -138,6 +138,7 @@ class Formulary extends React.Component<any, any> {
             pageSize={this.listPayload.limit}
             selectedCurrentPage={(this.listPayload.index/this.listPayload.limit + 1)}
             onPageChangeHandler={this.onGridPageChangeHandler}
+            onClearFilterHandler={this.onClearFilterHandler}
           />
         );
       case 1:
@@ -155,6 +156,10 @@ class Formulary extends React.Component<any, any> {
   onGridPageChangeHandler = (pageNumber: any) => {
     this.listPayload.index = (pageNumber - 1) * this.listPayload.limit;
     console.log(this.listPayload.index/this.listPayload.limit + 1);
+    this.props.fetchFormularies(this.listPayload);
+  }
+  onClearFilterHandler = () => {
+    this.listPayload = defaultListPayload;
     this.props.fetchFormularies(this.listPayload);
   }
   render() {
