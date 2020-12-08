@@ -1,4 +1,5 @@
 import React from "react";
+import {connect} from "react-redux";
 import "./FormularySetUp.scss";
 import GeneralInformation from "./components/GeneralInformation";
 import FormularyDesign from "./components/FormularyDesign";
@@ -7,7 +8,23 @@ import MedicareInformation from "./components/MedicareInformation";
 import SupplementalModels from "./components/SupplementalModels";
 import Box from '@material-ui/core/Box';
 import Button from '../../../../shared/Frx-components/button/Button';
-export default class FormularySetUp extends React.Component<any, any> {
+import { fetchSelectedFormulary } from "../../../../.././redux/slices/formulary/setup/setupSlice";
+import { Formulary } from "../../../../../redux/slices/formulary/setup/formulary";
+
+
+class FormularySetUp extends React.Component<any, any> {
+
+  formulary_details: Formulary | any;
+  
+  componentDidMount(){
+    //console.log("SP  -  -  -  -  -  -  -  -  -  -  -  - M. "+this.props.mode);
+    if(this.props.mode === "EXISTING") {
+      this.props.fetchSelectedFormulary();
+    } else {
+      this.formulary_details = {};
+    }
+  }
+
   render() {
     return(
       <div>
@@ -28,3 +45,21 @@ export default class FormularySetUp extends React.Component<any, any> {
     );
   };
 }
+
+const mapStateToProps = (state) => {
+  //console.log("SP  -  -  -  -  -  -  -  -  -  -  -  - S.");
+  console.log(state);
+  return {
+    mode: state?.application?.mode,
+    formulary_id: state?.application?.formulary_id,
+  };
+};
+
+function mapDispatchToProps(dispatch) {
+  return {
+    fetchSelectedFormulary:(a)=>dispatch(fetchSelectedFormulary(a)),
+  };
+}
+
+export default connect(mapStateToProps, mapDispatchToProps )(FormularySetUp);
+
