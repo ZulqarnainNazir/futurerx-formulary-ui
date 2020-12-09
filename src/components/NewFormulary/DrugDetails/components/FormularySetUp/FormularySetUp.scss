@@ -96,7 +96,7 @@
     display: flex;
     align-items: center;
     padding-right: 0;
-    margin-right: 60px;
+    margin-right: 58px;
     span.label {
       top: -2px;
       color: #c4c4c4;
@@ -318,4 +318,13 @@
       color: #707683;
     }
   }
+}
+
+.input-link.clone-formulary-link{
+  margin-top: 15px !important;
+  pointer-events: none;
+}
+.input-link.select-formulary-link{
+  margin-top: 10px !important;
+  pointer-events: none;
 }

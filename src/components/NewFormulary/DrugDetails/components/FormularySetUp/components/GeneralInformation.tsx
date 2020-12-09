@@ -73,7 +73,7 @@ const FormularyMethod = (props: any) => {
         <Grid item xs={4}>
           <div className="group">
             <label>CLONE FORMULARY <span className="astrict">*</span></label>
-            <a href="#" className="input-link ">Clone Formulary</a>
+            <a href="#" className="input-link clone-formulary-link">Clone Formulary</a>
           </div>
         </Grid>
       }
@@ -114,7 +114,8 @@ class GeneralInformation extends React.Component<any, any> {
                   className="formulary-type-dropdown"
                   placeholder="Select"
                   options={this.props.general_options ? general_options : []}
-                  defaultValue={this.props.formulary ?  this.props.formulary.formulary_type_info.formulary_type : ''}
+                  value={this.props.formulary ?  this.props.formulary.formulary_type_info.formulary_type : ''}
+                  disabled={disabled}
                 />
               </div>
             </Grid>
@@ -182,7 +183,7 @@ class GeneralInformation extends React.Component<any, any> {
             <Grid item xs={4}>
               <div className="group">
                 <label>Which prior year's formulary does this most closely resemble?</label>
-                <a href="#" className="input-link ">Select Formulary</a>
+                <a href="#" className="input-link select-formulary-link">Select Formulary</a>
               </div>
             </Grid>
             <Grid item xs={4}>
