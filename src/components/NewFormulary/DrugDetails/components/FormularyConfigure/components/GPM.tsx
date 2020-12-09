@@ -48,6 +48,7 @@ class GPM extends React.Component<any, any>{
         stGroupDescriptions: [],
         stTypes: [],
         stGroupDescriptionVersion: null,
+        selectedGrp:'',
         tabs: [
             {
                 id: 1,
@@ -81,10 +82,11 @@ class GPM extends React.Component<any, any>{
         this.setState({ tabs, activeTabIndex });
     };
 
-    selectGroup = (param: any) => {
+    selectGroup = (param: any,groupType:string) => {
         this.props.getStGrouptDescription(462)
         this.setState({
-            newGroup: true
+            newGroup: true,
+            selectedGrp:groupType==='warning'?false:true
         })
     }
     addNewGroup = () => {
@@ -95,10 +97,7 @@ class GPM extends React.Component<any, any>{
 
     componentDidMount() {
         this.props.getStGrouptDescriptions(this.props.formulary_id).then((json) => {
-            debugger;
-
             let tmpData = json.payload.data;
-
             var result = tmpData.map(function (el) {
                 var element = {};
                 element["id"] = el.id_st_group_description;
@@ -194,8 +193,8 @@ class GPM extends React.Component<any, any>{
                                 </div>
                             </div>
                         </div>
-                        {this.state.newGroup ? <NewGroup tooltip={this.state.tooltip} formType={1} /> : (
-                            <NewGroup tooltip={this.state.tooltip} formType={0} />
+                        {this.state.newGroup ? <NewGroup tooltip={this.state.tooltip} formType={1} editable={this.state.selectedGrp}/> : (
+                            <NewGroup tooltip={this.state.tooltip} formType={0} editable={this.state.selectedGrp}/>
                         )}
                     </div>
 

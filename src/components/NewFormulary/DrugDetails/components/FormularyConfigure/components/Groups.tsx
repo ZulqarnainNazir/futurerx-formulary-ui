@@ -4,7 +4,7 @@ interface Props {
     id: number,
     title: string;
     statusType: string;
-    selectGroup: (text: any) => void;
+    selectGroup: (text: any,groupType:string) => void;
 }
 export default class Groups extends React.Component<Props, any> {
     getStatusIcon = (type) => {
@@ -94,7 +94,7 @@ export default class Groups extends React.Component<Props, any> {
 
         const { selectGroup } = this.props
         return (
-            <div className={`list ${color}`} onClick={(e) => selectGroup(this.props.id)} >
+            <div className={`list ${color}`} onClick={(e) => selectGroup(this.props.id,this.props.statusType)} >
                 <div className="group">
                     <span>
                         {this.getStatusIcon(this.props.statusType)}
