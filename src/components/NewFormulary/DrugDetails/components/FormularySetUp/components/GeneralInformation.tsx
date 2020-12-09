@@ -5,14 +5,35 @@ import RadioButton from "../../../../../shared/Frx-components/radio-button/Radio
 import { DatePicker, Select } from "antd";
 import PanelHeader from "../../FormularyConfigure/components/PanelHeader";
 import Button from '../../../../../shared/Frx-components/button/Button';
+import {connect} from "react-redux";
+import Radio from '@material-ui/core/Radio';
+import RadioGroup from '@material-ui/core/RadioGroup';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import FormControl from '@material-ui/core/FormControl';
+import FormLabel from '@material-ui/core/FormLabel';
+const mapStateToProps = (state) => {
+  console.log(state);
+  return {
+    formulary: state?.setup?.formulary,
+    formulary_mode: state?.setup?.mode
+  };
+};
 
-const FormularyMethod = () => {
+
+const FormularyMethod = (props: any) => {
   const [selectedMethod, setSelectedMethod] = useState('');
-  
+  let method = props.method.toString()
+  console.log("*******")
+  console.log(typeof method)
+  console.log("*******")
+  const [value, setValue] = useState(method);
   const handleRadioOptionChange = (e) => {
     setSelectedMethod(e.target.value)
   }
-  
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    console.log((event.target as HTMLInputElement).value)
+    setValue((event.target as HTMLInputElement).value);
+  };
   return (
     <>
       <Grid item xs={selectedMethod === 'clone' ? 4 : 8}>
@@ -21,15 +42,20 @@ const FormularyMethod = () => {
             Method of Formulary Build <span className="astrict">*</span>
           </label>
           <div className="marketing-material radio-group">
-            <RadioButton label="Clone" checked={selectedMethod === 'clone'} value="clone" onChange={handleRadioOptionChange} name="marketing-material-radio" />
-            <RadioButton label="Upload" checked={selectedMethod === 'upload'} value="upload" onChange={handleRadioOptionChange} name="marketing-material-radio" />
+            <RadioButton label="Clone" checked={props.method === 'clone'} value="clone" onChange={handleRadioOptionChange} name="marketing-material-radio" />
+            <RadioButton label="Upload" checked={props.method === 'upload'} value="upload" onChange={handleRadioOptionChange} name="marketing-material-radio" />
             <RadioButton
               label="Create New"
               value="create-new"
               name="marketing-material-radio"
               onChange={handleRadioOptionChange}
-              checked={selectedMethod === 'create-new'}
+              checked={props.method === 'N'}
             />
+            {/* <RadioGroup aria-label="gender" name="gender1" value={value} onChange={handleChange}>
+              <FormControlLabel value="clone" control={<Radio />} label="clone" />
+              <FormControlLabel value="upload" control={<Radio />} label="upload" />
+              <FormControlLabel value="N" control={<Radio />} label="Create New" />
+            </RadioGroup> */}
           </div>
           
           {
@@ -54,8 +80,22 @@ const FormularyMethod = () => {
   )
 }
 
-export default class GeneralInformation extends React.Component<any, any> {  
+class GeneralInformation extends React.Component<any, any> {  
+  
   render() {
+    const FORMULARY = this.props.formulary;
+    const disabled = this.props.formulary_mode === 'EXISTING' ? true : false;
+    let FORMULARY_Values:any;
+    if(FORMULARY){
+      FORMULARY_Values = {
+        formulary_type: this.props.formulary_mode === 'EXISTING' ? FORMULARY.formulary_type_info.formulary_type : ["Commercial", "Medicare"],
+        formulary_name: FORMULARY.formulary_info?.formulary_name,
+        effective_date: FORMULARY.formulary_info?.effective_date,
+        formulary_description: FORMULARY.formulary_info?.formulary_description,
+        formulary_build_method: FORMULARY.formulary_info?.formulary_build_method,
+        contract_year: this.props.formulary_mode === 'EXISTING' ? [FORMULARY.formulary_info?.contract_year] : ["2021","2022"]
+      }
+    }
     return (
       <div className="general-information-container">
         <h4>General information</h4>
@@ -68,8 +108,15 @@ export default class GeneralInformation extends React.Component<any, any> {
                 </label>
                 <DropDown
                   className="formulary-type-dropdown"
-                  placeholder="Commercial"
-                  options={["Commercial", "Medicare", 3]}
+                  placeholder=""
+                  options={FORMULARY ? [FORMULARY_Values.formulary_type] : []}
+                  defaultValue={FORMULARY ? FORMULARY_Values.formulary_type : ''}
+                />
+                <DropDown
+                  className="formulary-type-dropdown"
+                  placeholder=""
+                  options={["version 1","version 2"]}
+                  defaultValue={"version 1"}
                 />
               </div>
             </Grid>
@@ -78,8 +125,7 @@ export default class GeneralInformation extends React.Component<any, any> {
                 <label>
                   FORMULARY NAME <span className="astrict">*</span>
                 </label>
-                <br />
-                <input type="text" className="setup-input-fields" />
+                <input type="text" className="setup-input-fields" disabled={disabled} value={FORMULARY ? FORMULARY_Values.formulary_name : ''}/>
               </div>
             </Grid>
             <Grid item xs={4}>
@@ -94,7 +140,8 @@ export default class GeneralInformation extends React.Component<any, any> {
               </label>
               <DatePicker
                 className="effective-date"
-                placeholder=""
+                placeholder={FORMULARY ? FORMULARY_Values.effective_date : ''}
+                disabled={disabled}
                 suffixIcon={
                   <svg
                     width="18"
@@ -114,7 +161,7 @@ export default class GeneralInformation extends React.Component<any, any> {
                 }
               />
             </Grid>
-            <FormularyMethod/>
+            <FormularyMethod method={FORMULARY ? FORMULARY_Values.formulary_build_method : ''}/>
             <Grid item xs={4}>
               <div className="group">
                 <label>
@@ -122,14 +169,16 @@ export default class GeneralInformation extends React.Component<any, any> {
                 </label>
                 <DropDown
                   className="formulary-type-dropdown"
-                  options={[2018, 2019, 2020]}
+                  options={FORMULARY ? FORMULARY_Values.contract_year : []}
+                  value={FORMULARY ? FORMULARY_Values.contract_year : ''}
+                  disabled={disabled}
                 />
               </div>
             </Grid>
             <Grid item xs={4}>
               <div className="group">
                 <label>FORMULARY DESCRIPTION</label>
-                <input type="text" className="setup-input-fields" />
+                <input type="text" className="setup-input-fields" value={FORMULARY ? FORMULARY_Values.formulary_description : ''}/>
               </div>
             </Grid>
             <Grid item xs={4}>
@@ -186,3 +235,4 @@ export default class GeneralInformation extends React.Component<any, any> {
     );
   }
 }
+export default connect(mapStateToProps)(GeneralInformation);
