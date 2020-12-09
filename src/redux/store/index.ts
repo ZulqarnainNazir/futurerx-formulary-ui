@@ -11,6 +11,8 @@ import { switchSlice } from '../slices/formulary/switch/switchSlice'
 import { validationList } from "../slices/formulary/validation/validationSlice";
 import setupReducer from "../slices/formulary/setup/setupSlice";
 import headerReducer from "../slices/formulary/header/headerSlice";
+import { saveGDMSlice } from "../slices/formulary/gdm/gdmSlice";
+import { stepTherapySlice } from "../slices/formulary/stepTherapy/stepTherapySlice";
 
 
 const reducer = combineReducers({
@@ -28,6 +30,8 @@ const formularyBaseReducer = formularyBaseSlice.reducer;
 const tierSliceReducer = tierSlice.reducer
 const switchReducer = switchSlice.reducer
 const validationReducer = validationList.reducer
+const saveGdm = saveGDMSlice.reducer
+const stepTherapy = stepTherapySlice.reducer
 
 // The store is configured with the state and the corresponding reducers.
 const store = configureStore({
@@ -41,7 +45,9 @@ const store = configureStore({
     validationReducer: validationReducer,
     application: applicationReducer,
     setup: setupReducer,
-    header: headerReducer
+    header: headerReducer,
+    savereducer:saveGdm,
+    stepTherapyReducer: stepTherapy
   },
   middleware,
 });

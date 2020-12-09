@@ -1,6 +1,6 @@
 import {createSlice} from "@reduxjs/toolkit";
 
-import { getStSummary } from "./stepTherapyActionCreation";
+import { getStSummary,getStGrouptDescription } from "./stepTherapyActionCreation";
 import { getStepTherapyFulfilled,getStepTherapyRejected } from "./stepTherapyReducers";
 
 const tierState: any = {
@@ -23,6 +23,15 @@ export const stepTherapySlice = createSlice({
       getStepTherapyFulfilled(state, action);
     }),
     builder.addCase(getStSummary.rejected, (state, action) => {
+      getStepTherapyRejected(state, action);
+    }),
+    builder.addCase(getStGrouptDescription.pending, (state, action) => {
+      state.isLoading = true;
+    }),
+    builder.addCase(getStGrouptDescription.fulfilled, (state, action) => {
+      getStepTherapyFulfilled(state, action);
+    }),
+    builder.addCase(getStGrouptDescription.rejected, (state, action) => {
       getStepTherapyRejected(state, action);
     })
   )
