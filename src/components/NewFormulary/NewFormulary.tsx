@@ -12,6 +12,7 @@ import FormularyDashboardStats from "./../FormularyDashboardStats/FormularyDashb
 import { getFormularyDetails } from "../../mocks/formulary/formularyDetails";
 import { fetchFormularies } from "../.././redux/slices/formulary/dashboard/dashboardSlice";
 import { setFormulary } from "../.././redux/slices/formulary/application/applicationSlice";
+import { fetchFormularyHeader } from "../.././redux/slices/formulary/header/headerSlice";
 import "./NewFormulary.scss";
 import Medicaid from "./Medicaid/Medicaid";
 
@@ -43,6 +44,7 @@ function mapDispatchToProps(dispatch) {
   return {
     fetchFormularies:(a)=>dispatch(fetchFormularies(a)),
     setFormulary:(arg)=>dispatch(setFormulary(arg)),
+    fetchFormularyHeader: (arg)=>dispatch(fetchFormularyHeader(arg)),
   };
 }
 
