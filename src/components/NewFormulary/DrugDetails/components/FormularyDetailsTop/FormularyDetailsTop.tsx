@@ -32,6 +32,7 @@ class FormularyDetailsTop extends React.Component<any, any> {
             <span
               className="color-blue"
               // onClick={FormularyDetailsCont.showDetailHandler}
+              onClick={() => window.location.reload()}
             >
               Formulary Grid
             </span>

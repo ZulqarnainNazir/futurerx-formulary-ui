@@ -8,5 +8,10 @@
         border-left: none !important;
         border-top: none !important;
         border-bottom: none !important;
+
+        .ant-select-selection-item, .ant-select-selection-placeholder{
+            color: #F65A1C !important;
+            text-decoration: underline;
+        }
     }
 }
