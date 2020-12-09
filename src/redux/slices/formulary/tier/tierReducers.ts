@@ -21,3 +21,24 @@ export const getTierRejected = (state, action) => {
   state.data = {};
 
 }
+
+export const postTierApplyFulfilled = (state, action) => {
+  console.log("Reducer::postTierApplyFulfilled");
+  state.isLoading = false;
+  console.log(action)
+  if(action.payload.result === undefined || !Array.isArray(action.payload.result) || (action.payload.result.length === 0)) {
+    console.log("postTierApplyFulfilled: Payload invalid");
+    return;
+  }
+  const data = action.payload.result;
+  // Response stored in the redux store.
+  state.applyData = data;
+  
+}
+
+export const postTierApplyRejected = (state, action) => {
+  console.log("Reducer::postTierApplyRejected");
+  state.isLoading = false;
+  state.applyData = {};
+
+}
