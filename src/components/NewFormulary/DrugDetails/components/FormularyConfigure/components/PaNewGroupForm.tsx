@@ -320,7 +320,8 @@ data["is_additional_criteria_defined"]=this.state.is_additional_criteria_defined
                                   <DropDown
                                     className="formulary-type-dropdown"
                                     placeholder=""
-                                    options={[{key:0,value:0}, {key:1,value:1}]}
+                                    // options={[{key:0,value:0}, {key:1,value:1}]}
+                                    options={[0,1]}
                                     valueProp="key" dispProp="value"
                                     onChange={(e) => this.handleChange({"change_indicator": e.target.value })}
                                   />
