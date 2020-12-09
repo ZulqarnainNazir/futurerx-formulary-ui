@@ -4,7 +4,6 @@ import {connect} from "react-redux";
 import {TabInfo} from "../../../models/tab.model";
 import FrxMiniTabs from "../../shared/FrxMiniTabs/FrxMiniTabs";
 import {formularyDetailsGridColumns} from "../../../utils/grid/columns";
-import {getFormularyDetails} from "../../../mocks/formulary/formularyDetails";
 import FrxGridContainer from "../../shared/FrxGrid/FrxDrugGridContainer";
 import FormularyExpandedDetails from "../../FormularyExpandedDetails/FormularyExpandedDetails";
 import Alternatives from "../Alternatives/Alternatives";
@@ -12,7 +11,6 @@ import FrxLoader from '../.././shared/FrxLoader/FrxLoader';
 import MaintenanceMassUpdate from "../MassMaintenance/MaintenanceMassUpdate/MaintenanceMassUpdate";
 import PanelHeader from '../../shared/Frx-components/panel-header/PanelHeader';
 import SearchBox from '../../shared/Frx-components/search-box/SearchBox';
-import { fetchFormularies } from "../../.././redux/slices/formulary/dashboard/dashboardSlice";
 
 import './Medicare.scss';
 import DropDown from "../../shared/Frx-components/dropdown/DropDown";
@@ -71,10 +69,25 @@ class Medicare extends React.Component<any, any> {
         return <div>Group Description Management</div>;
     }
   };
+  updateHiddenGridColumn = (hiddenColumns) => {
+    const getKey = hiddenColumns.map(e => e.key);
+    const updatedFormularyDetailsGridColumns = formularyDetailsGridColumns();
+    console.log(updatedFormularyDetailsGridColumns)
+    const updatedColumns = updatedFormularyDetailsGridColumns.map(e => {
+      if(getKey.indexOf(e.key) !== -1){
+        e.hidden = true;
+      }
+      return e
+    })
+    return updatedColumns;
+  }
   getGridData = () => {
     const baseData = [...this.props.dashboardGrid.list];
-    console.log(baseData)
-    
+    let hiddenColumns = [];
+    if(this.props.dashboardGrid.grid_settings.hiddenColumns.length > 0){
+      hiddenColumns = this.props.dashboardGrid.grid_settings.hiddenColumns.map(e => e.key)
+    }
+    // this.updateGridColumns
     const gridData = baseData.map((e,index: any) => {
       return {
         "id": index + 1,
@@ -93,8 +106,8 @@ class Medicare extends React.Component<any, any> {
           fill: "fill",
         },
         "formulary_name": e.formulary_name,
-        "id_formulary": e.id_formulary,
-        "version_number": e.version_number,
+        "id_formulary": e.id_formulary.toString(),
+        "version_number": e.version_number.toString(),
         "timeRemaining": {
           "text": "09/04/2020  @ 9:00 AM",
           "progress": 25,
@@ -131,6 +144,7 @@ class Medicare extends React.Component<any, any> {
             <div className="add-new-formulary-button">+ Add New Formulary</div>
           </div>
           <div className="inner-container">
+            
             <FrxGridContainer
               enableSearch={false}
               enableColumnDrag
@@ -141,15 +155,18 @@ class Medicare extends React.Component<any, any> {
               enableSettings
               columns={formularyDetailsGridColumns({
                 onFormularyNameClick: (id: any) => this.props.drugDetailClick(id),
-              })}
+              },hiddenColumns)}
               scroll={{ y: 377 }}
               isFetchingData={false}
               enableResizingOfColumns
               getPerPageItemSize={this.props.onPageSize}
               onGridPageChangeHandler={this.props.onPageChangeHandler}
+              clearFilterHandler={this.props.onClearFilterHandler}
               totalRowsCount={this.props.dashboardGrid.count}
               pageSize={this.props.pageSize}
               selectedCurrentPage={this.props.selectedCurrentPage}
+              applyFilter={this.props.applyFilter}
+              getColumnSettings={this.props.getColumnSettings}
               data={gridData}
               expandable={{
                 isExpandable: true,
@@ -219,7 +236,8 @@ const mapStateToProps = (state) => {
     dashboardGrid: {
       count: state.dashboard.formulary_count,
       list: state.dashboard.formulary_list,
-      isLoading: state.dashboard.isLoading
+      isLoading: state.dashboard.isLoading,
+      grid_settings: state.gridSettings
     } 
   }
 }
