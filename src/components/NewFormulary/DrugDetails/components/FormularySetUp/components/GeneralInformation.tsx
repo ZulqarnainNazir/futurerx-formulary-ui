@@ -15,7 +15,8 @@ const mapStateToProps = (state) => {
   console.log(state);
   return {
     formulary: state?.setup?.formulary,
-    formulary_mode: state?.setup?.mode
+    formulary_mode: state?.setup?.mode,
+    general_options: state?.setup?.generalOptions
   };
 };
 
@@ -81,14 +82,17 @@ const FormularyMethod = (props: any) => {
 }
 
 class GeneralInformation extends React.Component<any, any> {  
-  
   render() {
     const FORMULARY = this.props.formulary;
     const disabled = this.props.formulary_mode === 'EXISTING' ? true : false;
+    let general_options:any;
+    if(this.props.general_options){
+      general_options = this.props.general_options.formularyType.map(e => e.formulary_type)
+    }
     let FORMULARY_Values:any;
     if(FORMULARY){
       FORMULARY_Values = {
-        formulary_type: this.props.formulary_mode === 'EXISTING' ? FORMULARY.formulary_type_info.formulary_type : ["Commercial", "Medicare"],
+        selected_formulary_type: this.props.formulary_mode === 'EXISTING' ? FORMULARY.formulary_type_info.formulary_type : '',
         formulary_name: FORMULARY.formulary_info?.formulary_name,
         effective_date: FORMULARY.formulary_info?.effective_date,
         formulary_description: FORMULARY.formulary_info?.formulary_description,
@@ -108,15 +112,9 @@ class GeneralInformation extends React.Component<any, any> {
                 </label>
                 <DropDown
                   className="formulary-type-dropdown"
-                  placeholder=""
-                  options={FORMULARY ? [FORMULARY_Values.formulary_type] : []}
-                  defaultValue={FORMULARY ? FORMULARY_Values.formulary_type : ''}
-                />
-                <DropDown
-                  className="formulary-type-dropdown"
-                  placeholder=""
-                  options={["version 1","version 2"]}
-                  defaultValue={"version 1"}
+                  placeholder="Select"
+                  options={this.props.general_options ? general_options : []}
+                  defaultValue={this.props.formulary ?  this.props.formulary.formulary_type_info.formulary_type : ''}
                 />
               </div>
             </Grid>
