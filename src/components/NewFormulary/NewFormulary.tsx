@@ -13,6 +13,8 @@ import { getFormularyDetails } from "../../mocks/formulary/formularyDetails";
 import { fetchFormularies } from "../.././redux/slices/formulary/dashboard/dashboardSlice";
 import { setFormulary } from "../.././redux/slices/formulary/application/applicationSlice";
 import { fetchFormularyHeader } from "../.././redux/slices/formulary/header/headerSlice";
+import { gridSettingsSlice } from "../.././redux/slices/formulary/gridHandler/gridSettingsSlice";
+import { addNewFormulary } from "../.././redux/slices/formulary/application/applicationSlice";
 import "./NewFormulary.scss";
 import Medicaid from "./Medicaid/Medicaid";
 
@@ -45,8 +47,12 @@ function mapDispatchToProps(dispatch) {
     fetchFormularies:(a)=>dispatch(fetchFormularies(a)),
     setFormulary:(arg)=>dispatch(setFormulary(arg)),
     fetchFormularyHeader: (arg)=>dispatch(fetchFormularyHeader(arg)),
+    setHiddenColumn: (hiddenColumns) => dispatch(gridSettingsSlice.actions.setHiddenColum(hiddenColumns)),
+    clearHiddenColumns: () => dispatch(gridSettingsSlice.actions.clearHiddenColumns(true)),
+    addNewFormulary:(arg)=>dispatch(addNewFormulary(arg)),
   };
 }
+
 
 // REFERENCE :: 
 // listPayload = {
@@ -64,7 +70,7 @@ const defaultListPayload = {
   index: 0,
   limit: 10,
   filter: [],
-  id_lob: 4,
+  id_lob: 1,
   search_by: null,
   search_key: "",
   search_value: [],
@@ -82,11 +88,11 @@ class Formulary extends React.Component<any, any> {
     pageSize: 10
   };
 
-  listPayload = {
+  listPayload: any = {
     index: 0,
     limit: 10,
     filter: [],
-    id_lob: 4,
+    id_lob: 1,
     search_by: null,
     search_key: "",
     search_value: [],
@@ -98,6 +104,13 @@ class Formulary extends React.Component<any, any> {
     this.props.fetchFormularies(this.listPayload);
   }
 
+  addNewFormulary = (id: any) => {
+    this.props.addNewFormulary();
+    this.setState({
+      showTabs: !this.state.showTabs,
+      showDrugDetails: !this.state.showDrugDetails,
+    });
+  };
   onClickTab = (selectedTabIndex: number) => {
     let activeTabIndex = 0;
 
@@ -115,6 +128,7 @@ class Formulary extends React.Component<any, any> {
       selectedRow = this.props.formulary_list[id-1];
     }
     this.props.setFormulary(selectedRow);
+    this.props.clearHiddenColumns();
     this.setState({
       showTabs: !this.state.showTabs,
       showDrugDetails: !this.state.showDrugDetails,
@@ -127,7 +141,7 @@ class Formulary extends React.Component<any, any> {
       showMassMaintenance: !this.state.showMassMaintenance,
     });
   };
-
+  
   renderActiveTabContent = () => {
     const tabIndex = this.state.activeTabIndex;
     switch (tabIndex) {
@@ -140,6 +154,9 @@ class Formulary extends React.Component<any, any> {
             pageSize={this.listPayload.limit}
             selectedCurrentPage={(this.listPayload.index/this.listPayload.limit + 1)}
             onPageChangeHandler={this.onGridPageChangeHandler}
+            onClearFilterHandler={this.onClearFilterHandler}
+            applyFilter={this.onApplyFilterHandler}
+            getColumnSettings={this.onSettingsIconHandler}
           />
         );
       case 1:
@@ -150,13 +167,34 @@ class Formulary extends React.Component<any, any> {
         return <div>EXCHANGE</div>;
     }
   };
+  onSettingsIconHandler = (hiddenColumn,visibleColumn) => {
+    console.log(hiddenColumn,visibleColumn);
+    this.props.setHiddenColumn(hiddenColumn)
+  }
+  onApplyFilterHandler = (filters) => {
+    const fetchedProps = Object.keys(filters)[0];
+    const fetchedOperator = filters[fetchedProps][0].condition === 'is like' ? 'is_like' : 
+    filters[fetchedProps][0].condition === 'is not' ? 'is_not' : 
+    filters[fetchedProps][0].condition === 'is not like' ? 'is_not_like' : 
+    filters[fetchedProps][0].condition === 'does not exist' ? 'does_not_exist' : 
+    filters[fetchedProps][0].condition;
+    const fetchedValues = filters[fetchedProps][0].value !== '' ? [filters[fetchedProps][0].value.toString()] : [];
+    const newFilters = [{ prop: fetchedProps, operator: fetchedOperator,values: fetchedValues}];
+    this.listPayload.filter = newFilters;
+    this.props.fetchFormularies(this.listPayload);
+  }
   onPageSize = (pageSize) => {
+    this.listPayload = defaultListPayload;
     this.listPayload.limit = pageSize
     this.props.fetchFormularies(this.listPayload);
   }
   onGridPageChangeHandler = (pageNumber: any) => {
     this.listPayload.index = (pageNumber - 1) * this.listPayload.limit;
     console.log(this.listPayload.index/this.listPayload.limit + 1);
+    this.props.fetchFormularies(this.listPayload);
+  }
+  onClearFilterHandler = () => {
+    this.listPayload = defaultListPayload;
     this.props.fetchFormularies(this.listPayload);
   }
   render() {
@@ -166,7 +204,8 @@ class Formulary extends React.Component<any, any> {
           <>
             <FormularyDashboardStats />
             <div>
-                COUNT: {this.props.formulary_count} 
+                COUNT: {this.props.formulary_count}  
+                <button onClick={this.addNewFormulary}> + </button>
             </div>
             <FrxTabs
               tabList={this.state.tabs}

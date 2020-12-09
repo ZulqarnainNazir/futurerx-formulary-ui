@@ -526,7 +526,8 @@ export const setupStandardReportingColumns: () => Column<any>[] = () => {
 }
 
 
-export const formularyDetailsGridColumns: (data) => Column<any>[] = (data) => {
+export const formularyDetailsGridColumns: (data?, hiddenColumns?) => Column<any>[] = (data,hiddenColumns) => {
+  console.log(hiddenColumns)
   return [
     {
       position: 1,
@@ -538,7 +539,7 @@ export const formularyDetailsGridColumns: (data) => Column<any>[] = (data) => {
       isFilterable: true,
       dataType: "string",
       filters: textFilters,
-      hidden: false,
+      hidden: hiddenColumns && hiddenColumns.indexOf('contract_year') !== -1 ? true : false,
       sortDirections: ["ascend", "descend"],
     },
     {
@@ -559,7 +560,7 @@ export const formularyDetailsGridColumns: (data) => Column<any>[] = (data) => {
       isFilterable: true,
       dataType: "string",
       filters: textFilters,
-      hidden: false,
+      hidden: hiddenColumns && hiddenColumns.indexOf('bazaar') !== -1 ? true : false,
       sortDirections: ["ascend", "descend"],
     },
     {
@@ -580,7 +581,7 @@ export const formularyDetailsGridColumns: (data) => Column<any>[] = (data) => {
       isFilterable: true,
       dataType: "string",
       filters: textFilters,
-      hidden: false,
+      hidden: hiddenColumns && hiddenColumns.indexOf('origin') !== -1 ? true : false,
       sortDirections: ["ascend", "descend"],
     },
     {
@@ -598,7 +599,7 @@ export const formularyDetailsGridColumns: (data) => Column<any>[] = (data) => {
       isFilterable: true,
       dataType: "string",
       filters: textFilters,
-      hidden: false,
+      hidden: hiddenColumns && hiddenColumns.indexOf('formulary_name') !== -1 ? true : false,
       sortDirections: ["ascend", "descend"],
     },
     {
@@ -611,7 +612,7 @@ export const formularyDetailsGridColumns: (data) => Column<any>[] = (data) => {
       isFilterable: true,
       dataType: "string",
       filters: textFilters,
-      hidden: false,
+      hidden: hiddenColumns && hiddenColumns.indexOf('id_formulary') !== -1 ? true : false,
       sortDirections: ["ascend", "descend"],
     },
     {
@@ -624,7 +625,7 @@ export const formularyDetailsGridColumns: (data) => Column<any>[] = (data) => {
       isFilterable: true,
       dataType: "string",
       filters: textFilters,
-      hidden: false,
+      hidden: hiddenColumns && hiddenColumns.indexOf('version_number') !== -1 ? true : false,
       sortDirections: ["ascend", "descend"],
     },
     {
@@ -640,7 +641,7 @@ export const formularyDetailsGridColumns: (data) => Column<any>[] = (data) => {
       isFilterable: true,
       dataType: "string",
       filters: textFilters,
-      hidden: false,
+      hidden: hiddenColumns && hiddenColumns.indexOf('timeRemaining') !== -1 ? true : false,
       sortDirections: ["ascend", "descend"],
     },
     {
@@ -656,7 +657,7 @@ export const formularyDetailsGridColumns: (data) => Column<any>[] = (data) => {
       isFilterable: true,
       dataType: "string",
       filters: textFilters,
-      hidden: false,
+      hidden: hiddenColumns && hiddenColumns.indexOf('step') !== -1 ? true : false,
       sortDirections: ["ascend", "descend"],
     },
   ];

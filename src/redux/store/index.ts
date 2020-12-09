@@ -6,9 +6,11 @@ import { combineReducers } from 'redux'
 import { formularyBaseSlice } from "../slices/formulary/formularyBase/formularyBaseSlice";
 import applicationReducer from "../slices/formulary/application/applicationSlice";
 import dashboardReducer from "../slices/formulary/dashboard/dashboardSlice";
+import {gridSettingsSlice} from "../slices/formulary/gridHandler/gridSettingsSlice";
 import { tierSlice } from '../slices/formulary/tier/tierSlice'
 import { switchSlice } from '../slices/formulary/switch/switchSlice'
 import { validationList } from "../slices/formulary/validation/validationSlice";
+import  advancedSearchReducer from "../slices/formulary/advancedSearch/advancedSearchSlice";
 import setupReducer from "../slices/formulary/setup/setupSlice";
 import headerReducer from "../slices/formulary/header/headerSlice";
 
@@ -25,6 +27,7 @@ const middleware = [
 const memberSummaryReducer = memberSummarySlice.reducer;
 const userPrefsReducer = userPrefsSlice.reducer;
 const formularyBaseReducer = formularyBaseSlice.reducer;
+const gridSettingsReducer = gridSettingsSlice.reducer;
 const tierSliceReducer = tierSlice.reducer
 const switchReducer = switchSlice.reducer
 const validationReducer = validationList.reducer
@@ -40,8 +43,10 @@ const store = configureStore({
     switchReducer: switchReducer,
     validationReducer: validationReducer,
     application: applicationReducer,
+    gridSettings: gridSettingsReducer,
     setup: setupReducer,
-    header: headerReducer
+    header: headerReducer,
+    advancedSearch: advancedSearchReducer
   },
   middleware,
 });
