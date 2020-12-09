@@ -1,29 +1,67 @@
-import React from 'react';
-import PanelHeader from './PanelHeader';
-import PanelGrid from './panelGrid';
-import CustomizedSwitches from './CustomizedSwitches';
-import { TabInfo } from "../../../../../../models/tab.model";
-import FrxMiniTabs from "../../../../../shared/FrxMiniTabs/FrxMiniTabs";
+import React,{useState,useEffect} from 'react';
+import { connect } from "react-redux";
+import Radio from '@material-ui/core/Radio';
+import RadioGroup from '@material-ui/core/RadioGroup';
 import Button from '../../../../../shared/Frx-components/button/Button';
 import FormGroup from '@material-ui/core/FormGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
-import { textFilters } from "../../../../../../utils/grid/filters";
-import { getDrugDetailsColumn } from "../DrugGridColumn";
-import { getDrugDetailData } from "../../../../../../mocks/DrugGridMock";
-import FrxLoader from "../../../../../shared/FrxLoader/FrxLoader";
-import DrugGrid from '../../DrugGrid';
 import Tooltip from '@material-ui/core/Tooltip';
 import { Box, Grid, Input } from '@material-ui/core';
 import RadioButton from '../../../../../shared/Frx-components/radio-button/RadioButton';
+import { saveGDM } from '../../../../../../redux/slices/formulary/gdm/gdmActionCreation'
 
 interface Props{
     tooltip?:string;
     formType?:number;
+    editable?:boolean;
 }
 
-export default function NewGroup(props: any) {
-    console.log(props)
+
+const initialFormData = {
+  st_group_description:'',
+  file_type:'FAOTC',
+  is_rx_drug_type:'',
+  is_otc_drug_type:'',
+  st_criteria: "",
+  change_indicator:'',
+  excluded_drug_file:"",
+  is_additional_criteria_defined:'',
+  mmp_st_criteria:'',
+  st_criteria_change_indicator:'',
+  is_suppress_criteria_dispaly_cms_approval:'',
+  is_display_criteria_drugs_not_frf:''
+}
+
+function mapStateToProps(state){
+  return{
+      formulary_id: state.application.formulary_id,
+      StGDData:state.stepTherapyReducer.data
+  }
+}
+
+function mapDispatchToProps(dispatch){
+  return{
+    saveGDM:(body)=>dispatch(saveGDM(body)),
+  }
+}
+
+
+function NewGroup(props: any) {
+  const [formData, updateFormData] = React.useState(initialFormData);
+  const handleChange = (e) => {
+    updateFormData({
+      ...formData,
+      [e.target.name]: e.target.value.trim()
+    });
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault()
+    props.saveGDM(formData)
+    console.log(formData);
+  };
+
     return (
         <div className="new-group-des">
             <div className="panel header">
@@ -117,16 +155,23 @@ export default function NewGroup(props: any) {
             <div className="inner-container">
                 <div className="setting-1">
                     <span>What file type is this group description for? *</span>
-                    <div className="marketing-material radio-group">
+                    {/* <div className="marketing-material radio-group">
                         <RadioButton label="Formulary/OTC" name="marketing-material-radio1" checked />
                         <RadioButton label="Excluded" name="marketing-material-radio1" />
                         <RadioButton label="ADD" name="marketing-material-radio1" />
+                    </div> */}
+                    <div className="marketing-material radio-group">
+                        <RadioGroup aria-label="marketing-material-radio1" className="gdp-radio" name="file_type" onChange={handleChange}>
+                          <FormControlLabel value="FAOTC" control={<Radio checked={formData.file_type==="FAOTC"?true:false} />} label="Formulary/OTC" disabled={props.editable}/>
+                          <FormControlLabel value="ExD" control={<Radio checked={formData.file_type==="ExD"?true:false}/>} label="Excluded" disabled={props.editable}/>
+                          <FormControlLabel value="ADD" control={<Radio checked={formData.file_type==="ADD"?true:false}/>} label="ADD" disabled={props.editable}/>
+                        </RadioGroup>
                     </div>
                     <Grid container>
                         <Grid item xs={6}>
                             <div className="group">
                                 <label>ST GROUP DESCRIPTION<span className="astrict">*</span></label>
-                                <input type="text" />
+                                <input type="text" name="st_group_description" onChange={handleChange} defaultValue={props.StGDData.st_group_description_name} disabled={props.editable}/>
                             </div>
                         </Grid>
                     </Grid>
@@ -134,7 +179,7 @@ export default function NewGroup(props: any) {
                         <Grid item xs={6}>
                             <div className="group">
                                 <label>EXCLUDED DRUG FILE</label>
-                                <input type="text" />
+                                <input type="text" name="exclude_drug_file" onChange={handleChange} defaultValue={props.StGDData.excluded_drug_file} disabled={props.editable}/>
                             </div>
                         </Grid>
                     </Grid>)}
@@ -142,8 +187,8 @@ export default function NewGroup(props: any) {
                 {props.formType===0 && (<div className="setting-1 mb-20">
                     <span>What type of drugs will this group contain? Select all that apply.</span>
                     <div className="marketing-material-chk radio-group">
-                        <FormControlLabel control={<Checkbox />} label='RX' />
-                        <FormControlLabel control={<Checkbox />} label='OTC' />
+                        <FormControlLabel control={<Checkbox name="is_rx_drug_type" checked={props.StGDData.is_rx_drug_type} value='RX'/>} label='RX' disabled={props.editable}/>
+                        <FormControlLabel control={<Checkbox name="is_otc_drug_type" checked={props.StGDData.is_otc_drug_type} value='OTC'/>} label='OTC' disabled={props.editable}/>
                     </div>
                     <Grid container>
                         <Grid item xs={6}>
@@ -163,7 +208,7 @@ export default function NewGroup(props: any) {
                                         </Tooltip>
                                     </div>
                                 </label>
-                                <input type="text" />
+                                <input type="text" name="st_criteria" onChange={handleChange} value={props.StGDData.st_criteria} disabled={props.editable}/>
                             </div>
                         </Grid>
                     </Grid>
@@ -171,7 +216,7 @@ export default function NewGroup(props: any) {
                         <Grid item xs={6}>
                             <div className="group">
                                 <label>ST CRITERIA CHANGE INDICATOR<span className="astrict">*</span></label>
-                                <input type="text" />
+                                <input type="text" name="change_indicator" onChange={handleChange} value={props.StGDData.change_indicator} disabled={props.editable}/>
                             </div>
                         </Grid>
                     </Grid>
@@ -179,17 +224,24 @@ export default function NewGroup(props: any) {
                 <div className="setting-1 mb-20">
                     <span>MARKETING MATERIAL CONSIDERATIONS</span>
                     <div className="marketing-material-chk">
-                        <FormControlLabel control={<Checkbox />} label='Supress Criteria and Display: Pending CMS Approval' />
-                        <FormControlLabel control={<Checkbox />} label='Display Criteria for Drugs not on FRF' />
+                        <FormControlLabel control={<Checkbox name="is_suppress_criteria_dispaly_cms_approval" checked={props.StGDData.is_suppress_criteria_dispaly_cms_approval}/>} label='Supress Criteria and Display: Pending CMS Approval' onChange={handleChange} disabled={props.editable}/>
+                        <FormControlLabel control={<Checkbox name="is_display_criteria_drugs_not_frf" checked={props.StGDData.is_display_criteria_drugs_not_frf}/>} label='Display Criteria for Drugs not on FRF' onChange={handleChange} disabled={props.editable}/>
                     </div>
+                    
                     <span>do you want to add additional criteria?<span className="astrict">*</span></span>
+                    {/* <div className="marketing-material radio-group">
+                        <RadioButton label="Yes" name="marketingmaterialradio" checked onChange={handleChange}/>
+                        <RadioButton label="No" name="marketingmaterialradio" onChange={handleChange}/>
+                    </div> */}
                     <div className="marketing-material radio-group">
-                        <RadioButton label="Yes" name="marketing-material-radio" checked />
-                        <RadioButton label="No" name="marketing-material-radio" />
+                        <RadioGroup aria-label="marketing-material-radio1" name="is_additional_criteria_defined" defaultValue='Yes' onChange={handleChange} className="gdp-radio" >
+                          <FormControlLabel value="yes" control={<Radio checked={formData.is_additional_criteria_defined==='yes'}/>} label='Yes' disabled={props.editable}/>
+                          <FormControlLabel value="no" control={<Radio checked={formData.is_additional_criteria_defined==='no'}/>} label='No' disabled={props.editable}/>
+                        </RadioGroup>
                     </div>
                 </div>
                 <div className="button-wrapper">
-                    <Button label="Save Version Progress" className="Button" />
+                    <Button label="Save Version Progress" className="Button" onClick={handleSubmit}/>
                     <Button label="Version to Initiate Change Request" className="Button" />
                     <Button label="Version Submitted to CMS" className="Button" />
                 </div>
@@ -198,3 +250,5 @@ export default function NewGroup(props: any) {
         </div>
     )
 }
+
+export default connect(mapStateToProps,mapDispatchToProps)(NewGroup)
