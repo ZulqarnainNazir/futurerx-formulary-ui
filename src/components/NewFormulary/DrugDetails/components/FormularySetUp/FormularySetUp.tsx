@@ -8,7 +8,7 @@ import MedicareInformation from "./components/MedicareInformation";
 import SupplementalModels from "./components/SupplementalModels";
 import Box from '@material-ui/core/Box';
 import Button from '../../../../shared/Frx-components/button/Button';
-import { fetchSelectedFormulary } from "../../../../.././redux/slices/formulary/setup/setupSlice";
+import { fetchSelectedFormulary,fetchGeneralOptions,fetchMedicareOptions } from "../../../../.././redux/slices/formulary/setup/setupSlice";
 import { Formulary } from "../../../../../redux/slices/formulary/setup/formulary";
 
 
@@ -18,6 +18,9 @@ class FormularySetUp extends React.Component<any, any> {
   
   componentDidMount(){
     console.log("SP : "+this.props.mode+" - "+this.props.formulary_id);
+    this.props.fetchGeneralOptions();
+    // fetchMedicareOptions need to call conditionally... 
+    this.props.fetchMedicareOptions();
     if(this.props.mode === "EXISTING") {
       this.props.fetchSelectedFormulary(this.props.formulary_id);
     } else {
@@ -47,7 +50,7 @@ class FormularySetUp extends React.Component<any, any> {
 }
 
 const mapStateToProps = (state) => {
-  //console.log("SP  -  -  -  -  -  -  -  -  -  -  -  - S.");
+  console.log("SP  -  -  -  -  -  -  -  -  -  -  -  - STATE");
   console.log(state);
   return {
     mode: state?.application?.mode,
@@ -58,6 +61,8 @@ const mapStateToProps = (state) => {
 function mapDispatchToProps(dispatch) {
   return {
     fetchSelectedFormulary:(a)=>dispatch(fetchSelectedFormulary(a)),
+    fetchGeneralOptions:(a)=>dispatch(fetchGeneralOptions(a)),
+    fetchMedicareOptions:(a)=>dispatch(fetchMedicareOptions(a)),
   };
 }
 
