@@ -4,7 +4,7 @@ import Tooltip from '@material-ui/core/Tooltip';
 export default class PanelHeader extends React.Component<any,any>{
     render(){
         const { required = false, className = "" } = this.props;
-        console.log(this.props)
+        //console.log(this.props)
         return(
             <div className={`panel header ${className}`}>
                 <span>{this.props.title} {required &&<span className="astrict">*</span>}</span>

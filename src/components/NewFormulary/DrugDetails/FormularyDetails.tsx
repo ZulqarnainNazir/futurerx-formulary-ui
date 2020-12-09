@@ -18,7 +18,7 @@ const tabs = [
   { id: 6, text: "Bazaar" },
 ];
 const mapStateToProps = (state) => {
-  console.log(state)
+  //console.log(state)
   return{
     current_formulary: state.formularBase.current_formulary
   }
@@ -40,9 +40,9 @@ class FormularyDetails extends React.Component<any, any> {
     this.setState({ tabs, activeTabIndex });
   };
   componentDidMount(){
-    console.log("====== Reeta's code ========")
-    console.log(this.props)
-    console.log("====== Reeta's code ========")
+    // console.log("====== Reeta's code ========")
+    // console.log(this.props)
+    // console.log("====== Reeta's code ========")
   }
   renderActiveTabContent = () => {
     const tabIndex = this.state.activeTabIndex;
@@ -70,7 +70,7 @@ class FormularyDetails extends React.Component<any, any> {
     }
   };
   render() {
-    console.log("=============",this.props)
+    // console.log("=============",this.props)
     const fData = this.props.data;
     return (
       <>
