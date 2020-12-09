@@ -155,6 +155,7 @@ class Formulary extends React.Component<any, any> {
             onClearFilterHandler={this.onClearFilterHandler}
             applyFilter={this.onApplyFilterHandler}
             getColumnSettings={this.onSettingsIconHandler}
+            addNewFormulary={this.addNewFormulary}
           />
         );
       case 1:
@@ -201,10 +202,6 @@ class Formulary extends React.Component<any, any> {
         {this.state.showTabs ? (
           <>
             <FormularyDashboardStats />
-            <div>
-                COUNT: {this.props.formulary_count}  
-                <button onClick={this.addNewFormulary}> + </button>
-            </div>
             <FrxTabs
               tabList={this.state.tabs}
               activeTabIndex={this.state.activeTabIndex}
