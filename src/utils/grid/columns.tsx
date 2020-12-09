@@ -458,6 +458,19 @@ export const tierColumns: () => Column<any>[] = () => {
       hidden: false,
       sortDirections: ["ascend", "descend"],
     },
+    {
+      position: 9,
+      sorter: {},
+      textCase: "upper",
+      pixelWidth: 109,
+      key: "rxcui",
+      displayTitle: "RXCUI",
+      isFilterable: true,
+      dataType: "string",
+      filters: textFilters,
+      hidden: false,
+      sortDirections: ["ascend", "descend"],
+    },
   ];
 };
 
