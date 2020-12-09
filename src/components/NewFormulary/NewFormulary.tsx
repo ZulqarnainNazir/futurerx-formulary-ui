@@ -12,6 +12,7 @@ import FormularyDashboardStats from "./../FormularyDashboardStats/FormularyDashb
 import { getFormularyDetails } from "../../mocks/formulary/formularyDetails";
 import { fetchFormularies } from "../.././redux/slices/formulary/dashboard/dashboardSlice";
 import { setFormulary } from "../.././redux/slices/formulary/application/applicationSlice";
+import { fetchFormularyHeader } from "../.././redux/slices/formulary/header/headerSlice";
 import { gridSettingsSlice } from "../.././redux/slices/formulary/gridHandler/gridSettingsSlice";
 import { addNewFormulary } from "../.././redux/slices/formulary/application/applicationSlice";
 import "./NewFormulary.scss";
@@ -45,6 +46,7 @@ function mapDispatchToProps(dispatch) {
   return {
     fetchFormularies:(a)=>dispatch(fetchFormularies(a)),
     setFormulary:(arg)=>dispatch(setFormulary(arg)),
+    fetchFormularyHeader: (arg)=>dispatch(fetchFormularyHeader(arg)),
     setHiddenColumn: (hiddenColumns) => dispatch(gridSettingsSlice.actions.setHiddenColum(hiddenColumns)),
     clearHiddenColumns: () => dispatch(gridSettingsSlice.actions.clearHiddenColumns(true)),
     addNewFormulary:(arg)=>dispatch(addNewFormulary(arg)),

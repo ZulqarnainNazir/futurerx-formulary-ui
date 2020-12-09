@@ -17,17 +17,20 @@ const tabs = [
   { id: 5, text: "Complete" },
   { id: 6, text: "Bazaar" },
 ];
+
 const mapStateToProps = (state) => {
   //console.log(state)
   return{
-    current_formulary: state.formularBase.current_formulary
+    current_formulary: state.application.formulary
   }
 }
+
 class FormularyDetails extends React.Component<any, any> {
   state = {
     tabs: tabs,
     activeTabIndex: 0,
   };
+
   onClickTab = (selectedTabIndex: number) => {
     let activeTabIndex = 0;
 
@@ -39,11 +42,13 @@ class FormularyDetails extends React.Component<any, any> {
     });
     this.setState({ tabs, activeTabIndex });
   };
+
   componentDidMount(){
     // console.log("====== Reeta's code ========")
     // console.log(this.props)
     // console.log("====== Reeta's code ========")
   }
+
   renderActiveTabContent = () => {
     const tabIndex = this.state.activeTabIndex;
     switch (tabIndex) {
@@ -69,12 +74,13 @@ class FormularyDetails extends React.Component<any, any> {
         return <div>Bazaar</div>;
     }
   };
+
   render() {
     // console.log("=============",this.props)
     const fData = this.props.data;
     return (
       <>
-        <FormularyDetailsTop formularyTopData={fData} />
+        <FormularyDetailsTop />
         <div className="drug-details-bottom">
           <FrxTabs
             tabList={this.state.tabs}
