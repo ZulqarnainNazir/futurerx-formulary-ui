@@ -1,13 +1,19 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { Formulary } from "./formulary";
-import { getformulary, getGeneralOptions, getMedicareOptions } from "./setupService";
+import {
+  getformulary,
+  getGeneralOptions,
+  getMedicareOptions,
+  getDesignOptions,
+} from "./setupService";
 
 interface SetupState {
   formulary: Formulary | any;
   mode: string;
   generalOptions: GeneralOptions | any;
   medicareOptions: MedicareOptions | any;
+  designOptions: DesignOptions | any;
   isLoading: boolean;
   error: string | null;
 }
@@ -17,6 +23,7 @@ const setupInitialState: SetupState = {
   mode: "",
   generalOptions: null,
   medicareOptions: null,
+  designOptions: null,
   isLoading: true,
   error: null,
 };
@@ -34,7 +41,9 @@ export interface GeneralOptions {
 export interface MedicareOptions {
   contract_types: any[];
 }
-
+export interface DesignOptions {
+  designs: any[];
+}
 
 function startLoading(state: SetupState) {
   state.isLoading = true;
@@ -81,6 +90,15 @@ const setup = createSlice({
       state.error = null;
     },
     getMedicareOptionsFailure: loadingFailed,
+    getDesignOptionsStart: startLoading,
+    getDesignOptionsSuccess(state, { payload }: PayloadAction<DesignOptions>) {
+      // console.log("***** getDesignOptionsSuccess ");
+      // console.log(payload);
+      state.designOptions = payload;
+      state.isLoading = false;
+      state.error = null;
+    },
+    getDesignOptionsFailure: loadingFailed,
   },
 });
 
@@ -115,7 +133,6 @@ export const fetchGeneralOptions = createAsyncThunk(
   }
 );
 
-
 export const fetchMedicareOptions = createAsyncThunk(
   "setup",
   async (arg: number, { dispatch }) => {
@@ -132,7 +149,21 @@ export const fetchMedicareOptions = createAsyncThunk(
   }
 );
 
-
+export const fetchDesignOptions = createAsyncThunk(
+  "setup",
+  async (arg: number, { dispatch }) => {
+    //console.log("***** fetchDesignOptions AC ");
+    try {
+      dispatch(getDesignOptionsStart());
+      const options: any = await getDesignOptions(1);
+      //console.log("*** options : ", options);
+      dispatch(getDesignOptionsSuccess(options));
+    } catch (err) {
+      //console.log("***** fetchGeneralOptions AC - ERROR ");
+      dispatch(getDesignOptionsFailure(err.toString()));
+    }
+  }
+);
 
 export const {
   getformularyStart,
@@ -143,7 +174,10 @@ export const {
   getGeneralOptionsFailure,
   getMedicareOptionsStart,
   getMedicareOptionsSuccess,
-  getMedicareOptionsFailure
+  getMedicareOptionsFailure,
+  getDesignOptionsStart,
+  getDesignOptionsSuccess,
+  getDesignOptionsFailure,
 } = setup.actions;
 
 export default setup.reducer;
