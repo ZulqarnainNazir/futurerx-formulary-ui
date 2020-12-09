@@ -4,10 +4,27 @@ import Box from '@material-ui/core/Box';
 import Button from '../../../../../shared/Frx-components/button/Button';
 import RadioButton from "../../../../../shared/Frx-components/radio-button/RadioButton";
 import PanelHeader from "../../FormularyConfigure/components/PanelHeader";
+import {connect} from "react-redux";
 
-
-export default class MedicareInformation extends React.Component<any, any> {
+class MedicareInformation extends React.Component<any, any> {
+getCheckboxData = () => {
+    let data = null;
+    if(this.props.medicare_contract_types && this.props.contarct_types){
+        const  medicare_contract_types = this.props.medicare_contract_types.map(e => e.id_medicare_contract_type);
+        data = this.props.contarct_types.map(e => {
+            const isChecked = medicare_contract_types.indexOf(e.id_medicare_contract_type) !== -1 ? true : false;
+            return (<li>
+                <div className="checkbox-wrapper">
+                    <input type="checkbox" className="checkbox-btn" name="N/A" value="N/A" checked={isChecked} />
+            <label htmlFor="N/A" className="checkbox-label">{e.medicare_contract_type}</label>
+                </div>
+            </li>)
+        })
+    }
+    return data
+}
 render() {
+    
     return (
     <div className="medicare-information-container">
         <h4>Medicare Information</h4>
@@ -17,33 +34,7 @@ render() {
                     <div className="group">
                         <label>MEDICARE CONTRACT TYPE <span className="astrict">*</span></label>
                         <ul className="checkbox-ul medicare-information-container__checkbox-ul">
-                            <li>
-                                <div className="checkbox-wrapper">
-                                    <input type="checkbox" className="checkbox-btn" name="N/A" value="N/A" />
-                                    <label htmlFor="N/A" className="checkbox-label">S - PDP</label>
-                                </div>
-                            </li>
-                            <li>
-                                <div className="checkbox-wrapper">
-                                    <input type="checkbox" className="checkbox-btn" name="N/A" value="N/A" />
-                                    <label htmlFor="N/A" className="checkbox-label">H - MAPD</label>
-                                </div>
-                            </li>
-                            <li>
-                            <div className="checkbox-wrapper">
-                                <input type="checkbox" className="checkbox-btn" name="N/A" value="N/A" />
-                                <label htmlFor="N/A" className="checkbox-label">E - Employer/Union</label>
-                                {/* <PanelHeader
-                                    tooltip="Pharmacy Network"
-                                /> */}
-                            </div>
-                            </li>
-                            <li>
-                            <div className="checkbox-wrapper">
-                                <input type="checkbox" className="checkbox-btn" name="N/A" value="N/A" />
-                                <label htmlFor="N/A" className="checkbox-label">R - Regional/CCP</label>
-                            </div>
-                            </li>
+                            {this.getCheckboxData()}
                             <li>
                                 <div className="checkbox-wrapper">
                                     <input type="checkbox" className="checkbox-btn" name="N/A" value="N/A" />
@@ -83,3 +74,10 @@ render() {
     );
 }
 }
+const mapStateToProps = (state) => {
+    return {
+      contarct_types: state?.setup?.medicareOptions,
+      medicare_contract_types: state?.setup?.formulary?.medicare_contract_types
+    };
+  };
+export default connect(mapStateToProps)(MedicareInformation)

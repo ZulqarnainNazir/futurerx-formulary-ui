@@ -96,7 +96,7 @@
     display: flex;
     align-items: center;
     padding-right: 0;
-    margin-right: 60px;
+    margin-right: 58px;
     span.label {
       top: -2px;
       color: #c4c4c4;
@@ -118,18 +118,22 @@
 
 .reporting-tag-icon {
   position: absolute;
-  right: 50px;
-  top: 35px;
+  right: 12px;
+  top: 10px;
 }
-
+.add-tag-input-wrapper{
+  position: relative;
+  display: inline-block;
+}
 .add-tag {
   position: absolute;
-  right: 330px;
-  top: 31px;
+  left: 10px;
+  top: 10px;
   text-decoration: underline dashed !important;
   color: #1d54b4;
   font-weight: 500;
   font-size: 12px;
+  pointer-events: none;
 }
 
 .add-tag:hover {
@@ -314,4 +318,13 @@
       color: #707683;
     }
   }
+}
+
+.input-link.clone-formulary-link{
+  margin-top: 15px !important;
+  pointer-events: none;
+}
+.input-link.select-formulary-link{
+  margin-top: 10px !important;
+  pointer-events: none;
 }

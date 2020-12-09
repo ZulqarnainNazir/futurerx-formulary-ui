@@ -11,8 +11,8 @@ import FrxLoader from '../.././shared/FrxLoader/FrxLoader';
 import MaintenanceMassUpdate from "../MassMaintenance/MaintenanceMassUpdate/MaintenanceMassUpdate";
 import PanelHeader from '../../shared/Frx-components/panel-header/PanelHeader';
 import SearchBox from '../../shared/Frx-components/search-box/SearchBox';
-
 import './Medicare.scss';
+import { Popover, Button } from 'antd';
 import DropDown from "../../shared/Frx-components/dropdown/DropDown";
 interface State {
   miniTabs: Array<TabInfo>;
@@ -115,7 +115,7 @@ class Medicare extends React.Component<any, any> {
         "step": steps.indexOf(e.step) + 1
       }
     });
-    console.log(gridData)
+    const addNewButtonDDContent = <div className="add-new-dd"><p>Buy from Bazaar</p><p onClick={this.props.addNewFormulary}>Add New Formulary</p></div>;
     return (
       <div className="formulary-grid">
         <div className="bordered">
@@ -141,7 +141,10 @@ class Medicare extends React.Component<any, any> {
               </div>
             </div>
             <div className="panel-divider"></div>
-            <div className="add-new-formulary-button">+ Add New Formulary</div>
+            
+            <Popover content={addNewButtonDDContent} trigger="click" placement="bottom">
+              <div className="add-new-formulary-button">+ Add New Formulary</div>
+            </Popover>
           </div>
           <div className="inner-container">
             
@@ -217,6 +220,7 @@ class Medicare extends React.Component<any, any> {
     console.log("****** Component Did Mount",this.props.dashboardGrid)
   }
   render() {
+    
     return (
       <>
         <FrxMiniTabs

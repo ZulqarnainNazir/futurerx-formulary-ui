@@ -5,14 +5,36 @@ import RadioButton from "../../../../../shared/Frx-components/radio-button/Radio
 import { DatePicker, Select } from "antd";
 import PanelHeader from "../../FormularyConfigure/components/PanelHeader";
 import Button from '../../../../../shared/Frx-components/button/Button';
+import {connect} from "react-redux";
+import Radio from '@material-ui/core/Radio';
+import RadioGroup from '@material-ui/core/RadioGroup';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import FormControl from '@material-ui/core/FormControl';
+import FormLabel from '@material-ui/core/FormLabel';
+const mapStateToProps = (state) => {
+  console.log(state);
+  return {
+    formulary: state?.setup?.formulary,
+    formulary_mode: state?.setup?.mode,
+    general_options: state?.setup?.generalOptions
+  };
+};
 
-const FormularyMethod = () => {
+
+const FormularyMethod = (props: any) => {
   const [selectedMethod, setSelectedMethod] = useState('');
-  
+  let method = props.method.toString()
+  console.log("*******")
+  console.log(typeof method)
+  console.log("*******")
+  const [value, setValue] = useState(method);
   const handleRadioOptionChange = (e) => {
     setSelectedMethod(e.target.value)
   }
-  
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    console.log((event.target as HTMLInputElement).value)
+    setValue((event.target as HTMLInputElement).value);
+  };
   return (
     <>
       <Grid item xs={selectedMethod === 'clone' ? 4 : 8}>
@@ -21,15 +43,20 @@ const FormularyMethod = () => {
             Method of Formulary Build <span className="astrict">*</span>
           </label>
           <div className="marketing-material radio-group">
-            <RadioButton label="Clone" checked={selectedMethod === 'clone'} value="clone" onChange={handleRadioOptionChange} name="marketing-material-radio" />
-            <RadioButton label="Upload" checked={selectedMethod === 'upload'} value="upload" onChange={handleRadioOptionChange} name="marketing-material-radio" />
+            <RadioButton label="Clone" checked={props.method === 'clone'} value="clone" onChange={handleRadioOptionChange} name="marketing-material-radio" />
+            <RadioButton label="Upload" checked={props.method === 'upload'} value="upload" onChange={handleRadioOptionChange} name="marketing-material-radio" />
             <RadioButton
               label="Create New"
               value="create-new"
               name="marketing-material-radio"
               onChange={handleRadioOptionChange}
-              checked={selectedMethod === 'create-new'}
+              checked={props.method === 'N'}
             />
+            {/* <RadioGroup aria-label="gender" name="gender1" value={value} onChange={handleChange}>
+              <FormControlLabel value="clone" control={<Radio />} label="clone" />
+              <FormControlLabel value="upload" control={<Radio />} label="upload" />
+              <FormControlLabel value="N" control={<Radio />} label="Create New" />
+            </RadioGroup> */}
           </div>
           
           {
@@ -46,7 +73,7 @@ const FormularyMethod = () => {
         <Grid item xs={4}>
           <div className="group">
             <label>CLONE FORMULARY <span className="astrict">*</span></label>
-            <a href="" className="input-link ">Clone Formulary</a>
+            <a href="#" className="input-link clone-formulary-link">Clone Formulary</a>
           </div>
         </Grid>
       }
@@ -54,8 +81,25 @@ const FormularyMethod = () => {
   )
 }
 
-export default class GeneralInformation extends React.Component<any, any> {  
+class GeneralInformation extends React.Component<any, any> {  
   render() {
+    const FORMULARY = this.props.formulary;
+    const disabled = this.props.formulary_mode === 'EXISTING' ? true : false;
+    let general_options:any;
+    if(this.props.general_options){
+      general_options = this.props.general_options.formularyType.map(e => e.formulary_type)
+    }
+    let FORMULARY_Values:any;
+    if(FORMULARY){
+      FORMULARY_Values = {
+        selected_formulary_type: this.props.formulary_mode === 'EXISTING' ? FORMULARY.formulary_type_info.formulary_type : '',
+        formulary_name: FORMULARY.formulary_info?.formulary_name,
+        effective_date: FORMULARY.formulary_info?.effective_date,
+        formulary_description: FORMULARY.formulary_info?.formulary_description,
+        formulary_build_method: FORMULARY.formulary_info?.formulary_build_method,
+        contract_year: this.props.formulary_mode === 'EXISTING' ? [FORMULARY.formulary_info?.contract_year] : ["2021","2022"]
+      }
+    }
     return (
       <div className="general-information-container">
         <h4>General information</h4>
@@ -68,8 +112,10 @@ export default class GeneralInformation extends React.Component<any, any> {
                 </label>
                 <DropDown
                   className="formulary-type-dropdown"
-                  placeholder="Commercial"
-                  options={["Commercial", "Medicare", 3]}
+                  placeholder="Select"
+                  options={this.props.general_options ? general_options : []}
+                  value={this.props.formulary ?  this.props.formulary.formulary_type_info.formulary_type : ''}
+                  disabled={disabled}
                 />
               </div>
             </Grid>
@@ -78,8 +124,7 @@ export default class GeneralInformation extends React.Component<any, any> {
                 <label>
                   FORMULARY NAME <span className="astrict">*</span>
                 </label>
-                <br />
-                <input type="text" className="setup-input-fields" />
+                <input type="text" className="setup-input-fields" disabled={disabled} value={FORMULARY ? FORMULARY_Values.formulary_name : ''}/>
               </div>
             </Grid>
             <Grid item xs={4}>
@@ -94,7 +139,8 @@ export default class GeneralInformation extends React.Component<any, any> {
               </label>
               <DatePicker
                 className="effective-date"
-                placeholder=""
+                placeholder={FORMULARY ? FORMULARY_Values.effective_date : ''}
+                disabled={disabled}
                 suffixIcon={
                   <svg
                     width="18"
@@ -114,7 +160,7 @@ export default class GeneralInformation extends React.Component<any, any> {
                 }
               />
             </Grid>
-            <FormularyMethod/>
+            <FormularyMethod method={FORMULARY ? FORMULARY_Values.formulary_build_method : ''}/>
             <Grid item xs={4}>
               <div className="group">
                 <label>
@@ -122,20 +168,22 @@ export default class GeneralInformation extends React.Component<any, any> {
                 </label>
                 <DropDown
                   className="formulary-type-dropdown"
-                  options={[2018, 2019, 2020]}
+                  options={FORMULARY ? FORMULARY_Values.contract_year : []}
+                  value={FORMULARY ? FORMULARY_Values.contract_year : ''}
+                  disabled={disabled}
                 />
               </div>
             </Grid>
             <Grid item xs={4}>
               <div className="group">
                 <label>FORMULARY DESCRIPTION</label>
-                <input type="text" className="setup-input-fields" />
+                <input type="text" className="setup-input-fields" value={FORMULARY ? FORMULARY_Values.formulary_description : ''}/>
               </div>
             </Grid>
             <Grid item xs={4}>
               <div className="group">
                 <label>Which prior year's formulary does this most closely resemble?</label>
-                <a href="" className="input-link ">Select Formulary</a>
+                <a href="#" className="input-link select-formulary-link">Select Formulary</a>
               </div>
             </Grid>
             <Grid item xs={4}>
@@ -158,26 +206,28 @@ export default class GeneralInformation extends React.Component<any, any> {
             <Grid item xs={4}>
               <div className="group reporting-tag-group">
                 <label>reporting tags</label>
-                <input
-                  type="text"
-                  className="reporting-tags setup-input-fields"
-                />
-                <svg
-                  className="reporting-tag-icon"
-                  width="14"
-                  height="12"
-                  viewBox="0 0 14 12"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    d="M9.31944 1.95083L11.4074 4.06489C11.4954 4.15395 11.4954 4.29926 11.4074 4.38833L6.35185 9.50707L4.2037 9.74848C3.91667 9.78129 3.67361 9.5352 3.70602 9.24457L3.94444 7.06957L9 1.95083C9.08796 1.86177 9.23148 1.86177 9.31944 1.95083ZM13.0694 1.41411L11.9398 0.270361C11.588 -0.0858886 11.0162 -0.0858886 10.662 0.270361L9.84259 1.10005C9.75463 1.18911 9.75463 1.33442 9.84259 1.42349L11.9306 3.53755C12.0185 3.62661 12.162 3.62661 12.25 3.53755L13.0694 2.70786C13.4213 2.34927 13.4213 1.77036 13.0694 1.41411ZM8.88889 8.11489V10.5008H1.48148V3.00083H6.80093C6.875 3.00083 6.94444 2.97036 6.99769 2.9188L7.92361 1.9813C8.09954 1.80317 7.97454 1.50083 7.72685 1.50083H1.11111C0.497685 1.50083 0 2.00473 0 2.62583V10.8758C0 11.4969 0.497685 12.0008 1.11111 12.0008H9.25926C9.87269 12.0008 10.3704 11.4969 10.3704 10.8758V7.17739C10.3704 6.92661 10.0718 6.80239 9.89583 6.97817L8.96991 7.91567C8.91898 7.96957 8.88889 8.03989 8.88889 8.11489Z"
-                    fill="#1D54B4"
+                <div className="add-tag-input-wrapper">
+                  <input
+                    type="text"
+                    className="reporting-tags setup-input-fields"
                   />
-                </svg>
-                <a href="" className="add-tag">
-                  Add a tag
-                </a>
+                  <svg
+                    className="reporting-tag-icon"
+                    width="14"
+                    height="12"
+                    viewBox="0 0 14 12"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M9.31944 1.95083L11.4074 4.06489C11.4954 4.15395 11.4954 4.29926 11.4074 4.38833L6.35185 9.50707L4.2037 9.74848C3.91667 9.78129 3.67361 9.5352 3.70602 9.24457L3.94444 7.06957L9 1.95083C9.08796 1.86177 9.23148 1.86177 9.31944 1.95083ZM13.0694 1.41411L11.9398 0.270361C11.588 -0.0858886 11.0162 -0.0858886 10.662 0.270361L9.84259 1.10005C9.75463 1.18911 9.75463 1.33442 9.84259 1.42349L11.9306 3.53755C12.0185 3.62661 12.162 3.62661 12.25 3.53755L13.0694 2.70786C13.4213 2.34927 13.4213 1.77036 13.0694 1.41411ZM8.88889 8.11489V10.5008H1.48148V3.00083H6.80093C6.875 3.00083 6.94444 2.97036 6.99769 2.9188L7.92361 1.9813C8.09954 1.80317 7.97454 1.50083 7.72685 1.50083H1.11111C0.497685 1.50083 0 2.00473 0 2.62583V10.8758C0 11.4969 0.497685 12.0008 1.11111 12.0008H9.25926C9.87269 12.0008 10.3704 11.4969 10.3704 10.8758V7.17739C10.3704 6.92661 10.0718 6.80239 9.89583 6.97817L8.96991 7.91567C8.91898 7.96957 8.88889 8.03989 8.88889 8.11489Z"
+                      fill="#1D54B4"
+                    />
+                  </svg>
+                  <a href="" className="add-tag">
+                    Add a tag
+                  </a>
+                </div>
               </div>
             </Grid>
           </Grid>
@@ -186,3 +236,4 @@ export default class GeneralInformation extends React.Component<any, any> {
     );
   }
 }
+export default connect(mapStateToProps)(GeneralInformation);
