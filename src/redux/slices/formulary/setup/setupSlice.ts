@@ -1,12 +1,13 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { Formulary } from "./formulary";
-import { getformulary, getGeneralOptions } from "./setupService";
+import { getformulary, getGeneralOptions, getMedicareOptions } from "./setupService";
 
 interface SetupState {
   formulary: Formulary | any;
   mode: string;
   generalOptions: GeneralOptions | any;
+  medicareOptions: MedicareOptions | any;
   isLoading: boolean;
   error: string | null;
 }
@@ -15,6 +16,7 @@ const setupInitialState: SetupState = {
   formulary: null,
   mode: "",
   generalOptions: null,
+  medicareOptions: null,
   isLoading: true,
   error: null,
 };
@@ -28,6 +30,11 @@ export interface GeneralOptions {
   contractYear: any[];
   monthList: any[];
 }
+
+export interface MedicareOptions {
+  contract_types: any[];
+}
+
 
 function startLoading(state: SetupState) {
   state.isLoading = true;
@@ -62,6 +69,18 @@ const setup = createSlice({
       state.error = null;
     },
     getGeneralOptionsFailure: loadingFailed,
+    getMedicareOptionsStart: startLoading,
+    getMedicareOptionsSuccess(
+      state,
+      { payload }: PayloadAction<MedicareOptions>
+    ) {
+      //console.log("***** getMedicareOptionsSuccess ");
+      //console.log(payload);
+      state.medicareOptions = payload;
+      state.isLoading = false;
+      state.error = null;
+    },
+    getMedicareOptionsFailure: loadingFailed,
   },
 });
 
@@ -96,6 +115,25 @@ export const fetchGeneralOptions = createAsyncThunk(
   }
 );
 
+
+export const fetchMedicareOptions = createAsyncThunk(
+  "setup",
+  async (arg: number, { dispatch }) => {
+    //console.log("***** fetchMedicareOptions AC ");
+    try {
+      dispatch(getMedicareOptionsStart());
+      const options: any = await getMedicareOptions(1);
+      //console.log("*** options : ", options);
+      dispatch(getMedicareOptionsSuccess(options));
+    } catch (err) {
+      //console.log("***** fetchGeneralOptions AC - ERROR ");
+      dispatch(getMedicareOptionsFailure(err.toString()));
+    }
+  }
+);
+
+
+
 export const {
   getformularyStart,
   getFormularySuccess,
@@ -103,6 +141,9 @@ export const {
   getGeneralOptionsStart,
   getGeneralOptionsSuccess,
   getGeneralOptionsFailure,
+  getMedicareOptionsStart,
+  getMedicareOptionsSuccess,
+  getMedicareOptionsFailure
 } = setup.actions;
 
 export default setup.reducer;
