@@ -12,7 +12,8 @@ import {
         fetchSelectedFormulary,
         fetchGeneralOptions,
         fetchMedicareOptions,
-        fetchDesignOptions } from "../../../../.././redux/slices/formulary/setup/setupSlice";
+        fetchDesignOptions,
+      fetchSupplementalOptions } from "../../../../.././redux/slices/formulary/setup/setupSlice";
 import { Formulary } from "../../../../../redux/slices/formulary/setup/formulary";
 
 
@@ -26,6 +27,7 @@ class FormularySetUp extends React.Component<any, any> {
     this.props.fetchDesignOptions();
     // fetchMedicareOptions need to call conditionally... 
     this.props.fetchMedicareOptions();
+    this.props.fetchSupplementalOptions();
     if(this.props.mode === "EXISTING") {
       this.props.fetchSelectedFormulary(this.props.formulary_id);
     } else {
@@ -69,6 +71,7 @@ function mapDispatchToProps(dispatch) {
     fetchGeneralOptions:(a)=>dispatch(fetchGeneralOptions(a)),
     fetchMedicareOptions:(a)=>dispatch(fetchMedicareOptions(a)),
     fetchDesignOptions:(a)=>dispatch(fetchDesignOptions(a)),
+    fetchSupplementalOptions:(a)=>dispatch(fetchSupplementalOptions(a)),
   };
 }
 

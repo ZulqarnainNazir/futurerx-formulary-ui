@@ -6,6 +6,7 @@ import {
   getGeneralOptions,
   getMedicareOptions,
   getDesignOptions,
+  getSupplementalOptions
 } from "./setupService";
 
 interface SetupState {
@@ -14,6 +15,7 @@ interface SetupState {
   generalOptions: GeneralOptions | any;
   medicareOptions: MedicareOptions | any;
   designOptions: DesignOptions | any;
+  supplementalOptions: SupplementalOptions |any;
   isLoading: boolean;
   error: string | null;
 }
@@ -24,6 +26,7 @@ const setupInitialState: SetupState = {
   generalOptions: null,
   medicareOptions: null,
   designOptions: null,
+  supplementalOptions: null,
   isLoading: true,
   error: null,
 };
@@ -45,6 +48,10 @@ export interface DesignOptions {
   designs: any[];
 }
 
+
+export interface SupplementalOptions {
+  supplementals: any[];
+}
 function startLoading(state: SetupState) {
   state.isLoading = true;
 }
@@ -99,6 +106,17 @@ const setup = createSlice({
       state.error = null;
     },
     getDesignOptionsFailure: loadingFailed,
+
+    getSupplementalOptionsStart: startLoading,
+    getSupplementalOptionsSuccess(state, { payload }: PayloadAction<SupplementalOptions>) {
+      // console.log("***** getSupplementalOptionsSuccess ");
+      // console.log(payload);
+      state.supplementalOptions = payload;
+      state.isLoading = false;
+      state.error = null;
+    },
+    getSupplementalOptionsFailure: loadingFailed,
+
   },
 });
 
@@ -165,6 +183,24 @@ export const fetchDesignOptions = createAsyncThunk(
   }
 );
 
+export const fetchSupplementalOptions = createAsyncThunk(
+  "setup",
+  async (arg: number, { dispatch }) => {
+    //console.log("***** fetchSupplementalOptions AC ");
+    try {
+      dispatch(getSupplementalOptionsStart());
+      const options: any = await getSupplementalOptions(1);
+      //console.log("*** options : ", options);
+      dispatch(getSupplementalOptionsSuccess(options));
+    } catch (err) {
+      //console.log("***** fetchGeneralOptions AC - ERROR ");
+      dispatch(getSupplementalOptionsFailure(err.toString()));
+    }
+  }
+);
+
+
+
 export const {
   getformularyStart,
   getFormularySuccess,
@@ -178,6 +214,9 @@ export const {
   getDesignOptionsStart,
   getDesignOptionsSuccess,
   getDesignOptionsFailure,
+  getSupplementalOptionsStart,
+  getSupplementalOptionsSuccess,
+  getSupplementalOptionsFailure
 } = setup.actions;
 
 export default setup.reducer;
