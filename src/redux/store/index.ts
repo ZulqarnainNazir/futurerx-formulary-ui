@@ -12,6 +12,7 @@ import { switchSlice } from '../slices/formulary/switch/switchSlice'
 import { validationList } from "../slices/formulary/validation/validationSlice";
 import  advancedSearchReducer from "../slices/formulary/advancedSearch/advancedSearchSlice";
 import setupReducer from "../slices/formulary/setup/setupSlice";
+import setupOptionsReducer from "../slices/formulary/setup/setupOptionsSlice";
 import headerReducer from "../slices/formulary/header/headerSlice";
 import { saveGDMSlice } from "../slices/formulary/gdm/gdmSlice";
 import { stepTherapySlice } from "../slices/formulary/stepTherapy/stepTherapySlice";
@@ -49,6 +50,7 @@ const store = configureStore({
     application: applicationReducer,
     gridSettings: gridSettingsReducer,
     setup: setupReducer,
+    setupOptions: setupOptionsReducer,
     header: headerReducer,
     savereducer:saveGdm,
     stepTherapyReducer: stepTherapy,

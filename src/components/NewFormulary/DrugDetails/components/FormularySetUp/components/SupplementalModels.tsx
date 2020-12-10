@@ -168,7 +168,7 @@ class SupplementalModels extends React.Component<any, any> {
 }
 const mapStateToProps = (state) => {
     return {
-        supplementalOptions: state?.setup?.supplementalOptions,
+        supplementalOptions: state?.setupOptions?.supplementalOptions,
         supplemental_benefits: state?.setup?.formulary?.supplemental_benefits
     };
   };

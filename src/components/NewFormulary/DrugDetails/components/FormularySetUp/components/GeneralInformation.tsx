@@ -16,7 +16,7 @@ const mapStateToProps = (state) => {
   return {
     formulary: state?.setup?.formulary,
     formulary_mode: state?.setup?.mode,
-    general_options: state?.setup?.generalOptions
+    general_options: state?.setupOptions?.generalOptions
   };
 };
 

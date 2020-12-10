@@ -76,7 +76,7 @@ render() {
 }
 const mapStateToProps = (state) => {
     return {
-      contarct_types: state?.setup?.medicareOptions,
+      contarct_types: state?.setupOptions?.medicareOptions,
       medicare_contract_types: state?.setup?.formulary?.medicare_contract_types
     };
   };
