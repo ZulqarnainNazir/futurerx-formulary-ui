@@ -21,7 +21,7 @@ function mapDispatchToProps(dispatch) {
 class FormularyDetailsTop extends React.Component<any, any> {
 
   componentDidMount(){
-    this.props.fetchFormularyVersions();
+    this.props.fetchFormularyVersions(this.props.currentFormulary.id_base_formulary);
   }
 
   render() {
@@ -48,7 +48,7 @@ class FormularyDetailsTop extends React.Component<any, any> {
                 <path d="M0.471003 0H6.529C6.94809 0 7.15763 0.509932 6.86097 0.808776L3.83315 3.86125C3.64951 4.04625 3.35049 4.04625 3.16685 3.86125L0.139026 0.808776C-0.157635 0.509932 0.051911 0 0.471003 0Z" fill="#F65A1C"/>
               </svg>
             </div> */}
-            <DropDown className="formulary-type-dropdown formulary-versions" placeholder="Formulary Versions" options={this.props.formularyVersionList.map(e => e.value)} />
+            <DropDown className="formulary-type-dropdown formulary-versions" placeholder="Formulary Version" options={this.props.formularyVersionList.map(e => e.value)} />
             <div className="item">
               <svg
                 width="11"

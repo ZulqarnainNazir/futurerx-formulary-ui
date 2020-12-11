@@ -97,6 +97,7 @@ class GeneralInformation extends React.Component<any, any> {
         effective_date: FORMULARY.formulary_info?.effective_date,
         formulary_description: FORMULARY.formulary_info?.formulary_description,
         formulary_build_method: FORMULARY.formulary_info?.formulary_build_method,
+        abbreviation: FORMULARY.formulary_info?.abbreviation,
         contract_year: this.props.formulary_mode === 'EXISTING' ? [FORMULARY.formulary_info?.contract_year] : ["2021","2022"]
       }
     }
@@ -130,7 +131,7 @@ class GeneralInformation extends React.Component<any, any> {
             <Grid item xs={4}>
               <div className="group">
                 <label>ABBREVIATION</label>
-                <input type="text" className="setup-input-fields" />
+                <input type="text" className="setup-input-fields" value={FORMULARY ? FORMULARY_Values.abbreviation : ''}/>
               </div>
             </Grid>
             <Grid item sm={4}>

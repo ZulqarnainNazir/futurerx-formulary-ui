@@ -3,8 +3,58 @@ import Grid from "@material-ui/core/Grid";
 import DropDown from "../../../../../shared/Frx-components/dropdown/DropDown";
 import Box from '@material-ui/core/Box';
 import Button from '../../../../../shared/Frx-components/button/Button';
+import {connect} from "react-redux";
 
-export default class FormularyTiers extends React.Component<any, any> {
+const tierCount = {
+  medicare: [1,2,3,4,5,6,7],
+  commercial: 20
+}
+class FormularyTiers extends React.Component<any, any> {
+  
+  getAllTierOptions = () => {
+    let options = [];
+    let htmlElement:any;
+    if(this.props.tierOptionsOptions && this.props.selectedTiersOptions){
+      const selectedTierOptions = this.props.selectedTiersOptions.map(e => e.id_tier_label)
+      const allOptions = this.props.tierOptionsOptions.map(e => e.tier_label);
+      options = selectedTierOptions.map(e => {
+        return this.props.tierOptionsOptions.find(el => el.id_tier_label === e).tier_label
+      })
+      htmlElement = options.map((e,index) => {
+        return (<div className="tier border-bottom">
+          <label>
+            Tier {index}
+            </label>
+            <DropDown
+              className="formulary-tier-dropdown"
+              placeholder={e}
+              value={e}
+              options={allOptions}
+              disabled={index === 0}
+            />
+        </div>)
+      })
+    }
+    return htmlElement;
+  }
+  numberOfTiers = () => {
+    let htmlElement:any;
+    let otcObject = this.props.designOptions ? this.props.designOptions.find(e => e.edit_name === 'OTC').id_edit : null;
+    let otcChecked = false;
+    if(otcObject){
+      otcChecked = this.props.editInfo ? this.props.editInfo.find(e => e.id_edit === otcObject).is_checked : false
+    }
+    console.log(otcChecked)
+    if(this.props.selectedTiersOptions){
+      htmlElement = <DropDown
+        className="formulary-type-dropdown number-of-tier-dropdown"
+        placeholder={this.props.selectedTiersOptions.length}
+        options={tierCount.medicare}
+        defaultValue={this.props.selectedTiersOptions.length - 1}
+      />
+    }
+    return htmlElement;
+  }
   render() {
     return (
       <Fragment>
@@ -17,41 +67,11 @@ export default class FormularyTiers extends React.Component<any, any> {
                 <label>
                   NUMBER OF TIERS <span className="astrict">*</span>
                 </label>
-                <DropDown
-                  className="formulary-type-dropdown number-of-tier-dropdown"
-                  placeholder="2"
-                  options={[1, 3, 5]}
-                />
+                {this.numberOfTiers()}
+                
               </div>
               <div className="tiers-dropdown-wrapper">
-                  <div className="tier border-bottom">
-                  <label>
-                    TIER 0
-                    </label>
-                    <DropDown
-                    className="formulary-tier-dropdown tier-zero"
-                    placeholder="2"
-                    options={[1, 3, 5]}
-                    />
-                  </div>
-                  <div className="tier border-bottom">
-                  <label>
-                    TIER 1
-                    </label>
-                    <DropDown
-                    className="formulary-tier-dropdown"
-                    options={[1, 3, 5]}
-                    />
-                  </div>
-                  <div className="tier">
-                  <label>
-                    TIER 2
-                    </label>
-                    <DropDown
-                    className="formulary-tier-dropdown"
-                    options={[1, 3, 5]}
-                    />
-                  </div>
+                {this.getAllTierOptions()}
               </div>
             </Grid>
           </Grid>
@@ -61,3 +81,12 @@ export default class FormularyTiers extends React.Component<any, any> {
     );
   }
 }
+const mapStateToProps = (state) => {
+  return {
+    tierOptionsOptions: state?.setupOptions?.tierOptions,
+    selectedTiersOptions: state?.setup?.formulary?.tiers,
+    designOptions: state?.setupOptions?.designOptions,
+    editInfo: state?.setup?.formulary?.edit_info
+  };
+};
+export default connect(mapStateToProps)(FormularyTiers)

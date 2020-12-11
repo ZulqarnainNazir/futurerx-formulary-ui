@@ -9,7 +9,7 @@ const headers = {
 };
 
 export async function getformularyVersions(formularyId: any): Promise<FormularyVersionsResult> {
-  let url = `${BASE_URL1}api/1/formulary-versions-list/2581`
+  let url = `${BASE_URL1}api/1/formulary-versions-list/${formularyId}`
   
   try {
     const response = await axios.get(url, {
