@@ -384,3 +384,26 @@
 .text-tran-none{
   text-transform: none !important;
 }
+.radio-group{
+  label{
+    span.label{
+      text-transform: none;
+      color: #707683;
+      font-size: 12px;
+    }
+    span.checkmark{
+      height: 16px;
+      width: 16px;
+      border: 2px solid #ddd;
+      background: none;
+    }
+  }
+}
+.no-transform{
+  label{
+    span.label{
+      text-transform: none;
+      color: #707683;
+    }
+  }
+}
