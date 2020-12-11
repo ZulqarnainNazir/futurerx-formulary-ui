@@ -14,7 +14,7 @@ import  advancedSearchReducer from "../slices/formulary/advancedSearch/advancedS
 import setupReducer from "../slices/formulary/setup/setupSlice";
 import headerReducer from "../slices/formulary/header/headerSlice";
 import { saveGDMSlice } from "../slices/formulary/gdm/gdmSlice";
-import { stepTherapySlice } from "../slices/formulary/stepTherapy/stepTherapySlice";
+import { stepTherapySlice,stVersionSlice } from "../slices/formulary/stepTherapy/stepTherapySlice";
 
 
 const reducer = combineReducers({
@@ -35,6 +35,7 @@ const switchReducer = switchSlice.reducer
 const validationReducer = validationList.reducer
 const saveGdm = saveGDMSlice.reducer
 const stepTherapy = stepTherapySlice.reducer
+const stVerion = stVersionSlice.reducer
 
 // The store is configured with the state and the corresponding reducers.
 const store = configureStore({
@@ -52,7 +53,8 @@ const store = configureStore({
     header: headerReducer,
     savereducer:saveGdm,
     stepTherapyReducer: stepTherapy,
-    advancedSearch: advancedSearchReducer
+    advancedSearch: advancedSearchReducer,
+    stVerion: stVerion
   },
   middleware,
 });
