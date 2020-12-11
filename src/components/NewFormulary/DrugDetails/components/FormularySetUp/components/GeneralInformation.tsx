@@ -42,7 +42,7 @@ const FormularyMethod = (props: any) => {
           <label>
             Method of Formulary Build <span className="astrict">*</span>
           </label>
-          <div className="marketing-material radio-group">
+          <div className="marketing-material radio-group no-transform">
             <RadioButton label="Clone" checked={props.method === 'clone'} value="clone" onChange={handleRadioOptionChange} name="marketing-material-radio" />
             <RadioButton label="Upload" checked={props.method === 'upload'} value="upload" onChange={handleRadioOptionChange} name="marketing-material-radio" />
             <RadioButton

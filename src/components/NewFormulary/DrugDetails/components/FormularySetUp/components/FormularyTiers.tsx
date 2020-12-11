@@ -18,7 +18,7 @@ class FormularyTiers extends React.Component<any, any> {
       const selectedTierOptions = this.props.selectedTiersOptions.map(e => e.id_tier_label)
       const allOptions = this.props.tierOptionsOptions.map(e => e.tier_label);
       options = selectedTierOptions.map(e => {
-        return this.props.tierOptionsOptions.find(el => el.id_tier_label === e).tier_label
+        return this.props.tierOptionsOptions.find(el => el.id_tier_label === e) ? this.props.tierOptionsOptions.find(el => el.id_tier_label === e).tier_label : '';
       })
       htmlElement = options.map((e,index) => {
         return (<div className="tier border-bottom">
@@ -39,12 +39,6 @@ class FormularyTiers extends React.Component<any, any> {
   }
   numberOfTiers = () => {
     let htmlElement:any;
-    let otcObject = this.props.designOptions ? this.props.designOptions.find(e => e.edit_name === 'OTC').id_edit : null;
-    let otcChecked = false;
-    if(otcObject){
-      otcChecked = this.props.editInfo ? this.props.editInfo.find(e => e.id_edit === otcObject).is_checked : false
-    }
-    console.log(otcChecked)
     if(this.props.selectedTiersOptions){
       htmlElement = <DropDown
         className="formulary-type-dropdown number-of-tier-dropdown"

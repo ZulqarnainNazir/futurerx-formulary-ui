@@ -28,8 +28,8 @@ class FormularyDetailsTop extends React.Component<any, any> {
 
   onVersionChangeHandler = (e: any) => {
     const formulary_id = this.props.formularyVersionList.find(el => el.value === e).id_formulary;
-    console.log(formulary_id)
-    this.props.fetchSelectedFormulary(this.props.formulary_id);
+    // console.log(formulary_id)
+    this.props.fetchSelectedFormulary(formulary_id);
   }
 
   render() {
@@ -50,7 +50,7 @@ class FormularyDetailsTop extends React.Component<any, any> {
             </span>
             <span>&gt;</span>
             <span className="active-state">
-              {this.props.currentFormulary.formulary_name}
+              {this.props.currentFormulary?.formulary_info?.formulary_name}
             </span>
           </div>
           <div className="version-wrapper">
@@ -142,7 +142,7 @@ class FormularyDetailsTop extends React.Component<any, any> {
         </div>
         <div className="durationInfo d-flex">
           <div className="item">
-            <span className="tag purple">{this.props.currentFormulary.formulary_type}</span>
+            <span className="tag purple">{this.props.currentFormulary?.formulary_type_info?.formulary_type}</span>
           </div>
           <div className="item">
             <span className="label">Formulary ID:</span>{" "}
@@ -150,7 +150,7 @@ class FormularyDetailsTop extends React.Component<any, any> {
           </div>
           <div className="item">
             <span className="label">Effective Date:</span>{" "}
-            {this.props.currentFormulary.effective_date}
+            {this.props.currentFormulary?.formulary_info?.effective_date}
           </div>
           <div className="item">
             <span className="label">Termination Date:</span>{" "}
