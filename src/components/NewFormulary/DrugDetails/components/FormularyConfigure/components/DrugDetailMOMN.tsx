@@ -80,8 +80,8 @@ class DrugDetailMOMN extends React.Component<any, any> {
       let tmpData =
         json.payload && json.payload.result ? json.payload.result : [];
 
-      var rows = tmpData.map((ele) => {
-        var curRow = [
+      let rows = tmpData.map((ele) => {
+        let curRow = [
           ele["attribute_name"],
           ele["total_drug_count"],
           ele["added_drug_count"],
