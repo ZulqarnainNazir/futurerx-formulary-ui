@@ -22,19 +22,19 @@ export default class FormularyDesign extends React.Component<any, any> {
                 />
                 
                 <div className="radio-group field-group__radio-group">
-                    <div className="checkbox-wrapper">
+                    <div className="label-wrapper checkbox-wrapper">
                         <input type="checkbox" className="checkbox-btn" name="N/A" value="N/A" />
                         <label htmlFor="N/A" className="checkbox-label">Type 1</label>
                     </div>
-                    <div className="checkbox-wrapper">
+                    <div className="label-wrapper checkbox-wrapper">
                         <input type="checkbox" className="checkbox-btn" name="N/A" value="N/A" />
                         <label htmlFor="N/A" className="checkbox-label">Type 2</label>
                     </div>
-                    <div className="checkbox-wrapper">
+                    <div className="label-wrapper checkbox-wrapper">
                         <input type="checkbox" className="checkbox-btn" name="N/A" value="N/A" />
                         <label htmlFor="N/A" className="checkbox-label">Type 3</label>
                     </div>
-                    <div className="checkbox-wrapper">
+                    <div className="label-wrapper checkbox-wrapper">
                         <input type="checkbox" className="checkbox-btn" name="N/A" value="N/A" />
                         <label htmlFor="N/A" className="checkbox-label">N/A</label>
                     </div>

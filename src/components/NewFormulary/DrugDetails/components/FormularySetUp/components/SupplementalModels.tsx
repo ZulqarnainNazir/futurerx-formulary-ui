@@ -33,19 +33,19 @@ class SupplementalModels extends React.Component<any, any> {
                             <li>
                             <div className="checkbox-wrapper">
                                 <input type="checkbox" className="checkbox-btn" name="N/A" value="N/A" checked={this.getChecked(1)}/>
-                                <label htmlFor="N/A" className="checkbox-label"> Free First Fill</label>
+                                <label htmlFor="N/A" className="checkbox-label text-tran-none"> Free First Fill</label>
                             </div>
                             </li>
                             <li>
                             <div className="checkbox-wrapper">
                                 <input type="checkbox" className="checkbox-btn" name="N/A" value="N/A" checked={this.getChecked(4)}/>
-                                <label htmlFor="N/A" className="checkbox-label"> Home Infusion</label>
+                                <label htmlFor="N/A" className="checkbox-label text-tran-none"> Home Infusion</label>
                             </div>
                             </li>
                             <li>
                             <div className="checkbox-wrapper">
                                 <input type="checkbox" className="checkbox-btn" name="N/A" value="N/A" checked={this.getChecked(7)}/>
-                                <label htmlFor="N/A" className="checkbox-label"> Additional Demonstration Drugs (MMP only)</label>
+                                <label htmlFor="N/A" className="checkbox-label text-tran-none"> Additional Demonstration Drugs (MMP only)</label>
                                 <PanelHeader
                                     tooltip="AGE LIMIT"
                                 />
@@ -54,7 +54,7 @@ class SupplementalModels extends React.Component<any, any> {
                             <li>
                             <div className="checkbox-wrapper">
                                 <input type="checkbox" className="checkbox-btn" name="N/A" value="N/A" checked={this.getChecked(10)}/>
-                                <label htmlFor="N/A" className="checkbox-label"> Value-Based Insurance Design</label>
+                                <label htmlFor="N/A" className="checkbox-label text-tran-none"> Value-Based Insurance Design</label>
                             </div>
                             </li>
                         </ul>
@@ -65,13 +65,13 @@ class SupplementalModels extends React.Component<any, any> {
                             <li>
                             <div className="checkbox-wrapper">
                                 <input type="checkbox" className="checkbox-btn" name="N/A" value="N/A" checked={this.getChecked(2)}/>
-                                <label htmlFor="N/A" className="checkbox-label"> Full Gap Coverage</label>
+                                <label htmlFor="N/A" className="checkbox-label text-tran-none"> Full Gap Coverage</label>
                             </div>
                             </li>
                             <li>
                             <div className="checkbox-wrapper">
                                 <input type="checkbox" className="checkbox-btn" name="N/A" value="N/A" checked={this.getChecked(5)}/>
-                                <label htmlFor="N/A" className="checkbox-label"> Over the Counter Coverage</label>
+                                <label htmlFor="N/A" className="checkbox-label text-tran-none"> Over the Counter Coverage</label>
                                 <PanelHeader
                                     tooltip="Over the Counter Coverage"
                                 />
@@ -80,14 +80,14 @@ class SupplementalModels extends React.Component<any, any> {
                             <li>
                             <div className="checkbox-wrapper">
                                 <input type="checkbox" className="checkbox-btn" name="N/A" value="N/A" checked={this.getChecked(8)}/>
-                                <label htmlFor="N/A" className="checkbox-label"> Indication-Based Coverage</label>
+                                <label htmlFor="N/A" className="checkbox-label text-tran-none"> Indication-Based Coverage</label>
                                 
                             </div>
                             </li>
                             <li>
                             <div className="checkbox-wrapper">
                                 <input type="checkbox" className="checkbox-btn" name="N/A" value="N/A" checked={this.getChecked(11)}/>
-                                <label htmlFor="N/A" className="checkbox-label"> Senior Savings Model</label>
+                                <label htmlFor="N/A" className="checkbox-label text-tran-none"> Senior Savings Model</label>
                             </div>
                             </li>
                         </ul>
@@ -98,25 +98,25 @@ class SupplementalModels extends React.Component<any, any> {
                             <li>
                             <div className="checkbox-wrapper">
                                 <input type="checkbox" className="checkbox-btn" name="N/A" value="N/A" checked={this.getChecked(3)}/>
-                                <label htmlFor="N/A" className="checkbox-label"> Partial Gap Coverage</label>
+                                <label htmlFor="N/A" className="checkbox-label text-tran-none"> Partial Gap Coverage</label>
                             </div>
                             </li>
                             <li>
                             <div className="checkbox-wrapper">
                                 <input type="checkbox" className="checkbox-btn" name="N/A" value="N/A" checked={this.getChecked(6)}/>
-                                <label htmlFor="N/A" className="checkbox-label"> Excluded Drugs</label>
+                                <label htmlFor="N/A" className="checkbox-label text-tran-none"> Excluded Drugs</label>
                             </div>
                             </li>
                             <li>
                             <div className="checkbox-wrapper">
                                 <input type="checkbox" className="checkbox-btn" name="N/A" value="N/A" checked={this.getChecked(9)}/>
-                                <label htmlFor="N/A" className="checkbox-label"> LIS Cost-Sharing Reduction</label>
+                                <label htmlFor="N/A" className="checkbox-label text-tran-none"> LIS Cost-Sharing Reduction</label>
                             </div>
                             </li>
                             <li>
                             <div className="checkbox-wrapper">
                                 <input type="checkbox" className="checkbox-btn" name="N/A" value="N/A"/>
-                                <label htmlFor="N/A" className="checkbox-label"> Other</label>
+                                <label htmlFor="N/A" className="checkbox-label text-tran-none"> Other</label>
                             </div>
                             </li>
                             <li>
@@ -168,8 +168,8 @@ class SupplementalModels extends React.Component<any, any> {
 }
 const mapStateToProps = (state) => {
     return {
-        supplementalOptions: state?.setup?.supplementalOptions,
+        supplementalOptions: state?.setupOptions?.supplementalOptions,
         supplemental_benefits: state?.setup?.formulary?.supplemental_benefits
     };
-  };
+};
 export default connect(mapStateToProps)(SupplementalModels)

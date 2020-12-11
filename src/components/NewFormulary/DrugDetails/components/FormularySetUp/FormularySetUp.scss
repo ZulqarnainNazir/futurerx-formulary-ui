@@ -66,6 +66,19 @@
 .tiers-information-fields-wrapper {
   padding: 15px;
 }
+.tiers-information-fields-wrapper{
+  .tiers-dropdown-wrapper{
+    label{
+      text-transform: none;
+      margin-bottom: 0;
+      line-height: 12px;
+    }
+    .tier{
+      display: flex;
+      align-items: center;
+    }
+  }
+}
 
 .upload-button {
   margin-bottom: 20px !important;
@@ -233,7 +246,7 @@
 }
 
 .number-of-tier-dropdown {
-  width: 393px !important;
+  width: 100% !important;
 }
 
 .tier-zero {
@@ -327,4 +340,7 @@
 .input-link.select-formulary-link{
   margin-top: 10px !important;
   pointer-events: none;
+}
+.text-tran-none{
+  text-transform: none !important;
 }

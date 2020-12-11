@@ -16,7 +16,7 @@ getCheckboxData = () => {
             return (<li>
                 <div className="checkbox-wrapper">
                     <input type="checkbox" className="checkbox-btn" name="N/A" value="N/A" checked={isChecked} />
-            <label htmlFor="N/A" className="checkbox-label">{e.medicare_contract_type}</label>
+                    <label htmlFor="N/A" className="checkbox-label text-tran-none">{e.medicare_contract_type}</label>
                 </div>
             </li>)
         })
@@ -38,7 +38,7 @@ render() {
                             <li>
                                 <div className="checkbox-wrapper">
                                     <input type="checkbox" className="checkbox-btn" name="N/A" value="N/A" />
-                                    <label htmlFor="N/A" className="checkbox-label">Other</label>
+                                    <label htmlFor="N/A" className="checkbox-label text-tran-none">Other</label>
                                 </div>
                             </li>
                         </ul>
@@ -53,7 +53,7 @@ render() {
                             <input type="text" className="setup-input-fields field-group__text-field" />
                         </div>
                         
-                        <div className="field-group__post-fix-text">NOTE: Formulary ID assigned by CMS fter initial submission in HPMS</div>
+                        <div className="field-group__post-fix-text text-tran-none">NOTE: Formulary ID assigned by CMS fter initial submission in HPMS</div>
                     </div>
                     
                     <div className="field-group group setup-panel">
@@ -76,7 +76,7 @@ render() {
 }
 const mapStateToProps = (state) => {
     return {
-      contarct_types: state?.setup?.medicareOptions,
+      contarct_types: state?.setupOptions?.medicareOptions,
       medicare_contract_types: state?.setup?.formulary?.medicare_contract_types
     };
   };
