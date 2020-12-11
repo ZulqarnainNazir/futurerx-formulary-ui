@@ -28,8 +28,8 @@ class FormularyDetailsTop extends React.Component<any, any> {
 
   onVersionChangeHandler = (e: any) => {
     const formulary_id = this.props.formularyVersionList.find(el => el.value === e).id_formulary;
-    console.log(formulary_id)
-    this.props.fetchSelectedFormulary(this.props.formulary_id);
+    // console.log(formulary_id)
+    this.props.fetchSelectedFormulary(formulary_id);
   }
 
   render() {
