@@ -4,6 +4,7 @@ import DropDown from "../../../../shared/Frx-components/dropdown/DropDown";
 import FormularyDetailsContext from "../../../FormularyDetailsContext";
 import "./FormularyDetailsTop.scss";
 import { fetchFormularyHeader } from "../../../../../redux/slices/formulary/header/headerSlice";
+import { fetchSelectedFormulary } from "../../../../.././redux/slices/formulary/setup/setupSlice";
 
 const mapStateToProps = (state) => {
   return{
@@ -14,7 +15,8 @@ const mapStateToProps = (state) => {
 
 function mapDispatchToProps(dispatch) {
   return {
-    fetchFormularyVersions:(a)=>dispatch(fetchFormularyHeader(a))
+    fetchFormularyVersions:(a)=>dispatch(fetchFormularyHeader(a)),
+    fetchSelectedFormulary:(a)=>dispatch(fetchSelectedFormulary(a))
   };
 }
 
@@ -24,7 +26,17 @@ class FormularyDetailsTop extends React.Component<any, any> {
     this.props.fetchFormularyVersions(this.props.currentFormulary.id_base_formulary);
   }
 
+  onVersionChangeHandler = (e: any) => {
+    const formulary_id = this.props.formularyVersionList.find(el => el.value === e).id_formulary;
+    console.log(formulary_id)
+    this.props.fetchSelectedFormulary(this.props.formulary_id);
+  }
+
   render() {
+    let dropDown: any;
+    if(this.props.formularyVersionList){
+      dropDown = <DropDown className="formulary-type-dropdown formulary-versions" placeholder="Formulary Version" options={this.props.formularyVersionList.map(e => e.value)} onChange={this.onVersionChangeHandler}/>
+    }
     return (
       <div className="drug-detail-top">
         <div className="breadcrum-sec">
@@ -48,7 +60,7 @@ class FormularyDetailsTop extends React.Component<any, any> {
                 <path d="M0.471003 0H6.529C6.94809 0 7.15763 0.509932 6.86097 0.808776L3.83315 3.86125C3.64951 4.04625 3.35049 4.04625 3.16685 3.86125L0.139026 0.808776C-0.157635 0.509932 0.051911 0 0.471003 0Z" fill="#F65A1C"/>
               </svg>
             </div> */}
-            <DropDown className="formulary-type-dropdown formulary-versions" placeholder="Formulary Version" options={this.props.formularyVersionList.map(e => e.value)} />
+            {dropDown}
             <div className="item">
               <svg
                 width="11"

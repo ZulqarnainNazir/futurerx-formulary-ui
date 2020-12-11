@@ -8,8 +8,8 @@ const headers = {
   "Content-Type": "application/json;charset=UTF-8",
 };
 
-export async function getformularyVersions(formularyId: any): Promise<FormularyVersionsResult> {
-  let url = `${BASE_URL1}api/1/formulary-versions-list/${formularyId}`
+export async function getformularyVersions(formularyBaseId: any): Promise<FormularyVersionsResult> {
+  let url = `${BASE_URL1}api/1/formulary-versions-list/${formularyBaseId}`
   
   try {
     const response = await axios.get(url, {
