@@ -4,9 +4,60 @@ import Box from '@material-ui/core/Box';
 import Button from '../../../../../shared/Frx-components/button/Button';
 import RadioButton from "../../../../../shared/Frx-components/radio-button/RadioButton";
 import PanelHeader from "../../FormularyConfigure/components/PanelHeader";
+import Radio from '@material-ui/core/Radio';
+import RadioGroup from '@material-ui/core/RadioGroup';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import FormControl from '@material-ui/core/FormControl';
+import FormLabel from '@material-ui/core/FormLabel';
+import {connect} from "react-redux";
 
-
-export default class FormularyDesign extends React.Component<any, any> {
+class FormularyDesign extends React.Component<any, any> {
+    state = {
+        ql: true,
+        egs: false,
+        dr: false,
+        st: false,
+        stp: false
+    }
+    qlChangeHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
+        this.setState({
+            ql: event.target.value
+        })
+    }
+    designCheckbox = (type) => {
+        let paCheckbox: any;
+        if(this.props.designOptions){
+            const index = type === 'pa' ? 5 : 6;
+            paCheckbox = this.props.designOptions[index][type].map(e => {
+                const id = e.id_edit;
+                let checked = false;
+                if(this.props.editInto){
+                    checked =  this.props.editInto.find(el=>el.id_edit === id) !== undefined &&  this.props.editInto.find(el=>el.id_edit === id).id_checked ? this.props.editInto.find(el=>el.id_edit === id).id_checked  : false;
+                }
+                return (
+                    <div className="label-wrapper checkbox-wrapper">
+                        <input type="checkbox" className="checkbox-btn" name="N/A" value="N/A" checked={checked}/>
+                        <label htmlFor="N/A" className="checkbox-label text-tran-none">{e.edit_name}</label>
+                    </div>
+                )
+            })
+        }
+        return paCheckbox;
+    }
+    designRadioButton = (type) => {
+        let radioBox: any;
+        if(this.props.designOptions){
+            const id = this.props.designOptions.find(el => el.edit_name === type).id_edit;
+            const value = this.props.editInto ? this.props.editInto.find(el => el.id_edit === id).id_checked : 'false';
+            return (
+                <RadioGroup className="radio-group-custom mr-80" aria-label={type} name={type} value={value.toString()}>
+                    <FormControlLabel value="true" control={<Radio />} label="Yes" />
+                    <FormControlLabel value="false" control={<Radio />} label="No" />
+                </RadioGroup>
+            )
+        }
+        return radioBox;
+    }
   render() {
     return (
       <div className="formulary-design-container">
@@ -16,28 +67,13 @@ export default class FormularyDesign extends React.Component<any, any> {
         <Grid item xs={6}>
             <div className="field-group group setup-panel">
                 <PanelHeader
-                    title="WHAT PRIOR AUTHORIZATION TYPES(S) ARE INCLUDED IN THIS FORMULARY? *"
-                    tooltip="WHAT PRIOR AUTHORIZATION TYPES(S) ARE INCLUDED IN THIS FORMULARY? *"
+                    title="WHAT PRIOR AUTHORIZATION TYPES(S) ARE INCLUDED IN THIS FORMULARY?"
+                    tooltip="WHAT PRIOR AUTHORIZATION TYPES(S) ARE INCLUDED IN THIS FORMULARY?"
                     required={true}
                 />
                 
                 <div className="radio-group field-group__radio-group">
-                    <div className="label-wrapper checkbox-wrapper">
-                        <input type="checkbox" className="checkbox-btn" name="N/A" value="N/A" />
-                        <label htmlFor="N/A" className="checkbox-label">Type 1</label>
-                    </div>
-                    <div className="label-wrapper checkbox-wrapper">
-                        <input type="checkbox" className="checkbox-btn" name="N/A" value="N/A" />
-                        <label htmlFor="N/A" className="checkbox-label">Type 2</label>
-                    </div>
-                    <div className="label-wrapper checkbox-wrapper">
-                        <input type="checkbox" className="checkbox-btn" name="N/A" value="N/A" />
-                        <label htmlFor="N/A" className="checkbox-label">Type 3</label>
-                    </div>
-                    <div className="label-wrapper checkbox-wrapper">
-                        <input type="checkbox" className="checkbox-btn" name="N/A" value="N/A" />
-                        <label htmlFor="N/A" className="checkbox-label">N/A</label>
-                    </div>
+                    {this.designCheckbox('pa')}
                 </div>
             </div>
             <div className="field-group group setup-panel">
@@ -47,8 +83,7 @@ export default class FormularyDesign extends React.Component<any, any> {
                     required={true}
                 />
                 <div className="radio-group field-group__radio-group">
-                    <RadioButton label="Yes" />
-                    <RadioButton label="No" />
+                    {this.designRadioButton('QL')}
                 </div>
             </div>
             <div className="field-group group setup-panel">
@@ -58,8 +93,7 @@ export default class FormularyDesign extends React.Component<any, any> {
                     required={true}
                 />
                 <div className="radio-group field-group__radio-group">
-                    <RadioButton label="Yes" />
-                    <RadioButton label="No" />
+                    {this.designRadioButton('LA')}
                 </div>
             </div>
             <div className="field-group group setup-panel">
@@ -69,21 +103,19 @@ export default class FormularyDesign extends React.Component<any, any> {
                     required={true}
                 />
                 <div className="radio-group field-group__radio-group">
-                    <RadioButton label="Yes" />
-                    <RadioButton label="No" />
+                    {this.designRadioButton('EGS')}
                 </div>
             </div>
         </Grid>
         <Grid item xs={6}>
             <div className="field-group group setup-panel">
                 <PanelHeader
-                    title="ARE PART D DRUGS REQUIRED IN PART B STEP THERAPY PROTOCOLS? *"
+                    title="ARE PART D DRUGS REQUIRED IN PART B STEP THERAPY PROTOCOLS?"
                     tooltip="SUBJECT TO EXPEDITED GENERIC SUBSTITUTION?"
                     required={true}
                 />
                 <div className="radio-group field-group__radio-group">
-                    <RadioButton label="Yes" />
-                    <RadioButton label="No" />
+                    {this.designRadioButton('PartB-ST')}
                 </div>
             </div>
             <div className="field-group group setup-panel">
@@ -92,19 +124,8 @@ export default class FormularyDesign extends React.Component<any, any> {
                     tooltip="WHAT STEP THERAPY TYPE(S) ARE INCLUDED IN THIS FORMULARY?"
                     required={true}
                 />
-                            <div className="radio-group field-group__radio-group">
-                    <div className="checkbox-wrapper">
-                        <input type="checkbox" className="checkbox-btn" name="N/A" value="N/A" />
-                        <label htmlFor="N/A" className="checkbox-label">Type 1</label>
-                    </div>
-                    <div className="checkbox-wrapper">
-                        <input type="checkbox" className="checkbox-btn" name="N/A" value="N/A" />
-                        <label htmlFor="N/A" className="checkbox-label">Type 2</label>
-                    </div>
-                    <div className="checkbox-wrapper">
-                        <input type="checkbox" className="checkbox-btn" name="N/A" value="N/A" />
-                        <label htmlFor="N/A" className="checkbox-label">N/A</label>
-                    </div>
+                <div className="radio-group field-group__radio-group">
+                    {this.designCheckbox('st')}    
                 </div>
             </div>
             <div className="field-group group setup-panel">
@@ -114,8 +135,7 @@ export default class FormularyDesign extends React.Component<any, any> {
                     required={true}
                 />
                 <div className="radio-group field-group__radio-group">
-                    <RadioButton label="Yes" />
-                    <RadioButton label="No" />
+                    {this.designRadioButton('OTC')}
                 </div>
             </div>
         </Grid>
@@ -125,3 +145,10 @@ export default class FormularyDesign extends React.Component<any, any> {
     );
   }
 }
+const mapStateToProps = (state) => {
+    return {
+        designOptions: state?.setupOptions?.designOptions,
+        editInto: state?.setup?.formulary?.edit_info
+    };
+};
+export default connect(mapStateToProps)(FormularyDesign)
