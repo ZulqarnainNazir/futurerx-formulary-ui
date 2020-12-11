@@ -94,7 +94,7 @@ class GPM extends React.Component<any, any>{
                 element["value"] = el.value;
                 return element;
             })
-            let latestVerion = tmpData[dataLength-1].id_st_group_description
+            let latestVerion = tmpData.length>0?tmpData[dataLength-1].id_st_group_description:0
             this.setState({
                 versionList:result,
                 versionTitle:`Group Description ${tmpData[dataLength-1].value}`,

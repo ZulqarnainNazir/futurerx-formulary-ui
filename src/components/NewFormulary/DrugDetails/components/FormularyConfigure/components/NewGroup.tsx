@@ -31,7 +31,7 @@ const initialFormData = {
   st_group_description_name:'',
   mmp_st_criteria:'',
   st_criteria_change_indicator:'',
-  is_additional_criteria_defined:'',
+  is_additional_criteria_defined:false,
   is_suppress_criteria_dispaly_cms_approval:false,
   is_display_criteria_drugs_not_frf:false
 }
@@ -56,6 +56,7 @@ function NewGroup(props: any) {
   const [formData, updateFormData] = React.useState(initialFormData);
   const [placeHolder, setPlaceHolder] = React.useState(props.versionTitle);
   const [latestId, setLatestId] = React.useState(props.latestVerion);
+  const [panelColor, setPanelColor] = React.useState('');
   const handleChange = (e) => {
     updateFormData({
       ...formData,
@@ -76,6 +77,7 @@ function NewGroup(props: any) {
   }
 
   useEffect(() => {
+    setPanelColor(props.editable?'-green':'')
     setLatestId(props.latestVerion)
     updateFormData(initialFormData)
     setPlaceHolder(props.versionTitle)
@@ -92,13 +94,12 @@ function NewGroup(props: any) {
     console.log(formData)
     props.saveGDM({formularyId:props.formulary_id,latestId:latestId,body:formData})
   };
-
     return (
         <div className="new-group-des">
             <div className="panel header">
                 <span>{props.title?props.title:formData.st_group_description_name}</span>
             </div>
-            <div className="version-wrapper">
+            <div className={`version-wrapper${panelColor}`}>
               <DropDown className="formulary-type-dropdown formulary-versions" placeholder={placeHolder} options={props.versionList.map(e => e.value)} onChange={onChange}/>
               <div className="item">
                 <svg
@@ -213,7 +214,7 @@ function NewGroup(props: any) {
                 {props.formType===0 && (<div className="setting-1 mb-20">
                     <span>What type of drugs will this group contain? Select all that apply.</span>
                     <div className="marketing-material-chk radio-group">
-                        <FormControlLabel control={<Checkbox name="is_rx_drug_type" checked={formData.is_rx_drug_type} value='RX'/>} label='RX' disabled={props.editable}/>
+                        <FormControlLabel control={<Checkbox name="is_rx_drug_type" color="primary" checked={formData.is_rx_drug_type} value='RX'/>} label='RX' disabled={props.editable}/>
                         <FormControlLabel control={<Checkbox name="is_otc_drug_type" checked={formData.is_otc_drug_type} value='OTC'/>} label='OTC' disabled={props.editable}/>
                     </div>
                     <Grid container>
@@ -261,8 +262,8 @@ function NewGroup(props: any) {
                     </div> */}
                     <div className="marketing-material radio-group">
                         <RadioGroup aria-label="marketing-material-radio1" name="is_additional_criteria_defined" onChange={handleChange} className="gdp-radio" >
-                          <FormControlLabel value="yes" control={<Radio checked={formData.is_additional_criteria_defined==='yes'}/>} label='Yes' disabled={props.editable}/>
-                          <FormControlLabel value="no" control={<Radio checked={formData.is_additional_criteria_defined==='no'}/>} label='No' disabled={props.editable}/>
+                          <FormControlLabel value="yes" control={<Radio checked={formData.is_additional_criteria_defined}/>} label='Yes' disabled={props.editable}/>
+                          <FormControlLabel value="no" control={<Radio checked={!formData.is_additional_criteria_defined}/>} label='No' disabled={props.editable}/>
                         </RadioGroup>
                     </div>
                 </div>

@@ -51,6 +51,71 @@
             margin-right: 0;
         }
     }
+    .formulary-type-dropdown{
+        width: 205px !important;
+    }
+}
+
+.version-wrapper-green {
+    border: 1px solid #80C483;
+    height: 37px;
+    max-width: 890px;
+    width: 100%;
+    background: #D5FFD7;
+    border-radius: 3px;
+    display: flex;
+    justify-content: space-around;
+    
+    .version-dd {
+        width: 295px;
+        border-right: 1px solid #80C483;
+        height: 35px;
+        margin-right: 10px;
+        padding-left: 20px;
+        display: flex;
+        justify-content: space-between;
+        padding-right: 6px;
+    }
+    
+    .item-text {
+        font-family: Roboto;
+        font-style: normal;
+        font-weight: 500;
+        font-size: 13px;
+        line-height: 20px;
+        display: flex;
+        align-items: center;
+        text-decoration-line: underline;
+        color: #219653;
+    }
+    
+    .item {
+        display: flex;
+        line-height: 35px;
+        font-size: 12px;
+        color: #219653;
+        text-decoration-line: underline;
+        font-weight: $font-weight-500;
+        align-items: center;
+        svg {
+            margin-right: 5px;
+        }
+        &:last-child {
+            margin-right: 0;
+        }
+    }
+    .ant-select-selector{
+        background: #D5FFD7 !important;
+        .ant-select-selection-placeholder{
+            color: #219653 !important;
+        }
+    }
+    .formulary-versions .ant-select-selector{
+        border-right:1px solid #80C483 !important
+    }
+    .formulary-type-dropdown{
+        width: 205px !important;
+    }
 }
 
 .drug-detail-top{
