@@ -11,7 +11,7 @@ const laState: any = {
   isLoading: false,
 };
 
-export const paSlice = createSlice({
+export const laSlice = createSlice({
   name: "laSummary",
   initialState: laState,
   reducers: {},
