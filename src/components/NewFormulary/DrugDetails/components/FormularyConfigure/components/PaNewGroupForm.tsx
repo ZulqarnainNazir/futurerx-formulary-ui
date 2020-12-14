@@ -269,9 +269,8 @@ function NewGroup(props: any){
   // }
 
   const onChange = (e) =>{
-    debugger;
     console.log(props.version);
-    const latestVerion = Object.keys(props.version).length>0?props.version[Number(e)-1].id_pa_group_description:0;
+    const latestVerion = Object.keys(props.version).length>0?props.version[Number(e)]?.id_pa_group_description:0;
     setLatestId(latestVerion)
     props.getPaGrouptDescription(latestVerion)
     if(Object.keys(props.PaGDData).length>0){ 
