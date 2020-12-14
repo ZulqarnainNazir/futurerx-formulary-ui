@@ -3,11 +3,11 @@ import { BASE_URL1 } from "../../../../api/http-helper";
 import FormularyServices from "../../../../services/formulary.services";
 
 const GET_PA_SUMMARY_URL = BASE_URL1 + "/api/1/pa-summary/";
-const GET_PA_GROUP_DESCRIPTIONS_URL = BASE_URL1 + "/api/1/pa-group-descriptions/";
+const GET_PA_GROUP_DESCRIPTIONS_URL = BASE_URL1 + "/api/1/mcr-pa-group-descriptions/";
 const GET_PA_TYPES_URL = BASE_URL1 + "/api/1/pa-types/4";
 const GET_DRUG_LIST_URL = BASE_URL1 + "/api/1/drug-lists/";
-const GET_PA_GROUP_DESCRIPTION_URL = BASE_URL1 + "/api/1/pa-group-description/";
-const GET_PA_GROUP_DESCRIPTION_VERSTIONS_URL = BASE_URL1 + "/api/1/pa-group-description-versions/";
+const GET_PA_GROUP_DESCRIPTION_URL = BASE_URL1 + "/api/1/mcr-pa-group-description/";
+const GET_PA_GROUP_DESCRIPTION_VERSTIONS_URL = BASE_URL1 + "/api/1/mcr-pa-group-description-versions/";
 const GET_PA_GROUP_DESCRIPTION_DETAIL_URL = BASE_URL1 + "/api/1/mcr-st-group-description/462?entity_id=0";
 
 
@@ -178,7 +178,7 @@ export const postPAGroupDescription = createAsyncThunk(
         method: 'POST',
         body: JSON.stringify(messageBody),
         headers: {
-            'Authorization': 'Bearer bcfb20e2-9b1d-443a-b96a-0de3cc5b5463',
+            'Authorization': 'Bearer a8251940-84a1-4e03-a5e8-43df60f9d731',
             'Accept': 'application/json',
             'Content-Type': 'application/json;charset=UTF-8',
         }

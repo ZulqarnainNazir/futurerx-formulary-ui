@@ -8,7 +8,14 @@ import Button from '../../../../../shared/Frx-components/button/Button';
 import { Box, Grid, Input } from '@material-ui/core';
 import Groups from './Groups'
 import PaNewGroupForm from './PaNewGroupForm';
-import { getPaSummary, getPaGrouptDescriptions,getPaGrouptDescriptionDetail, getPaTypes, getDrugLists } from "../../../../../../redux/slices/formulary/pa/paActionCreation";
+import { getPaSummary, getPaGrouptDescriptions,getPaGrouptDescriptionDetail, getPaTypes, getDrugLists,getPaGrouptDescriptionVersions,getPaGrouptDescription } from "../../../../../../redux/slices/formulary/pa/paActionCreation";
+
+
+function mapStateToProps(state) {
+    return {
+        formulary_id: state.application.formulary_id
+    }
+}
 
 function mapDispatchToProps(dispatch) {
     return {
@@ -17,14 +24,23 @@ function mapDispatchToProps(dispatch) {
         getPaTypes: (a) => dispatch(getPaTypes(a)),
         getDrugLists: (a) => dispatch(getDrugLists(a)),
         getPaGrouptDescriptionDetail: (a) => dispatch(getPaGrouptDescriptionDetail(a)),
+        getPaGrouptDescriptionVersions: (a) => dispatch(getPaGrouptDescriptionVersions(a)),
+        getPaGrouptDescription: (a) => dispatch(getPaGrouptDescription(a)),
     };
 }
 
 class PaGroupDescriptionManagement extends React.Component<any, any>{
     state = {
         activeTabIndex: 0,
-        tooltip: "ST CRITERIA",
+        tooltip: "PA CRITERIA",
         newGroup: false,
+        stGroupDescriptions: [],
+        paTypes: [],
+        paGroupDescriptionVersion: null,
+        selectedGrp:'',
+        versionList:[{value:'Version 1'}],
+        versionTitle:"Group Description Version 1",
+        latestVerion:0,
         tabs: [
             {
                 id: 1,
@@ -58,37 +74,49 @@ class PaGroupDescriptionManagement extends React.Component<any, any>{
         this.setState({ tabs, activeTabIndex });
     };
 
-    selectGroup = (text:any) =>{
+    selectGroup = (param: any,groupType:string) => {
         
-        console.log(text);
-        debugger;
+        this.props.getPaGrouptDescriptionVersions(param).then((json) => {
+            let tmpData = json.payload.data;
+            let dataLength = tmpData.length
+            var result = tmpData.map(function (el) {
+                var element = {};
+                element["value"] = el.value;
+                return element;
+            })
+            let latestVerion = tmpData.length>0?tmpData[dataLength-1].id_pa_group_description:0
+            this.setState({
+                versionList:result,
+                versionTitle:`Group Description ${tmpData[dataLength-1].value}`,
+                latestVerion:latestVerion
+            })
+            this.props.getPaGrouptDescription(latestVerion)
+        });
         this.setState({
-            newGroup:text,
-            selectedGroup:text
+            newGroup: true,
+            selectedGrp:groupType==='warning'?false:true
         })
     }
     addNewGroup = () => {
         this.setState({
             newGroup:false,
-            selectedGroup:-1
         })
     }
 
     componentDidMount() {
-
+        
         this.props.getPaGrouptDescriptions("1").then((json) => {
-            debugger;
 
             let tmpData = json.payload.data;
 
             var result = tmpData.map(function (el) {
                 var element = {};
-                element["id"] = el.id_base_pa_group_description;
+                element["id"] = el.id_mcr_base_pa_group_description; 
                 element["label"] = el.pa_group_description_name;
                 element["status"] = el.is_setup_complete ? "completed" : "warning";
                 element["is_archived"] = el.is_archived;
                 console.log(element);
-                debugger;
+                
                 return element;
             })
 
@@ -98,10 +126,10 @@ class PaGroupDescriptionManagement extends React.Component<any, any>{
 
         });
 
-        this.props.getPaTypes("3132").then((json) => {
+        this.props.getPaTypes(this.props.formulary_id).then((json) => {
             debugger;
             this.setState({
-                stTypes: json.payload.data,
+                paTypes: json.payload.data,
             });
 
         });
@@ -180,7 +208,10 @@ class PaGroupDescriptionManagement extends React.Component<any, any>{
                                 </div>
                             </div>
                         </div>
-                        <PaNewGroupForm selectedGroupId={this.state.selectedGroup}/>
+                        {this.state.newGroup ? <PaNewGroupForm tooltip={this.state.tooltip} formType={1} editable={this.state.selectedGrp} versionList={this.state.versionList} versionTitle={this.state.versionTitle} activeTabIndex={this.state.activeTabIndex} latestVerion={this.state.latestVerion}/> : (
+                            <PaNewGroupForm tooltip={this.state.tooltip} formType={0} editable={this.state.selectedGrp} versionList={this.state.versionList} title={'NEW GROUP DESCRIPTION'} versionTitle={this.state.versionTitle} activeTabIndex={this.state.activeTabIndex} latestVerion={this.state.latestVerion}/>
+                        )}
+                        {/* <PaNewGroupForm selectedGroupId={this.state.selectedGroup}/> */}
                         {/* {this.state.newGroup ? <NewGroup tooltip={this.state.tooltip} formType={1}/>: (
                             <NewGroup tooltip={this.state.tooltip} formType={0}/>
                         ) } */}
@@ -272,6 +303,6 @@ class PaGroupDescriptionManagement extends React.Component<any, any>{
 
 
 export default connect(
-    null,
+    mapStateToProps,
     mapDispatchToProps
 )(PaGroupDescriptionManagement);
