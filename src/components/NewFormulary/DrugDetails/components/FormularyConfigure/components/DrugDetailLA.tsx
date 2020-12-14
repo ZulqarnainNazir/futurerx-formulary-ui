@@ -1,4 +1,5 @@
 import React from "react";
+import { connect } from "react-redux";
 import PanelHeader from "./PanelHeader";
 import PanelGrid from "./panelGrid";
 import CustomizedSwitches from "./CustomizedSwitches";
@@ -11,13 +12,20 @@ import { getDrugDetailData } from "../../../../../../mocks/DrugGridMock";
 import FrxLoader from "../../../../../shared/FrxLoader/FrxLoader";
 import DrugGrid from "../../DrugGrid";
 import AdvancedSearch from "./search/AdvancedSearch";
+import { getDrugDetailsLASummary } from "../../../../../../redux/slices/formulary/drugDetails/drugDetailLA/drugDetailLAActionCreation";
 
-export default class DrugDetailLA extends React.Component<any, any> {
+function mapDispatchToProps(dispatch) {
+  return {
+    getDrugDetailsLASummary: (a) => dispatch(getDrugDetailsLASummary(a)),
+  };
+}
+
+class DrugDetailLA extends React.Component<any, any> {
   state = {
     isSearchOpen: false,
-    panelGridTitle1: ["", "NUMBER OF DRUGS", "ADDED DRUGS", "REMOVED DRUGS"],
+    panelGridTitle: ["", "NUMBER OF DRUGS", "ADDED DRUGS", "REMOVED DRUGS"],
     panelTitleAlignment1: ["left", "center", "center", "center"],
-    panelGridValue1: [["Limited Access", "2", "2", "2"]],
+    panelGridValue: [],
     activeTabIndex: 0,
     columns: null,
     data: null,
@@ -36,17 +44,39 @@ export default class DrugDetailLA extends React.Component<any, any> {
       },
     ],
   };
+
   advanceSearchClickHandler = (event) => {
     event.stopPropagation();
     this.setState({ isSearchOpen: !this.state.isSearchOpen });
   };
+
   advanceSearchClosekHandler = () => {
     this.setState({ isSearchOpen: !this.state.isSearchOpen });
   };
+
   saveClickHandler = () => {
     console.log("Save data");
   };
+
   componentDidMount() {
+    this.props.getDrugDetailsLASummary().then((json) => {
+      let tmpData = json.payload && json.payload.result ? json.payload.result : [];
+
+      var rows = tmpData.map((ele) => {
+        var curRow = [
+          ele["attribute_name"],
+          ele["total_drug_count"],
+          ele["added_drug_count"],
+          ele["removed_drug_count"],
+        ];
+        return curRow;
+      });
+      
+      this.setState({
+        panelGridValue: rows,
+      })
+    });
+
     const data = getDrugDetailData();
     const columns = getDrugDetailsColumn();
     const FFFColumn: any = {
@@ -73,6 +103,7 @@ export default class DrugDetailLA extends React.Component<any, any> {
       data: data,
     });
   }
+
   onClickTab = (selectedTabIndex: number) => {
     let activeTabIndex = 0;
 
@@ -87,14 +118,16 @@ export default class DrugDetailLA extends React.Component<any, any> {
 
   render() {
     let dataGrid = <FrxLoader />;
+
     if (this.state.data) {
       dataGrid = (
         <DrugGrid columns={this.state.columns} data={this.state.data} />
       );
     }
+
     return (
       <>
-        <div className="bordered">
+        <div className="bordered" style={{ marginBottom: "15px" }}>
           <PanelHeader
             title="Limited Access"
             tooltip="Add or delete Limited Access (LA) Indicators in Drug Grid below for the formulary HPMS submission file and marketing material display. Identified LA drugs must meet CMS' definition of a Limited Access drug."
@@ -102,8 +135,8 @@ export default class DrugDetailLA extends React.Component<any, any> {
           <div className="inner-container bg-light-grey">
             <div className="mb-10">
               <PanelGrid
-                panelGridTitle={this.state.panelGridTitle1}
-                panelGridValue={this.state.panelGridValue1}
+                panelGridTitle={this.state.panelGridTitle}
+                panelGridValue={this.state.panelGridValue}
                 panelTitleAlignment={this.state.panelTitleAlignment1}
               />
             </div>
@@ -156,3 +189,5 @@ export default class DrugDetailLA extends React.Component<any, any> {
     );
   }
 }
+
+export default connect(null, mapDispatchToProps)(DrugDetailLA);
