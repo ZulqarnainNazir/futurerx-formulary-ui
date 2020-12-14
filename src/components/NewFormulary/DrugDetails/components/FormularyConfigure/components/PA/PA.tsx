@@ -91,8 +91,8 @@ class PA extends React.Component<any, any>  {
   componentDidMount() {
     
     this.props.getPaSummary(this.props.current_formulary.id_formulary).then((json => {
-      debugger;
-      let tmpData = json.payload.result;
+      //debugger;
+      let tmpData = json.payload && json.payload.result?json.payload.result:[];
       
       var rows = tmpData.map(function(el) {
         var curRow=[ el["pa_type_name"],
@@ -113,7 +113,7 @@ class PA extends React.Component<any, any>  {
     }))
 
     this.props.getDrugLists("0").then((json => {
-      debugger;
+      //debugger;
       let tmpData = json.payload.data;
       this.setState({
         paList: tmpData,

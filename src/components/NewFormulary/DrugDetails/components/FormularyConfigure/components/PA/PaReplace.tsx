@@ -59,14 +59,14 @@ class PaReplace extends React.Component<any,any> {
       <>
         <div className="group tier-dropdown white-bg">
           <Row>
-            <Col lg={8}>
+            <Col lg={8} className="mb-10">
               <label>
-                PA GROUP DESCRIPTION ---<span className="astrict">*</span>
+                PA GROUP DESCRIPTION<span className="astrict">*</span>
               </label>
               <DropDown options={this.state.paGroupDescriptions} valueProp="text" />
             </Col>
             <Col lg={4}></Col>
-            <Col lg={8}>
+            <Col lg={8} className="mb-10">
               <label>
                 PA GROUP DESCRIPTION <span className="astrict">*</span>
               </label>

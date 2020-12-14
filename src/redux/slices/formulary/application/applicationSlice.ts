@@ -71,6 +71,9 @@ export default application.reducer;
 export const setFormulary = createAsyncThunk(
   "application",
   async (arg: any, { dispatch }) => {
+
+    //console.log("***** setFormulary ", arg);
+    
     const obj = {
       formulary_id: arg.id_formulary,
       formulary: arg,

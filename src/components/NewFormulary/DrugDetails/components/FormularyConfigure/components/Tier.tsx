@@ -42,7 +42,8 @@ const mapStateToProps = (state) => {
     formulary_id: state?.application?.formulary_id,
     formulary: state?.application?.formulary,
     formulary_lob_id: state?.application?.formulary_lob_id,
-    formulary_type_id: state?.application?.formulary_type_id
+    formulary_type_id: state?.application?.formulary_type_id,
+    tierData: state.tierSliceReducer.data,
   };
 };
 
@@ -109,6 +110,28 @@ class Tier extends React.Component<any, tabsState> {
       })
     }))
   }
+
+  componentWillReceiveProps(nextProps) {
+    console.log('TIER: componentWillReceiveProps', nextProps);
+    const TierColumns = tierDefinationColumns();
+    let tmpData = nextProps.tierData;
+    var tierOption:any[] = [];
+    var result = tmpData.map(function(el) {
+      var element = Object.assign({}, el);
+      tierOption.push(element)
+      element.is_validated = "false";
+      if(element.added_count>0){
+        element.is_validated = "true";
+      }
+      return element;
+    })
+    this.setState({
+      tierDefinationColumns: TierColumns,
+      tierDefinationData: result,
+      tierOption: tierOption
+    })
+  }
+
   componentDidMount() {
     const TierColumns = tierDefinationColumns();
     if(this.props.formulary_id){
@@ -136,7 +159,7 @@ class Tier extends React.Component<any, tabsState> {
       case 1:
         return <div>Append</div>;
       case 2:
-        return <TierRemove />;
+        return <TierRemove formularyId={this.props?.formulary_id} formulary={this.props?.formulary} lobCode={this.state.lobCode}/>;
     }
   };
 

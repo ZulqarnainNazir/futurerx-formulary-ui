@@ -3,11 +3,12 @@ import { BASE_URL1 } from "../../../../api/http-helper";
 import FormularyServices from "../../../../services/formulary.services";
 
 const GET_ST_SUMMARY_URL = BASE_URL1 + "/api/1/st-summary/";
-const GET_ST_GROUP_DESCRIPTIONS_URL = BASE_URL1 + "/api/1/st-group-descriptions/";
+const GET_ST_GROUP_DESCRIPTIONS_URL = BASE_URL1 + "api/1/mcr-st-group-descriptions";
 const GET_ST_TYPES_URL = BASE_URL1 + "/api/1/st-types/4";
 const GET_DRUG_LIST_URL = BASE_URL1 + "/api/1/drug-lists/";
-const GET_ST_GROUP_DESCRIPTION_URL = BASE_URL1 + "/api/1/st-group-description/";
-const GET_ST_GROUP_DESCRIPTION_VERSTIONS_URL = BASE_URL1 + "/api/1/st-group-description-versions/";
+//const GET_ST_GROUP_DESCRIPTION_URL = BASE_URL1 + "/api/1/st-group-description/";
+const GET_ST_GROUP_DESCRIPTION_URL = BASE_URL1 + "api/1/mcr-st-group-description/";
+const GET_ST_GROUP_DESCRIPTION_VERSTIONS_URL = BASE_URL1 + "api/1/mcr-st-group-description-versions/";
 
 
 export const getStSummary = createAsyncThunk(
@@ -38,7 +39,7 @@ export const getStSummary = createAsyncThunk(
 export const getStGrouptDescriptions = createAsyncThunk(
   "formulary_summary/getStGrouptDescriptions",
   async (summary_id: string) => {
-    console.log("getStGrouptDescriptions action creator:: url: " + GET_ST_GROUP_DESCRIPTIONS_URL + summary_id);
+    console.log("getStGrouptDescriptions action creator:: url: " + GET_ST_GROUP_DESCRIPTIONS_URL + '/1?entity_id=0');
     const requestHeaders  = {
         // method: 'POST',
         // body: JSON.stringify(summary_id),
@@ -48,7 +49,7 @@ export const getStGrouptDescriptions = createAsyncThunk(
             'Content-Type': 'application/json;charset=UTF-8',
         }
     }
-    return fetch(GET_ST_GROUP_DESCRIPTIONS_URL + summary_id ,requestHeaders)
+    return fetch(GET_ST_GROUP_DESCRIPTIONS_URL + '/1?entity_id=0' ,requestHeaders)
       .then((response) => {
         if (!response.ok) throw Error(response.statusText);
         return response.json();
@@ -115,15 +116,13 @@ export const getStGrouptDescription = createAsyncThunk(
   async (summary_id: string) => {
     console.log("getStGrouptDescription action creator:: url: " + GET_ST_GROUP_DESCRIPTION_URL + summary_id);
     const requestHeaders  = {
-        // method: 'POST',
-        // body: JSON.stringify(summary_id),
         headers: {
             'Authorization': 'Bearer 1e05ff8b-a0af-4a8f-8915-487321900f21',
             'Accept': 'application/json',
             'Content-Type': 'application/json;charset=UTF-8',
         }
     }
-    return fetch(GET_ST_GROUP_DESCRIPTION_URL + summary_id ,requestHeaders)
+    return fetch(GET_ST_GROUP_DESCRIPTION_URL+summary_id  ,requestHeaders)
       .then((response) => {
         if (!response.ok) throw Error(response.statusText);
         return response.json();

@@ -2,6 +2,7 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { Formulary } from "./formulary";
 import { getformulary } from "./setupService";
+import {setFormulary} from "./../application/applicationSlice";
 
 interface SetupState {
   formulary: Formulary | any;
@@ -12,7 +13,7 @@ interface SetupState {
 
 const setupInitialState: SetupState = {
   formulary: null,
-  mode:"",
+  mode: "",
   isLoading: true,
   error: null,
 };
@@ -38,13 +39,31 @@ const setup = createSlice({
     getFormularySuccess(state, { payload }: PayloadAction<Formulary>) {
       // console.log("***** getFormulariesSuccess ");
       state.formulary = payload;
-      state.mode="EXISTING"
+      state.mode = "EXISTING";
       state.isLoading = false;
       state.error = null;
     },
     getFormalaryFailure: loadingFailed,
   },
 });
+
+export const fetchSelectedFormulary = createAsyncThunk(
+  "setup",
+  async (arg: number, { dispatch }) => {
+    console.log("***** fetchSelectedFormulary ( "+arg+" ) ");
+    try {
+      dispatch(getformularyStart());
+      const formulary: Formulary = await getformulary(arg);
+
+      dispatch(getFormularySuccess(formulary));
+      dispatch(setFormulary(formulary));
+
+    } catch (err) {
+      //console.log("***** fetchFormularies - ERROR ");
+      dispatch(getFormalaryFailure(err.toString()));
+    }
+  }
+);
 
 export const {
   getformularyStart,
@@ -53,18 +72,3 @@ export const {
 } = setup.actions;
 
 export default setup.reducer;
-
-export const fetchSelectedFormulary = createAsyncThunk(
-  "setup",
-  async (arg: number, { dispatch }) => {
-    console.log("***** fetchSelectedFormulary ");
-    try {
-      dispatch(getformularyStart());
-      const formulary: Formulary = await getformulary(arg);
-      dispatch(getFormularySuccess(formulary));
-    } catch (err) {
-      console.log("***** fetchFormularies - ERROR ");
-      dispatch(getFormalaryFailure(err.toString()));
-    }
-  }
-);

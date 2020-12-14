@@ -1,11 +1,12 @@
 import {createSlice} from "@reduxjs/toolkit";
 
-import { getTier } from "./tierActionCreation";
-import { getTierFulfilled,getTierRejected } from "./tierReducers";
+import { getTier, postTierApplyInfo } from "./tierActionCreation";
+import { getTierFulfilled,getTierRejected,postTierApplyFulfilled,postTierApplyRejected } from "./tierReducers";
 
 const tierState: any = {
   data: {},
   isLoading: false,
+  applyData: {}, 
 }
   
 
@@ -24,6 +25,15 @@ export const tierSlice = createSlice({
     }),
     builder.addCase(getTier.rejected, (state, action) => {
       getTierRejected(state, action);
+    }),
+    builder.addCase(postTierApplyInfo.pending, (state, action) => {
+      state.isLoading = true;
+    }),
+    builder.addCase(postTierApplyInfo.fulfilled, (state, action) => {
+      postTierApplyFulfilled(state, action);
+    }),
+    builder.addCase(postTierApplyInfo.rejected, (state, action) => {
+      postTierApplyRejected(state, action);
     })
   )
 });

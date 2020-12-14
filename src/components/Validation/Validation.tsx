@@ -10,7 +10,7 @@ import { getValidationList } from '../../redux/slices/formulary/validation/valid
 
 function mapStateToProps(state) {
   return {
-    current_formulary: state.formularBase.current_formulary,
+    current_formulary: state.application.formulary_id,
     validationData: state.validationReducer.validationData
   }
 }
@@ -23,8 +23,8 @@ function mapDispatchToProps(dispatch) {
 
 function Validation(props) {
   useEffect(() => {
-    props.getValidationList(props.current_formulary.id_formulary)
-  }, props.current_formulary.id_formulary)
+    props.getValidationList(props.current_formulary)
+  }, props.current_formulary)
 
   let total1, passed1, failed1, warning1, comment = '';
 
