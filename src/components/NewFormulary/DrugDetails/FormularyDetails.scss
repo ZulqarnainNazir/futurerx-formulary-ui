@@ -11,7 +11,7 @@
     background: #FFF5F0;
     border-radius: 3px;
     display: flex;
-    justify-content: space-between;
+    justify-content: space-around;
     
     .version-dd {
         width: 295px;
@@ -60,12 +60,18 @@
             margin-right: 0;
         }
     }
-    .select-box + div{
-        width: 100%;
-        display: flex;
-        padding: 0 35px 0 10px;
+    
+}
+.drug-detail-top{
+    .version-wrapper{
         justify-content: space-between;
-        
+        .select-box + div{
+            width: 100%;
+            display: flex;
+            padding: 0 35px 0 10px;
+            justify-content: space-between;
+            
+        }
     }
 }
 .ant-select-dropdown.version-dd{
