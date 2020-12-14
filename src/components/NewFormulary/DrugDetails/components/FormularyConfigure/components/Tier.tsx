@@ -153,6 +153,7 @@ class Tier extends React.Component<any, tabsState> {
 
   renderTabContent = () => {
     const activeTabIndex = this.state.activeTabIndex;
+    console.log("Active tab index is:"+this.state.activeTabIndex);
     switch (activeTabIndex) {
       case 0:
         return <TierReplace tierOptions={this.state.tierOption} formularyId={this.props?.formulary_id} formulary={this.props?.formulary} lobCode={this.state.lobCode}/>;
