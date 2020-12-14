@@ -25,7 +25,7 @@ import { getStSummary, getStGrouptDescriptions, getStTypes, getStGrouptDescripti
 
 function mapStateToProps(state) {
     return {
-        formulary_id: state.application.formulary_id,
+        formulary_id: state.application.formulary_id
     }
 }
 
@@ -49,6 +49,9 @@ class GPM extends React.Component<any, any>{
         stTypes: [],
         stGroupDescriptionVersion: null,
         selectedGrp:'',
+        versionList:[{value:'Version 1'}],
+        versionTitle:"Group Description Version 1",
+        latestVerion:0,
         tabs: [
             {
                 id: 1,
@@ -83,7 +86,22 @@ class GPM extends React.Component<any, any>{
     };
 
     selectGroup = (param: any,groupType:string) => {
-        this.props.getStGrouptDescription(462)
+        this.props.getStGrouptDescriptionVersions(param).then((json) => {
+            let tmpData = json.payload.data;
+            let dataLength = tmpData.length
+            var result = tmpData.map(function (el) {
+                var element = {};
+                element["value"] = el.value;
+                return element;
+            })
+            let latestVerion = tmpData.length>0?tmpData[dataLength-1].id_st_group_description:0
+            this.setState({
+                versionList:result,
+                versionTitle:`Group Description ${tmpData[dataLength-1].value}`,
+                latestVerion:latestVerion
+            })
+            this.props.getStGrouptDescription(latestVerion)
+        });
         this.setState({
             newGroup: true,
             selectedGrp:groupType==='warning'?false:true
@@ -193,8 +211,8 @@ class GPM extends React.Component<any, any>{
                                 </div>
                             </div>
                         </div>
-                        {this.state.newGroup ? <NewGroup tooltip={this.state.tooltip} formType={1} editable={this.state.selectedGrp}/> : (
-                            <NewGroup tooltip={this.state.tooltip} formType={0} editable={this.state.selectedGrp}/>
+                        {this.state.newGroup ? <NewGroup tooltip={this.state.tooltip} formType={1} editable={this.state.selectedGrp} versionList={this.state.versionList} versionTitle={this.state.versionTitle} activeTabIndex={this.state.activeTabIndex} latestVerion={this.state.latestVerion}/> : (
+                            <NewGroup tooltip={this.state.tooltip} formType={0} editable={this.state.selectedGrp} versionList={this.state.versionList} title={'NEW GROUP DESCRIPTION'} versionTitle={this.state.versionTitle} activeTabIndex={this.state.activeTabIndex} latestVerion={this.state.latestVerion}/>
                         )}
                     </div>
 

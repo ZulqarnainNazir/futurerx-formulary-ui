@@ -23,7 +23,47 @@
   color: #1d54b4;
   padding: 15px;
 }
-
+.formulary-design-container{
+  .radio-group {
+    .radio-group-custom{
+      display: flex;
+      width: 100%;
+      flex-direction: row;
+      label{
+        > span.MuiButtonBase-root{
+          padding-right: 12px;
+        }
+        input[type="radio"] + div{
+          height: 16px;
+          width: 16px;
+          border-radius: 50%;
+          background: white;
+          border: 2px solid #ddd;
+          svg{
+            display: none;
+          }
+        }
+        input[type="radio"]:checked + div{
+          background: #2055B5;
+          height: 16px;
+          width: 16px;
+          border-radius: 50%;
+          border: none
+          
+        }
+        span.MuiFormControlLabel-label{
+          font-size: 12px;
+          text-transform: none;
+        }
+      }
+      &.mr-80{
+        label{
+          margin-right: 77px;
+        }
+      }
+    }
+  }
+}
 .setup-label label {
   display: block;
   font-size: 12px;
@@ -65,6 +105,19 @@
 .formulary-design-fields-wrapper,
 .tiers-information-fields-wrapper {
   padding: 15px;
+}
+.tiers-information-fields-wrapper{
+  .tiers-dropdown-wrapper{
+    label{
+      text-transform: none;
+      margin-bottom: 0;
+      line-height: 12px;
+    }
+    .tier{
+      display: flex;
+      align-items: center;
+    }
+  }
 }
 
 .upload-button {
@@ -233,7 +286,7 @@
 }
 
 .number-of-tier-dropdown {
-  width: 393px !important;
+  width: 100% !important;
 }
 
 .tier-zero {
@@ -327,4 +380,30 @@
 .input-link.select-formulary-link{
   margin-top: 10px !important;
   pointer-events: none;
+}
+.text-tran-none{
+  text-transform: none !important;
+}
+.radio-group{
+  label{
+    span.label{
+      text-transform: none;
+      color: #707683;
+      font-size: 12px;
+    }
+    span.checkmark{
+      height: 16px;
+      width: 16px;
+      border: 2px solid #ddd;
+      background: none;
+    }
+  }
+}
+.no-transform{
+  label{
+    span.label{
+      text-transform: none;
+      color: #707683;
+    }
+  }
 }
