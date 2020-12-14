@@ -50,7 +50,27 @@ class GeneralInformation extends React.Component<any, any> {
       selectedMethod: event.target.value
     })
   }
-  
+  getClassificationRadio = () => {
+    let classificationRadio:any = null;
+    let options = this.props.setupOptions.generalOptions.classification_systems.map(el => {
+      return (
+        <FormControlLabel 
+          value={el.id_classification_system} 
+          control={<Radio />} 
+          label={el.classification_system} />
+      )
+    });
+    const radi = <RadioGroup 
+    className="radio-group-custom" 
+    aria-label={'classification_system'} 
+    name="classification_system"
+    value={'1'} 
+    onChange={this.props.onRadioChange}>
+      {options}
+    </RadioGroup>
+    return radi;
+    
+  }
   render() {
     const FORMULARY = this.props.formulary;
     const disabled = this.props.formulary_mode === 'EXISTING' ? true : false;
@@ -70,6 +90,7 @@ class GeneralInformation extends React.Component<any, any> {
         contract_year: this.props.formulary_mode === 'EXISTING' ? [FORMULARY.formulary_info?.contract_year] : ["2021","2022"]
       }
     }
+
     return (
       <div className="general-information-container">
         <h4>General information</h4>
@@ -198,13 +219,16 @@ class GeneralInformation extends React.Component<any, any> {
                   tooltip="FORMULARY CLASSIFICATION SYSTEM"
                 />
                 <div className="marketing-material radio-group">
-                  <RadioButton label="USP" name="marketing-usp-radio" />
-                  <RadioButton label="AHFS" name="marketing-usp-radio" />
-                  <RadioButton
-                    label="Medispan"
-                    name="marketing-usp-radio"
-                    checked
-                  />
+                  <RadioGroup 
+                      className="radio-group-custom" 
+                      aria-label={'classification_system'} 
+                      name="classification_system"
+                      value={this.props.generalInfo?.classification_system?.toString()} 
+                      onChange={this.props.onRadioChange}>
+                      <FormControlLabel value="1" control={<Radio />} label="USP" />
+                      <FormControlLabel value="2" control={<Radio />} label="AHFS" />
+                      <FormControlLabel value="3" control={<Radio />} label="Medispan" />
+                  </RadioGroup>
                 </div>
               </div>
             </Grid>

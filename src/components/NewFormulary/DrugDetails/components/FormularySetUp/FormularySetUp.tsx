@@ -31,7 +31,8 @@ class FormularySetUp extends React.Component<any, any> {
       service_year: '',
       description: '',
       classification_system: ''
-    }
+    },
+    setupOptions: {}
   }
   formulary_details: Formulary | any;
   
@@ -49,7 +50,7 @@ class FormularySetUp extends React.Component<any, any> {
     }
   }
   UNSAFE_componentWillReceiveProps = (newProps) => {
-    if(newProps.formulary){
+    if(newProps.formulary && newProps.setupOptions){
       this.setState({
         isUpdate: true,
         generalInformation: {
@@ -60,8 +61,9 @@ class FormularySetUp extends React.Component<any, any> {
           method: newProps.formulary.formulary_info.formulary_build_method,
           service_year: newProps.formulary.formulary_info.contract_year,
           description: newProps.formulary.formulary_info.formulary_description,
-          classification_system: ''
-        }
+          classification_system: newProps.formulary.formulary_info.id_classification_system
+        },
+        setupOptions: newProps.setupOptions
       })
     }
     
@@ -86,6 +88,7 @@ class FormularySetUp extends React.Component<any, any> {
         {this.state.isUpdate ? (
           <GeneralInformation 
             generalInfo={this.state.generalInformation} 
+            setupOptions={this.state.setupOptions}
             updateInputField={this.updateInputField}
             onRadioChange={this.onRadioChangeHandler}/>
         ) : null}
@@ -114,7 +117,8 @@ const mapStateToProps = (state) => {
   return {
     mode: state?.application?.mode,
     formulary_id: state?.application?.formulary_id,
-    formulary: state?.setup?.formulary
+    formulary: state?.setup?.formulary,
+    setupOptions: state?.setupOptions
   };
 };
 
