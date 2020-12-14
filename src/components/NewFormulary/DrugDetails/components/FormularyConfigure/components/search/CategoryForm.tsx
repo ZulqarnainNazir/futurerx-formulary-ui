@@ -12,6 +12,7 @@ interface Props{
     index?: any;
     checkBoxOpt?:any;
     catid?:number;
+    selectionHandler?: any;
 }
 
 export default class CategoryForm extends React.Component<Props, any>{
@@ -55,7 +56,7 @@ export default class CategoryForm extends React.Component<Props, any>{
                                     <span>Select the formulary file:</span>
                                     {this.props.catid===2 && <Button variant="contained">Select all</Button>}
                                 </div>
-                                <CheckboxLabels checkBoxOpt={this.props.checkBoxOpt} />
+                                <CheckboxLabels checkBoxOpt={this.props.checkBoxOpt} selectionHandler={this.props.selectionHandler} title={this.props.title}/>
                             </div>
                         </div>
                         <div className="delete-wrapper">
