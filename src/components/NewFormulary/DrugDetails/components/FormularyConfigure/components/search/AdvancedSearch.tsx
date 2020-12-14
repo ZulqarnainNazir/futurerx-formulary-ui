@@ -20,6 +20,7 @@ const mapStateToProps = (state) => {
     return {
         advancedSearchBody: state?.advancedSearch?.advancedSearchBody,
         populateGrid: state?.advancedSearch?.populateGrid,
+        closeDialog: state?.advancedSearch?.closeDialog,
     };
 };
 
@@ -139,7 +140,7 @@ class AdvancedSearchPopup extends React.Component<
         this.setState({
             formArray: []
         })
-        let payload = { advancedSearchBody: {}, populateGrid: false };
+        let payload = { advancedSearchBody: {}, populateGrid: false, closeDialog: false };
         payload.advancedSearchBody["additional_filter"] = {
             is_pa: this.state.additionalFilter.is_pa, is_st: this.state.additionalFilter.is_st, is_add: false, is_all_tiers: false, is_exd: false,
             is_fff: false, is_frf: false, is_hi: false, is_ibf: false, is_lis: false, is_non_frf: false, is_otc: false, is_pgc: false, is_user_defined1: false,
@@ -177,7 +178,7 @@ class AdvancedSearchPopup extends React.Component<
     }
 
     applySearch = () => {
-        let payload = { advancedSearchBody: {}, populateGrid: false };
+        let payload = { advancedSearchBody: {}, populateGrid: false, closeDialog: true };
         payload.advancedSearchBody["additional_filter"] = {
             is_pa: this.state.additionalFilter.is_pa, is_st: this.state.additionalFilter.is_st, is_add: false, is_all_tiers: false, is_exd: false,
             is_fff: false, is_frf: false, is_hi: false, is_ibf: false, is_lis: false, is_non_frf: false, is_otc: false, is_pgc: false, is_user_defined1: false,
