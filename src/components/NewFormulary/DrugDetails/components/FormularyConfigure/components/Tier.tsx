@@ -282,13 +282,8 @@ class Tier extends React.Component<any, tabsState> {
                         positiveActionText='Save'
                         negativeActionText='Cancel'
                         title='TIER DEFINITION'
-                        handleClose={() => {
-                          this.onNewTierPopupClose();
-                        }}
-                        handleAction={() => {
-                          debugger;
-                          console.log("do some action");
-                        }}
+                        handleClose={() => this.onNewTierPopupClose()}
+                        handleAction={() => this.onNewTierPopupClose()}
                         showActions={true}
                         open={this.state.addNewTierPopup}
                       >
