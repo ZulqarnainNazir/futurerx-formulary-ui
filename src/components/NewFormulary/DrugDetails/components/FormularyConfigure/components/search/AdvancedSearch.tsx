@@ -12,15 +12,15 @@ import { connect } from "react-redux";
 
 function mapDispatchToProps(dispatch) {
     return {
-      setAdvancedSearch:(a)=>dispatch(setAdvancedSearch(a))
+        setAdvancedSearch: (a) => dispatch(setAdvancedSearch(a))
     };
   }
-  
-  const mapStateToProps = (state) => {
+
+const mapStateToProps = (state) => {
     return {
-      tierAdvancedSearchBody: state?.advancedSearch?.tierAdvancedSearchBody
+        tierAdvancedSearchBody: state?.advancedSearch?.tierAdvancedSearchBody
     };
-  };
+};
 
 const { Option } = Select;
 
@@ -28,6 +28,7 @@ interface AdvancedSearchPopupProps {
     openPopup: boolean;
     onClose: () => void;
     category: string;
+    setAdvancedSearch: (a) => void;
 }
 
 interface CategoryData {
@@ -41,7 +42,8 @@ interface AdvancedSearchPopupState {
     activeCategoryTitle: string;
     formArray: any;
     formCount: number;
-    checkBoxOpt:any;
+    checkBoxOpt: any;
+    additionalFilter: any;
 }
 
 class AdvancedSearchPopup extends React.Component<
@@ -55,26 +57,29 @@ class AdvancedSearchPopup extends React.Component<
         formCount: 0,
         formArray: [],
         checkBoxOpt: {
-            1:[
-                {id: 1,text: "Formulary File"},
-                {id: 2,text: "Prior Authorization File"},
-                {id: 3,text: "Step Therapy File"},
-                {id: 4,text: "Indication-Based Coverage File"}
+            1: [
+                { id: 1, text: "Formulary File" },
+                { id: 2, text: "Prior Authorization File" },
+                { id: 3, text: "Step Therapy File" },
+                { id: 4, text: "Indication-Based Coverage File" }
             ],
-            2:[
-                {id: 1,text: "Tire1"},
-                {id: 2,text: "Tire2"},
-                {id: 3,text: "Tire3"},
-                {id: 4,text: "Tire4"},
-                {id: 5,text: "Tire5"},
-                {id: 6,text: "Tire6"}
+            2: [
+                { id: 1, text: "Tire1" },
+                { id: 2, text: "Tire2" },
+                { id: 3, text: "Tire3" },
+                { id: 4, text: "Tire4" },
+                { id: 5, text: "Tire5" },
+                { id: 6, text: "Tire6" }
             ]
+        },
+        additionalFilter: {
+            is_pa: false,
+            is_st: false
         }
     };
 
-    constructor(props){
+    constructor(props) {
         super(props);
-        console.log("ADVANCED SEARCH PROPS:"+JSON.stringify(props));
     }
 
     /**
@@ -112,7 +117,7 @@ class AdvancedSearchPopup extends React.Component<
         const checkIndex = this.state.formArray.findIndex(v => v.type === title);
         if (checkIndex === -1) {
             this.setState({
-                formArray: [...this.state.formArray, { type: title,id:catid }],
+                formArray: [...this.state.formArray, { type: title, id: catid }],
                 activeCategoryIndex: index.id
             })
         }
@@ -133,10 +138,40 @@ class AdvancedSearchPopup extends React.Component<
         })
     }
 
+    handleFormularyFileSelection = (event, value) => {
+        switch (value) {
+            case 'Prior Authorization File':
+                this.state.additionalFilter.is_pa = event.target.checked;
+                break;
+            case 'Step Therapy File':
+                this.state.additionalFilter.is_st = event.target.checked;
+                break;
+            default:
+                break;
+        }
+    }
+
+    valueSelectionHandler = (event, value, type) => {
+        console.log("ADVANCED SEARCH: Event:" + JSON.stringify(event.target.checked) + " Value:" + value + " Type:" + type);
+        switch (type) {
+            case 'Formulary File':
+                this.handleFormularyFileSelection(event, value);
+                break;
+            default:
+                break;
+        }
+    }
+
+    applySearch = () => {
+        let payload = {tierAdvancedSearchBody: {}};
+        payload.tierAdvancedSearchBody["additional_filter"] = {is_pa: this.state.additionalFilter.is_pa, is_st: this.state.additionalFilter.is_st};
+        this.props.setAdvancedSearch(payload);
+    }
+
     render() {
         let formContent = <div className="noForms">Drag the file type(s) from the list on the left to create a filter.</div>;
         if (this.state.formArray.length > 0) {
-            formContent = this.state.formArray.map((a, index: number) => <CategoryForm title={a.type} index={index} deleteField={this.deleteFormHandler} checkBoxOpt={this.state.checkBoxOpt[a.id]} catid={a.id} />)
+            formContent = this.state.formArray.map((a, index: number) => <CategoryForm title={a.type} index={index} deleteField={this.deleteFormHandler} checkBoxOpt={this.state.checkBoxOpt[a.id]} catid={a.id} selectionHandler={this.valueSelectionHandler} />)
         }
 
         return (
@@ -185,7 +220,7 @@ class AdvancedSearchPopup extends React.Component<
                                             </svg>
                                             <span>Clear</span>
                                         </Button>
-                                        <button className="Button member-notes-popup-root__dialog__category-notes_form__submit-btn">
+                                        <button className="Button member-notes-popup-root__dialog__category-notes_form__submit-btn" onClick={this.applySearch}>
                                             Apply Search
                                         </button>
                                     </Box>
@@ -204,4 +239,4 @@ class AdvancedSearchPopup extends React.Component<
 export default connect(
     mapStateToProps,
     mapDispatchToProps
-  )(AdvancedSearchPopup);
+)(AdvancedSearchPopup);
