@@ -20,11 +20,22 @@ import {
 
 
 class FormularySetUp extends React.Component<any, any> {
-
+  state = {
+    isUpdate: false,
+    generalInformation: {
+      type: '',
+      name: '',
+      abbreviation: '',
+      effective_date: '',
+      method: '',
+      service_year: '',
+      description: '',
+      classification_system: ''
+    }
+  }
   formulary_details: Formulary | any;
   
   componentDidMount(){
-    console.log("SP : "+this.props.mode+" - "+this.props.formulary_id);
     this.props.fetchGeneralOptions();
     this.props.fetchDesignOptions();
     // fetchMedicareOptions need to call conditionally... 
@@ -37,11 +48,49 @@ class FormularySetUp extends React.Component<any, any> {
       this.formulary_details = {};
     }
   }
-
+  UNSAFE_componentWillReceiveProps = (newProps) => {
+    if(newProps.formulary){
+      this.setState({
+        isUpdate: true,
+        generalInformation: {
+          type: newProps.formulary.formulary_type_info.formulary_type,
+          name: newProps.formulary.formulary_info.formulary_name,
+          abbreviation: newProps.formulary.formulary_info.abbreviation,
+          effective_date: newProps.formulary.formulary_info.effective_date,
+          method: newProps.formulary.formulary_info.formulary_build_method,
+          service_year: newProps.formulary.formulary_info.contract_year,
+          description: newProps.formulary.formulary_info.formulary_description,
+          classification_system: ''
+        }
+      })
+    }
+    
+  }
+  updateInputField = (e) => {
+    const newObj = {...this.state.generalInformation}
+    newObj[e.currentTarget.name] = e.currentTarget.value;
+    this.setState({
+      generalInformation : newObj
+    })
+  }
+  onRadioChangeHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const newObj = {...this.state.generalInformation}
+    newObj[event.target.name] = event.target.value;
+    this.setState({
+      generalInformation: newObj
+    })
+  }
   render() {
     return(
       <div>
-        <GeneralInformation />
+        {this.state.isUpdate ? (
+          <GeneralInformation 
+            generalInfo={this.state.generalInformation} 
+            updateInputField={this.updateInputField}
+            onRadioChange={this.onRadioChangeHandler}/>
+        ) : null}
+          
+        
         <MedicareInformation/>
         <FormularyDesign />
         <FormularyTiers />
@@ -65,6 +114,7 @@ const mapStateToProps = (state) => {
   return {
     mode: state?.application?.mode,
     formulary_id: state?.application?.formulary_id,
+    formulary: state?.setup?.formulary
   };
 };
 

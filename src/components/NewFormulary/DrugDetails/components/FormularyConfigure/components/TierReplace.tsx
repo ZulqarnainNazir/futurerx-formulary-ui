@@ -12,6 +12,7 @@ import { TierMockData } from "../../../../../../mocks/TierMock";
 import AdvancedSearch from './search/AdvancedSearch';
 import { postTierApplyInfo, getTier } from "../../../../../../redux/slices/formulary/tier/tierActionCreation";
 import * as tierConstants from "../../../../../../api/http-tier";
+import pageTypes from "../../../../../../constants/PageTypes";
 
 interface tabsState {
   tierGridContainer: boolean;
@@ -33,7 +34,8 @@ const mapStateToProps = (state) => {
     formulary_id: state?.application?.formulary_id,
     formulary: state?.application?.formulary,
     formulary_lob_id: state?.application?.formulary_lob_id,
-    formulary_type_id: state?.application?.formulary_type_id
+    formulary_type_id: state?.application?.formulary_type_id,
+    tierAdvancedSearchBody: state?.advancedSearch?.tierAdvancedSearchBody
   }
 }
 
@@ -152,6 +154,10 @@ class TierReplace extends React.Component<any, tabsState> {
     }
   }
 
+  componentWillReceiveProps(nextProps) {
+    console.log('TIER REPLACE: componentWillReceiveProps', nextProps);
+  }
+
   onSelectedTableRowChanged = (selectedRowKeys) => {
     this.state.selectedDrugs = [];
     if (selectedRowKeys && selectedRowKeys.length > 0) {
@@ -217,6 +223,10 @@ class TierReplace extends React.Component<any, tabsState> {
     this.setState({ isSearchOpen: !this.state.isSearchOpen })
   }
   render() {
+    const searchProps = {
+      lobCode: this.props.lobCode,
+      pageType: pageTypes.TYPE_TIER
+    };
     return (
       <>
         <div className="group tier-dropdown white-bg">
@@ -274,6 +284,7 @@ class TierReplace extends React.Component<any, tabsState> {
             </div>
             {this.state.isSearchOpen ? (
               <AdvancedSearch
+                {...searchProps}
                 category="Grievances"
                 openPopup={this.state.isSearchOpen}
                 onClose={this.advanceSearchClosekHandler} />

@@ -20,31 +20,6 @@ const mapStateToProps = (state) => {
   };
 };
 
-
-const FormularyMethod = (props: any) => {
-  const [selectedMethod, setSelectedMethod] = useState('');
-  let method = props.method.toString()
-  console.log("*******")
-  console.log(typeof method)
-  console.log("*******")
-  const [value, setValue] = useState(method);
-  const handleRadioOptionChange = (e) => {
-    setSelectedMethod(e.target.value)
-  }
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    console.log((event.target as HTMLInputElement).value)
-    setValue((event.target as HTMLInputElement).value);
-  };
-  const changeMethodHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
-    console.log((event.target.value))
-  }
-  return (
-    <>
-      
-  </>
-  )
-}
-
 class GeneralInformation extends React.Component<any, any> {
   state = {
     selectedMethod: this.props.formulary?.formulary_info?.formulary_build_method,
@@ -60,19 +35,10 @@ class GeneralInformation extends React.Component<any, any> {
   }
   getMethods = () => {
     let radioGroup: any = null;
-    if(this.state.selectedMethod !== undefined){
+    if(this.props.selectedMethod !== undefined){
       radioGroup = (
         <div className="radio-group">
-          <RadioGroup 
-            className="radio-group-custom" 
-            aria-label={this.state.selectedMethod} 
-            name={this.state.selectedMethod} 
-            value={this.state.selectedMethod.toString()} 
-            onChange={this.changeMethodHandler}>
-            <FormControlLabel value="clone" control={<Radio />} label="Clone" />
-            <FormControlLabel value="upload" control={<Radio />} label="Upload" />
-            <FormControlLabel value="N" control={<Radio />} label="Create New" />
-          </RadioGroup>
+          
         </div>
       );
     }
@@ -84,6 +50,7 @@ class GeneralInformation extends React.Component<any, any> {
       selectedMethod: event.target.value
     })
   }
+  
   render() {
     const FORMULARY = this.props.formulary;
     const disabled = this.props.formulary_mode === 'EXISTING' ? true : false;
@@ -127,13 +94,13 @@ class GeneralInformation extends React.Component<any, any> {
                 <label>
                   FORMULARY NAME <span className="astrict">*</span>
                 </label>
-                <input type="text" className="setup-input-fields" disabled={disabled} value={FORMULARY ? FORMULARY_Values.formulary_name : ''}/>
+                <input type="text" id="name" className="setup-input-fields" name="name" value={this.props.generalInfo.name} onChange={this.props.updateInputField}/>
               </div>
             </Grid>
             <Grid item xs={4}>
               <div className="group">
                 <label>ABBREVIATION</label>
-                <input type="text" className="setup-input-fields" value={FORMULARY ? FORMULARY_Values.abbreviation : ''}/>
+                <input type="text" className="setup-input-fields" name="abbreviation" value={this.props.generalInfo.abbreviation} onChange={this.props.updateInputField}/>
               </div>
             </Grid>
             <Grid item sm={4}>
@@ -163,17 +130,26 @@ class GeneralInformation extends React.Component<any, any> {
                 }
               />
             </Grid>
-            <Grid item xs={this.state.selectedMethod === 'clone' ? 4 : 8}>
+            <Grid item xs={this.props.generalInfo.method === 'clone' ? 4 : 8}>
               <div className="group">
                 <label>
                   Method of Formulary Build <span className="astrict">*</span>
                 </label>
                 <div className="marketing-material radio-group no-transform">
-                  {FORMULARY ? this.getMethods() : ''}
+                  <RadioGroup 
+                    className="radio-group-custom" 
+                    aria-label={this.props.generalInfo.method} 
+                    name="method"
+                    value={this.props.generalInfo.method?.toString()} 
+                    onChange={this.props.onRadioChange}>
+                    <FormControlLabel value="clone" control={<Radio />} label="Clone" />
+                    <FormControlLabel value="upload" control={<Radio />} label="Upload" />
+                    <FormControlLabel value="N" control={<Radio />} label="Create New" />
+                  </RadioGroup>
                 </div>
                 
                 {
-                  this.state.selectedMethod === 'upload' && 
+                  this.props.generalInfo.method === 'upload' && 
                   <div>
                     <Button label="Upload" htmlFor="upload-file" className="upload-button"/>
                   </div>
@@ -182,7 +158,7 @@ class GeneralInformation extends React.Component<any, any> {
             </Grid>
             
             { 
-              this.state.selectedMethod === 'clone' && 
+              this.props.generalInfo.method === 'clone' && 
               <Grid item xs={4}>
                 <div className="group">
                   <label>CLONE FORMULARY <span className="astrict">*</span></label>
@@ -206,7 +182,7 @@ class GeneralInformation extends React.Component<any, any> {
             <Grid item xs={4}>
               <div className="group">
                 <label>FORMULARY DESCRIPTION</label>
-                <input type="text" className="setup-input-fields" value={FORMULARY ? FORMULARY_Values.formulary_description : ''}/>
+                <input type="text" className="setup-input-fields" name="description" value={this.props.generalInfo.description} onChange={this.props.updateInputField}/>
               </div>
             </Grid>
             <Grid item xs={4}>
