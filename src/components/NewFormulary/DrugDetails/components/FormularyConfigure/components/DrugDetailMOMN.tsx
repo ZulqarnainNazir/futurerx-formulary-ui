@@ -206,7 +206,7 @@ class DrugDetailMOMN extends React.Component<any, any> {
                     name="marketing-material-radio"
                     checked
                   />
-                  <RadioButton label="MN" name="marketing-material-radio" />
+                  <RadioButton label="NM" name="marketing-material-radio" />
                 </div>
                 <Box display="flex" justifyContent="flex-end">
                   <Button
