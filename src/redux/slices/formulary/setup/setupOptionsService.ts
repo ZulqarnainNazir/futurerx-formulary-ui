@@ -20,9 +20,9 @@ export async function getGeneralOptions(): Promise<GeneralOptions | any> {
   let url2 = `${BASE_URL1}api/1/formulary-contract-years`;
   //let url3 = `${BASE_URL1}api/1/formulary-submission-months/${new Date().getFullYear()}`;
   let url3 = `${BASE_URL1}api/1/classification-systems/1`;
-//  let url4 = `${BASE_URL1}api//1/client-states/1`;
-
-  let url4 = `https://api-dev-config.futurerx.com/api//1/client-states/1`
+  //  let url4 = `${BASE_URL1}api//1/client-states/1`;
+  let url4 = `https://api-dev-config.futurerx.com/api//1/client-states/1`;
+ //          "https://api-dev-config-formulary.futurerx.com/";
 
   const request1 = axios.get(url1, {
     headers: headers,
@@ -43,7 +43,7 @@ export async function getGeneralOptions(): Promise<GeneralOptions | any> {
         const response1 = responses[0];
         const response2 = responses[1];
         const response3 = responses[2];
-        const response4 = responses[3]; 
+        const response4 = responses[3];
         // console.log(response1, response2, response3);
         let list1 = [];
         if (response1?.data?.code === "200") {
@@ -75,6 +75,27 @@ export async function getGeneralOptions(): Promise<GeneralOptions | any> {
     .catch((errors) => {
       console.error(errors);
     });
+}
+
+export async function getSubMthsOptions(
+  year: any
+): Promise<GeneralOptions | any> {
+  let url = `${BASE_URL1}api/1/formulary-submission-months/${year}`;
+  try {
+    const response = await axios.get(url, {
+      headers: headers,
+    });
+    // console.log("***** getSubMthsOptions  - Success");
+    // console.log(response);
+    if (response?.data?.code === "200") {
+      return { submission_months: response?.data?.data };
+    }
+    return null;
+  } catch (error) {
+    // console.log("***** getSubMthsOptions - Error");
+    // console.log(error);
+    throw error;
+  }
 }
 
 //getMedicareOptions
