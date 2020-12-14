@@ -14,11 +14,12 @@ function mapDispatchToProps(dispatch) {
     return {
         setAdvancedSearch: (a) => dispatch(setAdvancedSearch(a))
     };
-  }
+}
 
 const mapStateToProps = (state) => {
     return {
-        tierAdvancedSearchBody: state?.advancedSearch?.tierAdvancedSearchBody
+        advancedSearchBody: state?.advancedSearch?.advancedSearchBody,
+        populateGrid: state?.advancedSearch?.populateGrid,
     };
 };
 
@@ -133,9 +134,22 @@ class AdvancedSearchPopup extends React.Component<
 
 
     clearSelected = () => {
+        this.state.additionalFilter.is_pa = false;
+        this.state.additionalFilter.is_st = false;
         this.setState({
             formArray: []
         })
+        let payload = { advancedSearchBody: {}, populateGrid: false };
+        payload.advancedSearchBody["additional_filter"] = {
+            is_pa: this.state.additionalFilter.is_pa, is_st: this.state.additionalFilter.is_st, is_add: false, is_all_tiers: false, is_exd: false,
+            is_fff: false, is_frf: false, is_hi: false, is_ibf: false, is_lis: false, is_non_frf: false, is_otc: false, is_pgc: false, is_user_defined1: false,
+            is_user_defined2: false, is_user_defined3: false, is_user_defined4: false, is_user_defined5: false
+        };
+        payload.advancedSearchBody["covered"] = {};
+        payload.advancedSearchBody["not_covered"] = {};
+        payload.advancedSearchBody["is_advance_search"] = false;
+        payload.populateGrid = true;
+        this.props.setAdvancedSearch(payload);
     }
 
     handleFormularyFileSelection = (event, value) => {
@@ -163,8 +177,17 @@ class AdvancedSearchPopup extends React.Component<
     }
 
     applySearch = () => {
-        let payload = {tierAdvancedSearchBody: {}};
-        payload.tierAdvancedSearchBody["additional_filter"] = {is_pa: this.state.additionalFilter.is_pa, is_st: this.state.additionalFilter.is_st};
+        let payload = { advancedSearchBody: {}, populateGrid: false };
+        payload.advancedSearchBody["additional_filter"] = {
+            is_pa: this.state.additionalFilter.is_pa, is_st: this.state.additionalFilter.is_st, is_add: false, is_all_tiers: false, is_exd: false,
+            is_fff: false, is_frf: false, is_hi: false, is_ibf: false, is_lis: false, is_non_frf: false, is_otc: false, is_pgc: false, is_user_defined1: false,
+            is_user_defined2: false, is_user_defined3: false, is_user_defined4: false, is_user_defined5: false
+        };
+        payload.advancedSearchBody["covered"] = {};
+        payload.advancedSearchBody["not_covered"] = {};
+        payload.advancedSearchBody["is_advance_search"] = true;
+        payload.populateGrid = true;
+
         this.props.setAdvancedSearch(payload);
     }
 

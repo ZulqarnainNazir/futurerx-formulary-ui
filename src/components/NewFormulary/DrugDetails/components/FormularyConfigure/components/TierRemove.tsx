@@ -12,6 +12,7 @@ import FrxDrugGridContainer from "../../../../../shared/FrxGrid/FrxDrugGridConta
 import { tierColumns } from "../../../../../../utils/grid/columns";
 import DropDown from "../../../../../shared/Frx-components/dropdown/DropDown";
 import { postTierApplyInfo, getTier } from "../../../../../../redux/slices/formulary/tier/tierActionCreation";
+import { setAdvancedSearch } from "../../../../../../redux/slices/formulary/advancedSearch/advancedSearchSlice";
 
 interface tabsState {
   tierGridContainer: boolean;
@@ -29,19 +30,23 @@ interface tabsState {
 
 const mapStateToProps = (state) => {
   return {
+    configureSwitch: state.switchReducer.configureSwitch,
     tierData: state.tierSliceReducer.data,
     applyData: state.tierSliceReducer.applyData,
     formulary_id: state?.application?.formulary_id,
     formulary: state?.application?.formulary,
     formulary_lob_id: state?.application?.formulary_lob_id,
-    formulary_type_id: state?.application?.formulary_type_id
+    formulary_type_id: state?.application?.formulary_type_id,
+    advancedSearchBody: state?.advancedSearch?.advancedSearchBody,
+    populateGrid: state?.advancedSearch?.populateGrid
   }
 }
 
 function mapDispatchToProps(dispatch) {
   return {
     postTierApplyInfo: (a) => dispatch(postTierApplyInfo(a)),
-    getTier: (a) => dispatch(getTier(a))
+    getTier: (a) => dispatch(getTier(a)),
+    setAdvancedSearch: (a) => dispatch(setAdvancedSearch(a))
   };
 }
 
@@ -90,16 +95,19 @@ class TierRemove extends React.Component<any, tabsState> {
     this.state.selectedFileKey = this.props.lobCode;
   }
 
-  populateGridData = () => {
+  populateGridData = (searchBody = null) => {
     if (this.state.selectedCriteria && this.state.selectedCriteria.length > 0) {
       let apiDetails = {};
       apiDetails['apiPart'] = this.state.selectedFileKey === this.props.lobCode ? tierConstants.FORMULARY_DRUGS_TIER : tierConstants.DRUGS_TIER;
       apiDetails['pathParams'] = this.props?.formulary_id + "/" + this.state.selectedFileKey + "/" + tierConstants.TYPE_REMOVE;
       apiDetails['keyVals'] = [{ key: tierConstants.KEY_ENTITY_ID, value: this.props?.formulary_id }, { key: tierConstants.KEY_INDEX, value: 0 }, { key: tierConstants.KEY_LIMIT, value: 10 }];
-
+      apiDetails['messageBody'] = {};
       if (this.state.selectedCriteria && this.state.selectedCriteria.length > 0) {
-        apiDetails['messageBody'] = {};
         apiDetails['messageBody']['selected_criteria_ids'] = this.state.selectedCriteria;
+      }
+
+      if(searchBody){
+        apiDetails['messageBody'] = Object.assign(apiDetails['messageBody'],searchBody);
       }
 
       const drugGridData = this.props.postTierApplyInfo(apiDetails).then((json => {
@@ -161,6 +169,14 @@ class TierRemove extends React.Component<any, tabsState> {
           }))
         }
       }))
+    }
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if(nextProps.advancedSearchBody && nextProps.populateGrid){
+      this.populateGridData(nextProps.advancedSearchBody);
+      let payload = {advancedSearchBody:nextProps.advancedSearchBody,  populateGrid: false};
+      this.props.setAdvancedSearch(payload);
     }
   }
 
@@ -229,29 +245,31 @@ class TierRemove extends React.Component<any, tabsState> {
     ];
     return (
       <>
-        <div className="white-bg">
-          <Grid item xs={5}>
-            <div className="tier-grid-remove-container">
-              <Table
-                columns={columns}
-                dataSource={dataSource}
-                pagination={false}
-                rowSelection={{
-                  columnWidth: 20,
-                  fixed: true,
-                  type: "checkbox",
-                  onChange: this.onSelectedRowKeysChange,
-                }}
-              />
-            </div>
-          </Grid>
-          <Row justify="end">
-            <Col>
-              <Button label="Apply" onClick={this.openTierGridContainer}></Button>
-            </Col>
-          </Row>
-        </div>
-        {this.state.tierGridContainer && (
+        {!this.props.configureSwitch && (
+          <div className="white-bg">
+            <Grid item xs={5}>
+              <div className="tier-grid-remove-container">
+                <Table
+                  columns={columns}
+                  dataSource={dataSource}
+                  pagination={false}
+                  rowSelection={{
+                    columnWidth: 20,
+                    fixed: true,
+                    type: "checkbox",
+                    onChange: this.onSelectedRowKeysChange,
+                  }}
+                />
+              </div>
+            </Grid>
+            <Row justify="end">
+              <Col>
+                <Button label="Apply" onClick={this.openTierGridContainer}></Button>
+              </Col>
+            </Row>
+          </div>
+        )}
+        {this.state.tierGridContainer && !this.props.configureSwitch && (
           <div className="select-drug-from-table">
             <div className="bordered white-bg">
               <div className="header space-between pr-10">
