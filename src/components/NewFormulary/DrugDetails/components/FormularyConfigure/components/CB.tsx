@@ -16,33 +16,30 @@ import { textFilters } from "../../../../../../utils/grid/filters";
 import { getDrugDetailsColumn } from "../DrugGridColumn";
 import { getDrugDetailData } from "../../../../../../mocks/DrugGridMock";
 import FrxLoader from "../../../../../shared/FrxLoader/FrxLoader";
-import DrugGrid from '../../DrugGrid';
-import AdvancedSearch from './search/AdvancedSearch';
+import DrugGrid from "../../DrugGrid";
+import AdvancedSearch from "./search/AdvancedSearch";
 import { getFormularySummary } from "../../../../../../redux/slices/formulary/formularySummaryActionCreation";
-
+import { getDrugDetailsCBSummary } from "../../../../../../redux/slices/formulary/drugDetails/cb/cbActionCreation";
 
 const mapStateToProps = (state) => {
   return {
-    formularySummary: state
+    formularySummary: state,
   };
 };
 
 function mapDispatchToProps(dispatch) {
   return {
-    getFormularySummary:(a)=>dispatch(getFormularySummary(a))
+    getFormularySummary: (a) => dispatch(getFormularySummary(a)),
+    getDrugDetailsCBSummary: (a) => dispatch(getDrugDetailsCBSummary(a)),
   };
 }
-
 
 class CB extends React.Component<any, any> {
   state = {
     isSearchOpen: false,
     panelGridTitle1: ["", "Number of Drugs", "added drugs", "removed drugs"],
     panelTitleAlignment1: ["left", "center", "center", "center"],
-    panelGridValue1: [
-      ["INCLUDED", "0", "0", "0"],
-      ["EXCLUDED", "0", "0", "0"],
-    ],
+    panelGridValue1: [],
     isNotesOpen: false,
     activeTabIndex: 0,
     columns: null,
@@ -56,14 +53,17 @@ class CB extends React.Component<any, any> {
 
   advanceSearchClickHandler = (event) => {
     event.stopPropagation();
-    this.setState({isSearchOpen: !this.state.isSearchOpen})
-  }
-  advanceSearchClosekHandler = () =>{
-      this.setState({isSearchOpen: !this.state.isSearchOpen})
-  }
+    this.setState({ isSearchOpen: !this.state.isSearchOpen });
+  };
+
+  advanceSearchClosekHandler = () => {
+    this.setState({ isSearchOpen: !this.state.isSearchOpen });
+  };
+
   saveClickHandler = () => {
-    console.log('Save data');
-  }
+    console.log("Save data");
+  };
+
   componentDidMount() {
     const data = getDrugDetailData();
     const columns = getDrugDetailsColumn();
@@ -81,16 +81,40 @@ class CB extends React.Component<any, any> {
       dataType: "string",
       hidden: false,
       sortDirections: [],
-    }
+    };
+
     columns.unshift(FFFColumn);
     for (let el of data) {
-      el['fff'] = 'Y';
+      el["fff"] = "Y";
     }
-    this.setState({
-      columns: columns,
-      data: data
+
+    // this.setState({
+    //   columns: columns,
+    //   data: data,
+    // });
+
+    this.props.getDrugDetailsCBSummary().then((json) => {
+      let tmpData =
+        json.payload && json.payload.result ? json.payload.result : [];
+
+      let rows = tmpData.map((ele) => {
+        let curRow = [
+          ele["attribute_name"],
+          ele["total_drug_count"],
+          ele["added_drug_count"],
+          ele["removed_drug_count"],
+        ];
+        return curRow;
+      });
+
+      this.setState({
+        panelGridValue1: rows,
+        columns: columns,
+        data: data,
+      });
     });
-    this.props.getFormularySummary('1')
+
+    this.props.getFormularySummary("1");
   }
 
   onClickTab = (selectedTabIndex: number) => {
@@ -100,29 +124,37 @@ class CB extends React.Component<any, any> {
       if (index === selectedTabIndex) {
         activeTabIndex = index;
       }
-      if(index === 2){
-        const result = this.props.getFormularySummary('1')
-        console.log(result)
+      if (index === 2) {
+        const result = this.props.getFormularySummary("1");
+        console.log(result);
       }
       return tab;
     });
+
     this.setState({ tabs, activeTabIndex });
   };
+
   handleNoteClick = (event: React.ChangeEvent<{}>) => {
     event.stopPropagation();
     this.setState({ isNotesOpen: !this.state.isNotesOpen });
   };
+
   handleCloseNote = () => {
     this.setState({ isNotesOpen: !this.state.isNotesOpen });
   };
+
   settingFormApplyHandler = () => {
     alert(1);
   };
+
   render() {
     let dataGrid = <FrxLoader />;
     if (this.state.data) {
-      dataGrid = <DrugGrid columns={this.state.columns} data={this.state.data} />
+      dataGrid = (
+        <DrugGrid columns={this.state.columns} data={this.state.data} />
+      );
     }
+
     return (
       <>
         <div className="bordered mb-10">
@@ -163,15 +195,18 @@ class CB extends React.Component<any, any> {
                     onClose={this.handleCloseNote}
                   />
                 ) : (
-                    ""
-                  )}
+                  ""
+                )}
               </div>
               <div className="modify-panel">
                 <div className="icon">
                   <span>R</span>
                 </div>
                 <div className="switch-box">
-                  <CustomizedSwitches leftTitle="Modify" rightTitle="view all" />
+                  <CustomizedSwitches
+                    leftTitle="Modify"
+                    rightTitle="view all"
+                  />
                 </div>
                 <div className="mini-tabs">
                   <FrxMiniTabs
@@ -186,9 +221,12 @@ class CB extends React.Component<any, any> {
               <div className="settings-form">
                 <label>
                   What indicator will be configured for Marketing Material?
-              </label>
+                </label>
                 <div className="marketing-material radio-group">
-                  <RadioButton label="ADD File" name="marketing-material-radio" />
+                  <RadioButton
+                    label="ADD File"
+                    name="marketing-material-radio"
+                  />
                   <RadioButton
                     label="Excluded"
                     name="marketing-material-radio"
@@ -225,27 +263,27 @@ class CB extends React.Component<any, any> {
         <div className="bordered">
           <div className="header space-between pr-10">
             Drug Grid
-                        <div className="button-wrapper">
-              <Button className="Button normal" label="Advance Search" onClick={this.advanceSearchClickHandler} />
+            <div className="button-wrapper">
+              <Button
+                className="Button normal"
+                label="Advance Search"
+                onClick={this.advanceSearchClickHandler}
+              />
               <Button label="Save" onClick={this.saveClickHandler} disabled />
             </div>
           </div>
           {dataGrid}
           {this.state.isSearchOpen ? (
-              <AdvancedSearch
-                      category="Grievances"
-                      openPopup={this.state.isSearchOpen}
-                      onClose={this.advanceSearchClosekHandler}/>
-          ) : (
-              null
-          )}
+            <AdvancedSearch
+              category="Grievances"
+              openPopup={this.state.isSearchOpen}
+              onClose={this.advanceSearchClosekHandler}
+            />
+          ) : null}
         </div>
       </>
     );
   }
 }
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(CB);
+export default connect(mapStateToProps, mapDispatchToProps)(CB);

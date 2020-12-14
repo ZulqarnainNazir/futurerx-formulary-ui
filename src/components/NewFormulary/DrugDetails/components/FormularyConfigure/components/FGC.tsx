@@ -1,9 +1,18 @@
 import React from "react";
+import { connect } from "react-redux";
 import PanelHeader from "./PanelHeader";
 import PanelGrid from "./panelGrid";
 import Box from "@material-ui/core/Box";
 import Button from "../../../../../shared/Frx-components/button/Button";
-export default class FGC extends React.Component<any, any> {
+import { getDrugDetailsFGC } from "../../../../../../redux/slices/formulary/drugDetails/fgc/fgcActionCreation";
+
+function mapDispatchToProps(dispatch) {
+  return {
+    getDrugDetailsFGC: (a) => dispatch(getDrugDetailsFGC(a)),
+  };
+}
+
+class FGC extends React.Component<any, any> {
   state = {
     panelGridTitle1: [
       "Tier Number",
@@ -12,15 +21,34 @@ export default class FGC extends React.Component<any, any> {
       "Partial Gap Coverage",
     ],
     panelTitleAlignment1: ["left", "left", "center", "center"],
-    panelGridValue1: [
-      ["0", "OTC", "checkbox", "checkbox"],
-      ["1", "Brand", "checkbox", "checkbox"],
-      ["2", "Excluded Drug Only Tier", "checkbox", "checkbox"],
-    ],
+    panelGridValue1: []
   };
+
   onApplyHandler = () => {
     alert(1);
   };
+
+  componentDidMount() {
+    this.props.getDrugDetailsFGC().then((json) => {
+      let tmpData =
+        json.payload && json.payload.data ? json.payload.data : [];
+
+      let rows = tmpData.map((ele) => {
+        let curRow = [
+          ele["tier_value"],
+          ele["tier_label"],
+        ];
+        curRow.push("checkbox");
+        curRow.push("checkbox");
+        return curRow;
+      });
+
+      this.setState({
+        panelGridValue1: rows,
+      });
+    });
+  }
+
   render() {
     return (
       <>
@@ -41,3 +69,5 @@ export default class FGC extends React.Component<any, any> {
     );
   }
 }
+
+export default connect(null, mapDispatchToProps)(FGC);

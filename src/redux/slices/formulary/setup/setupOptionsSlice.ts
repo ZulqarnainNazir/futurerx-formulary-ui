@@ -3,6 +3,7 @@ import { createAsyncThunk } from "@reduxjs/toolkit";
 import { Formulary } from "./formulary";
 import {
   getGeneralOptions,
+  getSubMthsOptions,
   getMedicareOptions,
   getDesignOptions,
   getSupplementalOptions,
@@ -103,20 +104,22 @@ const setup = createSlice({
       state.error = null;
     },
     getGeneralOptionsFailure: loadingFailed,
-
     getSubMthsOptionsStart: startLoading,
     getSubMthsOptionsSuccess(
       state,
       { payload }: PayloadAction<GeneralOptions>
     ) {
-      //console.log("***** getSubMthsOptionsSuccess ");
-      //console.log(payload);
-      //state.medicareOptions = payload;
+      // console.log("***** getSubMthsOptionsSuccess ");
+      // console.log(payload);
+      if (!state.generalOptions) {
+        state.generalOptions = {};
+        state.generalOptions = generalOptionsInitialState;
+      }
+      state.generalOptions.submission_months = payload?.submission_months;
       state.isLoading = false;
       state.error = null;
     },
     getSubMthsOptionsFailure: loadingFailed,
-
     getMedicareOptionsStart: startLoading,
     getMedicareOptionsSuccess(
       state,
@@ -176,6 +179,22 @@ export const fetchGeneralOptions = createAsyncThunk(
     } catch (err) {
       //console.log("***** fetchGeneralOptions AC - ERROR ");
       dispatch(getGeneralOptionsFailure(err.toString()));
+    }
+  }
+);
+
+export const fetchSubMthsOptions = createAsyncThunk(
+  "setupOptions",
+  async (year: number, { dispatch }) => {
+    // console.log("***** fetchSubMthsOptions");
+    try {
+      dispatch(getSubMthsOptionsStart());
+      const options: any = await getSubMthsOptions(year);
+      // console.log("*** options : ", options);
+      dispatch(getSubMthsOptionsSuccess(options));
+    } catch (err) {
+      //console.log("***** fetchGeneralOptions AC - ERROR ");
+      dispatch(getSubMthsOptionsFailure(err.toString()));
     }
   }
 );
@@ -240,22 +259,6 @@ export const fetchSupplementalOptions = createAsyncThunk(
     } catch (err) {
       //console.log("***** fetchGeneralOptions AC - ERROR ");
       dispatch(getSupplementalOptionsFailure(err.toString()));
-    }
-  }
-);
-
-export const fetchSubMthsOptions = createAsyncThunk(
-  "setupOptions",
-  async (arg: number, { dispatch }) => {
-    //console.log("***** fetchSubMthsOptions");
-    try {
-      dispatch(getSubMthsOptionsStart());
-      const options: any = await getSupplementalOptions(1);
-      //console.log("*** options : ", options);
-      dispatch(getSubMthsOptionsSuccess(options));
-    } catch (err) {
-      //console.log("***** fetchGeneralOptions AC - ERROR ");
-      dispatch(getSubMthsOptionsFailure(err.toString()));
     }
   }
 );

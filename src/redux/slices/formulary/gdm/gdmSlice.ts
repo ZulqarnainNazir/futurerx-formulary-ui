@@ -1,30 +1,150 @@
-import {createSlice} from "@reduxjs/toolkit";
-import { saveGDM } from "./gdmActionCreation";
-import { actionFulfilled, actionRejected } from "./gdmReducers";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { createAsyncThunk } from "@reduxjs/toolkit";
+import { saveStGroup,deleteStGroup,cloneStGroup,archiveStGroup,newVersionStGroup } from "./services";
 
-
-// Init State
-const validationState: any = {
-  validationData: {},
-  isLoading: false,
+interface GDMState {
+  formulary_id: number;
+  isLoading: boolean;
+  error: string | null;
+  current_group_id:any;
+  current_group_des_id:any;
+  success:any;
 }
 
-// Slice
-export const saveGDMSlice = createSlice({
-  name: "validation-formulary",
-  initialState: validationState,
-  reducers: {
+const GDMInitialState: GDMState = {
+  formulary_id: 0,
+  isLoading: true,
+  error: null,
+  current_group_id:0,
+  current_group_des_id:0,
+  success:null
+};
 
+export interface GDMSaveResponse {
+  success:any;
+}
+
+interface StGroupResult {
+  formulary_id: any;
+  current_group_id: any;
+  current_group_des_id: any
+}
+
+function startLoading(state: GDMState) {
+  state.isLoading = true;
+}
+
+function loadingFailed(state: GDMState, action: PayloadAction<string>) {
+  state.isLoading = false;
+  state.success = null;
+  state.error = (action.payload["data"].errors)?action.payload["data"].errors:action.payload;
+}
+
+const gdm = createSlice({
+  name: "gdm",
+  initialState: GDMInitialState,
+  reducers: {
+    getPending: startLoading,
+    getSuccess(state, { payload }: PayloadAction<GDMSaveResponse>) {
+      state.error = null
+      state.success = payload.success.data;
+    },
+    getFailed: loadingFailed,
+    setStGroupDetails(state, { payload }: PayloadAction<StGroupResult>) {
+      const {
+        formulary_id,
+        current_group_id,
+        current_group_des_id,
+      } = payload;
+      state.formulary_id = formulary_id;
+      state.current_group_id = current_group_id;
+      state.current_group_des_id = current_group_des_id;
+    },
   },
-  extraReducers: builder => (
-    builder.addCase(saveGDM.pending, (state, action) => {
-      state.isLoading = true;
-    }),
-    builder.addCase(saveGDM.fulfilled, (state, action) => {
-      actionFulfilled(state, action);
-    }),
-    builder.addCase(saveGDM.rejected, (state, action) => {
-      actionRejected(state, action);
-    })
-  )
 });
+
+export const {
+  getPending,
+  getSuccess,
+  getFailed,
+  setStGroupDetails
+} = gdm.actions;
+
+export default gdm.reducer;
+
+export const saveGDM = createAsyncThunk(
+  "gdm",
+  async (arg: any, { dispatch }) => {
+    try {
+      dispatch(getPending());
+      const response = await saveStGroup(arg);
+      dispatch(getSuccess(response));
+    } catch (err) {
+      dispatch(getFailed(err));
+    }
+  }
+);
+
+export const getSTGroupDetails = createAsyncThunk(
+  "gdmdetail",
+  async (arg: any, { dispatch }) => {
+    const obj = {
+      formulary_id: arg.formulary_id,
+      current_group_id: arg.current_group_id,
+      current_group_des_id: arg.current_group_des_id
+    };
+    dispatch(setStGroupDetails(obj));
+  }
+);
+
+export const deleteGroupDescription = createAsyncThunk(
+  "delete_group_desc",
+  async (arg: any, { dispatch }) => {
+    try {
+      dispatch(getPending());
+      const response = await deleteStGroup(arg);
+      dispatch(getSuccess(response));
+    } catch (err) {
+      dispatch(getFailed(err));
+    }
+  }
+);
+
+export const cloneGroupDescription = createAsyncThunk(
+  "clone_group_desc",
+  async (arg: any, { dispatch }) => {
+    try {
+      dispatch(getPending());
+      const response = await cloneStGroup(arg);
+      dispatch(getSuccess(response));
+    } catch (err) {
+      dispatch(getFailed(err));
+    }
+  }
+);
+
+export const archiveGroupDescription = createAsyncThunk(
+  "archive_group_desc",
+  async (arg: any, { dispatch }) => {
+    try {
+      dispatch(getPending());
+      const response = await archiveStGroup(arg);
+      dispatch(getSuccess(response));
+    } catch (err) {
+      dispatch(getFailed(err));
+    }
+  }
+);
+
+export const newVersionGroupDescription = createAsyncThunk(
+  "newversion_group_desc",
+  async (arg: any, { dispatch }) => {
+    try {
+      dispatch(getPending());
+      const response = await newVersionStGroup(arg);
+      dispatch(getSuccess(response));
+    } catch (err) {
+      dispatch(getFailed(err));
+    }
+  }
+);
