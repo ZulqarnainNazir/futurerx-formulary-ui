@@ -16,7 +16,7 @@ export default function CheckboxLabels(Props:any) {
     <FormGroup row>
       {
         Props.checkBoxOpt!==undefined && Props.checkBoxOpt.map(e=>{
-          return <FormControlLabel control={<Checkbox/>} label={e.text} />
+          return <FormControlLabel control={<Checkbox onChange = {(event) => Props.selectionHandler(event, e.text, Props.title)}/>} label={e.text} />
         })
       }
     </FormGroup>
