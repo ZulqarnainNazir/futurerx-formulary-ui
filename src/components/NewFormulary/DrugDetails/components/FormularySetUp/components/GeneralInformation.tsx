@@ -35,53 +35,55 @@ const FormularyMethod = (props: any) => {
     console.log((event.target as HTMLInputElement).value)
     setValue((event.target as HTMLInputElement).value);
   };
+  const changeMethodHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
+    console.log((event.target.value))
+  }
   return (
     <>
-      <Grid item xs={selectedMethod === 'clone' ? 4 : 8}>
-        <div className="group">
-          <label>
-            Method of Formulary Build <span className="astrict">*</span>
-          </label>
-          <div className="marketing-material radio-group no-transform">
-            <RadioButton label="Clone" checked={props.method === 'clone'} value="clone" onChange={handleRadioOptionChange} name="marketing-material-radio" />
-            <RadioButton label="Upload" checked={props.method === 'upload'} value="upload" onChange={handleRadioOptionChange} name="marketing-material-radio" />
-            <RadioButton
-              label="Create New"
-              value="create-new"
-              name="marketing-material-radio"
-              onChange={handleRadioOptionChange}
-              checked={props.method === 'N'}
-            />
-            {/* <RadioGroup aria-label="gender" name="gender1" value={value} onChange={handleChange}>
-              <FormControlLabel value="clone" control={<Radio />} label="clone" />
-              <FormControlLabel value="upload" control={<Radio />} label="upload" />
-              <FormControlLabel value="N" control={<Radio />} label="Create New" />
-            </RadioGroup> */}
-          </div>
-          
-          {
-            selectedMethod === 'upload' && 
-            <div>
-              <Button label="Upload" htmlFor="upload-file" className="upload-button"/>
-            </div>
-          }
-        </div>
-      </Grid>
       
-      { 
-        selectedMethod === 'clone' && 
-        <Grid item xs={4}>
-          <div className="group">
-            <label>CLONE FORMULARY <span className="astrict">*</span></label>
-            <a href="#" className="input-link clone-formulary-link">Clone Formulary</a>
-          </div>
-        </Grid>
-      }
   </>
   )
 }
 
-class GeneralInformation extends React.Component<any, any> {  
+class GeneralInformation extends React.Component<any, any> {
+  state = {
+    selectedMethod: this.props.formulary?.formulary_info?.formulary_build_method,
+    forumalry_description: ''
+  }
+  UNSAFE_componentWillReceiveProps = (newProps) => {
+    if(newProps.formulary){
+      this.setState({
+        selectedMethod: newProps.formulary.formulary_info.formulary_build_method,
+        forumalry_description: newProps.formulary.formulary_info.formulary_description
+      })
+    }
+  }
+  getMethods = () => {
+    let radioGroup: any = null;
+    if(this.state.selectedMethod !== undefined){
+      radioGroup = (
+        <div className="radio-group">
+          <RadioGroup 
+            className="radio-group-custom" 
+            aria-label={this.state.selectedMethod} 
+            name={this.state.selectedMethod} 
+            value={this.state.selectedMethod.toString()} 
+            onChange={this.changeMethodHandler}>
+            <FormControlLabel value="clone" control={<Radio />} label="Clone" />
+            <FormControlLabel value="upload" control={<Radio />} label="Upload" />
+            <FormControlLabel value="N" control={<Radio />} label="Create New" />
+          </RadioGroup>
+        </div>
+      );
+    }
+    return radioGroup;
+  }
+  changeMethodHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
+    console.log((event.target.value))
+    this.setState({
+      selectedMethod: event.target.value
+    })
+  }
   render() {
     const FORMULARY = this.props.formulary;
     const disabled = this.props.formulary_mode === 'EXISTING' ? true : false;
@@ -161,7 +163,33 @@ class GeneralInformation extends React.Component<any, any> {
                 }
               />
             </Grid>
-            <FormularyMethod method={FORMULARY ? FORMULARY_Values.formulary_build_method : ''}/>
+            <Grid item xs={this.state.selectedMethod === 'clone' ? 4 : 8}>
+              <div className="group">
+                <label>
+                  Method of Formulary Build <span className="astrict">*</span>
+                </label>
+                <div className="marketing-material radio-group no-transform">
+                  {FORMULARY ? this.getMethods() : ''}
+                </div>
+                
+                {
+                  this.state.selectedMethod === 'upload' && 
+                  <div>
+                    <Button label="Upload" htmlFor="upload-file" className="upload-button"/>
+                  </div>
+                }
+              </div>
+            </Grid>
+            
+            { 
+              this.state.selectedMethod === 'clone' && 
+              <Grid item xs={4}>
+                <div className="group">
+                  <label>CLONE FORMULARY <span className="astrict">*</span></label>
+                  <a href="#" className="input-link clone-formulary-link">Clone Formulary</a>
+                </div>
+              </Grid>
+            }
             <Grid item xs={4}>
               <div className="group">
                 <label>
