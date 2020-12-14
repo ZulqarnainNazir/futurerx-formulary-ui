@@ -32,7 +32,7 @@ function mapDispatchToProps(dispatch) {
 }
 function mapStateToProps(state){
   return {
-    current_formulary: state.formularBase.current_formulary,
+    current_formulary: state.application.formulary,
   }
 }
 

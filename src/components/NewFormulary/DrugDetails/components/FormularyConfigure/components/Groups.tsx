@@ -99,7 +99,7 @@ export default class Groups extends React.Component<Props, any> {
                     <span>
                         {this.getStatusIcon(this.props.statusType)}
                     </span>
-                    <span className="group-title">{this.props.title}</span>
+        <span className="group-title">{this.props.title} </span>
                 </div>
                 <div className="edit-icon">
                     <span>
