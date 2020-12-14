@@ -23,7 +23,7 @@
   color: #1d54b4;
   padding: 15px;
 }
-.formulary-design-container{
+.formulary-design-container,.general-information-container{
   .radio-group {
     .radio-group-custom{
       display: flex;
@@ -137,7 +137,7 @@
 .radio-group {
   display: flex;
   &.marketing-material {
-    padding: 15px 0 20px;
+    padding: 0 0 20px;
   }
   &.marketing-usp {
     padding: 15px 0 20px;
