@@ -2,7 +2,7 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { Formulary } from "./formulary";
 import { getformulary } from "./setupService";
-import {setFormulary} from "./../application/applicationSlice";
+import { setFormulary } from "./../application/applicationSlice";
 
 interface SetupState {
   formulary: Formulary | any;
@@ -50,14 +50,13 @@ const setup = createSlice({
 export const fetchSelectedFormulary = createAsyncThunk(
   "setup",
   async (arg: number, { dispatch }) => {
-    console.log("***** fetchSelectedFormulary ( "+arg+" ) ");
+    //console.log("***** fetchSelectedFormulary ( "+arg+" ) ");
     try {
       dispatch(getformularyStart());
       const formulary: Formulary = await getformulary(arg);
 
       dispatch(getFormularySuccess(formulary));
       dispatch(setFormulary(formulary));
-
     } catch (err) {
       //console.log("***** fetchFormularies - ERROR ");
       dispatch(getFormalaryFailure(err.toString()));

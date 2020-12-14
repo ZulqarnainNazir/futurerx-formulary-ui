@@ -23,7 +23,17 @@
         justify-content: space-between;
         padding-right: 6px;
     }
-    
+    .formulary-type-dropdown{
+        width: 205px !important;
+        .ant-select-arrow{
+            svg{
+                path{
+                    fill: #F65A1C;
+                }
+            }
+        }
+    }
+
     .item-text {
         font-family: Roboto;
         font-style: normal;
@@ -51,8 +61,33 @@
             margin-right: 0;
         }
     }
-    .formulary-type-dropdown{
-        width: 205px !important;
+    
+}
+.drug-detail-top{
+    .version-wrapper{
+        justify-content: space-between;
+        .formulary-type-dropdown{
+            width: 355px !important;
+        }
+        .select-box + div{
+            width: 100%;
+            display: flex;
+            padding: 0 35px 0 10px;
+            justify-content: space-between;
+            
+        }
+    }
+}
+.ant-select-dropdown.version-dd{
+    border: 1px solid #F65A1C !important;
+    background: #FFF5F0 !important;
+    .ant-select-item{
+        background: none;
+        .ant-select-item-option-content{
+            background: none;
+            color: #F65A1C;
+        }
+    
     }
 }
 
@@ -117,7 +152,6 @@
         width: 205px !important;
     }
 }
-
 .drug-detail-top{
     background: white;
     padding: 22px 20px 30px 30px;

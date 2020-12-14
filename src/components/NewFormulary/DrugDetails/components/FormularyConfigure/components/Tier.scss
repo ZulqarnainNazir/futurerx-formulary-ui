@@ -149,7 +149,36 @@
     }
   }
 }
+.tier-definition-popup-wrapper {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  border: 1px solid #e5e5e5;
+  width: 630px;
 
+  .heading {
+    background: #f9f9f9;
+    font-size: 12px;
+    text-transform: uppercase;
+    color: #707683;
+    border-bottom: 1px solid #e5e5e5;
+    padding: 15px;
+  }
+
+  .border-right {
+    border-right: 1px solid #e5e5e5;
+  }
+
+  .tier-number,
+  .tier-descripption {
+    padding: 5px 15px;
+    height: 40px;
+    font-size: 12px;
+  }
+
+  .tier-description-dropdown {
+    width: 300px;
+  }
+}
 .tier-checkbox .ant-checkbox-inner {
   padding: 0px !important;
   background: #80c483 !important;
@@ -230,4 +259,14 @@
       }
     }
   }
+}
+.tier-dialog-popup {
+  z-index: 0 !important;
+}
+.mini-tabs{
+  z-index: 0;
+}
+.tier-popup-btn{
+  display: flex;
+  justify-content: flex-end;
 }
