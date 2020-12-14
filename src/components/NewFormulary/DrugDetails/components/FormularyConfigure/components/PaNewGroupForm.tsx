@@ -8,7 +8,7 @@ import CustomizedSwitches from './CustomizedSwitches';
 import { TabInfo } from "../../../../../../models/tab.model";
 import FrxMiniTabs from "../../../../../shared/FrxMiniTabs/FrxMiniTabs";
 import Button from '../../../../../shared/Frx-components/button/Button';
-import DropDown from "../../../../../shared/Frx-components/dropdown/DropDown";
+import DropDown from "../../../../../shared/Frx-components/dropdown/DropDownMap";
 import FormGroup from '@material-ui/core/FormGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
