@@ -37,7 +37,8 @@ const mapStateToProps = (state) => {
     formulary_lob_id: state?.application?.formulary_lob_id,
     formulary_type_id: state?.application?.formulary_type_id,
     advancedSearchBody: state?.advancedSearch?.advancedSearchBody,
-    populateGrid: state?.advancedSearch?.populateGrid
+    populateGrid: state?.advancedSearch?.populateGrid,
+    closeDialog: state?.advancedSearch?.closeDialog,
   }
 }
 
@@ -173,7 +174,11 @@ class TierReplace extends React.Component<any, tabsState> {
     this.initialize(nextProps);
     if(nextProps.advancedSearchBody && nextProps.populateGrid){
       this.populateGridData(nextProps.advancedSearchBody);
-      let payload = {advancedSearchBody:nextProps.advancedSearchBody,  populateGrid: false};
+      let payload = {advancedSearchBody:nextProps.advancedSearchBody,  populateGrid: false , closeDialog: nextProps.closeDialog};
+      if(nextProps.closeDialog){
+        this.state.isSearchOpen = false;
+        payload['closeDialog'] = false;
+      }
       this.props.setAdvancedSearch(payload);
     }
   }

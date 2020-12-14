@@ -20,7 +20,7 @@ import { Box, Grid, Input } from '@material-ui/core';
 import RadioButton from '../../../../../shared/Frx-components/radio-button/RadioButton';
 import Groups from './Groups'
 import NewGroup from './NewGroup'
-
+import { getSTGroupDetails } from "../../../../../../redux/slices/formulary/gdm/gdmSlice";
 import { getStSummary, getStGrouptDescriptions, getStTypes, getStGrouptDescriptionVersions, getStGrouptDescription } from "../../../../../../redux/slices/formulary/stepTherapy/stepTherapyActionCreation";
 
 function mapStateToProps(state) {
@@ -29,14 +29,14 @@ function mapStateToProps(state) {
     }
 }
 
-
 function mapDispatchToProps(dispatch) {
     return {
         getStSummary: (a) => dispatch(getStSummary(a)),
-        getStGrouptDescriptions: (a) => dispatch(getStGrouptDescriptions(a)),
-        getStTypes: (a) => dispatch(getStTypes(a)),
-        getStGrouptDescriptionVersions: (a) => dispatch(getStGrouptDescriptionVersions(a)),
-        getStGrouptDescription: (a) => dispatch(getStGrouptDescription(a)),
+        getStGrouptDescriptions: (a) => dispatch(getStGrouptDescriptions(a)), // Group List
+        getStTypes: (a) => dispatch(getStTypes(a)),  // File Type
+        getStGrouptDescriptionVersions: (a) => dispatch(getStGrouptDescriptionVersions(a)), //Version
+        getStGrouptDescription: (a) => dispatch(getStGrouptDescription(a)), // Group ID Detail
+        getSTGroupDetails:(arg)=>dispatch(getSTGroupDetails(arg)),
     };
 }
 
@@ -48,10 +48,6 @@ class GPM extends React.Component<any, any>{
         stGroupDescriptions: [],
         stTypes: [],
         stGroupDescriptionVersion: null,
-        selectedGrp:'',
-        versionList:[{value:'Version 1'}],
-        versionTitle:"Group Description Version 1",
-        latestVerion:0,
         tabs: [
             {
                 id: 1,
@@ -85,26 +81,20 @@ class GPM extends React.Component<any, any>{
         this.setState({ tabs, activeTabIndex });
     };
 
-    selectGroup = (param: any,groupType:string) => {
+    selectGroup = (param: any, groupType: string) => {
         this.props.getStGrouptDescriptionVersions(param).then((json) => {
             let tmpData = json.payload.data;
             let dataLength = tmpData.length
-            var result = tmpData.map(function (el) {
-                var element = {};
-                element["value"] = el.value;
-                return element;
-            })
-            let latestVerion = tmpData.length>0?tmpData[dataLength-1].id_st_group_description:0
-            this.setState({
-                versionList:result,
-                versionTitle:`Group Description ${tmpData[dataLength-1].value}`,
-                latestVerion:latestVerion
-            })
+            let latestVerion = tmpData.length > 0 ? tmpData[dataLength - 1].id_st_group_description : 0
             this.props.getStGrouptDescription(latestVerion)
+            this.props.getSTGroupDetails({
+                formulary_id: this.props.formulary_id,
+                current_group_id: param,
+                current_group_des_id: latestVerion
+            })
         });
         this.setState({
             newGroup: true,
-            selectedGrp:groupType==='warning'?false:true
         })
     }
     addNewGroup = () => {
@@ -120,17 +110,14 @@ class GPM extends React.Component<any, any>{
                 var element = {};
                 element["id"] = el.id_st_group_description;
                 element["label"] = el.st_group_description_name;
-                element["status"] = el.is_setup_complete?"completed":"warning";
+                element["status"] = el.is_setup_complete ? "completed" : "warning";
                 element["is_archived"] = el.is_archived;
                 return element;
             })
-
             this.setState({
                 groupsData: result,
             });
-
         });
-
         this.props.getStTypes(this.props.formulary_id).then((json) => {
             this.setState({
                 stTypes: json.payload.data,
@@ -188,10 +175,6 @@ class GPM extends React.Component<any, any>{
                                 </div>
                                 <div className="group-wrapper scrollbar scrollbar-primary  mt-5 mx-auto view-com-sec">
                                     {
-                                        // this.state.groupsData.map((group,key) => (
-                                        // <Groups key={key} id={group.id} title={group.label} statusType={group.status} selectGroup={this.selectGroup}/>        
-                                        // ))    
-
                                         this.state.groupsData.map((group, key) => (
                                             (this.state.searchInput == "" || (this.state.searchInput != "" && group.label.indexOf(this.state.searchInput) > -1)) ? (
                                                 (this.state.activeTabIndex == 0 && group.is_archived == false) ?
@@ -202,17 +185,11 @@ class GPM extends React.Component<any, any>{
                                             ) : ""
                                         ))
                                     }
-                                    {/* <Groups title={'Group1'} statusType={1} selectGroup={this.selectGroup}/>
-                                        <Groups title={'Group2'} statusType={2} selectGroup={this.selectGroup}/>
-                                        <Groups title={'Group3'} statusType={1} selectGroup={this.selectGroup}/>
-                                        <Groups title={'Group4'} statusType={1} selectGroup={this.selectGroup}/>
-                                        <Groups title={'Group5'} statusType={1} selectGroup={this.selectGroup}/>
-                                        <Groups title={'Group6'} statusType={1} selectGroup={this.selectGroup}/> */}
                                 </div>
                             </div>
                         </div>
-                        {this.state.newGroup ? <NewGroup tooltip={this.state.tooltip} formType={1} editable={this.state.selectedGrp} versionList={this.state.versionList} versionTitle={this.state.versionTitle} activeTabIndex={this.state.activeTabIndex} latestVerion={this.state.latestVerion}/> : (
-                            <NewGroup tooltip={this.state.tooltip} formType={0} editable={this.state.selectedGrp} versionList={this.state.versionList} title={'NEW GROUP DESCRIPTION'} versionTitle={this.state.versionTitle} activeTabIndex={this.state.activeTabIndex} latestVerion={this.state.latestVerion}/>
+                        {this.state.newGroup ? <NewGroup tooltip={this.state.tooltip} formType={1}/> : (
+                            <NewGroup tooltip={this.state.tooltip} formType={0}/>
                         )}
                     </div>
 
@@ -221,7 +198,6 @@ class GPM extends React.Component<any, any>{
         )
     }
 }
-
 
 export default connect(
     mapStateToProps,
