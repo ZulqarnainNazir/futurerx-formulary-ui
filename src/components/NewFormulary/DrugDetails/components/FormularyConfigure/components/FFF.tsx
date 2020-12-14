@@ -1,4 +1,5 @@
 import React from "react";
+import { connect } from "react-redux";
 import PanelHeader from "./PanelHeader";
 import PanelGrid from "./panelGrid";
 import CustomizedSwitches from "./CustomizedSwitches";
@@ -11,7 +12,15 @@ import { getDrugDetailData } from "../../../../../../mocks/DrugGridMock";
 import { textFilters } from "../../../../../../utils/grid/filters";
 import FrxLoader from "../../../../../shared/FrxLoader/FrxLoader";
 import AdvancedSearch from "./search/AdvancedSearch";
-export default class FFF extends React.Component<any, any> {
+import { getDrugDetailsFFFSummary } from "../../../../../../redux/slices/formulary/drugDetails/fff/fffActionCreation";
+
+function mapDispatchToProps(dispatch) {
+  return {
+    getDrugDetailsFFFSummary: (a) => dispatch(getDrugDetailsFFFSummary(a)),
+  };
+}
+
+class FFF extends React.Component<any, any> {
   state = {
     isSearchOpen: false,
     panelGridTitle1: [
@@ -88,11 +97,33 @@ export default class FFF extends React.Component<any, any> {
     for (let el of data) {
       el["fff"] = "Y";
     }
-    this.setState({
-      columns: columns,
-      data: data,
+    // this.setState({
+    //   columns: columns,
+    //   data: data,
+    // });
+
+    this.props.getDrugDetailsFFFSummary().then((json) => {
+      let tmpData =
+        json.payload && json.payload.result ? json.payload.result : [];
+
+      let rows = tmpData.map((ele) => {
+        let curRow = [
+          ele["attribute_name"],
+          ele["total_drug_count"],
+          ele["added_drug_count"],
+          ele["removed_drug_count"],
+        ];
+        return curRow;
+      });
+
+      this.setState({
+        panelGridValue1: rows,
+        columns: columns,
+        data: data,
+      });
     });
   }
+
   render() {
     let dataGrid = <FrxLoader />;
     if (this.state.data) {
@@ -100,6 +131,7 @@ export default class FFF extends React.Component<any, any> {
         <DrugGrid columns={this.state.columns} data={this.state.data} />
       );
     }
+
     return (
       <>
         <div className="bordered mb-10">
@@ -164,3 +196,5 @@ export default class FFF extends React.Component<any, any> {
     );
   }
 }
+
+export default connect(null, mapDispatchToProps)(FFF);

@@ -15,8 +15,8 @@ export async function getformularyVersions(formularyBaseId: any): Promise<Formul
     const response = await axios.get(url, {
       headers: headers,
     });
-    console.log("***** getformulary Versions - Success");
-    console.log(response);
+    // console.log("***** getformulary Versions - Success");
+    // console.log(response);
     return {
       list: response.data.data,
     };

@@ -2,15 +2,21 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { createAsyncThunk } from "@reduxjs/toolkit";
 
 interface AdvancedSearchState {
-  tierAdvancedSearchBody: any;
+  advancedSearchBody: any;
+  populateGrid: boolean;
+  closeDialog: boolean;
 }
 
 const advancedSearchInitialState: AdvancedSearchState = {
-  tierAdvancedSearchBody: null
+  advancedSearchBody: null,
+  populateGrid: false,
+  closeDialog: false
 };
 
 interface AdvancedSearchResult {
-  tierAdvancedSearchBody: any;
+  advancedSearchBody: any;
+  populateGrid: boolean;
+  closeDialog: boolean;
 }
 
 const advancedSearch = createSlice({
@@ -18,7 +24,9 @@ const advancedSearch = createSlice({
   initialState: advancedSearchInitialState,
   reducers: {
     setAdvancedSearchBody(state, { payload }: PayloadAction<AdvancedSearchResult>) {
-      state.tierAdvancedSearchBody = payload.tierAdvancedSearchBody;
+      state.advancedSearchBody = payload.advancedSearchBody;
+      state.populateGrid = payload.populateGrid;
+      state.closeDialog = payload.closeDialog;
     },
   },
 });
@@ -31,7 +39,9 @@ export const setAdvancedSearch = createAsyncThunk(
   "advancedSearch",
   async (arg: any, { dispatch }) => {
     const obj = {
-      tierAdvancedSearchBody: arg.tierAdvancedSearchBody
+      advancedSearchBody: arg.advancedSearchBody,
+      populateGrid: arg.populateGrid,
+      closeDialog: arg.closeDialog,
     };
     dispatch(setAdvancedSearchBody(obj));
   }

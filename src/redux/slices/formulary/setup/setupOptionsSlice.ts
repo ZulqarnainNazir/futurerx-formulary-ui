@@ -3,6 +3,7 @@ import { createAsyncThunk } from "@reduxjs/toolkit";
 import { Formulary } from "./formulary";
 import {
   getGeneralOptions,
+  getSubMthsOptions,
   getMedicareOptions,
   getDesignOptions,
   getSupplementalOptions,
@@ -32,8 +33,20 @@ const setupOptionsInitialState: SetupOptionsState = {
 export interface GeneralOptions {
   formularyType: any[];
   contractYear: any[];
-  monthList: any[];
+  submission_months: any[];
+  classification_systems: any[];
+  states: any[];
+  prior_year_resemble_formularies: any[];
 }
+
+const generalOptionsInitialState: GeneralOptions = {
+  formularyType: [],
+  contractYear: [],
+  submission_months: [],
+  classification_systems: [],
+  states: [],
+  prior_year_resemble_formularies: [],
+};
 
 export interface MedicareOptions {
   contract_types: any[];
@@ -50,6 +63,10 @@ export interface SupplementalOptions {
 export interface TierOptions {
   tier: any[];
 }
+
+// export interface ClassificationOptions {
+//   classification: any[];
+// }
 
 function startLoading(state: SetupOptionsState) {
   state.isLoading = true;
@@ -72,12 +89,37 @@ const setup = createSlice({
       state,
       { payload }: PayloadAction<GeneralOptions>
     ) {
-      //console.log("***** getGeneralOptionsSuccess ");
-      state.generalOptions = payload;
+      // console.log("***** getGeneralOptionsSuccess # 1");
+      if (!state.generalOptions) {
+        state.generalOptions = {};
+        state.generalOptions = generalOptionsInitialState;
+      }
+      state.generalOptions.formularyType = payload?.formularyType;
+      state.generalOptions.contractYear = payload?.contractYear;
+      state.generalOptions.classification_systems =
+        payload?.classification_systems;
+      state.generalOptions.states = payload?.states;
+
       state.isLoading = false;
       state.error = null;
     },
     getGeneralOptionsFailure: loadingFailed,
+    getSubMthsOptionsStart: startLoading,
+    getSubMthsOptionsSuccess(
+      state,
+      { payload }: PayloadAction<GeneralOptions>
+    ) {
+      // console.log("***** getSubMthsOptionsSuccess ");
+      // console.log(payload);
+      if (!state.generalOptions) {
+        state.generalOptions = {};
+        state.generalOptions = generalOptionsInitialState;
+      }
+      state.generalOptions.submission_months = payload?.submission_months;
+      state.isLoading = false;
+      state.error = null;
+    },
+    getSubMthsOptionsFailure: loadingFailed,
     getMedicareOptionsStart: startLoading,
     getMedicareOptionsSuccess(
       state,
@@ -102,8 +144,8 @@ const setup = createSlice({
 
     getTierOptionsStart: startLoading,
     getTierOptionsSuccess(state, { payload }: PayloadAction<TierOptions>) {
-      console.log("***** getTierOptionsSuccess Reducer");
-      console.log(payload);
+      //console.log("***** getTierOptionsSuccess Reducer");
+      //console.log(payload);
       state.tierOptions = payload;
       state.isLoading = false;
       state.error = null;
@@ -137,6 +179,22 @@ export const fetchGeneralOptions = createAsyncThunk(
     } catch (err) {
       //console.log("***** fetchGeneralOptions AC - ERROR ");
       dispatch(getGeneralOptionsFailure(err.toString()));
+    }
+  }
+);
+
+export const fetchSubMthsOptions = createAsyncThunk(
+  "setupOptions",
+  async (year: number, { dispatch }) => {
+    // console.log("***** fetchSubMthsOptions");
+    try {
+      dispatch(getSubMthsOptionsStart());
+      const options: any = await getSubMthsOptions(year);
+      // console.log("*** options : ", options);
+      dispatch(getSubMthsOptionsSuccess(options));
+    } catch (err) {
+      //console.log("***** fetchGeneralOptions AC - ERROR ");
+      dispatch(getSubMthsOptionsFailure(err.toString()));
     }
   }
 );
@@ -176,14 +234,14 @@ export const fetchDesignOptions = createAsyncThunk(
 export const fetchTierOptions = createAsyncThunk(
   "setupOptions",
   async (lob_id: number, { dispatch }) => {
-    console.log("***** fetchTierOptions AC ");
+    //console.log("***** fetchTierOptions AC ");
     try {
       dispatch(getTierOptionsStart());
       const options: any = await getTierOptions(lob_id, 0);
-      console.log("*** options : ", options);
+      //console.log("*** options : ", options);
       dispatch(getTierOptionsSuccess(options));
     } catch (err) {
-      console.log("***** fetchTierOptions AC - ERROR ");
+      //console.log("***** fetchTierOptions AC - ERROR ");
       dispatch(getTierOptionsFailure(err.toString()));
     }
   }
@@ -209,6 +267,11 @@ export const {
   getGeneralOptionsStart,
   getGeneralOptionsSuccess,
   getGeneralOptionsFailure,
+
+  getSubMthsOptionsStart,
+  getSubMthsOptionsSuccess,
+  getSubMthsOptionsFailure,
+
   getMedicareOptionsStart,
   getMedicareOptionsSuccess,
   getMedicareOptionsFailure,
