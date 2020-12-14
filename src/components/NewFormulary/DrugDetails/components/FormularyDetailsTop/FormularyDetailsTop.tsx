@@ -1,5 +1,5 @@
 import React, { useContext } from "react";
-import { connect } from "react-redux";
+import {connect} from 'react-redux';
 import DropDown from "../../../../shared/Frx-components/dropdown/DropDown";
 import FormularyDetailsContext from "../../../FormularyDetailsContext";
 import "./FormularyDetailsTop.scss";
@@ -7,46 +7,40 @@ import { fetchFormularyHeader } from "../../../../../redux/slices/formulary/head
 import { fetchSelectedFormulary } from "../../../../.././redux/slices/formulary/setup/setupSlice";
 
 const mapStateToProps = (state) => {
-  return {
+  return{
     currentFormulary: state.application.formulary,
-    formularyVersionList: state.header.formulary_version_list,
-  };
-};
+    formularyVersionList: state.header.formulary_version_list
+  }
+}
 
 function mapDispatchToProps(dispatch) {
   return {
-    fetchFormularyVersions: (a) => dispatch(fetchFormularyHeader(a)),
-    fetchSelectedFormulary: (a) => dispatch(fetchSelectedFormulary(a)),
+    fetchFormularyVersions:(a)=>dispatch(fetchFormularyHeader(a)),
+    fetchSelectedFormulary:(a)=>dispatch(fetchSelectedFormulary(a))
   };
 }
 
 class FormularyDetailsTop extends React.Component<any, any> {
-  componentDidMount() {
-    this.props.fetchFormularyVersions(
-      this.props.currentFormulary.id_base_formulary
-    );
-    console.log("The Active Tab Index = ", this.props.activeTabIndex);
+
+  componentDidMount(){
+    this.props.fetchFormularyVersions(this.props.currentFormulary?.id_base_formulary);
   }
 
   onVersionChangeHandler = (e: any) => {
-    const formulary_id = this.props.formularyVersionList.find(
-      (el) => el.value === e
-    ).id_formulary;
+    const formulary_id = this.props.formularyVersionList.find(el => el.value === e).id_formulary;
     // console.log(formulary_id)
     this.props.fetchSelectedFormulary(formulary_id);
-  };
+  }
 
   render() {
     let dropDown: any;
-    if (this.props.formularyVersionList) {
-      dropDown = (
-        <DropDown
-          className="formulary-type-dropdown formulary-versions"
-          placeholder="Formulary Version"
-          options={this.props.formularyVersionList.map((e) => e.value)}
-          onChange={this.onVersionChangeHandler}
-        />
-      );
+    if(this.props.formularyVersionList){
+      dropDown = <DropDown 
+        className="formulary-type-dropdown formulary-versions" 
+        placeholder="Formulary Version" 
+        options={this.props.formularyVersionList.map(e => e.value)} 
+        onChange={this.onVersionChangeHandler}
+        dropdownClassName="version-dd"/>
     }
     return (
       <div className="drug-detail-top">
@@ -64,15 +58,15 @@ class FormularyDetailsTop extends React.Component<any, any> {
               {this.props.currentFormulary?.formulary_info?.formulary_name}
             </span>
           </div>
-          {this.props.activeTabIndex === 0 ? (
-            <div className="version-wrapper">
-              {/* <div className="item-text version-dd" style={{paddingLeft: 0}}>
+          <div className="version-wrapper">
+            {/* <div className="item-text version-dd" style={{paddingLeft: 0}}>
               {this.props.formularyVersionList.length > 0 ? this.props.formularyVersionList[0].value : ""}
               <svg xmlns="http://www.w3.org/2000/svg" width="7" height="4" viewBox="0 0 7 4" fill="none">
                 <path d="M0.471003 0H6.529C6.94809 0 7.15763 0.509932 6.86097 0.808776L3.83315 3.86125C3.64951 4.04625 3.35049 4.04625 3.16685 3.86125L0.139026 0.808776C-0.157635 0.509932 0.051911 0 0.471003 0Z" fill="#F65A1C"/>
               </svg>
             </div> */}
-              {dropDown}
+            {dropDown}
+            <div>
               <div className="item">
                 <svg
                   width="11"
@@ -136,53 +130,42 @@ class FormularyDetailsTop extends React.Component<any, any> {
                 Delete
               </div>
               <div className="item">
-                <svg
-                  width="11"
-                  height="11"
-                  viewBox="0 0 11 11"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    d="M0.6875 9.625C0.6875 10.0053 0.994727 10.3125 1.375 10.3125H9.625C10.0053 10.3125 10.3125 10.0053 10.3125 9.625V3.4375H0.6875V9.625ZM4.125 5.07031C4.125 4.92852 4.24102 4.8125 4.38281 4.8125H6.61719C6.75898 4.8125 6.875 4.92852 6.875 5.07031V5.24219C6.875 5.38398 6.75898 5.5 6.61719 5.5H4.38281C4.24102 5.5 4.125 5.38398 4.125 5.24219V5.07031ZM10.3125 0.6875H0.6875C0.307227 0.6875 0 0.994727 0 1.375V2.40625C0 2.59531 0.154687 2.75 0.34375 2.75H10.6562C10.8453 2.75 11 2.59531 11 2.40625V1.375C11 0.994727 10.6928 0.6875 10.3125 0.6875Z"
-                    fill="#F65A1C"
-                  />
-                </svg>
-                Archive
-              </div>
+              <svg
+                width="11"
+                height="11"
+                viewBox="0 0 11 11"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M0.6875 9.625C0.6875 10.0053 0.994727 10.3125 1.375 10.3125H9.625C10.0053 10.3125 10.3125 10.0053 10.3125 9.625V3.4375H0.6875V9.625ZM4.125 5.07031C4.125 4.92852 4.24102 4.8125 4.38281 4.8125H6.61719C6.75898 4.8125 6.875 4.92852 6.875 5.07031V5.24219C6.875 5.38398 6.75898 5.5 6.61719 5.5H4.38281C4.24102 5.5 4.125 5.38398 4.125 5.24219V5.07031ZM10.3125 0.6875H0.6875C0.307227 0.6875 0 0.994727 0 1.375V2.40625C0 2.59531 0.154687 2.75 0.34375 2.75H10.6562C10.8453 2.75 11 2.59531 11 2.40625V1.375C11 0.994727 10.6928 0.6875 10.3125 0.6875Z"
+                  fill="#F65A1C"
+                />
+              </svg>
+              Archive
             </div>
-          ) : null}
+            </div>
+          </div>
         </div>
         <div className="durationInfo d-flex">
           <div className="item">
-            <span className="tag purple">
-              {this.props.currentFormulary?.formulary_type_info?.formulary_type}
-            </span>
+            <span className="tag purple">{this.props.currentFormulary?.formulary_type_info?.formulary_type}</span>
           </div>
           <div className="item">
             <span className="label">Formulary ID:</span>{" "}
-            {this.props.currentFormulary.id_formulary}
+            {this.props.currentFormulary?.id_formulary}
           </div>
-          {this.props.activeTabIndex !== 0 ? (
-            <div className="item">
-              <span className="label">Version:</span>{" "}
-              {this.props.currentFormulary?.formulary_info?.version_number}
-            </div>
-          ) : null}
           <div className="item">
             <span className="label">Effective Date:</span>{" "}
             {this.props.currentFormulary?.formulary_info?.effective_date}
           </div>
           <div className="item">
             <span className="label">Termination Date:</span>{" "}
-            {this.props.currentFormulary.terminationDate}
+            {this.props.currentFormulary?.terminationDate}
           </div>
         </div>
       </div>
     );
   }
 }
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(FormularyDetailsTop);
+export default connect(mapStateToProps, mapDispatchToProps)(FormularyDetailsTop);

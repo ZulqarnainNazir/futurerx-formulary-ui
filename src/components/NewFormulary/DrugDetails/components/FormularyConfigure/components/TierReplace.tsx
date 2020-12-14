@@ -13,6 +13,7 @@ import AdvancedSearch from './search/AdvancedSearch';
 import { postTierApplyInfo, getTier } from "../../../../../../redux/slices/formulary/tier/tierActionCreation";
 import * as tierConstants from "../../../../../../api/http-tier";
 import pageTypes from "../../../../../../constants/PageTypes";
+import { setAdvancedSearch } from "../../../../../../redux/slices/formulary/advancedSearch/advancedSearchSlice";
 
 interface tabsState {
   tierGridContainer: boolean;
@@ -35,14 +36,16 @@ const mapStateToProps = (state) => {
     formulary: state?.application?.formulary,
     formulary_lob_id: state?.application?.formulary_lob_id,
     formulary_type_id: state?.application?.formulary_type_id,
-    tierAdvancedSearchBody: state?.advancedSearch?.tierAdvancedSearchBody
+    advancedSearchBody: state?.advancedSearch?.advancedSearchBody,
+    populateGrid: state?.advancedSearch?.populateGrid
   }
 }
 
 function mapDispatchToProps(dispatch) {
   return {
     postTierApplyInfo: (a) => dispatch(postTierApplyInfo(a)),
-    getTier: (a) => dispatch(getTier(a))
+    getTier: (a) => dispatch(getTier(a)),
+    setAdvancedSearch: (a) => dispatch(setAdvancedSearch(a))
   };
 }
 
@@ -69,10 +72,15 @@ class TierReplace extends React.Component<any, tabsState> {
 
   constructor(props) {
     super(props);
+    console.log("Tier Replace constructor called. Props:"+JSON.stringify(props));
 
+    this.initialize(this.props, true);
+  }
+
+  initialize = (props, initFileKey=false) => {
     var tierOptions = Array();
-    if (this.props.tierOptions) {
-      this.props.tierOptions.map(tier => {
+    if (props.tierOptions) {
+      props.tierOptions.map(tier => {
         tierOptions.push(tier.tier_value);
       });
     }
@@ -80,21 +88,28 @@ class TierReplace extends React.Component<any, tabsState> {
 
     this.state.fileTypes.map(fileType => {
       if (fileType.type === 'Full Formulary') {
-        fileType.key = this.props.lobCode;
+        fileType.key = props.lobCode;
       }
       fileTypesModified.push(fileType);
     });
     this.state.fileTypes = fileTypesModified;
     this.state.tierValues = tierOptions;
-    this.state.selectedFileKey = this.props.lobCode;
+    if(initFileKey){
+      this.state.selectedFileKey = props.lobCode;
+    }
   }
 
-  populateGridData = () => {
+  populateGridData = (searchBody = null) => {
+    console.log('Populate grid data is called');
     let apiDetails = {};
     apiDetails['apiPart'] = this.state.selectedFileKey === this.props.lobCode ? tierConstants.FORMULARY_DRUGS_TIER : tierConstants.DRUGS_TIER;
     apiDetails['pathParams'] = this.props?.formulary_id + "/" + this.state.selectedFileKey + "/" + tierConstants.TYPE_REPLACE;
     apiDetails['keyVals'] = [{ key: tierConstants.KEY_ENTITY_ID, value: this.props?.formulary_id }, { key: tierConstants.KEY_INDEX, value: 0 }, { key: tierConstants.KEY_LIMIT, value: 10 }];
+    apiDetails['messageBody'] = {};
 
+    if(searchBody){
+      apiDetails['messageBody'] = Object.assign(apiDetails['messageBody'],searchBody);
+    }
     const drugGridDate = this.props.postTierApplyInfo(apiDetails).then((json => {
       //debugger;
       let tmpData = json.payload.result;
@@ -106,7 +121,7 @@ class TierReplace extends React.Component<any, tabsState> {
         let gridItem = {};
         gridItem['id'] = count;
         gridItem['key'] = count;
-        gridItem['tier'] = element.tier_value ? "" + element.tier_value : "";
+        gridItem['tier'] = element.tier_value;
         gridItem['fileType'] = element.file_type ? "" + element.file_type : "";
         gridItem['dataSource'] = element.data_source ? "" + element.data_source : "";
         gridItem['labelName'] = element.drug_label_name ? "" + element.drug_label_name : "";
@@ -155,7 +170,12 @@ class TierReplace extends React.Component<any, tabsState> {
   }
 
   componentWillReceiveProps(nextProps) {
-    console.log('TIER REPLACE: componentWillReceiveProps', nextProps);
+    this.initialize(nextProps);
+    if(nextProps.advancedSearchBody && nextProps.populateGrid){
+      this.populateGridData(nextProps.advancedSearchBody);
+      let payload = {advancedSearchBody:nextProps.advancedSearchBody,  populateGrid: false};
+      this.props.setAdvancedSearch(payload);
+    }
   }
 
   onSelectedTableRowChanged = (selectedRowKeys) => {
@@ -204,7 +224,8 @@ class TierReplace extends React.Component<any, tabsState> {
       }
     }
     console.log("Selected file key is:" + fileKey);
-    this.setState({ selectedFileKey: fileKey });
+    this.state.selectedFileKey = fileKey;
+    //this.setState({ selectedFileKey: fileKey });
 
     this.populateGridData();
   }
@@ -244,7 +265,7 @@ class TierReplace extends React.Component<any, tabsState> {
             </Grid>
           </Grid>
         </div>
-        {this.state.tierGridContainer && (
+        {this.state.tierGridContainer && !this.props.configureSwitch && (
           <div className="select-drug-from-table">
             <div className="bordered white-bg">
               <div className="header space-between pr-10">
@@ -253,8 +274,8 @@ class TierReplace extends React.Component<any, tabsState> {
                   <DropDown options={this.state.fileValues} disabled={this.props.configureSwitch} onSelect={this.fileTypeDropDownSelectHandler} defaultValue={this.state.selectedFileType} />
                 </div>
                 <div className="button-wrapper">
-                  <Button className="Button normal" label="Advance Search" onClick={this.advanceSearchClickHandler} />
-                  <Button label="Save" onClick={this.handleSave} />
+                  <Button className="Button normal" label="Advance Search" onClick={this.advanceSearchClickHandler} disabled={this.props.configureSwitch} />
+                  <Button label="Save" onClick={this.handleSave} disabled={this.props.configureSwitch} />
                 </div>
               </div>
 
