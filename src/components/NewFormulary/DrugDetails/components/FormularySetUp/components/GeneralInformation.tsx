@@ -24,9 +24,9 @@ const mapStateToProps = (state) => {
 const FormularyMethod = (props: any) => {
   const [selectedMethod, setSelectedMethod] = useState('');
   let method = props.method.toString()
-  console.log("*******")
-  console.log(typeof method)
-  console.log("*******")
+  // console.log("*******")
+  // console.log(typeof method)
+  // console.log("*******")
   const [value, setValue] = useState(method);
   const handleRadioOptionChange = (e) => {
     setSelectedMethod(e.target.value)
