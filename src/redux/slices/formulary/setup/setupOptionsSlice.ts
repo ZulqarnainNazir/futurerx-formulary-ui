@@ -4,6 +4,7 @@ import { Formulary } from "./formulary";
 import {
   getGeneralOptions,
   getSubMthsOptions,
+  getStatesOptions,
   getMedicareOptions,
   getDesignOptions,
   getSupplementalOptions,
@@ -98,7 +99,6 @@ const setup = createSlice({
       state.generalOptions.contractYear = payload?.contractYear;
       state.generalOptions.classification_systems =
         payload?.classification_systems;
-      state.generalOptions.states = payload?.states;
 
       state.isLoading = false;
       state.error = null;
@@ -120,6 +120,21 @@ const setup = createSlice({
       state.error = null;
     },
     getSubMthsOptionsFailure: loadingFailed,
+
+    getStatesOptionsStart: startLoading,
+    getStatesOptionsSuccess(state, { payload }: PayloadAction<GeneralOptions>) {
+      //console.log("***** getStatesOptionsSuccess ");
+      //console.log(payload);
+      if (!state.generalOptions) {
+        state.generalOptions = {};
+        state.generalOptions = generalOptionsInitialState;
+      }
+      state.generalOptions.states = payload?.states;
+      state.isLoading = false;
+      state.error = null;
+    },
+    getStatesOptionsFailure: loadingFailed,
+
     getMedicareOptionsStart: startLoading,
     getMedicareOptionsSuccess(
       state,
@@ -170,11 +185,11 @@ const setup = createSlice({
 export const fetchGeneralOptions = createAsyncThunk(
   "setupOptions",
   async (arg: number, { dispatch }) => {
-    //console.log("***** fetchGeneralOptions AC ");
+    console.log("***** fetchGeneralOptions General ");
     try {
       dispatch(getGeneralOptionsStart());
       const genOptions: any = await getGeneralOptions();
-      //console.log("*** genOptions : ", genOptions);
+      console.log("*** genOptions : ", genOptions);
       dispatch(getGeneralOptionsSuccess(genOptions));
     } catch (err) {
       //console.log("***** fetchGeneralOptions AC - ERROR ");
@@ -195,6 +210,22 @@ export const fetchSubMthsOptions = createAsyncThunk(
     } catch (err) {
       //console.log("***** fetchGeneralOptions AC - ERROR ");
       dispatch(getSubMthsOptionsFailure(err.toString()));
+    }
+  }
+);
+
+export const fetchStatesOptions = createAsyncThunk(
+  "setupOptions",
+  async (formulary_type: number, { dispatch }) => {
+    // console.log("***** fetchStatesOptions (" + formulary_type + ")");
+    try {
+      dispatch(getStatesOptionsStart());
+      const options: any = await getStatesOptions(formulary_type);
+      // console.log("*** options : ", options);
+      dispatch(getStatesOptionsSuccess(options));
+    } catch (err) {
+      //console.log("***** fetchStatesOptions AC - ERROR ");
+      dispatch(getStatesOptionsFailure(err.toString()));
     }
   }
 );
@@ -267,6 +298,10 @@ export const {
   getGeneralOptionsStart,
   getGeneralOptionsSuccess,
   getGeneralOptionsFailure,
+
+  getStatesOptionsStart,
+  getStatesOptionsSuccess,
+  getStatesOptionsFailure,
 
   getSubMthsOptionsStart,
   getSubMthsOptionsSuccess,

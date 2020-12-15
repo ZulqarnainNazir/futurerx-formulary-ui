@@ -15,36 +15,33 @@ const headers = {
 };
 
 export async function getGeneralOptions(): Promise<GeneralOptions | any> {
-  //console.log("- - - - - - - - - - - - -  - - CALL");
-  let url1 = `${BASE_URL1}api/1/formulary-types`;
-  let url2 = `${BASE_URL1}api/1/formulary-contract-years`;
-  //let url3 = `${BASE_URL1}api/1/formulary-submission-months/${new Date().getFullYear()}`;
-  let url3 = `${BASE_URL1}api/1/classification-systems/1`;
-  //  let url4 = `${BASE_URL1}api//1/client-states/1`;
-  let url4 = `https://api-dev-config.futurerx.com/api//1/client-states/1`;
- //          "https://api-dev-config-formulary.futurerx.com/";
+  //console.log("- - - - - - - - - - - - -  - - Genetal Option Service");
+  let url0 = `${BASE_URL1}api/1/formulary-types`;
+  let url1 = `${BASE_URL1}api/1/formulary-contract-years`;
+  let url2 = `${BASE_URL1}api/1/classification-systems/1`;
 
+  const request0 = axios.get(url0, {
+    headers: headers,
+  });
   const request1 = axios.get(url1, {
     headers: headers,
   });
   const request2 = axios.get(url2, {
     headers: headers,
   });
-  const request3 = axios.get(url3, {
-    headers: headers,
-  });
-  const request4 = axios.get(url4, {
-    headers: headers,
-  });
+
   return await axios
-    .all([request1, request2, request3, request4])
+    .all([request0, request1, request2])
     .then(
       axios.spread((...responses) => {
-        const response1 = responses[0];
-        const response2 = responses[1];
-        const response3 = responses[2];
-        const response4 = responses[3];
-        // console.log(response1, response2, response3);
+        const response0 = responses[0];
+        const response1 = responses[1];
+        const response2 = responses[2];
+        console.log( response0, response1, response2);
+        let list0 = [];
+        if (response0?.data?.code === "200") {
+          list0 = response0?.data?.data;
+        }
         let list1 = [];
         if (response1?.data?.code === "200") {
           list1 = response1?.data?.data;
@@ -53,22 +50,12 @@ export async function getGeneralOptions(): Promise<GeneralOptions | any> {
         if (response2?.data?.code === "200") {
           list2 = response2?.data?.data;
         }
-        let list3 = [];
-        if (response3?.data?.code === "200") {
-          list3 = response3?.data?.data;
-        }
-        let list4 = [];
-        if (response4?.data?.code === "200") {
-          list4 = response4?.data?.result;
-        }
 
-        // console.log("- - - - - - - - - - - - -  - - RESP");
-        // console.log(list1, list2, list3);
+        console.log(list0, list1, list2);
         return {
-          formularyType: list1,
-          contractYear: list2,
-          classification_systems: list3,
-          states: list4,
+          formularyType: list0,
+          contractYear: list1,
+          classification_systems: list2,
         };
       })
     )
@@ -78,7 +65,7 @@ export async function getGeneralOptions(): Promise<GeneralOptions | any> {
 }
 
 export async function getSubMthsOptions(
-  year: any
+  year: number
 ): Promise<GeneralOptions | any> {
   let url = `${BASE_URL1}api/1/formulary-submission-months/${year}`;
   try {
@@ -93,6 +80,34 @@ export async function getSubMthsOptions(
     return null;
   } catch (error) {
     // console.log("***** getSubMthsOptions - Error");
+    // console.log(error);
+    throw error;
+  }
+}
+
+export async function getStatesOptions(
+  formulary_type: number
+): Promise<GeneralOptions | any> {
+  let url = `${BASE_URL1}api/1/formulary-states`;
+  if (formulary_type === 2) {
+    url += `/MMP`;
+  }
+  try {
+    const response = await axios.get(url, {
+      headers: headers,
+    });
+    //  console.log("***** getStatesOptions  - Success");
+    //  console.log(response);
+    if (response?.data?.code === "200") {
+      return {
+        states: response?.data?.data
+          ? response?.data?.data
+          : response?.data?.result,
+      };
+    }
+    return null;
+  } catch (error) {
+    // console.log("***** getStatesOptions - Error");
     // console.log(error);
     throw error;
   }
@@ -188,3 +203,9 @@ export async function getTierOptions(
     throw error;
   }
 }
+
+// https://api-dev-config-formulary.futurerx.com/api/1/formularies/3
+// States - MMP
+// https://api-dev-config-formulary.futurerx.com/api/1/formulary-states/MMP
+// States - Medicaid
+// https://api-dev-config.futurerx.com/api//1/client-states/1;

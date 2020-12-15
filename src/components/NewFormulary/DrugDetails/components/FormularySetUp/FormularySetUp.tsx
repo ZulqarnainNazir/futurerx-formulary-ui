@@ -16,7 +16,8 @@ import {
   fetchDesignOptions,
   fetchSupplementalOptions,
   fetchTierOptions,
-  fetchSubMthsOptions
+  fetchSubMthsOptions,
+  fetchStatesOptions
 } from "../../../../.././redux/slices/formulary/setup/setupOptionsSlice";
 
 
@@ -52,6 +53,7 @@ class FormularySetUp extends React.Component<any, any> {
     }
     // Need to call this based on YEAR selected... 
     this.props.fetchSubMthsOptions(2021);
+    this.props.fetchStatesOptions(2);
   }
   UNSAFE_componentWillReceiveProps = (newProps) => {
     if(newProps.formulary && newProps.setupOptions){
@@ -135,6 +137,7 @@ function mapDispatchToProps(dispatch) {
     fetchTierOptions:(a)=>dispatch(fetchTierOptions(a)),
     fetchSupplementalOptions:(a)=>dispatch(fetchSupplementalOptions(a)),
     fetchSubMthsOptions:(a)=>dispatch(fetchSubMthsOptions(a)),
+    fetchStatesOptions:(a)=>dispatch(fetchStatesOptions(a)),
   };
 }
 

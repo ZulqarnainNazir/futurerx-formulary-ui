@@ -1,4 +1,4 @@
-import {fetchSelectedFormulary} from "./setupSlice";
+import { fetchSelectedFormulary } from "./setupSlice";
 
 export interface Formulary {
   id_formulary: any;
@@ -65,4 +65,4 @@ export interface Formulary {
   }[];
 }
 
-export {}
+export {};
