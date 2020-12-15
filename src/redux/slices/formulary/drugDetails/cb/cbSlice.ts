@@ -1,6 +1,14 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { getDrugDetailsCBSummary } from "./cbActionCreation";
-import { getCBSummaryFulfilled, getCBSummaryRejected } from "./cbReducers";
+import {
+  getDrugDetailsCBSummary,
+  getExcludedDrugsCBList,
+} from "./cbActionCreation";
+import {
+  getCBSummaryFulfilled,
+  getCBSummaryRejected,
+  postCBListFulfilled,
+  postCBListRejected,
+} from "./cbReducers";
 
 const cbState: any = {
   data: {},
@@ -20,6 +28,23 @@ export const cbSlice = createSlice({
     }),
     builder.addCase(getDrugDetailsCBSummary.rejected, (state, action) => {
       getCBSummaryRejected(state, action);
+    })
+  ),
+});
+
+export const cbListExcludedSlice = createSlice({
+  name: "cbDrugListExcluded",
+  initialState: cbState,
+  reducers: {},
+  extraReducers: (builder) => (
+    builder.addCase(getExcludedDrugsCBList.pending, (state, action) => {
+      state.isLoading = true;
+    }),
+    builder.addCase(getExcludedDrugsCBList.fulfilled, (state, action) => {
+      postCBListFulfilled(state, action);
+    }),
+    builder.addCase(getExcludedDrugsCBList.rejected, (state, action) => {
+      postCBListRejected(state, action);
     })
   ),
 });

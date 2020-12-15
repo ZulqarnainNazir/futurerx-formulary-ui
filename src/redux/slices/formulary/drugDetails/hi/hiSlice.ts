@@ -1,6 +1,14 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { getDrugDetailsHISummary } from "./hiActionCreation";
-import { getHISummaryFulfilled, getHISummaryRejected } from "./hiReducers";
+import {
+  getDrugDetailsHISummary,
+  getDrugDetailsHIList,
+} from "./hiActionCreation";
+import {
+  getHISummaryFulfilled,
+  getHISummaryRejected,
+  postHIListFulfilled,
+  postHIListRejected,
+} from "./hiReducers";
 
 const hiState: any = {
   data: {},
@@ -20,6 +28,23 @@ export const hiSlice = createSlice({
     }),
     builder.addCase(getDrugDetailsHISummary.rejected, (state, action) => {
       getHISummaryRejected(state, action);
+    })
+  ),
+});
+
+export const hiListSlice = createSlice({
+  name: "hiDrugList",
+  initialState: hiState,
+  reducers: {},
+  extraReducers: (builder) => (
+    builder.addCase(getDrugDetailsHIList.pending, (state, action) => {
+      state.isLoading = true;
+    }),
+    builder.addCase(getDrugDetailsHIList.fulfilled, (state, action) => {
+      postHIListFulfilled(state, action);
+    }),
+    builder.addCase(getDrugDetailsHIList.rejected, (state, action) => {
+      postHIListRejected(state, action);
     })
   ),
 });

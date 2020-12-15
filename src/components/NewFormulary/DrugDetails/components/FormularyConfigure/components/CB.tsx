@@ -19,7 +19,7 @@ import FrxLoader from "../../../../../shared/FrxLoader/FrxLoader";
 import DrugGrid from "../../DrugGrid";
 import AdvancedSearch from "./search/AdvancedSearch";
 import { getFormularySummary } from "../../../../../../redux/slices/formulary/formularySummaryActionCreation";
-import { getDrugDetailsCBSummary } from "../../../../../../redux/slices/formulary/drugDetails/cb/cbActionCreation";
+import { getDrugDetailsCBSummary, getExcludedDrugsCBList } from "../../../../../../redux/slices/formulary/drugDetails/cb/cbActionCreation";
 
 const mapStateToProps = (state) => {
   return {
@@ -31,6 +31,7 @@ function mapDispatchToProps(dispatch) {
   return {
     getFormularySummary: (a) => dispatch(getFormularySummary(a)),
     getDrugDetailsCBSummary: (a) => dispatch(getDrugDetailsCBSummary(a)),
+    getExcludedDrugsCBList: (a) => dispatch(getExcludedDrugsCBList(a)),
   };
 }
 

@@ -22,3 +22,26 @@ export const getHISummaryRejected = (state, action) => {
   state.isLoading = false;
   state.data = {};
 };
+
+export const postHIListFulfilled = (state, action) => {
+  console.log("Reducer::postHIListFulfilled");
+  state.isLoading = false;
+  console.log(action);
+  if (
+    action.payload.result === undefined ||
+    !Array.isArray(action.payload.result) ||
+    action.payload.result.length === 0
+  ) {
+    console.log("postHIListFulfilled: Payload invalid");
+    return;
+  }
+  const data = action.payload.result;
+  // Response stored in the redux store.
+  state.applyData = data;
+};
+
+export const postHIListRejected = (state, action) => {
+  console.log("Reducer::postHIListRejected");
+  state.isLoading = false;
+  state.applyData = {};
+};

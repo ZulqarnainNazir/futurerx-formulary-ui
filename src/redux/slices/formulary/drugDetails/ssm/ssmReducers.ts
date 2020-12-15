@@ -22,3 +22,26 @@ export const getSSMSummaryRejected = (state, action) => {
   state.isLoading = false;
   state.data = {};
 };
+
+export const postSSMListFulfilled = (state, action) => {
+  console.log("Reducer::postSSMListFulfilled");
+  state.isLoading = false;
+  console.log(action);
+  if (
+    action.payload.result === undefined ||
+    !Array.isArray(action.payload.result) ||
+    action.payload.result.length === 0
+  ) {
+    console.log("postSSMListFulfilled: Payload invalid");
+    return;
+  }
+  const data = action.payload.result;
+  // Response stored in the redux store.
+  state.applyData = data;
+};
+
+export const postSSMListRejected = (state, action) => {
+  console.log("Reducer::postSSMListRejected");
+  state.isLoading = false;
+  state.applyData = {};
+};
