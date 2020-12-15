@@ -46,6 +46,7 @@
     "react-router-dom": "5.2.0",
     "react-scripts": "3.4.3",
     "react-scroll-sync": "^0.8.0",
+    "react-toastify": "^6.2.0",
     "redux": "^4.0.5",
     "shortid": "^2.2.15",
     "smartystreets-javascript-sdk": "^1.6.0",
