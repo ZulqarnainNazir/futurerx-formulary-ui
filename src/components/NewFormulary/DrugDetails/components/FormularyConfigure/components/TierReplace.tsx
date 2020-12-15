@@ -86,23 +86,24 @@ class TierReplace extends React.Component<any, tabsState> {
         tierOptions.push(tier.tier_value);
       });
     }
-    let fileTypesModified: any[] = [];
-
-    if (props.lobCode === 'MCR' && props.formulary_type_id && props.formulary_type_id == 2) {
-      fileTypesModified.push({ 'type': 'ADD', 'key': 'ADD' });
-      fileTypesModified.push({ 'type': 'Full Formulary', 'key': props.lobCode });
-    } else {
-      this.state.fileTypes.map(fileType => {
-        if (fileType.type === 'Full Formulary') {
-          fileType.key = props.lobCode;
-        }
-        fileTypesModified.push(fileType);
-      });
+    if (this.props.lobCode === 'MCR') {
+      let fileTypesModified: any[] = [];
+      if (props.lobCode === 'MCR' && props.formulary_type_id && props.formulary_type_id == 2) {
+        fileTypesModified.push({ 'type': 'ADD', 'key': 'ADD' });
+        fileTypesModified.push({ 'type': 'Full Formulary', 'key': props.lobCode });
+      } else {
+        this.state.fileTypes.map(fileType => {
+          if (fileType.type === 'Full Formulary') {
+            fileType.key = props.lobCode;
+          }
+          fileTypesModified.push(fileType);
+        });
+      }
+      this.state.fileTypes = fileTypesModified;
     }
-    this.state.fileTypes = fileTypesModified;
     this.state.tierValues = tierOptions;
     if (initFileKey) {
-      this.state.selectedFileKey = props.lobCode;
+      this.state.selectedFileKey = props.lobCode === 'COMM' ? 'COMMDF' : props.lobCode;
     }
   }
 
@@ -212,21 +213,23 @@ class TierReplace extends React.Component<any, tabsState> {
     let tierValue = event.value;
 
     this.state.fileValues = [];
-    this.state.selectedFileKey = this.props.lobCode;
-    if (this.props.tierOptions && tierIndex < this.props.tierOptions.length) {
-      let tierObject = this.props.tierOptions[tierIndex]
-      if (this.props.lobCode === 'MCR' && this.props.formulary_type_id && this.props.formulary_type_id == 2) {
-        this.state.fileTypes.map(fileType => {
-          this.state.fileValues.push(fileType.type);
-        });
-      } else {
-        if (tierObject.tier_label && tierObject.tier_label === 'OTC') {
-          this.state.fileValues.push('ORF/ERF');
-          this.state.fileValues.push('Full Formulary');
-        } else {
+    this.state.selectedFileKey = this.props.lobCode === 'COMM' ? 'COMMDF' : this.props.lobCode;
+    if (this.props.lobCode === 'MCR') {
+      if (this.props.tierOptions && tierIndex < this.props.tierOptions.length) {
+        let tierObject = this.props.tierOptions[tierIndex]
+        if (this.props.lobCode === 'MCR' && this.props.formulary_type_id && this.props.formulary_type_id == 2) {
           this.state.fileTypes.map(fileType => {
             this.state.fileValues.push(fileType.type);
           });
+        } else {
+          if (tierObject.tier_label && tierObject.tier_label === 'OTC') {
+            this.state.fileValues.push('ORF/ERF');
+            this.state.fileValues.push('Full Formulary');
+          } else {
+            this.state.fileTypes.map(fileType => {
+              this.state.fileValues.push(fileType.type);
+            });
+          }
         }
       }
     }
@@ -289,10 +292,10 @@ class TierReplace extends React.Component<any, tabsState> {
           <div className="select-drug-from-table">
             <div className="bordered white-bg">
               <div className="header space-between pr-10">
-                <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+                {this.props.lobCode === 'MCR' && (<div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
                   <span style={{ marginRight: 10 }}>Select Drugs From</span>
                   <DropDown options={this.state.fileValues} disabled={this.props.configureSwitch} onSelect={this.fileTypeDropDownSelectHandler} defaultValue={this.state.selectedFileType} />
-                </div>
+                </div>)}
                 <div className="button-wrapper">
                   <Button className="Button normal" label="Advance Search" onClick={this.advanceSearchClickHandler} disabled={this.props.configureSwitch} />
                   <Button label="Save" onClick={this.handleSave} disabled={this.props.configureSwitch} />
