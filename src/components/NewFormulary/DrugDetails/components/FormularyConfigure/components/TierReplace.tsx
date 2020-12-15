@@ -14,6 +14,7 @@ import { postTierApplyInfo, getTier } from "../../../../../../redux/slices/formu
 import * as tierConstants from "../../../../../../api/http-tier";
 import pageTypes from "../../../../../../constants/PageTypes";
 import { setAdvancedSearch } from "../../../../../../redux/slices/formulary/advancedSearch/advancedSearchSlice";
+import showMessage from "../../../../Utils/Toast";
 
 interface tabsState {
   tierGridContainer: boolean;
@@ -153,7 +154,8 @@ class TierReplace extends React.Component<any, tabsState> {
 
       const saveData = this.props.postTierApplyInfo(apiDetails).then((json => {
         console.log("Save response is:" + JSON.stringify(json));
-        if (json.payload && json.payload.code === '200') {
+        if (json.payload && json.payload.code && json.payload.code === '200') {
+          showMessage('Success', 'success');
           this.state.drugData = [];
           this.state.drugGridData = [];
           this.populateGridData();
@@ -165,6 +167,8 @@ class TierReplace extends React.Component<any, tabsState> {
           const TierDefinationData = this.props.getTier(apiDetails).then((json => {
             this.setState({ tierGridContainer: true });
           }))
+        }else{
+          showMessage('Failure', 'error');
         }
       }))
     }
