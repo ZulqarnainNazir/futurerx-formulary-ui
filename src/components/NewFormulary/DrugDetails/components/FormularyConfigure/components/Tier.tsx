@@ -29,6 +29,7 @@ import { getTier, getTierLabels, postNewTier } from "../../../../../../redux/sli
 //import { getFormularySetup } from "../../../../../../redux/slices/formulary/formularySummaryActionCreation";
 import { GridMenu } from "../../../../../../models/grid.model";
 import DialogPopup from "../../../../../shared/FrxDialogPopup/FrxDialogPopup";
+import { ToastContainer } from 'react-toastify';
 
 import * as tierConstants from "../../../../../../api/http-tier";
 
@@ -245,6 +246,7 @@ class Tier extends React.Component<any, tabsState> {
     }
   }
   onNewTierPopupClose = () => {
+    showMessage('Popup closed', 'success');
     this.setState({
       addNewTierPopup: false
     })
@@ -271,10 +273,12 @@ class Tier extends React.Component<any, tabsState> {
       apiDetails['messageBody'] = { id_tier: this.state.newTierId, id_tier_label: this.state.newTierLabelId };
 
       const TierDefinationData = this.props.postNewTier(apiDetails).then((json => {
-        if (json.payload && json.payload.code && json.payload.code === 200) {
+        if (json.payload && json.payload.code && json.payload.code === "200") {
           showMessage('Tier Added', 'success');
           const TierColumns = tierDefinationColumns();
           this.populateTierDetails(TierColumns);
+        }else{
+          showMessage('Error: Failed to add tier', 'error');
         }
       }))
     }
@@ -423,6 +427,7 @@ class Tier extends React.Component<any, tabsState> {
             </Grid>
           </div>
         </div>
+        <ToastContainer />
       </div>
     );
   }
