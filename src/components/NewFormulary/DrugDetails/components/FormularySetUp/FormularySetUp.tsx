@@ -88,6 +88,14 @@ class FormularySetUp extends React.Component<any, any> {
       generalInformation: newObj
     })
   }
+
+  onSave = (e) => {
+    console.log("  SAVE  ",e);
+  };
+
+
+
+
   render() {
     return(
       <div>
@@ -106,10 +114,10 @@ class FormularySetUp extends React.Component<any, any> {
         <SupplementalModels/>
         <div className="btn-action">
           <Box display="flex" justifyContent="flex-end" className="save-btn">
-            <Button label="Save" />
+            <Button label="Save" onClick={() => this.onSave(false)}/>
           </Box>
           <Box display="flex" justifyContent="flex-end" className="save-and-continue-btn">
-            <Button label="Save & Continue" />
+            <Button label="Save & Continue" onClick={() => this.onSave(true)} />
           </Box>
         </div>
       </div>
