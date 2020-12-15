@@ -1,8 +1,13 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { getDrugDetailsMOMNSummary } from "./drugDetailMOMNActionCreation";
+import {
+  getDrugDetailsMOMNSummary,
+  getDrugDetailsMOList,
+} from "./drugDetailMOMNActionCreation";
 import {
   getMOMNSummaryFulfilled,
   getMOMNSummaryRejected,
+  postMOListFulfilled,
+  postMOListRejected,
 } from "./drugDetailMOMNReducers";
 
 const momnState: any = {
@@ -23,6 +28,24 @@ export const momnSlice = createSlice({
     }),
     builder.addCase(getDrugDetailsMOMNSummary.rejected, (state, action) => {
       getMOMNSummaryRejected(state, action);
+    })
+  ),
+});
+
+// getDrugDetailsMOList
+export const moListSlice = createSlice({
+  name: "moDrugList",
+  initialState: momnState,
+  reducers: {},
+  extraReducers: (builder) => (
+    builder.addCase(getDrugDetailsMOList.pending, (state, action) => {
+      state.isLoading = true;
+    }),
+    builder.addCase(getDrugDetailsMOList.fulfilled, (state, action) => {
+      postMOListFulfilled(state, action);
+    }),
+    builder.addCase(getDrugDetailsMOList.rejected, (state, action) => {
+      postMOListRejected(state, action);
     })
   ),
 });

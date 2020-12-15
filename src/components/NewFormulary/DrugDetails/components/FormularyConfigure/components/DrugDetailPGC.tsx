@@ -15,11 +15,18 @@ import { getDrugDetailData } from "../../../../../../mocks/DrugGridMock";
 import FrxLoader from "../../../../../shared/FrxLoader/FrxLoader";
 import DrugGrid from "../../DrugGrid";
 import AdvancedSearch from "./search/AdvancedSearch";
-import { getDrugDetailsPGCSummary } from "../../../../../../redux/slices/formulary/drugDetails/pgc/pgcActionCreation";
+import {
+  getDrugDetailsPGCSummary,
+  getDrugDetailsPGCList,
+  getExcludedDrugsPGCList,
+} from "../../../../../../redux/slices/formulary/drugDetails/pgc/pgcActionCreation";
+import FrxDrugGridContainer from "../../../../../shared/FrxGrid/FrxDrugGridContainer";
 
 function mapDispatchToProps(dispatch) {
   return {
     getDrugDetailsPGCSummary: (a) => dispatch(getDrugDetailsPGCSummary(a)),
+    getDrugDetailsPGCList: (a) => dispatch(getDrugDetailsPGCList(a)),
+    getExcludedDrugsPGCList: (a) => dispatch(getExcludedDrugsPGCList(a)),
   };
 }
 
@@ -37,7 +44,7 @@ class DrugDetailPGC extends React.Component<any, any> {
     isNotesOpen: false,
     activeTabIndex: 0,
     columns: null,
-    data: null,
+    data: [],
     tabs: [
       { id: 1, text: "Replace" },
       { id: 2, text: "Append" },
@@ -108,14 +115,64 @@ class DrugDetailPGC extends React.Component<any, any> {
         return curRow;
       });
 
-      console.log('-----The PGC Rows = ', rows)
-      console.log('-----THe Columns = ', columns)
-      console.log('-----Data ', data)
+      console.log("-----The PGC Rows = ", rows);
+      console.log("-----THe Columns = ", columns);
+      // console.log('-----Data ', data)
 
       this.setState({
         panelGridValue1: rows,
         columns: columns,
-        data: data,
+        // data: data,
+      });
+
+      this.props.getDrugDetailsPGCList().then((json) => {
+        let tmpData = json.payload.result;
+        console.log(
+          "----------The Get Drug Details PGC list response = ",
+          tmpData
+        );
+        var data: any[] = [];
+        let count = 1;
+        var gridData = tmpData.map((el) => {
+          var element = Object.assign({}, el);
+          data.push(element);
+          let gridItem = {};
+          gridItem["id"] = count;
+          gridItem["key"] = count;
+          gridItem["labelName"] = element.drug_label_name ? "" + element.drug_label_name : "";
+          gridItem["tier"] = element.tier_value;
+          gridItem["fileType"] = element.file_type ? "" + element.file_type : "";
+          gridItem["dataSource"] = element.data_source ? "" + element.data_source : "";
+          gridItem["ndc"] = "";
+          gridItem["rxcui"] = element.rxcui ? "" + element.rxcui : "";
+          gridItem["gpi"] = element.generic_product_identifier ? "" + element.generic_product_identifier : "";
+          gridItem["trademark"] = element.trademark_code ? "" + element.trademark_code : "";
+          gridItem["databaseCategory"] = element.database_category ? "" + element.database_category : "";
+          gridItem["databaseClass"] = element.database_class ? "" + element.database_class : "";
+          gridItem["createdBy"] = element.created_by ? "" + element.created_by : "";
+          gridItem["createdOn"] = element.created_date ? "" + element.created_date : "";
+          gridItem["modifiedBy"] = element.modified_by ? "" + element.modified_by : "";
+          gridItem["modifiedOn"] = element.modified_date ? "" + element.modified_date : "";
+          gridItem["paGroupDescription"] = element.pa_group_description ? "" + element.pa_group_description : "";
+          gridItem["paType"] = element.pa_type ? "" + element.pa_type : "";
+          gridItem["stGroupDescription"] = element.st_group_description ? "" + element.st_group_description : "";
+          gridItem["stepTherapyType"] = element.st_type ? "" + element.st_type : "";
+          gridItem["stepTherapyValue"] = element.st_value ? "" + element.st_value : "";
+          gridItem["qlType"] = element.ql_type ? "" + element.ql_type : "";
+          gridItem["qlAmount"] = element.ql_amount ? "" + element.ql_amount : "";
+          gridItem["qlDays"] = element.ql_days ? "" + element.ql_days : "";
+          gridItem["moIndicator"] = element.is_mo ? "" + element.is_mo : "";
+          gridItem["mnIndicator"] = element.is_nm ? "" + element.is_nm : "";
+          gridItem["seniorSavingsModel"] = element.is_ssm ? "" + element.is_ssm : "";
+          gridItem["indicatedBaseFormulary"] = element.is_ibf ? "" + element.is_ibf : "";
+          gridItem["meshCui"] = element.is_ibf ? "" + element.is_ibf : "";
+          gridItem["partialGapCoverage"] = element.is_pgc ? "" + element.is_pgc : "";
+          count++;
+          return gridItem;
+        });
+        this.setState({
+          data: gridData,
+        });
       });
     });
   }
@@ -137,7 +194,28 @@ class DrugDetailPGC extends React.Component<any, any> {
     let dataGrid = <FrxLoader />;
     if (this.state.data) {
       dataGrid = (
-        <DrugGrid columns={this.state.columns} data={this.state.data} />
+        // <DrugGrid columns={this.state.columns} data={this.state.data} />
+        <FrxDrugGridContainer
+          isPinningEnabled={false}
+          enableSearch={false}
+          enableColumnDrag
+          onSearch={() => {}}
+          fixedColumnKeys={[]}
+          pagintionPosition="topRight"
+          gridName="DRUGSDETAILS"
+          enableSettings={false}
+          columns={getDrugDetailsColumn()}
+          scroll={{ x: 2000, y: 377 }}
+          isFetchingData={false}
+          enableResizingOfColumns
+          data={this.state.data}
+          rowSelection={{
+            columnWidth: 50,
+            fixed: true,
+            type: "checkbox",
+            onChange: () => {},
+          }}
+        />
       );
     }
     return (
