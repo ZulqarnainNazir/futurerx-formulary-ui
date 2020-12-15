@@ -61,6 +61,22 @@
             margin-right: 0;
         }
     }
+
+    #group-description{
+        border: none;
+        height: 37px;
+        max-width: 890px;
+        width: 100%;
+        background: #FFF5F0;
+        border-radius: 3px;
+        color: #F65A1C;
+        text-decoration-line: underline;
+        font-weight: $font-weight-500;
+        align-items: center;
+        font-family: Roboto;
+        font-style: normal;
+        font-size: 12px;
+    }
     
 }
 .drug-detail-top{
@@ -88,22 +104,6 @@
             color: #F65A1C;
         }
     
-    }
-
-    #group-description{
-        border: none;
-        height: 37px;
-        max-width: 890px;
-        width: 100%;
-        background: #FFF5F0;
-        border-radius: 3px;
-        color: #F65A1C;
-        text-decoration-line: underline;
-        font-weight: $font-weight-500;
-        align-items: center;
-        font-family: Roboto;
-        font-style: normal;
-        font-size: 12px;
     }
 }
 .version-wrapper-green {
