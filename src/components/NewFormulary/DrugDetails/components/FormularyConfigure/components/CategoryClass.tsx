@@ -123,13 +123,13 @@ class CategoryClass extends React.Component<any, any> {
     console.log('Populate grid data is called');
     let apiDetails = {};
     apiDetails['apiPart'] = categoryConstants.DRUGS_CATEGORY;
-    /*apiDetails['pathParams'] = this.props?.formulary_id + "/" + this.state.lobCode;
+    apiDetails['pathParams'] = this.props?.formulary_id + "/" + this.state.lobCode;
     apiDetails['keyVals'] = [{ key: commonConstants.KEY_ENTITY_ID, value: this.props?.formulary_id }, { key: commonConstants.KEY_INDEX, value: 0 }, { key: commonConstants.KEY_LIMIT, value: 10 }];
     apiDetails['messageBody'] = { filter: this.state.filter };
 
     if (searchBody) {
       apiDetails['messageBody'] = Object.assign(apiDetails['messageBody'], searchBody);
-    }*/
+    }
     const thisRef = this;
 
     const drugGridData = this.props.postDrugsCategory(apiDetails).then((json => {
