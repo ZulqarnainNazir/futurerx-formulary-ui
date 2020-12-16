@@ -184,11 +184,11 @@ const setup = createSlice({
 
 export const fetchGeneralOptions = createAsyncThunk(
   "setupOptions",
-  async (arg: number, { dispatch }) => {
+  async (type: number, { dispatch }) => {
     console.log("***** fetchGeneralOptions General ");
     try {
       dispatch(getGeneralOptionsStart());
-      const genOptions: any = await getGeneralOptions();
+      const genOptions: any = await getGeneralOptions(type);
       console.log("*** genOptions : ", genOptions);
       dispatch(getGeneralOptionsSuccess(genOptions));
     } catch (err) {
@@ -216,11 +216,11 @@ export const fetchSubMthsOptions = createAsyncThunk(
 
 export const fetchStatesOptions = createAsyncThunk(
   "setupOptions",
-  async (formulary_type: number, { dispatch }) => {
+  async (type: number, { dispatch }) => {
     // console.log("***** fetchStatesOptions (" + formulary_type + ")");
     try {
       dispatch(getStatesOptionsStart());
-      const options: any = await getStatesOptions(formulary_type);
+      const options: any = await getStatesOptions(type);
       // console.log("*** options : ", options);
       dispatch(getStatesOptionsSuccess(options));
     } catch (err) {
@@ -248,11 +248,11 @@ export const fetchMedicareOptions = createAsyncThunk(
 
 export const fetchDesignOptions = createAsyncThunk(
   "setupOptions",
-  async (arg: number, { dispatch }) => {
+  async (type: number, { dispatch }) => {
     //console.log("***** fetchDesignOptions AC ");
     try {
       dispatch(getDesignOptionsStart());
-      const options: any = await getDesignOptions(1);
+      const options: any = await getDesignOptions(type);
       //console.log("*** options : ", options);
       dispatch(getDesignOptionsSuccess(options));
     } catch (err) {
@@ -264,11 +264,11 @@ export const fetchDesignOptions = createAsyncThunk(
 
 export const fetchTierOptions = createAsyncThunk(
   "setupOptions",
-  async (lob_id: number, { dispatch }) => {
+  async (type: number, { dispatch }) => {
     //console.log("***** fetchTierOptions AC ");
     try {
       dispatch(getTierOptionsStart());
-      const options: any = await getTierOptions(lob_id, 0);
+      const options: any = await getTierOptions(type, 0);
       //console.log("*** options : ", options);
       dispatch(getTierOptionsSuccess(options));
     } catch (err) {
@@ -280,11 +280,11 @@ export const fetchTierOptions = createAsyncThunk(
 
 export const fetchSupplementalOptions = createAsyncThunk(
   "setupOptions",
-  async (arg: number, { dispatch }) => {
+  async (type: number, { dispatch }) => {
     //console.log("***** fetchSupplementalOptions AC ");
     try {
       dispatch(getSupplementalOptionsStart());
-      const options: any = await getSupplementalOptions(1);
+      const options: any = await getSupplementalOptions(type);
       //console.log("*** options : ", options);
       dispatch(getSupplementalOptionsSuccess(options));
     } catch (err) {
