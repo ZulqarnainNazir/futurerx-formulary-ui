@@ -36,6 +36,7 @@ class FormularySetUp extends React.Component<any, any> {
       service_year: "",
       description: "",
       classification_system: "",
+      is_closed_formulary: false
     },
     setupOptions: {},
   };
@@ -64,8 +65,8 @@ class FormularySetUp extends React.Component<any, any> {
           method: newProps.formulary.formulary_info.formulary_build_method,
           service_year: newProps.formulary.formulary_info.contract_year,
           description: newProps.formulary.formulary_info.formulary_description,
-          classification_system:
-            newProps.formulary.formulary_info.id_classification_system,
+          classification_system: newProps.formulary.formulary_info.id_classification_system,
+          is_closed_formulary: newProps.formulary.formulary_info.is_closed_formulary
         },
         setupOptions: newProps.setupOptions,
       });
@@ -89,7 +90,11 @@ class FormularySetUp extends React.Component<any, any> {
   };
 
   formularyTypeChanged = (type) => {
-    console.log("***formularyTypeChanged : " + type);
+    const generalInfo = {...this.state.generalInformation}
+    generalInfo.type = type;
+    this.setState({
+      generalInformation: generalInfo
+    })
   };
 
   manageFormularyType(type: number) {
@@ -141,11 +146,17 @@ class FormularySetUp extends React.Component<any, any> {
               setupOptions={this.state.setupOptions}
               updateInputField={this.updateInputField}
               onRadioChange={this.onRadioChangeHandler}
+              formularyTypeChanged={this.formularyTypeChanged}
             />
-            {this.state.generalInformation.type !== 'Commercial' ? <MedicareInformation /> : null}
-            <FormularyDesign />
-            <FormularyTiers />
-            {this.state.generalInformation.type !== 'Commercial' ? <SupplementalModels /> : null}
+            {this.state.generalInformation.type !== '' ? (
+              <>
+              {this.state.generalInformation.type !== 'Commercial' ? <MedicareInformation /> : null}
+              <FormularyDesign />
+              <FormularyTiers />
+              {this.state.generalInformation.type !== 'Commercial' ? <SupplementalModels /> : null}
+              </>
+            ) : null}
+            
             <div className="btn-action">
               <Box display="flex" justifyContent="flex-end" className="save-btn">
                 <Button label="Save" onClick={() => this.onSave(false)} />
