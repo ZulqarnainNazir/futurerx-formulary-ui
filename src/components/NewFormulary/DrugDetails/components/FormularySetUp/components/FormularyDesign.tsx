@@ -48,7 +48,8 @@ class FormularyDesign extends React.Component<any, any> {
         let radioBox: any;
         if(this.props.designOptions){
             const id = this.props.designOptions.find(el => el.edit_name === type).id_edit;
-            const value = this.props.editInto ? this.props.editInto.find(el => el.id_edit === id).id_checked : 'false';
+            const value = this.props.editInto && this.props.editInto.find(el => el.id_edit === id) !== undefined ? 
+                    this.props.editInto.find(el => el.id_edit === id)?.id_checked : 'false';
             return (
                 <RadioGroup className="radio-group-custom mr-80" aria-label={type} name={type} value={value.toString()}>
                     <FormControlLabel value="true" control={<Radio />} label="Yes" />
