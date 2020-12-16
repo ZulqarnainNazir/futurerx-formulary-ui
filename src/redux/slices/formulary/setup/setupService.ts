@@ -28,3 +28,35 @@ export async function getformulary(
     throw error;
   }
 }
+
+export async function checkNameExist(name: string): Promise<boolean | any> {
+  //let url = `${BASE_URL1}api/1/formulary-setup/${formulary_id}?entity_id=${formulary_id}`;
+
+  let url = `${BASE_URL1}/1/check-formulary-name`;
+  if (name != null && name != undefined && name != "") {
+    url = url + `/${name}`;
+  } else {
+    name = "";
+    url = url + `/${name}`;
+  }
+  // url= url+`/${this.clientId}`;
+  url= url+`/1`;
+  // if (this.formularyBaseId != 0 && this.formularyBaseId != undefined) {
+  //   url = url + `/${this.formularyBaseId}`
+  // }
+  try {
+    const response = await axios.get(url, {
+      headers: headers,
+    });
+    console.log("***** checkNameExist  - Success");
+    console.log(response);
+    if (response?.data?.code === "200") {
+      return response?.data?.result?.is_formulary_name_exists;
+    }
+    return true;
+  } catch (error) {
+    console.log("***** checkNameExist - Error");
+    console.log(error);
+    throw error;
+  }
+}

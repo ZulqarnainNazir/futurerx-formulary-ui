@@ -8,7 +8,7 @@ import MedicareInformation from "./components/MedicareInformation";
 import SupplementalModels from "./components/SupplementalModels";
 import Box from '@material-ui/core/Box';
 import Button from '../../../../shared/Frx-components/button/Button';
-import { fetchSelectedFormulary } from "../../../../.././redux/slices/formulary/setup/setupSlice";
+import { fetchSelectedFormulary, verifyFormularyName } from "../../../../.././redux/slices/formulary/setup/setupSlice";
 import { Formulary } from "../../../../../redux/slices/formulary/setup/formulary";
 import { 
   fetchGeneralOptions,
@@ -75,11 +75,16 @@ class FormularySetUp extends React.Component<any, any> {
     
   }
   updateInputField = (e) => {
-    const newObj = {...this.state.generalInformation}
+    const newObj = {...this.state.generalInformation};
     newObj[e.currentTarget.name] = e.currentTarget.value;
     this.setState({
       generalInformation : newObj
-    })
+    });
+    console.log(" ON CHANGE : ( "+this.props.mode+" ) "+e.currentTarget.name +" , "+e.currentTarget.value);
+    //&& this.props.mode === "NEW"
+    if(e.currentTarget.name === "name") {
+      this.props.verifyFormularyName(e.currentTarget.value);
+    }
   }
   onRadioChangeHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
     const newObj = {...this.state.generalInformation}
@@ -132,7 +137,7 @@ const mapStateToProps = (state) => {
     mode: state?.application?.mode,
     formulary_id: state?.application?.formulary_id,
     formulary: state?.setup?.formulary,
-    setupOptions: state?.setupOptions
+    setupOptions: state?.setupOptions,
   };
 };
 
@@ -146,6 +151,7 @@ function mapDispatchToProps(dispatch) {
     fetchSupplementalOptions:(a)=>dispatch(fetchSupplementalOptions(a)),
     fetchSubMthsOptions:(a)=>dispatch(fetchSubMthsOptions(a)),
     fetchStatesOptions:(a)=>dispatch(fetchStatesOptions(a)),
+    verifyFormularyName:(a)=>dispatch(verifyFormularyName(a)),
   };
 }
 
