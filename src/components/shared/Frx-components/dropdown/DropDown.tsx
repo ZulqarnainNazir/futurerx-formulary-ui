@@ -55,6 +55,8 @@ export default function DropDown(props: any) {
         dropdownStyle={props.dropdownStyle}
         defaultValue={props.defaultValue}
         onSelect={props.onSelect}
+        showSearch={props.showSearch}
+        onSearch={props.onSearch}
         dropdownAlign={{
           offset: [0, 0],
           overflow: {
