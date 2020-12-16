@@ -101,6 +101,7 @@ class GPM extends React.Component<any, any>{
         this.setState({
             newGroup: false
         })
+        this.props.getStGrouptDescription(0)
     }
 
     componentDidMount() {

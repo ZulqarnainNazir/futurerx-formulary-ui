@@ -430,6 +430,21 @@
                     }
                     .marketing-material-chks{
                         margin-left: -10px;
+                        font-family: Roboto;
+                        font-style: normal;
+                        font-weight: normal;
+                        font-size: 12px;
+                        line-height: 20px;
+                        text-transform: uppercase;
+                        color: #707683;
+                        margin-bottom:10px;
+                        &.checkbox-group{
+                            display: flex;
+                            div.checkbox:nth-child(2){
+                                margin-left:150px;
+                            }
+                        }
+                       
                     }
                     .panel-tooltip{
                         margin-left: 10px;

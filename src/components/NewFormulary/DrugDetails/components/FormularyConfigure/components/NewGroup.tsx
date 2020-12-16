@@ -151,25 +151,25 @@ function NewGroup(props: any) {
         </div>
         {props.formType === 0 && (<div className="setting-1 mb-20">
           <span>What type of drugs will this group contain? Select all that apply.</span>
-          <div className="marketing-material-chks radio-group">
-              <span>
+          <div className="marketing-material-chks checkbox-group">
+              <div className="checkbox">
                 <Checkbox
-                    defaultChecked={formData.is_rx_drug_type}
+                    checked={formData.is_rx_drug_type}
                     onChange={handleCheckBox} disabled={editable}
                     name="is_rx_drug_type"
                     inputProps={{ 'aria-label': 'secondary checkbox' }}
                 /> 
                 RX
-              </span>
-              <span>
+              </div>
+              <div className="checkbox">
               <Checkbox
-                  defaultChecked={formData.is_otc_drug_type}
+                  checked={formData.is_otc_drug_type}
                   onChange={handleCheckBox} disabled={editable}
                   name="is_otc_drug_type"
                   inputProps={{ 'aria-label': 'secondary checkbox' }}
               />
               OTC
-              </span>
+              </div>
           </div>
           <Grid container>
             <Grid item xs={6}>
@@ -205,7 +205,7 @@ function NewGroup(props: any) {
         <div className="setting-1 mb-20">
           <span>MARKETING MATERIAL CONSIDERATIONS</span>
           <div className="marketing-material-chks">
-           <div>
+           <div className="checkbox">
               <Checkbox
                 checked={formData.is_suppress_criteria_dispaly_cms_approval}
                 onChange={handleCheckBox} disabled={editable}
@@ -214,7 +214,7 @@ function NewGroup(props: any) {
               />
               <span>Supress Criteria and Display: Pending CMS Approval</span>
            </div>
-            <div>
+            <div className="checkbox">
             <Checkbox
                 checked={formData.is_display_criteria_drugs_not_frf}
                 onChange={handleCheckBox} disabled={editable}
