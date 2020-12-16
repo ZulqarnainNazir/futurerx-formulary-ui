@@ -1,12 +1,13 @@
 import {createSlice} from "@reduxjs/toolkit";
 
-import { getClassificationSystems, postDrugsCategory } from "./categoryClassActionCreation";
+import { getClassificationSystems, postDrugsCategory, getIntelliscenseSearch } from "./categoryClassActionCreation";
 import { getClassificationSystemsFulfilled, getClassificationSystemsRejected, postDrugsCategoryFulfilled, postDrugsCategoryRejected } from "./categoryClassReducers";
 
 const categoryClassState: any = {
   classificationSystems: {},
   categoryData: {},
-  isLoading: false
+  isLoading: false,
+  intelliscenseData: {}
 }
   
 

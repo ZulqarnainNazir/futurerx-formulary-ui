@@ -26,7 +26,7 @@ import FormularyDetailsContext from "../../../../FormularyDetailsContext";
 import FrxGridContainer from "../../../../../shared/FrxGrid/FrxGridContainer";
 import { OverridePopup } from "./OverridePopup/OverridePopup";
 import { getTier } from "../../../../../../redux/slices/formulary/tier/tierActionCreation";
-import { getClassificationSystems, postDrugsCategory } from "../../../../../../redux/slices/formulary/categoryClass/categoryClassActionCreation";
+import { getClassificationSystems, postDrugsCategory, getIntelliscenseSearch } from "../../../../../../redux/slices/formulary/categoryClass/categoryClassActionCreation";
 import * as tierConstants from "../../../../../../api/http-tier";
 import * as commonConstants from "../../../../../../api/http-commons";
 import * as categoryConstants from "../../../../../../api/http-category-class";
@@ -37,6 +37,7 @@ function mapDispatchToProps(dispatch) {
     getTier: (a) => dispatch(getTier(a)),
     getClassificationSystems: (a) => dispatch(getClassificationSystems(a)),
     postDrugsCategory: (a) => dispatch(postDrugsCategory(a)),
+    getIntelliscenseSearch: (a) => dispatch(getIntelliscenseSearch(a)),
   };
 }
 
@@ -63,6 +64,8 @@ interface State {
   classificationSystems: any[];
   lobCode: any;
   filter: any[];
+  searchData: any[];
+  searchNames: any[];
 }
 
 class CategoryClass extends React.Component<any, any> {
@@ -85,6 +88,8 @@ class CategoryClass extends React.Component<any, any> {
     showActionsInd: false,
     lobCode: 'MCR',
     filter: Array(),
+    searchData: Array(),
+    searchNames: Array(),
   };
   static contextType = FormularyDetailsContext;
 
@@ -172,9 +177,9 @@ class CategoryClass extends React.Component<any, any> {
 
 
 
-  onInputValueChanged = (event) => {
-    if (event.target.value) {
-      this.state.filter = [];
+  onInputValueChanged = (value) => {
+    if (value) {
+      /*this.state.filter = [];
       if (this.props.formulary_lob_id == 1) {
         this.state.filter.push({ prop: "drug_descriptor_identifier", operator: "is_like", values: [event.target.value] });
       } else {
@@ -184,7 +189,64 @@ class CategoryClass extends React.Component<any, any> {
       this.state.filter.push({ prop: "generic_product_identifier", operator: "is_like", values: [event.target.value] });
       this.state.filter.push({ prop: "drug_label_name", operator: "is_like", values: [event.target.value] });
       this.state.filter.push({ prop: "database_class", operator: "is_like", values: [event.target.value] });
-      this.state.filter.push({ prop: "database_category", operator: "is_like", values: [event.target.value] });
+      this.state.filter.push({ prop: "database_category", operator: "is_like", values: [event.target.value] });*/
+
+      let requests = Array();
+      let apiDetails = {};
+      apiDetails['apiPart'] = commonConstants.SEARCH_GPI;
+      apiDetails['pathParams'] = this.props?.formulary_id + "/" + this.state.lobCode + "/" + "F";
+      if (this.state.lobCode === 'MCR') {
+        apiDetails['pathParams'] = apiDetails['pathParams'] + "/" + (this.props.formulary_type_id === 1 ? 'MC' : 'MMP');
+      } else {
+        apiDetails['pathParams'] = apiDetails['pathParams'] + "/" + this.state.lobCode;
+      }
+      apiDetails['keyVals'] = [{ key: commonConstants.KEY_SEARCH_VALUE, value: value }];
+      requests.push({ key: 'generic_product_identifier', apiDetails: apiDetails });
+
+      apiDetails = Object.assign({}, apiDetails);
+      apiDetails['apiPart'] = commonConstants.SEARCH_NDC;
+      requests.push({ key: 'ndc', apiDetails: apiDetails });
+
+      apiDetails = Object.assign({}, apiDetails);
+      apiDetails['apiPart'] = commonConstants.SEARCH_LABEL_NAME;
+      requests.push({ key: 'drug_label_name', apiDetails: apiDetails });
+
+      apiDetails = Object.assign({}, apiDetails);
+      apiDetails['apiPart'] = commonConstants.SEARCH_CLASS;
+      requests.push({ key: 'database_class', apiDetails: apiDetails });
+
+      apiDetails = Object.assign({}, apiDetails);
+      apiDetails['apiPart'] = commonConstants.SEARCH_CATEGORY;
+      requests.push({ key: 'database_category', apiDetails: apiDetails });
+
+      if (this.props.formulary_lob_id == 1) {
+        apiDetails = Object.assign({}, apiDetails);
+        apiDetails['apiPart'] = commonConstants.SEARCH_RXCUI;
+        requests.push({ key: 'rxcui', apiDetails: apiDetails });
+      } else {
+        apiDetails = Object.assign({}, apiDetails);
+        apiDetails['apiPart'] = commonConstants.SEARCH_DDID;
+        requests.push({ key: 'drug_descriptor_identifier', apiDetails: apiDetails });
+      }
+
+      const drugGridData = this.props.getIntelliscenseSearch(requests).then((json => {
+        //debugger;
+        console.log('JSON intellicense is:'+JSON.stringify(json));
+        if (json.data && Array.isArray(json.data) && json.data.length > 0) {
+          let tmpData = json.payload.result;
+          var data: any[] = [];
+          var gridData = tmpData.map(function (el) {
+            var element = Object.assign({}, el);
+            data.push(element)
+            let gridItem = element['value'];
+            return gridItem;
+          })
+          this.setState({
+            searchData: data,
+            searchNames: gridData
+          });
+        }
+      }))
     }
   }
 
@@ -280,85 +342,20 @@ class CategoryClass extends React.Component<any, any> {
                 </div>
                 <div className='bordered'>
                   <div className='header space-between pr-10'>
-                    <div className='button-wrapper'>
-                      {!this.props.isReadOnly &&
-                        this.props.formulary_lob_id === 4 && (
-                          <div className="float-left">
-                            <div
-                              className='add-file-button'
-                              onClick={(e) => this.handlePopupButtonClick("override", "CATEGORY AND CLASS ASSIGNMENT")}
-                            >
-                              Override
+                    <div
+                      className='add-file-button'
+                      onClick={(e) => this.handlePopupButtonClick("override", "CATEGORY AND CLASS ASSIGNMENT")}
+                    >
+                      Override
                           </div>
-                            <Input
-                              className='member-search__input'
-                              placeholder='Search'
-                              type='text'
-                              disableUnderline={true}
-                              startAdornment={
-                                <svg
-                                  className='member-search__icon'
-                                  width='11'
-                                  height='11'
-                                  viewBox='0 0 11 11'
-                                  fill='none'
-                                  xmlns='http://www.w3.org/2000/svg'
-                                >
-                                  <path
-                                    d='M10.8504 9.5102L8.70825 7.36842C8.61157 7.27175 8.4805 7.21805 8.34299 7.21805H7.99277C8.58578 6.45972 8.93815 5.50591 8.93815 4.46831C8.93815 2 6.93781 0 4.46908 0C2.00034 0 0 2 0 4.46831C0 6.93663 2.00034 8.93663 4.46908 8.93663C5.50685 8.93663 6.46082 8.58432 7.21928 7.99141V8.34157C7.21928 8.47905 7.27299 8.6101 7.36968 8.70677L9.51183 10.8485C9.7138 11.0505 10.0404 11.0505 10.2402 10.8485L10.8483 10.2406C11.0502 10.0387 11.0502 9.71214 10.8504 9.5102ZM4.46908 7.21805C2.95002 7.21805 1.71888 5.98926 1.71888 4.46831C1.71888 2.94952 2.94787 1.71858 4.46908 1.71858C5.98813 1.71858 7.21928 2.94737 7.21928 4.46831C7.21928 5.98711 5.99028 7.21805 4.46908 7.21805Z'
-                                    fill='#999999'
-                                  />
-                                </svg>
-                              }
-                              onChange={this.onInputValueChanged}
-                            />
-                          </div>
-                        )}
-                      {!this.props.isReadOnly &&
-                        this.props.formulary_lob_id === 1 && (
-                          <div className="float-left">
-                            <Input
-                              className='member-search__input'
-                              placeholder='Search'
-                              type='text'
-                              disableUnderline={true}
-                              startAdornment={
-                                <svg
-                                  className='member-search__icon'
-                                  width='11'
-                                  height='11'
-                                  viewBox='0 0 11 11'
-                                  fill='none'
-                                  xmlns='http://www.w3.org/2000/svg'
-                                >
-                                  <path
-                                    d='M10.8504 9.5102L8.70825 7.36842C8.61157 7.27175 8.4805 7.21805 8.34299 7.21805H7.99277C8.58578 6.45972 8.93815 5.50591 8.93815 4.46831C8.93815 2 6.93781 0 4.46908 0C2.00034 0 0 2 0 4.46831C0 6.93663 2.00034 8.93663 4.46908 8.93663C5.50685 8.93663 6.46082 8.58432 7.21928 7.99141V8.34157C7.21928 8.47905 7.27299 8.6101 7.36968 8.70677L9.51183 10.8485C9.7138 11.0505 10.0404 11.0505 10.2402 10.8485L10.8483 10.2406C11.0502 10.0387 11.0502 9.71214 10.8504 9.5102ZM4.46908 7.21805C2.95002 7.21805 1.71888 5.98926 1.71888 4.46831C1.71888 2.94952 2.94787 1.71858 4.46908 1.71858C5.98813 1.71858 7.21928 2.94737 7.21928 4.46831C7.21928 5.98711 5.99028 7.21805 4.46908 7.21805Z'
-                                    fill='#999999'
-                                  />
-                                </svg>
-                              }
-                              onChange={this.onInputValueChanged}
-                            />
-                            <div
-                              className='add-file-button margin-right'
-                              onClick={(e) => this.handlePopupButtonClick("override", "CATEGORY AND CLASS ASSIGNMENT")}
-                            >
-                              Override
-                          </div>
-                          </div>
-                        )}
-                      {!this.props.isReadOnly ? (
-                        <div
-                          className='advance-search-button'
-                          onClick={(e) => this.handlePopupButtonClick("advancesearch", "Advanced Search")}
-                        >
-                          Advanced Search
+                    <DropDown options={this.state.searchNames} placeholder='Search' showSearch={true} onSearch={this.onInputValueChanged} />
+                    <div
+                      className='advance-search-button'
+                      onClick={(e) => this.handlePopupButtonClick("advancesearch", "Advanced Search")}
+                    >
+                      Advanced Search
                         </div>
-                      ) : null}
-                      {!this.props.isReadOnly ? (
-                        <Button label='Save' className='Button' disabled />
-                      ) : null}
-                    </div>
+                    <Button label='Save' className='Button' disabled />
                   </div>
                   <FrxGridContainer
                     enableSearch={false}
