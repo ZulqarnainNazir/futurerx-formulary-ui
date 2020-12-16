@@ -194,7 +194,7 @@ class DrugDetailMOMN extends React.Component<any, any> {
             gridName="DRUGSDETAILS"
             enableSettings={false}
             columns={getDrugDetailsColumn()}
-            scroll={{ x: 2000, y: 377 }}
+            scroll={{ x: 5200, y: 377 }}
             isFetchingData={false}
             enableResizingOfColumns
             data={this.state.data}

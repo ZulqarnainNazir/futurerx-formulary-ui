@@ -15,14 +15,26 @@ import AdvancedSearch from "./search/AdvancedSearch";
 import {
   getDrugDetailsLASummary,
   getDrugDetailsLAList,
+  postReplaceLADrug,
 } from "../../../../../../redux/slices/formulary/drugDetails/drugDetailLA/drugDetailLAActionCreation";
+import showMessage from "../../../../Utils/Toast";
+import * as laConstants from "../../../../../../api/http-drug-details";
+import getLobCode from "../../../../Utils/LobUtils";
 
 function mapDispatchToProps(dispatch) {
   return {
     getDrugDetailsLASummary: (a) => dispatch(getDrugDetailsLASummary(a)),
     getDrugDetailsLAList: (a) => dispatch(getDrugDetailsLAList(a)),
+    postReplaceLADrug: (a) => dispatch(postReplaceLADrug(a)),
   };
 }
+
+const mapStateToProps = (state) => {
+  return {
+    formulary_id: state?.application?.formulary_id,
+    formulary_lob_id: state?.application?.formulary_lob_id,
+  };
+};
 
 class DrugDetailLA extends React.Component<any, any> {
   state = {
@@ -47,6 +59,9 @@ class DrugDetailLA extends React.Component<any, any> {
         text: "Remove",
       },
     ],
+    selectedDrugs: Array(),
+    drugData: Array(),
+    lobCode: null,
   };
 
   advanceSearchClickHandler = (event) => {
@@ -60,10 +75,60 @@ class DrugDetailLA extends React.Component<any, any> {
 
   saveClickHandler = () => {
     console.log("Save data");
+    if (this.state.selectedDrugs && this.state.selectedDrugs.length > 0) {
+      let apiDetails = {};
+      apiDetails['apiPart'] = laConstants.APPLY_LA_DRUG;
+      apiDetails['pathParams'] = this.props?.formulary_id + "/" + this.state.lobCode + "/" + laConstants.TYPE_REPLACE;
+      apiDetails['keyVals'] = [{ key: laConstants.KEY_ENTITY_ID, value: this.props?.formulary_id }];
+      apiDetails['messageBody'] = {};
+      apiDetails['messageBody']['selected_drug_ids'] = this.state.selectedDrugs;
+      apiDetails['messageBody']['is_select_all'] = false;
+      apiDetails['messageBody']['covered'] = {};
+      apiDetails['messageBody']['not_covered'] = {};
+      apiDetails['messageBody']['selected_criteria_ids'] = [];
+      apiDetails['messageBody']['filter'] = [];
+      apiDetails['messageBody']['search_key'] = "";
+      apiDetails['messageBody']['limited_access'] = "";
+
+      this.props.postReplaceLADrug(apiDetails).then(json => {
+        console.log("postReplaceLADrug - Save response is:" + JSON.stringify(json));
+        if (json.payload && json.payload.code && json.payload.code === '200') {
+          showMessage('Success', 'success');
+          // this.state.drugData = [];
+          // this.state.data = [];
+          // this.populateGridData();
+          this.getLASummary();
+          console.log("The Saved State = ", this.state);
+        }else{
+          showMessage('Failure', 'error');
+        }
+      })
+    }
   };
 
-  componentDidMount() {
-    this.props.getDrugDetailsLASummary().then((json) => {
+  onSelectedTableRowChanged = (selectedRowKeys) => {
+    console.log('THe Selected Row Keys = ', selectedRowKeys);
+    this.state.selectedDrugs = [];
+    if (selectedRowKeys && selectedRowKeys.length > 0) {
+      let selDrugs = selectedRowKeys.map(ele => {
+        console.log('THe so called ele = ', ele);
+        return this.state.drugData[ele - 1]['md5_id'] ? this.state.drugData[ele - 1]['md5_id'] : ""
+      });
+
+      this.setState({ selectedDrugs: selDrugs })
+      console.log("THe sel Drugs = ", selDrugs);
+    } else {
+      this.setState({ selectedDrugs: [] })
+    }
+  }
+
+  getLASummary = () => {
+    let apiDetails = {};
+    apiDetails['apiPart'] = laConstants.GET_DRUG_SUMMARY_LA;
+    apiDetails['pathParams'] = this.props?.formulary_id;
+    apiDetails['keyVals'] = [{ key: laConstants.KEY_ENTITY_ID, value: this.props?.formulary_id }];
+
+    this.props.getDrugDetailsLASummary(apiDetails).then((json) => {
       let tmpData =
         json.payload && json.payload.result ? json.payload.result : [];
 
@@ -79,10 +144,18 @@ class DrugDetailLA extends React.Component<any, any> {
 
       this.setState({
         panelGridValue: rows,
+        lobCode: getLobCode(this.props.formulary_lob_id),
       });
     });
+  }
 
-    this.props.getDrugDetailsLAList().then((json) => {
+  getLADrugsList = () => {
+    let apiDetails = {};
+    apiDetails['apiPart'] = laConstants.GET_LA_FORMULARY_DRUGS;
+    apiDetails['pathParams'] = this.props?.formulary_id + "/" + getLobCode(this.props.formulary_lob_id);
+    apiDetails['keyVals'] = [{ key: laConstants.KEY_ENTITY_ID, value: this.props?.formulary_id }, { key: laConstants.KEY_INDEX, value: 0 }, { key: laConstants.KEY_LIMIT, value: 10 }];
+
+    this.props.getDrugDetailsLAList(apiDetails).then((json) => {
       let tmpData = json.payload.result;
       console.log(
         "----------The Get Drug Details La list response = ",
@@ -127,11 +200,18 @@ class DrugDetailLA extends React.Component<any, any> {
         count++;
         return gridItem;
       });
+      console.log("-----The Drug Data = ", data);
       this.setState({
+        drugData: data,
         data: gridData,
-        columns: columns,
       });
     });
+
+  }
+
+  componentDidMount() {
+    this.getLASummary();
+    this.getLADrugsList();
 
     const data = getDrugDetailData();
     const columns = getDrugDetailsColumn();
@@ -184,7 +264,7 @@ class DrugDetailLA extends React.Component<any, any> {
             gridName="DRUGSDETAILS"
             enableSettings={false}
             columns={getDrugDetailsColumn()}
-            scroll={{ x: 2000, y: 377 }}
+            scroll={{ x: 5200, y: 377 }}
             isFetchingData={false}
             enableResizingOfColumns
             data={this.state.data}
@@ -192,7 +272,7 @@ class DrugDetailLA extends React.Component<any, any> {
               columnWidth: 50,
               fixed: true,
               type: "checkbox",
-              onChange: () => {},
+              onChange: this.onSelectedTableRowChanged,
             }}
           />
         </div>
@@ -249,7 +329,7 @@ class DrugDetailLA extends React.Component<any, any> {
                   label="Advance Search"
                   onClick={this.advanceSearchClickHandler}
                 />
-                <Button label="Save" onClick={this.saveClickHandler} disabled />
+                <Button label="Save" onClick={this.saveClickHandler} disabled={!(this.state.selectedDrugs.length > 0)} />
               </div>
             </div>
 
@@ -269,4 +349,4 @@ class DrugDetailLA extends React.Component<any, any> {
   }
 }
 
-export default connect(null, mapDispatchToProps)(DrugDetailLA);
+export default connect(mapStateToProps, mapDispatchToProps)(DrugDetailLA);

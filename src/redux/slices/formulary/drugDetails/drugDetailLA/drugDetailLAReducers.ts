@@ -45,3 +45,22 @@ export const postLAListRejected = (state, action) => {
   state.isLoading = false;
   state.applyData = {};
 };
+
+export const postReplaceDrugFulfilled = (state, action) => {
+  console.log("Reducer::postReplaceDrugFulfilled");
+  state.isLoading = false;
+  console.log(action);
+  if (action.payload) {
+    console.log("postReplaceDrugFulfilled: Payload invalid");
+    return;
+  }
+  const data = action.payload;
+  // Response stored in the redux store.
+  state.replaceLADrug = data;
+};
+
+export const postReplaceDrugRejected = (state, action) => {
+  console.log("Reducer::postReplaceDrugRejected");
+  state.isLoading = false;
+  state.replaceLADrug = {};
+};

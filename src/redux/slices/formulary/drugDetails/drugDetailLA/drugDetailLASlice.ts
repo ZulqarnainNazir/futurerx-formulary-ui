@@ -3,17 +3,21 @@ import { createSlice } from "@reduxjs/toolkit";
 import {
   getDrugDetailsLASummary,
   getDrugDetailsLAList,
+  postReplaceLADrug,
 } from "./drugDetailLAActionCreation";
 import {
   getLaSummaryFulfilled,
   getLaSummaryRejected,
   postLAListFulfilled,
-  postLAListRejected
+  postLAListRejected,
+  postReplaceDrugFulfilled,
+  postReplaceDrugRejected,
 } from "./drugDetailLAReducers";
 
 const laState: any = {
   data: {},
   isLoading: false,
+  replaceLADrug: {},
 };
 
 const lalistState: any = {
@@ -52,6 +56,24 @@ export const laListSlice = createSlice({
     }),
     builder.addCase(getDrugDetailsLAList.rejected, (state, action) => {
       postLAListRejected(state, action);
+    })
+  ),
+});
+
+// postReplaceDrug
+export const laReplaceDrugSlice = createSlice({
+  name: "laReplaceDrug",
+  initialState: laState,
+  reducers: {},
+  extraReducers: (builder) => (
+    builder.addCase(postReplaceLADrug.pending, (state, action) => {
+      state.isLoading = true;
+    }),
+    builder.addCase(postReplaceLADrug.fulfilled, (state, action) => {
+      postReplaceDrugFulfilled(state, action);
+    }),
+    builder.addCase(postReplaceLADrug.rejected, (state, action) => {
+      postReplaceDrugRejected(state, action);
     })
   ),
 });
