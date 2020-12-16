@@ -1,7 +1,12 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { Formulary } from "./formulary";
-import { getformulary, checkNameExist } from "./setupService";
+import {
+  getformulary,
+  checkNameExist,
+  composePostBody,
+  createFormulary,
+} from "./setupService";
 import { setFullFormulary } from "./../application/applicationSlice";
 import { stat } from "fs";
 
@@ -104,10 +109,11 @@ export const saveFormulary = createAsyncThunk(
   async (details: any, { dispatch }) => {
     console.log("***** saveFormulary ( " + details + " ) ");
     try {
-      // dispatch(saveFormularyStart());
-      // const resp: any = await persistFormulary(details);
-      // console.log(resp);
-      // dispatch(saveFormularySuccess(resp));
+      const payload = composePostBody(details);
+      dispatch(saveFormularyStart());
+      const resp: any = await createFormulary(payload);
+      console.log(resp);
+      dispatch(saveFormularySuccess(resp));
     } catch (err) {
       //console.log("***** saveFormulary - ERROR ");
       dispatch(saveFormularyFailure(err.toString()));
