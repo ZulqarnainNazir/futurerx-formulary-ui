@@ -8,6 +8,7 @@ import MedicareInformation from "./components/MedicareInformation";
 import SupplementalModels from "./components/SupplementalModels";
 import Box from "@material-ui/core/Box";
 import Button from "../../../../shared/Frx-components/button/Button";
+import FrxLoader from "../../../../shared/FrxLoader/FrxLoader";
 import {
   fetchSelectedFormulary,
   verifyFormularyName,
@@ -25,7 +26,7 @@ import {
 
 class FormularySetUp extends React.Component<any, any> {
   state = {
-    isUpdate: true,
+    isUpdate: false,
     generalInformation: {
       type: "",
       name: "",
@@ -68,6 +69,11 @@ class FormularySetUp extends React.Component<any, any> {
         },
         setupOptions: newProps.setupOptions,
       });
+    }
+    if(newProps.mode === 'NEW'){
+      this.setState({
+        isUpdate: true
+      })
     }
   };
   updateInputField = (e) => {
@@ -132,30 +138,33 @@ class FormularySetUp extends React.Component<any, any> {
     return (
       <div>
         {this.state.isUpdate ? (
-          <GeneralInformation
-            generalInfo={this.state.generalInformation}
-            setupOptions={this.state.setupOptions}
-            updateInputField={this.updateInputField}
-            onRadioChange={this.onRadioChangeHandler}
-          />
-        ) : null}
+          <>
+            <GeneralInformation
+              generalInfo={this.state.generalInformation}
+              setupOptions={this.state.setupOptions}
+              updateInputField={this.updateInputField}
+              onRadioChange={this.onRadioChangeHandler}
+            />
+            <MedicareInformation />
+            <FormularyDesign />
+            <FormularyTiers />
+            <SupplementalModels />
+            <div className="btn-action">
+              <Box display="flex" justifyContent="flex-end" className="save-btn">
+                <Button label="Save" onClick={() => this.onSave(false)} />
+              </Box>
+              <Box
+                display="flex"
+                justifyContent="flex-end"
+                className="save-and-continue-btn"
+              >
+                <Button label="Save & Continue" onClick={() => this.onSave(true)} />
+              </Box>
+            </div>
+          </>
+        ) : <FrxLoader/>}
 
-        <MedicareInformation />
-        <FormularyDesign />
-        <FormularyTiers />
-        <SupplementalModels />
-        <div className="btn-action">
-          <Box display="flex" justifyContent="flex-end" className="save-btn">
-            <Button label="Save" onClick={() => this.onSave(false)} />
-          </Box>
-          <Box
-            display="flex"
-            justifyContent="flex-end"
-            className="save-and-continue-btn"
-          >
-            <Button label="Save & Continue" onClick={() => this.onSave(true)} />
-          </Box>
-        </div>
+        
       </div>
     );
   }
