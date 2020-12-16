@@ -145,10 +145,10 @@ class FormularySetUp extends React.Component<any, any> {
               updateInputField={this.updateInputField}
               onRadioChange={this.onRadioChangeHandler}
             />
-            <MedicareInformation />
+            {this.state.generalInformation.type !== 'Commercial' ? <MedicareInformation /> : null}
             <FormularyDesign />
             <FormularyTiers />
-            <SupplementalModels />
+            {this.state.generalInformation.type !== 'Commercial' ? <SupplementalModels /> : null}
             <div className="btn-action">
               <Box display="flex" justifyContent="flex-end" className="save-btn">
                 <Button label="Save" onClick={() => this.onSave(false)} />

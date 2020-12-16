@@ -120,8 +120,20 @@ class Formulary extends React.Component<any, any> {
       }
       return tab;
     });
-    this.setState({ tabs, activeTabIndex });
+    this.setState({ tabs, activeTabIndex },()=>{
+      this.updateGrid(this.state.activeTabIndex);
+      
+    });
   };
+  updateGrid = (currentTabIndex) => {
+    let lob_id = 1;
+    if(currentTabIndex === 2){
+      lob_id = 4;
+    }
+    this.listPayload = {...defaultListPayload};
+    this.listPayload.id_lob = lob_id;
+    this.props.fetchFormularies(this.listPayload);
+  }
   drugDetailsClickHandler = (id: any) => {
     let selectedRow:any = null;
     if(id !== undefined){
@@ -142,32 +154,6 @@ class Formulary extends React.Component<any, any> {
     });
   };
   
-  renderActiveTabContent = () => {
-    const tabIndex = this.state.activeTabIndex;
-    switch (tabIndex) {
-      case 0:
-        return (
-          <Medicare
-            drugDetailClick={this.drugDetailsClickHandler}
-            onMassMaintenanceCLick={this.massMaintenanceCLickHandler}
-            onPageSize={this.onPageSize}
-            pageSize={this.listPayload.limit}
-            selectedCurrentPage={(this.listPayload.index/this.listPayload.limit + 1)}
-            onPageChangeHandler={this.onGridPageChangeHandler}
-            onClearFilterHandler={this.onClearFilterHandler}
-            applyFilter={this.onApplyFilterHandler}
-            getColumnSettings={this.onSettingsIconHandler}
-            addNewFormulary={this.addNewFormulary}
-          />
-        );
-      case 1:
-        return <Medicaid />;
-      case 2:
-        return <div>COMMERCIAL</div>;
-      case 3:
-        return <div>EXCHANGE</div>;
-    }
-  };
   onSettingsIconHandler = (hiddenColumn,visibleColumn) => {
     console.log(hiddenColumn,visibleColumn);
     this.props.setHiddenColumn(hiddenColumn)
@@ -185,17 +171,20 @@ class Formulary extends React.Component<any, any> {
     this.props.fetchFormularies(this.listPayload);
   }
   onPageSize = (pageSize) => {
-    this.listPayload = defaultListPayload;
+    let id_lob = this.listPayload.id_lob
+    this.listPayload = {...defaultListPayload};
     this.listPayload.limit = pageSize
+    this.listPayload.id_lob = id_lob;
     this.props.fetchFormularies(this.listPayload);
   }
   onGridPageChangeHandler = (pageNumber: any) => {
     this.listPayload.index = (pageNumber - 1) * this.listPayload.limit;
-    console.log(this.listPayload.index/this.listPayload.limit + 1);
     this.props.fetchFormularies(this.listPayload);
   }
   onClearFilterHandler = () => {
-    this.listPayload = defaultListPayload;
+    let id_lob = this.listPayload.id_lob
+    this.listPayload = {...defaultListPayload};
+    this.listPayload.id_lob = id_lob;
     this.props.fetchFormularies(this.listPayload);
   }
   render() {
@@ -210,7 +199,19 @@ class Formulary extends React.Component<any, any> {
               onClickTab={this.onClickTab}
             />
             <div className="formulary-tabs-info">
-              {this.renderActiveTabContent()}
+              {/* {this.renderActiveTabContent()} */}
+              <Medicare
+                drugDetailClick={this.drugDetailsClickHandler}
+                onMassMaintenanceCLick={this.massMaintenanceCLickHandler}
+                onPageSize={this.onPageSize}
+                pageSize={this.listPayload.limit}
+                selectedCurrentPage={(this.listPayload.index/this.listPayload.limit + 1)}
+                onPageChangeHandler={this.onGridPageChangeHandler}
+                onClearFilterHandler={this.onClearFilterHandler}
+                applyFilter={this.onApplyFilterHandler}
+                getColumnSettings={this.onSettingsIconHandler}
+                addNewFormulary={this.addNewFormulary}
+              />
             </div>
           </>
         ) : this.state.showDrugDetails ? (
