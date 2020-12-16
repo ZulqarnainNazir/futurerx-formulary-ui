@@ -126,15 +126,24 @@ class FormularySetUp extends React.Component<any, any> {
     
   };
 
-
-  onRadioChangeHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
+  onDropdownChange = (value,section, stateProp) => {
+    console.log(value, section, stateProp)
+    const selectedSection = {...this.state[section]}
+    selectedSection[stateProp] = value;
+    this.setState({
+      [section] : selectedSection
+    })
+  }
+  onRadioChangeHandler = (event: React.ChangeEvent<HTMLInputElement>,section) => {
     const newObj = { ...this.state.generalInformation };
     newObj[event.target.name] = event.target.value;
     this.setState({
       generalInformation: newObj,
     });
   };
-
+  onDatePickerChangeHandler = (date, dateString) => {
+    console.log(date,dateString)
+  }
   onSave = (e) => {
     console.log("  SAVE  ", e);
   };
@@ -149,7 +158,8 @@ class FormularySetUp extends React.Component<any, any> {
               setupOptions={this.state.setupOptions}
               updateInputField={this.updateInputField}
               onRadioChange={this.onRadioChangeHandler}
-              formularyTypeChanged={this.formularyTypeChanged}
+              onDropdownChange={this.onDropdownChange}
+              datePickerChange={this.onDatePickerChangeHandler}
             />
             {this.state.generalInformation.type !== '' ? (
               <>
