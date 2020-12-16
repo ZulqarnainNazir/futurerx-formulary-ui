@@ -107,6 +107,7 @@ class GeneralInformation extends React.Component<any, any> {
                   options={this.props.general_options ? general_options : []}
                   value={this.props.formulary ?  this.props.formulary.formulary_type_info.formulary_type : ''}
                   disabled={disabled}
+                  onChange={this.props.formularyTypeChanged}
                 />
               </div>
             </Grid>
