@@ -165,7 +165,7 @@ class PA extends React.Component<any, any>  {
                         <div>
                           <div className="PA-list">
                             <span>LIST</span>
-                            <DropDown options={this.state.paList} valueProp="text" />
+                            <DropDown options={this.state.paList} valueProp="text" dispProp="text"/>
                           </div>
                         </div>
                       </div>

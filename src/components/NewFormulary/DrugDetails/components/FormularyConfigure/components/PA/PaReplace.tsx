@@ -12,15 +12,21 @@ import {
 } from "../../../../../../../mocks/formulary/mock-data";
 
 
-
+import AdvancedSearch from './../search/AdvancedSearch';
+import FrxDrugGridContainer from "../../../../../../shared/FrxGrid/FrxDrugGridContainer";
+import { tierColumns } from "../../../../../../../utils/grid/columns";
+import DropDownMap from "../../../../../../shared/Frx-components/dropdown/DropDownMap";
 import DropDown from "../../../../../../shared/Frx-components/dropdown/DropDown";
 import { Row, Col, Space } from "antd";
 import RadioButton from "../../../../../../shared/Frx-components/radio-button/RadioButton";
 import Button from "../../../../../../shared/Frx-components/button/Button";
-
+import * as constants from "../../../../../../../api/http-tier";
 import "../Tier.scss";
 import "./PA.scss";
-import { getPaSummary,getPaGrouptDescriptions, getPaTypes, getDrugLists } from "../../../../../../../redux/slices/formulary/pa/paActionCreation";
+import { getPaSummary,getPaGrouptDescriptions, getPaTypes, getDrugLists,postFormularyDrugPA,getPaGrouptDescriptionVersions } from "../../../../../../../redux/slices/formulary/pa/paActionCreation";
+import Radio from '@material-ui/core/Radio';
+import RadioGroup from '@material-ui/core/RadioGroup';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
 
 function mapDispatchToProps(dispatch) {
   return {
@@ -28,21 +34,181 @@ function mapDispatchToProps(dispatch) {
     getPaGrouptDescriptions:(a)=>dispatch(getPaGrouptDescriptions(a)),
     getPaTypes:(a)=>dispatch(getPaTypes(a)),
     getDrugLists:(a)=>dispatch(getDrugLists(a)),
+    postFormularyDrugPA:(a) => dispatch(postFormularyDrugPA(a)),
+    getPaGrouptDescriptionVersions:(a) => dispatch(getPaGrouptDescriptionVersions(a)),
   };
+}
+
+const mapStateToProps = (state) => {
+  return {
+    configureSwitch: state.switchReducer.configureSwitch,
+    applyData: state.tierSliceReducer.applyData,
+    formulary_id: state?.application?.formulary_id,
+    formulary: state?.application?.formulary,
+    formulary_lob_id: state?.application?.formulary_lob_id,
+    formulary_type_id: state?.application?.formulary_type_id,
+    advancedSearchBody: state?.advancedSearch?.advancedSearchBody,
+    populateGrid: state?.advancedSearch?.populateGrid,
+    closeDialog: state?.advancedSearch?.closeDialog,
+  }
 }
 
 class PaReplace extends React.Component<any,any> {
   state={
+    tierGridContainer: false,
+    isSearchOpen:false,
     paTypes:[],
-    paGroupDescriptions:[]
+    paGroupDescriptions:Array(),
+    drugData: Array(),
+    drugGridData: Array(),
+    selectedDrugs: Array(),
+    selectedGroupDescription:null,
+    selectedPaType:null,
+    showPaConfiguration:false,
+    selectedLastestedVersion:null,
+    fileType:null,
+  }
+
+  openTierGridContainer = () => {
+    this.state.drugData = [];
+    this.state.drugGridData = [];
+    this.setState({ tierGridContainer: true });
+    this.populateGridData();
+  };
+
+  handleSave = () => {
+    if (this.state.selectedDrugs && this.state.selectedDrugs.length > 0) {
+      let apiDetails = {};
+     // apiDetails['apiPart'] = constants.APPLY_TIER;
+     let tmpGroup :any = this.state.paGroupDescriptions.filter(obj  => obj.id_mcr_base_pa_group_description === this.state.selectedGroupDescription);
+      apiDetails['pathParams'] = this.props?.formulary_id + "/" + tmpGroup.fileType + "/" + constants.TYPE_REPLACE;
+      apiDetails['keyVals'] = [];
+      apiDetails['messageBody'] = {};
+      apiDetails['messageBody']['selected_drug_ids'] = this.state.selectedDrugs;
+      //apiDetails['messageBody']['id_tier'] = this.state.selectedTier;
+
+      const saveData = this.props.postTierApplyInfo(apiDetails).then((json => {
+        console.log("Save response is:" + JSON.stringify(json));
+        if (json.payload && json.payload.code === '200') {
+          this.state.drugData = [];
+          this.state.drugGridData = [];
+          this.populateGridData();
+          apiDetails = {};
+          //apiDetails['apiPart'] = tierConstants.FORMULARY_TIERS;
+          apiDetails['pathParams'] = this.props?.formulary_id;
+          apiDetails['keyVals'] = [{ key: constants.KEY_ENTITY_ID, value: this.props?.formulary_id }];
+
+        }
+      }))
+    }
+  }
+  
+  advanceSearchClickHandler = (event) => {
+    event.stopPropagation();
+    this.setState({ isSearchOpen: !this.state.isSearchOpen })
+  }
+  advanceSearchClosekHandler = () => {
+    this.setState({ isSearchOpen: !this.state.isSearchOpen })
+  }
+  dropDownSelectHandlerGroupDescription = (value, event) => {
+    let tmp_index = event.key;
+    let tmp_value = event.value;
+
+   this.setState({ selectedGroupDescription: tmp_value });
+   this.props.getPaGrouptDescriptionVersions(tmp_value).then((json)=>{
+     let data = json.payload.data;
+     debugger;
+     this.setState({
+       selectedLastestedVersion: data[0].id_pa_group_description,
+       fileType: data[0].file_type,
+     });
+   });
+  }
+
+  dropDownSelectHandlerPaType = (value, event) => {
+    let tmp_index = event.key;
+    let tmp_value = event.value;
+    this.setState({ selectedPaType: tmp_value });
+  }
+
+  pa_configurationChange = (event, value) => {
+    let tmp_index = event.target.key;
+    let tmp_value = event.target.value;
+
+    if (tmp_value=="true"){
+        this.setState({showPaConfiguration: true});
+    }else{
+      this.setState({showPaConfiguration: false});
+    }
+  }
+
+  handleChange = (e:any) => {
+    let tmp_value = e.target.value;
+    let tmp_key = e.target.name;
+    if (e.target.value=='true'){
+      tmp_value= true;
+    }else if (e.target.value=='false'){
+      tmp_value=false;
+    }
+    this.setState(
+     { tmp_key :e.target.value.trim()}
+    )
+    debugger;
+  };
+
+  populateGridData = (searchBody = null) => {
+    console.log('Populate grid data is called');
+    let apiDetails = {};
+    debugger;
+   // let tmpGroup :any = this.state.paGroupDescriptions.filter(obj  => obj.id_mcr_base_pa_group_description === this.state.selectedGroupDescription);
+    apiDetails['pathParams'] = this.props?.formulary_id + "/" + this.state.fileType + "/" ;
+    apiDetails['keyVals'] = [{ key: constants.KEY_ENTITY_ID, value: this.props?.formulary_id }, { key: constants.KEY_INDEX, value: 0 }, { key: constants.KEY_LIMIT, value: 10 }];
+    apiDetails['messageBody'] = {};
+
+    apiDetails['messageBody']['base_pa_group_description_id'] = this.state.selectedGroupDescription;
+    apiDetails['messageBody']['id_pa_type'] = this.state.selectedPaType;
+
+    if(searchBody){
+      apiDetails['messageBody'] = Object.assign(apiDetails['messageBody'],searchBody);
+    }
+    const drugGridDate = this.props.postFormularyDrugPA(apiDetails).then((json => {
+      //debugger;
+      let tmpData = json.payload.result;
+      var data: any[] = [];
+      let count = 1;
+      var gridData = tmpData.map(function (el) {
+        var element = Object.assign({}, el);
+        data.push(element)
+        let gridItem = {};
+        gridItem['id'] = count;
+        gridItem['key'] = count;
+        gridItem['tier'] = element.tier_value;
+        gridItem['fileType'] = element.file_type ? "" + element.file_type : "";
+        gridItem['dataSource'] = element.data_source ? "" + element.data_source : "";
+        gridItem['labelName'] = element.drug_label_name ? "" + element.drug_label_name : "";
+        gridItem['ndc'] = "";
+        gridItem['rxcui'] = element.rxcui ? "" + element.rxcui : "";
+        gridItem['gpi'] = element.generic_product_identifier ? "" + element.generic_product_identifier : "";
+        gridItem['trademark'] = element.trademark_code ? "" + element.trademark_code : "";
+        gridItem['databaseCategory'] = element.database_category ? "" + element.database_category : "";
+        count++;
+        return gridItem;
+      })
+      this.setState({
+        drugData: data,
+        drugGridData: gridData
+      })
+    }))
   }
   componentDidMount() {
                    
-    this.props.getPaGrouptDescriptions("1").then((json) =>{
+    this.props.getPaGrouptDescriptions("1").then((json:any) =>{
         debugger;
+
+        let result = json.payload.data.filter(obj  => !obj.is_archived &&  obj.is_setup_complete);
         this.setState({
-          paGroupDescriptions: json.payload.data,
-          });
+          paGroupDescriptions: result,
+        });
         
     });
 
@@ -55,6 +221,10 @@ class PaReplace extends React.Component<any,any> {
     });
 }
   render() {
+    const searchProps = {
+      lobCode: this.props.lobCode,
+     // pageType: pageTypes.TYPE_TIER
+    };
     return (
       <>
         <div className="group tier-dropdown white-bg">
@@ -63,14 +233,14 @@ class PaReplace extends React.Component<any,any> {
               <label>
                 PA GROUP DESCRIPTION<span className="astrict">*</span>
               </label>
-              <DropDown options={this.state.paGroupDescriptions} valueProp="text" />
+              <DropDownMap options={this.state.paGroupDescriptions} valueProp="id_mcr_base_pa_group_description" dispProp="text" onSelect={this.dropDownSelectHandlerGroupDescription}/>
             </Col>
             <Col lg={4}></Col>
             <Col lg={8} className="mb-10">
               <label>
-                PA GROUP DESCRIPTION <span className="astrict">*</span>
+                PA TYPE <span className="astrict">*</span>
               </label>
-              <DropDown options={this.state.paTypes} valueProp="text" />
+              <DropDownMap options={this.state.paTypes} valueProp="text" dispProp="text" onSelect={this.dropDownSelectHandlerPaType} />
 
             </Col>
             <Col lg={8}>
@@ -79,18 +249,24 @@ class PaReplace extends React.Component<any,any> {
                 formulary? <span className="astrict">*</span>
               </label>
               <Space size="large">
-                <RadioButton label="Yes" />
-                <RadioButton label="No" />
+              <div className="marketing-material radio-group">
+                <RadioGroup aria-label="marketing-material-radio1" className="gdp-radio" name="pa_configuration" onChange={this.pa_configurationChange}>
+                  <FormControlLabel value="true" control={<Radio  />}label="Yes" />
+                  <FormControlLabel value="false" control={<Radio />} label="No" />
+                </RadioGroup>
+               </div>
               </Space>
             </Col>
             <Col lg={4}></Col>
-            <Col lg={8}>
-              <label>
-                Select Related Formulary to View Existing configuration?{" "}
-                <span className="astrict">*</span>
-              </label>
-              <DropDown options={[1, 2, 3]} />
-            </Col>
+            {this.state.showPaConfiguration ? (
+              <Col lg={8} >
+                <label>
+                  Select Related Formulary to View Existing configuration?{" "}
+                  <span className="astrict">*</span>
+                </label>
+                <DropDown options={[1, 2, 3]} />
+              </Col>
+            ):(<Col lg={8} ></Col>)}
             <Col lg={4}></Col>
             <Col lg={8}>
               <label>
@@ -107,17 +283,63 @@ class PaReplace extends React.Component<any,any> {
         <div className="white-bg">
           <Row justify="end">
             <Col>
-              <Button label="Apply"></Button>
+              <Button label="Apply" onClick={this.openTierGridContainer} ></Button>
             </Col>
           </Row>
         </div>
+        {this.state.tierGridContainer  && (
+          <div className="select-drug-from-table">
+            <div className="bordered white-bg">
+              <div className="header space-between pr-10">
+                
+                <div className="button-wrapper">
+                  <Button className="Button normal" label="Advance Search" onClick={this.advanceSearchClickHandler} disabled={this.props.configureSwitch} />
+                  <Button label="Save" onClick={this.handleSave} disabled={this.props.configureSwitch} />
+                </div>
+              </div>
+
+              <div className="tier-grid-container">
+                <FrxDrugGridContainer
+                  isPinningEnabled={false}
+                  enableSearch={false}
+                  enableColumnDrag
+                  onSearch={() => { }}
+                  fixedColumnKeys={[]}
+                  pagintionPosition="topRight"
+                  gridName="TIER"
+                  enableSettings={false}
+                  columns={tierColumns()}
+                  scroll={{ x: 2000, y: 377 }}
+                  isFetchingData={false}
+                  enableResizingOfColumns
+                  data={this.state.drugGridData}
+                  rowSelection={{
+                    columnWidth: 50,
+                    fixed: true,
+                    type: "checkbox",
+                  //  onChange: this.onSelectedTableRowChanged,
+                  }}
+                />
+              </div>
+            </div>
+            {this.state.isSearchOpen ? (
+              <AdvancedSearch
+                {...searchProps}
+                category="Grievances"
+                openPopup={this.state.isSearchOpen}
+                onClose={this.advanceSearchClosekHandler} />
+            ) : (
+                null
+              )}
+          </div>
+        )}
       </>
     );
   }
 }
 
 export default connect(
-  null,
+  mapStateToProps,
   mapDispatchToProps
 )(PaReplace);
 

@@ -51,14 +51,7 @@ class PaGroupDescriptionManagement extends React.Component<any, any>{
                 text: "Archived"
             }
         ],
-        groupsData: [
-            {
-                id: 1,
-                label: 'Group 1',
-                status: 'warning',
-                is_archived: false,
-            }
-        ],
+        groupsData: [],
         searchInput:"",
         selectedGroup: -1,
     }
@@ -127,7 +120,7 @@ class PaGroupDescriptionManagement extends React.Component<any, any>{
         });
 
         this.props.getPaTypes(this.props.formulary_id).then((json) => {
-            debugger;
+            //debugger;
             this.setState({
                 paTypes: json.payload.data,
             });
@@ -187,8 +180,8 @@ class PaGroupDescriptionManagement extends React.Component<any, any>{
                                 </div>
                                 <div className="group-wrapper scrollbar scrollbar-primary  mt-5 mx-auto view-com-sec">
                                     {
-
-                                        this.state.groupsData.map((group, key) => (
+                                        
+                                        this.state.groupsData.length>0 && this.state.groupsData.map((group:any, key:any) => (
                                             (this.state.searchInput == "" || (this.state.searchInput != "" && group.label.indexOf(this.state.searchInput) > -1)) ?
                                                 (
                                                     (this.state.activeTabIndex==0 && group.is_archived==false) ?
