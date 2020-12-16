@@ -8,6 +8,7 @@ import { Row, Col } from "antd";
 import Button from "../../../../../shared/Frx-components/button/Button";
 import AdvancedSearch from './search/AdvancedSearch';
 import * as tierConstants from "../../../../../../api/http-tier";
+import * as commonConstants from "../../../../../../api/http-commons";
 import FrxDrugGridContainer from "../../../../../shared/FrxGrid/FrxDrugGridContainer";
 import { tierColumns } from "../../../../../../utils/grid/columns";
 import DropDown from "../../../../../shared/Frx-components/dropdown/DropDown";
@@ -101,8 +102,8 @@ class TierRemove extends React.Component<any, tabsState> {
     if (this.state.selectedCriteria && this.state.selectedCriteria.length > 0) {
       let apiDetails = {};
       apiDetails['apiPart'] = this.state.selectedFileKey === this.props.lobCode ? tierConstants.FORMULARY_DRUGS_TIER : tierConstants.DRUGS_TIER;
-      apiDetails['pathParams'] = this.props?.formulary_id + "/" + this.state.selectedFileKey + "/" + tierConstants.TYPE_REMOVE;
-      apiDetails['keyVals'] = [{ key: tierConstants.KEY_ENTITY_ID, value: this.props?.formulary_id }, { key: tierConstants.KEY_INDEX, value: 0 }, { key: tierConstants.KEY_LIMIT, value: 10 }];
+      apiDetails['pathParams'] = this.props?.formulary_id + "/" + this.state.selectedFileKey + "/" + commonConstants.TYPE_REMOVE;
+      apiDetails['keyVals'] = [{ key: commonConstants.KEY_ENTITY_ID, value: this.props?.formulary_id }, { key: commonConstants.KEY_INDEX, value: 0 }, { key: commonConstants.KEY_LIMIT, value: 10 }];
       apiDetails['messageBody'] = {};
       if (this.state.selectedCriteria && this.state.selectedCriteria.length > 0) {
         apiDetails['messageBody']['selected_criteria_ids'] = this.state.selectedCriteria;
@@ -147,7 +148,7 @@ class TierRemove extends React.Component<any, tabsState> {
     if (this.state.selectedDrugs && this.state.selectedDrugs.length > 0) {
       let apiDetails = {};
       apiDetails['apiPart'] = tierConstants.APPLY_TIER;
-      apiDetails['pathParams'] = this.props?.formulary_id + "/" + this.state.selectedFileKey + "/" + tierConstants.TYPE_REMOVE;
+      apiDetails['pathParams'] = this.props?.formulary_id + "/" + this.state.selectedFileKey + "/" + commonConstants.TYPE_REMOVE;
       apiDetails['keyVals'] = [];
       apiDetails['messageBody'] = {};
       if (this.state.selectedCriteria && this.state.selectedCriteria.length > 0) {
@@ -165,7 +166,7 @@ class TierRemove extends React.Component<any, tabsState> {
           apiDetails = {};
           apiDetails['apiPart'] = tierConstants.FORMULARY_TIERS;
           apiDetails['pathParams'] = this.props?.formulary_id;
-          apiDetails['keyVals'] = [{ key: tierConstants.KEY_ENTITY_ID, value: this.props?.formulary_id }];
+          apiDetails['keyVals'] = [{ key: commonConstants.KEY_ENTITY_ID, value: this.props?.formulary_id }];
 
           const TierDefinationData = this.props.getTier(apiDetails).then((json => {
             this.setState({ tierGridContainer: true });
