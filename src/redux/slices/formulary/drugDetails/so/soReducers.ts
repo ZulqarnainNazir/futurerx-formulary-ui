@@ -22,3 +22,26 @@ export const getSOSummaryRejected = (state, action) => {
   state.isLoading = false;
   state.data = {};
 };
+
+export const postSOListFulfilled = (state, action) => {
+  console.log("Reducer::postSOListFulfilled");
+  state.isLoading = false;
+  console.log(action);
+  if (
+    action.payload.result === undefined ||
+    !Array.isArray(action.payload.result) ||
+    action.payload.result.length === 0
+  ) {
+    console.log("postSOListFulfilled: Payload invalid");
+    return;
+  }
+  const data = action.payload.result;
+  // Response stored in the redux store.
+  state.applyData = data;
+};
+
+export const postSOListRejected = (state, action) => {
+  console.log("Reducer::postSOListRejected");
+  state.isLoading = false;
+  state.applyData = {};
+};

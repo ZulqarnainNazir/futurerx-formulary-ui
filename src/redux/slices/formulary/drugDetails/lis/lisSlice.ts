@@ -1,6 +1,14 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { getDrugDetailsLISSummary } from "./lisActionCreation";
-import { getLISSummaryFulfilled, getLISSummaryRejected } from "./lisReducers";
+import {
+  getDrugDetailsLISSummary,
+  getDrugDetailsLISList,
+} from "./lisActionCreation";
+import {
+  getLISSummaryFulfilled,
+  getLISSummaryRejected,
+  postLISListFulfilled,
+  postLISListRejected,
+} from "./lisReducers";
 
 const lisState: any = {
   data: {},
@@ -20,6 +28,23 @@ export const lisSlice = createSlice({
     }),
     builder.addCase(getDrugDetailsLISSummary.rejected, (state, action) => {
       getLISSummaryRejected(state, action);
+    })
+  ),
+});
+
+export const lisListSlice = createSlice({
+  name: "lisDrugList",
+  initialState: lisState,
+  reducers: {},
+  extraReducers: (builder) => (
+    builder.addCase(getDrugDetailsLISList.pending, (state, action) => {
+      state.isLoading = true;
+    }),
+    builder.addCase(getDrugDetailsLISList.fulfilled, (state, action) => {
+      postLISListFulfilled(state, action);
+    }),
+    builder.addCase(getDrugDetailsLISList.rejected, (state, action) => {
+      postLISListRejected(state, action);
     })
   ),
 });

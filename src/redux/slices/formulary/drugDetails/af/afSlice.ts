@@ -1,6 +1,14 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { getDrugDetailsAFSummary } from "./afActionCreation";
-import { getAFSummaryFulfilled, getAFSummaryRejected } from "./afReducers";
+import {
+  getDrugDetailsAFSummary,
+  getDrugDetailsAFList,
+} from "./afActionCreation";
+import {
+  getAFSummaryFulfilled,
+  getAFSummaryRejected,
+  postAFListFulfilled,
+  postAFListRejected,
+} from "./afReducers";
 
 const afState: any = {
   data: {},
@@ -20,6 +28,23 @@ export const afSlice = createSlice({
     }),
     builder.addCase(getDrugDetailsAFSummary.rejected, (state, action) => {
       getAFSummaryRejected(state, action);
+    })
+  ),
+});
+
+export const afListSlice = createSlice({
+  name: "afDrugList",
+  initialState: afState,
+  reducers: {},
+  extraReducers: (builder) => (
+    builder.addCase(getDrugDetailsAFList.pending, (state, action) => {
+      state.isLoading = true;
+    }),
+    builder.addCase(getDrugDetailsAFList.fulfilled, (state, action) => {
+      postAFListFulfilled(state, action);
+    }),
+    builder.addCase(getDrugDetailsAFList.rejected, (state, action) => {
+      postAFListRejected(state, action);
     })
   ),
 });

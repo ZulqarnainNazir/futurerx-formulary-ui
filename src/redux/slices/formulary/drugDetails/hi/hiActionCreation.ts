@@ -30,9 +30,6 @@ export const getDrugDetailsHISummary = createAsyncThunk(
 export const getDrugDetailsHIList = createAsyncThunk(
   "drug_details/HI_list",
   async (summary_id: string) => {
-    console.log(
-      "get Drug LIST action creator:: url: " + POST_HI_FORMULARY_DRUGS
-    );
     const requestHeaders = {
       method: 'POST',
       headers: {
