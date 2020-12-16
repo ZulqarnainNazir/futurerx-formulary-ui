@@ -14,11 +14,13 @@ const headers = {
   "Content-Type": "application/json;charset=UTF-8",
 };
 
-export async function getGeneralOptions(): Promise<GeneralOptions | any> {
+export async function getGeneralOptions(
+  type: number
+): Promise<GeneralOptions | any> {
   //console.log("- - - - - - - - - - - - -  - - Genetal Option Service");
   let url0 = `${BASE_URL1}api/1/formulary-types`;
   let url1 = `${BASE_URL1}api/1/formulary-contract-years`;
-  let url2 = `${BASE_URL1}api/1/classification-systems/1`;
+  let url2 = `${BASE_URL1}api/1/classification-systems/${type}`;
 
   const request0 = axios.get(url0, {
     headers: headers,
@@ -37,7 +39,7 @@ export async function getGeneralOptions(): Promise<GeneralOptions | any> {
         const response0 = responses[0];
         const response1 = responses[1];
         const response2 = responses[2];
-        console.log( response0, response1, response2);
+        console.log(response0, response1, response2);
         let list0 = [];
         if (response0?.data?.code === "200") {
           list0 = response0?.data?.data;
@@ -86,10 +88,10 @@ export async function getSubMthsOptions(
 }
 
 export async function getStatesOptions(
-  formulary_type: number
+  type: number
 ): Promise<GeneralOptions | any> {
   let url = `${BASE_URL1}api/1/formulary-states`;
-  if (formulary_type === 2) {
+  if (type === 2) {
     url += `/MMP`;
   }
   try {
@@ -137,9 +139,9 @@ export async function getMedicareOptions(
 }
 
 export async function getDesignOptions(
-  formulary_id: any
+  type: any
 ): Promise<DesignOptions | any> {
-  let url = `${BASE_URL1}api/1/edits/${formulary_id}`;
+  let url = `${BASE_URL1}api/1/edits/${type}`;
   try {
     const response = await axios.get(url, {
       headers: headers,
@@ -158,10 +160,10 @@ export async function getDesignOptions(
 }
 
 export async function getSupplementalOptions(
-  formulary_id: any
+  type: any
 ): Promise<SupplementalOptions | any> {
   //let url = `${this.apiBaseUrl}/1/supplemental-benefits/${id_formulary_type}`;
-  let url = `${BASE_URL1}api/1/supplemental-benefits/${formulary_id}`;
+  let url = `${BASE_URL1}api/1/supplemental-benefits/${type}`;
   try {
     const response = await axios.get(url, {
       headers: headers,
@@ -182,11 +184,11 @@ export async function getSupplementalOptions(
 //getTierOptions
 
 export async function getTierOptions(
-  formulary_tpye_id: number,
+  type: number,
   tier_level: number
 ): Promise<SupplementalOptions | any> {
   //let url = `${this.apiBaseUrl}/1/tier-labels/1/0/${id_formulary_type}`;
-  let url = `${BASE_URL1}api/1/tier-labels/${formulary_tpye_id}/${tier_level}`;
+  let url = `${BASE_URL1}api/1/tier-labels/${type}/${tier_level}`;
   try {
     const response = await axios.get(url, {
       headers: headers,
@@ -203,9 +205,3 @@ export async function getTierOptions(
     throw error;
   }
 }
-
-// https://api-dev-config-formulary.futurerx.com/api/1/formularies/3
-// States - MMP
-// https://api-dev-config-formulary.futurerx.com/api/1/formulary-states/MMP
-// States - Medicaid
-// https://api-dev-config.futurerx.com/api//1/client-states/1;

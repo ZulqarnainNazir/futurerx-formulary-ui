@@ -99,32 +99,29 @@ class FormularySetUp extends React.Component<any, any> {
   }
   manageFormularyType(type: number) {
     console.log(" TYPE :: " + type);
-
-    this.props.fetchGeneralOptions();
-    this.props.fetchDesignOptions();
+    this.props.fetchGeneralOptions(type);
+    this.props.fetchDesignOptions(type);
+    this.props.fetchTierOptions(type, 0);
 
     if (type === 1) {
       this.props.fetchMedicareOptions();
-      this.props.fetchTierOptions(1, 0);
-      this.props.fetchSupplementalOptions();
+      this.props.fetchSupplementalOptions(type);
     } else if (type === 2) {
+      this.props.fetchStatesOptions(type);
       this.props.fetchMedicareOptions();
-      this.props.fetchTierOptions(1, 0);
-      this.props.fetchSupplementalOptions();
+      this.props.fetchSupplementalOptions(type);
     } else if (type === 3) {
       // TODO ... MEDICADE...
-      this.props.fetchTierOptions(1, 0);
+      this.props.fetchStatesOptions(0);
     } else if (type === 4) {
       // TODO ... MEDICADE...
-      this.props.fetchTierOptions(1, 0);
+      this.props.fetchStatesOptions(0);
+
     } else if (type === 5) {
-      this.props.fetchTierOptions(1, 0);
     } else if (type === 6) {
       // COMMERCIAL...
-      this.props.fetchTierOptions(1, 0);
     }
     this.props.fetchSubMthsOptions(2021);
-    this.props.fetchStatesOptions(2);
   }
 
   onRadioChangeHandler = (event: React.ChangeEvent<HTMLInputElement>,section) => {

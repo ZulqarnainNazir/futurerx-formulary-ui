@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react'
-import DropDown from "../../../../../shared/Frx-components/dropdown/DropDown";
 import STAlertDialog from './STAlertDialog';
 import Alerts from './PopupAlerts/Alerts'
 import {
@@ -63,7 +62,6 @@ function GroupHeader(props: any) {
     const onChange = (e) => {
         const verLength = Object.keys(props.version).length;
         const selectedVersion = e.target.value
-       // alert(selectedVersion)
         if (verLength > 0 && selectedVersion!='') {
             const isEditable = props.version[Number(selectedVersion.split(" ")[1]) - 1].is_setup_complete;
             const latestVerion = verLength > 0 ? props.version[Number(selectedVersion.split(" ")[1]) - 1]?.id_st_group_description : 0;
@@ -119,7 +117,6 @@ function GroupHeader(props: any) {
                     : <option value={e.value}>{`Group Description ${e.value}`}</option>
                 ))}
             </select>
-            {/* <DropDown className="formulary-type-dropdown formulary-versions" placeholder={placeHolder} options={versionList.map(e => e.value)} onChange={onChange} /> */}
             <div className="item">
                 <svg
                     width="11"
