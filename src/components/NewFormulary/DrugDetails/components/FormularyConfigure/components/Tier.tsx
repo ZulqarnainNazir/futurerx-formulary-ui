@@ -32,6 +32,7 @@ import DialogPopup from "../../../../../shared/FrxDialogPopup/FrxDialogPopup";
 import { ToastContainer } from 'react-toastify';
 
 import * as tierConstants from "../../../../../../api/http-tier";
+import * as commonConstants from "../../../../../../api/http-commons";
 
 function mapDispatchToProps(dispatch) {
   return {
@@ -102,7 +103,7 @@ class Tier extends React.Component<any, tabsState> {
     let apiDetails = {};
     apiDetails['apiPart'] = tierConstants.FORMULARY_TIERS;
     apiDetails['pathParams'] = this.props?.formulary_id;
-    apiDetails['keyVals'] = [{ key: tierConstants.KEY_ENTITY_ID, value: this.props?.formulary_id }];
+    apiDetails['keyVals'] = [{ key: commonConstants.KEY_ENTITY_ID, value: this.props?.formulary_id }];
 
     const TierDefinationData = this.props.getTier(apiDetails).then((json => {
       //debugger;
