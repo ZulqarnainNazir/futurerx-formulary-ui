@@ -16,7 +16,8 @@ import {
   fetchDesignOptions,
   fetchSupplementalOptions,
   fetchTierOptions,
-  fetchSubMthsOptions
+  fetchSubMthsOptions,
+  fetchStatesOptions
 } from "../../../../.././redux/slices/formulary/setup/setupOptionsSlice";
 
 
@@ -52,6 +53,7 @@ class FormularySetUp extends React.Component<any, any> {
     }
     // Need to call this based on YEAR selected... 
     this.props.fetchSubMthsOptions(2021);
+    this.props.fetchStatesOptions(2);
   }
   UNSAFE_componentWillReceiveProps = (newProps) => {
     if(newProps.formulary && newProps.setupOptions){
@@ -86,6 +88,14 @@ class FormularySetUp extends React.Component<any, any> {
       generalInformation: newObj
     })
   }
+
+  onSave = (e) => {
+    console.log("  SAVE  ",e);
+  };
+
+
+
+
   render() {
     return(
       <div>
@@ -104,10 +114,10 @@ class FormularySetUp extends React.Component<any, any> {
         <SupplementalModels/>
         <div className="btn-action">
           <Box display="flex" justifyContent="flex-end" className="save-btn">
-            <Button label="Save" />
+            <Button label="Save" onClick={() => this.onSave(false)}/>
           </Box>
           <Box display="flex" justifyContent="flex-end" className="save-and-continue-btn">
-            <Button label="Save & Continue" />
+            <Button label="Save & Continue" onClick={() => this.onSave(true)} />
           </Box>
         </div>
       </div>
@@ -135,6 +145,7 @@ function mapDispatchToProps(dispatch) {
     fetchTierOptions:(a)=>dispatch(fetchTierOptions(a)),
     fetchSupplementalOptions:(a)=>dispatch(fetchSupplementalOptions(a)),
     fetchSubMthsOptions:(a)=>dispatch(fetchSubMthsOptions(a)),
+    fetchStatesOptions:(a)=>dispatch(fetchStatesOptions(a)),
   };
 }
 

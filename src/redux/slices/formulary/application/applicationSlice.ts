@@ -2,6 +2,7 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import axios from "axios";
 import { BASE_URL1 } from "../../../../api/http-helper";
 import { createAsyncThunk } from "@reduxjs/toolkit";
+import { Formulary } from "../setup/formulary";
 
 interface ApplicationState {
   formulary_id: number;
@@ -57,7 +58,7 @@ const application = createSlice({
       state.formulary = formulary;
       state.formulary_lob_id = formulary_lob_id;
       state.formulary_type_id = formulary_type_id;
-      state.mode= mode;
+      state.mode = mode;
       state.isLoading = false;
       state.error = null;
     },
@@ -71,14 +72,29 @@ export default application.reducer;
 export const setFormulary = createAsyncThunk(
   "application",
   async (arg: any, { dispatch }) => {
-
     //console.log("***** setFormulary ", arg);
-    
+
     const obj = {
-      formulary_id: arg.id_formulary,
+      formulary_id: arg?.id_formulary,
       formulary: arg,
-      formulary_lob_id: arg.id_lob,
-      formulary_type_id: arg.id_formulary_type,
+      formulary_lob_id: arg?.id_lob,
+      formulary_type_id: arg?.id_formulary_type,
+      mode: "EXISTING",
+    };
+    dispatch(setFormularyDetails(obj));
+  }
+);
+
+export const setFullFormulary = createAsyncThunk(
+  "application",
+  async (value: Formulary, { dispatch }) => {
+    //console.log("***** setFormulary ", arg);
+
+    const obj = {
+      formulary_id: value?.id_formulary,
+      formulary: value,
+      formulary_lob_id: value?.formulary_type_info?.id_lob,
+      formulary_type_id: value?.formulary_type_info?.id_formulary_type,
       mode: "EXISTING",
     };
     dispatch(setFormularyDetails(obj));

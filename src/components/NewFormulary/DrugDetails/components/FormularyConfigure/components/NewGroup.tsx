@@ -1,24 +1,21 @@
 import React,{useState,useEffect} from 'react';
 import { connect } from "react-redux";
-import DropDown from "../../../../../shared/Frx-components/dropdown/DropDownMap";
 import Radio from '@material-ui/core/Radio';
 import RadioGroup from '@material-ui/core/RadioGroup';
 import Button from '../../../../../shared/Frx-components/button/Button';
-import FormGroup from '@material-ui/core/FormGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
 import Tooltip from '@material-ui/core/Tooltip';
 import GroupHeader from './GroupHeader';
-import { Box, Grid, Input } from '@material-ui/core';
+import { Grid } from '@material-ui/core';
 import AlertMessages from "./AlertMessages"
-import RadioButton from '../../../../../shared/Frx-components/radio-button/RadioButton';
+import { scrollPage } from '../../../../../../utils/formulary'
 import { saveGDM } from "../../../../../../redux/slices/formulary/gdm/gdmSlice";
 import { getStGrouptDescription } from "../../../../../../redux/slices/formulary/stepTherapy/stepTherapyActionCreation";
 
 interface Props{
     tooltip?:string;
     formType?:number;
-    //editable?:boolean;
 }
 
 const initialFormData = {
@@ -59,7 +56,9 @@ function NewGroup(props: any) {
   const [editable, setEditable] = React.useState(false);
   const [changeEvent, setChangeEvent] = React.useState(false);
   const handleChange = (e) => {
-    const formVal =(e.target.value==='yes' || e.target.value==='true')?true:(e.target.value==='no' || e.target.value==='true')?true:e.target.value;
+    console.log(typeof e.target.value)
+    console.log(e.target.name)
+    const formVal =(e.target.value==='yes' || e.target.value==='true')?true:(e.target.value==='no' || e.target.value==='false')?false:e.target.value;
     updateFormData({
       ...formData,
       [e.target.name]: formVal
@@ -67,7 +66,7 @@ function NewGroup(props: any) {
   };
 
   const onChange = (e) =>{
-    if(Object.keys(props.StGDData).length>0 && e!='no'){ 
+    if(Object.keys(props.StGDData).length>0 && e && e!='no'){ 
       //const verLength = Object.keys(props.version).length;
       const isEditable = props.version[Number(e.split(' ')[1])].is_setup_complete
       setEditable(isEditable)
@@ -95,11 +94,9 @@ function NewGroup(props: any) {
       });
     }
   },[props.StGDData || props.saveGdm])
-  //[props.StGDData || props.versionList || props.activeTabIndex || props.saveGdm]
   
   const handleSubmit = (e) => {
     e.preventDefault()
-    console.log(formData)
     updateFormData({
         ...formData,
         'change_indicator':0,
@@ -108,8 +105,8 @@ function NewGroup(props: any) {
     props.saveGDM({formularyId:props.formulary_id,
       latestId:props.saveGdm.current_group_des_id,
       ...formData})
-    window.scrollTo(0, 500)
-  };
+      scrollPage(0,500)
+    };
     return (
         <div className="new-group-des">
             <div className="panel header">
@@ -185,15 +182,15 @@ function NewGroup(props: any) {
                 <div className="setting-1 mb-20">
                     <span>MARKETING MATERIAL CONSIDERATIONS</span>
                     <div className="marketing-material-chk">
-                        <FormControlLabel control={<Checkbox name="is_suppress_criteria_dispaly_cms_approval" value checked={formData.is_suppress_criteria_dispaly_cms_approval}/>} label='Supress Criteria and Display: Pending CMS Approval' onChange={handleChange} disabled={editable}/>
-                        <FormControlLabel control={<Checkbox name="is_display_criteria_drugs_not_frf" value checked={formData.is_display_criteria_drugs_not_frf}/>} label='Display Criteria for Drugs not on FRF' onChange={handleChange} disabled={editable}/>
+                        <FormControlLabel control={<Checkbox/>}  name="is_suppress_criteria_dispaly_cms_approval" value checked={formData.is_suppress_criteria_dispaly_cms_approval} label='Supress Criteria and Display: Pending CMS Approval' onChange={handleChange} disabled={editable}/>
+                        <FormControlLabel control={<Checkbox/>}  name="is_display_criteria_drugs_not_frf" value checked={formData.is_display_criteria_drugs_not_frf} label='Display Criteria for Drugs not on FRF' onChange={handleChange} disabled={editable}/>
                     </div>
                     
                     <span>do you want to add additional criteria?<span className="astrict">*</span></span>
                     <div className="marketing-material radio-group">
-                        <RadioGroup aria-label="marketing-material-radio1" name="is_additional_criteria_defined" onChange={handleChange} className="gdp-radio" >
-                          <FormControlLabel control={<Radio checked={formData.is_additional_criteria_defined} value='yes'/>} label='Yes' disabled={editable}/>
-                          <FormControlLabel control={<Radio checked={!formData.is_additional_criteria_defined} value='no'/>} label='No' disabled={editable}/>
+                        <RadioGroup aria-label="marketing-material-radio1" name="is_additional_criteria_defined" onChange={handleChange} className="gdp-radio" value={formData.is_additional_criteria_defined}>
+                          <FormControlLabel value={true} control={<Radio/>} label='Yes' disabled={editable}/>
+                          <FormControlLabel value={false} control={<Radio/>} label='No' disabled={editable}/>
                         </RadioGroup>
                     </div>
                 </div>
