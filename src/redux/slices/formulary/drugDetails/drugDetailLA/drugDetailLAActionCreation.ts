@@ -11,6 +11,8 @@ import {
 
 // const POST_REPLACE_LA_FORMULARY_DRUG = BASE_URL1 + "api/1/apply-formulary-drug-la/3298/MCR/replace?entity_id=3298";
 
+// const POST_REMOVE_LA_FORMULARY_DRUG = BASE_URL1 + "api/1/apply-formulary-drug-la/3106/MCR/remove?entity_id=3106";
+
 export const getDrugDetailsLASummary = createAsyncThunk(
   "drug_details/LA_Summary",
   async (apiDetails: any) => {
@@ -45,6 +47,22 @@ export const getDrugDetailsLAList = createAsyncThunk(
 
 export const postReplaceLADrug = createAsyncThunk(
   "drug_details/postReplaceLADrug",
+  async (apiDetails: any) => {
+    let POST_URL = buildUrl({ apiDetails });
+    const requestHeaders = postHeaders(apiDetails);
+    return fetch(POST_URL, requestHeaders)
+      .then((response) => {
+        if (!response.ok) throw Error(response.statusText);
+        return response.json();
+      })
+      .then((json) => {
+        return json;
+      });
+  }
+);
+
+export const postRemoveLADrug = createAsyncThunk(
+  "drug_details/postRemoveLADrug",
   async (apiDetails: any) => {
     let POST_URL = buildUrl({ apiDetails });
     const requestHeaders = postHeaders(apiDetails);

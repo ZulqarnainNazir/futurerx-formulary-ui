@@ -16,6 +16,7 @@ import {
   getDrugDetailsLASummary,
   getDrugDetailsLAList,
   postReplaceLADrug,
+  postRemoveLADrug,
 } from "../../../../../../redux/slices/formulary/drugDetails/drugDetailLA/drugDetailLAActionCreation";
 import showMessage from "../../../../Utils/Toast";
 import * as laConstants from "../../../../../../api/http-drug-details";
@@ -26,6 +27,7 @@ function mapDispatchToProps(dispatch) {
     getDrugDetailsLASummary: (a) => dispatch(getDrugDetailsLASummary(a)),
     getDrugDetailsLAList: (a) => dispatch(getDrugDetailsLAList(a)),
     postReplaceLADrug: (a) => dispatch(postReplaceLADrug(a)),
+    postRemoveLADrug: (a) => dispatch(postRemoveLADrug(a)),
   };
 }
 
@@ -78,7 +80,7 @@ class DrugDetailLA extends React.Component<any, any> {
     if (this.state.selectedDrugs && this.state.selectedDrugs.length > 0) {
       let apiDetails = {};
       apiDetails['apiPart'] = laConstants.APPLY_LA_DRUG;
-      apiDetails['pathParams'] = this.props?.formulary_id + "/" + this.state.lobCode + "/" + laConstants.TYPE_REPLACE;
+      // apiDetails['pathParams'] = this.props?.formulary_id + "/" + this.state.lobCode + "/" + laConstants.TYPE_REPLACE;
       apiDetails['keyVals'] = [{ key: laConstants.KEY_ENTITY_ID, value: this.props?.formulary_id }];
       apiDetails['messageBody'] = {};
       apiDetails['messageBody']['selected_drug_ids'] = this.state.selectedDrugs;
@@ -90,19 +92,39 @@ class DrugDetailLA extends React.Component<any, any> {
       apiDetails['messageBody']['search_key'] = "";
       apiDetails['messageBody']['limited_access'] = "";
 
-      this.props.postReplaceLADrug(apiDetails).then(json => {
-        console.log("postReplaceLADrug - Save response is:" + JSON.stringify(json));
-        if (json.payload && json.payload.code && json.payload.code === '200') {
-          showMessage('Success', 'success');
-          // this.state.drugData = [];
-          // this.state.data = [];
-          // this.populateGridData();
-          this.getLASummary();
-          console.log("The Saved State = ", this.state);
-        }else{
-          showMessage('Failure', 'error');
-        }
-      })
+      if(this.state.activeTabIndex === 0){
+        console.log("-----REPLACE method-------")
+        apiDetails['pathParams'] = this.props?.formulary_id + "/" + this.state.lobCode + "/" + laConstants.TYPE_REPLACE;
+
+        // Replace Drug method call
+        this.props.postReplaceLADrug(apiDetails).then(json => {
+          console.log("postReplaceLADrug - response is:" + JSON.stringify(json));
+          if (json.payload && json.payload.code && json.payload.code === '200') {
+            showMessage('Success', 'success');
+            this.getLASummary();
+            console.log("The Saved State = ", this.state);
+          }else{
+            showMessage('Failure', 'error');
+          }
+        });
+
+      } else if(this.state.activeTabIndex === 2) {
+        console.log("-----REMOVE method-------")
+        apiDetails['pathParams'] = this.props?.formulary_id + "/" + this.state.lobCode + "/" + laConstants.TYPE_REMOVE;
+
+        // Remove Drug method call
+        this.props.postRemoveLADrug(apiDetails).then(json => {
+          console.log("postRemoveLADrug - response is:" + JSON.stringify(json));
+          if (json.payload && json.payload.code && json.payload.code === '200') {
+            showMessage('Success', 'success');
+            this.getLASummary();
+            console.log("The Saved State = ", this.state);
+          }else{
+            showMessage('Failure', 'error');
+          }
+        });
+
+      }
     }
   };
 

@@ -4,6 +4,7 @@ import {
   getDrugDetailsLASummary,
   getDrugDetailsLAList,
   postReplaceLADrug,
+  postRemoveLADrug,
 } from "./drugDetailLAActionCreation";
 import {
   getLaSummaryFulfilled,
@@ -73,6 +74,24 @@ export const laReplaceDrugSlice = createSlice({
       postReplaceDrugFulfilled(state, action);
     }),
     builder.addCase(postReplaceLADrug.rejected, (state, action) => {
+      postReplaceDrugRejected(state, action);
+    })
+  ),
+});
+
+// postRemoveDrug
+export const laRemoveDrugSlice = createSlice({
+  name: "laRemoveDrug",
+  initialState: laState,
+  reducers: {},
+  extraReducers: (builder) => (
+    builder.addCase(postRemoveLADrug.pending, (state, action) => {
+      state.isLoading = true;
+    }),
+    builder.addCase(postRemoveLADrug.fulfilled, (state, action) => {
+      postReplaceDrugFulfilled(state, action);
+    }),
+    builder.addCase(postRemoveLADrug.rejected, (state, action) => {
       postReplaceDrugRejected(state, action);
     })
   ),
