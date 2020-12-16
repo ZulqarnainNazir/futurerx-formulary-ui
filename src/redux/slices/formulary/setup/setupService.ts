@@ -59,3 +59,28 @@ export async function checkNameExist(name: string): Promise<boolean | any> {
     throw error;
   }
 }
+
+
+
+
+// export async function persistFormulary(
+//   details: any
+// ): Promise<any> {
+
+//   let url = `${BASE_URL1}api/1/formulary-setup/${formulary_id}?entity_id=${formulary_id}`;
+//   try {
+//     const response = await axios.get(url, {
+//       headers: headers,
+//     });
+//     //console.log("***** SETUP getformulary  - Success");
+//     //console.log(response);
+//     if (response?.data?.code === "200") {
+//       return response?.data?.result;
+//     }
+//     return null;
+//   } catch (error) {
+//     // console.log("***** getformularies - Error");
+//     // console.log(error);
+//     throw error;
+//   }
+// }
