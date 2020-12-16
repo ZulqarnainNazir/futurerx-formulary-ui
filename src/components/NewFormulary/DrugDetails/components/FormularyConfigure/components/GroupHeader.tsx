@@ -66,7 +66,7 @@ function GroupHeader(props: any) {
        // alert(selectedVersion)
         if (verLength > 0 && selectedVersion!='') {
             const isEditable = props.version[Number(selectedVersion.split(" ")[1]) - 1].is_setup_complete;
-            const latestVerion = verLength > 0 ? props.version[Number(selectedVersion.split(" ")[1]) - 1].id_st_group_description : 0;
+            const latestVerion = verLength > 0 ? props.version[Number(selectedVersion.split(" ")[1]) - 1]?.id_st_group_description : 0;
             setPanelColor(isEditable ? '-green' : '')
             setPlaceHolder(`Group Description ${selectedVersion}`)
             props.getStGrouptDescription(latestVerion)

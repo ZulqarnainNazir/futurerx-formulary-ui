@@ -8,7 +8,7 @@ import CustomizedSwitches from './CustomizedSwitches';
 import { TabInfo } from "../../../../../../models/tab.model";
 import FrxMiniTabs from "../../../../../shared/FrxMiniTabs/FrxMiniTabs";
 import Button from '../../../../../shared/Frx-components/button/Button';
-import DropDown from "../../../../../shared/Frx-components/dropdown/DropDown";
+import DropDown from "../../../../../shared/Frx-components/dropdown/DropDownMap";
 import FormGroup from '@material-ui/core/FormGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
@@ -269,9 +269,8 @@ function NewGroup(props: any){
   // }
 
   const onChange = (e) =>{
-    debugger;
     console.log(props.version);
-    const latestVerion = Object.keys(props.version).length>0?props.version[Number(e)-1].id_pa_group_description:0;
+    const latestVerion = Object.keys(props.version).length>0?props.version[Number(e)]?.id_pa_group_description:0;
     setLatestId(latestVerion)
     props.getPaGrouptDescription(latestVerion)
     if(Object.keys(props.PaGDData).length>0){ 
