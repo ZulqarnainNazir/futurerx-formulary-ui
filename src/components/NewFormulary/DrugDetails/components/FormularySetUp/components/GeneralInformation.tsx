@@ -105,7 +105,7 @@ class GeneralInformation extends React.Component<any, any> {
                   className="formulary-type-dropdown"
                   placeholder="Select"
                   options={this.props.general_options ? general_options : []}
-                  value={this.props.formulary ?  this.props.formulary.formulary_type_info.formulary_type : ''}
+                  value={this.props.generalInfo.type}
                   disabled={disabled}
                   onChange={this.props.formularyTypeChanged}
                 />
@@ -218,6 +218,7 @@ class GeneralInformation extends React.Component<any, any> {
                 <PanelHeader
                   title="FORMULARY CLASSIFICATION SYSTEM"
                   tooltip="FORMULARY CLASSIFICATION SYSTEM"
+                  required
                 />
                 <div className="marketing-material radio-group">
                   <RadioGroup 
@@ -226,13 +227,40 @@ class GeneralInformation extends React.Component<any, any> {
                       name="classification_system"
                       value={this.props.generalInfo?.classification_system?.toString()} 
                       onChange={this.props.onRadioChange}>
-                      <FormControlLabel value="1" control={<Radio />} label="USP" />
-                      <FormControlLabel value="2" control={<Radio />} label="AHFS" />
+                      {this.props.generalInfo.type !== 'Commercial' ? (
+                        <>
+                        <FormControlLabel value="1" control={<Radio />} label="USP" />
+                        <FormControlLabel value="2" control={<Radio />} label="AHFS" />
+                        </>
+                      ): null}
                       <FormControlLabel value="3" control={<Radio />} label="Medispan" />
                   </RadioGroup>
                 </div>
               </div>
             </Grid>
+            {this.props.generalInfo.type === 'Commercial' ? (
+              <Grid item xs={4}>
+                <div className="group setup-panel">
+                  <PanelHeader
+                    title="IS THIS A CLOSED OR OPEN FORMULARY"
+                    tooltip="FORMULARY CLASSIFICATION SYSTEM"
+                    required
+                  />
+                  <div className="marketing-material radio-group">
+                    <RadioGroup 
+                        className="radio-group-custom" 
+                        aria-label={'classification_system'} 
+                        name="is_formulary_open"
+                        value={this.props.generalInfo?.is_closed_formulary?.toString()} 
+                        onChange={this.props.onRadioChange}>
+                        <FormControlLabel value="true" control={<Radio />} label="Closed" />
+                        <FormControlLabel value="false" control={<Radio />} label="Open" />
+                    </RadioGroup>
+                  </div>
+                </div>
+              </Grid>
+            ) : null}
+            
             <Grid item xs={4}>
               <div className="group reporting-tag-group">
                 <label>reporting tags</label>
