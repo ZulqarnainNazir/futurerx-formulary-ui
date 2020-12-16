@@ -30,17 +30,16 @@ export async function getformulary(
 }
 
 export async function checkNameExist(name: string): Promise<boolean | any> {
-  //let url = `${BASE_URL1}api/1/formulary-setup/${formulary_id}?entity_id=${formulary_id}`;
-
-  let url = `${BASE_URL1}/1/check-formulary-name`;
+  let url = `${BASE_URL1}api/1/check-formulary-name`;
   if (name != null && name != undefined && name != "") {
     url = url + `/${name}`;
   } else {
-    name = "";
-    url = url + `/${name}`;
+    // name = "";
+    // url = url + `/${name}`;
+    return true;
   }
   // url= url+`/${this.clientId}`;
-  url= url+`/1`;
+  url = url + `/1`;
   // if (this.formularyBaseId != 0 && this.formularyBaseId != undefined) {
   //   url = url + `/${this.formularyBaseId}`
   // }
@@ -48,15 +47,15 @@ export async function checkNameExist(name: string): Promise<boolean | any> {
     const response = await axios.get(url, {
       headers: headers,
     });
-    console.log("***** checkNameExist  - Success");
-    console.log(response);
+    // console.log("***** checkNameExist  - Success");
+    // console.log(response);
     if (response?.data?.code === "200") {
       return response?.data?.result?.is_formulary_name_exists;
     }
     return true;
   } catch (error) {
-    console.log("***** checkNameExist - Error");
-    console.log(error);
+    // console.log("***** checkNameExist - Error");
+    // console.log(error);
     throw error;
   }
 }

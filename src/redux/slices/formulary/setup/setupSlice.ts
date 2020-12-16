@@ -49,13 +49,12 @@ const setup = createSlice({
     getFormalaryFailure: loadingFailed,
     verifyFormularyNameStart: startLoading,
     verifyFormularyNameSuccess(state, { payload }: PayloadAction<boolean>) {
-      console.log("***** verifyFormularyNameSuccess : ",payload);
+      //console.log("***** verifyFormularyNameSuccess : ",payload);
       state.nameExist = payload;
       state.isLoading = false;
       state.error = null;
     },
     verifyFormularyNameFailure: loadingFailed,
-  
   },
 });
 
@@ -83,7 +82,7 @@ export const verifyFormularyName = createAsyncThunk(
     try {
       dispatch(verifyFormularyNameStart());
       const exist: boolean = await checkNameExist(name);
-      console.log(exist);
+      //console.log(exist);
       dispatch(verifyFormularyNameSuccess(exist));
     } catch (err) {
       //console.log("***** fetchFormularies - ERROR ");
@@ -92,8 +91,6 @@ export const verifyFormularyName = createAsyncThunk(
   }
 );
 
-
-
 export const {
   getformularyStart,
   getFormularySuccess,
@@ -101,7 +98,6 @@ export const {
   verifyFormularyNameStart,
   verifyFormularyNameSuccess,
   verifyFormularyNameFailure,
-
 } = setup.actions;
 
 export default setup.reducer;
