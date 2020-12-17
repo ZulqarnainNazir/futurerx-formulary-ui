@@ -231,9 +231,8 @@ class CategoryClass extends React.Component<any, any> {
 
       const drugGridData = this.props.getIntelliscenseSearch(requests).then((json => {
         //debugger;
-        console.log('JSON intellicense is:'+JSON.stringify(json));
-        if (json.data && Array.isArray(json.data) && json.data.length > 0) {
-          let tmpData = json.payload.result;
+        if (json.payload && json.payload.data && Array.isArray(json.payload.data) && json.payload.data.length > 0) {
+          let tmpData = json.payload.data;
           var data: any[] = [];
           var gridData = tmpData.map(function (el) {
             var element = Object.assign({}, el);

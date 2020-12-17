@@ -107,10 +107,10 @@ export const getIntelliscenseSearch = createAsyncThunk(
         if (finalVals && Array.isArray(finalVals) && finalVals.length > 0) {
           let result = { code: '200', status: 'ok', data: Array() };
           for (let index = 0; index < finalVals.length; index++) {
-            let keyData = fetchKeys[index];
-            if (Array.isArray(keyData) && keyData.length > 0) {
-              for (let dataIndex = 0; dataIndex < keyData.length; dataIndex++) {
-                result.data.push({ key: fetchKeys[index], value: keyData[dataIndex].value});
+            let keyData = finalVals[index];
+            if (keyData.data && Array.isArray(keyData.data) && keyData.data.length > 0) {
+              for (let dataIndex = 0; dataIndex < keyData.data.length; dataIndex++) {
+                result.data.push({ key: fetchKeys[index], value: keyData.data[dataIndex].value});
               }
             }
           }
