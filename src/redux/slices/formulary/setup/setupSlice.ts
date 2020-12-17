@@ -106,14 +106,14 @@ export const verifyFormularyName = createAsyncThunk(
 
 export const saveFormulary = createAsyncThunk(
   "setup",
-  async (details: any, { dispatch }) => {
-    console.log("***** saveFormulary ( " + details + " ) ");
+  async (input: any, { dispatch }) => {
+    console.log("***** saveFormulary ( " + input + " ) ");
     try {
-      const payload = composePostBody(details);
-      dispatch(saveFormularyStart());
-      const resp: any = await createFormulary(payload);
-      console.log(resp);
-      dispatch(saveFormularySuccess(resp));
+      // const payload = composePostBody(details);
+      // dispatch(saveFormularyStart());
+      // const resp: any = await createFormulary(payload);
+      // console.log(resp);
+      // // dispatch(saveFormularySuccess(resp));
     } catch (err) {
       //console.log("***** saveFormulary - ERROR ");
       dispatch(saveFormularyFailure(err.toString()));

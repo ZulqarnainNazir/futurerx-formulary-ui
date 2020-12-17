@@ -39,7 +39,7 @@ export async function getGeneralOptions(
         const response0 = responses[0];
         const response1 = responses[1];
         const response2 = responses[2];
-        console.log(response0, response1, response2);
+        //console.log(response0, response1, response2);
         let list0 = [];
         if (response0?.data?.code === "200") {
           list0 = response0?.data?.data;
@@ -53,7 +53,7 @@ export async function getGeneralOptions(
           list2 = response2?.data?.data;
         }
 
-        console.log(list0, list1, list2);
+        //console.log(list0, list1, list2);
         return {
           formularyType: list0,
           contractYear: list1,

@@ -12,6 +12,7 @@ import FrxLoader from "../../../../shared/FrxLoader/FrxLoader";
 import {
   fetchSelectedFormulary,
   verifyFormularyName,
+  saveFormulary
 } from "../../../../.././redux/slices/formulary/setup/setupSlice";
 import { Formulary } from "../../../../../redux/slices/formulary/setup/formulary";
 import {
@@ -127,7 +128,7 @@ class FormularySetUp extends React.Component<any, any> {
   };
 
   onDropdownChange = (value,section, stateProp) => {
-    console.log(value, section, stateProp)
+    //console.log(value, section, stateProp)
     const selectedSection = {...this.state[section]}
     selectedSection[stateProp] = value;
     this.setState({
@@ -142,10 +143,16 @@ class FormularySetUp extends React.Component<any, any> {
     });
   };
   onDatePickerChangeHandler = (date, dateString) => {
-    console.log(date,dateString)
+    //console.log(date,dateString)
   }
   onSave = (e) => {
     console.log("  SAVE  ", e);
+    const input = {
+      MODE: this.props.mode,
+      CONTINUE: e,
+      GENERAL_INFO: this.state.generalInformation,
+    }
+    this.props.saveFormulary(input);
   };
 
   render() {
@@ -214,6 +221,7 @@ function mapDispatchToProps(dispatch) {
     fetchSubMthsOptions: (a) => dispatch(fetchSubMthsOptions(a)),
     fetchStatesOptions: (a) => dispatch(fetchStatesOptions(a)),
     verifyFormularyName: (a) => dispatch(verifyFormularyName(a)),
+    saveFormulary: (a) => dispatch(saveFormulary(a)),
   };
 }
 
