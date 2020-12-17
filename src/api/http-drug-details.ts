@@ -1,8 +1,14 @@
 import { BASE_URL1 } from "./http-helper";
 
+// LA TAB
 export const GET_DRUG_SUMMARY_LA = "api/1/formulary-drug-summary-la/";
 export const GET_LA_FORMULARY_DRUGS = "api/1/formulary-drugs-la/";
 export const APPLY_LA_DRUG = "api/1/apply-formulary-drug-la/";
+
+// AF TAB
+export const GET_DRUG_SUMMARY_AF = "api/1/formulary-drug-summary-abrfa/";
+export const GET_AF_FORMULARY_DRUGS = "api/1/formulary-drugs-abrfa/";
+export const APPLY_AF_DRUG = "api/1/apply-formulary-drug-abrfa/";
 
 export const KEY_ENTITY_ID = "entity_id";
 export const KEY_INDEX = "index";
