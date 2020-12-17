@@ -16,7 +16,6 @@ export async function getformularies(payload: any): Promise<DashboardResult> {
     });
     // console.log("***** getformularies - Success");
     // console.log(response);
-    let count = 11;
     return {
       list: response.data.data,
       count: response.data.count,

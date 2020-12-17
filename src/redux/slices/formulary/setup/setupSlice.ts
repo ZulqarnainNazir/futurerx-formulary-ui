@@ -69,11 +69,15 @@ const setup = createSlice({
     },
     verifyFormularyNameFailure: loadingFailed,
     saveFormularyStart: startLoading,
-    saveFormularySuccess(state, { payload }: PayloadAction<boolean>) {
+    saveFormularySuccess(state, { payload }: PayloadAction<number | null>) {
       console.log("***** saveFormularySuccess : ", payload);
-      state.nameExist = payload;
-      state.isLoading = false;
-      state.error = null;
+      if (!payload) {
+        state.isLoading = false;
+        state.error = "SAVE FAILED";
+      } else {
+        state.isLoading = false;
+        state.error = null;
+      }
     },
     saveFormularyFailure: loadingFailed,
   },
@@ -122,25 +126,26 @@ export const verifyFormularyName = createAsyncThunk(
 export const saveFormulary = createAsyncThunk(
   "setup",
   async (input: any, { dispatch }) => {
-    console.log("***** saveFormulary");
-    console.log(input);
-    //if(input?.GENERAL_INFO?.type_id)
-    if(input?.MODE === "NEW") {
+    console.log("***** saveFormulary .... ");
+    if (input?.MODE === "NEW") {
       const payload = composePostBody(input);
-      
-    } else if(input?.MODE === "EXISTING") {
-
+      // console.log(" - - - - - - - - - - - - - - - -");
+      // console.log(payload);
+      // console.log(" - - - - - - - - - - - - - - - -");
+      try {
+        dispatch(saveFormularyStart());
+        const resp: any = await createFormulary(payload);
+        console.log(resp);
+        dispatch(saveFormularySuccess(resp));
+        if (resp) {
+          dispatch(fetchSelectedFormulary(resp));
+        }
+      } catch (err) {
+        console.log("***** saveFormulary - ERROR ");
+        dispatch(saveFormularyFailure(err.toString()));
+      }
+    } else if (input?.MODE === "EXISTING") {
     }
-
-    // try {
-    //   dispatch(saveFormularyStart());
-    //   const resp: any = await createFormulary(payload);
-    //   console.log(resp);
-    //   dispatch(saveFormularySuccess(resp));
-    // } catch (err) {
-    //   console.log("***** saveFormulary - ERROR ");
-    //   dispatch(saveFormularyFailure(err.toString()));
-    // }
   }
 );
 
