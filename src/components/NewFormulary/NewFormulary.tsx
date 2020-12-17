@@ -193,9 +193,6 @@ class Formulary extends React.Component<any, any> {
         {this.state.showTabs ? (
           <>
             <FormularyDashboardStats />
-            <div>
-                <button onClick={this.addNewFormulary}> + </button>
-            </div>
             <FrxTabs
               tabList={this.state.tabs}
               activeTabIndex={this.state.activeTabIndex}
