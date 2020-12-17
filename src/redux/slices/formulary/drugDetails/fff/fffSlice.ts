@@ -1,6 +1,17 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { getDrugDetailsFFFSummary, getDrugDetailsFFFList } from "./fffActionCreation";
-import { getFFFSummaryFulfilled, getFFFSummaryRejected, postFFFListFulfilled, postFFFListRejected } from "./fffReducers";
+import {
+  getDrugDetailsFFFSummary,
+  getDrugDetailsFFFList,
+  postRemoveFFFDrug,
+} from "./fffActionCreation";
+import {
+  getFFFSummaryFulfilled,
+  getFFFSummaryRejected,
+  postFFFListFulfilled,
+  postFFFListRejected,
+  postReplaceDrugFulfilled,
+  postReplaceDrugRejected,
+} from "./fffReducers";
 
 const fffState: any = {
   data: {},
@@ -37,6 +48,24 @@ export const fffListSlice = createSlice({
     }),
     builder.addCase(getDrugDetailsFFFList.rejected, (state, action) => {
       postFFFListRejected(state, action);
+    })
+  ),
+});
+
+// postRemoveDrug
+export const fffRemoveDrugSlice = createSlice({
+  name: "fffRemoveDrug",
+  initialState: fffState,
+  reducers: {},
+  extraReducers: (builder) => (
+    builder.addCase(postRemoveFFFDrug.pending, (state, action) => {
+      state.isLoading = true;
+    }),
+    builder.addCase(postRemoveFFFDrug.fulfilled, (state, action) => {
+      postReplaceDrugFulfilled(state, action);
+    }),
+    builder.addCase(postRemoveFFFDrug.rejected, (state, action) => {
+      postReplaceDrugRejected(state, action);
     })
   ),
 });

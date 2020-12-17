@@ -10,6 +10,11 @@ export const GET_DRUG_SUMMARY_AF = "api/1/formulary-drug-summary-abrfa/";
 export const GET_AF_FORMULARY_DRUGS = "api/1/formulary-drugs-abrfa/";
 export const APPLY_AF_DRUG = "api/1/apply-formulary-drug-abrfa/";
 
+// FFF TAB
+export const GET_DRUG_SUMMARY_FFF = "api/1/formulary-drug-summary-fff/";
+export const GET_FFF_FORMULARY_DRUGS = "api/1/formulary-drugs-fff/";
+export const APPLY_FFF_DRUG = "api/1/apply-formulary-drug-fff/";
+
 export const KEY_ENTITY_ID = "entity_id";
 export const KEY_INDEX = "index";
 export const KEY_LIMIT = "limit";
