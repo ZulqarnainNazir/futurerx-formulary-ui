@@ -43,6 +43,7 @@ class FormularySetUp extends React.Component<any, any> {
       selectedState: "",
       state_id: null as unknown as number
     },
+    medicareInfo: [],
     supplemental_benefits:[],
     setupOptions: {},
   };
@@ -102,6 +103,7 @@ class FormularySetUp extends React.Component<any, any> {
           classification_system: newProps.formulary.formulary_info.id_classification_system,
           is_closed_formulary: newProps.formulary.formulary_info.is_closed_formulary,
         },
+        medicareInfo: newProps.formulary?.medicare_contract_types.map(e => e.id_medicare_contract_type),
         supplemental_benefits: newProps.setupOptions.supplementalOptions,
         setupOptions: newProps.setupOptions,
       });
@@ -150,7 +152,7 @@ class FormularySetUp extends React.Component<any, any> {
     });
     
   }
-  onRadioChangeHandler = (event: React.ChangeEvent<HTMLInputElement>,section) => {
+  onRadioChangeHandler = (event: React.ChangeEvent<HTMLInputElement>,_section) => {
     const newObj = { ...this.state.generalInformation };
     newObj[event.target.name] = event.target.value;
     this.setState({
@@ -164,6 +166,18 @@ class FormularySetUp extends React.Component<any, any> {
     this.setState({
       [section] : newObj
     });
+  }
+  medicareCheck = (id:any) => {
+    const updatedMedicareInfo:any = [...this.state.medicareInfo];
+    const index = updatedMedicareInfo.indexOf(id);
+    if(index > -1){
+      updatedMedicareInfo.splice(index,1);
+    }else{
+      updatedMedicareInfo.push(id)
+    }
+    this.setState({
+      medicareInfo: updatedMedicareInfo
+    })
   }
   onSave = (e) => {
     console.log("  SAVE  ", e);
@@ -191,8 +205,9 @@ class FormularySetUp extends React.Component<any, any> {
             />
             {this.state.generalInformation.type !== '' ? (
               <>
-              {this.state.generalInformation.type !== 'Commercial' ? <MedicareInformation /> : null}
-              <FormularyDesign />
+              {this.state.generalInformation.type !== 'Commercial' ? 
+                <MedicareInformation medicareOptions={this.state.medicareInfo} medicareCheck={this.medicareCheck}/> : null}
+              {this.state.generalInformation.type !== 'Commercial' ? <FormularyDesign /> : null}
               <FormularyTiers />
               {this.state.generalInformation.type !== 'Commercial' ? <SupplementalModels supplemental={this.state.supplemental_benefits}/> : null}
               </>
