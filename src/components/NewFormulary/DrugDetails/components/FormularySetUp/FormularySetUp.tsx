@@ -35,7 +35,7 @@ class FormularySetUp extends React.Component<any, any> {
       abbreviation: "",
       effective_date: "",
       method: "",
-      service_year: "",
+      service_year: "2021",
       description: "",
       classification_system: "",
       is_closed_formulary: false,

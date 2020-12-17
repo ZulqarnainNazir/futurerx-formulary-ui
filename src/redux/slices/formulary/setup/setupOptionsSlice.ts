@@ -27,7 +27,7 @@ const setupOptionsInitialState: SetupOptionsState = {
   designOptions: null,
   supplementalOptions: null,
   tierOptions: null,
-  isLoading: true,
+  isLoading: false,
   error: null,
 };
 

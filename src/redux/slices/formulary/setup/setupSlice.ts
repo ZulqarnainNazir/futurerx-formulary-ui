@@ -22,7 +22,7 @@ const setupInitialState: SetupState = {
   formulary: null,
   mode: "",
   nameExist: false,
-  isLoading: true,
+  isLoading: false,
   error: null,
 };
 
@@ -52,6 +52,14 @@ const setup = createSlice({
       state.error = null;
     },
     getFormalaryFailure: loadingFailed,
+    setNewFormularySuccess(state) {
+      console.log("***** setNewFormularySuccess ");
+      state.formulary = null;
+      state.mode = "NEW";
+      state.nameExist = false;
+      state.isLoading = false;
+      state.error = null;
+    },
     verifyFormularyNameStart: startLoading,
     verifyFormularyNameSuccess(state, { payload }: PayloadAction<boolean>) {
       //console.log("***** verifyFormularyNameSuccess : ",payload);
@@ -73,11 +81,18 @@ const setup = createSlice({
 
 export const fetchSelectedFormulary = createAsyncThunk(
   "setup",
-  async (arg: number, { dispatch }) => {
+  async (id: number, { dispatch }) => {
     //console.log("***** fetchSelectedFormulary ( "+arg+" ) ");
     try {
+      console.log("--------------0");
+      if (id === -1) {
+        dispatch(setNewFormularySuccess());
+        return;
+      }
+      console.log("--------------1");
+
       dispatch(getformularyStart());
-      const formulary: Formulary = await getformulary(arg);
+      const formulary: Formulary = await getformulary(id);
 
       dispatch(getFormularySuccess(formulary));
       dispatch(setFullFormulary(formulary));
@@ -125,6 +140,7 @@ export const {
   getformularyStart,
   getFormularySuccess,
   getFormalaryFailure,
+  setNewFormularySuccess,
   verifyFormularyNameStart,
   verifyFormularyNameSuccess,
   verifyFormularyNameFailure,
