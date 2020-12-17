@@ -175,6 +175,45 @@ class CategoryClass extends React.Component<any, any> {
     }))
   }
 
+  onSearchValueChanges = (value, event) => {
+    console.log('Search value changed:' + event.value + " " + event.key);
+    this.state.filter = [];
+    if (this.state.searchData && Array.isArray(this.state.searchData) && this.state.searchData.length > 0) {
+      if (event.key < this.state.searchData.length) {
+        let propData = this.state.searchData[event.key];
+        switch (propData.key) {
+          case 'drug_descriptor_identifier':
+            this.state.filter.push({ prop: "drug_descriptor_identifier", operator: "is_like", values: [propData.value] });
+            break;
+
+          case 'rxcui':
+            this.state.filter.push({ prop: "rxcui", operator: "is_like", values: [propData.value] });
+            break;
+
+          case 'ndc':
+            this.state.filter.push({ prop: "ndc", operator: "is_like", values: [propData.value] });
+            break;
+
+          case 'generic_product_identifier':
+            this.state.filter.push({ prop: "generic_product_identifier", operator: "is_like", values: [propData.value] });
+            break;
+
+          case 'drug_label_name':
+            this.state.filter.push({ prop: "drug_label_name", operator: "is_like", values: [propData.value] });
+            break;
+
+          case 'database_class':
+            this.state.filter.push({ prop: "database_class", operator: "is_like", values: [propData.value] });
+            break;
+
+          case 'database_category':
+            this.state.filter.push({ prop: "database_category", operator: "is_like", values: [propData.value] });
+            break;
+        }
+        this.populateGridData();
+      }
+    }
+  }
 
 
   onInputValueChanged = (value) => {
@@ -347,7 +386,7 @@ class CategoryClass extends React.Component<any, any> {
                     >
                       Override
                           </div>
-                    <DropDown options={this.state.searchNames} placeholder='Search' showSearch={true} onSearch={this.onInputValueChanged} />
+                    <DropDown options={this.state.searchNames} placeholder='Search' showSearch={true} onSearch={this.onInputValueChanged} onSelect={this.onSearchValueChanges} />
                     <div
                       className='advance-search-button'
                       onClick={(e) => this.handlePopupButtonClick("advancesearch", "Advanced Search")}
