@@ -10,7 +10,7 @@ import {
   getTapList,
   getMiniTabs,
 } from "../../../../../../../mocks/formulary/mock-data";
-import DropDown from "../../../../../../shared/Frx-components/dropdown/DropDown";
+import DropDown from "../../../../../../shared/Frx-components/dropdown/DropDownMap";
 import { Grid } from "@material-ui/core";
 import { Row, Col, Space } from "antd";
 import RadioButton from "../../../../../../shared/Frx-components/radio-button/RadioButton";
@@ -91,7 +91,7 @@ class PA extends React.Component<any, any>  {
   componentDidMount() {
     
     this.props.getPaSummary(this.props.current_formulary.id_formulary).then((json => {
-      //debugger;
+      //
       let tmpData = json.payload && json.payload.result?json.payload.result:[];
       
       var rows = tmpData.map(function(el) {
@@ -113,7 +113,7 @@ class PA extends React.Component<any, any>  {
     }))
 
     this.props.getDrugLists("0").then((json => {
-      //debugger;
+      //
       let tmpData = json.payload.data;
       this.setState({
         paList: tmpData,
