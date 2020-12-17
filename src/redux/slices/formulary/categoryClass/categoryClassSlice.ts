@@ -1,13 +1,14 @@
 import {createSlice} from "@reduxjs/toolkit";
 
-import { getClassificationSystems, postDrugsCategory, getIntelliscenseSearch } from "./categoryClassActionCreation";
-import { getClassificationSystemsFulfilled, getClassificationSystemsRejected, postDrugsCategoryFulfilled, postDrugsCategoryRejected } from "./categoryClassReducers";
+import { getClassificationSystems, postDrugsCategory, getIntelliscenseSearch, getCategoryClasses } from "./categoryClassActionCreation";
+import { getClassificationSystemsFulfilled, getClassificationSystemsRejected, postDrugsCategoryFulfilled, postDrugsCategoryRejected, getIntelliscenseSearchFulfilled, getIntelliscenseSearchRejected, getCategoryClassesFulfilled, getCategoryClassesRejected } from "./categoryClassReducers";
 
 const categoryClassState: any = {
   classificationSystems: {},
   categoryData: {},
   isLoading: false,
-  intelliscenseData: {}
+  intelliscenseData: {},
+  categoryClassData: {}
 }
   
 
@@ -35,6 +36,24 @@ export const categoryClassSlice = createSlice({
     }),
     builder.addCase(postDrugsCategory.rejected, (state, action) => {
       postDrugsCategoryRejected(state, action);
+    }),
+    builder.addCase(getIntelliscenseSearch.pending, (state, action) => {
+      state.isLoading = true;
+    }),
+    builder.addCase(getIntelliscenseSearch.fulfilled, (state, action) => {
+      getIntelliscenseSearchFulfilled(state, action);
+    }),
+    builder.addCase(getIntelliscenseSearch.rejected, (state, action) => {
+      getIntelliscenseSearchRejected(state, action);
+    }),
+    builder.addCase(getCategoryClasses.pending, (state, action) => {
+      state.isLoading = true;
+    }),
+    builder.addCase(getCategoryClasses.fulfilled, (state, action) => {
+      getCategoryClassesFulfilled(state, action);
+    }),
+    builder.addCase(getCategoryClasses.rejected, (state, action) => {
+      getCategoryClassesRejected(state, action);
     })
   )
 });

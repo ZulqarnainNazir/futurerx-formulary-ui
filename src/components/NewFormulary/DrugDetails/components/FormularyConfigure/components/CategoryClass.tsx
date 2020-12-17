@@ -24,7 +24,7 @@ import {
 import STPopup from "./STPopup/STpopup";
 import FormularyDetailsContext from "../../../../FormularyDetailsContext";
 import FrxGridContainer from "../../../../../shared/FrxGrid/FrxGridContainer";
-import { OverridePopup } from "./OverridePopup/OverridePopup";
+import OverridePopup from "./OverridePopup/OverridePopup";
 import { getTier } from "../../../../../../redux/slices/formulary/tier/tierActionCreation";
 import { getClassificationSystems, postDrugsCategory, getIntelliscenseSearch } from "../../../../../../redux/slices/formulary/categoryClass/categoryClassActionCreation";
 import * as tierConstants from "../../../../../../api/http-tier";
@@ -66,6 +66,7 @@ interface State {
   filter: any[];
   searchData: any[];
   searchNames: any[];
+  searchValue: any;
 }
 
 class CategoryClass extends React.Component<any, any> {
@@ -90,7 +91,12 @@ class CategoryClass extends React.Component<any, any> {
     filter: Array(),
     searchData: Array(),
     searchNames: Array(),
+    filterPlaceholder: 'Search',
+    searchValue: '',
+    overriddenClass: null,
+    overriddenCategory: null,
   };
+
   static contextType = FormularyDetailsContext;
 
   populateTierDetails = () => {
@@ -177,6 +183,7 @@ class CategoryClass extends React.Component<any, any> {
 
   onSearchValueChanges = (value, event) => {
     console.log('Search value changed:' + event.value + " " + event.key);
+    this.state.searchValue = value;
     this.state.filter = [];
     if (this.state.searchData && Array.isArray(this.state.searchData) && this.state.searchData.length > 0) {
       if (event.key < this.state.searchData.length) {
@@ -216,20 +223,17 @@ class CategoryClass extends React.Component<any, any> {
   }
 
 
+  clearSearchFilter = (e) => {
+    this.state.filter = Array();
+    this.state.searchData = Array();
+    this.state.searchNames = Array();
+    this.state.filterPlaceholder = 'Search';
+    this.state.searchValue = '';
+    this.populateGridData();
+  }
+
   onInputValueChanged = (value) => {
     if (value) {
-      /*this.state.filter = [];
-      if (this.props.formulary_lob_id == 1) {
-        this.state.filter.push({ prop: "drug_descriptor_identifier", operator: "is_like", values: [event.target.value] });
-      } else {
-        this.state.filter.push({ prop: "rxcui", operator: "is_like", values: [event.target.value] });
-      }
-      this.state.filter.push({ prop: "ndc", operator: "is_like", values: [event.target.value] });
-      this.state.filter.push({ prop: "generic_product_identifier", operator: "is_like", values: [event.target.value] });
-      this.state.filter.push({ prop: "drug_label_name", operator: "is_like", values: [event.target.value] });
-      this.state.filter.push({ prop: "database_class", operator: "is_like", values: [event.target.value] });
-      this.state.filter.push({ prop: "database_category", operator: "is_like", values: [event.target.value] });*/
-
       let requests = Array();
       let apiDetails = {};
       apiDetails['apiPart'] = commonConstants.SEARCH_GPI;
@@ -301,10 +305,8 @@ class CategoryClass extends React.Component<any, any> {
     switch (this.props.formulary_lob_id) {
       case 4:
         return categoryCommercialClassColumns();
-        break;
       case 1:
         return categoryClassColumns();
-        break;
       default:
         break;
     }
@@ -314,10 +316,8 @@ class CategoryClass extends React.Component<any, any> {
     switch (this.props.formulary_lob_id) {
       case 4:
         return categoryCommercialClassMock();
-        break;
       case 1:
         return categoryClassMock();
-        break;
       default:
         break;
     }
@@ -354,8 +354,16 @@ class CategoryClass extends React.Component<any, any> {
     }
 
   };
-  processCloseActions = () => {
-    this.setState({ show: true });
+  processCloseActions = (type) => {
+    //this.setState({ show: true });
+    if(type === 'positive'){
+
+    }else{
+
+    }
+    this.setState({
+      materialPopupInd: false,
+    });
   };
   handleSearch = (searchObject) => {
     console.log("search");
@@ -363,6 +371,16 @@ class CategoryClass extends React.Component<any, any> {
   rowSelectionChange = (record) => {
     console.log(record);
   };
+  onOverrideCategoryClass = (category,classValue) => {
+    this.state.overriddenCategory = category;
+    this.state.overriddenClass = classValue;
+  }
+  onOverrideCategory = (category) => {
+    this.state.overriddenCategory = category;
+  }
+  onOverrideClass = (classValue) => {
+    this.state.overriddenClass = classValue;
+  }
   render() {
     return (
       <div className='drug-detail-LA-root'>
@@ -386,7 +404,10 @@ class CategoryClass extends React.Component<any, any> {
                     >
                       Override
                           </div>
-                    <DropDown options={this.state.searchNames} placeholder='Search' showSearch={true} onSearch={this.onInputValueChanged} onSelect={this.onSearchValueChanges} />
+                    <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+                      <DropDown value={this.state.searchValue} options={this.state.searchNames} placeholder={this.state.filterPlaceholder} showSearch={true} onSearch={this.onInputValueChanged} onSelect={this.onSearchValueChanges} />
+                      {this.state.filter.length > 0 && (<span style={{ marginLeft: 10 }} onClick={this.clearSearchFilter}>Clear</span>)}
+                    </div>
                     <div
                       className='advance-search-button'
                       onClick={(e) => this.handlePopupButtonClick("advancesearch", "Advanced Search")}
@@ -429,8 +450,8 @@ class CategoryClass extends React.Component<any, any> {
           handleClose={() => {
             this.onClose();
           }}
-          handleAction={() => {
-            this.processCloseActions();
+          handleAction={(type) => {
+            this.processCloseActions(type);
           }}
           showActions={this.state.showActionsInd}
           open={this.state.materialPopupInd}
@@ -438,7 +459,7 @@ class CategoryClass extends React.Component<any, any> {
           {this.state.popupName === "advancesearch" ?
             <STPopup />
             : this.state.popupName === "override" ?
-              <OverridePopup />
+              <OverridePopup onOverrideCategoryClass={this.onOverrideCategoryClass} onOverrideCategory={this.onOverrideCategory} onOverrideClass={this.onOverrideClass} />
               : ""
           }
         </DialogPopup>

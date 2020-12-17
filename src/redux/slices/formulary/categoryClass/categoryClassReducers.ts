@@ -60,3 +60,23 @@ export const getIntelliscenseSearchRejected = (state, action) => {
   state.isLoading = false;
   state.intelliscenseData = {};
 }
+
+export const getCategoryClassesFulfilled = (state, action) => {
+  console.log("Reducer::getCategoryClassesFulfilled");
+  state.isLoading = false;
+  console.log(action)
+  if(action.payload.data === undefined) {
+    console.log("getCategoryClassesFulfilled: Payload invalid");
+    return;
+  }
+  const data = action.payload.data;
+  // Response stored in the redux store.
+  state.categoryClassData = data;
+  
+}
+
+export const getCategoryClassesRejected = (state, action) => {
+  console.log("Reducer::getCategoryClassesRejected");
+  state.isLoading = false;
+  state.categoryClassData = {};
+}
