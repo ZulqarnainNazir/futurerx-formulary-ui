@@ -12,6 +12,7 @@ interface ApplicationState {
   isLoading: boolean;
   error: string | null;
   mode: string;
+  clientId: number;
 }
 
 const applicationInitialState: ApplicationState = {
@@ -20,6 +21,7 @@ const applicationInitialState: ApplicationState = {
   formulary_lob_id: NaN,
   formulary_type_id: NaN,
   mode: "",
+  clientId: NaN,
   isLoading: false,
   error: null,
 };
@@ -61,6 +63,9 @@ const application = createSlice({
       state.mode = mode;
       state.isLoading = false;
       state.error = null;
+      //console.log("CLIENT ID", sessionStorage.getItem('client_id'));
+      //state.clientId = sessionStorage.getItem('client_id') ? parseInt(sessionStorage.getItem('client_id')) : 0;
+      state.clientId = 1;
     },
   },
 });

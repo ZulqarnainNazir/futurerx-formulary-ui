@@ -8,6 +8,7 @@ import applicationReducer from "../slices/formulary/application/applicationSlice
 import dashboardReducer from "../slices/formulary/dashboard/dashboardSlice";
 import {gridSettingsSlice} from "../slices/formulary/gridHandler/gridSettingsSlice";
 import { tierSlice } from '../slices/formulary/tier/tierSlice'
+import { categoryClassSlice } from '../slices/formulary/categoryClass/categoryClassSlice';
 import { switchSlice } from '../slices/formulary/switch/switchSlice'
 import { validationList } from "../slices/formulary/validation/validationSlice";
 import  advancedSearchReducer from "../slices/formulary/advancedSearch/advancedSearchSlice";
@@ -37,6 +38,7 @@ const validationReducer = validationList.reducer
 const stepTherapy = stepTherapySlice.reducer
 const stVerion = stVersionSlice.reducer
 const paVersion = paVersionSlice.reducer
+const categoryClass = categoryClassSlice.reducer
 
 const pa = paSlice.reducer
 
@@ -61,6 +63,7 @@ const store = configureStore({
     stVerion: stVerion,
     paReducer: pa,
     paVersion: paVersion,
+    categoryClass: categoryClass,
   },
   middleware,
 });
