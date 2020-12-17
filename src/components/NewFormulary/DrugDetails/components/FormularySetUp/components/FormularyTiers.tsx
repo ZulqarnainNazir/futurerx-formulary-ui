@@ -12,41 +12,44 @@ const tierCount = {
 class FormularyTiers extends React.Component<any, any> {
   
   getAllTierOptions = () => {
-    let options = [];
+    let options = [] as any;
     let htmlElement:any;
-    if(this.props.tierOptionsOptions && this.props.selectedTiersOptions){
-      const selectedTierOptions = this.props.selectedTiersOptions.map(e => e.id_tier_label)
-      const allOptions = this.props.tierOptionsOptions.map(e => e.tier_label);
+    if(this.props.tiers){
+      const selectedTierOptions = this.props.tiers;
+      const allOptions = this.props.tierOptionsOptions?.map(e => e.tier_label);
       options = selectedTierOptions.map(e => {
-        return this.props.tierOptionsOptions.find(el => el.id_tier_label === e) ? this.props.tierOptionsOptions.find(el => el.id_tier_label === e).tier_label : '';
-      })
+        return this.props.tierOptionsOptions.find(el => el.id_tier_label === e.id_tier_label) ? {
+          seletedVal: this.props.tierOptionsOptions.find(el => el.id_tier_label === e.id_tier_label).tier_label,
+          tierName: e.tier_name
+        } : '';
+      });
       htmlElement = options.map((e,index) => {
         return (<div className="tier border-bottom">
           <label>
-            Tier {index}
+            {e.tierName}
             </label>
             <DropDown
               className="formulary-tier-dropdown"
-              placeholder={e}
-              value={e}
+              value={e.seletedVal}
               options={allOptions}
-              disabled={index === 0}
+              onChange={(el) => this.props.changeTierValue(el,e.tierName)}
             />
         </div>)
-      })
+      });
+      return htmlElement;
     }
-    return htmlElement;
   }
   numberOfTiers = () => {
-    let htmlElement:any;
-    if(this.props.selectedTiersOptions){
-      htmlElement = <DropDown
+    let selectedCount = this.props.tiers ? this.props.tiers.length : null;
+    // if(this.props.selectedTiersOptions){
+    let htmlElement = <DropDown
         className="formulary-type-dropdown number-of-tier-dropdown"
-        placeholder={this.props.selectedTiersOptions.length}
+        placeholder="Select Tiers"
         options={tierCount.medicare}
-        defaultValue={this.props.selectedTiersOptions.length - 1}
+        value={selectedCount}
+        onChange={this.props.selectTier}
       />
-    }
+    // }
     return htmlElement;
   }
   render() {
@@ -62,7 +65,6 @@ class FormularyTiers extends React.Component<any, any> {
                   NUMBER OF TIERS <span className="astrict">*</span>
                 </label>
                 {this.numberOfTiers()}
-                
               </div>
               <div className="tiers-dropdown-wrapper">
                 {this.getAllTierOptions()}

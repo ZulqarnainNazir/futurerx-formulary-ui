@@ -18,7 +18,7 @@ class SupplementalModels extends React.Component<any, any> {
         if(this.props.supplementalOptions){
             checkbox = this.props.supplementalOptions.map(el => {
                 return <Grid item xs={4}>
-                    <Checkbox className="custom-checkbox mb-16" onChange={() => this.props.supplementalCheck(el.id_supplemental_benefit)} defaultChecked={this.getChecked(el.id_supplemental_benefit)}>{el.supplemental_benefit}</Checkbox>
+                    <Checkbox className="custom-checkbox mb-16" onChange={() => this.props.supplementalCheck(el.id_supplemental_benefit)} checked={this.getChecked(el.id_supplemental_benefit)}>{el.supplemental_benefit}</Checkbox>
                 </Grid>
             })
         }
@@ -39,7 +39,11 @@ class SupplementalModels extends React.Component<any, any> {
                 <ul>
                     <li>
                     <Box display="flex" justifyContent="flex-end" className="compare-btn">
-                        <Button label="Uncheck All" className="uncheck-btn" />
+                        {this.props.supplemental.length > 0 ? (
+                            <Button label="Uncheck All" className="uncheck-btn" onClick={() => this.props.checkUncheckAllSupplemental('uncheck')}/>
+                        ) : (
+                            <Button label="Check All" className="uncheck-btn" onClick={() => this.props.checkUncheckAllSupplemental('check')}/>
+                        )}
                     </Box>
                     </li>
                 </ul>
