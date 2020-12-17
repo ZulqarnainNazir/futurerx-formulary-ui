@@ -24,6 +24,8 @@ import {
   fetchSubMthsOptions,
   fetchStatesOptions,
 } from "../../../../.././redux/slices/formulary/setup/setupOptionsSlice";
+import { ToastContainer } from 'react-toastify';
+import showMessage from "../../../Utils/Toast";
 
 class FormularySetUp extends React.Component<any, any> {
   state = {
@@ -213,10 +215,32 @@ class FormularySetUp extends React.Component<any, any> {
   }
   onSave = (e) => {
     console.log("  SAVE  ", e);
+    if(this.props.mode==="NEW"){
+      let msg:string[]=[];
+      if(this.state.generalInformation.type_id === ""){
+        msg.push("Formulary Type is required.");
+      }
+      if(this.state.generalInformation.name === ""){
+        msg.push("Formulary Name is required.");
+      }
+      if(this.state.generalInformation.method === ""){
+        msg.push("Formulary Build Method is required.");
+      }
+      if(this.state.generalInformation.effective_date === ""){
+        msg.push("Formulary Effective Date is required.");
+      }
+      if(msg.length>0){
+        showMessage(msg[0], 'error');
+        return;
+      }
+    }
+
     const input = {
       MODE: this.props.mode,
       CONTINUE: e,
       GENERAL_INFO: this.state.generalInformation,
+      supplemental_benefit_info: this.state.supplemental_benefit_info,
+      medicare_contract_types: this.state.medicareInfo,
     }
     this.props.saveFormulary(input);
   };
@@ -262,7 +286,8 @@ class FormularySetUp extends React.Component<any, any> {
           </>
         ) : <FrxLoader/>}
 
-        
+        <ToastContainer />
+
       </div>
     );
   }
