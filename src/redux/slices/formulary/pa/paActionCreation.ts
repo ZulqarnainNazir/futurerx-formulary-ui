@@ -12,6 +12,9 @@ const POST_PA_GROUP_DESCRIPTION_VERSTION_URL = BASE_URL1 + "/api/1/mcr-pa-group-
 const GET_PA_GROUP_DESCRIPTION_DETAIL_URL = BASE_URL1 + "/api/1/mcr-st-group-description/462?entity_id=0";
 const POSt_PA_GROUP_DESCRIPTION_URL = BASE_URL1 + "api/1/mcr-pa-group-description/1/";
 const POST_FORUMULARY_DRUG_PA_URL = BASE_URL1 + "api/1/formulary-drugs-pa/";
+const POST_APPLY_FORUMULARY_DRUG_PA_URL = BASE_URL1 + "api/1/apply-formulary-drug-pa/";
+
+const POST_CRITERIA_LIST_PA_URL = BASE_URL1 + "api/1/criteria-list-pa/";
 
 
 export const getPaSummary = createAsyncThunk(
@@ -258,7 +261,7 @@ export const postPAGroupDescriptionVersion = createAsyncThunk(
 export const postFormularyDrugPA = createAsyncThunk(
   "tier/postFormularyDrugPA",
   async (apiDetails: any) => {
-    debugger;
+    
     let pathParams = apiDetails.pathParams;
     let keyVals = apiDetails.keyVals;
     let messageBody = apiDetails.messageBody;
@@ -284,6 +287,75 @@ export const postFormularyDrugPA = createAsyncThunk(
       })
       .then((json) => {
         console.log("postFormularyDrugPA: ", json);
+        return json;
+      });
+  }
+);
+
+export const postApplyFormularyDrugPA = createAsyncThunk(
+  "tier/postApplyFormularyDrugPA",
+  async (apiDetails: any) => {
+    
+    let pathParams = apiDetails.pathParams;
+    let keyVals = apiDetails.keyVals;
+    let messageBody = apiDetails.messageBody;
+    let POST_URL = POST_APPLY_FORUMULARY_DRUG_PA_URL + pathParams ;
+    if(keyVals){
+      keyVals = keyVals.map(pair => pair.key+'='+pair.value);
+      POST_URL = POST_URL + "?" + keyVals.join('&');
+    }
+    console.log("postApplyFormularyDrugPA action creator:: url: " + POST_URL);
+    const requestHeaders  = {
+        method: 'POST',
+        body: JSON.stringify(messageBody),
+        headers: {
+            'Authorization': 'Bearer baf65faa-8fee-4d08-98f0-29ffb04cb1fc',
+            'Accept': 'application/json',
+            'Content-Type': 'application/json;charset=UTF-8',
+        }
+    }
+    return fetch(POST_URL,requestHeaders)
+      .then((response) => {
+        if (!response.ok) throw Error(response.statusText);
+        return response.json();
+      })
+      .then((json) => {
+        console.log("postApplyFormularyDrugPA: ", json);
+        return json;
+      });
+  }
+);
+
+
+export const postCriteriaListPA = createAsyncThunk(
+  "tier/postCriteriaListPA",
+  async (apiDetails: any) => {
+    
+    let pathParams = apiDetails.pathParams;
+    let keyVals = apiDetails.keyVals;
+    let messageBody = apiDetails.messageBody;
+    let POST_URL = POST_CRITERIA_LIST_PA_URL + pathParams ;
+    if(keyVals){
+      keyVals = keyVals.map(pair => pair.key+'='+pair.value);
+      POST_URL = POST_URL + "?" + keyVals.join('&');
+    }
+    console.log("postCriteriaListPA action creator:: url: " + POST_URL);
+    const requestHeaders  = {
+        method: 'POST',
+        body: JSON.stringify(messageBody),
+        headers: {
+            'Authorization': 'Bearer baf65faa-8fee-4d08-98f0-29ffb04cb1fc',
+            'Accept': 'application/json',
+            'Content-Type': 'application/json;charset=UTF-8',
+        }
+    }
+    return fetch(POST_URL,requestHeaders)
+      .then((response) => {
+        if (!response.ok) throw Error(response.statusText);
+        return response.json();
+      })
+      .then((json) => {
+        console.log("postCriteriaListPA: ", json);
         return json;
       });
   }

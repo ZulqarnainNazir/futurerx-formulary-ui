@@ -23,7 +23,7 @@ import Button from "../../../../../../shared/Frx-components/button/Button";
 import * as constants from "../../../../../../../api/http-tier";
 import "../Tier.scss";
 import "./PA.scss";
-import { getPaSummary,getPaGrouptDescriptions, getPaTypes, getDrugLists,postFormularyDrugPA,getPaGrouptDescriptionVersions } from "../../../../../../../redux/slices/formulary/pa/paActionCreation";
+import { getPaSummary,getPaGrouptDescriptions, getPaTypes, getDrugLists,postFormularyDrugPA,getPaGrouptDescriptionVersions,postApplyFormularyDrugPA } from "../../../../../../../redux/slices/formulary/pa/paActionCreation";
 import Radio from '@material-ui/core/Radio';
 import RadioGroup from '@material-ui/core/RadioGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
@@ -36,6 +36,7 @@ function mapDispatchToProps(dispatch) {
     getDrugLists:(a)=>dispatch(getDrugLists(a)),
     postFormularyDrugPA:(a) => dispatch(postFormularyDrugPA(a)),
     getPaGrouptDescriptionVersions:(a) => dispatch(getPaGrouptDescriptionVersions(a)),
+    postApplyFormularyDrugPA:(a) => dispatch(postApplyFormularyDrugPA(a)),
   };
 }
 
@@ -69,6 +70,13 @@ class PaReplace extends React.Component<any,any> {
     fileType:null,
   }
 
+  onSelectedTableRowChanged = (selectedRowKeys) => {
+    this.state.selectedDrugs = [];
+    if (selectedRowKeys && selectedRowKeys.length > 0) {
+      this.state.selectedDrugs = selectedRowKeys.map(tierId => this.state.drugData[tierId - 1]['md5_id']);
+    }
+  }
+
   openTierGridContainer = () => {
     this.state.drugData = [];
     this.state.drugGridData = [];
@@ -80,21 +88,24 @@ class PaReplace extends React.Component<any,any> {
     if (this.state.selectedDrugs && this.state.selectedDrugs.length > 0) {
       let apiDetails = {};
      // apiDetails['apiPart'] = constants.APPLY_TIER;
-     let tmpGroup :any = this.state.paGroupDescriptions.filter(obj  => obj.id_mcr_base_pa_group_description === this.state.selectedGroupDescription);
-      apiDetails['pathParams'] = this.props?.formulary_id + "/" + tmpGroup.fileType + "/" + constants.TYPE_REPLACE;
-      apiDetails['keyVals'] = [];
+
+      apiDetails['pathParams'] = this.props?.formulary_id + "/" + this.state.fileType + "/" + constants.TYPE_REPLACE;
+      apiDetails['keyVals'] = [{ key: constants.KEY_ENTITY_ID, value: this.props?.formulary_id }];
       apiDetails['messageBody'] = {};
       apiDetails['messageBody']['selected_drug_ids'] = this.state.selectedDrugs;
+      apiDetails['messageBody']['base_pa_group_description_id'] = this.state.selectedGroupDescription;
+      apiDetails['messageBody']['id_pa_group_description'] = this.state.selectedGroupDescription;
+      apiDetails['messageBody']['id_pa_type'] = Number(this.state.selectedPaType);
+      apiDetails['messageBody']['search_key'] = "";
       //apiDetails['messageBody']['id_tier'] = this.state.selectedTier;
-
-      const saveData = this.props.postTierApplyInfo(apiDetails).then((json => {
+      
+      const saveData = this.props.postApplyFormularyDrugPA(apiDetails).then((json => {
         console.log("Save response is:" + JSON.stringify(json));
         if (json.payload && json.payload.code === '200') {
           this.state.drugData = [];
           this.state.drugGridData = [];
           this.populateGridData();
           apiDetails = {};
-          //apiDetails['apiPart'] = tierConstants.FORMULARY_TIERS;
           apiDetails['pathParams'] = this.props?.formulary_id;
           apiDetails['keyVals'] = [{ key: constants.KEY_ENTITY_ID, value: this.props?.formulary_id }];
 
@@ -117,7 +128,7 @@ class PaReplace extends React.Component<any,any> {
    this.setState({ selectedGroupDescription: tmp_value });
    this.props.getPaGrouptDescriptionVersions(tmp_value).then((json)=>{
      let data = json.payload.data;
-     debugger;
+     
      this.setState({
        selectedLastestedVersion: data[0].id_pa_group_description,
        fileType: data[0].file_type,
@@ -153,13 +164,13 @@ class PaReplace extends React.Component<any,any> {
     this.setState(
      { tmp_key :e.target.value.trim()}
     )
-    debugger;
+    
   };
 
   populateGridData = (searchBody = null) => {
     console.log('Populate grid data is called');
     let apiDetails = {};
-    debugger;
+    
    // let tmpGroup :any = this.state.paGroupDescriptions.filter(obj  => obj.id_mcr_base_pa_group_description === this.state.selectedGroupDescription);
     apiDetails['pathParams'] = this.props?.formulary_id + "/" + this.state.fileType + "/" ;
     apiDetails['keyVals'] = [{ key: constants.KEY_ENTITY_ID, value: this.props?.formulary_id }, { key: constants.KEY_INDEX, value: 0 }, { key: constants.KEY_LIMIT, value: 10 }];
@@ -172,7 +183,7 @@ class PaReplace extends React.Component<any,any> {
       apiDetails['messageBody'] = Object.assign(apiDetails['messageBody'],searchBody);
     }
     const drugGridDate = this.props.postFormularyDrugPA(apiDetails).then((json => {
-      //debugger;
+
       let tmpData = json.payload.result;
       var data: any[] = [];
       let count = 1;
@@ -202,9 +213,7 @@ class PaReplace extends React.Component<any,any> {
   }
   componentDidMount() {
                    
-    this.props.getPaGrouptDescriptions("1").then((json:any) =>{
-        debugger;
-
+    this.props.getPaGrouptDescriptions(this.props?.formulary_lob_id).then((json:any) =>{
         let result = json.payload.data.filter(obj  => !obj.is_archived &&  obj.is_setup_complete);
         this.setState({
           paGroupDescriptions: result,
@@ -212,10 +221,9 @@ class PaReplace extends React.Component<any,any> {
         
     });
 
-    this.props.getPaTypes("3132").then((json) =>{
-        debugger;
+    this.props.getPaSummary(this.props?.formulary_id).then((json) =>{
         this.setState({
-          paTypes: json.payload.data,
+          paTypes: json.payload.result,
           });
         
     });
@@ -240,7 +248,7 @@ class PaReplace extends React.Component<any,any> {
               <label>
                 PA TYPE <span className="astrict">*</span>
               </label>
-              <DropDownMap options={this.state.paTypes} valueProp="text" dispProp="text" onSelect={this.dropDownSelectHandlerPaType} />
+              <DropDownMap options={this.state.paTypes} valueProp="id_pa_type" dispProp="pa_type_name" onSelect={this.dropDownSelectHandlerPaType} />
 
             </Col>
             <Col lg={8}>
@@ -293,8 +301,8 @@ class PaReplace extends React.Component<any,any> {
               <div className="header space-between pr-10">
                 
                 <div className="button-wrapper">
-                  <Button className="Button normal" label="Advance Search" onClick={this.advanceSearchClickHandler} disabled={this.props.configureSwitch} />
-                  <Button label="Save" onClick={this.handleSave} disabled={this.props.configureSwitch} />
+                  <Button className="Button normal" label="Advance Search" onClick={this.advanceSearchClickHandler}  />
+                  <Button label="Save" onClick={this.handleSave}  />
                 </div>
               </div>
 
@@ -317,7 +325,7 @@ class PaReplace extends React.Component<any,any> {
                     columnWidth: 50,
                     fixed: true,
                     type: "checkbox",
-                  //  onChange: this.onSelectedTableRowChanged,
+                  onChange: this.onSelectedTableRowChanged,
                   }}
                 />
               </div>
