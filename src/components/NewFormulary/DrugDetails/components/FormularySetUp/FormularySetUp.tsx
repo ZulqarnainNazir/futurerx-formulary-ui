@@ -46,20 +46,25 @@ class FormularySetUp extends React.Component<any, any> {
     supplemental_benefits:[],
     setupOptions: {},
   };
-  formulary_details: Formulary | any;
-
+  
   componentDidMount() {
     if (this.props.mode === "EXISTING") {
       this.manageFormularyType(this.props.formulary_type_id);
       this.props.fetchSelectedFormulary(this.props.formulary_id);
     } else {
-      this.props.fetchGeneralOptions(1);
-      this.formulary_details = {};
+      this.manageFormularyType(-1);
+      this.props.fetchSelectedFormulary(-1);
     }
   }
 
   manageFormularyType(type: number) {
     console.log(" TYPE :: " + type);
+
+    if (type === -1) {
+      this.props.fetchGeneralOptions(1);
+      return;
+    }
+
     this.props.fetchGeneralOptions(type);
     this.props.fetchDesignOptions(type);
     this.props.fetchTierOptions(type, 0);

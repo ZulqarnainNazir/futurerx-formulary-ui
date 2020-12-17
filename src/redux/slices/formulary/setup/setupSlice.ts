@@ -122,17 +122,25 @@ export const verifyFormularyName = createAsyncThunk(
 export const saveFormulary = createAsyncThunk(
   "setup",
   async (input: any, { dispatch }) => {
-    console.log("***** saveFormulary ( " + input + " ) ");
-    try {
-      // const payload = composePostBody(details);
-      // dispatch(saveFormularyStart());
-      // const resp: any = await createFormulary(payload);
-      // console.log(resp);
-      // // dispatch(saveFormularySuccess(resp));
-    } catch (err) {
-      //console.log("***** saveFormulary - ERROR ");
-      dispatch(saveFormularyFailure(err.toString()));
+    console.log("***** saveFormulary");
+    console.log(input);
+    //if(input?.GENERAL_INFO?.type_id)
+    if(input?.MODE === "NEW") {
+      const payload = composePostBody(input);
+      
+    } else if(input?.MODE === "EXISTING") {
+
     }
+
+    // try {
+    //   dispatch(saveFormularyStart());
+    //   const resp: any = await createFormulary(payload);
+    //   console.log(resp);
+    //   dispatch(saveFormularySuccess(resp));
+    // } catch (err) {
+    //   console.log("***** saveFormulary - ERROR ");
+    //   dispatch(saveFormularyFailure(err.toString()));
+    // }
   }
 );
 
