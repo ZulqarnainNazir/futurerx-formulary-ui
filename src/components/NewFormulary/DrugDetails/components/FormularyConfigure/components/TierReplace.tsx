@@ -12,6 +12,7 @@ import { TierMockData } from "../../../../../../mocks/TierMock";
 import AdvancedSearch from './search/AdvancedSearch';
 import { postTierApplyInfo, getTier } from "../../../../../../redux/slices/formulary/tier/tierActionCreation";
 import * as tierConstants from "../../../../../../api/http-tier";
+import * as commonConstants from "../../../../../../api/http-commons";
 import pageTypes from "../../../../../../constants/PageTypes";
 import { setAdvancedSearch } from "../../../../../../redux/slices/formulary/advancedSearch/advancedSearchSlice";
 import showMessage from "../../../../Utils/Toast";
@@ -111,8 +112,8 @@ class TierReplace extends React.Component<any, tabsState> {
     console.log('Populate grid data is called');
     let apiDetails = {};
     apiDetails['apiPart'] = this.state.selectedFileKey === this.props.lobCode ? tierConstants.FORMULARY_DRUGS_TIER : tierConstants.DRUGS_TIER;
-    apiDetails['pathParams'] = this.props?.formulary_id + "/" + this.state.selectedFileKey + "/" + tierConstants.TYPE_REPLACE;
-    apiDetails['keyVals'] = [{ key: tierConstants.KEY_ENTITY_ID, value: this.props?.formulary_id }, { key: tierConstants.KEY_INDEX, value: 0 }, { key: tierConstants.KEY_LIMIT, value: 10 }];
+    apiDetails['pathParams'] = this.props?.formulary_id + "/" + this.state.selectedFileKey + "/" + commonConstants.TYPE_REPLACE;
+    apiDetails['keyVals'] = [{ key: commonConstants.KEY_ENTITY_ID, value: this.props?.formulary_id }, { key: commonConstants.KEY_INDEX, value: 0 }, { key: commonConstants.KEY_LIMIT, value: 10 }];
     apiDetails['messageBody'] = {};
 
     if (searchBody) {
@@ -152,7 +153,7 @@ class TierReplace extends React.Component<any, tabsState> {
     if (this.state.selectedDrugs && this.state.selectedDrugs.length > 0 && this.state.selectedTier !== -1) {
       let apiDetails = {};
       apiDetails['apiPart'] = tierConstants.APPLY_TIER;
-      apiDetails['pathParams'] = this.props?.formulary_id + "/" + this.state.selectedFileKey + "/" + tierConstants.TYPE_REPLACE;
+      apiDetails['pathParams'] = this.props?.formulary_id + "/" + this.state.selectedFileKey + "/" + commonConstants.TYPE_REPLACE;
       apiDetails['keyVals'] = [];
       apiDetails['messageBody'] = {};
       apiDetails['messageBody']['selected_drug_ids'] = this.state.selectedDrugs;
@@ -168,7 +169,7 @@ class TierReplace extends React.Component<any, tabsState> {
           apiDetails = {};
           apiDetails['apiPart'] = tierConstants.FORMULARY_TIERS;
           apiDetails['pathParams'] = this.props?.formulary_id;
-          apiDetails['keyVals'] = [{ key: tierConstants.KEY_ENTITY_ID, value: this.props?.formulary_id }];
+          apiDetails['keyVals'] = [{ key: commonConstants.KEY_ENTITY_ID, value: this.props?.formulary_id }];
 
           const TierDefinationData = this.props.getTier(apiDetails).then((json => {
             this.setState({ tierGridContainer: true });
@@ -294,7 +295,7 @@ class TierReplace extends React.Component<any, tabsState> {
               <div className="header space-between pr-10">
                 {this.props.lobCode === 'MCR' && (<div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
                   <span style={{ marginRight: 10 }}>Select Drugs From</span>
-                  <DropDown options={this.state.fileValues} disabled={this.props.configureSwitch} onSelect={this.fileTypeDropDownSelectHandler} defaultValue={this.state.selectedFileType} />
+                  <DropDown options={this.state.fileValues} disabled={this.props.configureSwitch} onSelect={this.fileTypeDropDownSelectHandler} defaultValue={this.state.selectedFileType}/>
                 </div>)}
                 <div className="button-wrapper">
                   <Button className="Button normal" label="Advance Search" onClick={this.advanceSearchClickHandler} disabled={this.props.configureSwitch} />
