@@ -20,6 +20,11 @@ export const GET_DRUG_SUMMARY_HI = "api/1/formulary-drug-summary-hi/";
 export const GET_HI_FORMULARY_DRUGS = "api/1/formulary-drugs-hi/";
 export const APPLY_HI_DRUG = "api/1/apply-formulary-drug-hi/";
 
+// PBST TAB
+export const GET_DRUG_SUMMARY_PBST = "api/1/formulary-drug-summary-pbst/";
+export const GET_PBST_FORMULARY_DRUGS = "api/1/formulary-drugs-pbst/";
+export const APPLY_PBST_DRUG = "api/1/apply-formulary-drug-pbst/";
+
 export const KEY_ENTITY_ID = "entity_id";
 export const KEY_INDEX = "index";
 export const KEY_LIMIT = "limit";

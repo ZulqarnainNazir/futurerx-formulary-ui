@@ -113,8 +113,8 @@ class HI extends React.Component<any, any> {
         apiDetails['pathParams'] = this.props?.formulary_id + "/" + this.state.lobCode + "/" + hiConstants.TYPE_REPLACE;
 
         // Replace Drug method call
-        this.props.postReplaceLADrug(apiDetails).then(json => {
-          console.log("postReplaceLADrug - response is:" + JSON.stringify(json));
+        this.props.postReplaceHIDrug(apiDetails).then(json => {
+          console.log("postReplaceHIDrug - response is:" + JSON.stringify(json));
           if (json.payload && json.payload.code && json.payload.code === '200') {
             showMessage('Success', 'success');
             this.getHISummary();
@@ -130,8 +130,8 @@ class HI extends React.Component<any, any> {
         apiDetails['pathParams'] = this.props?.formulary_id + "/" + this.state.lobCode + "/" + hiConstants.TYPE_REMOVE;
 
         // Remove Drug method call
-        this.props.postRemoveLADrug(apiDetails).then(json => {
-          console.log("postRemoveLADrug - response is:" + JSON.stringify(json));
+        this.props.postRemoveHIDrug(apiDetails).then(json => {
+          console.log("postRemoveHIDrug - response is:" + JSON.stringify(json));
           if (json.payload && json.payload.code && json.payload.code === '200') {
             showMessage('Success', 'success');
             this.getHISummary();

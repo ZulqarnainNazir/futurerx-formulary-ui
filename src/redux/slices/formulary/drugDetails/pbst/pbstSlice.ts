@@ -2,12 +2,16 @@ import { createSlice } from "@reduxjs/toolkit";
 import {
   getDrugDetailsPBSTSummary,
   getDrugDetailsPBSTList,
+  postRemovePBSTDrug,
+  postReplacePBSTDrug,
 } from "./pbstActionCreation";
 import {
   getPBSTSummaryFulfilled,
   getPBSTSummaryRejected,
   postPBSTListFulfilled,
   postPBSTListRejected,
+  postReplaceDrugFulfilled,
+  postReplaceDrugRejected,
 } from "./pbstReducers";
 
 const pbstState: any = {
@@ -45,6 +49,40 @@ export const pbstListSlice = createSlice({
     }),
     builder.addCase(getDrugDetailsPBSTList.rejected, (state, action) => {
       postPBSTListRejected(state, action);
+    })
+  ),
+});
+
+export const pbstReplaceDrugSlice = createSlice({
+  name: "pbstReplaceDrug",
+  initialState: pbstState,
+  reducers: {},
+  extraReducers: (builder) => (
+    builder.addCase(postReplacePBSTDrug.pending, (state, action) => {
+      state.isLoading = true;
+    }),
+    builder.addCase(postReplacePBSTDrug.fulfilled, (state, action) => {
+      postReplaceDrugFulfilled(state, action);
+    }),
+    builder.addCase(postReplacePBSTDrug.rejected, (state, action) => {
+      postReplaceDrugRejected(state, action);
+    })
+  ),
+});
+
+export const pbstRemoveDrugSlice = createSlice({
+  name: "pbstRemoveDrug",
+  initialState: pbstState,
+  reducers: {},
+  extraReducers: (builder) => (
+    builder.addCase(postRemovePBSTDrug.pending, (state, action) => {
+      state.isLoading = true;
+    }),
+    builder.addCase(postRemovePBSTDrug.fulfilled, (state, action) => {
+      postReplaceDrugFulfilled(state, action);
+    }),
+    builder.addCase(postRemovePBSTDrug.rejected, (state, action) => {
+      postReplaceDrugRejected(state, action);
     })
   ),
 });
