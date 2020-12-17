@@ -35,7 +35,7 @@ interface State {
   
 const mapStateToProps = (state) => {
   //console.log("***** DB");
-  console.log(state);
+  //console.log(state);
   return {
     formulary_count: state?.dashboard?.formulary_count,
     formulary_list: state?.dashboard?.formulary_list,
@@ -155,7 +155,7 @@ class Formulary extends React.Component<any, any> {
   };
   
   onSettingsIconHandler = (hiddenColumn,visibleColumn) => {
-    console.log(hiddenColumn,visibleColumn);
+    //console.log(hiddenColumn,visibleColumn);
     this.props.setHiddenColumn(hiddenColumn)
   }
   onApplyFilterHandler = (filters) => {
@@ -193,6 +193,9 @@ class Formulary extends React.Component<any, any> {
         {this.state.showTabs ? (
           <>
             <FormularyDashboardStats />
+            <div>
+                <button onClick={this.addNewFormulary}> + </button>
+            </div>
             <FrxTabs
               tabList={this.state.tabs}
               activeTabIndex={this.state.activeTabIndex}
