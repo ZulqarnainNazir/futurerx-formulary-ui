@@ -20,7 +20,8 @@ import DropDown from "../../../../../../shared/Frx-components/dropdown/DropDown"
 import { Row, Col, Space } from "antd";
 import RadioButton from "../../../../../../shared/Frx-components/radio-button/RadioButton";
 import Button from "../../../../../../shared/Frx-components/button/Button";
-import * as constants from "../../../../../../../api/http-tier";
+import * as constants from "../../../../../../../api/http-commons";
+
 import "../Tier.scss";
 import "./PA.scss";
 import { getPaSummary,getPaGrouptDescriptions, getPaTypes, getDrugLists,postFormularyDrugPA,getPaGrouptDescriptionVersions,postApplyFormularyDrugPA } from "../../../../../../../redux/slices/formulary/pa/paActionCreation";

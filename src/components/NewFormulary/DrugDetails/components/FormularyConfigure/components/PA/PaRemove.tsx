@@ -10,7 +10,7 @@ import Button from "../../../../../../shared/Frx-components/button/Button";
 import { Row, Col } from "antd";
 import PanelHeader from "../PanelHeader";
 import { postCriteriaListPA,postApplyFormularyDrugPA,postFormularyDrugPA } from "../../../../../../../redux/slices/formulary/pa/paActionCreation";
-import * as constants from "../../../../../../../api/http-tier";
+import * as constants from "../../../../../../../api/http-commons";
 import getLobCode from "../../../../../Utils/LobUtils";
 import { tierColumns } from "../../../../../../../utils/grid/columns";
 import AdvancedSearch from './../search/AdvancedSearch';
@@ -139,7 +139,7 @@ class PaRemove extends React.Component<any,any> {
   handleSave = () => {
     if (this.state.selectedDrugs && this.state.selectedDrugs.length > 0) {
       let apiDetails = {};
-      apiDetails['apiPart'] = constants.APPLY_TIER;
+      //apiDetails['apiPart'] = constants.APPLY_TIER;
       apiDetails['pathParams'] = this.props?.formulary_id + "/" + getLobCode(this.props?.formulary_lob_id) + "/" + constants.TYPE_REMOVE;
       apiDetails['keyVals'] = [{ key: constants.KEY_ENTITY_ID, value: this.props?.formulary_id }];
       apiDetails['messageBody'] = {};
@@ -156,7 +156,7 @@ class PaRemove extends React.Component<any,any> {
           this.state.drugGridData = [];
           this.populateGridData();
           apiDetails = {};
-          apiDetails['apiPart'] =constants.FORMULARY_TIERS;
+          //apiDetails['apiPart'] =constants.FORMULARY_TIERS;
           apiDetails['pathParams'] = this.props?.formulary_id;
           apiDetails['keyVals'] = [{ key: constants.KEY_ENTITY_ID, value: this.props?.formulary_id }];
 
