@@ -35,7 +35,7 @@ class FormularySetUp extends React.Component<any, any> {
       abbreviation: "",
       effective_date: "",
       method: "",
-      service_year: "2021",
+      service_year: "",
       description: "",
       classification_system: "",
       is_closed_formulary: false,
@@ -44,7 +44,16 @@ class FormularySetUp extends React.Component<any, any> {
       state_id: null as unknown as number
     },
     medicareInfo: [],
-    supplemental_benefits:[],
+    supplemental_benefit_info:{
+      supplemental_benefits :[] as any,
+    },
+    tiers: [
+      {
+        id_formulary_tier:null as unknown as any,
+        id_tier_label: 1,
+        id_tier: 0
+      }
+    ],
     setupOptions: {},
   };
   
@@ -109,14 +118,19 @@ class FormularySetUp extends React.Component<any, any> {
           is_closed_formulary: newProps.formulary.formulary_info.is_closed_formulary,
         },
         medicareInfo: newProps.formulary?.medicare_contract_types.map(e => e.id_medicare_contract_type),
-        supplemental_benefits: newProps.setupOptions.supplementalOptions,
+        supplemental_benefit_info: {
+          supplemental_benefits: newProps.formulary.supplemental_benefits.map(el => el.id_supplemental_benefit)
+        },
         setupOptions: newProps.setupOptions,
       });
     }
-    if(newProps.mode === 'NEW'){
+    if(newProps.mode === 'NEW' && newProps.setupOptions.generalOptions ){
       this.setState({
-        isUpdate: true
-      })
+        isUpdate: true,
+        supplemental_benefit_info: {
+          supplemental_benefits: []
+        }
+      });
     }
   };
   updateInputField = (e) => {
@@ -142,7 +156,6 @@ class FormularySetUp extends React.Component<any, any> {
   };
 
   onDropdownChange = (value,section, stateProp) => {
-    //console.log(value, section, stateProp)
     const selectedSection = {...this.state[section]}
     selectedSection[stateProp] = value;
     if(stateProp === 'service_year'){
@@ -184,6 +197,20 @@ class FormularySetUp extends React.Component<any, any> {
       medicareInfo: updatedMedicareInfo
     })
   }
+  supplementalCheck = (id:any) => {
+    const updatedSupplementalCheck:any = [...this.state.supplemental_benefit_info.supplemental_benefits];
+    const index = updatedSupplementalCheck.indexOf(id);
+    if(index > -1){
+      updatedSupplementalCheck.splice(index,1);
+    }else{
+      updatedSupplementalCheck.push(id)
+    }
+    this.setState({
+      supplemental_benefit_info: {
+        supplemental_benefits: updatedSupplementalCheck
+      }
+    })
+  }
   onSave = (e) => {
     console.log("  SAVE  ", e);
     const input = {
@@ -214,7 +241,9 @@ class FormularySetUp extends React.Component<any, any> {
                 <MedicareInformation medicareOptions={this.state.medicareInfo} medicareCheck={this.medicareCheck}/> : null}
               {this.state.generalInformation.type !== 'Commercial' ? <FormularyDesign /> : null}
               <FormularyTiers />
-              {this.state.generalInformation.type !== 'Commercial' ? <SupplementalModels supplemental={this.state.supplemental_benefits}/> : null}
+              {this.state.generalInformation.type !== 'Commercial' ? (
+                <SupplementalModels supplemental={this.state.supplemental_benefit_info.supplemental_benefits} supplementalCheck={this.supplementalCheck}/>
+               ) : null}
               </>
             ) : null}
             

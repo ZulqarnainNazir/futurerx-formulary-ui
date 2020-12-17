@@ -198,7 +198,7 @@ class GeneralInformation extends React.Component<any, any> {
                 </label>
                 <DropDown
                   className="formulary-type-dropdown"
-                  options={this.props.general_options.contractYear.map(e => e.contract_year)}
+                  options={this.props.general_options.contractYear?.map(e => e.contract_year)}
                   value={this.props.generalInfo.service_year}
                   disabled={disabled}
                   onChange={(e) => this.props.onDropdownChange(e,'generalInformation','service_year')}
