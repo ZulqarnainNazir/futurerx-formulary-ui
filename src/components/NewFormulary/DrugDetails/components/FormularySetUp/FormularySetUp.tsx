@@ -45,14 +45,41 @@ class FormularySetUp extends React.Component<any, any> {
   componentDidMount() {
     if (this.props.mode === "EXISTING") {
       this.manageFormularyType(this.props.formulary_type_id);
-      // LOAD Formulary
       this.props.fetchSelectedFormulary(this.props.formulary_id);
     } else {
-      this.props.fetchGeneralOptions();
-      // New Formulary
+      this.props.fetchGeneralOptions(1);
       this.formulary_details = {};
     }
   }
+
+  manageFormularyType(type: number) {
+    console.log(" TYPE :: " + type);
+    this.props.fetchGeneralOptions(type);
+    this.props.fetchDesignOptions(type);
+    this.props.fetchTierOptions(type, 0);
+
+    if (type === 1) {
+      this.props.fetchMedicareOptions();
+      this.props.fetchSupplementalOptions(type);
+    } else if (type === 2) {
+      this.props.fetchStatesOptions(type);
+      this.props.fetchMedicareOptions();
+      this.props.fetchSupplementalOptions(type);
+    } else if (type === 3) {
+      // TODO ... MEDICADE...
+      this.props.fetchStatesOptions(0);
+    } else if (type === 4) {
+      // TODO ... MEDICADE...
+      this.props.fetchStatesOptions(0);
+
+    } else if (type === 5) {
+    } else if (type === 6) {
+      // COMMERCIAL...
+    }
+    this.props.fetchSubMthsOptions(2021);
+  }
+
+
   UNSAFE_componentWillReceiveProps = (newProps) => {
     if (newProps.formulary && newProps.setupOptions) {
       this.setState({
@@ -89,6 +116,16 @@ class FormularySetUp extends React.Component<any, any> {
     }
   };
 
+  formularyTypeChanged = (type) => {
+    const generalInfo = {...this.state.generalInformation}
+    generalInfo.type = type;
+    const typeID = this.props.setupOptions.generalOptions.formularyType.find(e=>e.formulary_type===type).id_formulary_type;
+    this.setState({
+      generalInformation: generalInfo
+    }, ()=> this.manageFormularyType(typeID));
+    
+  };
+
   onDropdownChange = (value,section, stateProp) => {
     console.log(value, section, stateProp)
     const selectedSection = {...this.state[section]}
@@ -97,33 +134,6 @@ class FormularySetUp extends React.Component<any, any> {
       [section] : selectedSection
     })
   }
-  manageFormularyType(type: number) {
-    console.log(" TYPE :: " + type);
-    this.props.fetchGeneralOptions(type);
-    this.props.fetchDesignOptions(type);
-    this.props.fetchTierOptions(type, 0);
-
-    if (type === 1) {
-      this.props.fetchMedicareOptions();
-      this.props.fetchSupplementalOptions(type);
-    } else if (type === 2) {
-      this.props.fetchStatesOptions(type);
-      this.props.fetchMedicareOptions();
-      this.props.fetchSupplementalOptions(type);
-    } else if (type === 3) {
-      // TODO ... MEDICADE...
-      this.props.fetchStatesOptions(0);
-    } else if (type === 4) {
-      // TODO ... MEDICADE...
-      this.props.fetchStatesOptions(0);
-
-    } else if (type === 5) {
-    } else if (type === 6) {
-      // COMMERCIAL...
-    }
-    this.props.fetchSubMthsOptions(2021);
-  }
-
   onRadioChangeHandler = (event: React.ChangeEvent<HTMLInputElement>,section) => {
     const newObj = { ...this.state.generalInformation };
     newObj[event.target.name] = event.target.value;

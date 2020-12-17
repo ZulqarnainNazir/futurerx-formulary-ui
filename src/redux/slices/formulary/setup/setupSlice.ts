@@ -1,7 +1,12 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { Formulary } from "./formulary";
-import { getformulary, checkNameExist } from "./setupService";
+import {
+  getformulary,
+  checkNameExist,
+  composePostBody,
+  createFormulary,
+} from "./setupService";
 import { setFullFormulary } from "./../application/applicationSlice";
 import { stat } from "fs";
 
@@ -55,6 +60,14 @@ const setup = createSlice({
       state.error = null;
     },
     verifyFormularyNameFailure: loadingFailed,
+    saveFormularyStart: startLoading,
+    saveFormularySuccess(state, { payload }: PayloadAction<boolean>) {
+      console.log("***** saveFormularySuccess : ", payload);
+      state.nameExist = payload;
+      state.isLoading = false;
+      state.error = null;
+    },
+    saveFormularyFailure: loadingFailed,
   },
 });
 
@@ -91,6 +104,23 @@ export const verifyFormularyName = createAsyncThunk(
   }
 );
 
+export const saveFormulary = createAsyncThunk(
+  "setup",
+  async (details: any, { dispatch }) => {
+    console.log("***** saveFormulary ( " + details + " ) ");
+    try {
+      const payload = composePostBody(details);
+      dispatch(saveFormularyStart());
+      const resp: any = await createFormulary(payload);
+      console.log(resp);
+      dispatch(saveFormularySuccess(resp));
+    } catch (err) {
+      //console.log("***** saveFormulary - ERROR ");
+      dispatch(saveFormularyFailure(err.toString()));
+    }
+  }
+);
+
 export const {
   getformularyStart,
   getFormularySuccess,
@@ -98,6 +128,9 @@ export const {
   verifyFormularyNameStart,
   verifyFormularyNameSuccess,
   verifyFormularyNameFailure,
+  saveFormularyStart,
+  saveFormularySuccess,
+  saveFormularyFailure,
 } = setup.actions;
 
 export default setup.reducer;

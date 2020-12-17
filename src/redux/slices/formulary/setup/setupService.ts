@@ -59,3 +59,24 @@ export async function checkNameExist(name: string): Promise<boolean | any> {
     throw error;
   }
 }
+
+export async function createFormulary(details: any): Promise<any> {
+  return null;
+}
+
+export async function updateFormulary(details: any): Promise<any> {
+  return null;
+}
+
+export async function deleteFormulary(details: any): Promise<any> {
+  return null;
+}
+
+export function composePostBody(details: any): any {
+  return null;
+}
+
+export function composePutBody(details: any): any {
+  return null;
+}
+
