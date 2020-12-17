@@ -1,5 +1,11 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { BASE_URL1 } from "../../../../../api/http-helper";
+import {
+  buildUrl,
+  getHeaders,
+  postHeaders,
+  fetchRequest,
+} from "../../../../../api/http-drug-details";
 
 const GET_DRUG_SUMMARY_PGC =
   BASE_URL1 + "api/1/formulary-drug-summary-pgc/3303?entity_id=3303";
@@ -12,7 +18,7 @@ const POST_PGC_EXCLUDED_DRUGS = BASE_URL1 + "api/1/formulary-drugs-pgc/3303/ExD?
 
 export const getDrugDetailsPGCSummary = createAsyncThunk(
   "drug_details/PGC_Summary",
-  async (summary_id: string) => {
+  async (apiDetails: any) => {
     const requestHeaders = {
       headers: {
         Authorization: "Bearer 1e05ff8b-a0af-4a8f-8915-487321900f21",
@@ -20,20 +26,13 @@ export const getDrugDetailsPGCSummary = createAsyncThunk(
         "Content-Type": "application/json;charset=UTF-8",
       },
     };
-    return fetch(GET_DRUG_SUMMARY_PGC, requestHeaders)
-      .then((response) => {
-        if (!response.ok) throw Error(response.statusText);
-        return response.json();
-      })
-      .then((json) => {
-        return json;
-      });
+    return fetchRequest(GET_DRUG_SUMMARY_PGC, requestHeaders);
   }
 );
 
 export const getDrugDetailsPGCList = createAsyncThunk(
   "drug_details/PGC_list",
-  async (summary_id: string) => {
+  async (apiDetails: any) => {
     console.log(
       "get Drug LIST action creator:: url: " + POST_PGC_FORMULARY_DRUGS
     );
@@ -45,21 +44,13 @@ export const getDrugDetailsPGCList = createAsyncThunk(
         "Content-Type": "application/json;charset=UTF-8",
       },
     };
-    return fetch(POST_PGC_FORMULARY_DRUGS, requestHeaders)
-      .then((response) => {
-        if (!response.ok) throw Error(response.statusText);
-        return response.json();
-      })
-      .then((json) => {
-        console.log("Drug LIST PGC Json : ", json);
-        return json;
-      });
+    return fetchRequest(POST_PGC_FORMULARY_DRUGS, requestHeaders);
   }
 );
 
 export const getExcludedDrugsPGCList = createAsyncThunk(
   "drug_details/PGC_Excluded_list",
-  async (summary_id: string) => {
+  async (apiDetails: any) => {
     const requestHeaders = {
       method: "POST",
       headers: {
@@ -68,14 +59,6 @@ export const getExcludedDrugsPGCList = createAsyncThunk(
         "Content-Type": "application/json;charset=UTF-8",
       },
     };
-    return fetch(POST_PGC_EXCLUDED_DRUGS, requestHeaders)
-      .then((response) => {
-        if (!response.ok) throw Error(response.statusText);
-        return response.json();
-      })
-      .then((json) => {
-        console.log("Drug LIST PGC EXCLUDED Json : ", json);
-        return json;
-      });
+    return fetchRequest(POST_PGC_EXCLUDED_DRUGS, requestHeaders);
   }
 );

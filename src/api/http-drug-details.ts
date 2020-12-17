@@ -15,6 +15,11 @@ export const GET_DRUG_SUMMARY_FFF = "api/1/formulary-drug-summary-fff/";
 export const GET_FFF_FORMULARY_DRUGS = "api/1/formulary-drugs-fff/";
 export const APPLY_FFF_DRUG = "api/1/apply-formulary-drug-fff/";
 
+// HI TAB
+export const GET_DRUG_SUMMARY_HI = "api/1/formulary-drug-summary-hi/";
+export const GET_HI_FORMULARY_DRUGS = "api/1/formulary-drugs-hi/";
+export const APPLY_HI_DRUG = "api/1/apply-formulary-drug-hi/";
+
 export const KEY_ENTITY_ID = "entity_id";
 export const KEY_INDEX = "index";
 export const KEY_LIMIT = "limit";
@@ -56,4 +61,15 @@ export const postHeaders = (apiDetails) => {
       "Content-Type": "application/json;charset=UTF-8",
     },
   };
+};
+
+export const fetchRequest = (url, requestHeaders) => {
+  return fetch(url, requestHeaders)
+    .then((response) => {
+      if (!response.ok) throw Error(response.statusText);
+      return response.json();
+    })
+    .then((json) => {
+      return json;
+    });
 };

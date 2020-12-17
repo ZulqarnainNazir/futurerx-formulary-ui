@@ -1,5 +1,6 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { BASE_URL1 } from "../../../../../api/http-helper";
+import { buildUrl, getHeaders, postHeaders, fetchRequest } from "../../../../../api/http-drug-details";
 
 const GET_DRUG_FGC = BASE_URL1 + "api/1/formulary-tiers/3298?entity_id=3298";
 
@@ -13,14 +14,7 @@ const requestHeaders = {
 
 export const getDrugDetailsFGC = createAsyncThunk(
   "drug_details/FGC",
-  async (summary_id: string) => {
-    return fetch(GET_DRUG_FGC, requestHeaders)
-      .then((response) => {
-        if (!response.ok) throw Error(response.statusText);
-        return response.json();
-      })
-      .then((json) => {
-        return json;
-      });
+  async (apiDetails: any) => {
+    return fetchRequest(GET_DRUG_FGC, requestHeaders);
   }
 );

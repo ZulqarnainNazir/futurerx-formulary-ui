@@ -10,20 +10,33 @@ import { textFilters } from "../../../../../../utils/grid/filters";
 import { getDrugDetailsColumn } from "../DrugGridColumn";
 import { getDrugDetailData } from "../../../../../../mocks/DrugGridMock";
 import FrxLoader from "../../../../../shared/FrxLoader/FrxLoader";
-import DrugGrid from "../../DrugGrid";
 import AdvancedSearch from "./search/AdvancedSearch";
 import {
   getDrugDetailsHISummary,
   getDrugDetailsHIList,
+  postReplaceHIDrug,
+  postRemoveHIDrug,
 } from "../../../../../../redux/slices/formulary/drugDetails/hi/hiActionCreation";
 import FrxDrugGridContainer from "../../../../../shared/FrxGrid/FrxDrugGridContainer";
+import * as hiConstants from "../../../../../../api/http-drug-details";
+import getLobCode from "../../../../Utils/LobUtils";
+import showMessage from "../../../../Utils/Toast";
 
 function mapDispatchToProps(dispatch) {
   return {
     getDrugDetailsHISummary: (a) => dispatch(getDrugDetailsHISummary(a)),
     getDrugDetailsHIList: (a) => dispatch(getDrugDetailsHIList(a)),
+    postReplaceHIDrug: (a) => dispatch(postReplaceHIDrug(a)),
+    postRemoveHIDrug: (a) => dispatch(postRemoveHIDrug(a)),
   };
 }
+
+const mapStateToProps = (state) => {
+  return {
+    formulary_id: state?.application?.formulary_id,
+    formulary_lob_id: state?.application?.formulary_lob_id,
+  };
+};
 
 class HI extends React.Component<any, any> {
   state = {
@@ -53,6 +66,9 @@ class HI extends React.Component<any, any> {
         text: "Remove",
       },
     ],
+    selectedDrugs: Array(),
+    drugData: Array(),
+    lobCode: null,
   };
 
   onClickTab = (selectedTabIndex: number) => {
@@ -64,7 +80,7 @@ class HI extends React.Component<any, any> {
       }
       return tab;
     });
-    this.setState({ tabs, activeTabIndex });
+    this.setState({ tabs, activeTabIndex }, () => this.getHIDrugsList());
   };
 
   advanceSearchClickHandler = (event) => {
@@ -78,40 +94,78 @@ class HI extends React.Component<any, any> {
 
   saveClickHandler = () => {
     console.log("Save data");
+    if (this.state.selectedDrugs && this.state.selectedDrugs.length > 0) {
+      let apiDetails = {};
+      apiDetails['apiPart'] = hiConstants.APPLY_HI_DRUG;
+      apiDetails['keyVals'] = [{ key: hiConstants.KEY_ENTITY_ID, value: this.props?.formulary_id }];
+      apiDetails['messageBody'] = {};
+      apiDetails['messageBody']['selected_drug_ids'] = this.state.selectedDrugs;
+      apiDetails['messageBody']['is_select_all'] = false;
+      apiDetails['messageBody']['covered'] = {};
+      apiDetails['messageBody']['not_covered'] = {};
+      apiDetails['messageBody']['selected_criteria_ids'] = [];
+      apiDetails['messageBody']['filter'] = [];
+      apiDetails['messageBody']['search_key'] = "";
+      apiDetails['messageBody']['limited_access'] = "";
+
+      if(this.state.activeTabIndex === 0){
+        console.log("-----REPLACE method-------")
+        apiDetails['pathParams'] = this.props?.formulary_id + "/" + this.state.lobCode + "/" + hiConstants.TYPE_REPLACE;
+
+        // Replace Drug method call
+        this.props.postReplaceLADrug(apiDetails).then(json => {
+          console.log("postReplaceLADrug - response is:" + JSON.stringify(json));
+          if (json.payload && json.payload.code && json.payload.code === '200') {
+            showMessage('Success', 'success');
+            this.getHISummary();
+            this.getHIDrugsList();
+            console.log("The Saved State = ", this.state);
+          }else{
+            showMessage('Failure', 'error');
+          }
+        });
+
+      } else if(this.state.activeTabIndex === 2) {
+        console.log("-----REMOVE method-------")
+        apiDetails['pathParams'] = this.props?.formulary_id + "/" + this.state.lobCode + "/" + hiConstants.TYPE_REMOVE;
+
+        // Remove Drug method call
+        this.props.postRemoveLADrug(apiDetails).then(json => {
+          console.log("postRemoveLADrug - response is:" + JSON.stringify(json));
+          if (json.payload && json.payload.code && json.payload.code === '200') {
+            showMessage('Success', 'success');
+            this.getHISummary();
+            this.getHIDrugsList();
+            console.log("The Saved State = ", this.state);
+          }else{
+            showMessage('Failure', 'error');
+          }
+        });
+
+      }
+    }
   };
 
-  componentDidMount() {
-    const data = getDrugDetailData();
-    const columns = getDrugDetailsColumn();
+  onSelectedTableRowChanged = (selectedRowKeys) => {
+    this.state.selectedDrugs = [];
+    if (selectedRowKeys && selectedRowKeys.length > 0) {
+      let selDrugs = selectedRowKeys.map(ele => {
+        return this.state.drugData[ele - 1]['md5_id'] ? this.state.drugData[ele - 1]['md5_id'] : ""
+      });
 
-    const FFFColumn: any = {
-      id: 0,
-      position: 0,
-      textCase: "upper",
-      pixelWidth: 238,
-      sorter: {},
-      isFilterable: true,
-      showToolTip: false,
-      key: "fff",
-      displayTitle: "Free First Fill",
-      filters: textFilters,
-      dataType: "string",
-      hidden: false,
-      sortDirections: [],
-    };
-
-    columns.unshift(FFFColumn);
-
-    for (let el of data) {
-      el["fff"] = "Y";
+      this.setState({ selectedDrugs: selDrugs })
+    } else {
+      this.setState({ selectedDrugs: [] })
     }
+  }
 
-    // this.setState({
-    //   columns: columns,
-    //   data: data,
-    // });
+  getHISummary = () => {
+    let apiDetails = {};
+    apiDetails['apiPart'] = hiConstants.GET_DRUG_SUMMARY_HI;
+    apiDetails['pathParams'] = this.props?.formulary_id;
+    apiDetails['keyVals'] = [{ key: hiConstants.KEY_ENTITY_ID, value: this.props?.formulary_id }];
 
-    this.props.getDrugDetailsHISummary().then((json) => {
+    this.props.getDrugDetailsHISummary(apiDetails).then((json) => {
       let tmpData =
         json.payload && json.payload.result ? json.payload.result : [];
 
@@ -127,17 +181,24 @@ class HI extends React.Component<any, any> {
 
       this.setState({
         panelGridValue1: rows,
-        // columns: columns,
-        // data: data,
+        lobCode: getLobCode(this.props.formulary_lob_id),
       });
     });
+  }
 
-    this.props.getDrugDetailsHIList().then((json) => {
+  getHIDrugsList = () => {
+    let apiDetails = {};
+    apiDetails['apiPart'] = hiConstants.GET_HI_FORMULARY_DRUGS;
+    apiDetails['pathParams'] = this.props?.formulary_id + "/" + getLobCode(this.props.formulary_lob_id);
+    apiDetails['keyVals'] = [{ key: hiConstants.KEY_ENTITY_ID, value: this.props?.formulary_id }, { key: hiConstants.KEY_INDEX, value: 0 }, { key: hiConstants.KEY_LIMIT, value: 10 }];
+
+    if (this.state.activeTabIndex === 2) {
+      apiDetails["messageBody"] = {};
+      apiDetails["messageBody"]["selected_criteria_ids"] = ["Y"];
+    }
+
+    this.props.getDrugDetailsHIList(apiDetails).then((json) => {
       let tmpData = json.payload.result;
-      console.log(
-        "----------The Get Drug Details HI list response = ",
-        tmpData
-      );
       var data: any[] = [];
       let count = 1;
       var gridData = tmpData.map((el) => {
@@ -212,17 +273,46 @@ class HI extends React.Component<any, any> {
         return gridItem;
       });
       this.setState({
+        drugData: data,
         data: gridData,
-        // columns: columns,
       });
     });
+  }
+
+  componentDidMount() {
+    const data = getDrugDetailData();
+    const columns = getDrugDetailsColumn();
+
+    const FFFColumn: any = {
+      id: 0,
+      position: 0,
+      textCase: "upper",
+      pixelWidth: 238,
+      sorter: {},
+      isFilterable: true,
+      showToolTip: false,
+      key: "fff",
+      displayTitle: "Free First Fill",
+      filters: textFilters,
+      dataType: "string",
+      hidden: false,
+      sortDirections: [],
+    };
+
+    columns.unshift(FFFColumn);
+
+    for (let el of data) {
+      el["fff"] = "Y";
+    }
+
+    this.getHISummary();
+    this.getHIDrugsList();
   }
 
   render() {
     let dataGrid = <FrxLoader />;
     if (this.state.data) {
       dataGrid = (
-        // <DrugGrid columns={this.state.columns} data={this.state.data} />
         <FrxDrugGridContainer
           isPinningEnabled={false}
           enableSearch={false}
@@ -241,7 +331,7 @@ class HI extends React.Component<any, any> {
             columnWidth: 50,
             fixed: true,
             type: "checkbox",
-            onChange: () => {},
+            onChange: this.onSelectedTableRowChanged,
           }}
         />
       );
@@ -295,7 +385,7 @@ class HI extends React.Component<any, any> {
                 label="Advance Search"
                 onClick={this.advanceSearchClickHandler}
               />
-              <Button label="Save" onClick={this.saveClickHandler} disabled />
+              <Button label="Save" onClick={this.saveClickHandler} disabled={!(this.state.selectedDrugs.length > 0)} />
             </div>
           </div>
           {dataGrid}
@@ -312,4 +402,4 @@ class HI extends React.Component<any, any> {
   }
 }
 
-export default connect(null, mapDispatchToProps)(HI);
+export default connect(mapStateToProps, mapDispatchToProps)(HI);

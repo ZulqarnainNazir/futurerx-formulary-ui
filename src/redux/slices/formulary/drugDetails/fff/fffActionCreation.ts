@@ -3,6 +3,7 @@ import {
   buildUrl,
   getHeaders,
   postHeaders,
+  fetchRequest,
 } from "../../../../../api/http-drug-details";
 
 // const GET_DRUG_SUMMARY_FFF = BASE_URL1 + "api/1/formulary-drug-summary-fff/3303?entity_id=3303";
@@ -16,14 +17,7 @@ export const getDrugDetailsFFFSummary = createAsyncThunk(
   async (apiDetails: any) => {
     let GET_URL = buildUrl({ apiDetails });
     const requestHeaders = getHeaders();
-    return fetch(GET_URL, requestHeaders)
-      .then((response) => {
-        if (!response.ok) throw Error(response.statusText);
-        return response.json();
-      })
-      .then((json) => {
-        return json;
-      });
+    return fetchRequest(GET_URL, requestHeaders);
   }
 );
 
@@ -32,14 +26,7 @@ export const getDrugDetailsFFFList = createAsyncThunk(
   async (apiDetails: any) => {
     let POST_URL = buildUrl({ apiDetails });
     const requestHeaders = postHeaders(apiDetails);
-    return fetch(POST_URL, requestHeaders)
-      .then((response) => {
-        if (!response.ok) throw Error(response.statusText);
-        return response.json();
-      })
-      .then((json) => {
-        return json;
-      });
+    return fetchRequest(POST_URL, requestHeaders);
   }
 );
 
@@ -48,13 +35,6 @@ export const postRemoveFFFDrug = createAsyncThunk(
   async (apiDetails: any) => {
     let POST_URL = buildUrl({ apiDetails });
     const requestHeaders = postHeaders(apiDetails);
-    return fetch(POST_URL, requestHeaders)
-      .then((response) => {
-        if (!response.ok) throw Error(response.statusText);
-        return response.json();
-      })
-      .then((json) => {
-        return json;
-      });
+    return fetchRequest(POST_URL, requestHeaders);
   }
 );

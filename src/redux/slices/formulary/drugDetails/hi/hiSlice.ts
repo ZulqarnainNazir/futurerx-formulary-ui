@@ -2,12 +2,16 @@ import { createSlice } from "@reduxjs/toolkit";
 import {
   getDrugDetailsHISummary,
   getDrugDetailsHIList,
+  postReplaceHIDrug,
+  postRemoveHIDrug,
 } from "./hiActionCreation";
 import {
   getHISummaryFulfilled,
   getHISummaryRejected,
   postHIListFulfilled,
   postHIListRejected,
+  postReplaceDrugFulfilled,
+  postReplaceDrugRejected,
 } from "./hiReducers";
 
 const hiState: any = {
@@ -45,6 +49,42 @@ export const hiListSlice = createSlice({
     }),
     builder.addCase(getDrugDetailsHIList.rejected, (state, action) => {
       postHIListRejected(state, action);
+    })
+  ),
+});
+
+// postReplaceDrug
+export const hiReplaceDrugSlice = createSlice({
+  name: "hiReplaceDrug",
+  initialState: hiState,
+  reducers: {},
+  extraReducers: (builder) => (
+    builder.addCase(postReplaceHIDrug.pending, (state, action) => {
+      state.isLoading = true;
+    }),
+    builder.addCase(postReplaceHIDrug.fulfilled, (state, action) => {
+      postReplaceDrugFulfilled(state, action);
+    }),
+    builder.addCase(postReplaceHIDrug.rejected, (state, action) => {
+      postReplaceDrugRejected(state, action);
+    })
+  ),
+});
+
+// postRemoveDrug
+export const hiRemoveDrugSlice = createSlice({
+  name: "hiRemoveDrug",
+  initialState: hiState,
+  reducers: {},
+  extraReducers: (builder) => (
+    builder.addCase(postRemoveHIDrug.pending, (state, action) => {
+      state.isLoading = true;
+    }),
+    builder.addCase(postRemoveHIDrug.fulfilled, (state, action) => {
+      postReplaceDrugFulfilled(state, action);
+    }),
+    builder.addCase(postRemoveHIDrug.rejected, (state, action) => {
+      postReplaceDrugRejected(state, action);
     })
   ),
 });
