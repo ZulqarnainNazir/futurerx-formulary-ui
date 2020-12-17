@@ -29,6 +29,7 @@ class FormularySetUp extends React.Component<any, any> {
     isUpdate: false,
     generalInformation: {
       type: "",
+      type_id: "" as any,
       name: "",
       abbreviation: "",
       effective_date: "",
@@ -36,8 +37,12 @@ class FormularySetUp extends React.Component<any, any> {
       service_year: "",
       description: "",
       classification_system: "",
-      is_closed_formulary: false
+      is_closed_formulary: false,
+      isState: false,
+      selectedState: "",
+      state_id: null as unknown as number
     },
+    supplemental_benefits:[],
     setupOptions: {},
   };
   formulary_details: Formulary | any;
@@ -86,6 +91,7 @@ class FormularySetUp extends React.Component<any, any> {
         isUpdate: true,
         generalInformation: {
           type: newProps.formulary.formulary_type_info.formulary_type,
+          type_id: newProps.formulary.formulary_type_info.id_formulary_type,
           name: newProps.formulary.formulary_info.formulary_name,
           abbreviation: newProps.formulary.formulary_info.abbreviation,
           effective_date: newProps.formulary.formulary_info.effective_date,
@@ -93,8 +99,9 @@ class FormularySetUp extends React.Component<any, any> {
           service_year: newProps.formulary.formulary_info.contract_year,
           description: newProps.formulary.formulary_info.formulary_description,
           classification_system: newProps.formulary.formulary_info.id_classification_system,
-          is_closed_formulary: newProps.formulary.formulary_info.is_closed_formulary
+          is_closed_formulary: newProps.formulary.formulary_info.is_closed_formulary,
         },
+        supplemental_benefits: newProps.setupOptions.supplementalOptions,
         setupOptions: newProps.setupOptions,
       });
     }
@@ -118,21 +125,29 @@ class FormularySetUp extends React.Component<any, any> {
 
   formularyTypeChanged = (type) => {
     const generalInfo = {...this.state.generalInformation}
-    generalInfo.type = type;
     const typeID = this.props.setupOptions.generalOptions.formularyType.find(e=>e.formulary_type===type).id_formulary_type;
+    generalInfo.type = type;
+    generalInfo.type_id = parseInt(typeID);
     this.setState({
       generalInformation: generalInfo
     }, ()=> this.manageFormularyType(typeID));
-    
   };
 
   onDropdownChange = (value,section, stateProp) => {
     console.log(value, section, stateProp)
     const selectedSection = {...this.state[section]}
     selectedSection[stateProp] = value;
+    if(stateProp === 'service_year'){
+      selectedSection.isState = true
+    }
+    if(stateProp === 'selectedState'){
+      const stateId = this.props.setupOptions.generalOptions.states.find(e => e.state_name === value).id;
+      selectedSection.state_id = stateId
+    }
     this.setState({
       [section] : selectedSection
-    })
+    });
+    
   }
   onRadioChangeHandler = (event: React.ChangeEvent<HTMLInputElement>,section) => {
     const newObj = { ...this.state.generalInformation };
@@ -141,8 +156,13 @@ class FormularySetUp extends React.Component<any, any> {
       generalInformation: newObj,
     });
   };
-  onDatePickerChangeHandler = (date, dateString) => {
-    console.log(date,dateString)
+  onDatePickerChangeHandler = (e,section, stateProp) => {
+    const date = e._d.toLocaleDateString();
+    const newObj = { ...this.state[section] };
+    newObj[stateProp] = date
+    this.setState({
+      [section] : newObj
+    });
   }
   onSave = (e) => {
     console.log("  SAVE  ", e);
@@ -159,6 +179,7 @@ class FormularySetUp extends React.Component<any, any> {
               updateInputField={this.updateInputField}
               onRadioChange={this.onRadioChangeHandler}
               onDropdownChange={this.onDropdownChange}
+              formularyTypeChanged={this.formularyTypeChanged}
               datePickerChange={this.onDatePickerChangeHandler}
             />
             {this.state.generalInformation.type !== '' ? (
@@ -166,7 +187,7 @@ class FormularySetUp extends React.Component<any, any> {
               {this.state.generalInformation.type !== 'Commercial' ? <MedicareInformation /> : null}
               <FormularyDesign />
               <FormularyTiers />
-              {this.state.generalInformation.type !== 'Commercial' ? <SupplementalModels /> : null}
+              {this.state.generalInformation.type !== 'Commercial' ? <SupplementalModels supplemental={this.state.supplemental_benefits}/> : null}
               </>
             ) : null}
             

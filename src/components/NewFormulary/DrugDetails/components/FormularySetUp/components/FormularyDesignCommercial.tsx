@@ -4,8 +4,8 @@ import Box from '@material-ui/core/Box';
 import Button from '../../../../../shared/Frx-components/button/Button';
 import PanelHeader from "../../FormularyConfigure/components/PanelHeader";
 import {connect} from "react-redux";
-import { Checkbox } from 'antd';
-class SupplementalModels extends React.Component<any, any> {
+
+class formlaryDesignCommercial extends React.Component<any, any> {
     getChecked = (id) => {
         let isChecked = false;
         if(this.props.supplemental_benefits){
@@ -14,24 +14,12 @@ class SupplementalModels extends React.Component<any, any> {
         }
         return isChecked;
     }
-    onChange = (id) => {
-        console.log(id)
-    }
-    renderCheckbox = () => {
-        console.log(this.props.supplemental)
-        return this.props.supplemental.map(el => {
-            return <Grid item xs={4}>
-                <Checkbox onChange={() => this.onChange(el.id_supplemental_benefit)}>{el.supplemental_benefit}</Checkbox>
-            </Grid>
-        })
-    }
   render() {
     return (
       <div className="supplemental-models-container">
         <h4>SUPPLEMENTAL BENEFITS OR ALTERNATIVE MODELS</h4>
         <div className="formulary-design-fields-wrapper setup-label">
         <Grid container>
-            {this.renderCheckbox()}
             <Grid item xs={11}>
                 <Grid container>
                     <Grid item xs={4}>
@@ -184,4 +172,4 @@ const mapStateToProps = (state) => {
         supplemental_benefits: state?.setup?.formulary?.supplemental_benefits
     };
 };
-export default connect(mapStateToProps)(SupplementalModels)
+export default connect(mapStateToProps)(formlaryDesignCommercial)

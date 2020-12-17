@@ -90,6 +90,7 @@ class GeneralInformation extends React.Component<any, any> {
         contract_year: this.props.formulary_mode === 'EXISTING' ? [FORMULARY.formulary_info?.contract_year] : ["2021","2022"]
       }
     }
+    
 
     return (
       <div className="general-information-container">
@@ -107,7 +108,7 @@ class GeneralInformation extends React.Component<any, any> {
                   options={this.props.general_options ? general_options : []}
                   value={this.props.generalInfo.type}
                   disabled={disabled}
-                  onChange={(e) => this.props.onDropdownChange(e,'generalInformation','type')}
+                  onChange={this.props.formularyTypeChanged}
                 />
               </div>
             </Grid>
@@ -134,7 +135,7 @@ class GeneralInformation extends React.Component<any, any> {
                 placeholder={FORMULARY ? FORMULARY_Values.effective_date : ''}
                 disabled={disabled}
 
-                onChange={this.props.datePickerChange}
+                onChange={(e) => this.props.datePickerChange(e,'generalInformation','effective_date')}
                 suffixIcon={
                   <svg
                     width="18"
@@ -197,9 +198,10 @@ class GeneralInformation extends React.Component<any, any> {
                 </label>
                 <DropDown
                   className="formulary-type-dropdown"
-                  options={FORMULARY ? FORMULARY_Values.contract_year : []}
-                  value={FORMULARY ? FORMULARY_Values.contract_year : ''}
+                  options={this.props.general_options.contractYear.map(e => e.contract_year)}
+                  value={this.props.generalInfo.service_year}
                   disabled={disabled}
+                  onChange={(e) => this.props.onDropdownChange(e,'generalInformation','service_year')}
                 />
               </div>
             </Grid>
@@ -262,7 +264,22 @@ class GeneralInformation extends React.Component<any, any> {
                 </div>
               </Grid>
             ) : null}
-            
+            {this.props.generalInfo.type_id === 2 ? (
+              <Grid item xs={4}>
+                <div className="group state-group">
+                  <label>
+                    What State is this formulary for? <span className="astrict">*</span>
+                  </label>
+                  <DropDown
+                    className="formulary-type-dropdown"
+                    options={this.props.general_options.states.map(e => e.state_name)}
+                    value={this.props.generalInfo.selectedState}
+                    disabled={disabled}
+                    onChange={(e) => this.props.onDropdownChange(e,'generalInformation','selectedState')}
+                  />
+                </div>
+              </Grid>
+            ) : null}
             <Grid item xs={4}>
               <div className="group reporting-tag-group">
                 <label>reporting tags</label>
