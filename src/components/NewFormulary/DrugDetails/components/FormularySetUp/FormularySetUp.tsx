@@ -273,7 +273,7 @@ class FormularySetUp extends React.Component<any, any> {
         msg.push("Formulary Service year is required.");
       }
       if(msg.length>0){
-        msg.forEach((m)=>{showMessage(m, 'error');})
+        msg.forEach((m)=>{showMessage(m, 'info');})
         //showMessage(msg[0], 'error');
         return;
       }
