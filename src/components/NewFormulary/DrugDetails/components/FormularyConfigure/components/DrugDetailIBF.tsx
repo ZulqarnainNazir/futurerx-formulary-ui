@@ -9,26 +9,56 @@ import FrxMiniTabs from "../../../../../shared/FrxMiniTabs/FrxMiniTabs";
 import NotesPopup from "../../../../../member/MemberNotesPopup";
 import Box from "@material-ui/core/Box";
 import Button from "../../../../../shared/Frx-components/button/Button";
-import RadioButton from "../../../../../shared/Frx-components/radio-button/RadioButton";
 import DropDown from "../../../../../shared/Frx-components/dropdown/DropDown";
 import { textFilters } from "../../../../../../utils/grid/filters";
 import { getDrugDetailsColumn } from "../DrugGridColumn";
 import { getDrugDetailData } from "../../../../../../mocks/DrugGridMock";
 import FrxLoader from "../../../../../shared/FrxLoader/FrxLoader";
-import DrugGrid from "../../DrugGrid";
 import AdvancedSearch from "./search/AdvancedSearch";
-import { getDrugDetailsIBFSummary, getDrugDetailsIBFList } from "../../../../../../redux/slices/formulary/drugDetails/ibf/ibfActionCreation";
+import { getDrugDetailsIBFSummary, getDrugDetailsIBFList, getIBFCuids, postReplaceIBFDrug, postRemoveIBFDrug } from "../../../../../../redux/slices/formulary/drugDetails/ibf/ibfActionCreation";
 import FrxDrugGridContainer from "../../../../../shared/FrxGrid/FrxDrugGridContainer";
+import getLobCode from "../../../../Utils/LobUtils";
+import * as ibfConstants from "../../../../../../api/http-drug-details";
+import showMessage from "../../../../Utils/Toast";
 
 function mapDispatchToProps(dispatch) {
   return {
     getDrugDetailsIBFSummary: (a) => dispatch(getDrugDetailsIBFSummary(a)),
     getDrugDetailsIBFList: (a) => dispatch(getDrugDetailsIBFList(a)),
+    getIBFCuids: (a) => dispatch(getIBFCuids(a)),
+    postReplaceIBFDrug: (a) => dispatch(postReplaceIBFDrug(a)),
+    postRemoveIBFDrug: (a) => dispatch(postRemoveIBFDrug(a)),
   };
 }
 
+const mapStateToProps = (state) => {
+  return {
+    formulary_id: state?.application?.formulary_id,
+    formulary_lob_id: state?.application?.formulary_lob_id,
+  };
+};
+
+interface IBFState {
+  isSearchOpen: boolean,
+  panelGridTitle1: any[],
+  panelTitleAlignment1: any[],
+  panelGridValue1: any[],
+  isNotesOpen: false,
+  activeTabIndex: number,
+  columns: any,
+  data: any[],
+  tabs: any[],
+  selectedDrugs: any,
+  drugData: any,
+  lobCode: any,
+  cuids: any[],
+  selectedCuid: any,
+  showGrid: boolean,
+  gridApply: boolean,
+}
+
 class DrugDetailIBF extends React.Component<any, any> {
-  state = {
+  state:IBFState = {
     isSearchOpen: false,
     panelGridTitle1: [
       "INDICATION BASED COVRAGE",
@@ -47,6 +77,13 @@ class DrugDetailIBF extends React.Component<any, any> {
       { id: 2, text: "Append" },
       { id: 3, text: "Remove" },
     ],
+    selectedDrugs: Array(),
+    drugData: Array(),
+    lobCode: null,
+    cuids: [],
+    selectedCuid: null,
+    showGrid: false,
+    gridApply: false,
   };
 
   advanceSearchClickHandler = (event) => {
@@ -60,41 +97,77 @@ class DrugDetailIBF extends React.Component<any, any> {
 
   saveClickHandler = () => {
     console.log("Save data");
+    if (this.state.selectedDrugs && this.state.selectedDrugs.length > 0 && this.state.selectedCuid) {
+      let apiDetails = {};
+      apiDetails["apiPart"] = ibfConstants.APPLY_IBF_DRUG;
+      apiDetails["keyVals"] = [{ key: ibfConstants.KEY_ENTITY_ID, value: this.props?.formulary_id }];
+      apiDetails["messageBody"] = {};
+      apiDetails["messageBody"]["selected_drug_ids"] = this.state.selectedDrugs;
+      apiDetails["messageBody"]["is_select_all"] = false;
+      apiDetails["messageBody"]["covered"] = {};
+      apiDetails["messageBody"]["not_covered"] = {};
+      apiDetails["messageBody"]["selected_criteria_ids"] = [];
+      apiDetails["messageBody"]["filter"] = [];
+      apiDetails["messageBody"]["search_key"] = "";
+      apiDetails["messageBody"]["limited_access"] = "";
+
+      if (this.state.activeTabIndex === 0) {
+        apiDetails["pathParams"] = this.props?.formulary_id + "/" + this.state.lobCode + "/" + ibfConstants.TYPE_REPLACE;
+        apiDetails["messageBody"]["id_me_shcui"] = this.state.selectedCuid?.id_me_shcui;
+        apiDetails["messageBody"]["me_shcui"] = this.state.selectedCuid?.me_shcui;
+
+        // Replace Drug method call
+        this.props.postReplaceIBFDrug(apiDetails).then((json) => {
+          if (json.payload && json.payload.code && json.payload.code === "200") {
+            showMessage("Success", "success");
+            this.getIBFSummary();
+            this.getIBFDrugsList();
+          } else {
+            showMessage("Failure", "error");
+          }
+        });
+      } else if (this.state.activeTabIndex === 2) {
+        apiDetails["pathParams"] = this.props?.formulary_id + "/" + this.state.lobCode + "/" + ibfConstants.TYPE_REMOVE;
+        apiDetails["messageBody"]["selected_criteria_ids"] = [this.state.selectedCuid?.id_me_shcui];
+        apiDetails["messageBody"]["me_shcui"] = this.state.selectedCuid?.me_shcui;
+
+        // Remove Drug method call
+        this.props.postRemoveIBFDrug(apiDetails).then((json) => {
+          if (json.payload && json.payload.code && json.payload.code === "200") {
+            showMessage("Success", "success");
+            this.getIBFSummary();
+            this.getIBFDrugsList();
+          } else {
+            showMessage("Failure", "error");
+          }
+        });
+      }
+    }
   };
 
-  componentDidMount() {
-    const data = getDrugDetailData();
-    const columns = getDrugDetailsColumn();
-    const FFFColumn: any = {
-      id: 0,
-      position: 0,
-      textCase: "upper",
-      pixelWidth: 238,
-      sorter: {},
-      isFilterable: true,
-      showToolTip: false,
-      key: "fff",
-      displayTitle: "Free First Fill",
-      filters: textFilters,
-      dataType: "string",
-      hidden: false,
-      sortDirections: [],
-    };
+  onSelectedTableRowChanged = (selectedRowKeys) => {
+    this.state.selectedDrugs = [];
+    if (selectedRowKeys && selectedRowKeys.length > 0) {
+      let selDrugs = selectedRowKeys.map((ele) => {
+        return this.state.drugData[ele - 1]["md5_id"]
+          ? this.state.drugData[ele - 1]["md5_id"]
+          : "";
+      });
 
-    columns.unshift(FFFColumn);
-
-    for (let el of data) {
-      el["fff"] = "Y";
+      this.setState({ selectedDrugs: selDrugs });
+    } else {
+      this.setState({ selectedDrugs: [] });
     }
+  };
 
-    // this.setState({
-    //   columns: columns,
-    //   data: data,
-    // });
+  getIBFSummary = () => {
+    let apiDetails = {};
+    apiDetails["apiPart"] = ibfConstants.GET_DRUG_SUMMARY_IBF;
+    apiDetails["pathParams"] = this.props?.formulary_id;
+    apiDetails["keyVals"] = [{ key: ibfConstants.KEY_ENTITY_ID, value: this.props?.formulary_id }];
 
-    this.props.getDrugDetailsIBFSummary().then((json) => {
-      let tmpData =
-        json.payload && json.payload.result ? json.payload.result : [];
+    this.props.getDrugDetailsIBFSummary(apiDetails).then((json) => {
+      let tmpData = json.payload && json.payload.result ? json.payload.result : [];
 
       let rows = tmpData.map((ele) => {
         let curRow = [
@@ -108,15 +181,36 @@ class DrugDetailIBF extends React.Component<any, any> {
 
       this.setState({
         panelGridValue1: rows,
+        lobCode: getLobCode(this.props.formulary_lob_id),
       });
     });
+  }
 
-    this.props.getDrugDetailsIBFList().then((json) => {
+  getIBFCuids = () => {
+    let apiDetails = {};
+    apiDetails["apiPart"] = ibfConstants.GET_IBF_CUIS;
+
+    this.props.getIBFCuids(apiDetails).then((json) => {
+      console.log("The Cuids Json resp = ", json);
+      let tmpData = json.payload && json.payload.data ? json.payload.data : [];
+      console.log("The Temp CUid Data = ", tmpData);
+      this.setState({ cuids: tmpData })
+    });
+  }
+
+  getIBFDrugsList = () => {
+    let apiDetails = {};
+    apiDetails["apiPart"] = ibfConstants.GET_IBF_FORMULARY_DRUGS;
+    apiDetails["pathParams"] = this.props?.formulary_id + "/" + getLobCode(this.props.formulary_lob_id);
+    apiDetails["keyVals"] = [ { key: ibfConstants.KEY_ENTITY_ID, value: this.props?.formulary_id }, { key: ibfConstants.KEY_INDEX, value: 0 }, { key: ibfConstants.KEY_LIMIT, value: 10 } ];
+
+    if (this.state.activeTabIndex === 2) {
+      apiDetails["messageBody"] = {};
+      apiDetails["messageBody"]["selected_criteria_ids"] = [this.state.selectedCuid?.id_me_shcui];
+    }
+
+    this.props.getDrugDetailsIBFList(apiDetails).then((json) => {
       let tmpData = json.payload.result;
-      console.log(
-        "----------The Get Drug Details IBF list response = ",
-        tmpData
-      );
       var data: any[] = [];
       let count = 1;
       var gridData = tmpData.map((el) => {
@@ -192,8 +286,39 @@ class DrugDetailIBF extends React.Component<any, any> {
       });
       this.setState({
         data: gridData,
+        drugData: data,
       });
     });
+  }
+
+  componentDidMount() {
+    const data = getDrugDetailData();
+    const columns = getDrugDetailsColumn();
+    const FFFColumn: any = {
+      id: 0,
+      position: 0,
+      textCase: "upper",
+      pixelWidth: 238,
+      sorter: {},
+      isFilterable: true,
+      showToolTip: false,
+      key: "fff",
+      displayTitle: "Free First Fill",
+      filters: textFilters,
+      dataType: "string",
+      hidden: false,
+      sortDirections: [],
+    };
+
+    columns.unshift(FFFColumn);
+
+    for (let el of data) {
+      el["fff"] = "Y";
+    }
+
+    this.getIBFSummary();
+    this.getIBFCuids();
+    this.getIBFDrugsList();
   }
 
   onClickTab = (selectedTabIndex: number) => {
@@ -205,7 +330,7 @@ class DrugDetailIBF extends React.Component<any, any> {
       }
       return tab;
     });
-    this.setState({ tabs, activeTabIndex });
+    this.setState({ tabs, activeTabIndex, gridApply: false, showGrid: false }, () => this.getIBFCuids());
   };
 
   handleNoteClick = (event: React.ChangeEvent<{}>) => {
@@ -218,14 +343,21 @@ class DrugDetailIBF extends React.Component<any, any> {
   };
 
   settingFormApplyHandler = () => {
-    alert(1);
+    // alert(1);
+    this.setState({ showGrid: true });
+  };
+
+  onCUIDChangeHandler = (e: any) => {
+    console.log("THe Changed Value = ", e);
+    const cuidValue = this.state.cuids.find((el) => el.value === e);
+    console.log("The CUID Value = ", cuidValue)
+    this.setState({ selectedCuid: cuidValue, gridApply: true, showGrid: false })
   };
 
   render() {
     let dataGrid = <FrxLoader />;
     if (this.state.data) {
       dataGrid = (
-        // <DrugGrid columns={this.state.columns} data={this.state.data} />
         <FrxDrugGridContainer
           isPinningEnabled={false}
           enableSearch={false}
@@ -244,8 +376,19 @@ class DrugDetailIBF extends React.Component<any, any> {
             columnWidth: 50,
             fixed: true,
             type: "checkbox",
-            onChange: () => {},
+            onChange: this.onSelectedTableRowChanged,
           }}
+        />
+      );
+    }
+
+    let dropDown: any;
+    if (this.state.cuids.length > 0) {
+      dropDown = (
+        <DropDown
+          placeholder="Cuids"
+          options={this.state.cuids.map((e) => e.value)}
+          onChange={this.onCUIDChangeHandler}
         />
       );
     }
@@ -317,14 +460,15 @@ class DrugDetailIBF extends React.Component<any, any> {
                   <Grid item xs={4}>
                     <div className="group">
                       <label>MeSH CUI</label>
-                      <DropDown options={[1, 2, 3]} />
+                      {/* <DropDown options={[1, 2, 3]} /> */}
+                      {dropDown}
                     </div>
                   </Grid>
                 </Grid>
                 <Box display="flex" justifyContent="flex-end">
                   <Button
                     label="Apply"
-                    disabled
+                    disabled={!(this.state.gridApply)}
                     onClick={this.settingFormApplyHandler}
                   />
                 </Box>
@@ -332,30 +476,36 @@ class DrugDetailIBF extends React.Component<any, any> {
             </div>
           </div>
         </div>
-        <div className="bordered">
-          <div className="header space-between pr-10">
-            Drug Grid
-            <div className="button-wrapper">
-              <Button
-                className="Button normal"
-                label="Advance Search"
-                onClick={this.advanceSearchClickHandler}
-              />
-              <Button label="Save" onClick={this.saveClickHandler} disabled />
+        {this.state.showGrid ? (
+          <div className="bordered">
+            <div className="header space-between pr-10">
+              Drug Grid
+              <div className="button-wrapper">
+                <Button
+                  className="Button normal"
+                  label="Advance Search"
+                  onClick={this.advanceSearchClickHandler}
+                />
+                <Button
+                  label="Save"
+                  onClick={this.saveClickHandler}
+                  disabled={!(this.state.selectedDrugs.length > 0)}
+                />
+              </div>
             </div>
+            {dataGrid}
+            {this.state.isSearchOpen ? (
+              <AdvancedSearch
+                category="Grievances"
+                openPopup={this.state.isSearchOpen}
+                onClose={this.advanceSearchClosekHandler}
+              />
+            ) : null}
           </div>
-          {dataGrid}
-          {this.state.isSearchOpen ? (
-            <AdvancedSearch
-              category="Grievances"
-              openPopup={this.state.isSearchOpen}
-              onClose={this.advanceSearchClosekHandler}
-            />
-          ) : null}
-        </div>
+        ) : null}
       </>
     );
   }
 }
 
-export default connect(null, mapDispatchToProps)(DrugDetailIBF);
+export default connect(mapStateToProps, mapDispatchToProps)(DrugDetailIBF);

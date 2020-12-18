@@ -38,6 +38,11 @@ const mapStateToProps = (state) => {
   };
 };
 
+const defaultListPayload = {
+  index: 0,
+  limit: 10,
+}
+
 class DrugDetailLA extends React.Component<any, any> {
   state = {
     isSearchOpen: false,
@@ -64,7 +69,13 @@ class DrugDetailLA extends React.Component<any, any> {
     selectedDrugs: Array(),
     drugData: Array(),
     lobCode: null,
+    listCount: 0,
   };
+
+  listPayload: any = {
+    index: 0,
+    limit: 10,
+  }
 
   advanceSearchClickHandler = (event) => {
     event.stopPropagation();
@@ -80,7 +91,6 @@ class DrugDetailLA extends React.Component<any, any> {
     if (this.state.selectedDrugs && this.state.selectedDrugs.length > 0) {
       let apiDetails = {};
       apiDetails['apiPart'] = laConstants.APPLY_LA_DRUG;
-      // apiDetails['pathParams'] = this.props?.formulary_id + "/" + this.state.lobCode + "/" + laConstants.TYPE_REPLACE;
       apiDetails['keyVals'] = [{ key: laConstants.KEY_ENTITY_ID, value: this.props?.formulary_id }];
       apiDetails['messageBody'] = {};
       apiDetails['messageBody']['selected_drug_ids'] = this.state.selectedDrugs;
@@ -93,32 +103,26 @@ class DrugDetailLA extends React.Component<any, any> {
       apiDetails['messageBody']['limited_access'] = "";
 
       if(this.state.activeTabIndex === 0){
-        console.log("-----REPLACE method-------")
         apiDetails['pathParams'] = this.props?.formulary_id + "/" + this.state.lobCode + "/" + laConstants.TYPE_REPLACE;
 
         // Replace Drug method call
         this.props.postReplaceLADrug(apiDetails).then(json => {
-          console.log("postReplaceLADrug - response is:" + JSON.stringify(json));
           if (json.payload && json.payload.code && json.payload.code === '200') {
             showMessage('Success', 'success');
             this.getLASummary();
-            console.log("The Saved State = ", this.state);
           }else{
             showMessage('Failure', 'error');
           }
         });
 
       } else if(this.state.activeTabIndex === 2) {
-        console.log("-----REMOVE method-------")
         apiDetails['pathParams'] = this.props?.formulary_id + "/" + this.state.lobCode + "/" + laConstants.TYPE_REMOVE;
 
         // Remove Drug method call
         this.props.postRemoveLADrug(apiDetails).then(json => {
-          console.log("postRemoveLADrug - response is:" + JSON.stringify(json));
           if (json.payload && json.payload.code && json.payload.code === '200') {
             showMessage('Success', 'success');
             this.getLASummary();
-            console.log("The Saved State = ", this.state);
           }else{
             showMessage('Failure', 'error');
           }
@@ -128,17 +132,30 @@ class DrugDetailLA extends React.Component<any, any> {
     }
   };
 
+  onPageSize = (pageSize) => {
+    this.listPayload.limit = pageSize
+    this.getLADrugsList({ limit: this.listPayload.limit });
+  }
+
+  onGridPageChangeHandler = (pageNumber: any) => {
+    this.listPayload.index = (pageNumber - 1) * this.listPayload.limit;
+    this.getLADrugsList({ index: this.listPayload.index, limit: this.listPayload.limit });
+  }
+
+  onClearFilterHandler = () => {
+    this.listPayload.index = 0;
+    this.listPayload.limit = 10;
+    this.getLADrugsList({ index: defaultListPayload.index, limit: defaultListPayload.limit });
+  }
+
   onSelectedTableRowChanged = (selectedRowKeys) => {
-    console.log('THe Selected Row Keys = ', selectedRowKeys);
     this.state.selectedDrugs = [];
     if (selectedRowKeys && selectedRowKeys.length > 0) {
       let selDrugs = selectedRowKeys.map(ele => {
-        console.log('THe so called ele = ', ele);
         return this.state.drugData[ele - 1]['md5_id'] ? this.state.drugData[ele - 1]['md5_id'] : ""
       });
 
       this.setState({ selectedDrugs: selDrugs })
-      console.log("THe sel Drugs = ", selDrugs);
     } else {
       this.setState({ selectedDrugs: [] })
     }
@@ -171,18 +188,16 @@ class DrugDetailLA extends React.Component<any, any> {
     });
   }
 
-  getLADrugsList = () => {
+  getLADrugsList = ({index = 0, limit = 10} = {}) => {
     let apiDetails = {};
     apiDetails['apiPart'] = laConstants.GET_LA_FORMULARY_DRUGS;
     apiDetails['pathParams'] = this.props?.formulary_id + "/" + getLobCode(this.props.formulary_lob_id);
-    apiDetails['keyVals'] = [{ key: laConstants.KEY_ENTITY_ID, value: this.props?.formulary_id }, { key: laConstants.KEY_INDEX, value: 0 }, { key: laConstants.KEY_LIMIT, value: 10 }];
+    apiDetails['keyVals'] = [{ key: laConstants.KEY_ENTITY_ID, value: this.props?.formulary_id }, { key: laConstants.KEY_INDEX, value: index }, { key: laConstants.KEY_LIMIT, value: limit }];
 
+    let listCount = 0;
     this.props.getDrugDetailsLAList(apiDetails).then((json) => {
       let tmpData = json.payload.result;
-      console.log(
-        "----------The Get Drug Details La list response = ",
-        tmpData
-      );
+      listCount = json.payload.count;
       var data: any[] = [];
       let count = 1;
       var gridData = tmpData.map((el) => {
@@ -222,10 +237,10 @@ class DrugDetailLA extends React.Component<any, any> {
         count++;
         return gridItem;
       });
-      console.log("-----The Drug Data = ", data);
       this.setState({
         drugData: data,
         data: gridData,
+        listCount: listCount,
       });
     });
 
@@ -290,6 +305,12 @@ class DrugDetailLA extends React.Component<any, any> {
             isFetchingData={false}
             enableResizingOfColumns
             data={this.state.data}
+            getPerPageItemSize={this.onPageSize}
+            selectedCurrentPage={(this.listPayload.index/this.listPayload.limit + 1)}
+            pageSize={this.listPayload.limit}
+            onGridPageChangeHandler={this.onGridPageChangeHandler}
+            totalRowsCount={this.state.listCount}
+            clearFilterHandler={this.onClearFilterHandler}
             rowSelection={{
               columnWidth: 50,
               fixed: true,

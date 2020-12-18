@@ -38,6 +38,12 @@ export const GET_VBID_CONTRACTS = "api/1/formulary-associated-contracts/";
 export const GET_DRUG_SUMMARY_LIS = "api/1/formulary-drug-summary-lis/";
 export const GET_LIS_FORMULARY_DRUGS = "api/1/formulary-drugs-lis/";
 
+// IBF TAB
+export const GET_DRUG_SUMMARY_IBF = "api/1/formulary-drug-summary-ibf/";
+export const GET_IBF_FORMULARY_DRUGS = "api/1/formulary-drugs-ibf/";
+export const GET_IBF_CUIS = "api/1/drug-me-shcuis"
+export const APPLY_IBF_DRUG = "api/1/apply-formulary-drug-ibf/";
+
 export const KEY_ENTITY_ID = "entity_id";
 export const KEY_INDEX = "index";
 export const KEY_LIMIT = "limit";
@@ -51,7 +57,12 @@ export const buildUrl = ({ refUrl = BASE_URL1, apiDetails }) => {
   let apiPart = apiDetails.apiPart;
   let pathParams = apiDetails.pathParams;
   let keyVals = apiDetails.keyVals;
-  let url = refUrl + apiPart + pathParams;
+  let url = refUrl + apiPart;
+
+  if(pathParams) {
+    url = url + pathParams;
+  }
+
   if (keyVals) {
     keyVals = keyVals.map((pair) => pair.key + "=" + pair.value);
     url = url + "?" + keyVals.join("&");
