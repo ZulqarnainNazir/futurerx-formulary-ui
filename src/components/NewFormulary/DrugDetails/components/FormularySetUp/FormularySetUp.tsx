@@ -26,6 +26,7 @@ import {
 } from "../../../../.././redux/slices/formulary/setup/setupOptionsSlice";
 import { ToastContainer } from 'react-toastify';
 import showMessage from "../../../Utils/Toast";
+import { trim } from "lodash";
 
 class FormularySetUp extends React.Component<any, any> {
   state = {
@@ -216,7 +217,7 @@ class FormularySetUp extends React.Component<any, any> {
       if(this.state.generalInformation.type_id === ""){
         msg.push("Formulary Type is required.");
       }
-      if(this.state.generalInformation.name === ""){
+      if(trim(this.state.generalInformation.name) === ""){
         msg.push("Formulary Name is required.");
       }
       if(this.state.generalInformation.method === ""){
@@ -224,6 +225,9 @@ class FormularySetUp extends React.Component<any, any> {
       }
       if(this.state.generalInformation.effective_date === ""){
         msg.push("Formulary Effective Date is required.");
+      }
+      if(this.state.generalInformation.service_year === ""){
+        msg.push("Formulary Service year is required.");
       }
       if(msg.length>0){
         msg.forEach((m)=>{showMessage(m, 'error');})

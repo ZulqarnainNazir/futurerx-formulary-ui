@@ -31,9 +31,11 @@ export async function getformulary(
 }
 
 export async function checkNameExist(name: string): Promise<boolean | any> {
-  let url = `${BASE_URL1}api/1/check-formulary-name`;
+  let url = `${BASE_URL1}api/1/check-formulary-name/`;
   if (name != null && name != undefined && name != "") {
-    url = url + `/${name}`;
+    url = url + `${name}`;
+  }else{
+    url = url + ` `;
   }
   // url= url+`/${this.clientId}`;
   url = url + `/1`;
@@ -70,10 +72,6 @@ export function composePostBody(input: any): any {
   payload.formulary_info.effective_date = "2020-12-18";
   payload.formulary_info.contract_year = input.GENERAL_INFO?.service_year;
   payload.formulary_info.id_state = input.GENERAL_INFO?.state_id;
-  // TIERS COUNTs- - - - - - - - - - - - -
-  payload.formulary_info.number_of_tiers = 1;
-  // payload.formulary_info.min_tiers = 1;
-  // payload.formulary_info.max_tiers = 7;
   // TODO  - - - - - - - - - - - - -
   //payload.formulary_info.id_lob = 1;
   // payload.formulary_info.code_value = "MC";
@@ -129,6 +127,13 @@ export function composePostBody(input: any): any {
   };
 
   // TIER DETAILS  - - - - - - - - - - - - -
+
+  payload.tiers = input?.tiers;
+  payload.formulary_info.number_of_tiers = input?.tiers?.length;
+  // payload.formulary_info.number_of_tiers = 1;
+  // payload.formulary_info.min_tiers = 1;
+  // payload.formulary_info.max_tiers = 7;
+
   // payload.tiers = [
   //   {
   //     id_formulary_tier: null,
@@ -141,8 +146,6 @@ export function composePostBody(input: any): any {
   //     id_tier: 1,
   //   },
   // ];
-
-  payload.tiers = input?.tiers;
 
   // TIER DETAILS  - - - - - - - - - - - - - OTHERs Pending...
 
