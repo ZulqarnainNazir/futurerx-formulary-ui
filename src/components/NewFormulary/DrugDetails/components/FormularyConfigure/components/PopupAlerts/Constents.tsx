@@ -1,6 +1,11 @@
 export const DELETE_ACTION = "Do you want to delete the version or the full formulary:"
 export const ARCHIVE_ACTION = "Do you want to archive the version or the full formulary:";
-export const SUCCESS_MSG = "Saved Successfully";
+export const SUCCESS_MSG = {
+	"clone":"Saved Successfully",
+	"newVersion":"Saved Successfully",
+	"delete":"Deleted Successfully",
+	"archive":"Archive Successfully"
+};
 export const ERROR_MSG = "Somthing Went Wrong";
 export const BUTTONS = {
     'clone': [
