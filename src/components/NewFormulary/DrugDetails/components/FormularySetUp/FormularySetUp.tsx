@@ -50,6 +50,10 @@ class FormularySetUp extends React.Component<any, any> {
       supplemental_benefits :[] as any,
     },
     tiers: [],
+    edit_info: {
+      edits: [],
+      edits_no: []
+    },
     setupOptions: {},
   };
   
@@ -118,6 +122,8 @@ class FormularySetUp extends React.Component<any, any> {
           supplemental_benefits: newProps.formulary.supplemental_benefits.map(el => el.id_supplemental_benefit)
         },
         tiers: [...newProps.formulary.tiers],
+        fetchedEditInfo: newProps.formulary.edit_info,
+        edit_info: this.getEditInfo(newProps.formulary.edit_info),
         setupOptions: newProps.setupOptions,
       });
     }
@@ -131,6 +137,43 @@ class FormularySetUp extends React.Component<any, any> {
       });
     }
   };
+  getEditInfo = (editInfo:any) => {
+    const editTrue = editInfo.filter(obj => obj.id_checked === true).map(e => e.id_edit);
+    const editFalse = editInfo.filter(obj => obj.id_checked === false).map(e => e.id_edit);
+    console.log(editTrue,editFalse)
+    const newObj = {
+      edits: editTrue,
+      edits_no: editFalse
+    }
+    return newObj;
+  }
+  formularyRadioChangeHandler = (event: React.ChangeEvent<HTMLInputElement>,id: any, type) => {
+    console.log(event.target.value, id)
+    console.log(this.state.edit_info)
+    let checked = event.target.value;
+    const updatedEditInfo:any = {...this.state.edit_info}
+    if(type === 'checkbox'){
+      let index = updatedEditInfo.edits.indexOf(id);
+      index === -1 ? updatedEditInfo.edits.push(id) : updatedEditInfo.edits.splice(index,1);
+    }else{
+      if(checked === 'true'){
+        if(updatedEditInfo.edits_no.indexOf(id) !== -1){
+          let index = updatedEditInfo.edits_no.indexOf(id);
+          updatedEditInfo.edits_no.splice(index,1)
+        }
+        updatedEditInfo.edits.push(id)
+      }else{
+        if(updatedEditInfo.edits.indexOf(id) !== -1){
+          let index = updatedEditInfo.edits.indexOf(id);
+          updatedEditInfo.edits.splice(index,1)
+        }
+        updatedEditInfo.edits_no.push(id)
+      }
+    }
+    this.setState({
+      edit_info: updatedEditInfo
+    })
+  }
   updateInputField = (e) => {
     const newObj = { ...this.state.generalInformation };
     newObj[e.currentTarget.name] = e.currentTarget.value;
@@ -259,12 +302,6 @@ class FormularySetUp extends React.Component<any, any> {
   selectTierHandler = (e) => {
     const updatedTiers:any = [...this.state.tiers];
     const tiersLength = updatedTiers.length;
-    const newTier:any = {
-      id_formulary_tier: null,
-      id_tier: 0,
-      id_tier_label: null,
-      tier_name: ''
-    };
     if(tiersLength > e){
       updatedTiers.length = e;  
     }else{
@@ -311,7 +348,10 @@ class FormularySetUp extends React.Component<any, any> {
               <>
               {this.state.generalInformation.type !== 'Commercial' ? 
                 <MedicareInformation medicareOptions={this.state.medicareInfo} medicareCheck={this.medicareCheck}/> : null}
-              {this.state.generalInformation.type !== 'Commercial' ? <FormularyDesign /> : null}
+              {this.state.generalInformation.type !== 'Commercial' ? (
+                <FormularyDesign edit_info={this.state.edit_info}
+                formularyRadioChange={this.formularyRadioChangeHandler}/>
+              ) : null}
               <FormularyTiers 
                 tiers={this.state.tiers}
                 selectTier={this.selectTierHandler}
