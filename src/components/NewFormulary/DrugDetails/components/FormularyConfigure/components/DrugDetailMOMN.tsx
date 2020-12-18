@@ -43,6 +43,11 @@ const mapStateToProps = (state) => {
   };
 };
 
+const defaultListPayload = {
+  index: 0,
+  limit: 10,
+}
+
 class DrugDetailMOMN extends React.Component<any, any> {
   state = {
     isSearchOpen: false,
@@ -63,7 +68,13 @@ class DrugDetailMOMN extends React.Component<any, any> {
     lobCode: null,
     indicatorMM: "",
     showDG: false,
+    listCount: 0,
   };
+
+  listPayload: any = {
+    index: 0,
+    limit: 10,
+  }
 
   advanceSearchClickHandler = (event) => {
     event.stopPropagation();
@@ -147,6 +158,22 @@ class DrugDetailMOMN extends React.Component<any, any> {
     }
   };
 
+  onPageSize = (pageSize) => {
+    this.listPayload.limit = pageSize
+    this.getMOMNDrugsList({ limit: this.listPayload.limit });
+  }
+
+  onGridPageChangeHandler = (pageNumber: any) => {
+    this.listPayload.index = (pageNumber - 1) * this.listPayload.limit;
+    this.getMOMNDrugsList({ index: this.listPayload.index, limit: this.listPayload.limit });
+  }
+
+  onClearFilterHandler = () => {
+    this.listPayload.index = 0;
+    this.listPayload.limit = 10;
+    this.getMOMNDrugsList({ index: defaultListPayload.index, limit: defaultListPayload.limit });
+  }
+
   onSelectedTableRowChanged = (selectedRowKeys) => {
     this.state.selectedDrugs = [];
     if (selectedRowKeys && selectedRowKeys.length > 0) {
@@ -191,7 +218,7 @@ class DrugDetailMOMN extends React.Component<any, any> {
     });
   };
 
-  getMOMNDrugsList = () => {
+  getMOMNDrugsList = ({index = 0, limit = 10} = {}) => {
     if (this.state.indicatorMM) {
       let apiDetails = {};
       apiDetails["apiPart"] = momnConstants.GET_MONM_FORMULARY_DRUGS;
@@ -203,8 +230,8 @@ class DrugDetailMOMN extends React.Component<any, any> {
         "MO";
       apiDetails["keyVals"] = [
         { key: momnConstants.KEY_ENTITY_ID, value: this.props?.formulary_id },
-        { key: momnConstants.KEY_INDEX, value: 0 },
-        { key: momnConstants.KEY_LIMIT, value: 10 },
+        { key: momnConstants.KEY_INDEX, value: index },
+        { key: momnConstants.KEY_LIMIT, value: limit },
       ];
 
       if (this.state.activeTabIndex === 2) {
@@ -212,8 +239,10 @@ class DrugDetailMOMN extends React.Component<any, any> {
         apiDetails["messageBody"]["selected_criteria_ids"] = ["Y"];
       }
 
+      let listCount = 0;
       this.props.getDrugDetailsMOList(apiDetails).then((json) => {
         let tmpData = json.payload.result;
+        listCount = json.payload.count;
         var data: any[] = [];
         let count = 1;
         var gridData = tmpData.map((el) => {
@@ -295,6 +324,7 @@ class DrugDetailMOMN extends React.Component<any, any> {
           drugData: data,
           data: gridData,
           showDG: true,
+          listCount: listCount,
         });
       });
     }
@@ -377,7 +407,12 @@ class DrugDetailMOMN extends React.Component<any, any> {
           isFetchingData={false}
           enableResizingOfColumns
           data={this.state.data}
-          clearFilterHandler={() => {}}
+          getPerPageItemSize={this.onPageSize}
+          selectedCurrentPage={(this.listPayload.index/this.listPayload.limit + 1)}
+          pageSize={this.listPayload.limit}
+          onGridPageChangeHandler={this.onGridPageChangeHandler}
+          totalRowsCount={this.state.listCount}
+          clearFilterHandler={this.onClearFilterHandler}
           rowSelection={{
             columnWidth: 50,
             fixed: true,
