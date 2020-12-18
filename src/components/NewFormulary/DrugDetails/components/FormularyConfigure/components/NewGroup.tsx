@@ -16,6 +16,7 @@ import { getStGrouptDescription } from "../../../../../../redux/slices/formulary
 interface Props {
   tooltip?: string;
   formType?: number;
+  editMode?:boolean;
 }
 
 const initialFormData = {
@@ -73,7 +74,7 @@ function NewGroup(props: any) {
   const onChange = (e) => {
     if (Object.keys(props.StGDData).length > 0 && e && e != 'no') {
       //const verLength = Object.keys(props.version).length;
-      const isEditable = props.version[Number(e.split(' ')[1])-1].is_setup_complete
+      const isEditable = props.version[Number(e.split(' ')[1])-1]?props.version[Number(e.split(' ')[1])-1].is_setup_complete:false
       setEditable(isEditable)
       setChangeEvent(true)
       updateFormData({
@@ -98,7 +99,10 @@ function NewGroup(props: any) {
         ...props.StGDData
       });
     }
-  }, [props.StGDData || props.saveGdm])
+    if(!props.editMode){
+      setEditable(false)
+    }
+  }, [props.StGDData || props.saveGdm || props.editMode])
 
   const handleSubmit = (e) => {
     e.preventDefault()

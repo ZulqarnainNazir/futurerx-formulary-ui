@@ -189,8 +189,8 @@ class GPM extends React.Component<any, any>{
                                 </div>
                             </div>
                         </div>
-                        {this.state.newGroup ? <NewGroup tooltip={this.state.tooltip} formType={1}/> : (
-                            <NewGroup tooltip={this.state.tooltip} formType={0} title={'NEW GROUP DESCRIPTION'}/>
+                        {this.state.newGroup ? <NewGroup tooltip={this.state.tooltip} formType={1} editMode={true}/> : (
+                            <NewGroup tooltip={this.state.tooltip} formType={0} title={'NEW GROUP DESCRIPTION'} editMode={false}/>
                         )}
                     </div>
 
