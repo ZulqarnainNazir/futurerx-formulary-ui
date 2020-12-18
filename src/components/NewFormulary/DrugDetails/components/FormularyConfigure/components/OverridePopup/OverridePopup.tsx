@@ -88,7 +88,7 @@ class OverridePopup extends React.Component<any, any> {
         if (event.target.value) {
             switch (type) {
                 case 'category':
-                    this.props.onOverrideCategory(event.target.value);
+                    this.props.onOverrideCategory(event.target.value,true);
                     this.setState({categoryText: event.target.value});
                     break;
                 case 'class':

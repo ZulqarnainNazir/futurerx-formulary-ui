@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { getDrugDetailsSSMSummary } from "./ssmActionCreation";
-import { getSSMSummaryFulfilled, getSSMSummaryRejected } from "./ssmReducers";
+import { getDrugDetailsSSMSummary, getDrugDetailsSSMList } from "./ssmActionCreation";
+import { getSSMSummaryFulfilled, getSSMSummaryRejected, postSSMListFulfilled, postSSMListRejected } from "./ssmReducers";
 
 const ssmState: any = {
   data: {},
@@ -20,6 +20,23 @@ export const ssmSlice = createSlice({
     }),
     builder.addCase(getDrugDetailsSSMSummary.rejected, (state, action) => {
       getSSMSummaryRejected(state, action);
+    })
+  ),
+});
+
+export const ssmListSlice = createSlice({
+  name: "ssmDrugList",
+  initialState: ssmState,
+  reducers: {},
+  extraReducers: (builder) => (
+    builder.addCase(getDrugDetailsSSMList.pending, (state, action) => {
+      state.isLoading = true;
+    }),
+    builder.addCase(getDrugDetailsSSMList.fulfilled, (state, action) => {
+      postSSMListFulfilled(state, action);
+    }),
+    builder.addCase(getDrugDetailsSSMList.rejected, (state, action) => {
+      postSSMListRejected(state, action);
     })
   ),
 });
