@@ -20,7 +20,7 @@ const PAGDMInitialState: PAGDMState = {
   success:null
 };
 
-interface StMessage {
+interface PaMessage {
   error: any;
   success:any;
 }
@@ -56,7 +56,7 @@ const gdm = createSlice({
       state.success = payload.success.data;
     },
     getFailed: loadingFailed,
-    setStGroupDetails(state, { payload }: PayloadAction<StGroupResult>) {
+    setPaGroupDetails(state, { payload }: PayloadAction<StGroupResult>) {
       const {
         formulary_id,
         current_group_id,
@@ -66,7 +66,7 @@ const gdm = createSlice({
       state.current_group_id = current_group_id;
       state.current_group_des_id = current_group_des_id;
     },
-    cleanMessages(state, { payload }: PayloadAction<StMessage>){
+    cleanMessages(state, { payload }: PayloadAction<PaMessage>){
       state.error = payload.error;
       state.success = payload.error;
     }
@@ -77,7 +77,7 @@ export const {
   getPending,
   getSuccess,
   getFailed,
-  setStGroupDetails,
+  setPaGroupDetails,
   cleanMessages
 } = gdm.actions;
 
@@ -96,7 +96,7 @@ export const savePAGDM = createAsyncThunk(
   }
 );
 
-export const getSTGroupDetails = createAsyncThunk(
+export const getPAGroupDetails = createAsyncThunk(
   "gdmdetail",
   async (arg: any, { dispatch }) => {
     const obj = {
@@ -104,7 +104,7 @@ export const getSTGroupDetails = createAsyncThunk(
       current_group_id: arg.current_group_id,
       current_group_des_id: arg.current_group_des_id
     };
-    dispatch(setStGroupDetails(obj));
+    dispatch(setPaGroupDetails(obj));
   }
 );
 

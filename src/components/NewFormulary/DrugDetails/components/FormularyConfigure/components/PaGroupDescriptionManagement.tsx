@@ -8,6 +8,7 @@ import Button from '../../../../../shared/Frx-components/button/Button';
 import { Box, Grid, Input } from '@material-ui/core';
 import Groups from './Groups'
 import PaNewGroupForm from './PaNewGroupForm';
+import { getPAGroupDetails } from "../../../../../../redux/slices/formulary/pagdm/pagdmSlice";
 import { getPaSummary, getPaGrouptDescriptions,getPaGrouptDescriptionDetail, getPaTypes, getDrugLists,getPaGrouptDescriptionVersions,getPaGrouptDescription } from "../../../../../../redux/slices/formulary/pa/paActionCreation";
 
 
@@ -26,6 +27,7 @@ function mapDispatchToProps(dispatch) {
         getPaGrouptDescriptionDetail: (a) => dispatch(getPaGrouptDescriptionDetail(a)),
         getPaGrouptDescriptionVersions: (a) => dispatch(getPaGrouptDescriptionVersions(a)),
         getPaGrouptDescription: (a) => dispatch(getPaGrouptDescription(a)),
+        getPAGroupDetails:(arg)=>dispatch(getPAGroupDetails(arg)),
     };
 }
 
@@ -84,6 +86,12 @@ class PaGroupDescriptionManagement extends React.Component<any, any>{
                 latestVerion:latestVerion
             })
             this.props.getPaGrouptDescription(latestVerion)
+
+            this.props.getPAGroupDetails({
+                formulary_id: this.props.formulary_id,
+                current_group_id: param,
+                current_group_des_id: latestVerion
+            })
         });
         this.setState({
             newGroup: true,
