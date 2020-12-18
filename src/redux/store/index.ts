@@ -3,7 +3,6 @@ import { memberSummarySlice } from "../slices/member-summary/MemberSummarySlice"
 import { userPrefsSlice } from "../slices/users/UserPrefsSlice";
 import { formularySummarySlice } from "../slices/formulary/formularySummarySlice";
 import { combineReducers } from 'redux'
-import { formularyBaseSlice } from "../slices/formulary/formularyBase/formularyBaseSlice";
 import applicationReducer from "../slices/formulary/application/applicationSlice";
 import dashboardReducer from "../slices/formulary/dashboard/dashboardSlice";
 import {gridSettingsSlice} from "../slices/formulary/gridHandler/gridSettingsSlice";
@@ -30,7 +29,6 @@ const middleware = [
 
 const memberSummaryReducer = memberSummarySlice.reducer;
 const userPrefsReducer = userPrefsSlice.reducer;
-const formularyBaseReducer = formularyBaseSlice.reducer;
 const gridSettingsReducer = gridSettingsSlice.reducer;
 const tierSliceReducer = tierSlice.reducer
 const switchReducer = switchSlice.reducer
@@ -45,17 +43,16 @@ const pa = paSlice.reducer
 // The store is configured with the state and the corresponding reducers.
 const store = configureStore({
   reducer: {
+    application: applicationReducer,
+    setup: setupReducer,
+    setupOptions: setupOptionsReducer,
     member_summary: memberSummaryReducer,
     user_prefs: userPrefsReducer,
-    formularBase: formularyBaseReducer,
     dashboard: dashboardReducer,
     tierSliceReducer: tierSliceReducer,
     switchReducer: switchReducer,
     validationReducer: validationReducer,
-    application: applicationReducer,
     gridSettings: gridSettingsReducer,
-    setup: setupReducer,
-    setupOptions: setupOptionsReducer,
     header: headerReducer,
     saveGdm:gdmReducer,
     stepTherapyReducer: stepTherapy,

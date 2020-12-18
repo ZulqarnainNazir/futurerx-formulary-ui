@@ -42,7 +42,45 @@
         }
     }
 }
-
+label.custom-checkbox{
+    &.mb-16{
+        margin-bottom: 16px;
+    }
+    span.ant-checkbox{
+        margin-left: 0;
+        padding-top: 0;
+        span.ant-checkbox-inner{
+            margin-left: 0;
+            border: 2px solid #d5d5d5;
+            border-radius: 4px;
+        }
+        + span{
+            font-size: 12px;
+            color: #707683;
+            padding-left: 0;
+            margin-left: 10px;
+            line-height: 16px;
+            text-transform: none;
+        }
+    }
+    &:hover, .ant-checkbox:hover{
+        .ant-checkbox-inner{
+            border-color: #2055B5;
+        }
+    }
+    .ant-checkbox-input:focus + .ant-checkbox-inner{
+        border-color: #d5d5d5;
+    }
+    span.ant-checkbox-checked {
+        .ant-checkbox-inner{
+            background: #2055B5;
+            border-color: #2055B5 !important;
+        }
+        &:after{
+            display: none;
+        }
+    }
+}
 .ant-table-row-expand-icon-cell {
     position: sticky !important;
     right: 0;
