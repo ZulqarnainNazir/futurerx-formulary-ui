@@ -55,6 +55,12 @@ interface IBFState {
   selectedCuid: any,
   showGrid: boolean,
   gridApply: boolean,
+  listCount: number,
+}
+
+const defaultListPayload = {
+  index: 0,
+  limit: 10,
 }
 
 class DrugDetailIBF extends React.Component<any, any> {
@@ -84,7 +90,13 @@ class DrugDetailIBF extends React.Component<any, any> {
     selectedCuid: null,
     showGrid: false,
     gridApply: false,
+    listCount: 0,
   };
+
+  listPayload: any = {
+    index: 0,
+    limit: 10,
+  }
 
   advanceSearchClickHandler = (event) => {
     event.stopPropagation();
@@ -145,6 +157,22 @@ class DrugDetailIBF extends React.Component<any, any> {
     }
   };
 
+  onPageSize = (pageSize) => {
+    this.listPayload.limit = pageSize
+    this.getIBFDrugsList({ limit: this.listPayload.limit });
+  }
+
+  onGridPageChangeHandler = (pageNumber: any) => {
+    this.listPayload.index = (pageNumber - 1) * this.listPayload.limit;
+    this.getIBFDrugsList({ index: this.listPayload.index, limit: this.listPayload.limit });
+  }
+
+  onClearFilterHandler = () => {
+    this.listPayload.index = 0;
+    this.listPayload.limit = 10;
+    this.getIBFDrugsList({ index: defaultListPayload.index, limit: defaultListPayload.limit });
+  }
+
   onSelectedTableRowChanged = (selectedRowKeys) => {
     this.state.selectedDrugs = [];
     if (selectedRowKeys && selectedRowKeys.length > 0) {
@@ -198,19 +226,21 @@ class DrugDetailIBF extends React.Component<any, any> {
     });
   }
 
-  getIBFDrugsList = () => {
+  getIBFDrugsList = ({index = 0, limit = 10} = {}) => {
     let apiDetails = {};
     apiDetails["apiPart"] = ibfConstants.GET_IBF_FORMULARY_DRUGS;
     apiDetails["pathParams"] = this.props?.formulary_id + "/" + getLobCode(this.props.formulary_lob_id);
-    apiDetails["keyVals"] = [ { key: ibfConstants.KEY_ENTITY_ID, value: this.props?.formulary_id }, { key: ibfConstants.KEY_INDEX, value: 0 }, { key: ibfConstants.KEY_LIMIT, value: 10 } ];
+    apiDetails["keyVals"] = [ { key: ibfConstants.KEY_ENTITY_ID, value: this.props?.formulary_id }, { key: ibfConstants.KEY_INDEX, value: index }, { key: ibfConstants.KEY_LIMIT, value: limit } ];
 
     if (this.state.activeTabIndex === 2) {
       apiDetails["messageBody"] = {};
       apiDetails["messageBody"]["selected_criteria_ids"] = [this.state.selectedCuid?.id_me_shcui];
     }
 
+    let listCount = 0;
     this.props.getDrugDetailsIBFList(apiDetails).then((json) => {
       let tmpData = json.payload.result;
+      listCount = json.payload.count;
       var data: any[] = [];
       let count = 1;
       var gridData = tmpData.map((el) => {
@@ -287,6 +317,7 @@ class DrugDetailIBF extends React.Component<any, any> {
       this.setState({
         data: gridData,
         drugData: data,
+        listCount: listCount,
       });
     });
   }
@@ -372,7 +403,12 @@ class DrugDetailIBF extends React.Component<any, any> {
           isFetchingData={false}
           enableResizingOfColumns
           data={this.state.data}
-          clearFilterHandler={() => {}}
+          getPerPageItemSize={this.onPageSize}
+          selectedCurrentPage={(this.listPayload.index/this.listPayload.limit + 1)}
+          pageSize={this.listPayload.limit}
+          onGridPageChangeHandler={this.onGridPageChangeHandler}
+          totalRowsCount={this.state.listCount}
+          clearFilterHandler={this.onClearFilterHandler}
           rowSelection={{
             columnWidth: 50,
             fixed: true,

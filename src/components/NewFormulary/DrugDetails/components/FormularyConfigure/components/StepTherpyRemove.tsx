@@ -11,7 +11,7 @@ import "../../../../../ClaimsGrid/ClaimsGrid.scss";
 import "./STRemove.scss";
 import * as constants from "../../../../../../api/http-commons";
 import getLobCode from "../../../../Utils/LobUtils";
-import { tierColumns } from "../../../../../../utils/grid/columns";
+import { stColumns } from "../../../../../../utils/grid/columns";
 import AdvancedSearch from './search/AdvancedSearch';
 import showMessage from "../../../../Utils/Toast";
 import Button from "../../../../../shared/Frx-components/button/Button";
@@ -131,6 +131,9 @@ class DrugGrid extends React.Component<any, any> {
         let gridItem = {};
         gridItem['id'] = count;
         gridItem['key'] = count;
+        gridItem['stGroupDescription'] = element.st_group_description;
+        gridItem['stType'] = element.st_type;
+        gridItem['stValue'] = element.st_value;
         gridItem['tier'] = element.tier_value;
         gridItem['fileType'] = element.file_type ? "" + element.file_type : "";
         gridItem['dataSource'] = element.data_source ? "" + element.data_source : "";
@@ -205,7 +208,7 @@ class DrugGrid extends React.Component<any, any> {
   render() {
     const columns = [
       {
-        title: "ST Group Description",
+        title: "ST GROUP DESCRIPTION",
         dataIndex: "st_group_description_name",
         key: "st_group_description_name",
       },
@@ -234,7 +237,7 @@ class DrugGrid extends React.Component<any, any> {
         <div className="white-bg">
           <Row justify="end">
             <Col>
-              <Button label="Apply" onClick={this.openTierGridContainer}  />
+              <Button label="Apply" onClick={this.openTierGridContainer} disabled={this.props.configureSwitch} />
             </Col>
           </Row>
         </div>
@@ -256,9 +259,9 @@ class DrugGrid extends React.Component<any, any> {
                   onSearch={() => { }}
                   fixedColumnKeys={[]}
                   pagintionPosition="topRight"
-                  gridName="TIER"
+                  gridName="DRUG GRID"
                   enableSettings={false}
-                  columns={tierColumns()}
+                  columns={stColumns()}
                   scroll={{ x: 2000, y: 377 }}
                   isFetchingData={false}
                   enableResizingOfColumns

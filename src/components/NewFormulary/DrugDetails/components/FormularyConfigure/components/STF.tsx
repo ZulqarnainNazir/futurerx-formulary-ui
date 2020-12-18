@@ -11,7 +11,7 @@ import { getStSummary,getStGrouptDescriptions, getStTypes, getDrugLists,postForm
 import "./STF.scss";
 import * as constants from "../../../../../../api/http-commons";
 import FrxDrugGridContainer from "../../../../../shared/FrxGrid/FrxDrugGridContainer";
-import { tierColumns } from "../../../../../../utils/grid/columns";
+import { stColumns } from "../../../../../../utils/grid/columns";
 import AdvancedSearch from './search/AdvancedSearch';
 
 function mapDispatchToProps(dispatch) {
@@ -192,6 +192,9 @@ function mapDispatchToProps(dispatch) {
             gridItem['id'] = count;
             gridItem['key'] = count;
             gridItem['tier'] = element.tier_value;
+            gridItem['stGroupDescription'] = element.st_group_description;
+            gridItem['stType'] = element.st_type;
+            gridItem['stValue'] = element.st_value;
             gridItem['fileType'] = element.file_type ? "" + element.file_type : "";
             gridItem['dataSource'] = element.data_source ? "" + element.data_source : "";
             gridItem['labelName'] = element.drug_label_name ? "" + element.drug_label_name : "";
@@ -264,7 +267,7 @@ function mapDispatchToProps(dispatch) {
                                 <Grid item xs={4}>
                                     <div className="group">
                                         <label>ST GROUP DESCRIPTION<span className="astrict">*</span></label>
-                                        <DropDown options={this.state.stGroupDescription} valueProp="id_st_group_description" dispProp="text" onSelect={this.dropDownSelectHandlerGroupDescription}/>
+                                        <DropDown options={this.state.stGroupDescription} valueProp="id_st_group_description" dispProp="text" onSelect={this.dropDownSelectHandlerGroupDescription} disabled={this.props.configureSwitch}/>
                                     </div>
 
                                     <div className="group mt-10">
@@ -301,24 +304,24 @@ function mapDispatchToProps(dispatch) {
                                    
                                     <div className="group">
                                         <label>ST Type <span className="astrict">*</span></label>
-                                        <DropDown options={this.state.stTypes} valueProp="st_type_value" dispProp="st_type_name" onSelect={this.dropDownSelectHandlerStType}/>
+                                        <DropDown options={this.state.stTypes} valueProp="st_type_value" dispProp="st_type_name" onSelect={this.dropDownSelectHandlerStType} disabled={this.props.configureSwitch}/>
                                     </div>
 
                                     <div className="group">
                                         <label>ST Value <span className="astrict">*</span></label>
-                                        <input type="text" name="stValue" onChange={this.handleChange} />
+                                        <input type="text" name="stValue" onChange={this.handleChange} disabled={this.props.configureSwitch} />
                                     </div>
                                 </Grid>
 
                                 <Grid item xs={4}>
                                 <div className="group">
                                         <label>package <span className="astrict">*</span></label>
-                                        <input type="text" />
+                                        <input type="text" disabled={this.props.configureSwitch} />
                                     </div>
                                 </Grid>
                             </Grid>
                             <Box display="flex" justifyContent="flex-end">
-                                <Button label="Apply" onClick={this.settingFormApplyHandler}/>
+                                <Button label="Apply" onClick={this.settingFormApplyHandler} disabled={this.props.configureSwitch}/>
                             </Box>
                         </div>
 
@@ -343,7 +346,7 @@ function mapDispatchToProps(dispatch) {
                   pagintionPosition="topRight"
                   gridName="TIER"
                   enableSettings={false}
-                  columns={tierColumns()}
+                  columns={stColumns()}
                   scroll={{ x: 2000, y: 377 }}
                   isFetchingData={false}
                   enableResizingOfColumns

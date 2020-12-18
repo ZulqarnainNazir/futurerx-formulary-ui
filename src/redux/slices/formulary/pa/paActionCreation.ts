@@ -13,9 +13,9 @@ const GET_PA_GROUP_DESCRIPTION_DETAIL_URL = BASE_URL1 + "/api/1/mcr-st-group-des
 const POSt_PA_GROUP_DESCRIPTION_URL = BASE_URL1 + "api/1/mcr-pa-group-description/1/";
 const POST_FORUMULARY_DRUG_PA_URL = BASE_URL1 + "api/1/formulary-drugs-pa/";
 const POST_APPLY_FORUMULARY_DRUG_PA_URL = BASE_URL1 + "api/1/apply-formulary-drug-pa/";
-
+const POST_RELATED_FORUMULARY_DRUG_PA_URL = BASE_URL1 + "api/1/related-formulary-drugs/";
 const POST_CRITERIA_LIST_PA_URL = BASE_URL1 + "api/1/criteria-list-pa/";
-
+const GET_LOB_FORMULARIES_URL = BASE_URL1 + "/api/1/lob-formularies/";
 
 export const getPaSummary = createAsyncThunk(
   "formulary_summary/getPaSummary",
@@ -174,7 +174,7 @@ export const postPAGroupDescription = createAsyncThunk(
     let pathParams = apiDetails.pathParams;
     let keyVals = pathParams.keyVals;
     let messageBody = apiDetails.messageBody;
-    let POST_URL = BASE_URL1 + POSt_PA_GROUP_DESCRIPTION_URL + pathParams;
+    let POST_URL =  POSt_PA_GROUP_DESCRIPTION_URL + pathParams;
     if(keyVals){
       keyVals = keyVals.map(pair => pair.key+'='+pair.value);
       POST_URL = POST_URL + "?" + keyVals.join('&');
@@ -184,7 +184,7 @@ export const postPAGroupDescription = createAsyncThunk(
         method: 'POST',
         body: JSON.stringify(messageBody),
         headers: {
-            'Authorization': 'Bearer a8251940-84a1-4e03-a5e8-43df60f9d731',
+            'Authorization': 'Bearer 6356291c-5b3e-4313-878b-dea9538c53cf',
             'Accept': 'application/json',
             'Content-Type': 'application/json;charset=UTF-8',
         }
@@ -304,6 +304,7 @@ export const postApplyFormularyDrugPA = createAsyncThunk(
       keyVals = keyVals.map(pair => pair.key+'='+pair.value);
       POST_URL = POST_URL + "?" + keyVals.join('&');
     }
+
     console.log("postApplyFormularyDrugPA action creator:: url: " + POST_URL);
     const requestHeaders  = {
         method: 'POST',
@@ -356,6 +357,66 @@ export const postCriteriaListPA = createAsyncThunk(
       })
       .then((json) => {
         console.log("postCriteriaListPA: ", json);
+        return json;
+      });
+  }
+);
+
+
+export const getLobFormularies = createAsyncThunk(
+  "formulary_summary/getLobFormularies",
+  async (apiDetails: any) => {
+    console.log("getLobFormularies action creator:: url: " + GET_LOB_FORMULARIES_URL + apiDetails.formulary_type_id);
+    const requestHeaders  = {
+        // method: 'POST',
+        // body: JSON.stringify(summary_id),
+        headers: {
+            'Authorization': 'Bearer 1e05ff8b-a0af-4a8f-8915-487321900f21',
+            'Accept': 'application/json',
+            'Content-Type': 'application/json;charset=UTF-8',
+        }
+    }
+    return fetch(GET_LOB_FORMULARIES_URL + apiDetails.formulary_type_id +'/'+apiDetails.formulary_lob_id ,requestHeaders)
+      .then((response) => {
+        if (!response.ok) throw Error(response.statusText);
+        return response.json();
+      })
+      .then((json) => {
+        console.log("getLobFormularies: ", json);
+        return json;
+      });
+  }
+);
+
+export const postRelatedFormularyDrugPA = createAsyncThunk(
+  "tier/postRelatedFormularyDrugPA",
+  async (apiDetails: any) => {
+    
+    let pathParams = apiDetails.pathParams;
+    let keyVals = apiDetails.keyVals;
+    let messageBody = apiDetails.messageBody;
+    let POST_URL = POST_RELATED_FORUMULARY_DRUG_PA_URL + pathParams ;
+    if(keyVals){
+      keyVals = keyVals.map(pair => pair.key+'='+pair.value);
+      POST_URL = POST_URL + "?" + keyVals.join('&');
+    }
+    console.log("postRelatedFormularyDrugPA action creator:: url: " + POST_URL);
+    const requestHeaders  = {
+        method: 'POST',
+        body: JSON.stringify(messageBody),
+        headers: {
+            'Authorization': 'Bearer baf65faa-8fee-4d08-98f0-29ffb04cb1fc',
+            'Accept': 'application/json',
+            'Content-Type': 'application/json;charset=UTF-8',
+        }
+    }
+    return fetch(POST_URL,requestHeaders)
+      .then((response) => {
+        if (!response.ok) throw Error(response.statusText);
+        return response.json();
+      })
+      .then((json) => {
+        console.log("postFormularyDrugPA: ", json);
         return json;
       });
   }
