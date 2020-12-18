@@ -220,7 +220,7 @@ class FormularySetUp extends React.Component<any, any> {
     });
   };
   onDatePickerChangeHandler = (e,section, stateProp) => {
-    const date = e._d.toLocaleDateString();
+    const date = `${e._d.getFullYear()}-${e._d.getMonth()+1}-${e._d.getDate()}`;
     const newObj = { ...this.state[section] };
     newObj[stateProp] = date
     this.setState({
