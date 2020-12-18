@@ -226,7 +226,8 @@ class FormularySetUp extends React.Component<any, any> {
         msg.push("Formulary Effective Date is required.");
       }
       if(msg.length>0){
-        showMessage(msg[0], 'error');
+        msg.forEach((m)=>{showMessage(m, 'error');})
+        //showMessage(msg[0], 'error');
         return;
       }
     }
@@ -237,6 +238,7 @@ class FormularySetUp extends React.Component<any, any> {
       GENERAL_INFO: this.state.generalInformation,
       supplemental_benefit_info: this.state.supplemental_benefit_info,
       medicare_contract_types: this.state.medicareInfo,
+      tiers: this.state.tiers,
     }
     this.props.saveFormulary(input);
   };
@@ -348,8 +350,11 @@ class FormularySetUp extends React.Component<any, any> {
 }
 
 const mapStateToProps = (state) => {
-  // console.log("SP  -  -  -  -  -  -  -  -  -  -  -  - STATE");
-  // console.log(state);
+   console.log("SP  -  -  -  -  -  -  -  -  -  -  -  - STATE");
+   console.log(state?.setup?.messageType +" - "+ state?.setup?.message  );
+  if(state?.setup?.messageType!=="" && state?.setup?.message !==""){
+    showMessage(state?.setup?.message, state?.setup?.messageType);
+  }
   return {
     mode: state?.application?.mode,
     formulary_id: state?.application?.formulary_id,

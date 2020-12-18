@@ -118,31 +118,33 @@ export function composePostBody(input: any): any {
     removed_formulary_medicare_contracts: [],
   };
 
-  // DESIGN  - - - - - - - - - - - - -
+  // DESIGN  - - - - - - - - - - - - - OTHERs Pending...
+  //  edits: [1, 5, 6, 7, 8, 9, 12],
 
   payload.edit_info = {
-    edits: [1, 5, 6, 7, 8, 9, 12],
-    edits_no: [],
+    edits: [1, 6],
+    edits_no: [5],
     custom_edits: [],
     removed_formulary_edits: [],
   };
 
   // TIER DETAILS  - - - - - - - - - - - - -
+  // payload.tiers = [
+  //   {
+  //     id_formulary_tier: null,
+  //     id_tier_label: 1,
+  //     id_tier: 0,
+  //   },
+  //   {
+  //     id_formulary_tier: null,
+  //     id_tier_label: 3,
+  //     id_tier: 1,
+  //   },
+  // ];
 
-  payload.tiers = [
-    {
-      id_formulary_tier: null,
-      id_tier_label: 1,
-      id_tier: 0,
-    },
-    {
-      id_formulary_tier: null,
-      id_tier_label: 3,
-      id_tier: 1,
-    },
-  ];
+  payload.tiers = input?.tiers;
 
-  // TIER DETAILS  - - - - - - - - - - - - -
+  // TIER DETAILS  - - - - - - - - - - - - - OTHERs Pending...
 
   payload.supplemental_benefit_info = {
     supplemental_benefits:
@@ -177,15 +179,34 @@ export async function createFormulary(payload: any): Promise<any> {
     console.log("***** createFormulary - Success");
     console.log(response);
     if (response?.data?.code === "200") {
-      return response?.data?.id_formulary;
+      return {
+        data: response?.data?.id_formulary,
+        status: 200,
+      };
     }
     return null;
   } catch (error) {
     console.log("***** createFormulary - Error");
     console.log(error);
-    throw error;
+    const { response } = error;
+    const { request, ...errorObject } = response; // take everything but 'request'
+    console.log(errorObject);
+    return {
+      status: errorObject.status,
+      data: errorObject.data,
+    };
   }
 }
+//   try {
+//     const response = await axios.post(url, payload, {
+//       headers: headers,
+//     });
+//   } catch (error) {
+//     const { response } = error;
+//     const { request, ...errorObject } = response; // take everything but 'request'
+//     console.log(errorObject);
+//   }
+// }
 
 export function composePutBody(details: any): any {
   return null;
