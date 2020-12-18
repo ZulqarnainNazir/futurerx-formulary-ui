@@ -257,8 +257,27 @@ class FormularySetUp extends React.Component<any, any> {
     }
   }
   selectTierHandler = (e) => {
-    const updatedTiers = [...this.state.tiers];
-    updatedTiers.length = e;
+    const updatedTiers:any = [...this.state.tiers];
+    const tiersLength = updatedTiers.length;
+    const newTier:any = {
+      id_formulary_tier: null,
+      id_tier: 0,
+      id_tier_label: null,
+      tier_name: ''
+    };
+    if(tiersLength > e){
+      updatedTiers.length = e;  
+    }else{
+      for(let i=1; i <= (e-tiersLength); i++){
+        const newObj = {
+          id_formulary_tier: null,
+          id_tier: tiersLength + i,
+          id_tier_label: null,
+          tier_name: `Tier ${tiersLength + i}`
+        };
+        updatedTiers.push(newObj)
+      }
+    }
     this.setState({
       tiers: updatedTiers
     })
