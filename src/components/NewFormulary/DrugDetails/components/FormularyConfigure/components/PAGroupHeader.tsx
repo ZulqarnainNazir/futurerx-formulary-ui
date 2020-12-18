@@ -112,7 +112,7 @@ function PAGroupHeader(props: any) {
     const cloneGroup = (e: any,param:any) => {
         props.cloneGroupDescription({
             current_group_des_id: props.saveGdm.current_group_des_id,
-            st_group_description_name: param.st_group_description_name // clone page input
+            pa_group_description_name: param.st_group_description_name // clone page input
         })
         props.getPaGrouptDescriptions(props.saveGdm.formulary_id)
     }
@@ -137,7 +137,7 @@ function PAGroupHeader(props: any) {
                 <option value=""></option>
                 {
                     versionList.map((e, index) => (
-                        versionListLength === index ? <option value={e.value} selected>{`Group Description ${e.value}`}</option>
+                        versionListLength === index ? <option value={e.value} selected>{e.value}</option>
                             : <option value={e.value}>{e.value}</option>
                     ))}
             </select>

@@ -90,7 +90,7 @@ function NewGroup(props: any) {
     if (Object.keys(props.StGDData).length > 0) {
       if (!changeEvent) {
         const verLength = Object.keys(props.version).length;
-        const isEditable = props.version[verLength - 1].is_setup_complete
+        const isEditable = props.version[verLength - 1]?props.version[verLength - 1].is_setup_complete:false
         setEditable(isEditable)
       }
       updateFormData({
