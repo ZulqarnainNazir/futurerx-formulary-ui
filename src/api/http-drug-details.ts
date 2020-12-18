@@ -30,6 +30,14 @@ export const GET_DRUG_SUMMARY_MONM = "api/1/formulary-drug-summary-monm/";
 export const GET_MONM_FORMULARY_DRUGS = "api/1/formulary-drugs-monm/";
 export const APPLY_MONM_DRUG = "api/1/apply-formulary-drug-monm/";
 
+// VBID TAB
+export const GET_DRUG_SUMMARY_VBID = "api/1/formulary-drug-summary-vbid/";
+export const GET_VBID_CONTRACTS = "api/1/formulary-associated-contracts/";
+
+// LIS TAB
+export const GET_DRUG_SUMMARY_LIS = "api/1/formulary-drug-summary-lis/";
+export const GET_LIS_FORMULARY_DRUGS = "api/1/formulary-drugs-lis/";
+
 export const KEY_ENTITY_ID = "entity_id";
 export const KEY_INDEX = "index";
 export const KEY_LIMIT = "limit";

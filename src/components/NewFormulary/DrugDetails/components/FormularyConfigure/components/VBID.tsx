@@ -16,12 +16,20 @@ import FrxLoader from "../../../../../shared/FrxLoader/FrxLoader";
 import DrugGrid from "../../DrugGrid";
 import AdvancedSearch from "./search/AdvancedSearch";
 import { getDrugDetailsVBIDSummary } from "../../../../../../redux/slices/formulary/drugDetails/vbid/vbidActionCreation";
+import * as vbidConstants from "../../../../../../api/http-drug-details";
 
 function mapDispatchToProps(dispatch) {
   return {
     getDrugDetailsVBIDSummary: (a) => dispatch(getDrugDetailsVBIDSummary(a)),
   };
 }
+
+const mapStateToProps = (state) => {
+  return {
+    formulary_id: state?.application?.formulary_id,
+    formulary_lob_id: state?.application?.formulary_lob_id,
+  };
+};
 
 class VBID extends React.Component<any, any> {
   state = {
@@ -58,6 +66,31 @@ class VBID extends React.Component<any, any> {
     console.log("Save data");
   };
 
+  getVBIDSummary = () => {
+    let apiDetails = {};
+    apiDetails["apiPart"] = vbidConstants.GET_DRUG_SUMMARY_VBID;
+    apiDetails["pathParams"] = this.props?.formulary_id;
+    apiDetails["keyVals"] = [{ key: vbidConstants.KEY_ENTITY_ID, value: this.props?.formulary_id }];
+
+    this.props.getDrugDetailsVBIDSummary(apiDetails).then((json) => {
+      let tmpData = json.payload && json.payload.result ? json.payload.result : [];
+
+      let rows = tmpData.map((ele) => {
+        let curRow = [
+          ele["attribute_name"],
+          ele["total_drug_count"],
+          ele["added_drug_count"],
+          ele["removed_drug_count"],
+        ];
+        return curRow;
+      });
+
+      this.setState({
+        panelGridValue1: rows,
+      });
+    });
+  }
+
   componentDidMount() {
     const data = getDrugDetailData();
     const columns = getDrugDetailsColumn();
@@ -83,31 +116,11 @@ class VBID extends React.Component<any, any> {
       el["fff"] = "Y";
     }
 
-    // this.setState({
-    //   columns: columns,
-    //   data: data,
-    // });
-
-    this.props.getDrugDetailsVBIDSummary().then((json) => {
-      let tmpData =
-        json.payload && json.payload.result ? json.payload.result : [];
-
-      let rows = tmpData.map((ele) => {
-        let curRow = [
-          ele["attribute_name"],
-          ele["total_drug_count"],
-          ele["added_drug_count"],
-          ele["removed_drug_count"],
-        ];
-        return curRow;
-      });
-
-      this.setState({
-        panelGridValue1: rows,
-        columns: columns,
-        data: data,
-      });
-    });
+    this.getVBIDSummary();
+    this.setState({
+      columns: columns,
+      data: data,
+    })
   }
 
   onClickTab = (selectedTabIndex: number) => {
@@ -266,4 +279,4 @@ class VBID extends React.Component<any, any> {
   }
 }
 
-export default connect(null, mapDispatchToProps)(VBID);
+export default connect(mapStateToProps, mapDispatchToProps)(VBID);

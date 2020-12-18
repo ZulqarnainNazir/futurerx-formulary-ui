@@ -13,10 +13,11 @@ import { textFilters } from "../../../../../../utils/grid/filters";
 import { getDrugDetailsColumn } from "../DrugGridColumn";
 import { getDrugDetailData } from "../../../../../../mocks/DrugGridMock";
 import FrxLoader from "../../../../../shared/FrxLoader/FrxLoader";
-import DrugGrid from "../../DrugGrid";
 import AdvancedSearch from "./search/AdvancedSearch";
 import { getDrugDetailsLISSummary, getDrugDetailsLISList } from "../../../../../../redux/slices/formulary/drugDetails/lis/lisActionCreation";
 import FrxDrugGridContainer from "../../../../../shared/FrxGrid/FrxDrugGridContainer";
+import * as lisConstants from "../../../../../../api/http-drug-details";
+import getLobCode from "../../../../Utils/LobUtils";
 
 function mapDispatchToProps(dispatch) {
   return {
@@ -24,6 +25,13 @@ function mapDispatchToProps(dispatch) {
     getDrugDetailsLISList: (a) => dispatch(getDrugDetailsLISList(a)),
   };
 }
+
+const mapStateToProps = (state) => {
+  return {
+    formulary_id: state?.application?.formulary_id,
+    formulary_lob_id: state?.application?.formulary_lob_id,
+  };
+};
 
 class DrugDetailLIS extends React.Component<any, any> {
   state = {
@@ -45,6 +53,9 @@ class DrugDetailLIS extends React.Component<any, any> {
       { id: 2, text: "Append" },
       { id: 3, text: "Remove" },
     ],
+    selectedDrugs: Array(),
+    drugData: Array(),
+    lobCode: null,
   };
 
   advanceSearchClickHandler = (event) => {
@@ -60,34 +71,14 @@ class DrugDetailLIS extends React.Component<any, any> {
     console.log("Save data");
   };
 
-  componentDidMount() {
-    const data = getDrugDetailData();
-    const columns = getDrugDetailsColumn();
-    const FFFColumn: any = {
-      id: 0,
-      position: 0,
-      textCase: "upper",
-      pixelWidth: 238,
-      sorter: {},
-      isFilterable: true,
-      showToolTip: false,
-      key: "fff",
-      displayTitle: "Free First Fill",
-      filters: textFilters,
-      dataType: "string",
-      hidden: false,
-      sortDirections: [],
-    };
+  getLISSummary = () => {
+    let apiDetails = {};
+    apiDetails["apiPart"] = lisConstants.GET_DRUG_SUMMARY_LIS;
+    apiDetails["pathParams"] = this.props?.formulary_id;
+    apiDetails["keyVals"] = [{ key: lisConstants.KEY_ENTITY_ID, value: this.props?.formulary_id }];
 
-    columns.unshift(FFFColumn);
-
-    for (let el of data) {
-      el["fff"] = "Y";
-    }
-
-    this.props.getDrugDetailsLISSummary().then((json) => {
-      let tmpData =
-        json.payload && json.payload.result ? json.payload.result : [];
+    this.props.getDrugDetailsLISSummary(apiDetails).then((json) => {
+      let tmpData = json.payload && json.payload.result ? json.payload.result : [];
 
       let rows = tmpData.map((ele) => {
         let curRow = [
@@ -101,15 +92,23 @@ class DrugDetailLIS extends React.Component<any, any> {
 
       this.setState({
         panelGridValue1: rows,
+        lobCode: getLobCode(this.props.formulary_lob_id),
       });
     });
+  }
 
-    this.props.getDrugDetailsLISList().then((json) => {
+  getLISDrugsList = () => {
+    let apiDetails = {};
+    apiDetails["apiPart"] = lisConstants.GET_LIS_FORMULARY_DRUGS;
+    apiDetails["pathParams"] = this.props?.formulary_id + "/" + getLobCode(this.props.formulary_lob_id);
+    apiDetails["keyVals"] = [
+      { key: lisConstants.KEY_ENTITY_ID, value: this.props?.formulary_id },
+      { key: lisConstants.KEY_INDEX, value: 0 },
+      { key: lisConstants.KEY_LIMIT, value: 10 },
+    ];
+
+    this.props.getDrugDetailsLISList(apiDetails).then((json) => {
       let tmpData = json.payload.result;
-      console.log(
-        "----------The Get Drug Details LIS list response = ",
-        tmpData
-      );
       var data: any[] = [];
       let count = 1;
       var gridData = tmpData.map((el) => {
@@ -184,9 +183,39 @@ class DrugDetailLIS extends React.Component<any, any> {
         return gridItem;
       });
       this.setState({
+        drugData: data,
         data: gridData,
       });
     });
+  }
+
+  componentDidMount() {
+    const data = getDrugDetailData();
+    const columns = getDrugDetailsColumn();
+    const FFFColumn: any = {
+      id: 0,
+      position: 0,
+      textCase: "upper",
+      pixelWidth: 238,
+      sorter: {},
+      isFilterable: true,
+      showToolTip: false,
+      key: "fff",
+      displayTitle: "Free First Fill",
+      filters: textFilters,
+      dataType: "string",
+      hidden: false,
+      sortDirections: [],
+    };
+
+    columns.unshift(FFFColumn);
+
+    for (let el of data) {
+      el["fff"] = "Y";
+    }
+
+    this.getLISSummary();
+    this.getLISDrugsList();
   }
 
   onClickTab = (selectedTabIndex: number) => {
@@ -352,4 +381,4 @@ class DrugDetailLIS extends React.Component<any, any> {
   }
 }
 
-export default connect(null, mapDispatchToProps)(DrugDetailLIS);
+export default connect(mapStateToProps, mapDispatchToProps)(DrugDetailLIS);
