@@ -20,6 +20,7 @@ import DrugGrid from "../../DrugGrid";
 import AdvancedSearch from "./search/AdvancedSearch";
 import { getFormularySummary } from "../../../../../../redux/slices/formulary/formularySummaryActionCreation";
 import { getDrugDetailsCBSummary, getExcludedDrugsCBList } from "../../../../../../redux/slices/formulary/drugDetails/cb/cbActionCreation";
+import FrxDrugGridContainer from "../../../../../shared/FrxGrid/FrxDrugGridContainer";
 
 const mapStateToProps = (state) => {
   return {
@@ -44,7 +45,7 @@ class CB extends React.Component<any, any> {
     isNotesOpen: false,
     activeTabIndex: 0,
     columns: null,
-    data: null,
+    data: [],
     tabs: [
       { id: 1, text: "Replace" },
       { id: 2, text: "Append" },
@@ -152,7 +153,29 @@ class CB extends React.Component<any, any> {
     let dataGrid = <FrxLoader />;
     if (this.state.data) {
       dataGrid = (
-        <DrugGrid columns={this.state.columns} data={this.state.data} />
+        // <DrugGrid columns={this.state.columns} data={this.state.data} />
+        <FrxDrugGridContainer
+          isPinningEnabled={false}
+          enableSearch={false}
+          enableColumnDrag
+          onSearch={() => {}}
+          fixedColumnKeys={[]}
+          pagintionPosition="topRight"
+          gridName="DRUGSDETAILS"
+          enableSettings={false}
+          columns={getDrugDetailsColumn()}
+          scroll={{ x: 5200, y: 377 }}
+          isFetchingData={false}
+          enableResizingOfColumns
+          data={this.state.data}
+          clearFilterHandler={() => {}}
+          rowSelection={{
+            columnWidth: 50,
+            fixed: true,
+            type: "checkbox",
+            onChange: () => {},
+          }}
+        />
       );
     }
 

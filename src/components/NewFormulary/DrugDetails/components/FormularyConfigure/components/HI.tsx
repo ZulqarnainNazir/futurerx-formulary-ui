@@ -327,6 +327,7 @@ class HI extends React.Component<any, any> {
           isFetchingData={false}
           enableResizingOfColumns
           data={this.state.data}
+          clearFilterHandler={() => {}}
           rowSelection={{
             columnWidth: 50,
             fixed: true,
