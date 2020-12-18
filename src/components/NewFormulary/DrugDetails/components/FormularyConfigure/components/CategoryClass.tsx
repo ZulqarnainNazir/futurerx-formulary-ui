@@ -407,7 +407,7 @@ class CategoryClass extends React.Component<any, any> {
     this.state.addedFormularyDrugs = Array();
     if (record && record.length > 0) {
       record.map(row => {
-        let checkedIndex = row.key - 1;
+        let checkedIndex = row - 1;
         if (checkedIndex < this.state.data.length) {
           let drug = this.state.data[checkedIndex];
           this.state.addedFormularyDrugs.push(drug['md5_id']);
@@ -467,7 +467,7 @@ class CategoryClass extends React.Component<any, any> {
                         </div>
                     <Button label='Save' className='Button' disabled />
                   </div>
-                  <FrxGridContainer
+                  <FrxDrugGridContainer
                     enableSearch={false}
                     enableColumnDrag={false}
                     onSearch={this.handleSearch}
@@ -481,8 +481,14 @@ class CategoryClass extends React.Component<any, any> {
                     scroll={{ x: 0, y: 377 }}
                     enableResizingOfColumns={false}
                     data={this.state.filteredData}
-                    isCustomCheckboxEnabled={true}
-                    handleCustomRowSelectionChange={this.rowSelectionChange}
+                    /*isCustomCheckboxEnabled={true}
+                    handleCustomRowSelectionChange={this.rowSelectionChange}*/
+                    rowSelection={{
+                      columnWidth: 50,
+                      fixed: true,
+                      type: "checkbox",
+                      onChange: this.rowSelectionChange,
+                    }}
                     settingsTriDotClick={() => {
                       console.log("object");
                     }}
