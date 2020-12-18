@@ -33,6 +33,11 @@ const mapStateToProps = (state) => {
   };
 };
 
+const defaultListPayload = {
+  index: 0,
+  limit: 10,
+}
+
 class DrugDetailPBST extends React.Component<any, any> {
   state = {
     isSearchOpen: false,
@@ -63,7 +68,13 @@ class DrugDetailPBST extends React.Component<any, any> {
     selectedDrugs: Array(),
     drugData: Array(),
     lobCode: null,
+    listCount: 0,
   };
+
+  listPayload: any = {
+    index: 0,
+    limit: 10,
+  }
 
   advanceSearchClickHandler = (event) => {
     event.stopPropagation();
@@ -120,6 +131,22 @@ class DrugDetailPBST extends React.Component<any, any> {
     }
   };
 
+  onPageSize = (pageSize) => {
+    this.listPayload.limit = pageSize
+    this.getPBSTDrugsList({ limit: this.listPayload.limit });
+  }
+
+  onGridPageChangeHandler = (pageNumber: any) => {
+    this.listPayload.index = (pageNumber - 1) * this.listPayload.limit;
+    this.getPBSTDrugsList({ index: this.listPayload.index, limit: this.listPayload.limit });
+  }
+
+  onClearFilterHandler = () => {
+    this.listPayload.index = 0;
+    this.listPayload.limit = 10;
+    this.getPBSTDrugsList({ index: defaultListPayload.index, limit: defaultListPayload.limit });
+  }
+
   onSelectedTableRowChanged = (selectedRowKeys) => {
     this.state.selectedDrugs = [];
     if (selectedRowKeys && selectedRowKeys.length > 0) {
@@ -160,19 +187,21 @@ class DrugDetailPBST extends React.Component<any, any> {
     });
   }
 
-  getPBSTDrugsList = () => {
+  getPBSTDrugsList = ({index = 0, limit = 10} = {}) => {
     let apiDetails = {};
     apiDetails["apiPart"] = pbstConstants.GET_PBST_FORMULARY_DRUGS;
     apiDetails["pathParams"] = this.props?.formulary_id + "/" + getLobCode(this.props.formulary_lob_id);
-    apiDetails["keyVals"] = [{ key: pbstConstants.KEY_ENTITY_ID, value: this.props?.formulary_id }, { key: pbstConstants.KEY_INDEX, value: 0 }, { key: pbstConstants.KEY_LIMIT, value: 10 }];
+    apiDetails["keyVals"] = [{ key: pbstConstants.KEY_ENTITY_ID, value: this.props?.formulary_id }, { key: pbstConstants.KEY_INDEX, value: index }, { key: pbstConstants.KEY_LIMIT, value: limit }];
 
     if (this.state.activeTabIndex === 2) {
       apiDetails["messageBody"] = {};
       apiDetails["messageBody"]["selected_criteria_ids"] = ["Y"];
     }
 
+    let listCount = 0;
     this.props.getDrugDetailsPBSTList(apiDetails).then((json) => {
       let tmpData = json.payload.result;
+      listCount = json.payload.count;
       var data: any[] = [];
       let count = 1;
       var gridData = tmpData.map((el) => {
@@ -249,6 +278,7 @@ class DrugDetailPBST extends React.Component<any, any> {
       this.setState({
         drugData: data,
         data: gridData,
+        listCount: listCount,
       });
     });
   }
@@ -312,7 +342,12 @@ class DrugDetailPBST extends React.Component<any, any> {
           isFetchingData={false}
           enableResizingOfColumns
           data={this.state.data}
-          clearFilterHandler={() => {}}
+          getPerPageItemSize={this.onPageSize}
+          selectedCurrentPage={(this.listPayload.index/this.listPayload.limit + 1)}
+          pageSize={this.listPayload.limit}
+          onGridPageChangeHandler={this.onGridPageChangeHandler}
+          totalRowsCount={this.state.listCount}
+          clearFilterHandler={this.onClearFilterHandler}
           rowSelection={{
             columnWidth: 50,
             fixed: true,

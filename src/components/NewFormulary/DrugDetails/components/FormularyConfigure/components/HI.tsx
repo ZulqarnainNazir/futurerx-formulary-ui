@@ -38,6 +38,11 @@ const mapStateToProps = (state) => {
   };
 };
 
+const defaultListPayload = {
+  index: 0,
+  limit: 10,
+}
+
 class HI extends React.Component<any, any> {
   state = {
     isSearchOpen: false,
@@ -69,7 +74,13 @@ class HI extends React.Component<any, any> {
     selectedDrugs: Array(),
     drugData: Array(),
     lobCode: null,
+    listCount: 0,
   };
+
+  listPayload: any = {
+    index: 0,
+    limit: 10,
+  }
 
   onClickTab = (selectedTabIndex: number) => {
     let activeTabIndex = 0;
@@ -146,6 +157,22 @@ class HI extends React.Component<any, any> {
     }
   };
 
+  onPageSize = (pageSize) => {
+    this.listPayload.limit = pageSize
+    this.getHIDrugsList({ limit: this.listPayload.limit });
+  }
+
+  onGridPageChangeHandler = (pageNumber: any) => {
+    this.listPayload.index = (pageNumber - 1) * this.listPayload.limit;
+    this.getHIDrugsList({ index: this.listPayload.index, limit: this.listPayload.limit });
+  }
+
+  onClearFilterHandler = () => {
+    this.listPayload.index = 0;
+    this.listPayload.limit = 10;
+    this.getHIDrugsList({ index: defaultListPayload.index, limit: defaultListPayload.limit });
+  }
+
   onSelectedTableRowChanged = (selectedRowKeys) => {
     this.state.selectedDrugs = [];
     if (selectedRowKeys && selectedRowKeys.length > 0) {
@@ -186,19 +213,21 @@ class HI extends React.Component<any, any> {
     });
   }
 
-  getHIDrugsList = () => {
+  getHIDrugsList = ({index = 0, limit = 10} = {}) => {
     let apiDetails = {};
     apiDetails['apiPart'] = hiConstants.GET_HI_FORMULARY_DRUGS;
     apiDetails['pathParams'] = this.props?.formulary_id + "/" + getLobCode(this.props.formulary_lob_id);
-    apiDetails['keyVals'] = [{ key: hiConstants.KEY_ENTITY_ID, value: this.props?.formulary_id }, { key: hiConstants.KEY_INDEX, value: 0 }, { key: hiConstants.KEY_LIMIT, value: 10 }];
+    apiDetails['keyVals'] = [{ key: hiConstants.KEY_ENTITY_ID, value: this.props?.formulary_id }, { key: hiConstants.KEY_INDEX, value: index }, { key: hiConstants.KEY_LIMIT, value: limit }];
 
     if (this.state.activeTabIndex === 2) {
       apiDetails["messageBody"] = {};
       apiDetails["messageBody"]["selected_criteria_ids"] = ["Y"];
     }
 
+    let listCount = 0;
     this.props.getDrugDetailsHIList(apiDetails).then((json) => {
       let tmpData = json.payload.result;
+      listCount = json.payload.count;
       var data: any[] = [];
       let count = 1;
       var gridData = tmpData.map((el) => {
@@ -275,6 +304,7 @@ class HI extends React.Component<any, any> {
       this.setState({
         drugData: data,
         data: gridData,
+        listCount: listCount,
       });
     });
   }
@@ -327,7 +357,12 @@ class HI extends React.Component<any, any> {
           isFetchingData={false}
           enableResizingOfColumns
           data={this.state.data}
-          clearFilterHandler={() => {}}
+          getPerPageItemSize={this.onPageSize}
+          selectedCurrentPage={(this.listPayload.index/this.listPayload.limit + 1)}
+          pageSize={this.listPayload.limit}
+          onGridPageChangeHandler={this.onGridPageChangeHandler}
+          totalRowsCount={this.state.listCount}
+          clearFilterHandler={this.onClearFilterHandler}
           rowSelection={{
             columnWidth: 50,
             fixed: true,
