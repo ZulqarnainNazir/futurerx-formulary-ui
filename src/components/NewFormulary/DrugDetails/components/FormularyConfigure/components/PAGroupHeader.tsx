@@ -7,39 +7,55 @@ import {
     archiveGroupDescription,
     newVersionGroupDescription,
     cleanMessage
-} from "../../../../../../redux/slices/formulary/gdm/gdmSlice";
-import { getStGrouptDescriptions, getStTypes, getStGrouptDescriptionVersions, getStGrouptDescription } from "../../../../../../redux/slices/formulary/stepTherapy/stepTherapyActionCreation";
+} from "../../../../../../redux/slices/formulary/pagdm/pagdmSlice";
+import {
+    getPaGrouptDescriptions, getPaTypes, getPaGrouptDescriptionVersions,
+    getPaGrouptDescriptionDetail, getPaGrouptDescription
+} from "../../../../../../redux/slices/formulary/pa/paActionCreation";
 import { connect } from 'react-redux';
 
 function mapStateToProps(state) {
     return {
         formulary_id: state.application.formulary_id,
-        StGDData: state.stepTherapyReducer.data,
-        saveGdm: state.saveGdm,
-        version: state.stVerion.stVersion,
+        saveGdm: state.savePaGdm,
+        PaGDData: state.paReducer.data,
+        version: state.paVersion.paVersion,
     }
 }
 
 function mapDispatchToProps(dispatch) {
     return {
-        getStGrouptDescriptions: (arg) => dispatch(getStGrouptDescriptions(arg)), // Group List
-        getStTypes: (arg) => dispatch(getStTypes(arg)),  // File Type
+        getPaGrouptDescriptions: (arg) => dispatch(getPaGrouptDescriptions(arg)), // Group List
+        getPaTypes: (arg) => dispatch(getPaTypes(arg)),  // File Type
         cleanMessage: (arg) => dispatch(cleanMessage(arg)),
-        getStGrouptDescriptionVersions: (arg) => dispatch(getStGrouptDescriptionVersions(arg)), //Version
-        getStGrouptDescription: (arg) => dispatch(getStGrouptDescription(arg)), // Group ID Detail
+        getPaGrouptDescriptionVersions: (arg) => dispatch(getPaGrouptDescriptionVersions(arg)), //Version
+        getPaGrouptDescriptionDetail: (arg) => dispatch(getPaGrouptDescriptionDetail(arg)), // Group ID Detail
+        getPaGrouptDescription: (a) => dispatch(getPaGrouptDescription(a)),
         deleteGroupDescription: (arg) => dispatch(deleteGroupDescription(arg)), // Delete
         cloneGroupDescription: (arg) => dispatch(cloneGroupDescription(arg)), // Clone
         archiveGroupDescription: (arg) => dispatch(archiveGroupDescription(arg)), // archive
         newVersionGroupDescription: (arg) => dispatch(newVersionGroupDescription(arg)) // New Vesrion
+
+
+
+        // getPaGrouptDescriptions: (a) => dispatch(getPaGrouptDescriptions(a)),
+        // getPaTypes: (a) => dispatch(getPaTypes(a)),
+        //getDrugLists: (a) => dispatch(getDrugLists(a)),
+       // getPaGrouptDescriptionDetail: (a) => dispatch(getPaGrouptDescriptionDetail(a)),
+       // getPaGrouptDescriptionVersions: (a) => dispatch(getPaGrouptDescriptionVersions(a)),
+        //getPaGrouptDescription: (a) => dispatch(getPaGrouptDescription(a)),
+
+
+
     };
 }
-function GroupHeader(props: any) {
+function PAGroupHeader(props: any) {
     const [open, setOpen] = React.useState(false);
     const [popupType, setPopUpType] = React.useState('clone');
     const [versionList, setVersion] = useState([{ value: 'Version 1' }])
     const [placeHolder, setPlaceHolder] = React.useState('Version 1');
     const [panelColor, setPanelColor] = React.useState('');
-    const versionListLength = versionList.length-1;
+    const versionListLength = versionList.length - 1;
 
     useEffect(() => {
         if (props.version.length > 0) {
@@ -68,12 +84,12 @@ function GroupHeader(props: any) {
     const onChange = (e) => {
         const verLength = Object.keys(props.version).length;
         const selectedVersion = e.target.value
-        if (verLength > 0 && selectedVersion!='') {
+        if (verLength > 0 && selectedVersion != '') {
             const isEditable = props.version[Number(selectedVersion.split(" ")[1]) - 1].is_setup_complete;
             const latestVerion = verLength > 0 ? props.version[Number(selectedVersion.split(" ")[1]) - 1]?.id_st_group_description : 0;
             setPanelColor(isEditable ? '-green' : '')
             setPlaceHolder(selectedVersion)
-            props.getStGrouptDescription(latestVerion)
+            props.getPaGrouptDescription(latestVerion)
         }
         props.onChange(selectedVersion);
     }
@@ -86,44 +102,44 @@ function GroupHeader(props: any) {
         })
     };
 
-    const deleteGroup = (e: any,param:any) => {
+    const deleteGroup = (e: any, param: any) => {
         props.deleteGroupDescription({ current_group_des_id: props.saveGdm.current_group_des_id })
-        props.getStGrouptDescriptions(props.saveGdm.formulary_id)
-        props.getStGrouptDescriptionVersions(props.saveGdm.current_group_des_id)
-        props.getStGrouptDescription(props.saveGdm.current_group_id)
-        props.getStTypes(props.saveGdm.formulary_id)
+        props.getPaGrouptDescriptions(props.saveGdm.formulary_id)
+        props.getPaGrouptDescriptionVersions(props.saveGdm.current_group_des_id)
+        props.getPaGrouptDescription(props.saveGdm.current_group_id)
+        props.getPaTypes(props.saveGdm.formulary_id)
     }
     const cloneGroup = (e: any,param:any) => {
         props.cloneGroupDescription({
             current_group_des_id: props.saveGdm.current_group_des_id,
-            st_group_description_name: param.st_group_description_name // clone page input
+            pa_group_description_name: param.st_group_description_name // clone page input
         })
-        props.getStGrouptDescriptions(props.saveGdm.formulary_id)
+        props.getPaGrouptDescriptions(props.saveGdm.formulary_id)
     }
-    const archiveGroup = (e: any,param:any) => {
+    const archiveGroup = (e: any, param: any) => {
         props.archiveGroupDescription({ current_group_des_id: props.saveGdm.current_group_des_id })
-        props.getStGrouptDescriptions(props.saveGdm.formulary_id)
-        props.getStGrouptDescriptionVersions(props.saveGdm.current_group_des_id)
-        props.getStGrouptDescription(props.saveGdm.current_group_id)
-        props.getStTypes(props.saveGdm.formulary_id)
+        props.getPaGrouptDescriptions(props.saveGdm.formulary_id)
+        props.getPaGrouptDescriptionVersions(props.saveGdm.current_group_des_id)
+        props.getPaGrouptDescription(props.saveGdm.current_group_id)
+        props.getPaTypes(props.saveGdm.formulary_id)
     }
 
     const newVersionGroup = (e: any,param:any) => {
         props.newVersionGroupDescription({ current_group_des_id: props.saveGdm.current_group_des_id })
-        props.getStGrouptDescriptions(props.saveGdm.formulary_id)
-        props.getStGrouptDescriptionVersions(props.saveGdm.current_group_des_id)
-        props.getStGrouptDescription(props.saveGdm.current_group_id)
-        props.getStTypes(props.saveGdm.formulary_id)
+        props.getPaGrouptDescriptions(props.saveGdm.formulary_id)
+        props.getPaGrouptDescriptionVersions(props.saveGdm.current_group_des_id)
+        props.getPaGrouptDescription(props.saveGdm.current_group_id)
+        props.getPaTypes(props.saveGdm.formulary_id)
     }
     return (
         <div className={`version-wrapper${panelColor}`}>
             <select name="group-description" id="group-description" className="formulary-type-dropdown formulary-versions" onChange={onChange}>
                 <option value=""></option>
                 {
-                versionList.map((e, index) => (
-                    versionListLength === index ? <option value={e.value} selected>{e.value}</option>
-                    : <option value={e.value}>{e.value}</option>
-                ))}
+                    versionList.map((e, index) => (
+                        versionListLength === index ? <option value={e.value} selected>{e.value}</option>
+                            : <option value={e.value}>{e.value}</option>
+                    ))}
             </select>
             <div className="item">
                 <svg
@@ -208,14 +224,14 @@ function GroupHeader(props: any) {
                     openPopup={open}
                     closePopup={handleClose}
                     popupType={popupType}>
-                    <Alerts 
-                    closePopup={handleClose} 
-                    popupType={popupType} 
-                    deleteGroup={deleteGroup}
-                    cloneGroup={cloneGroup} 
-                    archiveGroup={archiveGroup} 
-                    newVersionGroup={newVersionGroup} 
-                    popuptitle={props.popuptitle}
+                    <Alerts
+                        closePopup={handleClose}
+                        popupType={popupType}
+                        deleteGroup={deleteGroup}
+                        cloneGroup={cloneGroup}
+                        archiveGroup={archiveGroup}
+                        newVersionGroup={newVersionGroup}
+                        popuptitle={props.popuptitle}
                     />
                 </STAlertDialog>
             ) : null}
@@ -223,4 +239,4 @@ function GroupHeader(props: any) {
     )
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(GroupHeader)
+export default connect(mapStateToProps, mapDispatchToProps)(PAGroupHeader)

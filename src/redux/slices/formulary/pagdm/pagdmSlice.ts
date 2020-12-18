@@ -1,8 +1,8 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import { saveStGroup,deleteStGroup,cloneStGroup,archiveStGroup,newVersionStGroup } from "./services";
+import { savePaGroup,deletePaGroup,clonePaGroup,archivePaGroup,newVersionPaGroup } from "./services";
 
-interface GDMState {
+interface PAGDMState {
   formulary_id: number;
   isLoading: boolean;
   error: string | null;
@@ -11,7 +11,7 @@ interface GDMState {
   success:any;
 }
 
-const GDMInitialState: GDMState = {
+const PAGDMInitialState: PAGDMState = {
   formulary_id: 0,
   isLoading: true,
   error: null,
@@ -20,7 +20,13 @@ const GDMInitialState: GDMState = {
   success:null
 };
 
-export interface GDMSaveResponse {
+interface PaMessage {
+  error: any;
+  success:any;
+}
+
+
+export interface PAGDMSaveResponse {
   success:any;
 }
 
@@ -30,17 +36,11 @@ interface StGroupResult {
   current_group_des_id: any
 }
 
-interface StMessage {
-  error: any;
-  success:any;
-}
-
-
-function startLoading(state: GDMState) {
+function startLoading(state: PAGDMState) {
   state.isLoading = true;
 }
 
-function loadingFailed(state: GDMState, action: PayloadAction<string>) {
+function loadingFailed(state: PAGDMState, action: PayloadAction<string>) {
   state.isLoading = false;
   state.success = null;
   state.error = (action.payload["data"].errors)?action.payload["data"].errors:action.payload;
@@ -48,15 +48,15 @@ function loadingFailed(state: GDMState, action: PayloadAction<string>) {
 
 const gdm = createSlice({
   name: "gdm",
-  initialState: GDMInitialState,
+  initialState: PAGDMInitialState,
   reducers: {
     getPending: startLoading,
-    getSuccess(state, { payload }: PayloadAction<GDMSaveResponse>) {
+    getSuccess(state, { payload }: PayloadAction<PAGDMSaveResponse>) {
       state.error = null
       state.success = payload.success.data;
     },
     getFailed: loadingFailed,
-    setStGroupDetails(state, { payload }: PayloadAction<StGroupResult>) {
+    setPaGroupDetails(state, { payload }: PayloadAction<StGroupResult>) {
       const {
         formulary_id,
         current_group_id,
@@ -66,7 +66,7 @@ const gdm = createSlice({
       state.current_group_id = current_group_id;
       state.current_group_des_id = current_group_des_id;
     },
-    cleanMessages(state, { payload }: PayloadAction<StMessage>){
+    cleanMessages(state, { payload }: PayloadAction<PaMessage>){
       state.error = payload.error;
       state.success = payload.error;
     }
@@ -77,18 +77,18 @@ export const {
   getPending,
   getSuccess,
   getFailed,
-  setStGroupDetails,
+  setPaGroupDetails,
   cleanMessages
 } = gdm.actions;
 
 export default gdm.reducer;
 
-export const saveGDM = createAsyncThunk(
+export const savePAGDM = createAsyncThunk(
   "gdm",
   async (arg: any, { dispatch }) => {
     try {
       dispatch(getPending());
-      const response = await saveStGroup(arg);
+      const response = await savePaGroup(arg);
       dispatch(getSuccess(response));
     } catch (err) {
       dispatch(getFailed(err));
@@ -96,7 +96,7 @@ export const saveGDM = createAsyncThunk(
   }
 );
 
-export const getSTGroupDetails = createAsyncThunk(
+export const getPAGroupDetails = createAsyncThunk(
   "gdmdetail",
   async (arg: any, { dispatch }) => {
     const obj = {
@@ -104,7 +104,7 @@ export const getSTGroupDetails = createAsyncThunk(
       current_group_id: arg.current_group_id,
       current_group_des_id: arg.current_group_des_id
     };
-    dispatch(setStGroupDetails(obj));
+    dispatch(setPaGroupDetails(obj));
   }
 );
 
@@ -124,7 +124,7 @@ export const deleteGroupDescription = createAsyncThunk(
   async (arg: any, { dispatch }) => {
     try {
       dispatch(getPending());
-      const response = await deleteStGroup(arg);
+      const response = await deletePaGroup(arg);
       dispatch(getSuccess(response));
     } catch (err) {
       dispatch(getFailed(err));
@@ -137,7 +137,7 @@ export const cloneGroupDescription = createAsyncThunk(
   async (arg: any, { dispatch }) => {
     try {
       dispatch(getPending());
-      const response = await cloneStGroup(arg);
+      const response = await clonePaGroup(arg);
       dispatch(getSuccess(response));
     } catch (err) {
       dispatch(getFailed(err));
@@ -150,7 +150,7 @@ export const archiveGroupDescription = createAsyncThunk(
   async (arg: any, { dispatch }) => {
     try {
       dispatch(getPending());
-      const response = await archiveStGroup(arg);
+      const response = await archivePaGroup(arg);
       dispatch(getSuccess(response));
     } catch (err) {
       dispatch(getFailed(err));
@@ -163,7 +163,7 @@ export const newVersionGroupDescription = createAsyncThunk(
   async (arg: any, { dispatch }) => {
     try {
       dispatch(getPending());
-      const response = await newVersionStGroup(arg);
+      const response = await newVersionPaGroup(arg);
       dispatch(getSuccess(response));
     } catch (err) {
       dispatch(getFailed(err));
