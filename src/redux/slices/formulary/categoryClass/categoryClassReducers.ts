@@ -40,3 +40,43 @@ export const postDrugsCategoryRejected = (state, action) => {
   state.isLoading = false;
   state.categoryData = {};
 }
+
+export const getIntelliscenseSearchFulfilled = (state, action) => {
+  console.log("Reducer::getIntelliscenseSearchFulfilled");
+  state.isLoading = false;
+  console.log(action)
+  if(action.payload.data === undefined || !Array.isArray(action.payload.data) || (action.payload.data.length === 0)) {
+    console.log("getIntelliscenseSearchFulfilled: Payload invalid");
+    return;
+  }
+  const data = action.payload.data;
+  // Response stored in the redux store.
+  state.intelliscenseData = data;
+  
+}
+
+export const getIntelliscenseSearchRejected = (state, action) => {
+  console.log("Reducer::getIntelliscenseSearchRejected");
+  state.isLoading = false;
+  state.intelliscenseData = {};
+}
+
+export const getCategoryClassesFulfilled = (state, action) => {
+  console.log("Reducer::getCategoryClassesFulfilled");
+  state.isLoading = false;
+  console.log(action)
+  if(action.payload.data === undefined) {
+    console.log("getCategoryClassesFulfilled: Payload invalid");
+    return;
+  }
+  const data = action.payload.data;
+  // Response stored in the redux store.
+  state.categoryClassData = data;
+  
+}
+
+export const getCategoryClassesRejected = (state, action) => {
+  console.log("Reducer::getCategoryClassesRejected");
+  state.isLoading = false;
+  state.categoryClassData = {};
+}

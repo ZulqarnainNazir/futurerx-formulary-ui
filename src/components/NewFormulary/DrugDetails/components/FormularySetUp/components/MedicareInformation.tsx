@@ -5,20 +5,20 @@ import Button from '../../../../../shared/Frx-components/button/Button';
 import RadioButton from "../../../../../shared/Frx-components/radio-button/RadioButton";
 import PanelHeader from "../../FormularyConfigure/components/PanelHeader";
 import {connect} from "react-redux";
+import { Checkbox } from 'antd';
 
 class MedicareInformation extends React.Component<any, any> {
 getCheckboxData = () => {
     let data = null;
-    if(this.props.medicare_contract_types && this.props.contarct_types){
-        const  medicare_contract_types = this.props.medicare_contract_types.map(e => e.id_medicare_contract_type);
+    if(this.props.contarct_types){
+        const  medicare_contract_types = this.props.medicareOptions;
         data = this.props.contarct_types.map(e => {
             const isChecked = medicare_contract_types.indexOf(e.id_medicare_contract_type) !== -1 ? true : false;
-            return (<li>
+            return (
                 <div className="checkbox-wrapper">
-                    <input type="checkbox" className="checkbox-btn" name="N/A" value="N/A" checked={isChecked} />
-                    <label htmlFor="N/A" className="checkbox-label text-tran-none">{e.medicare_contract_type}</label>
+                    <Checkbox className="custom-checkbox mb-16" onChange={() => this.props.medicareCheck(e.id_medicare_contract_type)} defaultChecked={isChecked}>{e.medicare_contract_type}</Checkbox>
                 </div>
-            </li>)
+            )
         })
     }
     return data
@@ -32,16 +32,14 @@ render() {
             <Grid container>
                 <Grid item xs={6}>
                     <div className="group">
-                        <label>MEDICARE CONTRACT TYPE <span className="astrict">*</span></label>
-                        <ul className="checkbox-ul medicare-information-container__checkbox-ul">
+                        <label className="mb-16">MEDICARE CONTRACT TYPE <span className="astrict">*</span></label>
+                        <div className="checkbox-ul medicare-information-container__checkbox-ul">
                             {this.getCheckboxData()}
-                            <li>
-                                <div className="checkbox-wrapper">
-                                    <input type="checkbox" className="checkbox-btn" name="N/A" value="N/A" />
-                                    <label htmlFor="N/A" className="checkbox-label text-tran-none">Other</label>
-                                </div>
-                            </li>
-                        </ul>
+                                
+                            <div className="checkbox-wrapper">
+                                <Checkbox className="custom-checkbox">Other</Checkbox>
+                            </div>
+                        </div>
                     </div>
                 </Grid>
                 
@@ -76,8 +74,9 @@ render() {
 }
 const mapStateToProps = (state) => {
     return {
-      contarct_types: state?.setupOptions?.medicareOptions,
-      medicare_contract_types: state?.setup?.formulary?.medicare_contract_types
+        mode: state?.application?.mode,
+        contarct_types: state?.setupOptions?.medicareOptions,
+        medicare_contract_types: state?.setup?.formulary?.medicare_contract_types
     };
   };
 export default connect(mapStateToProps)(MedicareInformation)
