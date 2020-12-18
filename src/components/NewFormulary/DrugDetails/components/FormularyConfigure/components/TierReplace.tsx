@@ -203,6 +203,8 @@ class TierReplace extends React.Component<any, tabsState> {
           item = { formulary_drug_id: this.state.drugData[tierId - 1]['formulary_drug_id'], drug_id: this.state.drugData[tierId - 1]['drug_id'] }
         } else if (this.state.drugData[tierId - 1]['formulary_drug_id']) {
           item = { formulary_drug_id: this.state.drugData[tierId - 1]['formulary_drug_id'] }
+        } else if (this.state.drugData[tierId - 1]['drug_id']) {
+          item = { drug_id: this.state.drugData[tierId - 1]['drug_id'], formulary_drug_id: this.state.drugData[tierId - 1]['formulary_drug_id'] }
         }
         return item;
       });
