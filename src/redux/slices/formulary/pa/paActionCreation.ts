@@ -8,7 +8,13 @@ const GET_PA_TYPES_URL = BASE_URL1 + "/api/1/pa-types/4";
 const GET_DRUG_LIST_URL = BASE_URL1 + "/api/1/drug-lists/";
 const GET_PA_GROUP_DESCRIPTION_URL = BASE_URL1 + "/api/1/mcr-pa-group-description/";
 const GET_PA_GROUP_DESCRIPTION_VERSTIONS_URL = BASE_URL1 + "/api/1/mcr-pa-group-description-versions/";
+const POST_PA_GROUP_DESCRIPTION_VERSTION_URL = BASE_URL1 + "/api/1/mcr-pa-group-description-version/";
 const GET_PA_GROUP_DESCRIPTION_DETAIL_URL = BASE_URL1 + "/api/1/mcr-st-group-description/462?entity_id=0";
+const POSt_PA_GROUP_DESCRIPTION_URL = BASE_URL1 + "api/1/mcr-pa-group-description/1/";
+const POST_FORUMULARY_DRUG_PA_URL = BASE_URL1 + "api/1/formulary-drugs-pa/";
+const POST_APPLY_FORUMULARY_DRUG_PA_URL = BASE_URL1 + "api/1/apply-formulary-drug-pa/";
+
+const POST_CRITERIA_LIST_PA_URL = BASE_URL1 + "api/1/criteria-list-pa/";
 
 
 export const getPaSummary = createAsyncThunk(
@@ -164,11 +170,11 @@ export const getPaGrouptDescriptionVersions = createAsyncThunk(
 export const postPAGroupDescription = createAsyncThunk(
   "tier/postPAGroupDescription",
   async (apiDetails: any) => {
-    let apiPart = apiDetails.apiPart;
+    
     let pathParams = apiDetails.pathParams;
     let keyVals = pathParams.keyVals;
     let messageBody = apiDetails.messageBody;
-    let POST_URL = BASE_URL1 + apiPart + pathParams;
+    let POST_URL = BASE_URL1 + POSt_PA_GROUP_DESCRIPTION_URL + pathParams;
     if(keyVals){
       keyVals = keyVals.map(pair => pair.key+'='+pair.value);
       POST_URL = POST_URL + "?" + keyVals.join('&');
@@ -213,6 +219,143 @@ export const getPaGrouptDescriptionDetail = createAsyncThunk(
       })
       .then((json) => {
         console.log("getStGrouptDescription: ", json);
+        return json;
+      });
+  }
+);
+
+export const postPAGroupDescriptionVersion = createAsyncThunk(
+  "tier/postPAGroupDescriptionVersion",
+  async (apiDetails: any) => {
+    
+    let pathParams = apiDetails.pathParams;
+    let keyVals = pathParams.keyVals;
+    let messageBody = apiDetails.messageBody;
+    let POST_URL = BASE_URL1 + POST_PA_GROUP_DESCRIPTION_VERSTION_URL + pathParams;
+    if(keyVals){
+      keyVals = keyVals.map(pair => pair.key+'='+pair.value);
+      POST_URL = POST_URL + "?" + keyVals.join('&');
+    }
+    console.log("postPAGroupDescriptionVersion action creator:: url: " + POST_URL);
+    const requestHeaders  = {
+        method: 'POST',
+        body: JSON.stringify(messageBody),
+        headers: {
+            'Authorization': 'Bearer baf65faa-8fee-4d08-98f0-29ffb04cb1fc',
+            'Accept': 'application/json',
+            'Content-Type': 'application/json;charset=UTF-8',
+        }
+    }
+    return fetch(POST_URL,requestHeaders)
+      .then((response) => {
+        if (!response.ok) throw Error(response.statusText);
+        return response.json();
+      })
+      .then((json) => {
+        console.log("postPAGroupDescriptionVersion: ", json);
+        return json;
+      });
+  }
+);
+
+export const postFormularyDrugPA = createAsyncThunk(
+  "tier/postFormularyDrugPA",
+  async (apiDetails: any) => {
+    
+    let pathParams = apiDetails.pathParams;
+    let keyVals = apiDetails.keyVals;
+    let messageBody = apiDetails.messageBody;
+    let POST_URL = POST_FORUMULARY_DRUG_PA_URL + pathParams ;
+    if(keyVals){
+      keyVals = keyVals.map(pair => pair.key+'='+pair.value);
+      POST_URL = POST_URL + "?" + keyVals.join('&');
+    }
+    console.log("postFormularyDrugPA action creator:: url: " + POST_URL);
+    const requestHeaders  = {
+        method: 'POST',
+        body: JSON.stringify(messageBody),
+        headers: {
+            'Authorization': 'Bearer baf65faa-8fee-4d08-98f0-29ffb04cb1fc',
+            'Accept': 'application/json',
+            'Content-Type': 'application/json;charset=UTF-8',
+        }
+    }
+    return fetch(POST_URL,requestHeaders)
+      .then((response) => {
+        if (!response.ok) throw Error(response.statusText);
+        return response.json();
+      })
+      .then((json) => {
+        console.log("postFormularyDrugPA: ", json);
+        return json;
+      });
+  }
+);
+
+export const postApplyFormularyDrugPA = createAsyncThunk(
+  "tier/postApplyFormularyDrugPA",
+  async (apiDetails: any) => {
+    
+    let pathParams = apiDetails.pathParams;
+    let keyVals = apiDetails.keyVals;
+    let messageBody = apiDetails.messageBody;
+    let POST_URL = POST_APPLY_FORUMULARY_DRUG_PA_URL + pathParams ;
+    if(keyVals){
+      keyVals = keyVals.map(pair => pair.key+'='+pair.value);
+      POST_URL = POST_URL + "?" + keyVals.join('&');
+    }
+    console.log("postApplyFormularyDrugPA action creator:: url: " + POST_URL);
+    const requestHeaders  = {
+        method: 'POST',
+        body: JSON.stringify(messageBody),
+        headers: {
+            'Authorization': 'Bearer baf65faa-8fee-4d08-98f0-29ffb04cb1fc',
+            'Accept': 'application/json',
+            'Content-Type': 'application/json;charset=UTF-8',
+        }
+    }
+    return fetch(POST_URL,requestHeaders)
+      .then((response) => {
+        if (!response.ok) throw Error(response.statusText);
+        return response.json();
+      })
+      .then((json) => {
+        console.log("postApplyFormularyDrugPA: ", json);
+        return json;
+      });
+  }
+);
+
+
+export const postCriteriaListPA = createAsyncThunk(
+  "tier/postCriteriaListPA",
+  async (apiDetails: any) => {
+    
+    let pathParams = apiDetails.pathParams;
+    let keyVals = apiDetails.keyVals;
+    let messageBody = apiDetails.messageBody;
+    let POST_URL = POST_CRITERIA_LIST_PA_URL + pathParams ;
+    if(keyVals){
+      keyVals = keyVals.map(pair => pair.key+'='+pair.value);
+      POST_URL = POST_URL + "?" + keyVals.join('&');
+    }
+    console.log("postCriteriaListPA action creator:: url: " + POST_URL);
+    const requestHeaders  = {
+        method: 'POST',
+        body: JSON.stringify(messageBody),
+        headers: {
+            'Authorization': 'Bearer baf65faa-8fee-4d08-98f0-29ffb04cb1fc',
+            'Accept': 'application/json',
+            'Content-Type': 'application/json;charset=UTF-8',
+        }
+    }
+    return fetch(POST_URL,requestHeaders)
+      .then((response) => {
+        if (!response.ok) throw Error(response.statusText);
+        return response.json();
+      })
+      .then((json) => {
+        console.log("postCriteriaListPA: ", json);
         return json;
       });
   }

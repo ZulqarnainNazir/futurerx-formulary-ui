@@ -195,78 +195,18 @@ function NewGroup(props: any){
     console.log(formData)
     props.saveGDM({formularyId:props.formulary_id,latestId:latestId,body:formData})
   };
-  // state = {
-  //   pa_group_description:"",
-  //   file_type:"FA",
-  //   is_rx_drug_type:false,
-  //   is_otc_drug_type:false,
-  //   id_indication_indicator:false,
-  //   change_indicator:null,
-  //   off_label_uses:null,
-  //   exclusion_criteria:null,
-  //   required_medical_info:null,
-  //   age_restrictions:null,
-  //   prescriber_restrictions:null,
-  //   coverage_restrictions:null,
-  //   other_criteria:null,
-  //   excluded_drug_file:null,
-  //   mmp_pa_criteria:null,
-  //   is_suppress_criteria_dispaly_cms_approval:false,
-  //   is_display_criteria_drugs_not_frf:false,
-  //   is_additional_criteria_defined:false,
-  // }
-
-//   onNewDefinationAddHandler = () => {
-//     console.log(this.props.formulary_count)
-//   }
-  const saveGroupDescription = () =>{
+  
+  const saveGroupDescription = (is_validation:boolean) =>{
     
     let requestData = {};
-    debugger;
+    //debugger;
     requestData['apiPart'] = 'api/1/mcr-pa-group-description/1';
     requestData['pathParams'] = '/3086?entity_id=0';
     requestData['keyVals'] = [{key: 'index', value: 0},{key: 'limit', value: 10},{key: 'entity_id', value: 1262}];
-//     let data = {};
-//     data["pa_group_description_name"]=this.state.pa_group_description;
-//     //data["id_pa_type"]=8;
-//     data["is_validation_required"]=true;
-//     data["pa_group_description_name"]=this.state.pa_group_description;
-//     data["file_type"]=this.state.file_type;
-//     data["is_rx_drug_type"]=this.state.is_rx_drug_type;
-//     data["is_otc_drug_type"]=this.state.is_otc_drug_type;
-//     data["id_indication_indicator"]=this.state.id_indication_indicator;
-//     data["change_indicator"]=this.state.change_indicator;
-//     data["off_label_uses"]=this.state.off_label_uses;
-//     data["exclusion_criteria"]=this.state.exclusion_criteria;
-//     data["required_medical_info"]=this.state.required_medical_info
-//     data["age_restrictions"]=this.state.age_restrictions
-//     data["prescriber_restrictions"]=this.state.prescriber_restrictions;
-// data["coverage_restrictions"]=this.state.coverage_restrictions;
-// data["other_criteria"]=this.state.other_criteria
-// data["excluded_drug_file"]=this.state.excluded_drug_file;
-// data["mmp_pa_criteria"]=this.state.mmp_pa_criteria;
-// data["is_suppress_criteria_dispaly_cms_approval"]=this.state.is_suppress_criteria_dispaly_cms_approval;
-// data["is_display_criteria_drugs_not_frf"]=this.state.is_display_criteria_drugs_not_frf;
-// data["is_additional_criteria_defined"]=this.state.is_additional_criteria_defined;
-
+    formData["is_validation_required"] =is_validation;
     requestData['messageBody'] = formData;
     props.postPAGroupDescription(requestData);
   };
-
-  // componentDidMount() {
-  //   debugger;               
-  //   console.log("##################" );
-  //   this.props.getPaGrouptDescription(this.props.selectedGroupId);
-  // }
-  // componentDidUpdate(){
-  //   debugger;               
-  //   console.log("##################" );
-  //   this.props.getPaGrouptDescription(this.props.selectedGroupId);
-  // }
-  // handleChange(changeObject) {
-  //   debugger;
-  //   this.setState(changeObject)
-  // }
 
   const onChange = (e) =>{
     console.log(props.version);
@@ -282,11 +222,12 @@ function NewGroup(props: any){
   }
 
   useEffect(() => {
+    //debugger;
     setPanelColor(props.editable?'-green':'')
     setLatestId(props.latestVerion)
     updateFormData(initialFormData)
     setPlaceHolder(props.versionTitle)
-    if(Object.keys(props.PaGDData).length>0){ 
+    if(Object.keys(props.PaGDData).length>0) { 
       updateFormData({
         ...formData,
         ...props.PaGDData
@@ -383,11 +324,6 @@ function NewGroup(props: any){
             <div className="inner-container pa-new-group-form">
                 <div className="setting-1">
                     <span>What file type is this group description for? *</span>
-                    {/* <div className="marketing-material radio-group" >
-                        <RadioButton label="Formulary/OTC" name="marketing-material-radio1" checked value="FA"  onChange={(e) => this.handleChange({ file_type: e.target.value })}/>
-                        <RadioButton label="Excluded" name="marketing-material-radio1" value="ExD"  onChange={(e) => this.handleChange({ file_type: e.target.value })}/>
-                        <RadioButton label="ADD" name="marketing-material-radio1" value="ADD" onChange={(e) => this.handleChange({ file_type: e.target.value })}/>
-                    </div> */}
                     <div className="marketing-material radio-group">
                         <RadioGroup aria-label="marketing-material-radio1" className="gdp-radio" name="file_type" onChange={handleChange}>
                           <FormControlLabel value="FAOTC" control={<Radio checked={formData.file_type==="FAOTC"?true:false} />} label="Formulary/OTC" disabled={props.editable}/>
@@ -414,7 +350,7 @@ function NewGroup(props: any){
                                     //options={[0,1]}
                                     valueProp="key" dispProp="value"
                                     onChange={handleChange_1}
-                                    
+                                    disabled={props.editable}
                                   />
                               </div>
                           </Grid>
@@ -428,7 +364,7 @@ function NewGroup(props: any){
                                     options={[{key:1,value:1}, {key:2,value:2},{key:3,value:3},{key:4,value:4}]}
                                     valueProp="key" dispProp="value"
                                     onChange={handleChange_2}
-                                    
+                                    disabled={props.editable}
                                   />
                               </div>
                           </Grid>
@@ -441,60 +377,53 @@ function NewGroup(props: any){
                         <Grid item xs={12}>
                             <div className="group">
                                 <label>Off-LABEL USES</label>
-                                <input type="text" className="setup-input-fields" name="off_label_uses" defaultValue={formData.off_label_uses} onChange={handleChange}/>
+                                <input type="text" className="setup-input-fields" name="off_label_uses" defaultValue={formData.off_label_uses} onChange={handleChange} disabled={props.editable}/>
                             </div>
                         </Grid>
                         <Grid item xs={12}>
                             <div className="group">
                                 <label>EXCLUSION CRITERIA</label>
-                                <input type="text" className="setup-input-fields"  name="exclusion_criteria" defaultValue={formData.exclusion_criteria} onChange={handleChange}/>
+                                <input type="text" className="setup-input-fields"  name="exclusion_criteria" defaultValue={formData.exclusion_criteria} onChange={handleChange} disabled={props.editable}/>
                             </div>
                         </Grid>
                         <Grid item xs={12}>
                             <div className="group">
                                 <label>REQUIRED MEDICAL INFORMATION</label>
-                                <input type="text" className="setup-input-fields"  name="required_medical_info" defaultValue={formData.required_medical_info} onChange={handleChange}/>
+                                <input type="text" className="setup-input-fields"  name="required_medical_info" defaultValue={formData.required_medical_info} onChange={handleChange} disabled={props.editable}/>
                             </div>
                         </Grid>
                         <Grid item xs={12}>
                             <div className="group">
                                 <label>AGE RESTRICTIONS</label>
-                                <input type="text" className="setup-input-fields"  name="age_restrictions" defaultValue={formData.age_restrictions} onChange={handleChange}/>
+                                <input type="text" className="setup-input-fields"  name="age_restrictions" defaultValue={formData.age_restrictions} onChange={handleChange} disabled={props.editable}/>
                             </div>
                         </Grid>
                         <Grid item xs={12}>
                             <div className="group">
                                 <label>PRESCRIBER RESTRICTIONS</label>
-                                <input name="prescriber_restrictions" type="text" className="setup-input-fields" defaultValue={formData.prescriber_restrictions} onChange={handleChange} />
+                                <input name="prescriber_restrictions" type="text" className="setup-input-fields" defaultValue={formData.prescriber_restrictions} onChange={handleChange} disabled={props.editable}/>
                             </div>
                         </Grid>
                         <Grid item xs={12}>
                             <div className="group">
                                 <label>COVERAGE DURATION<span className="astrict">*</span></label>
-                                <input name="coverage_restrictions" type="text" className="setup-input-fields" defaultValue={formData.coverage_restrictions} onChange={handleChange} />
+                                <input name="coverage_restrictions" type="text" className="setup-input-fields" defaultValue={formData.coverage_restrictions} onChange={handleChange} disabled={props.editable}/>
                             </div>
                         </Grid>
                         <Grid item xs={12}>
                             <div className="group">
                                 <label>OTHER CRITERIA</label>
-                                <input name="other_criteria" type="text" className="setup-input-fields" defaultValue={formData.other_criteria} onChange={handleChange} />
+                                <input name="other_criteria" type="text" className="setup-input-fields" defaultValue={formData.other_criteria} onChange={handleChange} disabled={props.editable}/>
                             </div>
                         </Grid>
                     </Grid>
-                    {/* {props.formType>0 && (<Grid container className="mb-20">
-                        <Grid item xs={6}>
-                            <div className="group">
-                                <label>EXCLUDED DRUG FILE</label>
-                                <input type="text" />
-                            </div>
-                        </Grid>
-                    </Grid>)} */}
+                   
                 </div>
                 <div className="setting-1 mb-20">
                     <span>MARKETING MATERIAL CONSIDERATIONS</span>
                     <div className="marketing-material-chk">
-                        <FormControlLabel control={<Checkbox value="true" name="is_suppress_criteria_dispaly_cms_approval" color="primary" checked={formData.is_suppress_criteria_dispaly_cms_approval } />} label='Supress Criteria and Display: Pending CMS Approval' />
-                        <FormControlLabel control={<Checkbox value="true" name="is_display_criteria_drugs_not_frf" color="primary" checked={formData.is_display_criteria_drugs_not_frf } />} label='Display Criteria for Drugs not on FRF' />
+                        <FormControlLabel control={<Checkbox value="true" name="is_suppress_criteria_dispaly_cms_approval" color="primary" checked={formData.is_suppress_criteria_dispaly_cms_approval } disabled={props.editable} />} label='Supress Criteria and Display: Pending CMS Approval' />
+                        <FormControlLabel control={<Checkbox value="true" name="is_display_criteria_drugs_not_frf" color="primary" checked={formData.is_display_criteria_drugs_not_frf } disabled={props.editable}/>} label='Display Criteria for Drugs not on FRF' />
                     </div>
                     <span>do you want to add additional criteria?<span className="astrict">*</span></span>
                     <div className="marketing-material radio-group">
@@ -503,14 +432,12 @@ function NewGroup(props: any){
                           <FormControlLabel value='true' control={<Radio checked={formData.is_additional_criteria_defined} />} label="Yes" disabled={props.editable}/>
                           <FormControlLabel value='false' control={<Radio checked={!formData.is_additional_criteria_defined}/>} label="No" disabled={props.editable}/>
                     </RadioGroup>
-                        {/* <RadioButton label="Yes" name="marketing-material-radio" value="true" checked />
-                        <RadioButton label="No" name="marketing-material-radio" value="false" /> */}
                     </div>
                 </div>
                 <div className="button-wrapper">
-                    <Button label="Save Version Progress" className="Button" />
-                    <Button label="Version to Initiate Change Request" className="Button" />
-                    <Button label="Version Submitted to CMS" className="Button"  onClick={saveGroupDescription} />
+                    <Button label="Save Version Progress" className="Button" onClick={()=>saveGroupDescription(false)}/>
+                    <Button label="Version to Initiate Change Request" className="Button" onClick={()=>saveGroupDescription(false)}/>
+                    <Button label="Version Submitted to CMS" className="Button"  onClick={()=>saveGroupDescription(true)} />
                 </div>
             </div>
 

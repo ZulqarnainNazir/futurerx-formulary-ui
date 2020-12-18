@@ -24,6 +24,9 @@ import {
   fetchSubMthsOptions,
   fetchStatesOptions,
 } from "../../../../.././redux/slices/formulary/setup/setupOptionsSlice";
+import { ToastContainer } from 'react-toastify';
+import showMessage from "../../../Utils/Toast";
+import { trim } from "lodash";
 
 class FormularySetUp extends React.Component<any, any> {
   state = {
@@ -48,6 +51,10 @@ class FormularySetUp extends React.Component<any, any> {
       supplemental_benefits :[] as any,
     },
     tiers: [],
+    edit_info: {
+      edits: [],
+      edits_no: []
+    },
     setupOptions: {},
   };
   
@@ -116,6 +123,8 @@ class FormularySetUp extends React.Component<any, any> {
           supplemental_benefits: newProps.formulary.supplemental_benefits.map(el => el.id_supplemental_benefit)
         },
         tiers: [...newProps.formulary.tiers],
+        fetchedEditInfo: newProps.formulary.edit_info,
+        edit_info: this.getEditInfo(newProps.formulary.edit_info),
         setupOptions: newProps.setupOptions,
       });
     }
@@ -129,6 +138,43 @@ class FormularySetUp extends React.Component<any, any> {
       });
     }
   };
+  getEditInfo = (editInfo:any) => {
+    const editTrue = editInfo.filter(obj => obj.id_checked === true).map(e => e.id_edit);
+    const editFalse = editInfo.filter(obj => obj.id_checked === false).map(e => e.id_edit);
+    console.log(editTrue,editFalse)
+    const newObj = {
+      edits: editTrue,
+      edits_no: editFalse
+    }
+    return newObj;
+  }
+  formularyRadioChangeHandler = (event: React.ChangeEvent<HTMLInputElement>,id: any, type) => {
+    console.log(event.target.value, id)
+    console.log(this.state.edit_info)
+    let checked = event.target.value;
+    const updatedEditInfo:any = {...this.state.edit_info}
+    if(type === 'checkbox'){
+      let index = updatedEditInfo.edits.indexOf(id);
+      index === -1 ? updatedEditInfo.edits.push(id) : updatedEditInfo.edits.splice(index,1);
+    }else{
+      if(checked === 'true'){
+        if(updatedEditInfo.edits_no.indexOf(id) !== -1){
+          let index = updatedEditInfo.edits_no.indexOf(id);
+          updatedEditInfo.edits_no.splice(index,1)
+        }
+        updatedEditInfo.edits.push(id)
+      }else{
+        if(updatedEditInfo.edits.indexOf(id) !== -1){
+          let index = updatedEditInfo.edits.indexOf(id);
+          updatedEditInfo.edits.splice(index,1)
+        }
+        updatedEditInfo.edits_no.push(id)
+      }
+    }
+    this.setState({
+      edit_info: updatedEditInfo
+    })
+  }
   updateInputField = (e) => {
     const newObj = { ...this.state.generalInformation };
     newObj[e.currentTarget.name] = e.currentTarget.value;
@@ -174,7 +220,7 @@ class FormularySetUp extends React.Component<any, any> {
     });
   };
   onDatePickerChangeHandler = (e,section, stateProp) => {
-    const date = e._d.toLocaleDateString();
+    const date = `${e._d.getFullYear()}-${e._d.getMonth()+1}-${e._d.getDate()}`;
     const newObj = { ...this.state[section] };
     newObj[stateProp] = date
     this.setState({
@@ -209,10 +255,38 @@ class FormularySetUp extends React.Component<any, any> {
   }
   onSave = (e) => {
     console.log("  SAVE  ", e);
+    if(this.props.mode==="NEW"){
+      let msg:string[]=[];
+      if(this.state.generalInformation.type_id === ""){
+        msg.push("Formulary Type is required.");
+      }
+      if(trim(this.state.generalInformation.name) === ""){
+        msg.push("Formulary Name is required.");
+      }
+      if(this.state.generalInformation.method === ""){
+        msg.push("Formulary Build Method is required.");
+      }
+      if(this.state.generalInformation.effective_date === ""){
+        msg.push("Formulary Effective Date is required.");
+      }
+      if(this.state.generalInformation.service_year === ""){
+        msg.push("Formulary Service year is required.");
+      }
+      if(msg.length>0){
+        msg.forEach((m)=>{showMessage(m, 'error');})
+        //showMessage(msg[0], 'error');
+        return;
+      }
+    }
+
     const input = {
       MODE: this.props.mode,
       CONTINUE: e,
       GENERAL_INFO: this.state.generalInformation,
+      edit_info: this.state.edit_info,
+      supplemental_benefit_info: this.state.supplemental_benefit_info,
+      medicare_contract_types: this.state.medicareInfo,
+      tiers: this.state.tiers,
     }
     this.props.saveFormulary(input);
   };
@@ -233,8 +307,21 @@ class FormularySetUp extends React.Component<any, any> {
     }
   }
   selectTierHandler = (e) => {
-    const updatedTiers = [...this.state.tiers];
-    updatedTiers.length = e;
+    const updatedTiers:any = [...this.state.tiers];
+    const tiersLength = updatedTiers.length;
+    if(tiersLength > e){
+      updatedTiers.length = e;  
+    }else{
+      for(let i=1; i <= (e-tiersLength); i++){
+        const newObj = {
+          id_formulary_tier: null,
+          id_tier: tiersLength + i,
+          id_tier_label: null,
+          tier_name: `Tier ${tiersLength + i}`
+        };
+        updatedTiers.push(newObj)
+      }
+    }
     this.setState({
       tiers: updatedTiers
     })
@@ -268,7 +355,10 @@ class FormularySetUp extends React.Component<any, any> {
               <>
               {this.state.generalInformation.type !== 'Commercial' ? 
                 <MedicareInformation medicareOptions={this.state.medicareInfo} medicareCheck={this.medicareCheck}/> : null}
-              {this.state.generalInformation.type !== 'Commercial' ? <FormularyDesign /> : null}
+              {this.state.generalInformation.type !== 'Commercial' ? (
+                <FormularyDesign edit_info={this.state.edit_info}
+                formularyRadioChange={this.formularyRadioChangeHandler}/>
+              ) : null}
               <FormularyTiers 
                 tiers={this.state.tiers}
                 selectTier={this.selectTierHandler}
@@ -284,28 +374,32 @@ class FormularySetUp extends React.Component<any, any> {
             
             <div className="btn-action">
               <Box display="flex" justifyContent="flex-end" className="save-btn">
-                <Button label="Save" onClick={() => this.onSave(false)} />
+                <Button label="Save" onClick={() => this.onSave(false)} disabled={this.props.mode === "EXISTING"}/>
               </Box>
               <Box
                 display="flex"
                 justifyContent="flex-end"
                 className="save-and-continue-btn"
               >
-                <Button label="Save & Continue" onClick={() => this.onSave(true)} />
+                <Button label="Save & Continue" onClick={() => this.onSave(true)} disabled="true" />
               </Box>
             </div>
           </>
         ) : <FrxLoader/>}
 
-        
+        <ToastContainer />
+
       </div>
     );
   }
 }
 
 const mapStateToProps = (state) => {
-  // console.log("SP  -  -  -  -  -  -  -  -  -  -  -  - STATE");
-  // console.log(state);
+   console.log("SP  -  -  -  -  -  -  -  -  -  -  -  - STATE");
+   console.log(state?.setup?.messageType +" - "+ state?.setup?.message  );
+  if(state?.setup?.messageType!=="" && state?.setup?.message !==""){
+    showMessage(state?.setup?.message, state?.setup?.messageType);
+  }
   return {
     mode: state?.application?.mode,
     formulary_id: state?.application?.formulary_id,

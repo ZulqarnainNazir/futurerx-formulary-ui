@@ -24,9 +24,9 @@ import {
 import STPopup from "./STPopup/STpopup";
 import FormularyDetailsContext from "../../../../FormularyDetailsContext";
 import FrxGridContainer from "../../../../../shared/FrxGrid/FrxGridContainer";
-import { OverridePopup } from "./OverridePopup/OverridePopup";
+import OverridePopup from "./OverridePopup/OverridePopup";
 import { getTier } from "../../../../../../redux/slices/formulary/tier/tierActionCreation";
-import { getClassificationSystems, postDrugsCategory } from "../../../../../../redux/slices/formulary/categoryClass/categoryClassActionCreation";
+import { getClassificationSystems, postDrugsCategory, getIntelliscenseSearch } from "../../../../../../redux/slices/formulary/categoryClass/categoryClassActionCreation";
 import * as tierConstants from "../../../../../../api/http-tier";
 import * as commonConstants from "../../../../../../api/http-commons";
 import * as categoryConstants from "../../../../../../api/http-category-class";
@@ -37,6 +37,7 @@ function mapDispatchToProps(dispatch) {
     getTier: (a) => dispatch(getTier(a)),
     getClassificationSystems: (a) => dispatch(getClassificationSystems(a)),
     postDrugsCategory: (a) => dispatch(postDrugsCategory(a)),
+    getIntelliscenseSearch: (a) => dispatch(getIntelliscenseSearch(a)),
   };
 }
 
@@ -63,6 +64,9 @@ interface State {
   classificationSystems: any[];
   lobCode: any;
   filter: any[];
+  searchData: any[];
+  searchNames: any[];
+  searchValue: any;
 }
 
 class CategoryClass extends React.Component<any, any> {
@@ -85,7 +89,14 @@ class CategoryClass extends React.Component<any, any> {
     showActionsInd: false,
     lobCode: 'MCR',
     filter: Array(),
+    searchData: Array(),
+    searchNames: Array(),
+    filterPlaceholder: 'Search',
+    searchValue: '',
+    overriddenClass: null,
+    overriddenCategory: null,
   };
+
   static contextType = FormularyDetailsContext;
 
   populateTierDetails = () => {
@@ -155,8 +166,8 @@ class CategoryClass extends React.Component<any, any> {
           gridItem['gpi'] = element.generic_product_identifier ? "" + element.generic_product_identifier : "";
           gridItem['databaseCategory'] = element.database_category ? "" + element.database_category : "";
           gridItem['databaseClass'] = element.database_class ? "" + element.database_class : "";
-          gridItem['overrideCategory'] = element.database_category ? "" + element.database_category : "";
-          gridItem['overRideClass'] = element.database_class ? "" + element.database_class : "";
+          gridItem['overrideCategory'] = element.override_category ? "" + element.override_category : "";
+          gridItem['overRideClass'] = element.override_class ? "" + element.override_class : "";
           count++;
           return gridItem;
         })
@@ -170,21 +181,114 @@ class CategoryClass extends React.Component<any, any> {
     }))
   }
 
+  onSearchValueChanges = (value, event) => {
+    console.log('Search value changed:' + event.value + " " + event.key);
+    this.state.searchValue = value;
+    this.state.filter = [];
+    if (this.state.searchData && Array.isArray(this.state.searchData) && this.state.searchData.length > 0) {
+      if (event.key < this.state.searchData.length) {
+        let propData = this.state.searchData[event.key];
+        switch (propData.key) {
+          case 'drug_descriptor_identifier':
+            this.state.filter.push({ prop: "drug_descriptor_identifier", operator: "is_like", values: [propData.value] });
+            break;
 
+          case 'rxcui':
+            this.state.filter.push({ prop: "rxcui", operator: "is_like", values: [propData.value] });
+            break;
 
-  onInputValueChanged = (event) => {
-    if (event.target.value) {
-      this.state.filter = [];
-      if (this.props.formulary_lob_id == 1) {
-        this.state.filter.push({ prop: "drug_descriptor_identifier", operator: "is_like", values: [event.target.value] });
-      } else {
-        this.state.filter.push({ prop: "rxcui", operator: "is_like", values: [event.target.value] });
+          case 'ndc':
+            this.state.filter.push({ prop: "ndc", operator: "is_like", values: [propData.value] });
+            break;
+
+          case 'generic_product_identifier':
+            this.state.filter.push({ prop: "generic_product_identifier", operator: "is_like", values: [propData.value] });
+            break;
+
+          case 'drug_label_name':
+            this.state.filter.push({ prop: "drug_label_name", operator: "is_like", values: [propData.value] });
+            break;
+
+          case 'database_class':
+            this.state.filter.push({ prop: "database_class", operator: "is_like", values: [propData.value] });
+            break;
+
+          case 'database_category':
+            this.state.filter.push({ prop: "database_category", operator: "is_like", values: [propData.value] });
+            break;
+        }
+        this.populateGridData();
       }
-      this.state.filter.push({ prop: "ndc", operator: "is_like", values: [event.target.value] });
-      this.state.filter.push({ prop: "generic_product_identifier", operator: "is_like", values: [event.target.value] });
-      this.state.filter.push({ prop: "drug_label_name", operator: "is_like", values: [event.target.value] });
-      this.state.filter.push({ prop: "database_class", operator: "is_like", values: [event.target.value] });
-      this.state.filter.push({ prop: "database_category", operator: "is_like", values: [event.target.value] });
+    }
+  }
+
+
+  clearSearchFilter = (e) => {
+    this.state.filter = Array();
+    this.state.searchData = Array();
+    this.state.searchNames = Array();
+    this.state.filterPlaceholder = 'Search';
+    this.state.searchValue = '';
+    this.populateGridData();
+  }
+
+  onInputValueChanged = (value) => {
+    if (value) {
+      let requests = Array();
+      let apiDetails = {};
+      apiDetails['apiPart'] = commonConstants.SEARCH_GPI;
+      apiDetails['pathParams'] = this.props?.formulary_id + "/" + this.state.lobCode + "/" + "F";
+      if (this.state.lobCode === 'MCR') {
+        apiDetails['pathParams'] = apiDetails['pathParams'] + "/" + (this.props.formulary_type_id === 1 ? 'MC' : 'MMP');
+      } else {
+        apiDetails['pathParams'] = apiDetails['pathParams'] + "/" + this.state.lobCode;
+      }
+      apiDetails['keyVals'] = [{ key: commonConstants.KEY_SEARCH_VALUE, value: value }];
+      requests.push({ key: 'generic_product_identifier', apiDetails: apiDetails });
+
+      apiDetails = Object.assign({}, apiDetails);
+      apiDetails['apiPart'] = commonConstants.SEARCH_NDC;
+      requests.push({ key: 'ndc', apiDetails: apiDetails });
+
+      apiDetails = Object.assign({}, apiDetails);
+      apiDetails['apiPart'] = commonConstants.SEARCH_LABEL_NAME;
+      requests.push({ key: 'drug_label_name', apiDetails: apiDetails });
+
+      apiDetails = Object.assign({}, apiDetails);
+      apiDetails['apiPart'] = commonConstants.SEARCH_CLASS;
+      requests.push({ key: 'database_class', apiDetails: apiDetails });
+
+      apiDetails = Object.assign({}, apiDetails);
+      apiDetails['apiPart'] = commonConstants.SEARCH_CATEGORY;
+      requests.push({ key: 'database_category', apiDetails: apiDetails });
+
+      if (this.props.formulary_lob_id == 1) {
+        apiDetails = Object.assign({}, apiDetails);
+        apiDetails['apiPart'] = commonConstants.SEARCH_RXCUI;
+        requests.push({ key: 'rxcui', apiDetails: apiDetails });
+      } else {
+        apiDetails = Object.assign({}, apiDetails);
+        apiDetails['apiPart'] = commonConstants.SEARCH_DDID;
+        requests.push({ key: 'drug_descriptor_identifier', apiDetails: apiDetails });
+      }
+
+      const drugGridData = this.props.getIntelliscenseSearch(requests).then((json => {
+        //debugger;
+        if (json.payload && json.payload.data && Array.isArray(json.payload.data) && json.payload.data.length > 0) {
+          let tmpData = json.payload.data;
+          var data: any[] = [];
+          var gridData = tmpData.map(function (el) {
+            var element = Object.assign({}, el);
+            data.push(element)
+            let gridItem = element['value'];
+            return gridItem;
+          })
+          this.setState({
+            searchData: data,
+            searchNames: gridData
+          });
+        }
+      }))
     }
   }
 
@@ -201,10 +305,8 @@ class CategoryClass extends React.Component<any, any> {
     switch (this.props.formulary_lob_id) {
       case 4:
         return categoryCommercialClassColumns();
-        break;
       case 1:
         return categoryClassColumns();
-        break;
       default:
         break;
     }
@@ -214,10 +316,8 @@ class CategoryClass extends React.Component<any, any> {
     switch (this.props.formulary_lob_id) {
       case 4:
         return categoryCommercialClassMock();
-        break;
       case 1:
         return categoryClassMock();
-        break;
       default:
         break;
     }
@@ -254,8 +354,16 @@ class CategoryClass extends React.Component<any, any> {
     }
 
   };
-  processCloseActions = () => {
-    this.setState({ show: true });
+  processCloseActions = (type) => {
+    //this.setState({ show: true });
+    if(type === 'positive'){
+      if(this.state.overriddenCategory && this.state.overriddenClass){
+
+      }
+    }
+    this.setState({
+      materialPopupInd: false,
+    });
   };
   handleSearch = (searchObject) => {
     console.log("search");
@@ -263,6 +371,16 @@ class CategoryClass extends React.Component<any, any> {
   rowSelectionChange = (record) => {
     console.log(record);
   };
+  onOverrideCategoryClass = (category,classValue) => {
+    this.state.overriddenCategory = category;
+    this.state.overriddenClass = classValue;
+  }
+  onOverrideCategory = (category) => {
+    this.state.overriddenCategory = category;
+  }
+  onOverrideClass = (classValue) => {
+    this.state.overriddenClass = classValue;
+  }
   render() {
     return (
       <div className='drug-detail-LA-root'>
@@ -280,85 +398,23 @@ class CategoryClass extends React.Component<any, any> {
                 </div>
                 <div className='bordered'>
                   <div className='header space-between pr-10'>
-                    <div className='button-wrapper'>
-                      {!this.props.isReadOnly &&
-                        this.props.formulary_lob_id === 4 && (
-                          <div className="float-left">
-                            <div
-                              className='add-file-button'
-                              onClick={(e) => this.handlePopupButtonClick("override", "CATEGORY AND CLASS ASSIGNMENT")}
-                            >
-                              Override
+                    <div
+                      className='add-file-button'
+                      onClick={(e) => this.handlePopupButtonClick("override", "CATEGORY AND CLASS ASSIGNMENT")}
+                    >
+                      Override
                           </div>
-                            <Input
-                              className='member-search__input'
-                              placeholder='Search'
-                              type='text'
-                              disableUnderline={true}
-                              startAdornment={
-                                <svg
-                                  className='member-search__icon'
-                                  width='11'
-                                  height='11'
-                                  viewBox='0 0 11 11'
-                                  fill='none'
-                                  xmlns='http://www.w3.org/2000/svg'
-                                >
-                                  <path
-                                    d='M10.8504 9.5102L8.70825 7.36842C8.61157 7.27175 8.4805 7.21805 8.34299 7.21805H7.99277C8.58578 6.45972 8.93815 5.50591 8.93815 4.46831C8.93815 2 6.93781 0 4.46908 0C2.00034 0 0 2 0 4.46831C0 6.93663 2.00034 8.93663 4.46908 8.93663C5.50685 8.93663 6.46082 8.58432 7.21928 7.99141V8.34157C7.21928 8.47905 7.27299 8.6101 7.36968 8.70677L9.51183 10.8485C9.7138 11.0505 10.0404 11.0505 10.2402 10.8485L10.8483 10.2406C11.0502 10.0387 11.0502 9.71214 10.8504 9.5102ZM4.46908 7.21805C2.95002 7.21805 1.71888 5.98926 1.71888 4.46831C1.71888 2.94952 2.94787 1.71858 4.46908 1.71858C5.98813 1.71858 7.21928 2.94737 7.21928 4.46831C7.21928 5.98711 5.99028 7.21805 4.46908 7.21805Z'
-                                    fill='#999999'
-                                  />
-                                </svg>
-                              }
-                              onChange={this.onInputValueChanged}
-                            />
-                          </div>
-                        )}
-                      {!this.props.isReadOnly &&
-                        this.props.formulary_lob_id === 1 && (
-                          <div className="float-left">
-                            <Input
-                              className='member-search__input'
-                              placeholder='Search'
-                              type='text'
-                              disableUnderline={true}
-                              startAdornment={
-                                <svg
-                                  className='member-search__icon'
-                                  width='11'
-                                  height='11'
-                                  viewBox='0 0 11 11'
-                                  fill='none'
-                                  xmlns='http://www.w3.org/2000/svg'
-                                >
-                                  <path
-                                    d='M10.8504 9.5102L8.70825 7.36842C8.61157 7.27175 8.4805 7.21805 8.34299 7.21805H7.99277C8.58578 6.45972 8.93815 5.50591 8.93815 4.46831C8.93815 2 6.93781 0 4.46908 0C2.00034 0 0 2 0 4.46831C0 6.93663 2.00034 8.93663 4.46908 8.93663C5.50685 8.93663 6.46082 8.58432 7.21928 7.99141V8.34157C7.21928 8.47905 7.27299 8.6101 7.36968 8.70677L9.51183 10.8485C9.7138 11.0505 10.0404 11.0505 10.2402 10.8485L10.8483 10.2406C11.0502 10.0387 11.0502 9.71214 10.8504 9.5102ZM4.46908 7.21805C2.95002 7.21805 1.71888 5.98926 1.71888 4.46831C1.71888 2.94952 2.94787 1.71858 4.46908 1.71858C5.98813 1.71858 7.21928 2.94737 7.21928 4.46831C7.21928 5.98711 5.99028 7.21805 4.46908 7.21805Z'
-                                    fill='#999999'
-                                  />
-                                </svg>
-                              }
-                              onChange={this.onInputValueChanged}
-                            />
-                            <div
-                              className='add-file-button margin-right'
-                              onClick={(e) => this.handlePopupButtonClick("override", "CATEGORY AND CLASS ASSIGNMENT")}
-                            >
-                              Override
-                          </div>
-                          </div>
-                        )}
-                      {!this.props.isReadOnly ? (
-                        <div
-                          className='advance-search-button'
-                          onClick={(e) => this.handlePopupButtonClick("advancesearch", "Advanced Search")}
-                        >
-                          Advanced Search
-                        </div>
-                      ) : null}
-                      {!this.props.isReadOnly ? (
-                        <Button label='Save' className='Button' disabled />
-                      ) : null}
+                    <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+                      <DropDown value={this.state.searchValue} options={this.state.searchNames} placeholder={this.state.filterPlaceholder} showSearch={true} onSearch={this.onInputValueChanged} onSelect={this.onSearchValueChanges} />
+                      {this.state.filter.length > 0 && (<span style={{ marginLeft: 10 }} onClick={this.clearSearchFilter}>Clear</span>)}
                     </div>
+                    <div
+                      className='advance-search-button'
+                      onClick={(e) => this.handlePopupButtonClick("advancesearch", "Advanced Search")}
+                    >
+                      Advanced Search
+                        </div>
+                    <Button label='Save' className='Button' disabled />
                   </div>
                   <FrxGridContainer
                     enableSearch={false}
@@ -394,8 +450,8 @@ class CategoryClass extends React.Component<any, any> {
           handleClose={() => {
             this.onClose();
           }}
-          handleAction={() => {
-            this.processCloseActions();
+          handleAction={(type) => {
+            this.processCloseActions(type);
           }}
           showActions={this.state.showActionsInd}
           open={this.state.materialPopupInd}
@@ -403,7 +459,7 @@ class CategoryClass extends React.Component<any, any> {
           {this.state.popupName === "advancesearch" ?
             <STPopup />
             : this.state.popupName === "override" ?
-              <OverridePopup />
+              <OverridePopup onOverrideCategoryClass={this.onOverrideCategoryClass} onOverrideCategory={this.onOverrideCategory} onOverrideClass={this.onOverrideClass} />
               : ""
           }
         </DialogPopup>
