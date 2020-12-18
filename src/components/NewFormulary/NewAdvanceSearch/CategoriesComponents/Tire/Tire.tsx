@@ -9,42 +9,52 @@ const tires = [
   {
     id: 1,
     lable: "Tier 0",
+    key: 0
   },
   {
     id: 2,
     lable: "Tier 1",
+    key: 1
   },
   {
     id: 3,
     lable: "Tier 2",
+    key: 2
   },
   {
     id: 4,
     lable: "Tier 3",
+    key: 3
   },
   {
     id: 5,
     lable: "Tier 4",
+    key: 4
   },
   {
     id: 6,
     lable: "Tier 5",
+    key: 5
   },
   {
     id: 7,
     lable: "Tier 6",
+    key: 6
   },
   {
     id: 8,
     lable: "Tier 7",
+    key: 7
   },
   {
     id: 9,
     lable: "Tier 8",
+    key: 8
   },
   {
     id: 10,
     lable: "No Tier ",
+    key: -1
   },
 ];
 
