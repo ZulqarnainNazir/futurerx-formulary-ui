@@ -60,31 +60,24 @@ export function composePostBody(input: any): any {
   const payload: any = {};
   payload.formulary_info = {};
   payload.formulary_info.id_formulary_type = input.GENERAL_INFO?.type_id;
-
   payload.formulary_info.formulary_type_name = input.GENERAL_INFO?.type;
-
   payload.formulary_info.formulary_build_method = input.GENERAL_INFO?.method;
   payload.formulary_info.formulary_name = input.GENERAL_INFO?.name;
   payload.formulary_info.abbreviation = input.GENERAL_INFO?.abbreviation;
   payload.formulary_info.formulary_description =
     input.GENERAL_INFO?.description;
   //payload.formulary_info.effective_date = input.GENERAL_INFO?.effective_date;
-
-  payload.formulary_info.effective_date = "2020-12-17";
+  payload.formulary_info.effective_date = "2020-12-18";
   payload.formulary_info.contract_year = input.GENERAL_INFO?.service_year;
   payload.formulary_info.id_state = input.GENERAL_INFO?.state_id;
-
   // TIERS COUNTs- - - - - - - - - - - - -
-
   payload.formulary_info.number_of_tiers = 1;
-  payload.formulary_info.min_tiers = 1;
-  payload.formulary_info.max_tiers = 7;
-
+  // payload.formulary_info.min_tiers = 1;
+  // payload.formulary_info.max_tiers = 7;
   // TODO  - - - - - - - - - - - - -
-
-  payload.formulary_info.id_lob = 1;
-  payload.formulary_info.code_value = "MC";
-  payload.formulary_info.id_submission_month = 5;
+  //payload.formulary_info.id_lob = 1;
+  // payload.formulary_info.code_value = "MC";
+  // payload.formulary_info.id_submission_month = 5;
   payload.formulary_info.resemble_formulary_id = null;
   payload.formulary_info.is_closed_formulary = null;
   payload.formulary_info.id_classification_system = parseInt(
@@ -100,9 +93,8 @@ export function composePostBody(input: any): any {
   payload.formulary_info.is_carve_out = null;
   payload.formulary_info.import_file_path = "";
   payload.formulary_info.import_file_name = "";
-  //payload.formulary_info.medicare_types_ref = [];
   payload.formulary_info.medicare_types_ref_other = false;
-  payload.formulary_info.medicare_types_ref = ["S"];
+  // payload.formulary_info.medicare_types_ref = ["S"];
   payload.is_validation_required = false;
   payload.cms_override = false;
 
@@ -116,7 +108,7 @@ export function composePostBody(input: any): any {
   // MEDICARE INFO  - - - - - - - - - - - - -
 
   payload.medicare_contract_type_info = {
-    medicare_contract_types: [1],
+    medicare_contract_types: input.medicare_contract_types,
     // custom_medicare_contract_type: {
     //   id_medicare_contract_type: null,
     //   id_formulary_medicare_contract: "",
@@ -150,8 +142,11 @@ export function composePostBody(input: any): any {
     },
   ];
 
+  // TIER DETAILS  - - - - - - - - - - - - -
+
   payload.supplemental_benefit_info = {
-    supplemental_benefits: [5, 1],
+    supplemental_benefits:
+      input?.supplemental_benefit_info?.supplemental_benefits,
     custom_supplemental_benefits: [],
     removed_formulary_supplemental_benefits: [],
   };
