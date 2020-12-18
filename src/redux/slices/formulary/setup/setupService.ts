@@ -68,8 +68,8 @@ export function composePostBody(input: any): any {
   payload.formulary_info.abbreviation = input.GENERAL_INFO?.abbreviation;
   payload.formulary_info.formulary_description =
     input.GENERAL_INFO?.description;
-  //payload.formulary_info.effective_date = input.GENERAL_INFO?.effective_date;
-  payload.formulary_info.effective_date = "2020-12-19";
+  payload.formulary_info.effective_date = input.GENERAL_INFO?.effective_date;
+  //payload.formulary_info.effective_date = "2020-12-19";
   payload.formulary_info.contract_year = input.GENERAL_INFO?.service_year;
   payload.formulary_info.id_state = input.GENERAL_INFO?.state_id;
   // TODO  - - - - - - - - - - - - -
@@ -119,14 +119,20 @@ export function composePostBody(input: any): any {
   };
 
   // DESIGN  - - - - - - - - - - - - - OTHERs Pending...
-  //  edits: [1, 5, 6, 7, 8, 9, 12],
 
   payload.edit_info = {
-    edits: [1, 6],
-    edits_no: [5],
+    edits: input?.edit_info?.edits,
+    edits_no: input?.edit_info?.edits_no,
     custom_edits: [],
     removed_formulary_edits: [],
   };
+
+  // payload.edit_info = {
+  //   edits: [1, 6],
+  //   edits_no: [5],
+  //   custom_edits: [],
+  //   removed_formulary_edits: [],
+  // };
 
   // TIER DETAILS  - - - - - - - - - - - - -
 

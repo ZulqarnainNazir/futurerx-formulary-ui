@@ -283,6 +283,7 @@ class FormularySetUp extends React.Component<any, any> {
       MODE: this.props.mode,
       CONTINUE: e,
       GENERAL_INFO: this.state.generalInformation,
+      edit_info: this.state.edit_info,
       supplemental_benefit_info: this.state.supplemental_benefit_info,
       medicare_contract_types: this.state.medicareInfo,
       tiers: this.state.tiers,
