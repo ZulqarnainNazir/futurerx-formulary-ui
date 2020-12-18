@@ -56,6 +56,14 @@ export const GET_DRUG_SUMMARY_PGC = "api/1/formulary-drug-summary-pgc/";
 export const GET_PGC_FORMULARY_DRUGS = "api/1/formulary-drugs-pgc/";
 export const GET_PGC_EXCLUDED_DRUGS = "api/1/formulary-drugs-pgc/";
 
+// SO TAB
+export const GET_DRUG_SUMMARY_SO = "api/1/formulary-drug-summary-sboth/";
+export const GET_SO_FORMULARY_DRUGS = "api/1/formulary-drugs-sboth/";
+
+// SSM TAB
+export const GET_DRUG_SUMMARY_SSM = "api/1/formulary-drug-summary-ssm/";
+export const GET_SSM_FORMULARY_DRUGS = "api/1/formulary-drugs-ssm/";
+
 export const KEY_ENTITY_ID = "entity_id";
 export const KEY_INDEX = "index";
 export const KEY_LIMIT = "limit";

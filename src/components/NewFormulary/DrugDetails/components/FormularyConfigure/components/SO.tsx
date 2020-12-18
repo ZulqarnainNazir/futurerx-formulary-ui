@@ -14,10 +14,11 @@ import { textFilters } from "../../../../../../utils/grid/filters";
 import { getDrugDetailsColumn } from "../DrugGridColumn";
 import { getDrugDetailData } from "../../../../../../mocks/DrugGridMock";
 import FrxLoader from "../../../../../shared/FrxLoader/FrxLoader";
-import DrugGrid from "../../DrugGrid";
 import AdvancedSearch from "./search/AdvancedSearch";
 import { getDrugDetailsSOSummary, getDrugDetailsSOList } from "../../../../../../redux/slices/formulary/drugDetails/so/soActionCreation";
 import FrxDrugGridContainer from "../../../../../shared/FrxGrid/FrxDrugGridContainer";
+import * as soConstants from "../../../../../../api/http-drug-details";
+import getLobCode from "../../../../Utils/LobUtils";
 
 function mapDispatchToProps(dispatch) {
   return {
@@ -25,6 +26,13 @@ function mapDispatchToProps(dispatch) {
     getDrugDetailsSOList: (a) => dispatch(getDrugDetailsSOList(a)),
   };
 }
+
+const mapStateToProps = (state) => {
+  return {
+    formulary_id: state?.application?.formulary_id,
+    formulary_lob_id: state?.application?.formulary_lob_id,
+  };
+};
 
 class SO extends React.Component<any, any> {
   state = {
@@ -73,38 +81,16 @@ class SO extends React.Component<any, any> {
     console.log("Save data");
   };
 
-  componentDidMount() {
-    const data = getDrugDetailData();
-    const columns = getDrugDetailsColumn();
-    const FFFColumn: any = {
-      id: 0,
-      position: 0,
-      textCase: "upper",
-      pixelWidth: 238,
-      sorter: {},
-      isFilterable: true,
-      showToolTip: false,
-      key: "fff",
-      displayTitle: "Free First Fill",
-      filters: textFilters,
-      dataType: "string",
-      hidden: false,
-      sortDirections: [],
-    };
+  getSOSummary = () => {
+    let apiDetails = {};
+    apiDetails["apiPart"] = soConstants.GET_DRUG_SUMMARY_SO;
+    apiDetails["pathParams"] = this.props?.formulary_id;
+    apiDetails["keyVals"] = [
+      { key: soConstants.KEY_ENTITY_ID, value: this.props?.formulary_id },
+    ];
 
-    columns.unshift(FFFColumn);
-
-    for (let el of data) {
-      el["fff"] = "Y";
-    }
-    // this.setState({
-    //     columns: columns,
-    //     data: data
-    // });
-
-    this.props.getDrugDetailsSOSummary().then((json) => {
-      let tmpData =
-        json.payload && json.payload.result ? json.payload.result : [];
+    this.props.getDrugDetailsSOSummary(apiDetails).then((json) => {
+      let tmpData = json.payload && json.payload.result ? json.payload.result : [];
 
       let rows = tmpData.map((ele) => {
         let curRow = [
@@ -120,13 +106,21 @@ class SO extends React.Component<any, any> {
         panelGridValue1: rows
       });
     });
+  }
 
-    this.props.getDrugDetailsSOList().then((json) => {
+  getSODrugList = () => {
+    let apiDetails = {};
+    apiDetails["apiPart"] = soConstants.GET_SO_FORMULARY_DRUGS;
+    apiDetails["pathParams"] =
+      this.props?.formulary_id + "/" + getLobCode(this.props.formulary_lob_id);
+    apiDetails["keyVals"] = [
+      { key: soConstants.KEY_ENTITY_ID, value: this.props?.formulary_id },
+      { key: soConstants.KEY_INDEX, value: 0 },
+      { key: soConstants.KEY_LIMIT, value: 10 },
+    ];
+
+    this.props.getDrugDetailsSOList(apiDetails).then((json) => {
       let tmpData = json.payload.result;
-      console.log(
-        "----------The Get Drug Details SO list response = ",
-        tmpData
-      );
       var data: any[] = [];
       let count = 1;
       var gridData = tmpData.map((el) => {
@@ -206,6 +200,35 @@ class SO extends React.Component<any, any> {
     });
   }
 
+  componentDidMount() {
+    const data = getDrugDetailData();
+    const columns = getDrugDetailsColumn();
+    const FFFColumn: any = {
+      id: 0,
+      position: 0,
+      textCase: "upper",
+      pixelWidth: 238,
+      sorter: {},
+      isFilterable: true,
+      showToolTip: false,
+      key: "fff",
+      displayTitle: "Free First Fill",
+      filters: textFilters,
+      dataType: "string",
+      hidden: false,
+      sortDirections: [],
+    };
+
+    columns.unshift(FFFColumn);
+
+    for (let el of data) {
+      el["fff"] = "Y";
+    }
+
+    this.getSOSummary();
+    this.getSODrugList();
+  }
+
   handleNoteClick = (event: React.ChangeEvent<{}>) => {
     event.stopPropagation();
     this.setState({ isNotesOpen: !this.state.isNotesOpen });
@@ -223,7 +246,6 @@ class SO extends React.Component<any, any> {
     let dataGrid = <FrxLoader />;
     if (this.state.data) {
       dataGrid = (
-        // <DrugGrid columns={this.state.columns} data={this.state.data} />
         <FrxDrugGridContainer
           isPinningEnabled={false}
           enableSearch={false}
@@ -360,4 +382,4 @@ class SO extends React.Component<any, any> {
   }
 }
 
-export default connect(null, mapDispatchToProps)(SO);
+export default connect(mapStateToProps, mapDispatchToProps)(SO);
