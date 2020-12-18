@@ -8,6 +8,7 @@ import { fetchSelectedFormulary } from "../../../../.././redux/slices/formulary/
 
 const mapStateToProps = (state) => {
   return {
+    mode: state?.setup?.mode,
     currentFormulary: state.application.formulary,
     formularyVersionList: state.header.formulary_version_list,
   };
@@ -155,6 +156,7 @@ class FormularyDetailsTop extends React.Component<any, any> {
             </div>
           ) : null}
         </div>
+        {(this.props?.mode==="EXISTING") &&
         <div className="durationInfo d-flex">
           <div className="item">
             <span className="tag purple">
@@ -180,6 +182,7 @@ class FormularyDetailsTop extends React.Component<any, any> {
             {this.props.currentFormulary?.terminationDate}
           </div>
         </div>
+        }
       </div>
     );
   }
