@@ -373,14 +373,14 @@ class FormularySetUp extends React.Component<any, any> {
             
             <div className="btn-action">
               <Box display="flex" justifyContent="flex-end" className="save-btn">
-                <Button label="Save" onClick={() => this.onSave(false)} />
+                <Button label="Save" onClick={() => this.onSave(false)} disabled={this.props.mode === "EXISTING"}/>
               </Box>
               <Box
                 display="flex"
                 justifyContent="flex-end"
                 className="save-and-continue-btn"
               >
-                <Button label="Save & Continue" onClick={() => this.onSave(true)} />
+                <Button label="Save & Continue" onClick={() => this.onSave(true)} disabled="true" />
               </Box>
             </div>
           </>

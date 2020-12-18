@@ -34,7 +34,7 @@ export async function checkNameExist(name: string): Promise<boolean | any> {
   let url = `${BASE_URL1}api/1/check-formulary-name/`;
   if (name != null && name != undefined && name != "") {
     url = url + `${name}`;
-  }else{
+  } else {
     url = url + ` `;
   }
   // url= url+`/${this.clientId}`;
@@ -69,7 +69,7 @@ export function composePostBody(input: any): any {
   payload.formulary_info.formulary_description =
     input.GENERAL_INFO?.description;
   //payload.formulary_info.effective_date = input.GENERAL_INFO?.effective_date;
-  payload.formulary_info.effective_date = "2020-12-18";
+  payload.formulary_info.effective_date = "2020-12-19";
   payload.formulary_info.contract_year = input.GENERAL_INFO?.service_year;
   payload.formulary_info.id_state = input.GENERAL_INFO?.state_id;
   // TODO  - - - - - - - - - - - - -
@@ -98,7 +98,9 @@ export function composePostBody(input: any): any {
 
   // CLASSIFICATION  - - - - - - - - - - - - -
   payload.classification_system_info = {
-    id_classification_system: 1,
+    id_classification_system: parseInt(
+      input.GENERAL_INFO?.classification_system
+    ),
     is_custom: false,
     classification_system: "",
   };
