@@ -174,7 +174,7 @@ export const postPAGroupDescription = createAsyncThunk(
     let pathParams = apiDetails.pathParams;
     let keyVals = pathParams.keyVals;
     let messageBody = apiDetails.messageBody;
-    let POST_URL = BASE_URL1 + POSt_PA_GROUP_DESCRIPTION_URL + pathParams;
+    let POST_URL =  POSt_PA_GROUP_DESCRIPTION_URL + pathParams;
     if(keyVals){
       keyVals = keyVals.map(pair => pair.key+'='+pair.value);
       POST_URL = POST_URL + "?" + keyVals.join('&');
@@ -184,7 +184,7 @@ export const postPAGroupDescription = createAsyncThunk(
         method: 'POST',
         body: JSON.stringify(messageBody),
         headers: {
-            'Authorization': 'Bearer a8251940-84a1-4e03-a5e8-43df60f9d731',
+            'Authorization': 'Bearer 6356291c-5b3e-4313-878b-dea9538c53cf',
             'Accept': 'application/json',
             'Content-Type': 'application/json;charset=UTF-8',
         }
