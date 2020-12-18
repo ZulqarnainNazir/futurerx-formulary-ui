@@ -16,14 +16,17 @@ import { textFilters } from "../../../../../../utils/grid/filters";
 import { getDrugDetailsColumn } from "../DrugGridColumn";
 import { getDrugDetailData } from "../../../../../../mocks/DrugGridMock";
 import FrxLoader from "../../../../../shared/FrxLoader/FrxLoader";
-import DrugGrid from "../../DrugGrid";
 import AdvancedSearch from "./search/AdvancedSearch";
 import { getFormularySummary } from "../../../../../../redux/slices/formulary/formularySummaryActionCreation";
-import { getDrugDetailsCBSummary } from "../../../../../../redux/slices/formulary/drugDetails/cb/cbActionCreation";
+import { getDrugDetailsCBSummary, getExcludedDrugsCBList } from "../../../../../../redux/slices/formulary/drugDetails/cb/cbActionCreation";
+import FrxDrugGridContainer from "../../../../../shared/FrxGrid/FrxDrugGridContainer";
+import * as cbConstants from "../../../../../../api/http-drug-details";
 
 const mapStateToProps = (state) => {
   return {
     formularySummary: state,
+    formulary_id: state?.application?.formulary_id,
+    formulary_lob_id: state?.application?.formulary_lob_id,
   };
 };
 
@@ -31,6 +34,7 @@ function mapDispatchToProps(dispatch) {
   return {
     getFormularySummary: (a) => dispatch(getFormularySummary(a)),
     getDrugDetailsCBSummary: (a) => dispatch(getDrugDetailsCBSummary(a)),
+    getExcludedDrugsCBList: (a) => dispatch(getExcludedDrugsCBList(a)),
   };
 }
 
@@ -43,7 +47,7 @@ class CB extends React.Component<any, any> {
     isNotesOpen: false,
     activeTabIndex: 0,
     columns: null,
-    data: null,
+    data: [],
     tabs: [
       { id: 1, text: "Replace" },
       { id: 2, text: "Append" },
@@ -63,6 +67,32 @@ class CB extends React.Component<any, any> {
   saveClickHandler = () => {
     console.log("Save data");
   };
+
+  getCBSummary = () => {
+    let apiDetails = {};
+    apiDetails["apiPart"] = cbConstants.GET_DRUG_SUMMARY_CB;
+    apiDetails["pathParams"] = this.props?.formulary_id;
+    apiDetails["keyVals"] = [{ key: cbConstants.KEY_ENTITY_ID, value: this.props?.formulary_id }];
+
+    this.props.getDrugDetailsCBSummary(apiDetails).then((json) => {
+      let tmpData = json.payload && json.payload.result ? json.payload.result : [];
+
+      let rows = tmpData.map((ele) => {
+        let curRow = [
+          ele["attribute_name"],
+          ele["total_drug_count"],
+          ele["added_drug_count"],
+          ele["removed_drug_count"],
+        ];
+        return curRow;
+      });
+
+      this.setState({
+        panelGridValue1: rows,
+      });
+    });
+
+  }
 
   componentDidMount() {
     const data = getDrugDetailData();
@@ -88,33 +118,12 @@ class CB extends React.Component<any, any> {
       el["fff"] = "Y";
     }
 
-    // this.setState({
-    //   columns: columns,
-    //   data: data,
-    // });
-
-    this.props.getDrugDetailsCBSummary().then((json) => {
-      let tmpData =
-        json.payload && json.payload.result ? json.payload.result : [];
-
-      let rows = tmpData.map((ele) => {
-        let curRow = [
-          ele["attribute_name"],
-          ele["total_drug_count"],
-          ele["added_drug_count"],
-          ele["removed_drug_count"],
-        ];
-        return curRow;
-      });
-
-      this.setState({
-        panelGridValue1: rows,
-        columns: columns,
-        data: data,
-      });
-    });
-
     this.props.getFormularySummary("1");
+    this.getCBSummary();
+    this.setState({
+      columns: columns,
+      data: data,
+    });
   }
 
   onClickTab = (selectedTabIndex: number) => {
@@ -151,7 +160,28 @@ class CB extends React.Component<any, any> {
     let dataGrid = <FrxLoader />;
     if (this.state.data) {
       dataGrid = (
-        <DrugGrid columns={this.state.columns} data={this.state.data} />
+        <FrxDrugGridContainer
+          isPinningEnabled={false}
+          enableSearch={false}
+          enableColumnDrag
+          onSearch={() => {}}
+          fixedColumnKeys={[]}
+          pagintionPosition="topRight"
+          gridName="DRUGSDETAILS"
+          enableSettings={false}
+          columns={getDrugDetailsColumn()}
+          scroll={{ x: 5200, y: 377 }}
+          isFetchingData={false}
+          enableResizingOfColumns
+          data={this.state.data}
+          clearFilterHandler={() => {}}
+          rowSelection={{
+            columnWidth: 50,
+            fixed: true,
+            type: "checkbox",
+            onChange: () => {},
+          }}
+        />
       );
     }
 

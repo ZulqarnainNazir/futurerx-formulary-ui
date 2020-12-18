@@ -26,11 +26,13 @@ import FormularyDetailsContext from "../../../../FormularyDetailsContext";
 import FrxGridContainer from "../../../../../shared/FrxGrid/FrxGridContainer";
 import OverridePopup from "./OverridePopup/OverridePopup";
 import { getTier } from "../../../../../../redux/slices/formulary/tier/tierActionCreation";
-import { getClassificationSystems, postDrugsCategory, getIntelliscenseSearch } from "../../../../../../redux/slices/formulary/categoryClass/categoryClassActionCreation";
+import { getClassificationSystems, postDrugsCategory, getIntelliscenseSearch, postDrugsClassCategoryOverride } from "../../../../../../redux/slices/formulary/categoryClass/categoryClassActionCreation";
 import * as tierConstants from "../../../../../../api/http-tier";
 import * as commonConstants from "../../../../../../api/http-commons";
 import * as categoryConstants from "../../../../../../api/http-category-class";
 import getLobCode from "../../../../Utils/LobUtils";
+import showMessage from "../../../../Utils/Toast";
+import { ToastContainer } from 'react-toastify';
 
 function mapDispatchToProps(dispatch) {
   return {
@@ -38,6 +40,7 @@ function mapDispatchToProps(dispatch) {
     getClassificationSystems: (a) => dispatch(getClassificationSystems(a)),
     postDrugsCategory: (a) => dispatch(postDrugsCategory(a)),
     getIntelliscenseSearch: (a) => dispatch(getIntelliscenseSearch(a)),
+    postDrugsClassCategoryOverride: (a) => dispatch(postDrugsClassCategoryOverride(a)),
   };
 }
 
@@ -67,6 +70,7 @@ interface State {
   searchData: any[];
   searchNames: any[];
   searchValue: any;
+  addedFormularyDrugs: any[];
 }
 
 class CategoryClass extends React.Component<any, any> {
@@ -95,6 +99,9 @@ class CategoryClass extends React.Component<any, any> {
     searchValue: '',
     overriddenClass: null,
     overriddenCategory: null,
+    addedFormularyDrugs: Array(),
+    customCategory: false,
+    customClass: false,
   };
 
   static contextType = FormularyDetailsContext;
@@ -337,17 +344,28 @@ class CategoryClass extends React.Component<any, any> {
   handleAddFileClick = () => { };
 
   handlePopupButtonClick = (popupName, title) => {
-    this.setState({
-      materialPopupInd: true,
-      popupName: popupName,
-      title: title,
-    });
     if (popupName === "override") {
-      this.setState({
-        showActionsInd: true,
-      });
+      if (this.state.addedFormularyDrugs.length > 0) {
+        this.setState({
+          materialPopupInd: true,
+          popupName: popupName,
+          title: title,
+        });
+
+        this.setState({
+          showActionsInd: true,
+        });
+      } else {
+        showMessage('Choose Drugs to Override Category/Class', 'error');
+      }
     }
     else {
+      this.setState({
+        materialPopupInd: true,
+        popupName: popupName,
+        title: title,
+      });
+
       this.setState({
         showActionsInd: false,
       });
@@ -356,9 +374,19 @@ class CategoryClass extends React.Component<any, any> {
   };
   processCloseActions = (type) => {
     //this.setState({ show: true });
-    if(type === 'positive'){
-      if(this.state.overriddenCategory && this.state.overriddenClass){
-
+    if (type === 'positive') {
+      if (this.state.overriddenCategory && this.state.overriddenClass && this.state.addedFormularyDrugs.length > 0) {
+        let apiDetails = {};
+        apiDetails['apiPart'] = categoryConstants.DRUG_CATEGORY_CLASS;
+        apiDetails['pathParams'] = this.props?.formulary_id + "/" + this.state.lobCode;
+        apiDetails['keyVals'] = [{ key: commonConstants.KEY_ENTITY_ID, value: this.props?.formulary_id }];
+        apiDetails['messageBody'] = { category_name: this.state.overriddenCategory, class_name: this.state.overriddenClass , added_formulary_drugs: this.state.addedFormularyDrugs, category_list:'' , covered:{} , filter:[], is_select_all: false, not_covered: {}, removedformulary_drug_ids: [], search_key:'', is_custom_category: this.state.customCategory, is_custom_class:this.state.customClass};
+        const postData = this.props.postDrugsClassCategoryOverride(apiDetails).then((json => {
+          //debugger;
+          if (json.payload && json.payload.code && json.payload.code === '200') {
+            this.populateGridData();
+          }
+        }))
       }
     }
     this.setState({
@@ -370,16 +398,33 @@ class CategoryClass extends React.Component<any, any> {
   };
   rowSelectionChange = (record) => {
     console.log(record);
+    this.state.addedFormularyDrugs = Array();
+    if (record && record.length > 0) {
+      record.map(row => {
+        let checkedIndex = row.key - 1;
+        if (checkedIndex < this.state.data.length) {
+          let drug = this.state.data[checkedIndex];
+          this.state.addedFormularyDrugs.push(drug['md5_id']);
+        }
+      });
+    }
   };
-  onOverrideCategoryClass = (category,classValue) => {
+  onOverrideCategoryClass = (category, classValue) => {
     this.state.overriddenCategory = category;
     this.state.overriddenClass = classValue;
+
+    if(!category && !classValue){
+      this.state.customCategory = false;
+      this.state.customClass = false;
+    }
   }
-  onOverrideCategory = (category) => {
+  onOverrideCategory = (category,isCustom=false) => {
     this.state.overriddenCategory = category;
+    this.state.customCategory = isCustom;
   }
   onOverrideClass = (classValue) => {
     this.state.overriddenClass = classValue;
+    this.state.customClass = true;
   }
   render() {
     return (
@@ -463,6 +508,7 @@ class CategoryClass extends React.Component<any, any> {
               : ""
           }
         </DialogPopup>
+        <ToastContainer />
       </div>
     );
   }

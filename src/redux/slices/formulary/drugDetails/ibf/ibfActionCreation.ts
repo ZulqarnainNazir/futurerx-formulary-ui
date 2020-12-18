@@ -1,27 +1,62 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import { BASE_URL1 } from "../../../../../api/http-helper";
+import {
+  buildUrl,
+  getHeaders,
+  postHeaders,
+  fetchRequest,
+} from "../../../../../api/http-drug-details";
 
-const GET_DRUG_SUMMARY_IBF =
-  BASE_URL1 + "api/1/formulary-drug-summary-ibf/3323?entity_id=3323";
+// const GET_DRUG_SUMMARY_IBF = BASE_URL1 + "api/1/formulary-drug-summary-ibf/3323?entity_id=3323";
 
-const requestHeaders = {
-  headers: {
-    Authorization: "Bearer 1e05ff8b-a0af-4a8f-8915-487321900f21",
-    Accept: "application/json",
-    "Content-Type": "application/json;charset=UTF-8",
-  },
-};
+// const POST_IBF_FORMULARY_DRUGS = BASE_URL1 + "api/1/formulary-drugs-ibf/3298/MCR?index=0&limit=10&entity_id=3298";
+
+// const GET_IBF_CUIS = BASE_URL1 + "api/1/drug-me-shcuis"
+
+// const POST_REPLACE_IBF_FORMULARY_DRUG = BASE_URL1 + "api/1/apply-formulary-drug-ibf/3298/MCR/replace?entity_id=3298"; {"selected_drug_ids":["33df986c40ed34ca16210f83dd9fc938"],"id_me_shcui":3,"me_shcui":"test3"}
+
+// const POST_REMOVE_IBF_FORMULARY_DRUG = BASE_URL1 + "api/1/apply-formulary-drug-ibf/3298/MCR/remove?entity_id=3298"; {"selected_drug_ids":["33df986c40ed34ca16210f83dd9fc938"],"selected_criteria_ids":[3],"me_shcui":"test3"}
 
 export const getDrugDetailsIBFSummary = createAsyncThunk(
   "drug_details/IBF_Summary",
-  async (summary_id: string) => {
-    return fetch(GET_DRUG_SUMMARY_IBF, requestHeaders)
-      .then((response) => {
-        if (!response.ok) throw Error(response.statusText);
-        return response.json();
-      })
-      .then((json) => {
-        return json;
-      });
+  async (apiDetails: any) => {
+    let GET_URL = buildUrl({ apiDetails });
+    const requestHeaders = getHeaders();
+    return fetchRequest(GET_URL, requestHeaders);
+  }
+);
+
+export const getIBFCuids = createAsyncThunk(
+  "drug_details/IBF_Cuids",
+  async (apiDetails: any) => {
+    let GET_URL = buildUrl({ apiDetails });
+    const requestHeaders = getHeaders();
+    return fetchRequest(GET_URL, requestHeaders);
+  }
+);
+
+export const getDrugDetailsIBFList = createAsyncThunk(
+  "drug_details/IBF_list",
+  async (apiDetails: any) => {
+    let POST_URL = buildUrl({ apiDetails });
+    const requestHeaders = postHeaders(apiDetails);
+    return fetchRequest(POST_URL, requestHeaders);
+  }
+);
+
+export const postReplaceIBFDrug = createAsyncThunk(
+  "drug_details/postReplaceIBFDrug",
+  async (apiDetails: any) => {
+    let POST_URL = buildUrl({ apiDetails });
+    const requestHeaders = postHeaders(apiDetails);
+    return fetchRequest(POST_URL, requestHeaders);
+  }
+);
+
+export const postRemoveIBFDrug = createAsyncThunk(
+  "drug_details/postRemoveIBFDrug",
+  async (apiDetails: any) => {
+    let POST_URL = buildUrl({ apiDetails });
+    const requestHeaders = postHeaders(apiDetails);
+    return fetchRequest(POST_URL, requestHeaders);
   }
 );

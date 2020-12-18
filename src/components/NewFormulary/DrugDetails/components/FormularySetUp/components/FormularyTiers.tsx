@@ -18,10 +18,17 @@ class FormularyTiers extends React.Component<any, any> {
       const selectedTierOptions = this.props.tiers;
       const allOptions = this.props.tierOptionsOptions?.map(e => e.tier_label);
       options = selectedTierOptions.map(e => {
-        return this.props.tierOptionsOptions.find(el => el.id_tier_label === e.id_tier_label) ? {
-          seletedVal: this.props.tierOptionsOptions.find(el => el.id_tier_label === e.id_tier_label).tier_label,
-          tierName: e.tier_name
-        } : '';
+        if(e.id_tier_label === null){
+          return {
+            selecedVal: '',
+            tierName: e.tier_name
+          }
+        }else{
+          return this.props.tierOptionsOptions.find(el => el.id_tier_label === e.id_tier_label) ? {
+            seletedVal: this.props.tierOptionsOptions.find(el => el.id_tier_label === e.id_tier_label).tier_label,
+            tierName: e.tier_name
+          } : '';
+        }
       });
       htmlElement = options.map((e,index) => {
         return (<div className="tier border-bottom">

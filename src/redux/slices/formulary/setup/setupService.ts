@@ -31,9 +31,11 @@ export async function getformulary(
 }
 
 export async function checkNameExist(name: string): Promise<boolean | any> {
-  let url = `${BASE_URL1}api/1/check-formulary-name`;
+  let url = `${BASE_URL1}api/1/check-formulary-name/`;
   if (name != null && name != undefined && name != "") {
-    url = url + `/${name}`;
+    url = url + `${name}`;
+  } else {
+    url = url + ` `;
   }
   // url= url+`/${this.clientId}`;
   url = url + `/1`;
@@ -66,14 +68,10 @@ export function composePostBody(input: any): any {
   payload.formulary_info.abbreviation = input.GENERAL_INFO?.abbreviation;
   payload.formulary_info.formulary_description =
     input.GENERAL_INFO?.description;
-  //payload.formulary_info.effective_date = input.GENERAL_INFO?.effective_date;
-  payload.formulary_info.effective_date = "2020-12-18";
+  payload.formulary_info.effective_date = input.GENERAL_INFO?.effective_date;
+  //payload.formulary_info.effective_date = "2020-12-19";
   payload.formulary_info.contract_year = input.GENERAL_INFO?.service_year;
   payload.formulary_info.id_state = input.GENERAL_INFO?.state_id;
-  // TIERS COUNTs- - - - - - - - - - - - -
-  payload.formulary_info.number_of_tiers = 1;
-  // payload.formulary_info.min_tiers = 1;
-  // payload.formulary_info.max_tiers = 7;
   // TODO  - - - - - - - - - - - - -
   //payload.formulary_info.id_lob = 1;
   // payload.formulary_info.code_value = "MC";
@@ -100,7 +98,9 @@ export function composePostBody(input: any): any {
 
   // CLASSIFICATION  - - - - - - - - - - - - -
   payload.classification_system_info = {
-    id_classification_system: 1,
+    id_classification_system: parseInt(
+      input.GENERAL_INFO?.classification_system
+    ),
     is_custom: false,
     classification_system: "",
   };
@@ -118,31 +118,44 @@ export function composePostBody(input: any): any {
     removed_formulary_medicare_contracts: [],
   };
 
-  // DESIGN  - - - - - - - - - - - - -
+  // DESIGN  - - - - - - - - - - - - - OTHERs Pending...
 
   payload.edit_info = {
-    edits: [1, 5, 6, 7, 8, 9, 12],
-    edits_no: [],
+    edits: input?.edit_info?.edits,
+    edits_no: input?.edit_info?.edits_no,
     custom_edits: [],
     removed_formulary_edits: [],
   };
 
-  // TIER DETAILS  - - - - - - - - - - - - -
-
-  payload.tiers = [
-    {
-      id_formulary_tier: null,
-      id_tier_label: 1,
-      id_tier: 0,
-    },
-    {
-      id_formulary_tier: null,
-      id_tier_label: 3,
-      id_tier: 1,
-    },
-  ];
+  // payload.edit_info = {
+  //   edits: [1, 6],
+  //   edits_no: [5],
+  //   custom_edits: [],
+  //   removed_formulary_edits: [],
+  // };
 
   // TIER DETAILS  - - - - - - - - - - - - -
+
+  payload.tiers = input?.tiers;
+  payload.formulary_info.number_of_tiers = input?.tiers?.length;
+  // payload.formulary_info.number_of_tiers = 1;
+  // payload.formulary_info.min_tiers = 1;
+  // payload.formulary_info.max_tiers = 7;
+
+  // payload.tiers = [
+  //   {
+  //     id_formulary_tier: null,
+  //     id_tier_label: 1,
+  //     id_tier: 0,
+  //   },
+  //   {
+  //     id_formulary_tier: null,
+  //     id_tier_label: 3,
+  //     id_tier: 1,
+  //   },
+  // ];
+
+  // TIER DETAILS  - - - - - - - - - - - - - OTHERs Pending...
 
   payload.supplemental_benefit_info = {
     supplemental_benefits:
@@ -177,15 +190,34 @@ export async function createFormulary(payload: any): Promise<any> {
     console.log("***** createFormulary - Success");
     console.log(response);
     if (response?.data?.code === "200") {
-      return response?.data?.id_formulary;
+      return {
+        data: response?.data?.id_formulary,
+        status: 200,
+      };
     }
     return null;
   } catch (error) {
     console.log("***** createFormulary - Error");
     console.log(error);
-    throw error;
+    const { response } = error;
+    const { request, ...errorObject } = response; // take everything but 'request'
+    console.log(errorObject);
+    return {
+      status: errorObject.status,
+      data: errorObject.data,
+    };
   }
 }
+//   try {
+//     const response = await axios.post(url, payload, {
+//       headers: headers,
+//     });
+//   } catch (error) {
+//     const { response } = error;
+//     const { request, ...errorObject } = response; // take everything but 'request'
+//     console.log(errorObject);
+//   }
+// }
 
 export function composePutBody(details: any): any {
   return null;
