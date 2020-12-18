@@ -24,7 +24,8 @@ import * as constants from "../../../../../../../api/http-commons";
 
 import "../Tier.scss";
 import "./PA.scss";
-import { getPaSummary,getPaGrouptDescriptions, getPaTypes, getDrugLists,postFormularyDrugPA,getPaGrouptDescriptionVersions,postApplyFormularyDrugPA } from "../../../../../../../redux/slices/formulary/pa/paActionCreation";
+import { getPaSummary,getPaGrouptDescriptions, getPaTypes, getDrugLists,postFormularyDrugPA,postRelatedFormularyDrugPA,
+  getPaGrouptDescriptionVersions,postApplyFormularyDrugPA,getLobFormularies } from "../../../../../../../redux/slices/formulary/pa/paActionCreation";
 import Radio from '@material-ui/core/Radio';
 import RadioGroup from '@material-ui/core/RadioGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
@@ -38,6 +39,8 @@ function mapDispatchToProps(dispatch) {
     postFormularyDrugPA:(a) => dispatch(postFormularyDrugPA(a)),
     getPaGrouptDescriptionVersions:(a) => dispatch(getPaGrouptDescriptionVersions(a)),
     postApplyFormularyDrugPA:(a) => dispatch(postApplyFormularyDrugPA(a)),
+    getLobFormularies:(a) => dispatch(getLobFormularies(a)),
+    postRelatedFormularyDrugPA:(a) => dispatch(postRelatedFormularyDrugPA(a)),
   };
 }
 
@@ -69,6 +72,8 @@ class PaReplace extends React.Component<any,any> {
     showPaConfiguration:false,
     selectedLastestedVersion:null,
     fileType:null,
+    lobFormularies:null,
+    selectedLobFormulary:null,
   }
 
   onSelectedTableRowChanged = (selectedRowKeys) => {
@@ -99,6 +104,7 @@ class PaReplace extends React.Component<any,any> {
       apiDetails['messageBody']['id_pa_type'] = Number(this.state.selectedPaType);
       apiDetails['messageBody']['search_key'] = "";
       //apiDetails['messageBody']['id_tier'] = this.state.selectedTier;
+     
       
       const saveData = this.props.postApplyFormularyDrugPA(apiDetails).then((json => {
         console.log("Save response is:" + JSON.stringify(json));
@@ -143,6 +149,12 @@ class PaReplace extends React.Component<any,any> {
     this.setState({ selectedPaType: tmp_value });
   }
 
+  dropDownSelectHandlerLob = (value, event) => {
+    let tmp_index = event.key;
+    let tmp_value = event.value;
+    this.setState({ selectedLobFormulary: tmp_value });
+  }
+
   pa_configurationChange = (event, value) => {
     let tmp_index = event.target.key;
     let tmp_value = event.target.value;
@@ -173,7 +185,9 @@ class PaReplace extends React.Component<any,any> {
     let apiDetails = {};
     
    // let tmpGroup :any = this.state.paGroupDescriptions.filter(obj  => obj.id_mcr_base_pa_group_description === this.state.selectedGroupDescription);
-    apiDetails['pathParams'] = this.props?.formulary_id + "/" + this.state.fileType + "/" ;
+
+   
+    
     apiDetails['keyVals'] = [{ key: constants.KEY_ENTITY_ID, value: this.props?.formulary_id }, { key: constants.KEY_INDEX, value: 0 }, { key: constants.KEY_LIMIT, value: 10 }];
     apiDetails['messageBody'] = {};
 
@@ -183,7 +197,18 @@ class PaReplace extends React.Component<any,any> {
     if(searchBody){
       apiDetails['messageBody'] = Object.assign(apiDetails['messageBody'],searchBody);
     }
-    const drugGridDate = this.props.postFormularyDrugPA(apiDetails).then((json => {
+    if (this.state.showPaConfiguration){
+      apiDetails['pathParams'] = this.props?.formulary_id + "/" + this.state.selectedLobFormulary + '/' +this.state.fileType + "/PA/" ;
+      this.props.postRelatedFormularyDrugPA(apiDetails).then((json => this.loadGridData(json) ));
+     }else{
+      apiDetails['pathParams'] = this.props?.formulary_id + "/" + this.state.fileType + "/" ;
+      this.props.postFormularyDrugPA(apiDetails).then((json => this.loadGridData(json) ));
+     }
+    
+  }
+
+  loadGridData(json: any){
+    {
 
       let tmpData = json.payload.result;
       var data: any[] = [];
@@ -212,7 +237,7 @@ class PaReplace extends React.Component<any,any> {
         drugData: data,
         drugGridData: gridData
       })
-    }))
+    }
   }
   componentDidMount() {
                    
@@ -230,6 +255,16 @@ class PaReplace extends React.Component<any,any> {
           });
         
     });
+
+    let apiDetails = {formulary_type_id: this.props?.formulary_type_id,
+      formulary_lob_id: this.props?.formulary_lob_id}
+    this.props.getLobFormularies(apiDetails).then((json) =>{
+      this.setState({
+        lobFormularies: json.payload.result,
+        });
+      
+    });
+    
 }
   render() {
     const searchProps = {
@@ -275,7 +310,8 @@ class PaReplace extends React.Component<any,any> {
                   Select Related Formulary to View Existing configuration?{" "}
                   <span className="astrict">*</span>
                 </label>
-                <DropDown options={[1, 2, 3]} />
+                <DropDownMap options={this.state.lobFormularies} valueProp="id_formulary" dispProp="formulary_name" onSelect={this.dropDownSelectHandlerLob} disabled={this.props.configureSwitch}/>
+
               </Col>
             ):(<Col lg={8} ></Col>)}
             <Col lg={4}></Col>
