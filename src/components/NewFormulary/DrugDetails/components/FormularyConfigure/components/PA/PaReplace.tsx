@@ -244,14 +244,14 @@ class PaReplace extends React.Component<any,any> {
               <label>
                 PA GROUP DESCRIPTION<span className="astrict">*</span>
               </label>
-              <DropDownMap options={this.state.paGroupDescriptions} valueProp="id_mcr_base_pa_group_description" dispProp="text" onSelect={this.dropDownSelectHandlerGroupDescription}/>
+              <DropDownMap options={this.state.paGroupDescriptions} valueProp="id_mcr_base_pa_group_description" dispProp="text" onSelect={this.dropDownSelectHandlerGroupDescription} disabled={this.props.configureSwitch}/>
             </Col>
             <Col lg={4}></Col>
             <Col lg={8} className="mb-10">
               <label>
                 PA TYPE <span className="astrict">*</span>
               </label>
-              <DropDownMap options={this.state.paTypes} valueProp="id_pa_type" dispProp="pa_type_name" onSelect={this.dropDownSelectHandlerPaType} />
+              <DropDownMap options={this.state.paTypes} valueProp="id_pa_type" dispProp="pa_type_name" onSelect={this.dropDownSelectHandlerPaType} disabled={this.props.configureSwitch}/>
 
             </Col>
             <Col lg={8}>
@@ -261,9 +261,9 @@ class PaReplace extends React.Component<any,any> {
               </label>
               <Space size="large">
               <div className="marketing-material radio-group">
-                <RadioGroup aria-label="marketing-material-radio1" className="gdp-radio" name="pa_configuration" onChange={this.pa_configurationChange}>
-                  <FormControlLabel value="true" control={<Radio  />}label="Yes" />
-                  <FormControlLabel value="false" control={<Radio />} label="No" />
+                <RadioGroup aria-label="marketing-material-radio1" className="gdp-radio" name="pa_configuration" onChange={this.pa_configurationChange} >
+                  <FormControlLabel value="true" control={<Radio  disabled={this.props.configureSwitch} />}label="Yes" />
+                  <FormControlLabel value="false" control={<Radio disabled={this.props.configureSwitch} />} label="No" />
                 </RadioGroup>
                </div>
               </Space>
@@ -294,7 +294,7 @@ class PaReplace extends React.Component<any,any> {
         <div className="white-bg">
           <Row justify="end">
             <Col>
-              <Button label="Apply" onClick={this.openTierGridContainer} ></Button>
+              <Button label="Apply" onClick={this.openTierGridContainer} disabled={this.props.configureSwitch}></Button>
             </Col>
           </Row>
         </div>

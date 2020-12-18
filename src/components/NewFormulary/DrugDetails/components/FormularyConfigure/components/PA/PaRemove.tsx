@@ -207,7 +207,7 @@ class PaRemove extends React.Component<any,any> {
         <div className="white-bg">
           <Row justify="end">
             <Col>
-              <Button label="Apply" onClick={this.openTierGridContainer}  />
+              <Button label="Apply" onClick={this.openTierGridContainer} disabled={this.props.configureSwitch} />
             </Col>
           </Row>
         </div>
