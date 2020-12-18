@@ -48,11 +48,10 @@ class FormularyDesign extends React.Component<any, any> {
     }
     designRadioButton = (type) => {
         let radioBox: any;
-        if(this.props.edit_info){
+        if(this.props.designOptions){
             const id = this.props.designOptions.find(el => el.edit_name === type).id_edit;
             const value = this.props.edit_info.edits.indexOf(id) !== -1 ? true :
                           this.props.edit_info.edits_no.indexOf(id) !== -1 ? false : null;
-            debugger;
             return (
                 <RadioGroup 
                     className="radio-group-custom mr-80" 
