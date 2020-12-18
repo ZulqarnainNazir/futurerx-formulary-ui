@@ -338,6 +338,7 @@ class CategoryClass extends React.Component<any, any> {
 
   onClose = () => {
     console.log("close");
+    this.state.addedFormularyDrugs = Array();
     this.setState({ materialPopupInd: false });
     return true;
   };
@@ -384,10 +385,15 @@ class CategoryClass extends React.Component<any, any> {
         const postData = this.props.postDrugsClassCategoryOverride(apiDetails).then((json => {
           //debugger;
           if (json.payload && json.payload.code && json.payload.code === '200') {
+            this.state.addedFormularyDrugs = Array();
             this.populateGridData();
+          }else{
+            this.state.addedFormularyDrugs = Array();
           }
         }))
       }
+    }else{
+      this.state.addedFormularyDrugs = Array();
     }
     this.setState({
       materialPopupInd: false,
@@ -397,7 +403,7 @@ class CategoryClass extends React.Component<any, any> {
     console.log("search");
   };
   rowSelectionChange = (record) => {
-    console.log(record);
+    console.log("Records:"+record);
     this.state.addedFormularyDrugs = Array();
     if (record && record.length > 0) {
       record.map(row => {
