@@ -14,7 +14,7 @@ import {
 
 import AdvancedSearch from './../search/AdvancedSearch';
 import FrxDrugGridContainer from "../../../../../../shared/FrxGrid/FrxDrugGridContainer";
-import { tierColumns } from "../../../../../../../utils/grid/columns";
+import { PaColumns } from "../../../../../../../utils/grid/columns";
 import DropDownMap from "../../../../../../shared/Frx-components/dropdown/DropDownMap";
 import DropDown from "../../../../../../shared/Frx-components/dropdown/DropDown";
 import { Row, Col, Space } from "antd";
@@ -95,7 +95,7 @@ class PaReplace extends React.Component<any,any> {
       apiDetails['messageBody'] = {};
       apiDetails['messageBody']['selected_drug_ids'] = this.state.selectedDrugs;
       apiDetails['messageBody']['base_pa_group_description_id'] = this.state.selectedGroupDescription;
-      apiDetails['messageBody']['id_pa_group_description'] = this.state.selectedGroupDescription;
+      apiDetails['messageBody']['id_pa_group_description'] = this.state.selectedLastestedVersion;
       apiDetails['messageBody']['id_pa_type'] = Number(this.state.selectedPaType);
       apiDetails['messageBody']['search_key'] = "";
       //apiDetails['messageBody']['id_tier'] = this.state.selectedTier;
@@ -195,6 +195,8 @@ class PaReplace extends React.Component<any,any> {
         gridItem['id'] = count;
         gridItem['key'] = count;
         gridItem['tier'] = element.tier_value;
+        gridItem['paGroupDescription'] = element.pa_group_description;
+        gridItem['paType'] = element.pa_type;
         gridItem['fileType'] = element.file_type ? "" + element.file_type : "";
         gridItem['dataSource'] = element.data_source ? "" + element.data_source : "";
         gridItem['labelName'] = element.drug_label_name ? "" + element.drug_label_name : "";
@@ -315,9 +317,9 @@ class PaReplace extends React.Component<any,any> {
                   onSearch={() => { }}
                   fixedColumnKeys={[]}
                   pagintionPosition="topRight"
-                  gridName="TIER"
+                  gridName="DRUG GRID"
                   enableSettings={false}
-                  columns={tierColumns()}
+                  columns={PaColumns()}
                   scroll={{ x: 2000, y: 377 }}
                   isFetchingData={false}
                   enableResizingOfColumns

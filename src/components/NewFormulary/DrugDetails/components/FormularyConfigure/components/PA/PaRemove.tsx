@@ -4,7 +4,7 @@ import { connect } from "react-redux";
 import { Table } from "antd";
 import Grid from "@material-ui/core/Grid";
 import FrxDrugGridContainer from "../../../../../../shared/FrxGrid/FrxDrugGridContainer";
-import { PaRemoveColumns } from "../../../../../../../utils/grid/columns";
+import { PaColumns } from "../../../../../../../utils/grid/columns";
 import { PAMock } from "../../../../../../../mocks/PAMock";
 import Button from "../../../../../../shared/Frx-components/button/Button";
 import { Row, Col } from "antd";
@@ -118,6 +118,8 @@ class PaRemove extends React.Component<any,any> {
         gridItem['id'] = count;
         gridItem['key'] = count;
         gridItem['tier'] = element.tier_value;
+        gridItem['paGroupDescription'] = element.pa_group_description;
+        gridItem['paType'] = element.pa_type;
         gridItem['fileType'] = element.file_type ? "" + element.file_type : "";
         gridItem['dataSource'] = element.data_source ? "" + element.data_source : "";
         gridItem['labelName'] = element.drug_label_name ? "" + element.drug_label_name : "";
@@ -177,7 +179,7 @@ class PaRemove extends React.Component<any,any> {
   render() {
     const columns = [
       {
-        title: "PA Group Description",
+        title: "PA GROUP DESCRIPTION",
         dataIndex: "pa_group_description_name",
         key: "pa_group_description_name",
       },
@@ -227,9 +229,9 @@ class PaRemove extends React.Component<any,any> {
                   onSearch={() => { }}
                   fixedColumnKeys={[]}
                   pagintionPosition="topRight"
-                  gridName="TIER"
+                  gridName="DRUG GRID"
                   enableSettings={false}
-                  columns={tierColumns()}
+                  columns={PaColumns()}
                   scroll={{ x: 2000, y: 377 }}
                   isFetchingData={false}
                   enableResizingOfColumns
