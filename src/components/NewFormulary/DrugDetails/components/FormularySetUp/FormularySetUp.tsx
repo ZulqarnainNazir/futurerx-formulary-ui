@@ -118,9 +118,9 @@ class FormularySetUp extends React.Component<any, any> {
           classification_system: newProps.formulary.formulary_info.id_classification_system,
           is_closed_formulary: newProps.formulary.formulary_info.is_closed_formulary,
         },
-        medicareInfo: newProps.formulary?.medicare_contract_types.map(e => e.id_medicare_contract_type),
+        medicareInfo: newProps.formulary?.medicare_contract_types?.map(e => e.id_medicare_contract_type),
         supplemental_benefit_info: {
-          supplemental_benefits: newProps.formulary.supplemental_benefits.map(el => el.id_supplemental_benefit)
+          supplemental_benefits: newProps.formulary.supplemental_benefits?.map(el => el.id_supplemental_benefit)
         },
         tiers: [...newProps.formulary.tiers],
         fetchedEditInfo: newProps.formulary.edit_info,
@@ -273,7 +273,7 @@ class FormularySetUp extends React.Component<any, any> {
         msg.push("Formulary Service year is required.");
       }
       if(msg.length>0){
-        msg.forEach((m)=>{showMessage(m, 'error');})
+        msg.forEach((m)=>{showMessage(m, 'info');})
         //showMessage(msg[0], 'error');
         return;
       }

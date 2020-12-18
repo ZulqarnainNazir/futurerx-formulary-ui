@@ -52,21 +52,21 @@ class GeneralInformation extends React.Component<any, any> {
   }
   getClassificationRadio = () => {
     let classificationRadio:any = null;
-    let options = this.props.setupOptions.generalOptions.classification_systems.map(el => {
-      return (
-        <FormControlLabel 
-          value={el.id_classification_system} 
-          control={<Radio />} 
-          label={el.classification_system} />
-      )
-    });
+    let value = this.props.generalInfo.classification_system;
     const radi = <RadioGroup 
     className="radio-group-custom" 
     aria-label={'classification_system'} 
     name="classification_system"
-    value={'1'} 
-    onChange={this.props.onRadioChange}>
-      {options}
+    value={this.props.generalInfo.classification_system?.toString()} 
+    onChange={(e) => this.props.onRadioChange(e,'generalInformation')}>
+      {this.props.general_options.classification_systems.map(el => {
+        return (
+          <FormControlLabel 
+            value={el.id_classification_system} 
+            control={<Radio />} 
+            label={el.classification_system} />
+        )
+      })}
     </RadioGroup>
     return radi;
     
@@ -90,8 +90,6 @@ class GeneralInformation extends React.Component<any, any> {
         contract_year: this.props.formulary_mode === 'EXISTING' ? [FORMULARY.formulary_info?.contract_year] : ["2021","2022"]
       }
     }
-    
-
     return (
       <div className="general-information-container">
         <h4>General information</h4>
@@ -226,6 +224,22 @@ class GeneralInformation extends React.Component<any, any> {
                 />
                 <div className="marketing-material radio-group">
                   <RadioGroup 
+                  className="radio-group-custom" 
+                  aria-label={'classification_system'} 
+                  name="classification_system"
+                  value={parseInt(this.props.generalInfo.classification_system)} 
+                  onChange={(e) => this.props.onRadioChange(e,'generalInformation')}>
+                    {this.props.general_options.classification_systems.map(el => {
+                      return (
+                        <FormControlLabel 
+                          value={el.id_classification_system} 
+                          control={<Radio />} 
+                          label={el.classification_system} />
+                      )
+                    })}
+                  </RadioGroup>
+                  {/* {this.getClassificationRadio()} */}
+                  {/* <RadioGroup 
                       className="radio-group-custom" 
                       aria-label={'classification_system'} 
                       name="classification_system"
@@ -238,7 +252,7 @@ class GeneralInformation extends React.Component<any, any> {
                         </>
                       ): null}
                       <FormControlLabel value="3" control={<Radio />} label="Medispan" />
-                  </RadioGroup>
+                  </RadioGroup> */}
                 </div>
               </div>
             </Grid>
