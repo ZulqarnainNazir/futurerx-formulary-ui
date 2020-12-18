@@ -4,13 +4,21 @@ import PanelHeader from "./PanelHeader";
 import PanelGrid from "./panelGrid";
 import Box from "@material-ui/core/Box";
 import Button from "../../../../../shared/Frx-components/button/Button";
-import { getDrugDetailsFGC } from "../../../../../../redux/slices/formulary/drugDetails/fgc/fgcActionCreation";
+import { getDrugDetailsFGCTiers } from "../../../../../../redux/slices/formulary/drugDetails/fgc/fgcActionCreation";
+import * as fgcConstants from "../../../../../../api/http-drug-details";
 
 function mapDispatchToProps(dispatch) {
   return {
-    getDrugDetailsFGC: (a) => dispatch(getDrugDetailsFGC(a)),
+    getDrugDetailsFGCTiers: (a) => dispatch(getDrugDetailsFGCTiers(a)),
   };
 }
+
+const mapStateToProps = (state) => {
+  return {
+    formulary_id: state?.application?.formulary_id,
+    formulary_lob_id: state?.application?.formulary_lob_id,
+  };
+};
 
 class FGC extends React.Component<any, any> {
   state = {
@@ -28,8 +36,13 @@ class FGC extends React.Component<any, any> {
     alert(1);
   };
 
-  componentDidMount() {
-    this.props.getDrugDetailsFGC().then((json) => {
+  getFGCTiers = () => {
+    let apiDetails = {};
+    apiDetails["apiPart"] = fgcConstants.GET_DRUG_FGC_TIERS;
+    apiDetails["pathParams"] = this.props?.formulary_id;
+    apiDetails["keyVals"] = [{ key: fgcConstants.KEY_ENTITY_ID, value: this.props?.formulary_id }];
+
+    this.props.getDrugDetailsFGCTiers(apiDetails).then((json) => {
       let tmpData =
         json.payload && json.payload.data ? json.payload.data : [];
 
@@ -49,6 +62,10 @@ class FGC extends React.Component<any, any> {
     });
   }
 
+  componentDidMount() {
+    this.getFGCTiers();
+  }
+
   render() {
     return (
       <>
@@ -63,11 +80,11 @@ class FGC extends React.Component<any, any> {
           </div>
         </div>
         <Box display="flex" justifyContent="flex-end">
-          <Button label="Apply" onClick={this.onApplyHandler} />
+          <Button label="Apply" disabled onClick={this.onApplyHandler} />
         </Box>
       </>
     );
   }
 }
 
-export default connect(null, mapDispatchToProps)(FGC);
+export default connect(mapStateToProps, mapDispatchToProps)(FGC);

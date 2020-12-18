@@ -80,3 +80,23 @@ export const getCategoryClassesRejected = (state, action) => {
   state.isLoading = false;
   state.categoryClassData = {};
 }
+
+export const postDrugsClassCategoryOverrideFulfilled = (state, action) => {
+  console.log("Reducer::postDrugsClassCategoryOverride");
+  state.isLoading = false;
+  console.log(action)
+  if(action.payload) {
+    console.log("postDrugsClassCategoryOverride: Payload invalid");
+    return;
+  }
+  const data = action.payload;
+  // Response stored in the redux store.
+  state.overrideResponse = data;
+  
+}
+
+export const postDrugsClassCategoryOverrideRejected = (state, action) => {
+  console.log("Reducer::postDrugsClassCategoryOverride");
+  state.isLoading = false;
+  state.overrideResponse = {};
+}

@@ -19,7 +19,6 @@ interface Props {
 }
 
 const initialFormData = {
-  st_group_description: '',
   file_type: 'FAOTC',
   is_rx_drug_type: false,
   is_otc_drug_type: false,
@@ -124,7 +123,7 @@ function NewGroup(props: any) {
       <div className="inner-container">
         <div className="setting-1">
           <span>What file type is this group description for? *</span>
-          <AlertMessages delay="10000" />
+          <AlertMessages delay="10000" error={props.saveGdm.error} success={props.saveGdm.success} />
           <div className="marketing-material radio-group">
             <RadioGroup aria-label="marketing-material-radio1" className="gdp-radio" name="file_type" onChange={handleChange}>
               <FormControlLabel value="FAOTC" control={<Radio checked={formData.file_type === "FAOTC" ? true : false} />} label="Formulary/OTC" disabled={editable} />

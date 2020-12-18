@@ -15,6 +15,7 @@ import setupReducer from "../slices/formulary/setup/setupSlice";
 import setupOptionsReducer from "../slices/formulary/setup/setupOptionsSlice";
 import headerReducer from "../slices/formulary/header/headerSlice";
 import gdmReducer from "../slices/formulary/gdm/gdmSlice";
+import gdmPaReducer from "../slices/formulary/pagdm/pagdmSlice";
 import { stepTherapySlice,stVersionSlice } from "../slices/formulary/stepTherapy/stepTherapySlice";
 import { paSlice,paVersionSlice } from "../slices/formulary/pa/paSlice";
 
@@ -55,6 +56,7 @@ const store = configureStore({
     gridSettings: gridSettingsReducer,
     header: headerReducer,
     saveGdm:gdmReducer,
+    savePaGdm: gdmPaReducer,
     stepTherapyReducer: stepTherapy,
     advancedSearch: advancedSearchReducer,
     stVerion: stVerion,

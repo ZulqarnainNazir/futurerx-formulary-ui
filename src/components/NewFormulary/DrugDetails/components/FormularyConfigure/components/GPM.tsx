@@ -190,7 +190,7 @@ class GPM extends React.Component<any, any>{
                             </div>
                         </div>
                         {this.state.newGroup ? <NewGroup tooltip={this.state.tooltip} formType={1}/> : (
-                            <NewGroup tooltip={this.state.tooltip} formType={0}/>
+                            <NewGroup tooltip={this.state.tooltip} formType={0} title={'NEW GROUP DESCRIPTION'}/>
                         )}
                     </div>
 

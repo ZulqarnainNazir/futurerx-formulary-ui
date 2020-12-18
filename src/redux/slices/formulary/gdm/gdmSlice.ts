@@ -30,6 +30,12 @@ interface StGroupResult {
   current_group_des_id: any
 }
 
+interface StMessage {
+  error: any;
+  success:any;
+}
+
+
 function startLoading(state: GDMState) {
   state.isLoading = true;
 }
@@ -60,6 +66,10 @@ const gdm = createSlice({
       state.current_group_id = current_group_id;
       state.current_group_des_id = current_group_des_id;
     },
+    cleanMessages(state, { payload }: PayloadAction<StMessage>){
+      state.error = payload.error;
+      state.success = payload.error;
+    }
   },
 });
 
@@ -67,7 +77,8 @@ export const {
   getPending,
   getSuccess,
   getFailed,
-  setStGroupDetails
+  setStGroupDetails,
+  cleanMessages
 } = gdm.actions;
 
 export default gdm.reducer;
@@ -94,6 +105,17 @@ export const getSTGroupDetails = createAsyncThunk(
       current_group_des_id: arg.current_group_des_id
     };
     dispatch(setStGroupDetails(obj));
+  }
+);
+
+export const cleanMessage = createAsyncThunk(
+  "gdmdetail",
+  async (arg: any, { dispatch }) => {
+    const obj = {
+      error: arg.error,
+      success: arg.success,
+    }
+    dispatch(cleanMessages(obj));
   }
 );
 

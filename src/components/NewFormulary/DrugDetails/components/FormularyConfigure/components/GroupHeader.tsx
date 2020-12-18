@@ -5,7 +5,8 @@ import {
     deleteGroupDescription,
     cloneGroupDescription,
     archiveGroupDescription,
-    newVersionGroupDescription
+    newVersionGroupDescription,
+    cleanMessage
 } from "../../../../../../redux/slices/formulary/gdm/gdmSlice";
 import { getStGrouptDescriptions, getStTypes, getStGrouptDescriptionVersions, getStGrouptDescription } from "../../../../../../redux/slices/formulary/stepTherapy/stepTherapyActionCreation";
 import { connect } from 'react-redux';
@@ -23,6 +24,7 @@ function mapDispatchToProps(dispatch) {
     return {
         getStGrouptDescriptions: (arg) => dispatch(getStGrouptDescriptions(arg)), // Group List
         getStTypes: (arg) => dispatch(getStTypes(arg)),  // File Type
+        cleanMessage: (arg) => dispatch(cleanMessage(arg)),
         getStGrouptDescriptionVersions: (arg) => dispatch(getStGrouptDescriptionVersions(arg)), //Version
         getStGrouptDescription: (arg) => dispatch(getStGrouptDescription(arg)), // Group ID Detail
         deleteGroupDescription: (arg) => dispatch(deleteGroupDescription(arg)), // Delete
@@ -35,7 +37,7 @@ function GroupHeader(props: any) {
     const [open, setOpen] = React.useState(false);
     const [popupType, setPopUpType] = React.useState('clone');
     const [versionList, setVersion] = useState([{ value: 'Version 1' }])
-    const [placeHolder, setPlaceHolder] = React.useState('Group Description Version 1');
+    const [placeHolder, setPlaceHolder] = React.useState('Version 1');
     const [panelColor, setPanelColor] = React.useState('');
     const versionListLength = versionList.length-1;
 
@@ -46,10 +48,10 @@ function GroupHeader(props: any) {
             const value = props.version[verLength - 1].value;
             setPanelColor(isEditable ? '-green' : '')
             setVersion(props.version)
-            setPlaceHolder(`Group Description ${value}`)
+            setPlaceHolder(value)
         } else {
             setVersion([{ value: 'Version 1' }])
-            setPlaceHolder('Group Description Version 1')
+            setPlaceHolder('Version 1')
         }
         props.onChange('no');
     }, [props.saveGdm.current_group_id])
@@ -57,6 +59,10 @@ function GroupHeader(props: any) {
     const handleClickOpen = (type) => {
         setOpen(true);
         setPopUpType(type)
+        props.cleanMessage({
+            error:'',
+            success:''
+        })
     };
 
     const onChange = (e) => {
@@ -66,7 +72,7 @@ function GroupHeader(props: any) {
             const isEditable = props.version[Number(selectedVersion.split(" ")[1]) - 1].is_setup_complete;
             const latestVerion = verLength > 0 ? props.version[Number(selectedVersion.split(" ")[1]) - 1]?.id_st_group_description : 0;
             setPanelColor(isEditable ? '-green' : '')
-            setPlaceHolder(`Group Description ${selectedVersion}`)
+            setPlaceHolder(selectedVersion)
             props.getStGrouptDescription(latestVerion)
         }
         props.onChange(selectedVersion);
@@ -74,25 +80,27 @@ function GroupHeader(props: any) {
 
     const handleClose = () => {
         setOpen(false);
+        props.cleanMessage({
+            error:'',
+            success:''
+        })
     };
 
     const deleteGroup = (e: any,param:any) => {
-        alert(param)
         props.deleteGroupDescription({ current_group_des_id: props.saveGdm.current_group_des_id })
         props.getStGrouptDescriptions(props.saveGdm.formulary_id)
         props.getStGrouptDescriptionVersions(props.saveGdm.current_group_des_id)
         props.getStGrouptDescription(props.saveGdm.current_group_id)
         props.getStTypes(props.saveGdm.formulary_id)
     }
-    const cloneGroup = (e: any) => {
+    const cloneGroup = (e: any,param:any) => {
         props.cloneGroupDescription({
             current_group_des_id: props.saveGdm.current_group_des_id,
-            st_group_description_name: 'ng4in' // clone page input
+            st_group_description_name: param.st_group_description_name // clone page input
         })
         props.getStGrouptDescriptions(props.saveGdm.formulary_id)
     }
     const archiveGroup = (e: any,param:any) => {
-        alert(param)
         props.archiveGroupDescription({ current_group_des_id: props.saveGdm.current_group_des_id })
         props.getStGrouptDescriptions(props.saveGdm.formulary_id)
         props.getStGrouptDescriptionVersions(props.saveGdm.current_group_des_id)
@@ -100,7 +108,7 @@ function GroupHeader(props: any) {
         props.getStTypes(props.saveGdm.formulary_id)
     }
 
-    const newVersionGroup = (e: any) => {
+    const newVersionGroup = (e: any,param:any) => {
         props.newVersionGroupDescription({ current_group_des_id: props.saveGdm.current_group_des_id })
         props.getStGrouptDescriptions(props.saveGdm.formulary_id)
         props.getStGrouptDescriptionVersions(props.saveGdm.current_group_des_id)
@@ -113,8 +121,8 @@ function GroupHeader(props: any) {
                 <option value=""></option>
                 {
                 versionList.map((e, index) => (
-                    versionListLength === index ? <option value={e.value} selected>{`Group Description ${e.value}`}</option>
-                    : <option value={e.value}>{`Group Description ${e.value}`}</option>
+                    versionListLength === index ? <option value={e.value} selected>{e.value}</option>
+                    : <option value={e.value}>{e.value}</option>
                 ))}
             </select>
             <div className="item">
