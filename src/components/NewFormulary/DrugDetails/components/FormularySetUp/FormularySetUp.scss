@@ -193,7 +193,7 @@
   color: #1d54b4 !important;
 }
 
-.reporting-tag-group {
+.reporting-tag-group, .state-group {
   margin-top: 20px;
   position: relative;
 }
@@ -221,6 +221,8 @@
   height: 25px;
   color: #ffffff;
   font-size: 12px;
+  margin: 0 !important;
+  cursor: pointer;
 }
 
 .checkbox-label {
@@ -325,6 +327,9 @@
 }
 
 .medicare-information-container {
+  .mb-16{
+    margin-bottom: 16px;
+  }
   &__wrapper {
     padding: 20px;
   }

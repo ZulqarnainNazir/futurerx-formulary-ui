@@ -12,6 +12,7 @@ import FrxLoader from "../../../../shared/FrxLoader/FrxLoader";
 import {
   fetchSelectedFormulary,
   verifyFormularyName,
+  saveFormulary
 } from "../../../../.././redux/slices/formulary/setup/setupSlice";
 import { Formulary } from "../../../../../redux/slices/formulary/setup/formulary";
 import {
@@ -29,6 +30,7 @@ class FormularySetUp extends React.Component<any, any> {
     isUpdate: false,
     generalInformation: {
       type: "",
+      type_id: "" as any,
       name: "",
       abbreviation: "",
       effective_date: "",
@@ -36,24 +38,37 @@ class FormularySetUp extends React.Component<any, any> {
       service_year: "",
       description: "",
       classification_system: "",
-      is_closed_formulary: false
+      is_closed_formulary: false,
+      isState: false,
+      selectedState: "",
+      state_id: null as unknown as number
     },
+    medicareInfo: [],
+    supplemental_benefit_info:{
+      supplemental_benefits :[] as any,
+    },
+    tiers: [],
     setupOptions: {},
   };
-  formulary_details: Formulary | any;
-
+  
   componentDidMount() {
     if (this.props.mode === "EXISTING") {
       this.manageFormularyType(this.props.formulary_type_id);
       this.props.fetchSelectedFormulary(this.props.formulary_id);
     } else {
-      this.props.fetchGeneralOptions(1);
-      this.formulary_details = {};
+      this.manageFormularyType(-1);
+      this.props.fetchSelectedFormulary(-1);
     }
   }
 
   manageFormularyType(type: number) {
     console.log(" TYPE :: " + type);
+
+    if (type === -1) {
+      this.props.fetchGeneralOptions(1);
+      return;
+    }
+
     this.props.fetchGeneralOptions(type);
     this.props.fetchDesignOptions(type);
     this.props.fetchTierOptions(type, 0);
@@ -86,6 +101,7 @@ class FormularySetUp extends React.Component<any, any> {
         isUpdate: true,
         generalInformation: {
           type: newProps.formulary.formulary_type_info.formulary_type,
+          type_id: newProps.formulary.formulary_type_info.id_formulary_type,
           name: newProps.formulary.formulary_info.formulary_name,
           abbreviation: newProps.formulary.formulary_info.abbreviation,
           effective_date: newProps.formulary.formulary_info.effective_date,
@@ -93,15 +109,24 @@ class FormularySetUp extends React.Component<any, any> {
           service_year: newProps.formulary.formulary_info.contract_year,
           description: newProps.formulary.formulary_info.formulary_description,
           classification_system: newProps.formulary.formulary_info.id_classification_system,
-          is_closed_formulary: newProps.formulary.formulary_info.is_closed_formulary
+          is_closed_formulary: newProps.formulary.formulary_info.is_closed_formulary,
         },
+        medicareInfo: newProps.formulary?.medicare_contract_types.map(e => e.id_medicare_contract_type),
+        supplemental_benefit_info: {
+          supplemental_benefits: newProps.formulary.supplemental_benefits.map(el => el.id_supplemental_benefit)
+        },
+        tiers: [...newProps.formulary.tiers],
         setupOptions: newProps.setupOptions,
       });
     }
-    if(newProps.mode === 'NEW'){
+    if(newProps.mode === 'NEW' && newProps.setupOptions.generalOptions ){
       this.setState({
-        isUpdate: true
-      })
+        isUpdate: true,
+        supplemental_benefit_info: {
+          supplemental_benefits: []
+        },
+        tiers: []
+      });
     }
   };
   updateInputField = (e) => {
@@ -118,36 +143,113 @@ class FormularySetUp extends React.Component<any, any> {
 
   formularyTypeChanged = (type) => {
     const generalInfo = {...this.state.generalInformation}
-    generalInfo.type = type;
     const typeID = this.props.setupOptions.generalOptions.formularyType.find(e=>e.formulary_type===type).id_formulary_type;
+    generalInfo.type = type;
+    generalInfo.type_id = parseInt(typeID);
     this.setState({
       generalInformation: generalInfo
     }, ()=> this.manageFormularyType(typeID));
-    
   };
 
   onDropdownChange = (value,section, stateProp) => {
-    console.log(value, section, stateProp)
     const selectedSection = {...this.state[section]}
     selectedSection[stateProp] = value;
+    if(stateProp === 'service_year'){
+      selectedSection.isState = true
+    }
+    if(stateProp === 'selectedState'){
+      const stateId = this.props.setupOptions.generalOptions.states.find(e => e.state_name === value).id;
+      selectedSection.state_id = stateId
+    }
     this.setState({
       [section] : selectedSection
-    })
+    });
+    
   }
-  onRadioChangeHandler = (event: React.ChangeEvent<HTMLInputElement>,section) => {
+  onRadioChangeHandler = (event: React.ChangeEvent<HTMLInputElement>,_section) => {
     const newObj = { ...this.state.generalInformation };
     newObj[event.target.name] = event.target.value;
     this.setState({
       generalInformation: newObj,
     });
   };
-  onDatePickerChangeHandler = (date, dateString) => {
-    console.log(date,dateString)
+  onDatePickerChangeHandler = (e,section, stateProp) => {
+    const date = e._d.toLocaleDateString();
+    const newObj = { ...this.state[section] };
+    newObj[stateProp] = date
+    this.setState({
+      [section] : newObj
+    });
+  }
+  medicareCheck = (id:any) => {
+    const updatedMedicareInfo:any = [...this.state.medicareInfo];
+    const index = updatedMedicareInfo.indexOf(id);
+    if(index > -1){
+      updatedMedicareInfo.splice(index,1);
+    }else{
+      updatedMedicareInfo.push(id)
+    }
+    this.setState({
+      medicareInfo: updatedMedicareInfo
+    })
+  }
+  supplementalCheck = (id:any) => {
+    const updatedSupplementalCheck:any = [...this.state.supplemental_benefit_info.supplemental_benefits];
+    const index = updatedSupplementalCheck.indexOf(id);
+    if(index > -1){
+      updatedSupplementalCheck.splice(index,1);
+    }else{
+      updatedSupplementalCheck.push(id)
+    }
+    this.setState({
+      supplemental_benefit_info: {
+        supplemental_benefits: updatedSupplementalCheck
+      }
+    })
   }
   onSave = (e) => {
     console.log("  SAVE  ", e);
+    const input = {
+      MODE: this.props.mode,
+      CONTINUE: e,
+      GENERAL_INFO: this.state.generalInformation,
+    }
+    this.props.saveFormulary(input);
   };
-
+  onCheckUncheckAllSupplementalHandler = (val) => {
+    if(val === 'uncheck'){
+      this.setState({
+        supplemental_benefit_info: {
+          supplemental_benefits: []
+        }
+      })
+    }else{
+      const allSupplemental = this.props.setupOptions.supplementalOptions.map(e => e.id_supplemental_benefit);
+      this.setState({
+        supplemental_benefit_info: {
+          supplemental_benefits: allSupplemental
+        }
+      })
+    }
+  }
+  selectTierHandler = (e) => {
+    const updatedTiers = [...this.state.tiers];
+    updatedTiers.length = e;
+    this.setState({
+      tiers: updatedTiers
+    })
+  }
+  changeTierValueHandler = (e,val) => {
+    const updatedTiers:any = [...this.state.tiers];
+    const ind = updatedTiers.findIndex(el => el.tier_name === val);
+    const getObj = {...updatedTiers[ind]};
+    const getId = this.props.setupOptions.tierOptions.find(el => el.tier_label === e).id_tier_label;
+    getObj.id_tier_label = getId;
+    updatedTiers[ind] = getObj;
+    this.setState({
+      tiers: updatedTiers
+    })
+  }
   render() {
     return (
       <div>
@@ -159,14 +261,24 @@ class FormularySetUp extends React.Component<any, any> {
               updateInputField={this.updateInputField}
               onRadioChange={this.onRadioChangeHandler}
               onDropdownChange={this.onDropdownChange}
+              formularyTypeChanged={this.formularyTypeChanged}
               datePickerChange={this.onDatePickerChangeHandler}
             />
             {this.state.generalInformation.type !== '' ? (
               <>
-              {this.state.generalInformation.type !== 'Commercial' ? <MedicareInformation /> : null}
-              <FormularyDesign />
-              <FormularyTiers />
-              {this.state.generalInformation.type !== 'Commercial' ? <SupplementalModels /> : null}
+              {this.state.generalInformation.type !== 'Commercial' ? 
+                <MedicareInformation medicareOptions={this.state.medicareInfo} medicareCheck={this.medicareCheck}/> : null}
+              {this.state.generalInformation.type !== 'Commercial' ? <FormularyDesign /> : null}
+              <FormularyTiers 
+                tiers={this.state.tiers}
+                selectTier={this.selectTierHandler}
+                changeTierValue={this.changeTierValueHandler}/>
+              {this.state.generalInformation.type !== 'Commercial' ? (
+                <SupplementalModels 
+                  supplemental={this.state.supplemental_benefit_info.supplemental_benefits} 
+                  supplementalCheck={this.supplementalCheck}
+                  checkUncheckAllSupplemental={this.onCheckUncheckAllSupplementalHandler}/>
+               ) : null}
               </>
             ) : null}
             
@@ -214,6 +326,7 @@ function mapDispatchToProps(dispatch) {
     fetchSubMthsOptions: (a) => dispatch(fetchSubMthsOptions(a)),
     fetchStatesOptions: (a) => dispatch(fetchStatesOptions(a)),
     verifyFormularyName: (a) => dispatch(verifyFormularyName(a)),
+    saveFormulary: (a) => dispatch(saveFormulary(a)),
   };
 }
 

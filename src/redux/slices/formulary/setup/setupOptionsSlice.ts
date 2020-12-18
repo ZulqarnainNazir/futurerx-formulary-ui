@@ -27,7 +27,7 @@ const setupOptionsInitialState: SetupOptionsState = {
   designOptions: null,
   supplementalOptions: null,
   tierOptions: null,
-  isLoading: true,
+  isLoading: false,
   error: null,
 };
 
@@ -185,11 +185,11 @@ const setup = createSlice({
 export const fetchGeneralOptions = createAsyncThunk(
   "setupOptions",
   async (type: number, { dispatch }) => {
-    console.log("***** fetchGeneralOptions General ");
+    //console.log("***** fetchGeneralOptions General ");
     try {
       dispatch(getGeneralOptionsStart());
       const genOptions: any = await getGeneralOptions(type);
-      console.log("*** genOptions : ", genOptions);
+      //console.log("*** genOptions : ", genOptions);
       dispatch(getGeneralOptionsSuccess(genOptions));
     } catch (err) {
       //console.log("***** fetchGeneralOptions AC - ERROR ");
