@@ -166,8 +166,8 @@ class CategoryClass extends React.Component<any, any> {
           gridItem['gpi'] = element.generic_product_identifier ? "" + element.generic_product_identifier : "";
           gridItem['databaseCategory'] = element.database_category ? "" + element.database_category : "";
           gridItem['databaseClass'] = element.database_class ? "" + element.database_class : "";
-          gridItem['overrideCategory'] = element.database_category ? "" + element.database_category : "";
-          gridItem['overRideClass'] = element.database_class ? "" + element.database_class : "";
+          gridItem['overrideCategory'] = element.override_category ? "" + element.override_category : "";
+          gridItem['overRideClass'] = element.override_class ? "" + element.override_class : "";
           count++;
           return gridItem;
         })
@@ -357,9 +357,9 @@ class CategoryClass extends React.Component<any, any> {
   processCloseActions = (type) => {
     //this.setState({ show: true });
     if(type === 'positive'){
+      if(this.state.overriddenCategory && this.state.overriddenClass){
 
-    }else{
-
+      }
     }
     this.setState({
       materialPopupInd: false,
