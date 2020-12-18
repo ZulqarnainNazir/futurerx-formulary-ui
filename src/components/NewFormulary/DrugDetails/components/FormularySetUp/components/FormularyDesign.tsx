@@ -28,7 +28,7 @@ class FormularyDesign extends React.Component<any, any> {
         let paCheckbox: any;
         if(this.props.designOptions){
             const index = type === 'pa' ? 5 : 6;
-            paCheckbox = this.props.designOptions[index][type].map(e => {
+            paCheckbox = this.props.designOptions[index][type]?.map(e => {
                 const id = e.id_edit;
                 let checked:any;
                 if(this.props.edit_info){
@@ -49,7 +49,7 @@ class FormularyDesign extends React.Component<any, any> {
     designRadioButton = (type) => {
         let radioBox: any;
         if(this.props.designOptions){
-            const id = this.props.designOptions.find(el => el.edit_name === type).id_edit;
+            const id = this.props.designOptions.find(el => el.edit_name === type)?.id_edit;
             const value = this.props.edit_info.edits.indexOf(id) !== -1 ? true :
                           this.props.edit_info.edits_no.indexOf(id) !== -1 ? false : null;
             return (
