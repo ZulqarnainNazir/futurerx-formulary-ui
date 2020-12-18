@@ -14,6 +14,8 @@ interface SetupState {
   formulary: Formulary | any;
   mode: string;
   nameExist: boolean;
+  message: string;
+  messageType: string;
   isLoading: boolean;
   error: string | null;
 }
@@ -22,6 +24,8 @@ const setupInitialState: SetupState = {
   formulary: null,
   mode: "",
   nameExist: false,
+  message: "",
+  messageType: "",
   isLoading: false,
   error: null,
 };
@@ -32,10 +36,14 @@ export interface SetupResult {
 
 function startLoading(state: SetupState) {
   state.isLoading = true;
+  state.message = "";
+  state.messageType = "";
 }
 
 function loadingFailed(state: SetupState, action: PayloadAction<string>) {
   state.isLoading = false;
+  state.message = action.payload;
+  state.messageType = "error";
   state.error = action.payload;
 }
 
@@ -45,9 +53,11 @@ const setup = createSlice({
   reducers: {
     getformularyStart: startLoading,
     getFormularySuccess(state, { payload }: PayloadAction<Formulary>) {
-      // console.log("***** getFormulariesSuccess ");
+      console.log("***** getFormulariesSuccess ");
       state.formulary = payload;
       state.mode = "EXISTING";
+      // state.message ="";
+      // state.messageType ="";
       state.isLoading = false;
       state.error = null;
     },
@@ -56,6 +66,8 @@ const setup = createSlice({
       console.log("***** setNewFormularySuccess ");
       state.formulary = null;
       state.mode = "NEW";
+      state.message = "";
+      state.messageType = "";
       state.nameExist = false;
       state.isLoading = false;
       state.error = null;
@@ -64,19 +76,32 @@ const setup = createSlice({
     verifyFormularyNameSuccess(state, { payload }: PayloadAction<boolean>) {
       //console.log("***** verifyFormularyNameSuccess : ",payload);
       state.nameExist = payload;
+      if (payload) {
+        state.message = "Formulary name already exist";
+        state.messageType = "error";
+      } else {
+        state.message = "";
+        state.messageType = "";
+      }
       state.isLoading = false;
       state.error = null;
     },
     verifyFormularyNameFailure: loadingFailed,
     saveFormularyStart: startLoading,
-    saveFormularySuccess(state, { payload }: PayloadAction<number | null>) {
+    saveFormularySuccess(state, { payload }: PayloadAction<any>) {
       console.log("***** saveFormularySuccess : ", payload);
-      if (!payload) {
-        state.isLoading = false;
-        state.error = "SAVE FAILED";
-      } else {
-        state.isLoading = false;
-        state.error = null;
+      if (payload) {
+        if (payload.status === 200) {
+          state.message = "Formulary created successfully";
+          state.messageType = "success";
+          state.isLoading = false;
+          state.error = null;
+        } else if (payload.status === 400) {
+          state.message = payload?.data?.message;
+          state.messageType = "error";
+          state.isLoading = false;
+          state.error = payload?.data?.message;
+        }
       }
     },
     saveFormularyFailure: loadingFailed,
@@ -86,7 +111,7 @@ const setup = createSlice({
 export const fetchSelectedFormulary = createAsyncThunk(
   "setup",
   async (id: number, { dispatch }) => {
-    //console.log("***** fetchSelectedFormulary ( "+arg+" ) ");
+    console.log("***** fetchSelectedFormulary ( " + id + " ) ");
     try {
       console.log("--------------0");
       if (id === -1) {
@@ -135,10 +160,13 @@ export const saveFormulary = createAsyncThunk(
       try {
         dispatch(saveFormularyStart());
         const resp: any = await createFormulary(payload);
+        console.log("- - - -- - - - - - -- - - -");
         console.log(resp);
-        dispatch(saveFormularySuccess(resp));
         if (resp) {
-          dispatch(fetchSelectedFormulary(resp));
+          dispatch(saveFormularySuccess(resp));
+          if (resp?.status === 200) {
+            dispatch(fetchSelectedFormulary(resp?.data));
+          }
         }
       } catch (err) {
         console.log("***** saveFormulary - ERROR ");

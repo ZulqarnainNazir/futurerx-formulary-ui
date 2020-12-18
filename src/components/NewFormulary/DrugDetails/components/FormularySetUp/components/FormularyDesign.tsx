@@ -10,7 +10,7 @@ import FormControlLabel from '@material-ui/core/FormControlLabel';
 import FormControl from '@material-ui/core/FormControl';
 import FormLabel from '@material-ui/core/FormLabel';
 import {connect} from "react-redux";
-
+import { Checkbox } from 'antd';
 class FormularyDesign extends React.Component<any, any> {
     state = {
         ql: true,
@@ -30,14 +30,16 @@ class FormularyDesign extends React.Component<any, any> {
             const index = type === 'pa' ? 5 : 6;
             paCheckbox = this.props.designOptions[index][type].map(e => {
                 const id = e.id_edit;
-                let checked = false;
-                if(this.props.editInto){
-                    checked =  this.props.editInto.find(el=>el.id_edit === id) !== undefined &&  this.props.editInto.find(el=>el.id_edit === id).id_checked ? this.props.editInto.find(el=>el.id_edit === id).id_checked  : false;
+                let checked:any;
+                if(this.props.edit_info){
+                    checked =  this.props.edit_info.edits.indexOf(id) !== -1 ? true :
+                    this.props.edit_info.edits_no.indexOf(id) !== -1 ? false : null;
                 }
                 return (
                     <div className="label-wrapper checkbox-wrapper">
-                        <input type="checkbox" className="checkbox-btn" name="N/A" value="N/A" checked={checked}/>
-                        <label htmlFor="N/A" className="checkbox-label text-tran-none">{e.edit_name}</label>
+                        <Checkbox className="custom-checkbox mb-16" onChange={(e) => this.props.formularyRadioChange(e,id,'checkbox')} checked={checked}>{e.edit_name}</Checkbox>
+                        {/* <input type="checkbox" className="checkbox-btn" value checked={checked} onChange={(e) => this.props.formularyRadioChange(e,id)}/>
+                        <label htmlFor="N/A" className="checkbox-label text-tran-none">{e.edit_name}</label> */}
                     </div>
                 )
             })
@@ -48,12 +50,17 @@ class FormularyDesign extends React.Component<any, any> {
         let radioBox: any;
         if(this.props.designOptions){
             const id = this.props.designOptions.find(el => el.edit_name === type).id_edit;
-            const value = this.props.editInto && this.props.editInto.find(el => el.id_edit === id) !== undefined ? 
-                    this.props.editInto.find(el => el.id_edit === id)?.id_checked : 'false';
+            const value = this.props.edit_info.edits.indexOf(id) !== -1 ? true :
+                          this.props.edit_info.edits_no.indexOf(id) !== -1 ? false : null;
             return (
-                <RadioGroup className="radio-group-custom mr-80" aria-label={type} name={type} value={value.toString()}>
-                    <FormControlLabel value="true" control={<Radio />} label="Yes" />
-                    <FormControlLabel value="false" control={<Radio />} label="No" />
+                <RadioGroup 
+                    className="radio-group-custom mr-80" 
+                    aria-label={type} 
+                    name={type} 
+                    value={value} 
+                    onClick={(e) => this.props.formularyRadioChange(e,id)}>
+                    <FormControlLabel value={true} control={<Radio />} label="Yes" />
+                    <FormControlLabel value={false} control={<Radio />} label="No" />
                 </RadioGroup>
             )
         }
