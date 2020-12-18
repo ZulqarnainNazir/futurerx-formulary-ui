@@ -11,7 +11,7 @@ import {
   getMiniTabs,
 } from "../../../../../../../mocks/formulary/mock-data";
 
-
+import showMessage from "../../../../../Utils/Toast";
 import AdvancedSearch from './../search/AdvancedSearch';
 import FrxDrugGridContainer from "../../../../../../shared/FrxGrid/FrxDrugGridContainer";
 import { PaColumns } from "../../../../../../../utils/grid/columns";
@@ -109,6 +109,7 @@ class PaReplace extends React.Component<any,any> {
       const saveData = this.props.postApplyFormularyDrugPA(apiDetails).then((json => {
         console.log("Save response is:" + JSON.stringify(json));
         if (json.payload && json.payload.code === '200') {
+          showMessage('Success', 'success');
           this.state.drugData = [];
           this.state.drugGridData = [];
           this.populateGridData();
@@ -116,6 +117,8 @@ class PaReplace extends React.Component<any,any> {
           apiDetails['pathParams'] = this.props?.formulary_id;
           apiDetails['keyVals'] = [{ key: constants.KEY_ENTITY_ID, value: this.props?.formulary_id }];
 
+        }else{
+          showMessage('Failure', 'error');
         }
       }))
     }
@@ -141,12 +144,21 @@ class PaReplace extends React.Component<any,any> {
        fileType: data[0].file_type,
      });
    });
+   this.setState({
+     tierGridContainer:false,
+     gridData:[],
+     drugGridData:[]
+    });
   }
 
   dropDownSelectHandlerPaType = (value, event) => {
     let tmp_index = event.key;
     let tmp_value = event.value;
-    this.setState({ selectedPaType: tmp_value });
+    this.setState({ selectedPaType: tmp_value,
+      tierGridContainer:false,
+      gridData:[],
+      drugGridData:[] });
+
   }
 
   dropDownSelectHandlerLob = (value, event) => {

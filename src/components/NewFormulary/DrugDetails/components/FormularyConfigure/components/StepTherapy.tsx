@@ -22,6 +22,15 @@ function mapDispatchToProps(dispatch) {
   };
 }
 
+const mapStateToProps = (state) => {
+  return {
+    formulary_id: state?.application?.formulary_id,
+    formulary: state?.application?.formulary,
+    formulary_lob_id: state?.application?.formulary_lob_id,
+    formulary_type_id: state?.application?.formulary_type_id,
+  }
+}
+
 interface tabsState {
   activeMiniTabIndex: number;
   miniTabs: any;
@@ -53,7 +62,7 @@ class StepTherapy extends React.Component<any, tabsState> {
   };
   componentDidMount() {
     
-    const TierDefinationData = this.props.getStSummary("3132").then((json => {
+    const TierDefinationData = this.props.getStSummary(this.props?.formulary_id).then((json => {
       debugger;
       let tmpData = json.payload.result;
       var rows = tmpData.map(function(el) {
@@ -109,6 +118,6 @@ class StepTherapy extends React.Component<any, tabsState> {
 }
 
 export default connect(
-  null,
+  mapStateToProps,
   mapDispatchToProps
 )(StepTherapy);
