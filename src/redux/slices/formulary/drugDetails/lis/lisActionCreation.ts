@@ -13,13 +13,6 @@ import {
 export const getDrugDetailsLISSummary = createAsyncThunk(
   "drug_details/LIS_Summary",
   async (apiDetails: any) => {
-    // const requestHeaders = {
-    //   headers: {
-    //     Authorization: "Bearer 1e05ff8b-a0af-4a8f-8915-487321900f21",
-    //     Accept: "application/json",
-    //     "Content-Type": "application/json;charset=UTF-8",
-    //   },
-    // };
     let GET_URL = buildUrl({ apiDetails });
     const requestHeaders = getHeaders();
     return fetchRequest(GET_URL, requestHeaders);
@@ -29,14 +22,6 @@ export const getDrugDetailsLISSummary = createAsyncThunk(
 export const getDrugDetailsLISList = createAsyncThunk(
   "drug_details/LIS_list",
   async (apiDetails: any) => {
-    // const requestHeaders = {
-    //   method: "POST",
-    //   headers: {
-    //     Authorization: "Bearer f4f83ba7-02e5-464f-bfe3-1684edc85794",
-    //     Accept: "application/json",
-    //     "Content-Type": "application/json;charset=UTF-8",
-    //   },
-    // };
     let POST_URL = buildUrl({ apiDetails });
     const requestHeaders = postHeaders(apiDetails);
     return fetchRequest(POST_URL, requestHeaders);

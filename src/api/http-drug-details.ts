@@ -44,6 +44,18 @@ export const GET_IBF_FORMULARY_DRUGS = "api/1/formulary-drugs-ibf/";
 export const GET_IBF_CUIS = "api/1/drug-me-shcuis"
 export const APPLY_IBF_DRUG = "api/1/apply-formulary-drug-ibf/";
 
+// CB TAB
+export const GET_DRUG_SUMMARY_CB = "api/1/formulary-drug-summary-cb/";
+export const GET_CB_EXCLUDED_DRUGS = "api/1/formulary-drugs-cb/";
+
+// FGC TAB
+export const GET_DRUG_FGC_TIERS = "api/1/formulary-tiers/";
+
+// PGC TAB
+export const GET_DRUG_SUMMARY_PGC = "api/1/formulary-drug-summary-pgc/";
+export const GET_PGC_FORMULARY_DRUGS = "api/1/formulary-drugs-pgc/";
+export const GET_PGC_EXCLUDED_DRUGS = "api/1/formulary-drugs-pgc/";
+
 export const KEY_ENTITY_ID = "entity_id";
 export const KEY_INDEX = "index";
 export const KEY_LIMIT = "limit";
