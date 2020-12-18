@@ -9,7 +9,8 @@ import Box from "@material-ui/core/Box";
 import FrxDrugGridContainer from "../../../../../shared/FrxGrid/FrxDrugGridContainer";
 import { tierColumns } from "../../../../../../utils/grid/columns";
 import { TierMockData } from "../../../../../../mocks/TierMock";
-import AdvancedSearch from './search/AdvancedSearch';
+//import AdvancedSearch from './search/AdvancedSearch';
+import AdvanceSearchContainer from '../../../../NewAdvanceSearch/AdvanceSearchContainer';
 import { postTierApplyInfo, getTier } from "../../../../../../redux/slices/formulary/tier/tierActionCreation";
 import * as tierConstants from "../../../../../../api/http-tier";
 import * as commonConstants from "../../../../../../api/http-commons";
@@ -330,9 +331,8 @@ class TierReplace extends React.Component<any, tabsState> {
               </div>
             </div>
             {this.state.isSearchOpen ? (
-              <AdvancedSearch
+              <AdvanceSearchContainer
                 {...searchProps}
-                category="Grievances"
                 openPopup={this.state.isSearchOpen}
                 onClose={this.advanceSearchClosekHandler} />
             ) : (
