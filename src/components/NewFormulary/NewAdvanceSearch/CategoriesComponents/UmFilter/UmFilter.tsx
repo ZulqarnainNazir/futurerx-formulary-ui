@@ -71,6 +71,7 @@ class UmFilter extends Component<Props, State> {
             umSelected.push(um);
           }
         });
+        this.props.umFiltersChanged(umSelected);
         this.setState({
           selectedUm: umSelected,
           selectedKeys: keystoSet

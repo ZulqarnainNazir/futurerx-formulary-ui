@@ -75,7 +75,7 @@ class AdvanceSearchContainer extends Component<Props, State> {
 
   umFiltersChanged = (umFilters) => {
     Object.keys(this.state.additionalFilter).map(filterKey => {
-      if (filterKey !== 'tiers') {
+      if (filterKey !== 'tiers' && filterKey !== 'is_all_tiers') {
         this.state.additionalFilter[filterKey] = false;
       }
     });
