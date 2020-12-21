@@ -34,10 +34,16 @@
                 width: 170px;
                 height: 35px;
             }
+            .invalid{
+                border:1px solid red;
+            }
         }
         &.clone{
             .input input{
                 width: 285px;
+            }
+            .invalid{
+                border:1px solid red;
             }
         }
         .content{

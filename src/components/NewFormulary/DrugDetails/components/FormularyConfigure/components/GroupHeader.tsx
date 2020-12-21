@@ -6,10 +6,12 @@ import {
     cloneGroupDescription,
     archiveGroupDescription,
     newVersionGroupDescription,
-    cleanMessage
+    cleanMessages
 } from "../../../../../../redux/slices/formulary/gdm/gdmSlice";
 import { getStGrouptDescriptions, getStTypes, getStGrouptDescriptionVersions, getStGrouptDescription } from "../../../../../../redux/slices/formulary/stepTherapy/stepTherapyActionCreation";
 import { connect } from 'react-redux';
+import { ToastContainer } from 'react-toastify';
+import showMessage from "../../../../Utils/Toast";
 
 function mapStateToProps(state) {
     return {
@@ -24,7 +26,7 @@ function mapDispatchToProps(dispatch) {
     return {
         getStGrouptDescriptions: (arg) => dispatch(getStGrouptDescriptions(arg)), // Group List
         getStTypes: (arg) => dispatch(getStTypes(arg)),  // File Type
-        cleanMessage: (arg) => dispatch(cleanMessage(arg)),
+        cleanMessages: (arg) => dispatch(cleanMessages(arg)),
         getStGrouptDescriptionVersions: (arg) => dispatch(getStGrouptDescriptionVersions(arg)), //Version
         getStGrouptDescription: (arg) => dispatch(getStGrouptDescription(arg)), // Group ID Detail
         deleteGroupDescription: (arg) => dispatch(deleteGroupDescription(arg)), // Delete
@@ -57,9 +59,14 @@ function GroupHeader(props: any) {
     }, [props.saveGdm.current_group_id])
 
     const handleClickOpen = (type) => {
-        setOpen(true);
-        setPopUpType(type)
-        props.cleanMessage({
+        if(validation(props.saveGdm.current_group_des_id)){
+            setOpen(true);
+            setPopUpType(type)
+        }else{
+            setOpen(false);
+            setPopUpType(type)
+        }
+        props.cleanMessages({
             error:'',
             success:''
         })
@@ -80,13 +87,22 @@ function GroupHeader(props: any) {
 
     const handleClose = () => {
         setOpen(false);
-        props.cleanMessage({
+        props.cleanMessages({
             error:'',
             success:''
         })
     };
 
+    const validation = (current_group_des_id) =>{
+        if(current_group_des_id===0){
+            showMessage('ST group description ID is missing or invalid', 'error');
+            return false;
+        }
+        return true;
+    }
+
     const deleteGroup = (e: any,param:any) => {
+        props.cleanMessages({error:'',success:''})
         props.deleteGroupDescription({ current_group_des_id: props.saveGdm.current_group_des_id })
         props.getStGrouptDescriptions(props.saveGdm.formulary_id)
         props.getStGrouptDescriptionVersions(props.saveGdm.current_group_des_id)
@@ -94,6 +110,7 @@ function GroupHeader(props: any) {
         props.getStTypes(props.saveGdm.formulary_id)
     }
     const cloneGroup = (e: any,param:any) => {
+        props.cleanMessages({error:'',success:''})
         props.cloneGroupDescription({
             current_group_des_id: props.saveGdm.current_group_des_id,
             st_group_description_name: param.st_group_description_name // clone page input
@@ -101,6 +118,7 @@ function GroupHeader(props: any) {
         props.getStGrouptDescriptions(props.saveGdm.formulary_id)
     }
     const archiveGroup = (e: any,param:any) => {
+        props.cleanMessages({error:'',success:''})
         props.archiveGroupDescription({ current_group_des_id: props.saveGdm.current_group_des_id })
         props.getStGrouptDescriptions(props.saveGdm.formulary_id)
         props.getStGrouptDescriptionVersions(props.saveGdm.current_group_des_id)
@@ -109,6 +127,7 @@ function GroupHeader(props: any) {
     }
 
     const newVersionGroup = (e: any,param:any) => {
+        props.cleanMessages({error:'',success:''})
         props.newVersionGroupDescription({ current_group_des_id: props.saveGdm.current_group_des_id })
         props.getStGrouptDescriptions(props.saveGdm.formulary_id)
         props.getStGrouptDescriptionVersions(props.saveGdm.current_group_des_id)
@@ -202,7 +221,7 @@ function GroupHeader(props: any) {
                 </svg>
           Archive
         </div>
-            {open ? (
+            {open&&props.saveGdm.current_group_des_id>0 ? (
                 <STAlertDialog
                     popuptitle={props.popuptitle}
                     openPopup={open}
@@ -218,7 +237,7 @@ function GroupHeader(props: any) {
                     popuptitle={props.popuptitle}
                     />
                 </STAlertDialog>
-            ) : null}
+            ) : <ToastContainer/>}
         </div>
     )
 }

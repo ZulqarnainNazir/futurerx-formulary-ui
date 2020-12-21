@@ -70,7 +70,7 @@ export async function cloneStGroup(payload: any): Promise<GDMSaveResponse> {
 
 
 export async function archiveStGroup(payload: any): Promise<GDMSaveResponse> {
-  let url = `${BASE_URL1}api/1/archive-mcr-st-group-description/${payload.current_group_des_id}/GD?entity_id=0`;
+  let url = `${BASE_URL1}api/1/archive-mcr-st-group-description/${payload.current_group_des_id}/CV?entity_id=0`;
   try {
     const response = await axios.post(url,{},{
       headers: headers
