@@ -7,6 +7,7 @@ import PA from "./components/PA/PA";
 import PaData from './components/PA/PaData';
 import StepTherpayDetails from "./components/StepTherapyData";
 import CategoryClass from "./components/CategoryClass";
+import QL from '../QL/QL';
 
 const tabs = [
   { id: 1, text: "TIER" },
@@ -66,7 +67,7 @@ export default class FormularyConfigure extends React.Component<
           </div>
         );
       case 4:
-        return <div>QL</div>;
+        return <QL />
       case 5:
         return <DrugDetails />;
     }

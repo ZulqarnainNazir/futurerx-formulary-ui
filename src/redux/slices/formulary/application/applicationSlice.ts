@@ -21,7 +21,7 @@ const applicationInitialState: ApplicationState = {
   formulary_lob_id: NaN,
   formulary_type_id: NaN,
   mode: "",
-  clientId: NaN,
+  clientId: 1,
   isLoading: false,
   error: null,
 };

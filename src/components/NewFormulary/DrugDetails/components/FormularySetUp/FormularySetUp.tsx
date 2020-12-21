@@ -44,9 +44,22 @@ class FormularySetUp extends React.Component<any, any> {
       is_closed_formulary: false,
       isState: false,
       selectedState: "",
-      state_id: null as unknown as number
+      state_id: null as unknown as number,
+      medicare_types_ref_other: false
     },
-    medicareInfo: [],
+    medicareInfo: {
+      medicare_contract_types: [],
+
+    },
+    medicare_contract_type_info: {
+      medicare_contract_types: [],
+      custom_medicare_contract_type: {
+        id_medicare_contract_type: null,
+        id_formulary_medicare_contract: "",
+        medicare_contract_type: ""
+      },
+      removed_formulary_medicare_contracts: []
+    },
     supplemental_benefit_info:{
       supplemental_benefits :[] as any,
     },
@@ -104,6 +117,9 @@ class FormularySetUp extends React.Component<any, any> {
 
   UNSAFE_componentWillReceiveProps = (newProps) => {
     if (newProps.formulary && newProps.setupOptions) {
+      const medeicareContract = {...this.state.medicare_contract_type_info};
+      medeicareContract.medicare_contract_types = newProps.formulary?.medicare_contract_types?.map(e => e.id_medicare_contract_type);
+
       this.setState({
         isUpdate: true,
         generalInformation: {
@@ -117,8 +133,9 @@ class FormularySetUp extends React.Component<any, any> {
           description: newProps.formulary.formulary_info.formulary_description,
           classification_system: newProps.formulary.formulary_info.id_classification_system,
           is_closed_formulary: newProps.formulary.formulary_info.is_closed_formulary,
+          medicare_types_ref_other: false
         },
-        medicareInfo: newProps.formulary?.medicare_contract_types?.map(e => e.id_medicare_contract_type),
+        medicare_contract_type_info: medeicareContract,
         supplemental_benefit_info: {
           supplemental_benefits: newProps.formulary.supplemental_benefits?.map(el => el.id_supplemental_benefit)
         },
@@ -141,10 +158,11 @@ class FormularySetUp extends React.Component<any, any> {
   getEditInfo = (editInfo:any) => {
     const editTrue = editInfo.filter(obj => obj.id_checked === true).map(e => e.id_edit);
     const editFalse = editInfo.filter(obj => obj.id_checked === false).map(e => e.id_edit);
-    console.log(editTrue,editFalse)
+    const customEdit = editInfo
     const newObj = {
       edits: editTrue,
-      edits_no: editFalse
+      edits_no: editFalse,
+      custom_edits: ""
     }
     return newObj;
   }
@@ -181,12 +199,17 @@ class FormularySetUp extends React.Component<any, any> {
     this.setState({
       generalInformation: newObj,
     });
-    // console.log(" ON CHANGE : ( "+this.props.mode+" ) "+e.currentTarget.name +" , "+e.currentTarget.value);
     if (e.currentTarget.name === "name" && this.props.mode === "NEW") {
       this.props.verifyFormularyName(e.currentTarget.value);
     }
   };
-
+  onOtherMedicareHandler = (e) => {
+    const custom = {...this.state.medicare_contract_type_info}
+    custom.custom_medicare_contract_type.medicare_contract_type = e.currentTarget.value;
+    this.setState({
+      medicare_contract_type_info: custom
+    })
+  }
   formularyTypeChanged = (type) => {
     const generalInfo = {...this.state.generalInformation}
     const typeID = this.props.setupOptions.generalOptions.formularyType.find(e=>e.formulary_type===type).id_formulary_type;
@@ -228,15 +251,24 @@ class FormularySetUp extends React.Component<any, any> {
     });
   }
   medicareCheck = (id:any) => {
-    const updatedMedicareInfo:any = [...this.state.medicareInfo];
-    const index = updatedMedicareInfo.indexOf(id);
+    const updatedMedicareInfo:any = {...this.state.medicare_contract_type_info};
+    const updatedMedicareInfoContract:any = [...updatedMedicareInfo.medicare_contract_types];
+    const index = updatedMedicareInfoContract.indexOf(id);
     if(index > -1){
-      updatedMedicareInfo.splice(index,1);
+      updatedMedicareInfoContract.splice(index,1);
     }else{
-      updatedMedicareInfo.push(id)
+      updatedMedicareInfoContract.push(id)
     }
+    updatedMedicareInfo.medicare_contract_types = updatedMedicareInfoContract
     this.setState({
-      medicareInfo: updatedMedicareInfo
+      medicare_contract_type_info: updatedMedicareInfo
+    })
+  }
+  onMedicareOtherCheck = (e) => {
+    const genInfo = {...this.state.generalInformation};
+    genInfo.medicare_types_ref_other = e.target.checked;
+    this.setState({
+      generalInformation: genInfo
     })
   }
   supplementalCheck = (id:any) => {
@@ -354,7 +386,12 @@ class FormularySetUp extends React.Component<any, any> {
             {this.state.generalInformation.type !== '' ? (
               <>
               {this.state.generalInformation.type !== 'Commercial' ? 
-                <MedicareInformation medicareOptions={this.state.medicareInfo} medicareCheck={this.medicareCheck}/> : null}
+                <MedicareInformation 
+                  medicareOptions={this.state.medicare_contract_type_info.medicare_contract_types} 
+                  medicareCheck={this.medicareCheck}
+                  generalInfo={this.state.generalInformation}
+                  onMedicareOtherCheck={this.onMedicareOtherCheck}
+                  otherMedicareInfo={this.onOtherMedicareHandler}/> : null}
               {this.state.generalInformation.type !== 'Commercial' ? (
                 <FormularyDesign edit_info={this.state.edit_info}
                 formularyRadioChange={this.formularyRadioChangeHandler}/>

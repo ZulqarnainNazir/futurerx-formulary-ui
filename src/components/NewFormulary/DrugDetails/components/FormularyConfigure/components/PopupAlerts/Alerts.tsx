@@ -6,6 +6,8 @@ import { BUTTONS, DELETE_ACTION, ARCHIVE_ACTION, MONTHS } from './Constents'
 import AlertMessages from '../AlertMessages';
 import { DatePicker } from 'antd';
 import { connect } from 'react-redux';
+import { ToastContainer } from 'react-toastify';
+import showMessage from "../../../../../Utils/Toast";
 
 interface Props {
     closePopup: () => void;
@@ -21,6 +23,9 @@ interface Props {
 
 
 function mapStateToProps(state) {
+    if(state?.saveGdm?.success!=="" && state?.saveGdm?.error !==""){
+        showMessage(state?.saveGdm?.success, state?.saveGdm?.error);
+    }
     return {
       success: state.saveGdm.success,
       error: state.saveGdm.error
@@ -35,6 +40,8 @@ class Alerts extends React.Component<Props, any> {
             st_group_description_name:null
 
         },
+        errors: [],
+        errorClass:'',
         submitted: false,
     }
 
@@ -46,6 +53,33 @@ class Alerts extends React.Component<Props, any> {
 
     handleSubmit = (eventHandle) => {
         const {alertFormData} = this.state
+
+        console.log(alertFormData)
+        if(this.props.popupType === 'clone'){
+            let msg:string[]=[];
+            if(alertFormData.st_group_description_name === null){
+                msg.push("Formulary Name is required.");
+            }
+            if(msg.length>0){
+                this.setState({ errorClass:'invalid' });
+                return;
+            }
+        }
+        // if(this.props.popupType === 'newVersion'){
+        //     let msg:string[]=[];
+        //     if(alertFormData.effective_date === null){
+        //         msg.push("Formulary Build Method is required.");
+        //     }
+        //     if(alertFormData.submission_month === null){
+        //         msg.push("Formulary Effective Date is required.");
+        //     }
+        //     if(msg.length>0){
+        //         console.log(msg)
+        //         this.setState({ errorClass:'invalid' });
+        //         return;
+        //     }
+        // }
+
         this.setState({ submitted: true }, () => {
             setTimeout(() => this.setState({ submitted: false }), 5000);
             eventHandle(alertFormData)
@@ -53,7 +87,7 @@ class Alerts extends React.Component<Props, any> {
     }
 
     handleStartDate = date => {
-        this.setState({ alertFormData: { effective_date: date } });
+        this.setState({ alertFormData: { effective_date: date,...this.state.alertFormData } });
     }
 
     render() {
@@ -66,7 +100,7 @@ class Alerts extends React.Component<Props, any> {
                         {popupType == 'clone' && (<React.Fragment>
                             <div className="label">New Name<span className="astrict">*</span></div>
                             <div className="input">
-                                <input type="text" name="st_group_description_name" onChange={this.handleChange}/>
+                                <input type="text" name="st_group_description_name" onChange={this.handleChange} className={this.state.errorClass}/>
                             </div>
                         </React.Fragment>)}
                         {popupType == 'newVersion' && (<React.Fragment>
@@ -75,13 +109,13 @@ class Alerts extends React.Component<Props, any> {
                                     <div className="label">Effective Date<span className="astrict">*</span></div>
                                     <div className="calender">
                                         <DatePicker onChange={this.handleStartDate} value={this.state.alertFormData.effective_date} 
-                                        placeholder="Effective Date" name="effective_date" className="claims-search__input claims-search__input--date"/>
+                                        placeholder="Effective Date" name="effective_date" className={this.state.errorClass}/>
                                     </div>
                                 </Grid>
                                 <Grid xs={6}>
                                     <div className="label">Submission Month<span className="astrict">*</span></div>
                                     <div className="input">
-                                        <select name="submission_month" id="submission_month" onChange={this.handleChange}>
+                                        <select name="submission_month" id="submission_month" onChange={this.handleChange} className={this.state.errorClass}>
                                             <option value="Month">Month</option>
                                             {MONTHS.map(e => {
                                                 return <option value={e.abbreviation}>{e.abbreviation}</option>
@@ -114,6 +148,7 @@ class Alerts extends React.Component<Props, any> {
                         }
                     </div>
                 </div>
+                <ToastContainer/>
             </div>
         );
     }

@@ -21,14 +21,18 @@ export const getStepTherapyRejected = (state, action) => {
 
 export const getVersionFulfilled = (state, action) => {
   state.isLoading = false;
+  let stVersion
   if(action.payload.data === undefined || (action.payload.data.length === 0)) {
+    stVersion = action.payload.data;
+    // Response stored in the redux store.
+    state.stVersion = stVersion;
     console.log("getStepTherapyFulfilled: Payload invalid");
     return;
+  }else{
+    stVersion = action.payload.data;
+    // Response stored in the redux store.
+    state.stVersion = stVersion;
   }
-  const stVersion = action.payload.data;
-  // Response stored in the redux store.
-  state.stVersion = stVersion;
-  
 }
 
 export const getVersionRejected = (state, action) => {
