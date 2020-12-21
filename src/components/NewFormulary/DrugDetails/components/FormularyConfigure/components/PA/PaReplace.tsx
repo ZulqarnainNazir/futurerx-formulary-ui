@@ -46,6 +46,7 @@ function mapDispatchToProps(dispatch) {
 
 const mapStateToProps = (state) => {
   return {
+    current_formulary: state.application.formulary,
     configureSwitch: state.switchReducer.configureSwitch,
     applyData: state.tierSliceReducer.applyData,
     formulary_id: state?.application?.formulary_id,
@@ -113,10 +114,12 @@ class PaReplace extends React.Component<any,any> {
           this.state.drugData = [];
           this.state.drugGridData = [];
           this.populateGridData();
-          apiDetails = {};
-          apiDetails['pathParams'] = this.props?.formulary_id;
-          apiDetails['keyVals'] = [{ key: constants.KEY_ENTITY_ID, value: this.props?.formulary_id }];
+         
 
+          this.props.getPaSummary(this.props.current_formulary.id_formulary).then((json => {
+            debugger;
+            this.setState({ tierGridContainer: true });
+          }))
         }else{
           showMessage('Failure', 'error');
         }
