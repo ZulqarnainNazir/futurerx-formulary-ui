@@ -12,6 +12,7 @@ const GET_PA_GROUP_DESCRIPTION_VERSTIONS_URL = BASE_URL1 + "/api/1/mcr-pa-group-
 const POST_PA_GROUP_DESCRIPTION_VERSTION_URL = BASE_URL1 + "/api/1/mcr-pa-group-description-version/";
 const GET_PA_GROUP_DESCRIPTION_DETAIL_URL = BASE_URL1 + "/api/1/mcr-st-group-description/462?entity_id=0";
 const POSt_PA_GROUP_DESCRIPTION_URL = BASE_URL1 + "api/1/mcr-pa-group-description/1/";
+const PUT_PA_GROUP_DESCRIPTION_URL = BASE_URL1 + "api/1/mcr-pa-group-description/";
 const POST_FORUMULARY_DRUG_PA_URL = BASE_URL1 + "api/1/formulary-drugs-pa/";
 const POST_APPLY_FORUMULARY_DRUG_PA_URL = BASE_URL1 + "api/1/apply-formulary-drug-pa/";
 const POST_RELATED_FORUMULARY_DRUG_PA_URL = BASE_URL1 + "api/1/related-formulary-drugs/";
@@ -160,6 +161,36 @@ export const postPAGroupDescription = createAsyncThunk(
     console.log("postPAGroupDescription action creator:: url: " + POST_URL);
     const requestHeaders  = {
         method: 'POST',
+        body: JSON.stringify(messageBody),
+        headers: commonConstants.REQUEST_HEADER
+    }
+    return fetch(POST_URL,requestHeaders)
+      .then((response) => {
+        if (!response.ok) throw Error(response.statusText);
+        return response.json();
+      })
+      .then((json) => {
+        console.log("postPAGroupDescription: ", json);
+        return json;
+      });
+  }
+);
+
+export const putPAGroupDescription = createAsyncThunk(
+  "tier/putPAGroupDescription",
+  async (apiDetails: any) => {
+    
+    let pathParams = apiDetails.pathParams;
+    let keyVals = pathParams.keyVals;
+    let messageBody = apiDetails.messageBody;
+    let POST_URL =  PUT_PA_GROUP_DESCRIPTION_URL + pathParams;
+    if(keyVals){
+      keyVals = keyVals.map(pair => pair.key+'='+pair.value);
+      POST_URL = POST_URL + "?" + keyVals.join('&');
+    }
+    console.log("putPAGroupDescription action creator:: url: " + POST_URL);
+    const requestHeaders  = {
+        method: 'PUT',
         body: JSON.stringify(messageBody),
         headers: commonConstants.REQUEST_HEADER
     }
