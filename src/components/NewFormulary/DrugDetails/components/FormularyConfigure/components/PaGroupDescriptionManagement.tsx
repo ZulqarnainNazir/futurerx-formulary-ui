@@ -95,7 +95,8 @@ class PaGroupDescriptionManagement extends React.Component<any, any>{
         });
         this.setState({
             newGroup: true,
-            selectedGrp:groupType==='warning'?false:true
+            selectedGrp:groupType==='warning'?false:true,
+            selectedGroup:param,
         })
     }
     addNewGroup = () => {
@@ -194,9 +195,9 @@ class PaGroupDescriptionManagement extends React.Component<any, any>{
                                             (this.state.searchInput == "" || (this.state.searchInput != "" && group.label.indexOf(this.state.searchInput) > -1)) ?
                                                 (
                                                     (this.state.activeTabIndex==0 && group.is_archived==false) ?
-                                                        <Groups key={key} id={group.id} title={group.label} statusType={group.status} selectGroup={this.selectGroup}/>        
+                                                        <Groups key={key} id={group.id} title={group.label} statusType={group.status} selectGroup={this.selectGroup} isSelected={this.state.selectedGroup==group.id}/>        
                                                     : (this.state.activeTabIndex==1 && group.is_archived==true) ?
-                                                        <Groups key={key} id={group.id} title={group.label} statusType={group.status} selectGroup={this.selectGroup} />
+                                                        <Groups key={key} id={group.id} title={group.label} statusType={group.status} selectGroup={this.selectGroup} isSelected={this.state.selectedGroup==group.id}/>
                                                     : ""
                                                 ) : "" 
                                             ))
