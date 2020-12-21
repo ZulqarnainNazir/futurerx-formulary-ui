@@ -9,7 +9,7 @@ import { PAMock } from "../../../../../../../mocks/PAMock";
 import Button from "../../../../../../shared/Frx-components/button/Button";
 import { Row, Col } from "antd";
 import PanelHeader from "../PanelHeader";
-import { postCriteriaListPA,postApplyFormularyDrugPA,postFormularyDrugPA } from "../../../../../../../redux/slices/formulary/pa/paActionCreation";
+import { postCriteriaListPA,postApplyFormularyDrugPA,postFormularyDrugPA,getPaSummary } from "../../../../../../../redux/slices/formulary/pa/paActionCreation";
 import * as constants from "../../../../../../../api/http-commons";
 import getLobCode from "../../../../../Utils/LobUtils";
 import { tierColumns } from "../../../../../../../utils/grid/columns";
@@ -21,12 +21,13 @@ function mapDispatchToProps(dispatch) {
     postCriteriaListPA:(a)=>dispatch(postCriteriaListPA(a)),
     postApplyFormularyDrugPA:(a)=>dispatch(postApplyFormularyDrugPA(a)),
     postFormularyDrugPA:(a)=>dispatch(postFormularyDrugPA(a)),
-
+    getPaSummary:(a)=>dispatch(getPaSummary(a)),
   };
 }
 
 const mapStateToProps = (state) => {
   return {
+    current_formulary: state.application.formulary,
     configureSwitch: state.switchReducer.configureSwitch,
     formulary_id: state?.application?.formulary_id,
     formulary: state?.application?.formulary,
@@ -157,11 +158,11 @@ class PaRemove extends React.Component<any,any> {
           this.state.drugData = [];
           this.state.drugGridData = [];
           this.populateGridData();
-          apiDetails = {};
-          //apiDetails['apiPart'] =constants.FORMULARY_TIERS;
-          apiDetails['pathParams'] = this.props?.formulary_id;
-          apiDetails['keyVals'] = [{ key: constants.KEY_ENTITY_ID, value: this.props?.formulary_id }];
 
+          this.props.getPaSummary(this.props.current_formulary.id_formulary).then((json => {
+            debugger;
+            this.setState({ tierGridContainer: true });
+          }))
         }else{
           showMessage('Failure', 'error');
         }

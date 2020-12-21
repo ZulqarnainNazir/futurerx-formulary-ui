@@ -2,11 +2,11 @@
 export const getStepTherapyFulfilled = (state, action) => {
   console.log("Reducer::getStepTherapyFulfilled");
   state.isLoading = false;
-  if(action.payload.data === undefined || (action.payload.data.length === 0)) {
+  if(action.payload.result === undefined || (action.payload.result === 0)) {
     console.log("getStepTherapyFulfilled: Payload invalid");
     return;
   }
-  const data = action.payload.data;
+  const data = action.payload.result;
   // Response stored in the redux store.
   state.data = data;
   

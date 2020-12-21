@@ -28,6 +28,8 @@ const mapStateToProps = (state) => {
     formulary: state?.application?.formulary,
     formulary_lob_id: state?.application?.formulary_lob_id,
     formulary_type_id: state?.application?.formulary_type_id,
+    current_formulary: state.application.formulary,
+    stData: state.stepTherapyReducer.data,
   }
 }
 
@@ -60,6 +62,36 @@ class StepTherapy extends React.Component<any, tabsState> {
       activeMiniTabIndex: num,
     });
   };
+
+  componentWillReceiveProps(nextProps) {
+    debugger;
+    console.log('TIER: componentWillReceiveProps', nextProps);
+    
+    let tmpData = nextProps.stData;
+    if (tmpData && Array.isArray(tmpData) && tmpData.length > 0) {
+      var tierOption: any[] = [];
+      var result = tmpData.map(function (el) {
+        var curRow=[ el["st_type_name"],
+        el["total_group_description_count"],
+        el["added_group_description_count"],
+        el["removed_group_description_count"],
+        el["total_drug_count"],
+        el["added_drug_count"],
+        el["removed_drug_count"]
+      ]
+        return curRow;
+      })
+      // if (tierOption.length > 0) {
+      //   let lastTier = tierOption[tierOption.length - 1];
+      //   this.state.newTierId = lastTier.id_tier + 1;
+      // }
+      this.setState({
+       // tierDefinationColumns: TierColumns,
+        panelGridValue: result,
+        //tierOption: tierOption
+      })
+    }
+  }
   componentDidMount() {
     
     const TierDefinationData = this.props.getStSummary(this.props?.formulary_id).then((json => {

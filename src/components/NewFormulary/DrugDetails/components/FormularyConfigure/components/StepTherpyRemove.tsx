@@ -18,7 +18,7 @@ import Button from "../../../../../shared/Frx-components/button/Button";
 import { Row, Col } from "antd";
 import { Table } from "antd";
 import Grid from "@material-ui/core/Grid";
-import { postCriteriaListST,postApplyFormularyDrugST,postFormularyDrugST } from "../../../../../../redux/slices/formulary/stepTherapy/stepTherapyActionCreation";
+import { postCriteriaListST,postApplyFormularyDrugST,postFormularyDrugST,getStSummary } from "../../../../../../redux/slices/formulary/stepTherapy/stepTherapyActionCreation";
 
 
 function mapDispatchToProps(dispatch) {
@@ -26,7 +26,7 @@ function mapDispatchToProps(dispatch) {
     postCriteriaListST:(a)=>dispatch(postCriteriaListST(a)),
     postApplyFormularyDrugST:(a)=>dispatch(postApplyFormularyDrugST(a)),
     postFormularyDrugST:(a)=>dispatch(postFormularyDrugST(a)),
-
+    getStSummary:(a)=>dispatch(getStSummary(a)),
   };
 }
 
@@ -172,10 +172,9 @@ class DrugGrid extends React.Component<any, any> {
           this.state.drugData = [];
           this.state.drugGridData = [];
           this.populateGridData();
-          apiDetails = {};
-          //apiDetails['apiPart'] =constants.FORMULARY_TIERS;
-          apiDetails['pathParams'] = this.props?.formulary_id;
-          apiDetails['keyVals'] = [{ key: constants.KEY_ENTITY_ID, value: this.props?.formulary_id }];
+          this.props.getStSummary(this.props?.formulary_id).then((json => {
+            this.setState({ tierGridContainer: true });
+          }))
 
         }else{
           showMessage('Failure', 'error');
