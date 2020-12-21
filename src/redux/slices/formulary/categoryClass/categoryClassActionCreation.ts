@@ -1,6 +1,7 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { BASE_URL1 } from "../../../../api/http-helper";
 import FormularyServices from "../../../../services/formulary.services";
+import * as commonConstants from "../../../../api/http-commons";
 
 const URL = BASE_URL1;
 
@@ -19,11 +20,7 @@ export const getClassificationSystems = createAsyncThunk(
     const requestHeaders = {
       /*method: 'POST',
       body: JSON.stringify(messageBody),*/
-      headers: {
-        'Authorization': 'Bearer b8625daa-ccbd-4167-8cde-673de141fd11',
-        'Accept': 'application/json',
-        'Content-Type': 'application/json;charset=UTF-8',
-      }
+      headers: commonConstants.REQUEST_HEADER
     }
     return fetch(GET_URL, requestHeaders)
       .then((response) => {
@@ -53,11 +50,7 @@ export const postDrugsCategory = createAsyncThunk(
     const requestHeaders = {
       method: 'POST',
       body: JSON.stringify(messageBody),
-      headers: {
-        'Authorization': 'Bearer b8625daa-ccbd-4167-8cde-673de141fd11',
-        'Accept': 'application/json',
-        'Content-Type': 'application/json;charset=UTF-8',
-      }
+      headers: commonConstants.REQUEST_HEADER
     }
     return fetch(POST_URL, requestHeaders)
       .then((response) => {
@@ -87,11 +80,7 @@ export const postDrugsClassCategoryOverride = createAsyncThunk(
     const requestHeaders = {
       method: 'POST',
       body: JSON.stringify(messageBody),
-      headers: {
-        'Authorization': 'Bearer b8625daa-ccbd-4167-8cde-673de141fd11',
-        'Accept': 'application/json',
-        'Content-Type': 'application/json;charset=UTF-8',
-      }
+      headers: commonConstants.REQUEST_HEADER
     }
     return fetch(POST_URL, requestHeaders)
       .then((response) => {
@@ -125,11 +114,7 @@ export const getIntelliscenseSearch = createAsyncThunk(
       const requestHeaders = {
         /*method: 'POST',
         body: JSON.stringify(messageBody),*/
-        headers: {
-          'Authorization': 'Bearer b8625daa-ccbd-4167-8cde-673de141fd11',
-          'Accept': 'application/json',
-          'Content-Type': 'application/json;charset=UTF-8',
-        }
+        headers: commonConstants.REQUEST_HEADER
       }
       let fetchObject = fetch(GET_URL, requestHeaders);
       fetchPromises.push(fetchObject);
@@ -171,11 +156,7 @@ export const getCategoryClasses = createAsyncThunk(
     const requestHeaders = {
       /*method: 'POST',
       body: JSON.stringify(messageBody),*/
-      headers: {
-        'Authorization': 'Bearer b8625daa-ccbd-4167-8cde-673de141fd11',
-        'Accept': 'application/json',
-        'Content-Type': 'application/json;charset=UTF-8',
-      }
+      headers: commonConstants.REQUEST_HEADER
     }
     return fetch(GET_URL, requestHeaders)
       .then((response) => {

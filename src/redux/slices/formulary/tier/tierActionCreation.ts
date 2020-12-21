@@ -1,6 +1,7 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { BASE_URL1 } from "../../../../api/http-helper";
 import FormularyServices from "../../../../services/formulary.services";
+import * as commonConstants from "../../../../api/http-commons";
 
 const URL = BASE_URL1;
 
@@ -23,11 +24,7 @@ export const getTier = createAsyncThunk(
     const requestHeaders  = {
         /*method: 'POST',
         body: JSON.stringify(messageBody),*/
-        headers: {
-            'Authorization': 'Bearer b8625daa-ccbd-4167-8cde-673de141fd11',
-            'Accept': 'application/json',
-            'Content-Type': 'application/json;charset=UTF-8',
-        }
+        headers: commonConstants.REQUEST_HEADER
     }
     return fetch(GET_URL,requestHeaders)
       .then((response) => {
@@ -56,11 +53,7 @@ export const getTierLabels = createAsyncThunk(
     const requestHeaders  = {
         /*method: 'POST',
         body: JSON.stringify(messageBody),*/
-        headers: {
-            'Authorization': 'Bearer b8625daa-ccbd-4167-8cde-673de141fd11',
-            'Accept': 'application/json',
-            'Content-Type': 'application/json;charset=UTF-8',
-        }
+        headers: commonConstants.REQUEST_HEADER
     }
     return fetch(GET_URL,requestHeaders)
       .then((response) => {
@@ -90,11 +83,7 @@ export const postTierApplyInfo = createAsyncThunk(
     const requestHeaders  = {
         method: 'POST',
         body: JSON.stringify(messageBody),
-        headers: {
-            'Authorization': 'Bearer b8625daa-ccbd-4167-8cde-673de141fd11',
-            'Accept': 'application/json',
-            'Content-Type': 'application/json;charset=UTF-8',
-        }
+        headers: commonConstants.REQUEST_HEADER
     }
     return fetch(POST_URL,requestHeaders)
       .then((response) => {
@@ -124,11 +113,7 @@ export const postNewTier = createAsyncThunk(
     const requestHeaders  = {
         method: 'POST',
         body: JSON.stringify(messageBody),
-        headers: {
-            'Authorization': 'Bearer b8625daa-ccbd-4167-8cde-673de141fd11',
-            'Accept': 'application/json',
-            'Content-Type': 'application/json;charset=UTF-8',
-        }
+        headers: commonConstants.REQUEST_HEADER
     }
     return fetch(POST_URL,requestHeaders)
       .then((response) => {

@@ -14,3 +14,9 @@ export const SEARCH_DDID = "api/1/formulary-ddids/";
 export const SEARCH_LABEL_NAME = "api/1/formulary-drug-label-names/";
 export const SEARCH_RXCUI = "api/1/formulary-rxcuis/";
 
+export const REQUEST_HEADER = {
+    Authorization: "Bearer 5d123376-9888-4a4f-a167-9494485fe10d",
+    Accept: "application/json",
+    "Content-Type": "application/json;charset=UTF-8",
+};
+
