@@ -247,7 +247,6 @@ class DrugDetailLIS extends React.Component<any, any> {
     let dataGrid = <FrxLoader />;
     if (this.state.data) {
       dataGrid = (
-        // <DrugGrid columns={this.state.columns} data={this.state.data} />
         <FrxDrugGridContainer
           isPinningEnabled={false}
           enableSearch={false}
