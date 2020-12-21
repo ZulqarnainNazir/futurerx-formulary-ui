@@ -89,11 +89,13 @@
 
 .setup-input-fields {
   border: 1px solid #c4c4c4 !important;
+  position: initial;
+  &.other-input{
+    width: 175px !important;
+    margin-left: 26px;
+  }
 }
 
-.setup-input-fields {
-  position: initial;
-}
 
 ::placeholder {
   font-weight: 500;
@@ -206,6 +208,9 @@
 
 .checkbox-wrapper {
   display: flex;
+  &.other-checkbox-wrapper{
+    display: block;
+  }
 }
 
 .checkbox-btn {

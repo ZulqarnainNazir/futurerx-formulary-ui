@@ -156,6 +156,8 @@ class Medicare extends React.Component<any, any> {
               pagintionPosition="topRight"
               gridName="MEDICARE"
               enableSettings
+              // isCustomCheckboxEnabled={false}
+              // handleCustomRowSelectionChange={()=>{}}
               columns={formularyDetailsGridColumns({
                 onFormularyNameClick: (id: any) => this.props.drugDetailClick(id),
               },hiddenColumns)}
