@@ -155,7 +155,7 @@ function mapDispatchToProps(dispatch) {
 function mapStateToProps(state) {
   return {
     formulary_id: state.application.formulary_id,
-    PaGDData: state.paReducer.data,
+    PaGDData: state.paReducer.description,
     version: state.paVersion.paVersion,
   };
 }
@@ -202,7 +202,6 @@ function NewGroup(props: any) {
   const saveGroupDescription = (is_validation: boolean) => {
 
     let requestData = {};
-    //debugger;
     requestData['apiPart'] = 'api/1/mcr-pa-group-description/1';
     requestData['pathParams'] = '/3086?entity_id=0';
     requestData['keyVals'] = [{ key: 'index', value: 0 }, { key: 'limit', value: 10 }, { key: 'entity_id', value: 1262 }];
@@ -215,7 +214,6 @@ function NewGroup(props: any) {
     console.log(props.version);
     const latestVerion = Object.keys(props.version).length > 0 ? props.version[Number(e)]?.id_pa_group_description : 0;
     setLatestId(latestVerion)
-    props.getPaGrouptDescription(latestVerion)
     if (Object.keys(props.PaGDData).length > 0) {
       updateFormData({
         ...formData,
@@ -250,7 +248,7 @@ function NewGroup(props: any) {
       <div className="panel header">
         <span>{props.title ? props.title : formData.pa_group_description_name}</span>
       </div>
-      <PAGroupHeader popuptitle={props.title ? props.title : formData.pa_group_description_name} onChange={onChange} />
+      <PAGroupHeader popuptitle={props.title ? props.title : formData.pa_group_description_name} onChange={onChange} /> 
       <div className="inner-container pa-new-group-form">
         <div className="setting-1">
           <span>What file type is this group description for? *</span>
