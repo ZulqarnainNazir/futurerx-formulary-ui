@@ -1,6 +1,7 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { BASE_URL1 } from "../../../../api/http-helper";
 import FormularyServices from "../../../../services/formulary.services";
+import * as commonConstants from "../../../../api/http-commons";
 
 const GET_PA_SUMMARY_URL = BASE_URL1 + "/api/1/pa-summary/";
 const GET_PA_GROUP_DESCRIPTIONS_URL = BASE_URL1 + "/api/1/mcr-pa-group-descriptions/";
@@ -17,6 +18,7 @@ const POST_RELATED_FORUMULARY_DRUG_PA_URL = BASE_URL1 + "api/1/related-formulary
 const POST_CRITERIA_LIST_PA_URL = BASE_URL1 + "api/1/criteria-list-pa/";
 const GET_LOB_FORMULARIES_URL = BASE_URL1 + "/api/1/lob-formularies/";
 
+
 export const getPaSummary = createAsyncThunk(
   "formulary_summary/getPaSummary",
   async (summary_id: string) => {
@@ -24,11 +26,7 @@ export const getPaSummary = createAsyncThunk(
     const requestHeaders  = {
         // method: 'POST',
         // body: JSON.stringify(summary_id),
-        headers: {
-            'Authorization': 'Bearer 1e05ff8b-a0af-4a8f-8915-487321900f21',
-            'Accept': 'application/json',
-            'Content-Type': 'application/json;charset=UTF-8',
-        }
+        headers: commonConstants.REQUEST_HEADER
     }
     return fetch(GET_PA_SUMMARY_URL + summary_id ,requestHeaders)
       .then((response) => {
@@ -49,11 +47,7 @@ export const getPaGrouptDescriptions = createAsyncThunk(
     const requestHeaders  = {
         // method: 'POST',
         // body: JSON.stringify(summary_id),
-        headers: {
-            'Authorization': 'Bearer 1e05ff8b-a0af-4a8f-8915-487321900f21',
-            'Accept': 'application/json',
-            'Content-Type': 'application/json;charset=UTF-8',
-        }
+        headers: commonConstants.REQUEST_HEADER
     }
     return fetch(GET_PA_GROUP_DESCRIPTIONS_URL + summary_id ,requestHeaders)
       .then((response) => {
@@ -74,11 +68,7 @@ export const getPaTypes = createAsyncThunk(
     const requestHeaders  = {
         // method: 'POST',
         // body: JSON.stringify(summary_id),
-        headers: {
-            'Authorization': 'Bearer 1e05ff8b-a0af-4a8f-8915-487321900f21',
-            'Accept': 'application/json',
-            'Content-Type': 'application/json;charset=UTF-8',
-        }
+        headers: commonConstants.REQUEST_HEADER
     }
     return fetch(GET_PA_TYPES_URL  ,requestHeaders)
       .then((response) => {
@@ -99,11 +89,7 @@ export const getDrugLists = createAsyncThunk(
     const requestHeaders  = {
         // method: 'POST',
         // body: JSON.stringify(summary_id),
-        headers: {
-            'Authorization': 'Bearer 1e05ff8b-a0af-4a8f-8915-487321900f21',
-            'Accept': 'application/json',
-            'Content-Type': 'application/json;charset=UTF-8',
-        }
+        headers: commonConstants.REQUEST_HEADER
     }
     return fetch(GET_DRUG_LIST_URL + summary_id ,requestHeaders)
       .then((response) => {
@@ -124,11 +110,7 @@ export const getPaGrouptDescription = createAsyncThunk(
     const requestHeaders  = {
         // method: 'POST',
         // body: JSON.stringify(summary_id),
-        headers: {
-            'Authorization': 'Bearer 1e05ff8b-a0af-4a8f-8915-487321900f21',
-            'Accept': 'application/json',
-            'Content-Type': 'application/json;charset=UTF-8',
-        }
+        headers: commonConstants.REQUEST_HEADER
     }
     return fetch(GET_PA_GROUP_DESCRIPTION_URL + summary_id ,requestHeaders)
       .then((response) => {
@@ -149,11 +131,7 @@ export const getPaGrouptDescriptionVersions = createAsyncThunk(
     const requestHeaders  = {
         // method: 'POST',
         // body: JSON.stringify(summary_id),
-        headers: {
-            'Authorization': 'Bearer 1e05ff8b-a0af-4a8f-8915-487321900f21',
-            'Accept': 'application/json',
-            'Content-Type': 'application/json;charset=UTF-8',
-        }
+        headers: commonConstants.REQUEST_HEADER
     }
     return fetch(GET_PA_GROUP_DESCRIPTION_VERSTIONS_URL + summary_id ,requestHeaders)
       .then((response) => {
@@ -183,11 +161,7 @@ export const postPAGroupDescription = createAsyncThunk(
     const requestHeaders  = {
         method: 'POST',
         body: JSON.stringify(messageBody),
-        headers: {
-            'Authorization': 'Bearer 6356291c-5b3e-4313-878b-dea9538c53cf',
-            'Accept': 'application/json',
-            'Content-Type': 'application/json;charset=UTF-8',
-        }
+        headers: commonConstants.REQUEST_HEADER
     }
     return fetch(POST_URL,requestHeaders)
       .then((response) => {
@@ -206,11 +180,7 @@ export const getPaGrouptDescriptionDetail = createAsyncThunk(
   async (summary_id: string) => {
     console.log("getStGrouptDescription action creator:: url: " + GET_PA_GROUP_DESCRIPTION_DETAIL_URL + summary_id);
     const requestHeaders  = {
-        headers: {
-            'Authorization': 'Bearer 1e05ff8b-a0af-4a8f-8915-487321900f21',
-            'Accept': 'application/json',
-            'Content-Type': 'application/json;charset=UTF-8',
-        }
+        headers: commonConstants.REQUEST_HEADER
     }
     return fetch(GET_PA_GROUP_DESCRIPTION_DETAIL_URL ,requestHeaders)
       .then((response) => {
@@ -240,11 +210,7 @@ export const postPAGroupDescriptionVersion = createAsyncThunk(
     const requestHeaders  = {
         method: 'POST',
         body: JSON.stringify(messageBody),
-        headers: {
-            'Authorization': 'Bearer baf65faa-8fee-4d08-98f0-29ffb04cb1fc',
-            'Accept': 'application/json',
-            'Content-Type': 'application/json;charset=UTF-8',
-        }
+        headers: commonConstants.REQUEST_HEADER
     }
     return fetch(POST_URL,requestHeaders)
       .then((response) => {
@@ -274,11 +240,7 @@ export const postFormularyDrugPA = createAsyncThunk(
     const requestHeaders  = {
         method: 'POST',
         body: JSON.stringify(messageBody),
-        headers: {
-            'Authorization': 'Bearer baf65faa-8fee-4d08-98f0-29ffb04cb1fc',
-            'Accept': 'application/json',
-            'Content-Type': 'application/json;charset=UTF-8',
-        }
+        headers: commonConstants.REQUEST_HEADER
     }
     return fetch(POST_URL,requestHeaders)
       .then((response) => {
@@ -309,11 +271,7 @@ export const postApplyFormularyDrugPA = createAsyncThunk(
     const requestHeaders  = {
         method: 'POST',
         body: JSON.stringify(messageBody),
-        headers: {
-            'Authorization': 'Bearer baf65faa-8fee-4d08-98f0-29ffb04cb1fc',
-            'Accept': 'application/json',
-            'Content-Type': 'application/json;charset=UTF-8',
-        }
+        headers: commonConstants.REQUEST_HEADER
     }
     return fetch(POST_URL,requestHeaders)
       .then((response) => {
@@ -344,11 +302,7 @@ export const postCriteriaListPA = createAsyncThunk(
     const requestHeaders  = {
         method: 'POST',
         body: JSON.stringify(messageBody),
-        headers: {
-            'Authorization': 'Bearer baf65faa-8fee-4d08-98f0-29ffb04cb1fc',
-            'Accept': 'application/json',
-            'Content-Type': 'application/json;charset=UTF-8',
-        }
+        headers: commonConstants.REQUEST_HEADER
     }
     return fetch(POST_URL,requestHeaders)
       .then((response) => {
@@ -370,11 +324,7 @@ export const getLobFormularies = createAsyncThunk(
     const requestHeaders  = {
         // method: 'POST',
         // body: JSON.stringify(summary_id),
-        headers: {
-            'Authorization': 'Bearer 1e05ff8b-a0af-4a8f-8915-487321900f21',
-            'Accept': 'application/json',
-            'Content-Type': 'application/json;charset=UTF-8',
-        }
+        headers: commonConstants.REQUEST_HEADER
     }
     return fetch(GET_LOB_FORMULARIES_URL + apiDetails.formulary_type_id +'/'+apiDetails.formulary_lob_id ,requestHeaders)
       .then((response) => {
@@ -404,11 +354,7 @@ export const postRelatedFormularyDrugPA = createAsyncThunk(
     const requestHeaders  = {
         method: 'POST',
         body: JSON.stringify(messageBody),
-        headers: {
-            'Authorization': 'Bearer baf65faa-8fee-4d08-98f0-29ffb04cb1fc',
-            'Accept': 'application/json',
-            'Content-Type': 'application/json;charset=UTF-8',
-        }
+        headers: commonConstants.REQUEST_HEADER
     }
     return fetch(POST_URL,requestHeaders)
       .then((response) => {
