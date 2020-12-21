@@ -1,9 +1,29 @@
 import React, { Component } from "react";
 import Checkbox from "@material-ui/core/Checkbox";
 import { Grid } from "@material-ui/core";
+import { setAdvancedSearch } from "../../../../../redux/slices/formulary/advancedSearch/advancedSearchSlice";
+import { connect } from "react-redux";
 
 import "./FileType.scss";
-interface Props {}
+
+function mapDispatchToProps(dispatch) {
+  return {
+    setAdvancedSearch: (a) => dispatch(setAdvancedSearch(a))
+  };
+}
+
+const mapStateToProps = (state) => {
+  return {
+    advancedSearchBody: state?.advancedSearch?.advancedSearchBody,
+    populateGrid: state?.advancedSearch?.populateGrid,
+    closeDialog: state?.advancedSearch?.closeDialog,
+  };
+};
+
+interface Props {
+  fileFiltersChanged: (a) => void;
+  advancedSearchBody: any;
+}
 interface State {}
 
 const fileTypes = [
@@ -11,26 +31,26 @@ const fileTypes = [
     id: 1,
     lable: "Formulary",
     types: [
-      { id: 1, lable: "Prior Authorization File" },
-      { id: 2, lable: "Step Therapy File" },
-      { id: 3, lable: "Indication-Based Coverage File" },
+      { id: 1, lable: "Prior Authorization File", key: 'is_pa' },
+      { id: 2, lable: "Step Therapy File",  key: 'is_st' },
+      { id: 3, lable: "Indication-Based Coverage File", key: 'NA1' },
     ],
   },
   {
     id: 2,
     lable: "Supplemental",
     types: [
-      { id: 1, lable: "Free First Fill (FFF)" },
-      { id: 2, lable: "Home Infusion" },
-      { id: 3, lable: "Partial Gap Coverage" },
+      { id: 1, lable: "Free First Fill (FFF)", key: 'is_fff' },
+      { id: 2, lable: "Home Infusion", key: 'is_hi' },
+      { id: 3, lable: "Partial Gap Coverage", key: 'is_pgc' },
     ],
   },
   {
     id: 3,
     lable: "Other",
     types: [
-      { id: 1, lable: "Value-Based Insurance Design (VBID)" },
-      { id: 2, lable: "LIS Caost-Sharing Reduction File" },
+      { id: 1, lable: "Value-Based Insurance Design (VBID)", key: 'is_vbid' },
+      { id: 2, lable: "LIS Caost-Sharing Reduction File", key: 'is_lis' },
     ],
   },
 ];
@@ -54,15 +74,23 @@ class FileType extends Component<Props, State> {
   };
 
   componentDidMount = () => {
+    let keystoSet = Array();
+    if(this.props.advancedSearchBody && this.props.advancedSearchBody.additional_filter){
+      keystoSet = Object.keys(this.props.advancedSearchBody.additional_filter).filter(key => this.props.advancedSearchBody.additional_filter[key]);
+    }
     const checkList = fileTypes.map((file) => {
-      file["isChecked"] = false;
+      let parentChecked = true;
       file.types.map((type) => {
-        type["isChecked"] = false;
-        return type;
+        let value = keystoSet.includes(type['key']);
+        type["isChecked"] = value;
+        parentChecked = parentChecked && value;
+        return type; 
       });
+      file["isChecked"] = parentChecked;
       return file;
     });
     console.log("[checkList]:", checkList);
+    this.props.fileFiltersChanged(checkList);
     this.setState({ fileTypes: checkList });
   };
 
@@ -79,6 +107,7 @@ class FileType extends Component<Props, State> {
     console.log("[updateCheckBoxStatus]:", updateCheckBoxStatus);
     console.log("[currentCheckBoxStatus]:", e.target.checked);
 
+    this.props.fileFiltersChanged(updateCheckBoxStatus);
     this.setState({ fileTypes: updateCheckBoxStatus });
   };
 
@@ -125,6 +154,7 @@ class FileType extends Component<Props, State> {
       }
     );
 
+    this.props.fileFiltersChanged(updateCheckBoxStatus);
     this.setState({ fileTypes: updateCheckBoxStatus });
   };
 
@@ -180,4 +210,7 @@ class FileType extends Component<Props, State> {
   }
 }
 
-export default FileType;
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(FileType);
