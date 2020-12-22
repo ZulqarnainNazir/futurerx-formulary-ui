@@ -5,9 +5,14 @@ interface Props {
     title: string;
     statusType: string;
     selectGroup: (text: any,groupType:string) => void;
+    isSelected:boolean;
 }
 export default class Groups extends React.Component<Props, any> {
+   
     getStatusIcon = (type) => {
+        if (this.props.isSelected){
+            type='selected';
+        }
         switch (type) {
             case 'warning':
                 return (
@@ -37,6 +42,9 @@ export default class Groups extends React.Component<Props, any> {
     }
 
     getEditIcon = (type) => {
+        if (this.props.isSelected){
+            type='selected';
+        }
         switch (type) {
             case 'warning':
                 return (
@@ -74,6 +82,9 @@ export default class Groups extends React.Component<Props, any> {
 
 
     getStatus = () => {
+        if (this.props.isSelected){
+            return   'orange-fill';
+        }
         switch (this.props.statusType) {
             case 'selected':
                 return 'orange-fill'

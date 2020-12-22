@@ -32,6 +32,7 @@ const memberSummaryReducer = memberSummarySlice.reducer;
 const userPrefsReducer = userPrefsSlice.reducer;
 const gridSettingsReducer = gridSettingsSlice.reducer;
 const tierSliceReducer = tierSlice.reducer
+const paSliceReducer = paSlice.reducer
 const switchReducer = switchSlice.reducer
 const validationReducer = validationList.reducer
 const stepTherapy = stepTherapySlice.reducer

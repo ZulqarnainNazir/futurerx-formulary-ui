@@ -3,7 +3,6 @@ import { TabInfo } from "../../../../../models/tab.model";
 import FrxTabs from "../../../../shared/FrxTabs/FrxTabs";
 import DrugDetails from "./components/DrugDetails";
 import Tier from "./components/Tier";
-import PA from "./components/PA/PA";
 import PaData from './components/PA/PaData';
 import StepTherpayDetails from "./components/StepTherapyData";
 import CategoryClass from "./components/CategoryClass";

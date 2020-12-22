@@ -1,6 +1,7 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { BASE_URL1 } from "../../../../api/http-helper";
 import FormularyServices from "../../../../services/formulary.services";
+import * as commonConstants from "../../../../api/http-commons";
 
 const GET_ST_SUMMARY_URL = BASE_URL1 + "/api/1/st-summary/";
 const GET_ST_GROUP_DESCRIPTIONS_URL = BASE_URL1 + "api/1/mcr-st-group-descriptions";
@@ -21,11 +22,7 @@ export const getStSummary = createAsyncThunk(
     const requestHeaders  = {
         // method: 'POST',
         // body: JSON.stringify(summary_id),
-        headers: {
-            'Authorization': 'Bearer 1e05ff8b-a0af-4a8f-8915-487321900f21',
-            'Accept': 'application/json',
-            'Content-Type': 'application/json;charset=UTF-8',
-        }
+        headers: commonConstants.REQUEST_HEADER
     }
     return fetch(GET_ST_SUMMARY_URL + summary_id ,requestHeaders)
       .then((response) => {
@@ -46,11 +43,7 @@ export const getStGrouptDescriptions = createAsyncThunk(
     const requestHeaders  = {
         // method: 'POST',
         // body: JSON.stringify(summary_id),
-        headers: {
-            'Authorization': 'Bearer 1e05ff8b-a0af-4a8f-8915-487321900f21',
-            'Accept': 'application/json',
-            'Content-Type': 'application/json;charset=UTF-8',
-        }
+        headers: commonConstants.REQUEST_HEADER
     }
     return fetch(GET_ST_GROUP_DESCRIPTIONS_URL + '/1?entity_id=0' ,requestHeaders)
       .then((response) => {
@@ -71,11 +64,7 @@ export const getStTypes = createAsyncThunk(
     const requestHeaders  = {
         // method: 'POST',
         // body: JSON.stringify(summary_id),
-        headers: {
-            'Authorization': 'Bearer 1e05ff8b-a0af-4a8f-8915-487321900f21',
-            'Accept': 'application/json',
-            'Content-Type': 'application/json;charset=UTF-8',
-        }
+        headers: commonConstants.REQUEST_HEADER
     }
     return fetch(GET_ST_TYPES_URL  ,requestHeaders)
       .then((response) => {
@@ -96,11 +85,7 @@ export const getDrugLists = createAsyncThunk(
     const requestHeaders  = {
         // method: 'POST',
         // body: JSON.stringify(summary_id),
-        headers: {
-            'Authorization': 'Bearer 1e05ff8b-a0af-4a8f-8915-487321900f21',
-            'Accept': 'application/json',
-            'Content-Type': 'application/json;charset=UTF-8',
-        }
+        headers: commonConstants.REQUEST_HEADER
     }
     return fetch(GET_DRUG_LIST_URL + summary_id ,requestHeaders)
       .then((response) => {
@@ -119,11 +104,7 @@ export const getStGrouptDescription = createAsyncThunk(
   async (summary_id: string) => {
     console.log("getStGrouptDescription action creator:: url: " + GET_ST_GROUP_DESCRIPTION_URL + summary_id);
     const requestHeaders  = {
-        headers: {
-            'Authorization': 'Bearer 1e05ff8b-a0af-4a8f-8915-487321900f21',
-            'Accept': 'application/json',
-            'Content-Type': 'application/json;charset=UTF-8',
-        }
+      headers: commonConstants.REQUEST_HEADER
     }
     return fetch(GET_ST_GROUP_DESCRIPTION_URL+summary_id  ,requestHeaders)
       .then((response) => {
@@ -144,11 +125,7 @@ export const getStGrouptDescriptionVersions = createAsyncThunk(
     const requestHeaders  = {
         // method: 'POST',
         // body: JSON.stringify(summary_id),
-        headers: {
-            'Authorization': 'Bearer 1e05ff8b-a0af-4a8f-8915-487321900f21',
-            'Accept': 'application/json',
-            'Content-Type': 'application/json;charset=UTF-8',
-        }
+        headers: commonConstants.REQUEST_HEADER
     }
     return fetch(GET_ST_GROUP_DESCRIPTION_VERSTIONS_URL + summary_id ,requestHeaders)
       .then((response) => {
@@ -179,11 +156,7 @@ export const postFormularyDrugST = createAsyncThunk(
     const requestHeaders  = {
         method: 'POST',
         body: JSON.stringify(messageBody),
-        headers: {
-            'Authorization': 'Bearer baf65faa-8fee-4d08-98f0-29ffb04cb1fc',
-            'Accept': 'application/json',
-            'Content-Type': 'application/json;charset=UTF-8',
-        }
+        headers: commonConstants.REQUEST_HEADER
     }
     return fetch(POST_URL,requestHeaders)
       .then((response) => {
@@ -213,11 +186,7 @@ export const postApplyFormularyDrugST = createAsyncThunk(
     const requestHeaders  = {
         method: 'POST',
         body: JSON.stringify(messageBody),
-        headers: {
-            'Authorization': 'Bearer baf65faa-8fee-4d08-98f0-29ffb04cb1fc',
-            'Accept': 'application/json',
-            'Content-Type': 'application/json;charset=UTF-8',
-        }
+        headers: commonConstants.REQUEST_HEADER
     }
     return fetch(POST_URL,requestHeaders)
       .then((response) => {
@@ -248,11 +217,7 @@ export const postCriteriaListST = createAsyncThunk(
     const requestHeaders  = {
         method: 'POST',
         body: JSON.stringify(messageBody),
-        headers: {
-            'Authorization': 'Bearer baf65faa-8fee-4d08-98f0-29ffb04cb1fc',
-            'Accept': 'application/json',
-            'Content-Type': 'application/json;charset=UTF-8',
-        }
+        headers: commonConstants.REQUEST_HEADER
     }
     return fetch(POST_URL,requestHeaders)
       .then((response) => {

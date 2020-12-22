@@ -18,7 +18,7 @@ function mapStateToProps(state) {
     return {
         formulary_id: state.application.formulary_id,
         saveGdm: state.savePaGdm,
-        PaGDData: state.paReducer.data,
+        PaGDData: state.paReducer.description,
         version: state.paVersion.paVersion,
     }
 }
@@ -86,7 +86,7 @@ function PAGroupHeader(props: any) {
         const selectedVersion = e.target.value
         if (verLength > 0 && selectedVersion != '') {
             const isEditable = props.version[Number(selectedVersion.split(" ")[1]) - 1].is_setup_complete;
-            const latestVerion = verLength > 0 ? props.version[Number(selectedVersion.split(" ")[1]) - 1]?.id_st_group_description : 0;
+            const latestVerion = verLength > 0 ? props.version[Number(selectedVersion.split(" ")[1]) - 1]?.id_pa_group_description : 0;
             setPanelColor(isEditable ? '-green' : '')
             setPlaceHolder(selectedVersion)
             props.getPaGrouptDescription(latestVerion)

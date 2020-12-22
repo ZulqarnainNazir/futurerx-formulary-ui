@@ -102,9 +102,10 @@ function mapDispatchToProps(dispatch) {
               this.state.drugData = [];
               this.state.drugGridData = [];
               this.populateGridData();
-              apiDetails = {};
-              apiDetails['pathParams'] = this.props?.formulary_id;
-              apiDetails['keyVals'] = [{ key: constants.KEY_ENTITY_ID, value: this.props?.formulary_id }];
+              this.props.getStSummary(this.props?.formulary_id).then((json => {
+                this.setState({ tierGridContainer: true });
+              }))
+              
     
             }
           }))
@@ -181,7 +182,7 @@ function mapDispatchToProps(dispatch) {
           apiDetails['messageBody'] = Object.assign(apiDetails['messageBody'],searchBody);
         }
         const drugGridDate = this.props.postFormularyDrugST(apiDetails).then((json => {
-    
+          debugger;
           let tmpData = json.payload.result;
           var data: any[] = [];
           let count = 1;

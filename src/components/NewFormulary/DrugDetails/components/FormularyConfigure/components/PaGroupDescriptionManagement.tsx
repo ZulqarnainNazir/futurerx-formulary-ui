@@ -14,7 +14,12 @@ import { getPaSummary, getPaGrouptDescriptions,getPaGrouptDescriptionDetail, get
 
 function mapStateToProps(state) {
     return {
-        formulary_id: state.application.formulary_id
+        client_id: state.application.clientId,
+        current_formulary: state.application.formulary,
+        formulary_id: state?.application?.formulary_id,
+        formulary: state?.application?.formulary,
+        formulary_lob_id: state?.application?.formulary_lob_id, //comme- 4, medicare-1 , medicate-2, exchnage -3 
+        formulary_type_id: state?.application?.formulary_type_id, //6
     }
 }
 
@@ -71,7 +76,11 @@ class PaGroupDescriptionManagement extends React.Component<any, any>{
 
     selectGroup = (param: any,groupType:string) => {
         
-        this.props.getPaGrouptDescriptionVersions(param).then((json) => {
+        let apiDetails= {};
+        apiDetails["lob_type"] = this.props.formulary_lob_id;
+        apiDetails['pathParams'] = '/'+param;
+
+        this.props.getPaGrouptDescriptionVersions(apiDetails).then((json) => {
             let tmpData = json.payload.data;
             let dataLength = tmpData.length
             var result = tmpData.map(function (el) {
@@ -85,7 +94,11 @@ class PaGroupDescriptionManagement extends React.Component<any, any>{
                 versionTitle:`Group Description ${tmpData[dataLength-1].value}`,
                 latestVerion:latestVerion
             })
-            this.props.getPaGrouptDescription(latestVerion)
+            let apiDetails= {};
+            apiDetails["lob_type"] = this.props.formulary_lob_id;
+            apiDetails['pathParams'] = '/'+latestVerion;
+
+            this.props.getPaGrouptDescription(apiDetails)
 
             this.props.getPAGroupDetails({
                 formulary_id: this.props.formulary_id,
@@ -95,7 +108,8 @@ class PaGroupDescriptionManagement extends React.Component<any, any>{
         });
         this.setState({
             newGroup: true,
-            selectedGrp:groupType==='warning'?false:true
+            selectedGrp:groupType==='warning'?false:true,
+            selectedGroup:param,
         })
     }
     addNewGroup = () => {
@@ -107,7 +121,12 @@ class PaGroupDescriptionManagement extends React.Component<any, any>{
 
     componentDidMount() {
         
-        this.props.getPaGrouptDescriptions("1").then((json) => {
+        let apiDetails= {};
+        apiDetails["lob_type"] = this.props.formulary_lob_id;
+        apiDetails['pathParams'] = '/'+this.props?.client_id + '?entity_id='+this.props?.formulary_id;
+
+
+        this.props.getPaGrouptDescriptions(apiDetails).then((json) => {
 
             let tmpData = json.payload.data;
 
@@ -194,9 +213,9 @@ class PaGroupDescriptionManagement extends React.Component<any, any>{
                                             (this.state.searchInput == "" || (this.state.searchInput != "" && group.label.indexOf(this.state.searchInput) > -1)) ?
                                                 (
                                                     (this.state.activeTabIndex==0 && group.is_archived==false) ?
-                                                        <Groups key={key} id={group.id} title={group.label} statusType={group.status} selectGroup={this.selectGroup}/>        
+                                                        <Groups key={key} id={group.id} title={group.label} statusType={group.status} selectGroup={this.selectGroup} isSelected={this.state.selectedGroup==group.id}/>        
                                                     : (this.state.activeTabIndex==1 && group.is_archived==true) ?
-                                                        <Groups key={key} id={group.id} title={group.label} statusType={group.status} selectGroup={this.selectGroup} />
+                                                        <Groups key={key} id={group.id} title={group.label} statusType={group.status} selectGroup={this.selectGroup} isSelected={this.state.selectedGroup==group.id}/>
                                                     : ""
                                                 ) : "" 
                                             ))
