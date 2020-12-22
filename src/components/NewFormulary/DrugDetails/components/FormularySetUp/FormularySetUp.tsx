@@ -381,6 +381,7 @@ class FormularySetUp extends React.Component<any, any> {
               <FormularyTiers 
                 tiers={this.state.tiers}
                 selectTier={this.selectTierHandler}
+                generalInfo={this.state.generalInformation}
                 changeTierValue={this.changeTierValueHandler}/>
               {this.state.generalInformation.type !== 'Commercial' ? (
                 <SupplementalModels 

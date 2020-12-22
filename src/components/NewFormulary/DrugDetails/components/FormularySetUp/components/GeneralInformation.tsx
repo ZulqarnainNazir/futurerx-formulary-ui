@@ -9,6 +9,11 @@ import {connect} from "react-redux";
 import Radio from '@material-ui/core/Radio';
 import RadioGroup from '@material-ui/core/RadioGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
+import { ReactComponent as EditIcon } from "../../../../../../assets/icons/EditIcon.svg";
+import FrxReportingTags from "../../../../../shared/FrxReportingTags/FrxReportingTags";
+import "../../../../../shared/FrxReportingTags/FrxReportingTags.scss";
+import AddNewTag from "../../../../../shared/FrxReportingTags/AddNewTag";
+import DialogPopup from "../../../../../shared/FrxDialogPopup/FrxDialogPopup";
 import FormControl from '@material-ui/core/FormControl';
 import FormLabel from '@material-ui/core/FormLabel';
 const mapStateToProps = (state) => {
@@ -19,11 +24,47 @@ const mapStateToProps = (state) => {
     general_options: state?.setupOptions?.generalOptions
   };
 };
+interface TagModule {
+  id: number;
+  name: string;
+  description: string;
+  categories: string[];
+  categoriesWithColor: any[];
+}
+interface GeneralInformationState {
+  selectedMethod: any;
+  forumalry_description: any;
+  addTagsOpened: boolean;
+  addNewTagOpened: boolean;
 
-class GeneralInformation extends React.Component<any, any> {
+  availableTags: TagModule[];
+  displayedTags: TagModule[];
+
+  count: number;
+  tagName: string;
+  tagCategories: string[];
+  tagCategoriesWithColor: any[];
+  tagDesc: string;
+
+  DialogshowInd: boolean;
+}
+class GeneralInformation extends React.Component<any, GeneralInformationState> {
+  
   state = {
     selectedMethod: this.props.formulary?.formulary_info?.formulary_build_method,
-    forumalry_description: ''
+    forumalry_description: '',
+    addTagsOpened: false,
+    addNewTagOpened: false,
+
+    availableTags: tags,
+    displayedTags: [],
+
+    count: 12,
+    tagName: "",
+    tagCategories: [],
+    tagCategoriesWithColor: [],
+    tagDesc: "",
+    DialogshowInd: false,
   }
   UNSAFE_componentWillReceiveProps = (newProps) => {
     if(newProps.formulary){
@@ -71,7 +112,111 @@ class GeneralInformation extends React.Component<any, any> {
     return radi;
     
   }
+  getDisplayedTags = (): string[] => {
+    const displayedTags: TagModule[] = this.state.displayedTags;
+    // const filteredDisplayedTags = displayedTags.filter((t) => t.id !== tag.id);
+    // const { displayedTags } = this.state;
+
+    let tagsArr: string[] = [];
+    for (let index = 0; index < displayedTags.length; index++) {
+      const element = displayedTags[index];
+      tagsArr.push(element.name);
+    }
+    return tagsArr;
+  };
+  addNewTagToForm = () => {
+    const { addTagsOpened } = this.state;
+    this.setState({
+      addTagsOpened: !addTagsOpened,
+    });
+  };
+  cancelAddTags = () => {
+    this.setState({
+      displayedTags: [],
+      addTagsOpened: !this.state.addTagsOpened,
+    });
+  };
+  toggleAddTags = () => {
+    const { addTagsOpened } = this.state;
+    this.setState({
+      addTagsOpened: !addTagsOpened,
+    });
+  };
+  addTag = (tag: TagModule) => {
+    const displayedTags = [{ ...tag }, ...this.state.displayedTags];
+    this.setState({ displayedTags });
+  };
+
+  removeTag = (tag: TagModule) => {
+    const displayedTags: TagModule[] = this.state.displayedTags;
+    const filteredDisplayedTags = displayedTags.filter((t) => t.id !== tag.id);
+    this.setState({ displayedTags: filteredDisplayedTags });
+  };
+
+  getRandomTagColor = () => {
+    return ["blue", "green", "orange"][Math.floor(Math.random() * 3 + 1)];
+  };
+  addNewTagToList = () => {
+    const { count, tagName, tagDesc, tagCategories } = this.state;
+    const catObj = tagCategories.map((cat) => {
+      return {
+        name: cat,
+        color: this.getRandomTagColor(),
+      };
+    });
+    const newTag: TagModule = {
+      id: count,
+      name: tagName,
+      categories: tagCategories,
+      categoriesWithColor: catObj,
+      description: tagDesc,
+    };
+
+    this.setState({
+      availableTags: [...this.state.availableTags, { ...newTag }],
+      displayedTags: [{ ...newTag }, ...this.state.displayedTags],
+      count: count + 1,
+      tagName: "",
+      tagDesc: "",
+      tagCategories: [],
+      tagCategoriesWithColor: [],
+    });
+
+    this.handleAddNewTagPopup();
+  };
+  handleAddNewTagPopup = () => {
+    this.setState({
+      addTagsOpened: !this.state.addTagsOpened,
+      addNewTagOpened: !this.state.addNewTagOpened,
+    });
+  };
+  handleChange = (event) => {
+    if (event.target.name === "name") {
+      this.setState({
+        tagName: event.target.value,
+      });
+    }
+    if (event.target.name === "desc") {
+      this.setState({
+        tagDesc: event.target.value,
+      });
+    }
+  };
+  handleCategoryChange = (value) => {
+    this.setState({
+      tagCategories: [...value],
+    });
+  };
   render() {
+    const { Option } = Select;
+    const {
+      addTagsOpened,
+      addNewTagOpened,
+
+      tagName,
+      tagCategories,
+      tagDesc,
+    } = this.state;
     const FORMULARY = this.props.formulary;
     const disabled = this.props.formulary_mode === 'EXISTING' ? true : false;
     let general_options:any;
@@ -239,21 +384,6 @@ class GeneralInformation extends React.Component<any, any> {
                       )
                     })}
                   </RadioGroup>
-                  {/* {this.getClassificationRadio()} */}
-                  {/* <RadioGroup 
-                      className="radio-group-custom" 
-                      aria-label={'classification_system'} 
-                      name="classification_system"
-                      value={this.props.generalInfo?.classification_system?.toString()} 
-                      onChange={(e) => this.props.onRadioChange(e,'generalInformation')}>
-                      {this.props.generalInfo.type !== 'Commercial' ? (
-                        <>
-                        <FormControlLabel value="1" control={<Radio />} label="USP" />
-                        <FormControlLabel value="2" control={<Radio />} label="AHFS" />
-                        </>
-                      ): null}
-                      <FormControlLabel value="3" control={<Radio />} label="Medispan" />
-                  </RadioGroup> */}
                 </div>
               </div>
             </Grid>
@@ -298,29 +428,82 @@ class GeneralInformation extends React.Component<any, any> {
             <Grid item xs={4}>
               <div className="group reporting-tag-group">
                 <label>reporting tags</label>
-                <div className="add-tag-input-wrapper">
-                  <input
-                    type="text"
-                    className="reporting-tags setup-input-fields"
-                  />
-                  <svg
-                    className="reporting-tag-icon"
-                    width="14"
-                    height="12"
-                    viewBox="0 0 14 12"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      d="M9.31944 1.95083L11.4074 4.06489C11.4954 4.15395 11.4954 4.29926 11.4074 4.38833L6.35185 9.50707L4.2037 9.74848C3.91667 9.78129 3.67361 9.5352 3.70602 9.24457L3.94444 7.06957L9 1.95083C9.08796 1.86177 9.23148 1.86177 9.31944 1.95083ZM13.0694 1.41411L11.9398 0.270361C11.588 -0.0858886 11.0162 -0.0858886 10.662 0.270361L9.84259 1.10005C9.75463 1.18911 9.75463 1.33442 9.84259 1.42349L11.9306 3.53755C12.0185 3.62661 12.162 3.62661 12.25 3.53755L13.0694 2.70786C13.4213 2.34927 13.4213 1.77036 13.0694 1.41411ZM8.88889 8.11489V10.5008H1.48148V3.00083H6.80093C6.875 3.00083 6.94444 2.97036 6.99769 2.9188L7.92361 1.9813C8.09954 1.80317 7.97454 1.50083 7.72685 1.50083H1.11111C0.497685 1.50083 0 2.00473 0 2.62583V10.8758C0 11.4969 0.497685 12.0008 1.11111 12.0008H9.25926C9.87269 12.0008 10.3704 11.4969 10.3704 10.8758V7.17739C10.3704 6.92661 10.0718 6.80239 9.89583 6.97817L8.96991 7.91567C8.91898 7.96957 8.88889 8.03989 8.88889 8.11489Z"
-                      fill="#1D54B4"
-                    />
-                  </svg>
-                  <a href="" className="add-tag">
-                    Add a tag
-                  </a>
-                </div>
+                <Select
+                  mode="multiple"
+                  showSearch={false}
+                  // value={value}
+                  defaultActiveFirstOption={false}
+                  disabled={this.getDisplayedTags().length === 0 ? false : true}
+                  notFoundContent={null}
+                  placeholder={"Add a tag"}
+                  onClick={this.toggleAddTags}
+                  className="root--ant-select-tag"
+                  value={
+                    this.getDisplayedTags().length === 0
+                      ? []
+                      : this.getDisplayedTags()
+                  }
+                />
+                <EditIcon
+                  className="ability-to-add-tags-edit-icon"
+                  onClick={this.toggleAddTags}
+                />
               </div>
+              {addTagsOpened ? (
+                <DialogPopup
+                  className=""
+                  showCloseIcon={false}
+                  positiveActionText="Apply"
+                  negativeActionText="Cancel"
+                  title="tags"
+                  handleClose={this.cancelAddTags}
+                  handleAction={this.addNewTagToForm}
+                  showActions={true}
+                  open={addTagsOpened}
+                  popupMaxWidth={"lg"}
+                  headJSX={() => (
+                    <button
+                      className="add-new-tag-btn"
+                      onClick={this.handleAddNewTagPopup}
+                    >
+                      + Add New Tag
+                    </button>
+                  )}
+                >
+                  <FrxReportingTags
+                    availableTags={this.state.availableTags}
+                    displayedTags={this.state.displayedTags}
+                    removeTag={this.removeTag}
+                    addTag={this.addTag}
+                  />
+                </DialogPopup>
+              ) : null}
+
+              {addNewTagOpened ? (
+                <div className="root-component-add-new-tag">
+                  <DialogPopup
+                    showCloseIcon={true}
+                    positiveActionText="Add Tag"
+                    negativeActionText="Cancel"
+                    title="ADD NEW TAG"
+                    handleClose={this.handleAddNewTagPopup}
+                    handleAction={this.addNewTagToList}
+                    showActions={true}
+                    open={addNewTagOpened}
+                    popupMaxWidth={"md"}
+                    className="root-add-new-tag-popup"
+                  >
+                    <AddNewTag
+                      categories={categories}
+                      tagName={tagName}
+                      tagCategories={tagCategories}
+                      tagDesc={tagDesc}
+                      handleChange={this.handleChange}
+                      handleCategoryChange={this.handleCategoryChange}
+                    />
+                  </DialogPopup>
+                </div>
+              ) : null}
             </Grid>
           </Grid>
         </div>
@@ -329,3 +512,161 @@ class GeneralInformation extends React.Component<any, any> {
   }
 }
 export default connect(mapStateToProps)(GeneralInformation);
+
+
+
+const categories = [
+  { id: 1, name: "Category 1", color: "green" },
+  { id: 2, name: "Category 2", color: "blue" },
+  { id: 3, name: "Category 3", color: "orange" },
+  { id: 4, name: "Category 4", color: "green" },
+  { id: 5, name: "Category 5", color: "blue" },
+  { id: 6, name: "Category 6", color: "orange" },
+  { id: 7, name: "Category 7", color: "green" },
+  { id: 8, name: "Category 8", color: "blue" },
+];
+
+// fake data
+const tags = [
+  {
+    id: 1,
+    name: "Tag 1",
+    description: "This will display all assets with Tag 1",
+    categories: ["Category 1", "Category 2", "Category 6", "Category 8"],
+    categoriesWithColor: [
+      { name: "Category 1", color: "green" },
+      { name: "Category 2", color: "blue" },
+      { name: "Category 6", color: "orange" },
+      { name: "Category 8", color: "green" },
+    ],
+  },
+  {
+    id: 2,
+    name: "Tag 2",
+    description: "This will display all assets with Tag 2",
+    categories: ["Category 1", "Category 2", "Category 8"],
+    categoriesWithColor: [
+      { name: "Category 1", color: "blue" },
+      { name: "Category 2", color: "orange" },
+      { name: "Category 8", color: "green" },
+    ],
+  },
+  {
+    id: 3,
+    name: "Tag 3",
+    description: "This will display all assets with Tag 3",
+    categories: ["Category 1", "Category 8"],
+    categoriesWithColor: [
+      { name: "Category 1", color: "green" },
+      { name: "Category 8", color: "orange" },
+    ],
+  },
+  {
+    id: 4,
+    name: "Tag 4",
+    description: "This will display all assets with Tag 4",
+    categories: [
+      "Category 1",
+      "Category 2",
+      "Category 3",
+      "Category 4",
+      "Category 5",
+      "Category 7",
+      "Category 8",
+    ],
+    categoriesWithColor: [
+      { name: "Category 1", color: "green" },
+      { name: "Category 2", color: "orange" },
+      { name: "Category 3", color: "blue" },
+      { name: "Category 4", color: "orange" },
+      { name: "Category 7", color: "blue" },
+      { name: "Category 5", color: "green" },
+      { name: "Category 8", color: "orange" },
+    ],
+  },
+  {
+    id: 5,
+    name: "Tag 5",
+    description: "This will display all assets with Tag 5",
+
+    categories: ["Category 2", "Category 4", "Category 6", "Category 8"],
+    categoriesWithColor: [
+      { name: "Category 2", color: "green" },
+      { name: "Category 4", color: "orange" },
+      { name: "Category 6", color: "blue" },
+      { name: "Category 8", color: "green" },
+    ],
+  },
+  {
+    id: 6,
+    name: "Tag 6",
+    description: "This will display all assets with Tag 6",
+    categories: ["Category 2", "Category 4", "Category 6", "Category 8"],
+    categoriesWithColor: [
+      { name: "Category 2", color: "green" },
+      { name: "Category 4", color: "orange" },
+      { name: "Category 6", color: "blue" },
+      { name: "Category 8", color: "green" },
+    ],
+  },
+  {
+    id: 7,
+    name: "Tag 7",
+    description: "This will display all assets with Tag 7",
+    categories: ["Category 2", "Category 4", "Category 6", "Category 8"],
+    categoriesWithColor: [
+      { name: "Category 1", color: "green" },
+      { name: "Category 4", color: "orange" },
+      { name: "Category 6", color: "blue" },
+      { name: "Category 8", color: "green" },
+    ],
+  },
+  {
+    id: 8,
+    name: "Tag 8",
+    description: "This will display all assets with Tag 8",
+    categories: ["Category 2", "Category 4", "Category 6", "Category 8"],
+    categoriesWithColor: [
+      { name: "Category 1", color: "green" },
+      { name: "Category 4", color: "orange" },
+      { name: "Category 6", color: "blue" },
+      { name: "Category 8", color: "green" },
+    ],
+  },
+  {
+    id: 9,
+    name: "Tag 9",
+    description: "This will display all assets with Tag 9",
+    categories: ["Category 2", "Category 4", "Category 6", "Category 8"],
+    categoriesWithColor: [
+      { name: "Category 1", color: "green" },
+      { name: "Category 4", color: "orange" },
+      { name: "Category 6", color: "blue" },
+      { name: "Category 8", color: "green" },
+    ],
+  },
+  {
+    id: 10,
+    name: "Tag 10",
+    description: "This will display all assets with Tag 10",
+    categories: ["Category 2", "Category 4", "Category 6", "Category 8"],
+    categoriesWithColor: [
+      { name: "Category 1", color: "green" },
+      { name: "Category 4", color: "orange" },
+      { name: "Category 6", color: "blue" },
+      { name: "Category 8", color: "green" },
+    ],
+  },
+  {
+    id: 11,
+    name: "Tag 11",
+    description: "This will display all assets with Tag 11",
+    categories: ["Category 2", "Category 4", "Category 6", "Category 8"],
+    categoriesWithColor: [
+      { name: "Category 1", color: "green" },
+      { name: "Category 4", color: "orange" },
+      { name: "Category 6", color: "blue" },
+      { name: "Category 8", color: "green" },
+    ],
+  },
+];

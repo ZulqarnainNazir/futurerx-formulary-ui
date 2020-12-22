@@ -23,6 +23,17 @@
   color: #1d54b4;
   padding: 15px;
 }
+.root--ant-select-tag {
+  width: 77%;
+  cursor: inherit;
+  .ant-select-selection-placeholder {
+    color: #1d54b4;
+    font-weight: 500;
+    font-size: 12px;
+    text-decoration: underline dashed;
+    cursor: pointer;
+  }
+}
 .formulary-design-container,.general-information-container,.medicare-information-container{
   .radio-group {
     .radio-group-custom{

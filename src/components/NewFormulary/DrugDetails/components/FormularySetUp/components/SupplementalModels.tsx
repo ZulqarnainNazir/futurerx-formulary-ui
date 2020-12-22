@@ -15,7 +15,9 @@ class SupplementalModels extends React.Component<any, any> {
     }
     renderCheckbox = () => {
         let checkbox = [];
+
         if(this.props.supplementalOptions){
+
             checkbox = this.props.supplementalOptions.map(el => {
                 return <Grid item xs={4}>
                     <Checkbox 
@@ -38,7 +40,7 @@ class SupplementalModels extends React.Component<any, any> {
           updatedSupplementalCheck.supplemental_benefits.push(id)
         }
         this.props.supplementalCheck(updatedSupplementalCheck);
-      }
+    }
   render() {
     return (
       <div className="supplemental-models-container">
@@ -46,9 +48,12 @@ class SupplementalModels extends React.Component<any, any> {
         <div className="formulary-design-fields-wrapper setup-label">
         <Grid container>
             <Grid item xs={11}>
-                <Grid container>
-                    {this.renderCheckbox()}
-                </Grid>
+                <Checkbox 
+                    className="custom-checkbox mb-16" 
+                    onChange={() => this.props.checkUncheckAllSupplemental('uncheck')} 
+                    checked={true}>
+                        N/A
+                </Checkbox>
             </Grid>
             <Grid item xs={1}>
                 <ul>
@@ -62,6 +67,13 @@ class SupplementalModels extends React.Component<any, any> {
                     </Box>
                     </li>
                 </ul>
+            </Grid>
+        </Grid>
+        <Grid container>
+            <Grid item xs={11}>
+                <Grid container>
+                    {this.renderCheckbox()}
+                </Grid>
             </Grid>
         </Grid>
         </div>

@@ -36,7 +36,6 @@ class MedicareInformation extends React.Component<any, any> {
                 const isChecked = medicare_contract_types.indexOf(e.id_medicare_contract_type) !== -1 ? true : false;
                 return (
                     <div className="checkbox-wrapper">
-                        {/* <Checkbox className="custom-checkbox mb-16" onChange={() => this.props.medicareCheck(e.id_medicare_contract_type)} defaultChecked={isChecked}>{e.medicare_contract_type}</Checkbox> */}
                         <Checkbox className="custom-checkbox mb-16" onChange={() => this.onMedicareCheck(e.id_medicare_contract_type)} defaultChecked={isChecked}>{e.medicare_contract_type}</Checkbox>
                     </div>
                 )
