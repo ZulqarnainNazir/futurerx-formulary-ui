@@ -6,6 +6,7 @@ import "./ReferenceNdc.scss";
 import { getIntelliscenseSearch } from "../../../../../redux/slices/formulary/categoryClass/categoryClassActionCreation";
 import { connect } from "react-redux";
 import * as commonConstants from "../../../../../api/http-commons";
+import getLobCode from "../../../Utils/LobUtils";
 
 const { SHOW_PARENT } = TreeSelect;
 
@@ -97,7 +98,9 @@ interface Props {
   formulary: any;
   formulary_lob_id: any;
   formulary_type_id: any;
+  nodeId: any;
   getIntelliscenseSearch: (a) => any;
+  onChildDataUpdated: (nodeId,childData) => void;
 }
 interface State {
   searchValue: string;
@@ -109,8 +112,8 @@ interface State {
   searchData: any[];
   searchNames: any[];
   choosenElements: any[];
+  currentItems: any[];
   treeClosed: boolean;
-  currentElements: any[];
 }
 
 class ReferenceNdc extends Component<Props, State> {
@@ -125,11 +128,14 @@ class ReferenceNdc extends Component<Props, State> {
     searchNames: Array(),
     choosenElements: Array(),
     treeClosed: false,
-    currentElements: Array(),
+    currentItems: Array(),
   }
 
   componentDidMount = () => {
-
+    let lobCode = getLobCode(this.props.formulary_lob_id);
+    this.setState({
+      lobCode: lobCode,
+    });
   }
 
 
@@ -201,10 +207,16 @@ class ReferenceNdc extends Component<Props, State> {
 
   onCheck = (checkedKeys) => {
     console.log("onCheck", checkedKeys);
-    this.state.currentElements = [...this.state.choosenElements]
-    checkedKeys.map(item => {
-      this.state.currentElements.push(this.state.searchData[item]['value'])
+    let checkedItems = checkedKeys.map(item => {
+      return this.state.searchData[item]['value'];
     });
+    let tobeRemoved = Array();
+    if(this.state.currentItems.length > 0){
+      tobeRemoved = this.state.currentItems.filter(item => !checkedItems.includes(item));
+    }
+    this.state.currentItems = checkedItems;
+    this.state.choosenElements = Array.from(new Set([...this.state.choosenElements ,...checkedItems])).filter(item => !tobeRemoved.includes(item));
+    this.props.onChildDataUpdated(this.props.nodeId, {'reference_ndcs': this.state.choosenElements});
     this.setState({
       checkedKeys: checkedKeys,
     });
@@ -224,25 +236,26 @@ class ReferenceNdc extends Component<Props, State> {
           this.state.choosenElements.push(this.state.searchData[item]['value'])
       });
       this.state.checkedKeys = [];
-      this.state.currentElements = this.state.choosenElements;
+      this.props.onChildDataUpdated(this.props.nodeId, {'reference_ndcs': this.state.choosenElements});
     }
     this.setState({
       searchValue: '',
       treeClosed: true,
+      currentItems: Array(),
     });
   };
 
   removeSearchElement = (element) => {
+    let currentChosenElements = this.state.choosenElements.filter(item => item !== element);
+    this.props.onChildDataUpdated(this.props.nodeId, {'reference_ndcs': currentChosenElements});
     if (!this.state.treeClosed) {
       this.setState({
         checkedKeys: this.state.checkedKeys.filter(item => this.state.searchData[item]['value'] !== element),
-        choosenElements: this.state.choosenElements.filter(item => item !== element),
-        currentElements: this.state.currentElements.filter(item => item !== element),
+        choosenElements: currentChosenElements,
       });
     } else {
       this.setState({
-        choosenElements: this.state.choosenElements.filter(item => item !== element),
-        currentElements: this.state.currentElements.filter(item => item !== element),
+        choosenElements: currentChosenElements,
       });
     }
   }
@@ -264,7 +277,7 @@ class ReferenceNdc extends Component<Props, State> {
           />
         </div>
         <div className="search-tag-list">
-          {this.state.currentElements.map((ndc, index) => {
+          {this.state.choosenElements.map((ndc, index) => {
             return <div className="search-tag-list__item">
               {ndc} <RemoveIcon className="search-tag-list__remove-action" onClick={() => this.removeSearchElement(ndc)} />
             </div>
