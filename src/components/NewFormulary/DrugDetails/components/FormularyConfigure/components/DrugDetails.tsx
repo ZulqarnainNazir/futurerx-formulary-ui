@@ -3,7 +3,6 @@ import { connect } from "react-redux";
 import FrxMiniTabs from "../../../../../shared/FrxMiniTabs/FrxMiniTabs";
 import { TabInfo } from "../../../../../../models/tab.model";
 import {
-  getTapList,
   getCommercialTabList,
   getMedicareTabList,
 } from "../../../../../../mocks/formulary/mock-data";
@@ -22,6 +21,15 @@ import CBComponent from "./CB";
 import SSMComponent from "./SSM";
 import SOComponent from "./SO";
 import getLobCode from "../../../../Utils/LobUtils";
+import DrugDetailAL from "../../AL/AL";
+import DrugDetailGL from "../../GL/GL";
+import DrugDetailICD from "../../ICD/ICD";
+import DrugDetailPN from "../../PN/PN";
+import DrugDetailPT from "../../PT/PT";
+import DrugDetailPOS from "../../POS/POS";
+import DrugDetailPR from "../../PR/PR";
+import DrugDetailFFF from "../../FFF/FFF";
+import DrugDetailOther from "../../Other/Other";
 
 interface drugDetailsState {
   activeTabIndex: number;
@@ -67,7 +75,23 @@ class DrugDetails extends React.Component<any, drugDetailsState> {
     if (this.props.formulary_lob_id === 4) {
       switch (tabIndex) {
         case 0:
-          return <div>Inside COMM</div>;
+          return <DrugDetailAL />;
+        case 1:
+          return <DrugDetailGL />;
+        case 2:
+          return <DrugDetailICD />;
+        case 3:
+          return <DrugDetailPN />;
+        case 4:
+          return <DrugDetailPT />;
+        case 5:
+          return <DrugDetailPOS />;
+        case 6:
+          return <DrugDetailPR />;
+        case 7:
+          return <DrugDetailFFF />;
+        case 8:
+          return <DrugDetailOther />;
       }
     } else {
       switch (tabIndex) {
