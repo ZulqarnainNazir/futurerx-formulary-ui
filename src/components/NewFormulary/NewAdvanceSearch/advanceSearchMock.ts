@@ -27,10 +27,10 @@ export const getCategoryList = () => {
       id: 6,
       category: "UM Filter",
     },
-    {
+    /*{
       id: 7,
       category: "Alternative Drugs",
-    },
+    },*/
   ];
   return categories;
 };

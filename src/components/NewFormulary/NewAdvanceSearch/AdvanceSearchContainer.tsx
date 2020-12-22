@@ -64,7 +64,9 @@ class AdvanceSearchContainer extends Component<Props, State> {
       is_vbid: false,
       is_no_tier: false,
       tiers: Array()
-    }
+    },
+    nodeList: Array(),
+    idCount: 0,
   };
 
   onClose = () => {
@@ -175,6 +177,24 @@ class AdvanceSearchContainer extends Component<Props, State> {
     this.state.additionalFilter.is_all_tiers = isAllTier;
   }
 
+  onChildDataUpdated = (id,data) => {
+    let updatedNode = this.state.nodeList.filter(node => node.id === id);
+    if(updatedNode && updatedNode.length > 0){
+      let node = updatedNode[0];
+      node.childData = data;
+    }
+    console.log('onChildDataUpdated:'+JSON.stringify(this.state.nodeList));
+  }
+
+  onParentDataUpdated = (id,isIncluded) => {
+    let updatedNode = this.state.nodeList.filter(node => node.id === id);
+    if(updatedNode && updatedNode.length > 0){
+      let node = updatedNode[0];
+      node.isIncluded = isIncluded;
+    }
+    console.log('onParentDataUpdated:'+JSON.stringify(this.state.nodeList));
+  }
+
   onCategrorySelect = (selectedCat) => {
     console.log("{selsectedCate}:", selectedCat);
 
@@ -191,76 +211,111 @@ class AdvanceSearchContainer extends Component<Props, State> {
 
     switch (selectedCat) {
       case 1:
+        this.state.idCount++;
+        this.state.nodeList.push({type: 'gpi', id: this.state.idCount, childData: [], isIncluded: false});
         this.setState({
           selectedCateoryList: [
             ...this.state.selectedCateoryList,
-            <ListItemContainer title={"GPI/Generic Name/Label Name/ RXCUI"}>
-              <GpiLableSearch />
-            </ListItemContainer>,
+            {
+              id: this.state.idCount,
+              content:<ListItemContainer title={"GPI/Generic Name/Label Name/ RXCUI"} onParentDataUpdated={this.onParentDataUpdated} nodeId={this.state.idCount}>
+              <GpiLableSearch nodeId={this.state.idCount} onChildDataUpdated={this.onChildDataUpdated}/>
+            </ListItemContainer>
+            },
           ],
         });
         break;
       case 2:
+        this.state.idCount++;
+        this.state.nodeList.push({type: 'ndc', id: this.state.idCount, childData: [], isIncluded: false});
         this.setState({
           selectedCateoryList: [
             ...this.state.selectedCateoryList,
-            <ListItemContainer title={"Reference NDC"}>
-              <ReferenceNdc />
-            </ListItemContainer>,
+            {
+            id: this.state.idCount,
+            content:<ListItemContainer title={"Reference NDC"} onParentDataUpdated={this.onParentDataUpdated} nodeId={this.state.idCount}>
+              <ReferenceNdc nodeId={this.state.idCount} onChildDataUpdated={this.onChildDataUpdated}/>
+            </ListItemContainer>
+            },
           ],
         });
         break;
 
       case 3:
+        this.state.idCount++;
+        this.state.nodeList.push({type: 'cat_class', id: this.state.idCount, childData: [], isIncluded: false});
         this.setState({
           selectedCateoryList: [
             ...this.state.selectedCateoryList,
-            <ListItemContainer title={"Drug Category/Class"}>
+            {
+              id: this.state.idCount,
+              content:<ListItemContainer title={"Drug Category/Class"} onParentDataUpdated={this.onParentDataUpdated} nodeId={this.state.idCount}>
               <DrugCategory onCkick={this.handleOnClick} />
-            </ListItemContainer>,
+            </ListItemContainer>
+            },
           ],
         });
         break;
       case 4:
+        this.state.idCount++;
+        this.state.nodeList.push({type: 'filetype', id: this.state.idCount, childData: [], isIncluded: false});
         this.setState({
           selectedCateoryList: [
             ...this.state.selectedCateoryList,
-            <ListItemContainer title={"File Type"}>
+            {
+              id: this.state.idCount,
+              content:<ListItemContainer title={"File Type"} onParentDataUpdated={this.onParentDataUpdated} nodeId={this.state.idCount}>
               <FileType fileFiltersChanged={this.fileFiltersChanged}/>
-            </ListItemContainer>,
+            </ListItemContainer>
+            },
           ],
         });
         break;
 
       case 5:
+        this.state.idCount++;
+        this.state.nodeList.push({type: 'tier', id: this.state.idCount, childData: [], isIncluded: false});
         this.setState({
           selectedCateoryList: [
             ...this.state.selectedCateoryList,
-            <ListItemContainer title={"Tier"}>
+            {
+              id: this.state.idCount,
+              content:<ListItemContainer title={"Tier"} onParentDataUpdated={this.onParentDataUpdated} nodeId={this.state.idCount}>
               <Tire tierChanged={this.tierChanged} />
-            </ListItemContainer>,
+            </ListItemContainer>
+            },
           ],
         });
         break;
       case 6:
+        this.state.idCount++;
+        this.state.nodeList.push({type: 'um_filter', id: this.state.idCount, childData: [], isIncluded: false});
         this.setState({
           selectedCateoryList: [
             ...this.state.selectedCateoryList,
-            <ListItemContainer title={"UM Filter"}>
+            {
+              id: this.state.idCount,
+              content:<ListItemContainer title={"UM Filter"} onParentDataUpdated={this.onParentDataUpdated} nodeId={this.state.idCount}>
               <UmFilter umFiltersChanged={this.umFiltersChanged} />
-            </ListItemContainer>,
+            </ListItemContainer>
+            },
           ],
         });
         break;
-      case 7:
+      /*case 7:
+        this.state.idCount++;
+        this.state.nodeList.push({type: 'alternative_drugs', id: this.state.idCount, childData: [], isIncluded: false});
         this.setState({
           selectedCateoryList: [
             ...this.state.selectedCateoryList,
-            <ListItemContainer title={"Alternative Drugs"}>
+            {
+              id: this.state.idCount,
+              content:<ListItemContainer title={"Alternative Drugs"} onParentDataUpdated={this.onParentDataUpdated} nodeId={this.state.idCount}>
               <AlternativeDrug />
-            </ListItemContainer>,
+            </ListItemContainer>
+            },
           ],
-        });
+        });*/
       // return (
       //   <ListItemContainer title={"Alternative Drugs"}>
 
@@ -324,11 +379,15 @@ class AdvanceSearchContainer extends Component<Props, State> {
   //   }
   // };
 
-  onDelete = (idx) => {
+  onDelete = (idx,id) => {
     const currentSelecteCategories = this.state.selectedCateoryList.filter(
       (category, index) => index !== idx
     );
-    this.setState({ selectedCateoryList: currentSelecteCategories });
+    let currentNodeList = this.state.nodeList.filter(node => node.id !== id);
+    this.setState({ 
+      selectedCateoryList: currentSelecteCategories,
+      nodeList: currentNodeList,
+    });
   };
   onClear = () => {
     this.state.additionalFilter = {
@@ -361,7 +420,7 @@ class AdvanceSearchContainer extends Component<Props, State> {
     payload.advancedSearchBody["is_advance_search"] = false;
     payload.populateGrid = true;
     this.props.setAdvancedSearch(payload);
-    this.setState({ selectedCateoryList: [] });
+    this.setState({ selectedCateoryList: [], nodeList: [] });
   };
 
   handleDrag = (e, catid) => {
@@ -489,7 +548,7 @@ class AdvanceSearchContainer extends Component<Props, State> {
                             />
                           </svg>
                         </span>
-                        {renderCatory}
+                        {renderCatory['content']}
                         <span>
                           <svg
                             width="13"
@@ -497,7 +556,7 @@ class AdvanceSearchContainer extends Component<Props, State> {
                             viewBox="0 0 13 15"
                             fill="none"
                             xmlns="http://www.w3.org/2000/svg"
-                            onClick={() => this.onDelete(idx)}
+                            onClick={() => this.onDelete(idx,renderCatory['id'])}
                             // onClick={this.onDelete(idx)}
                             style={{ cursor: "pointer" }}
                           >

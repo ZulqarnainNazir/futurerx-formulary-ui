@@ -19,6 +19,8 @@ interface BorderType {
 interface Props {
   title: string;
   children?: any;
+  nodeId: any;
+  onParentDataUpdated: (nodeId,isIncluded) => void;
 }
 interface State {}
 
@@ -27,8 +29,16 @@ class ListItemContainer extends Component<Props, State> {
     selectedOpt: "",
   };
 
+  constructor(props){
+    super(props);
+  }
+
+  componentDidMount(){
+  }
+
   onHandleSelected = (opt) => {
     console.log("[opt]", opt);
+    this.props.onParentDataUpdated(this.props.nodeId, (opt === 'include'));
     this.setState({ selectedOpt: opt });
   };
 

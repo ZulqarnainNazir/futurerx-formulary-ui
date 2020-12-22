@@ -1,8 +1,28 @@
-import React, { useState } from "react";
+import React, { useState, Component } from "react";
 import { TreeSelect, Tree } from "antd";
 import TreeNodeTitle from "../../components/TreeComponents/TreeNodeTitle/TreeNodeTitle";
 import SearchBox from "../../../../shared/Frx-components/search-box/SearchBox"; //"../../../../shared/Frx-components/search-box/SearchBox";
 import "./GpiLableSearch.scss";
+import { getIntelliscenseSearch } from "../../../../../redux/slices/formulary/categoryClass/categoryClassActionCreation";
+import { connect } from "react-redux";
+import * as commonConstants from "../../../../../api/http-commons";
+import getLobCode from "../../../Utils/LobUtils";
+
+function mapDispatchToProps(dispatch) {
+  return {
+    getIntelliscenseSearch: (a) => dispatch(getIntelliscenseSearch(a)),
+  };
+}
+
+const mapStateToProps = (state) => {
+  return {
+    formulary_id: state?.application?.formulary_id,
+    formulary: state?.application?.formulary,
+    formulary_lob_id: state?.application?.formulary_lob_id,
+    formulary_type_id: state?.application?.formulary_type_id
+  };
+};
+
 
 const RemoveIcon = (props) => (
   <span {...props}>
@@ -224,91 +244,274 @@ const treeData = [
     ],
   },
 ];
-interface Props {}
-interface State {}
+interface Props {
+  formulary_id: any;
+  formulary: any;
+  formulary_lob_id: any;
+  formulary_type_id: any;
+  nodeId: any;
+  getIntelliscenseSearch: (a) => any;
+  onChildDataUpdated: (nodeId, childData) => void;
+}
+interface State {
+  searchValue: string;
+  expandedKeys: string[];
+  checkedKeys: string[];
+  selectedKeys: string[];
+  autoExpandParent: boolean;
+  lobCode: string;
+  searchData: any[];
+  searchNames: any[];
+  choosenElements: any[];
+  currentItems: any[];
+  treeClosed: boolean;
+}
 
-const GpiLableSearch = () => {
-  const [searchValue, setSearchValue] = useState("");
-  const [expandedKeys, setExpandedKeys] = useState<string[]>([]);
-  const [checkedKeys, setCheckedKeys] = useState<string[]>([]);
-  const [selectedKeys, setSelectedKeys] = useState<string[]>([]);
-  const [autoExpandParent, setAutoExpandParent] = useState<boolean>(true);
+class GpiLableSearch extends Component<Props, State> {
+  state = {
+    searchValue: '',
+    expandedKeys: [],
+    checkedKeys: [],
+    selectedKeys: [],
+    autoExpandParent: true,
+    lobCode: '',
+    searchData: Array(),
+    searchNames: Array(),
+    choosenElements: Array(),
+    treeClosed: false,
+    currentItems: Array(),
+  }
 
-  const onExpand = (expandedKeys) => {
+  componentDidMount = () => {
+    let lobCode = getLobCode(this.props.formulary_lob_id);
+    this.setState({
+      lobCode: lobCode,
+    });
+  }
+
+  onExpand = (expandedKeys) => {
     console.log("onExpand", expandedKeys);
     // if not set autoExpandParent to false, if children expanded, parent can not collapse.
     // or, you can remove all expanded children keys.
-    setExpandedKeys(expandedKeys);
-    setAutoExpandParent(false);
+    this.setState({
+      expandedKeys: expandedKeys,
+      autoExpandParent: false
+    });
   };
 
-  const onSearch = (e) => {
-    setSearchValue(e.target.value);
+  onSearch = (e) => {
+    if (e.target.value) {
+      this.state.treeClosed = false;
+      let requests = Array();
+      let apiDetails = {};
+      apiDetails['apiPart'] = commonConstants.SEARCH_GPI;
+      apiDetails['pathParams'] = this.props?.formulary_id + "/" + this.state.lobCode + "/" + "F";
+      if (this.state.lobCode === 'MCR') {
+        apiDetails['pathParams'] = apiDetails['pathParams'] + "/" + (this.props.formulary_type_id === 1 ? 'MC' : 'MMP');
+      } else {
+        apiDetails['pathParams'] = apiDetails['pathParams'] + "/" + this.state.lobCode;
+      }
+      apiDetails['keyVals'] = [{ key: commonConstants.KEY_SEARCH_VALUE, value: e.target.value }];
+      requests.push({ key: 'gpi', apiDetails: apiDetails });
+
+      apiDetails = Object.assign({}, apiDetails);
+      apiDetails['apiPart'] = commonConstants.SEARCH_LABEL_NAME;
+      requests.push({ key: 'drug_label', apiDetails: apiDetails });
+
+      if (this.props.formulary_lob_id == 1) {
+        apiDetails = Object.assign({}, apiDetails);
+        apiDetails['apiPart'] = commonConstants.SEARCH_RXCUI;
+        requests.push({ key: 'rxcui', apiDetails: apiDetails });
+      } else {
+        apiDetails = Object.assign({}, apiDetails);
+        apiDetails['apiPart'] = commonConstants.SEARCH_DDID;
+        requests.push({ key: 'ddid', apiDetails: apiDetails });
+      }
+
+      this.state.searchValue = e.target.value;
+      const drugGridData = this.props.getIntelliscenseSearch(requests).then((json => {
+        //debugger;
+        if (json.payload && json.payload.data && Array.isArray(json.payload.data) && json.payload.data.length > 0) {
+          let tmpData = json.payload.data;
+          var data: any[] = [];
+          var count = 0;
+          var gridData = tmpData.map(function (el) {
+            var element = Object.assign({}, el);
+            data.push(element)
+            let gridItem = {
+              title: (
+                <TreeNodeTitle
+                  groupTitle=""
+                  title={element['value'] + '[' + element['key'] + ']'}
+                />
+              ),
+              value: element['value'] + '[' + element['key'] + ']',
+              key: count,
+              lable: "",
+
+              children: [],
+            };
+            count++;
+            return gridItem;
+          })
+          this.setState({
+            searchData: data,
+            searchNames: gridData
+          });
+        } else {
+          this.setState({
+            searchData: [],
+            searchNames: []
+          });
+        }
+      }))
+    }
+
   };
 
-  const onCheck = (checkedKeys) => {
+  getResult = (rawData) => {
+    let result = { gpis: Array(), drug_label_names: Array(), rxcuis: Array(), ddids: Array() };
+    if (rawData.length > 0) {
+      rawData.map(data => {
+        let key = data.substring(data.lastIndexOf("[") + 1, (data.lastIndexOf("]")));
+        let value = data.substring(0, (data.lastIndexOf("[")));
+        value = value.trim();
+        key = key.trim();
+
+        switch (key) {
+          case 'gpi':
+            result.gpis.push(value);
+            break;
+
+          case 'drug_label':
+            result.drug_label_names.push(value);
+            break;
+
+          case 'rxcui':
+            result.rxcuis.push(value);
+            break;
+
+          case 'ddid':
+            result.ddids.push(value);
+            break;
+        }
+      });
+    }
+    return result;
+  }
+
+  onCheck = (checkedKeys) => {
     console.log("onCheck", checkedKeys);
-    setCheckedKeys(checkedKeys);
+    let checkedItems = checkedKeys.map(item => {
+      return this.state.searchData[item]['value'] + '[' + this.state.searchData[item]['key'] + ']';
+    });
+    let tobeRemoved = Array();
+    if (this.state.currentItems.length > 0) {
+      tobeRemoved = this.state.currentItems.filter(item => !checkedItems.includes(item));
+    }
+    this.state.currentItems = checkedItems;
+    this.state.choosenElements = Array.from(new Set([...this.state.choosenElements, ...checkedItems])).filter(item => !tobeRemoved.includes(item));
+    let resultData = this.getResult(this.state.choosenElements);
+    this.props.onChildDataUpdated(this.props.nodeId, resultData);
+    this.setState({
+      checkedKeys: checkedKeys,
+    });
   };
 
-  const onSelect = (selectedKeys, info) => {
+  onSelect = (selectedKeys, info) => {
     console.log("onSelect", info);
-    setSelectedKeys(selectedKeys);
+    this.setState({
+      selectedKeys: selectedKeys,
+    });
   };
 
-  const onClearSearch = () => {
-    setSearchValue("");
+  onClearSearch = () => {
+    if (this.state.checkedKeys.length > 0) {
+      this.state.checkedKeys.map(item => {
+        if (!this.state.choosenElements.includes(this.state.searchData[item]['value'] + '[' + this.state.searchData[item]['key'] + ']'))
+          this.state.choosenElements.push(this.state.searchData[item]['value'] + '[' + this.state.searchData[item]['key'] + ']')
+      });
+      this.state.checkedKeys = [];
+      let resultData = this.getResult(this.state.choosenElements);
+      this.props.onChildDataUpdated(this.props.nodeId, resultData);
+    }
+    this.setState({
+      searchValue: '',
+      treeClosed: true,
+      currentItems: Array(),
+    });
   };
 
-  const tProps = {
-    checkable: true,
-    onExpand,
-    expandedKeys,
-    autoExpandParent,
-    onCheck,
-    checkedKeys,
-    onSelect,
-    selectedKeys,
-    treeData,
-    style: {
-      width: "100%",
-    },
-  };
+  removeSearchElement = (element) => {
+    let currentChosenElements = this.state.choosenElements.filter(item => item !== element);
+    let resultData = this.getResult(currentChosenElements);
+    this.props.onChildDataUpdated(this.props.nodeId, resultData);
+    if (!this.state.treeClosed) {
+      this.setState({
+        checkedKeys: this.state.checkedKeys.filter(item => this.state.searchData[item]['value'] + '[' + this.state.searchData[item]['key'] + ']' !== element),
+        choosenElements: currentChosenElements,
+      });
+    } else {
+      this.setState({
+        choosenElements: currentChosenElements,
+      });
+    }
+  }
 
-  return (
-    <div className="__root-gpi">
-      <div className="search-box-container">
-        <SearchBox
-          iconPosition="left"
-          onChange={onSearch}
-          value={searchValue}
-          placeholder="Search by GPI/Generic Name/Label Name/DDID"
-          style={{ paddingLeft: "30px" }}
-        />
-        <ClearIcon
-          className="search-box-container__clear-action"
-          onClick={onClearSearch}
-        />
-      </div>
-      <div className="search-tag-list">
-        <div className="search-tag-list__item">
-          Amikacin <RemoveIcon className="search-tag-list__remove-action" />
+  render() {
+    return (
+      <div className="__root-alternative-drug">
+        <div className="search-box-container">
+          <SearchBox
+            iconPosition="left"
+            onChange={this.onSearch}
+            value={this.state.searchValue}
+            placeholder="Search by alternative drug"
+            style={{ paddingLeft: "30px" }}
+          />
+          <ClearIcon
+            className="search-box-container__clear-action"
+            onClick={this.onClearSearch}
+          />
         </div>
-      </div>
+        <div className="search-tag-list">
+          {this.state.choosenElements.map((ndc, index) => {
+            return <div className="search-tag-list__item">
+              {ndc} <RemoveIcon className="search-tag-list__remove-action" onClick={() => this.removeSearchElement(ndc)} />
+            </div>
+          })}
+        </div>
 
-      {searchValue.length > 3 && (
-        <div className="search-tree-list scroll-bar">
-          <Tree {...tProps} />
-          <div className="search-tree-list__hide-label-action">
-            <HideIcon />
-            <span className="search-tree-list__hide-label-action-text">
-              Hide labels
+        {this.state.searchValue.length > 0 && (
+          <div className="search-tree-list scroll-bar">
+            <Tree
+              checkable={true}
+              onExpand={this.onExpand}
+              expandedKeys={this.state.expandedKeys}
+              autoExpandParent={this.state.autoExpandParent}
+              onCheck={this.onCheck}
+              checkedKeys={this.state.checkedKeys}
+              onSelect={this.onSelect}
+              selectedKeys={this.state.selectedKeys}
+              treeData={this.state.searchNames}
+              style={{
+                width: "100%"
+              }}
+            />
+            <div className="search-tree-list__hide-label-action">
+              <HideIcon onClick={this.onClearSearch} />
+              <span className="search-tree-list__hide-label-action-text" onClick={this.onClearSearch}>
+                Hide labels
             </span>
+            </div>
           </div>
-        </div>
-      )}
-    </div>
-  );
+        )}
+      </div>
+    );
+  }
 };
 
-export default GpiLableSearch;
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(GpiLableSearch);
