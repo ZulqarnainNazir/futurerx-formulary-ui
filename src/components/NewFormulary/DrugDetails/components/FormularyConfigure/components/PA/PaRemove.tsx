@@ -97,7 +97,7 @@ class PaRemove extends React.Component<any,any> {
   populateGridData = (searchBody = null) => {
     console.log('Populate grid data is called');
     let apiDetails = {};
-
+    apiDetails["lob_type"] = this.props.formulary_lob_id;
     apiDetails['pathParams'] = this.props?.formulary_id + "/"  +getLobCode(this.props?.formulary_lob_id);
     apiDetails['keyVals'] = [{ key: constants.KEY_ENTITY_ID, value: this.props?.formulary_id }, { key: constants.KEY_INDEX, value: 0 }, { key: constants.KEY_LIMIT, value: 10 }];
     apiDetails['messageBody'] = {};
@@ -143,6 +143,7 @@ class PaRemove extends React.Component<any,any> {
     if (this.state.selectedDrugs && this.state.selectedDrugs.length > 0) {
       let apiDetails = {};
       //apiDetails['apiPart'] = constants.APPLY_TIER;
+      apiDetails["lob_type"] = this.props.formulary_lob_id;
       apiDetails['pathParams'] = this.props?.formulary_id + "/" + getLobCode(this.props?.formulary_lob_id) + "/" + constants.TYPE_REMOVE;
       apiDetails['keyVals'] = [{ key: constants.KEY_ENTITY_ID, value: this.props?.formulary_id }];
       apiDetails['messageBody'] = {};

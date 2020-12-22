@@ -95,7 +95,7 @@ class PaReplace extends React.Component<any,any> {
     if (this.state.selectedDrugs && this.state.selectedDrugs.length > 0) {
       let apiDetails = {};
      // apiDetails['apiPart'] = constants.APPLY_TIER;
-
+     apiDetails["lob_type"] = this.props.formulary_lob_id;
       apiDetails['pathParams'] = this.props?.formulary_id + "/" + this.state.fileType + "/" + constants.TYPE_REPLACE;
       apiDetails['keyVals'] = [{ key: constants.KEY_ENTITY_ID, value: this.props?.formulary_id }];
       apiDetails['messageBody'] = {};
@@ -139,7 +139,11 @@ class PaReplace extends React.Component<any,any> {
     let tmp_value = event.value;
 
    this.setState({ selectedGroupDescription: tmp_value });
-   this.props.getPaGrouptDescriptionVersions(tmp_value).then((json)=>{
+   let apiDetails= {};
+   apiDetails["lob_type"] = this.props.formulary_lob_id;
+   apiDetails['pathParams'] = '/'+tmp_value;
+
+   this.props.getPaGrouptDescriptionVersions(apiDetails).then((json)=>{
      let data = json.payload.data;
      
      this.setState({
@@ -256,7 +260,11 @@ class PaReplace extends React.Component<any,any> {
   }
   componentDidMount() {
                    
-    this.props.getPaGrouptDescriptions(this.props?.formulary_lob_id).then((json:any) =>{
+    let apiDetails_1= {};
+    apiDetails_1["lob_type"] = this.props.formulary_lob_id;
+    apiDetails_1['pathParams'] = '/'+this.props?.formulary_lob_id;
+
+    this.props.getPaGrouptDescriptions(apiDetails_1).then((json:any) =>{
         let result = json.payload.data.filter(obj  => !obj.is_archived &&  obj.is_setup_complete);
         this.setState({
           paGroupDescriptions: result,
