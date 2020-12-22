@@ -15,12 +15,16 @@ const headers = {
 };
 
 export async function getGeneralOptions(
-  type: number
+  type: number,
+  id: number
 ): Promise<GeneralOptions | any> {
   //console.log("- - - - - - - - - - - - -  - - Genetal Option Service");
   let url0 = `${BASE_URL1}api/1/formulary-types`;
   let url1 = `${BASE_URL1}api/1/formulary-contract-years`;
   let url2 = `${BASE_URL1}api/1/classification-systems/${type}`;
+  if (id > 0) {
+    url2 += `/${id}`;
+  }
 
   const request0 = axios.get(url0, {
     headers: headers,
@@ -117,10 +121,14 @@ export async function getStatesOptions(
 
 //getMedicareOptions
 export async function getMedicareOptions(
-  formulary_id: any
+  type: number,
+  id: number
 ): Promise<MedicareOptions | any> {
   //let url = `${this.apiBaseUrl}/1/medicare-contract-types/${id_formulary_type}`;
-  let url = `${BASE_URL1}api/1/medicare-contract-types/${formulary_id}`;
+  let url = `${BASE_URL1}api/1/medicare-contract-types/${type}`;
+  if (id > 0) {
+    url += `/${id}`;
+  }
   try {
     const response = await axios.get(url, {
       headers: headers,
@@ -139,9 +147,13 @@ export async function getMedicareOptions(
 }
 
 export async function getDesignOptions(
-  type: any
+  type: number,
+  id: number
 ): Promise<DesignOptions | any> {
   let url = `${BASE_URL1}api/1/edits/${type}`;
+  if (id > 0) {
+    url += `/${id}`;
+  }
   try {
     const response = await axios.get(url, {
       headers: headers,
@@ -160,10 +172,13 @@ export async function getDesignOptions(
 }
 
 export async function getSupplementalOptions(
-  type: any
+  type: number,
+  id: number
 ): Promise<SupplementalOptions | any> {
-  //let url = `${this.apiBaseUrl}/1/supplemental-benefits/${id_formulary_type}`;
   let url = `${BASE_URL1}api/1/supplemental-benefits/${type}`;
+  if (id > 0) {
+    url += `/${id}`;
+  }
   try {
     const response = await axios.get(url, {
       headers: headers,
@@ -185,10 +200,14 @@ export async function getSupplementalOptions(
 
 export async function getTierOptions(
   type: number,
+  id: number,
   tier_level: number
 ): Promise<SupplementalOptions | any> {
   //let url = `${this.apiBaseUrl}/1/tier-labels/1/0/${id_formulary_type}`;
   let url = `${BASE_URL1}api/1/tier-labels/${type}/${tier_level}`;
+  if (id > 0) {
+    url += `/${id}`;
+  }
   try {
     const response = await axios.get(url, {
       headers: headers,

@@ -9,6 +9,8 @@ import Tooltip from '@material-ui/core/Tooltip';
 import GroupHeader from './GroupHeader';
 import { Grid } from '@material-ui/core';
 import AlertMessages from "./AlertMessages"
+import { ToastContainer } from 'react-toastify';
+import showMessage from "../../../../Utils/Toast";
 import { scrollPage } from '../../../../../../utils/formulary'
 import { saveGDM } from "../../../../../../redux/slices/formulary/gdm/gdmSlice";
 import { getStGrouptDescription } from "../../../../../../redux/slices/formulary/stepTherapy/stepTherapyActionCreation";
@@ -19,12 +21,28 @@ interface Props {
   editMode?:boolean;
 }
 
-const initialFormData = {
+interface initialFormData{
+  file_type:any;
+  is_rx_drug_type: any;
+  is_otc_drug_type: any;
+  st_criteria: any;
+  change_indicator: any;
+  excluded_drug_file: any;
+  st_group_description_name: any;
+  mmp_st_criteria:  any;
+  st_criteria_change_indicator:  any;
+  is_additional_criteria_defined:  any;
+  is_suppress_criteria_dispaly_cms_approval:  any;
+  is_display_criteria_drugs_not_frf:  any;
+  is_validation_required:  any;
+}
+
+const initialFormData:initialFormData = {
   file_type: 'FAOTC',
   is_rx_drug_type: false,
   is_otc_drug_type: false,
   st_criteria: "",
-  change_indicator: 0,
+  change_indicator: "",
   excluded_drug_file: "",
   st_group_description_name: '',
   mmp_st_criteria: '',
@@ -36,6 +54,15 @@ const initialFormData = {
 }
 
 function mapStateToProps(state) {
+  if(state?.saveGdm?.success!=="" && state?.saveGdm?.success!==null){
+    showMessage('Saved Successfully', 'info');
+  }
+  if(state?.saveGdm?.error !==""){
+    // {state?.saveGdm?.error.length > 1 && state?.saveGdm?.error.map(err => {
+    //   showMessage(err.message, 'error');
+    // })}
+    showMessage(state?.saveGdm?.error?.data?.message, 'error');
+  }
   return {
     formulary_id: state.application.formulary_id,
     StGDData: state.stepTherapyReducer.data,
@@ -55,6 +82,8 @@ function NewGroup(props: any) {
   const [formData, updateFormData] = React.useState(initialFormData);
   const [editable, setEditable] = React.useState(false);
   const [changeEvent, setChangeEvent] = React.useState(false);
+  const [showHeader, setShowHeader] = React.useState(props.formType);
+  const [errorClass, setErrorClass] = React.useState('');
 
   const handleChange = (e) => {
     const formVal = (e.target.value === 'yes' || e.target.value === 'true') ? true : (e.target.value === 'no' || e.target.value === 'false') ? false : e.target.value;
@@ -102,20 +131,34 @@ function NewGroup(props: any) {
     if(!props.editMode){
       setEditable(false)
     }
+    setShowHeader(0)
+    setErrorClass('');
   }, [props.StGDData || props.saveGdm || props.editMode])
 
   const handleSubmit = (e) => {
     e.preventDefault()
-    updateFormData({
-      ...formData,
-      'change_indicator': 0,
-      [e.target.name]: e.target.value.trim()
-    });
+    if(props.formType===0){
+      let msg:string[]=[];
+      if(formData.st_group_description_name === ''){
+          msg.push("Formulary Build Method is required.");
+      }
+      if(formData.st_group_description_name === ''){
+          msg.push("Formulary Effective Date is required.");
+      }
+      if(msg.length>0){
+          console.log(msg)
+          setErrorClass('invalid');
+          return;
+      }
+    }
+    setErrorClass('');
+    formData.change_indicator = parseInt(formData.change_indicator)
     props.saveGDM({
       formularyId: props.formulary_id,
       latestId: props.saveGdm.current_group_des_id,
       ...formData
     })
+    setShowHeader(1)
     scrollPage(0, 500)
   };
   return (
@@ -123,11 +166,11 @@ function NewGroup(props: any) {
       <div className="panel header">
         <span>{props.title ? props.title : formData.st_group_description_name}</span>
       </div>
-      <GroupHeader popuptitle={props.title ? props.title : formData.st_group_description_name} onChange={onChange}/>
+      {(props.formType > 0 || showHeader>0) && <GroupHeader popuptitle={props.title ? props.title : formData.st_group_description_name} onChange={onChange}/>}
       <div className="inner-container">
         <div className="setting-1">
           <span>What file type is this group description for? *</span>
-          <AlertMessages delay="10000" error={props.saveGdm.error} success={props.saveGdm.success} />
+          {/* <AlertMessages delay="10000" error={props.saveGdm.error} success={props.saveGdm.success} /> */}
           <div className="marketing-material radio-group">
             <RadioGroup aria-label="marketing-material-radio1" className="gdp-radio" name="file_type" onChange={handleChange}>
               <FormControlLabel value="FAOTC" control={<Radio checked={formData.file_type === "FAOTC" ? true : false} />} label="Formulary/OTC" disabled={editable} />
@@ -139,7 +182,7 @@ function NewGroup(props: any) {
             <Grid item xs={6}>
               <div className="group">
                 <label>ST GROUP DESCRIPTION<span className="astrict">*</span></label>
-                <input type="text" name="st_group_description_name" onChange={handleChange} defaultValue={formData.st_group_description_name} disabled={editable} />
+                <input type="text" name="st_group_description_name" onChange={handleChange} defaultValue={formData.st_group_description_name} disabled={editable} className={errorClass} />
               </div>
             </Grid>
           </Grid>
@@ -192,7 +235,7 @@ function NewGroup(props: any) {
                     </Tooltip>
                   </div>
                 </label>
-                <input type="text" name="st_criteria" onChange={handleChange} value={formData.st_criteria} disabled={editable} />
+                <input type="text" name="st_criteria" onChange={handleChange} value={formData.st_criteria} disabled={editable} className={errorClass} />
               </div>
             </Grid>
           </Grid>
@@ -200,7 +243,7 @@ function NewGroup(props: any) {
             <Grid item xs={6}>
               <div className="group">
                 <label>ST CRITERIA CHANGE INDICATOR<span className="astrict">*</span></label>
-                <input type="text" name="change_indicator" onChange={handleChange} value={formData.change_indicator} disabled={editable} />
+                <input type="text" name="change_indicator" onChange={handleChange} value={formData.change_indicator} disabled={editable} className={errorClass}/>
               </div>
             </Grid>
           </Grid>
@@ -242,7 +285,7 @@ function NewGroup(props: any) {
           <Button label="Version Submitted to CMS" className="Button" />
         </div>
       </div>
-
+      <ToastContainer/>
     </div>
   )
 }

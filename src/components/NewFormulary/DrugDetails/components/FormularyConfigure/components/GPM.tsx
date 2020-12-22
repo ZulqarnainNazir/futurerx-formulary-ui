@@ -20,7 +20,7 @@ import { Box, Grid, Input } from '@material-ui/core';
 import RadioButton from '../../../../../shared/Frx-components/radio-button/RadioButton';
 import Groups from './Groups'
 import NewGroup from './NewGroup'
-import { getSTGroupDetails } from "../../../../../../redux/slices/formulary/gdm/gdmSlice";
+import { getSTGroupDetails,cleanMessages } from "../../../../../../redux/slices/formulary/gdm/gdmSlice";
 import { getStSummary, getStGrouptDescriptions, getStTypes, getStGrouptDescriptionVersions, getStGrouptDescription } from "../../../../../../redux/slices/formulary/stepTherapy/stepTherapyActionCreation";
 
 function mapStateToProps(state) {
@@ -37,6 +37,7 @@ function mapDispatchToProps(dispatch) {
         getStGrouptDescriptionVersions: (a) => dispatch(getStGrouptDescriptionVersions(a)), //Version
         getStGrouptDescription: (a) => dispatch(getStGrouptDescription(a)), // Group ID Detail
         getSTGroupDetails:(arg)=>dispatch(getSTGroupDetails(arg)),
+        cleanMessages: (arg) => dispatch(cleanMessages(arg))
     };
 }
 
@@ -82,6 +83,7 @@ class GPM extends React.Component<any, any>{
     };
 
     selectGroup = (param: any, groupType: string) => {
+        this.props.cleanMessages({error:'',success:''})
         this.props.getStGrouptDescriptionVersions(param).then((json) => {
             let tmpData = json.payload.data;
             let dataLength = tmpData.length
@@ -101,7 +103,16 @@ class GPM extends React.Component<any, any>{
         this.setState({
             newGroup: false
         })
+        this.props.getSTGroupDetails({
+            formulary_id: this.props.formulary_id,
+            current_group_id: 0,
+            current_group_des_id: 0
+        })
+        this.props.cleanMessages({error:'',success:''})
+        this.props.getStGrouptDescriptions(this.props.formulary_id)
+        this.props.getStGrouptDescriptionVersions(0)
         this.props.getStGrouptDescription(0)
+        this.props.getStTypes(this.props.formulary_id)
     }
 
     componentDidMount() {

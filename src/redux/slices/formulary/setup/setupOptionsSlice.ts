@@ -65,9 +65,10 @@ export interface TierOptions {
   tier: any[];
 }
 
-// export interface ClassificationOptions {
-//   classification: any[];
-// }
+interface TypeAndId {
+  type: number;
+  id: number;
+}
 
 function startLoading(state: SetupOptionsState) {
   state.isLoading = true;
@@ -184,11 +185,11 @@ const setup = createSlice({
 
 export const fetchGeneralOptions = createAsyncThunk(
   "setupOptions",
-  async (type: number, { dispatch }) => {
-    //console.log("***** fetchGeneralOptions General ");
+  async (input: TypeAndId, { dispatch }) => {
+    console.log("***** fetchGeneralOptions : " + input);
     try {
       dispatch(getGeneralOptionsStart());
-      const genOptions: any = await getGeneralOptions(type);
+      const genOptions: any = await getGeneralOptions(input.type, input.id);
       //console.log("*** genOptions : ", genOptions);
       dispatch(getGeneralOptionsSuccess(genOptions));
     } catch (err) {
@@ -208,7 +209,7 @@ export const fetchSubMthsOptions = createAsyncThunk(
       // console.log("*** options : ", options);
       dispatch(getSubMthsOptionsSuccess(options));
     } catch (err) {
-      //console.log("***** fetchGeneralOptions AC - ERROR ");
+      //console.log("*****  AC - ERROR ");
       dispatch(getSubMthsOptionsFailure(err.toString()));
     }
   }
@@ -232,15 +233,15 @@ export const fetchStatesOptions = createAsyncThunk(
 
 export const fetchMedicareOptions = createAsyncThunk(
   "setupOptions",
-  async (arg: number, { dispatch }) => {
-    //console.log("***** fetchMedicareOptions AC ");
+  async (input: TypeAndId, { dispatch }) => {
+    console.log("***** fetchMedicareOptions  " + input);
     try {
       dispatch(getMedicareOptionsStart());
-      const options: any = await getMedicareOptions(1);
+      const options: any = await getMedicareOptions(input.type, input.id);
       //console.log("*** options : ", options);
       dispatch(getMedicareOptionsSuccess(options));
     } catch (err) {
-      //console.log("***** fetchGeneralOptions AC - ERROR ");
+      //console.log("*****  AC - ERROR ");
       dispatch(getMedicareOptionsFailure(err.toString()));
     }
   }
@@ -248,15 +249,15 @@ export const fetchMedicareOptions = createAsyncThunk(
 
 export const fetchDesignOptions = createAsyncThunk(
   "setupOptions",
-  async (type: number, { dispatch }) => {
-    //console.log("***** fetchDesignOptions AC ");
+  async (input: TypeAndId, { dispatch }) => {
+    console.log("***** fetchDesignOptions AC ");
     try {
       dispatch(getDesignOptionsStart());
-      const options: any = await getDesignOptions(type);
+      const options: any = await getDesignOptions(input.type, input.id);
       //console.log("*** options : ", options);
       dispatch(getDesignOptionsSuccess(options));
     } catch (err) {
-      //console.log("***** fetchGeneralOptions AC - ERROR ");
+      //console.log("*****  AC - ERROR ");
       dispatch(getDesignOptionsFailure(err.toString()));
     }
   }
@@ -264,11 +265,11 @@ export const fetchDesignOptions = createAsyncThunk(
 
 export const fetchTierOptions = createAsyncThunk(
   "setupOptions",
-  async (type: number, { dispatch }) => {
+  async (input: TypeAndId, { dispatch }) => {
     //console.log("***** fetchTierOptions AC ");
     try {
       dispatch(getTierOptionsStart());
-      const options: any = await getTierOptions(type, 0);
+      const options: any = await getTierOptions(input.type, input.id, 0);
       //console.log("*** options : ", options);
       dispatch(getTierOptionsSuccess(options));
     } catch (err) {
@@ -280,17 +281,55 @@ export const fetchTierOptions = createAsyncThunk(
 
 export const fetchSupplementalOptions = createAsyncThunk(
   "setupOptions",
-  async (type: number, { dispatch }) => {
+  async (input: TypeAndId, { dispatch }) => {
     //console.log("***** fetchSupplementalOptions AC ");
     try {
       dispatch(getSupplementalOptionsStart());
-      const options: any = await getSupplementalOptions(type);
+      const options: any = await getSupplementalOptions(input.type, input.id);
       //console.log("*** options : ", options);
       dispatch(getSupplementalOptionsSuccess(options));
     } catch (err) {
-      //console.log("***** fetchGeneralOptions AC - ERROR ");
+      //console.log("*****  AC - ERROR ");
       dispatch(getSupplementalOptionsFailure(err.toString()));
     }
+  }
+);
+
+export const manageFormularyType = createAsyncThunk(
+  "setupOptions",
+  async (input: TypeAndId, { dispatch }) => {
+    const type = input.type;
+    const id = input.id;
+
+    console.log(" TYPE :: " + type + " - " + id);
+
+    if (type === -1) {
+      dispatch(fetchGeneralOptions({ type: 1, id: -1 }));
+      return;
+    }
+
+    dispatch(fetchGeneralOptions({ type: type, id: id }));
+    dispatch(fetchDesignOptions({ type: type, id: id }));
+    dispatch(fetchTierOptions({ type: type, id: id }));
+
+    if (type === 1) {
+      dispatch(fetchMedicareOptions({ type: type, id: id }));
+      dispatch(fetchSupplementalOptions({ type: type, id: id }));
+    } else if (type === 2) {
+      dispatch(fetchStatesOptions(type));
+      dispatch(fetchMedicareOptions({ type: type, id: id }));
+      dispatch(fetchSupplementalOptions({ type: type, id: id }));
+    } else if (type === 3) {
+      // TODO ... MEDICADE...
+      dispatch(fetchStatesOptions(0));
+    } else if (type === 4) {
+      // TODO ... MEDICADE...
+      dispatch(fetchStatesOptions(0));
+    } else if (type === 5) {
+    } else if (type === 6) {
+      // COMMERCIAL...
+    }
+    dispatch(fetchSubMthsOptions(2021));
   }
 );
 
