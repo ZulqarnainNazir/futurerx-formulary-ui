@@ -295,6 +295,44 @@ export const fetchSupplementalOptions = createAsyncThunk(
   }
 );
 
+export const manageFormularyType = createAsyncThunk(
+  "setupOptions",
+  async (input: TypeAndId, { dispatch }) => {
+    const type = input.type;
+    const id = input.id;
+
+    console.log(" TYPE :: " + type + " - " + id);
+
+    if (type === -1) {
+      dispatch(fetchGeneralOptions({ type: 1, id: -1 }));
+      return;
+    }
+
+    dispatch(fetchGeneralOptions({ type: type, id: id }));
+    dispatch(fetchDesignOptions({ type: type, id: id }));
+    dispatch(fetchTierOptions({ type: type, id: id }));
+
+    if (type === 1) {
+      dispatch(fetchMedicareOptions({ type: type, id: id }));
+      dispatch(fetchSupplementalOptions({ type: type, id: id }));
+    } else if (type === 2) {
+      dispatch(fetchStatesOptions(type));
+      dispatch(fetchMedicareOptions({ type: type, id: id }));
+      dispatch(fetchSupplementalOptions({ type: type, id: id }));
+    } else if (type === 3) {
+      // TODO ... MEDICADE...
+      dispatch(fetchStatesOptions(0));
+    } else if (type === 4) {
+      // TODO ... MEDICADE...
+      dispatch(fetchStatesOptions(0));
+    } else if (type === 5) {
+    } else if (type === 6) {
+      // COMMERCIAL...
+    }
+    dispatch(fetchSubMthsOptions(2021));
+  }
+);
+
 export const {
   getGeneralOptionsStart,
   getGeneralOptionsSuccess,
