@@ -62,7 +62,8 @@ class AdvanceSearchContainer extends Component<Props, State> {
       is_user_defined4: false,
       is_user_defined5: false,
       is_vbid: false,
-      tiers: []
+      is_no_tier: false,
+      tiers: Array()
     }
   };
 
@@ -74,11 +75,34 @@ class AdvanceSearchContainer extends Component<Props, State> {
   };
 
   umFiltersChanged = (umFilters) => {
-    Object.keys(this.state.additionalFilter).map(filterKey => {
-      if (filterKey !== 'tiers' && filterKey !== 'is_all_tiers') {
+    /*Object.keys(this.state.additionalFilter).map(filterKey => {
+      if (filterKey !== 'tiers' && filterKey !== 'is_all_tiers' && filterKey !== 'is_no_tier') {
         this.state.additionalFilter[filterKey] = false;
       }
-    });
+    });*/
+    this.state.additionalFilter = {
+      is_all_tiers: this.state.additionalFilter['is_all_tiers'],
+      is_no_tier: this.state.additionalFilter['is_no_tier'],
+      tiers: this.state.additionalFilter['tiers'],
+      is_add: false,
+      is_exd: false,
+      is_fff: false,
+      is_frf: false,
+      is_hi: false,
+      is_ibf: false,
+      is_lis: false,
+      is_non_frf: false,
+      is_otc: false,
+      is_pa: false,
+      is_st: false,
+      is_pgc: false,
+      is_user_defined1: false,
+      is_user_defined2: false,
+      is_user_defined3: false,
+      is_user_defined4: false,
+      is_user_defined5: false,
+      is_vbid: false,
+    };
     if (umFilters.length > 0) {
       umFilters.map(umItem => {
         if (!umItem.key.startsWith('NA')) {
@@ -86,6 +110,69 @@ class AdvanceSearchContainer extends Component<Props, State> {
         }
       })
     }
+  }
+
+  fileFiltersChanged = (filters) => {
+    /*Object.keys(this.state.additionalFilter).map(filterKey => {
+      if (filterKey !== 'tiers' && filterKey !== 'is_all_tiers' && filterKey !== 'is_no_tier') {
+        this.state.additionalFilter[filterKey] = false;
+      }
+    });*/
+    this.state.additionalFilter = {
+      is_all_tiers: this.state.additionalFilter['is_all_tiers'],
+      is_no_tier: this.state.additionalFilter['is_no_tier'],
+      tiers: this.state.additionalFilter['tiers'],
+      is_add: false,
+      is_exd: false,
+      is_fff: false,
+      is_frf: false,
+      is_hi: false,
+      is_ibf: false,
+      is_lis: false,
+      is_non_frf: false,
+      is_otc: false,
+      is_pa: false,
+      is_st: false,
+      is_pgc: false,
+      is_user_defined1: false,
+      is_user_defined2: false,
+      is_user_defined3: false,
+      is_user_defined4: false,
+      is_user_defined5: false,
+      is_vbid: false,
+    };
+    if (filters.length > 0) {
+      filters.map(item => {
+        item.types.map(type => {
+          if(!type['key'].startsWith('NA')){
+            this.state.additionalFilter[type['key']] = type['isChecked'];
+          }
+        });
+      })
+    }
+  }
+
+  tierChanged = (tiers) => {
+    console.log('Selected tiers:' + JSON.stringify(tiers));
+    this.state.additionalFilter.tiers = Array();
+    let isAllTier: boolean = true;
+    tiers.map(tier => {
+      if (tier.key != -1) {
+        isAllTier = isAllTier && tier['isChecked'];
+        if (tier.isChecked) {
+          this.state.additionalFilter.tiers.push(tier.key);
+        }
+      } else {
+        if (tier.isChecked) {
+          this.state.additionalFilter.is_no_tier = true;
+          isAllTier = true;
+        }else{
+          this.state.additionalFilter.is_no_tier = false;
+        }
+      }
+    });
+
+    this.state.additionalFilter.is_all_tiers = isAllTier;
   }
 
   onCategrorySelect = (selectedCat) => {
@@ -139,7 +226,7 @@ class AdvanceSearchContainer extends Component<Props, State> {
           selectedCateoryList: [
             ...this.state.selectedCateoryList,
             <ListItemContainer title={"File Type"}>
-              <FileType />
+              <FileType fileFiltersChanged={this.fileFiltersChanged}/>
             </ListItemContainer>,
           ],
         });
@@ -150,7 +237,7 @@ class AdvanceSearchContainer extends Component<Props, State> {
           selectedCateoryList: [
             ...this.state.selectedCateoryList,
             <ListItemContainer title={"Tier"}>
-              <Tire />
+              <Tire tierChanged={this.tierChanged} />
             </ListItemContainer>,
           ],
         });
@@ -244,13 +331,29 @@ class AdvanceSearchContainer extends Component<Props, State> {
     this.setState({ selectedCateoryList: currentSelecteCategories });
   };
   onClear = () => {
-    Object.keys(this.state.additionalFilter).map(filterKey => {
-      if (filterKey !== 'tiers') {
-        this.state.additionalFilter[filterKey] = false;
-      } else {
-        this.state.additionalFilter[filterKey] = [];
-      }
-    });
+    this.state.additionalFilter = {
+      is_add: false,
+      is_all_tiers: false,
+      is_exd: false,
+      is_fff: false,
+      is_frf: false,
+      is_hi: false,
+      is_ibf: false,
+      is_lis: false,
+      is_non_frf: false,
+      is_otc: false,
+      is_pa: false,
+      is_st: false,
+      is_pgc: false,
+      is_user_defined1: false,
+      is_user_defined2: false,
+      is_user_defined3: false,
+      is_user_defined4: false,
+      is_user_defined5: false,
+      is_vbid: false,
+      is_no_tier: false,
+      tiers: Array()
+    };
     let payload = { advancedSearchBody: {}, populateGrid: false, closeDialog: false };
     payload.advancedSearchBody['additional_filter'] = this.state.additionalFilter;
     payload.advancedSearchBody["covered"] = {};
