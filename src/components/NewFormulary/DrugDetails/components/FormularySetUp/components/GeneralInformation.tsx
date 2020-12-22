@@ -3,6 +3,7 @@ import Grid from "@material-ui/core/Grid";
 import DropDown from "../../../../../shared/Frx-components/dropdown/DropDown";
 import RadioButton from "../../../../../shared/Frx-components/radio-button/RadioButton";
 import { DatePicker, Select } from "antd";
+import moment from 'moment';
 import PanelHeader from "../../FormularyConfigure/components/PanelHeader";
 import Button from '../../../../../shared/Frx-components/button/Button';
 import {connect} from "react-redux";
@@ -207,6 +208,23 @@ class GeneralInformation extends React.Component<any, GeneralInformationState> {
       tagCategories: [...value],
     });
   };
+  isOpenFormularyOptions = () => {
+    const val = (this.props.generalInfo?.is_closed_formulary === 'true' || this.props.generalInfo?.is_closed_formulary === true) ? true : 
+                (this.props.generalInfo?.is_closed_formulary === 'false' || this.props.generalInfo?.is_closed_formulary === false) ? false : null;
+    return <RadioGroup 
+              className="radio-group-custom" 
+              aria-label={'is_closed_formulary'} 
+              name="is_closed_formulary"
+              value={val} 
+              onChange={(e) => this.props.onRadioChange(e,"generalInformation")}>
+              <FormControlLabel value={true} control={<Radio />} label="Closed" />
+              <FormControlLabel value={false} control={<Radio />} label="Open" />
+          </RadioGroup>
+  }
+  disabledDate = (current) => {
+    // Can not select days before today and today
+    return current && current < moment().endOf('day');
+  }
   render() {
     const { Option } = Select;
     const {
@@ -278,7 +296,7 @@ class GeneralInformation extends React.Component<any, GeneralInformationState> {
                 className="effective-date"
                 placeholder={FORMULARY ? FORMULARY_Values.effective_date : ''}
                 disabled={disabled}
-
+                disabledDate={this.disabledDate}
                 onChange={(e) => this.props.datePickerChange(e,'generalInformation','effective_date')}
                 suffixIcon={
                   <svg
@@ -356,11 +374,14 @@ class GeneralInformation extends React.Component<any, GeneralInformationState> {
               </div>
             </Grid>
             <Grid item xs={4}>
-              <div className="group">
-                <label>Which prior year's formulary does this most closely resemble?</label>
-                <a href="#" className="input-link select-formulary-link">Select Formulary</a>
-              </div>
+              {this.props.generalInfo.type !== 'Commercial' ? (
+                <div className="group">
+                  <label>Which prior year's formulary does this most closely resemble?</label>
+                  <a href="#" className="input-link select-formulary-link">Select Formulary</a>
+                </div>
+              ):null}
             </Grid>
+            
             <Grid item xs={4}>
               <div className="group setup-panel">
                 <PanelHeader
@@ -396,15 +417,7 @@ class GeneralInformation extends React.Component<any, GeneralInformationState> {
                     required
                   />
                   <div className="marketing-material radio-group">
-                    <RadioGroup 
-                        className="radio-group-custom" 
-                        aria-label={'classification_system'} 
-                        name="is_formulary_open"
-                        value={this.props.generalInfo?.is_closed_formulary?.toString()} 
-                        onChange={(e) => this.props.onRadioChange(e,"generalInformation")}>
-                        <FormControlLabel value="true" control={<Radio />} label="Closed" />
-                        <FormControlLabel value="false" control={<Radio />} label="Open" />
-                    </RadioGroup>
+                    {this.isOpenFormularyOptions()}
                   </div>
                 </div>
               </Grid>
