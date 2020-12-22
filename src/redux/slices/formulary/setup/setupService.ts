@@ -2,12 +2,8 @@ import axios from "axios";
 import { BASE_URL1 } from "../../../../api/http-helper";
 import { Formulary } from "./../setup/formulary";
 import { FormularyPost } from "./../setup/formularyPayload";
+import { REQUEST_HEADER } from "../../../../api/http-commons";
 
-const headers = {
-  Authorization: "Bearer 5d123376-9888-4a4f-a167-9494485fe10d",
-  Accept: "application/json",
-  "Content-Type": "application/json;charset=UTF-8",
-};
 
 export async function getformulary(
   formulary_id: any
@@ -15,7 +11,7 @@ export async function getformulary(
   let url = `${BASE_URL1}api/1/formulary-setup/${formulary_id}?entity_id=${formulary_id}`;
   try {
     const response = await axios.get(url, {
-      headers: headers,
+      headers: REQUEST_HEADER,
     });
     //console.log("***** SETUP getformulary  - Success");
     //console.log(response);
@@ -41,7 +37,7 @@ export async function checkNameExist(name: string): Promise<boolean | any> {
   url = url + `/1`;
   try {
     const response = await axios.get(url, {
-      headers: headers,
+      headers: REQUEST_HEADER,
     });
     // console.log("***** checkNameExist  - Success");
     // console.log(response);
@@ -57,7 +53,7 @@ export async function checkNameExist(name: string): Promise<boolean | any> {
 }
 
 export function composePostBody(input: any): any {
-  console.log("***** composePostBody");
+  //console.log("***** composePostBody");
 
   const payload: any = {};
   payload.formulary_info = {};
@@ -155,7 +151,7 @@ export async function createFormulary(payload: any): Promise<any> {
   let url = `${BASE_URL1}api/1/formulary-setup/1`;
   try {
     const response = await axios.post(url, payload, {
-      headers: headers,
+      headers: REQUEST_HEADER,
     });
     console.log("***** createFormulary - Success");
     console.log(response);
@@ -168,7 +164,7 @@ export async function createFormulary(payload: any): Promise<any> {
     return null;
   } catch (error) {
     console.log("***** createFormulary - Error");
-    console.log(error);
+    //console.log(error);
     const { response } = error;
     const { request, ...errorObject } = response; // take everything but 'request'
     console.log(errorObject);

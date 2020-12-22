@@ -10,6 +10,8 @@ import {
 
 // const POST_SO_FORMULARY_DRUGS = BASE_URL1 + "api/1/formulary-drugs-sboth/3298/MCR?index=0&limit=10&entity_id=3298";
 
+// const GET_SO_CRITERIA_LIST = BASE_URL1 + "api/1/criteria-list-sboth/3298/MCR?entity_id=3298";
+
 export const getDrugDetailsSOSummary = createAsyncThunk(
   "drug_details/SO_Summary",
   async (apiDetails: any) => {
@@ -25,5 +27,14 @@ export const getDrugDetailsSOList = createAsyncThunk(
     let POST_URL = buildUrl({ apiDetails });
     const requestHeaders = postHeaders(apiDetails);
     return fetchRequest(POST_URL, requestHeaders);
+  }
+);
+
+export const getSOCriteriaList = createAsyncThunk(
+  "drug_details/SO_criteria_list",
+  async (apiDetails: any) => {
+    let GET_URL = buildUrl({ apiDetails });
+    const requestHeaders = getHeaders();
+    return fetchRequest(GET_URL, requestHeaders);
   }
 );

@@ -17,7 +17,7 @@ import DialogPopup from "../../../../../shared/FrxDialogPopup/FrxDialogPopup";
 import FormControl from '@material-ui/core/FormControl';
 import FormLabel from '@material-ui/core/FormLabel';
 const mapStateToProps = (state) => {
-  console.log(state);
+  //console.log(state);
   return {
     formulary: state?.setup?.formulary,
     formulary_mode: state?.setup?.mode,
@@ -86,7 +86,7 @@ class GeneralInformation extends React.Component<any, GeneralInformationState> {
     return radioGroup;
   }
   changeMethodHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
-    console.log((event.target.value))
+    //console.log((event.target.value))
     this.setState({
       selectedMethod: event.target.value
     })

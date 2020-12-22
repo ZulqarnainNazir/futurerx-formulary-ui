@@ -41,6 +41,7 @@ const mapStateToProps = (state) => {
 const defaultListPayload = {
   index: 0,
   limit: 10,
+  filter: [],
 }
 
 class DrugDetailLA extends React.Component<any, any> {
@@ -75,6 +76,7 @@ class DrugDetailLA extends React.Component<any, any> {
   listPayload: any = {
     index: 0,
     limit: 10,
+    filter: [],
   }
 
   advanceSearchClickHandler = (event) => {
@@ -161,6 +163,24 @@ class DrugDetailLA extends React.Component<any, any> {
     }
   }
 
+  onApplyFilterHandler = (filters) => {
+    console.log("The FIlters = ", filters)
+    const fetchedProps = Object.keys(filters)[0];
+    console.log("The Fetched Props = ", fetchedProps);
+    const fetchedOperator = filters[fetchedProps][0].condition === 'is like' ? 'is_like' : 
+    filters[fetchedProps][0].condition === 'is not' ? 'is_not' : 
+    filters[fetchedProps][0].condition === 'is not like' ? 'is_not_like' : 
+    filters[fetchedProps][0].condition === 'does not exist' ? 'does_not_exist' : 
+    filters[fetchedProps][0].condition;
+    const fetchedValues = filters[fetchedProps][0].value !== '' ? [filters[fetchedProps][0].value.toString()] : [];
+    const newFilters = [{ prop: fetchedProps, operator: fetchedOperator,values: fetchedValues}];
+    console.log("------THe New Filters = ", newFilters);
+    this.listPayload.filter = newFilters;
+    // this.props.fetchFormularies(this.listPayload);
+    console.log("THe List Payload inside APPLy filter Handler = ", this.listPayload);
+    this.getLADrugsList({ index: this.listPayload.index, limit: this.listPayload.limit, listPayload: this.listPayload });
+  }
+
   getLASummary = () => {
     let apiDetails = {};
     apiDetails['apiPart'] = laConstants.GET_DRUG_SUMMARY_LA;
@@ -188,11 +208,12 @@ class DrugDetailLA extends React.Component<any, any> {
     });
   }
 
-  getLADrugsList = ({index = 0, limit = 10} = {}) => {
+  getLADrugsList = ({index = 0, limit = 10, listPayload = {}} = {}) => {
     let apiDetails = {};
     apiDetails['apiPart'] = laConstants.GET_LA_FORMULARY_DRUGS;
     apiDetails['pathParams'] = this.props?.formulary_id + "/" + getLobCode(this.props.formulary_lob_id);
     apiDetails['keyVals'] = [{ key: laConstants.KEY_ENTITY_ID, value: this.props?.formulary_id }, { key: laConstants.KEY_INDEX, value: index }, { key: laConstants.KEY_LIMIT, value: limit }];
+    apiDetails['messageBody'] = listPayload;
 
     let listCount = 0;
     this.props.getDrugDetailsLAList(apiDetails).then((json) => {
@@ -204,8 +225,23 @@ class DrugDetailLA extends React.Component<any, any> {
         var element = Object.assign({}, el);
         data.push(element);
         let gridItem = {};
+        console.log("THe LA ELEMent = ", element.is_la)
         gridItem["id"] = count;
         gridItem["key"] = count;
+        gridItem["is_abr_formulary"] = element.is_abr_formulary ? "" + element.is_abr_formulary : "";
+        gridItem["is_cb"] = element.is_cb ? "" + element.is_cb : "";
+        gridItem["is_fff"] = element.is_fff ? "" + element.is_fff : "";
+        gridItem["is_gc"] = element.is_gc ? "" + element.is_gc : "";
+        gridItem["is_hi"] = element.is_hi ? "" + element.is_hi : "";
+        gridItem["is_ibf"] = element.is_ibf ? "" + element.is_ibf : "";
+        gridItem["is_la"] = element.is_la ? "" + element.is_la : "";
+        gridItem["is_lis"] = element.is_lis ? "" + element.is_lis : "";
+        gridItem["is_mo"] = element.is_mo ? "" + element.is_mo : "";
+        gridItem["is_nm"] = element.is_nm ? "" + element.is_nm : "";
+        gridItem["is_pgc"] = element.is_pgc ? "" + element.is_pgc : "";
+        gridItem["is_pbst"] = element.is_pbst ? "" + element.is_pbst : "";
+        gridItem["is_ssm"] = element.is_ssm ? "" + element.is_ssm : "";
+        gridItem["is_vbid"] = element.is_vbid ? "" + element.is_vbid : "";
         gridItem["labelName"] = element.drug_label_name ? "" + element.drug_label_name : "";
         gridItem["tier"] = element.tier_value;
         gridItem["fileType"] = element.file_type ? "" + element.file_type : "";
@@ -301,7 +337,7 @@ class DrugDetailLA extends React.Component<any, any> {
             gridName="DRUGSDETAILS"
             enableSettings={false}
             columns={getDrugDetailsColumn()}
-            scroll={{ x: 5200, y: 377 }}
+            scroll={{ x: 7000, y: 377 }}
             isFetchingData={false}
             enableResizingOfColumns
             data={this.state.data}
@@ -311,6 +347,7 @@ class DrugDetailLA extends React.Component<any, any> {
             onGridPageChangeHandler={this.onGridPageChangeHandler}
             totalRowsCount={this.state.listCount}
             clearFilterHandler={this.onClearFilterHandler}
+            applyFilter={this.onApplyFilterHandler}
             rowSelection={{
               columnWidth: 50,
               fixed: true,

@@ -28,6 +28,8 @@ class DrugCategory extends Component<Props, State> {
                 <input
                   type="radio"
                   name="radiobutton"
+                  value="class A"
+                  onChange={(e) => this.setCategoryClass(e, '')}
                   style={{ marginRight: "5px" }}
                 />
                 <label htmlFor=""> class A</label>
@@ -51,6 +53,7 @@ class DrugCategory extends Component<Props, State> {
                 <input
                   type="radio"
                   name="radiobutton"
+                  value="class B"
                   style={{ marginRight: "5px" }}
                 />
                 <label htmlFor="">Class B</label>
@@ -78,6 +81,10 @@ class DrugCategory extends Component<Props, State> {
     ],
   };
 
+  setCategoryClass = (e,category) => {
+    console.log('Set category class called');
+  }
+
   render() {
     const { drugCategory } = this.state;
     return (
@@ -91,6 +98,7 @@ class DrugCategory extends Component<Props, State> {
           //   checkedKeys={checkedKeys}
           //   onSelect={this.onSelect}
           //   selectedKeys={selectedKeys}
+          selectable={false}
           treeData={drugCategory}
         />
         <span className="__expand-all" onClick={this.props.onCkick}>
