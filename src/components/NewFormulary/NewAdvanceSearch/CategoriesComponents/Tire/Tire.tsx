@@ -1,9 +1,28 @@
 import React, { Component } from "react";
 import { Checkbox, Button, Grid } from "@material-ui/core";
+import { setAdvancedSearch } from "../../../../../redux/slices/formulary/advancedSearch/advancedSearchSlice";
+import { connect } from "react-redux";
 
 import "./Tire.scss";
 
-interface Props {}
+function mapDispatchToProps(dispatch) {
+  return {
+    setAdvancedSearch: (a) => dispatch(setAdvancedSearch(a))
+  };
+}
+
+const mapStateToProps = (state) => {
+  return {
+    advancedSearchBody: state?.advancedSearch?.advancedSearchBody,
+    populateGrid: state?.advancedSearch?.populateGrid,
+    closeDialog: state?.advancedSearch?.closeDialog,
+  };
+};
+
+interface Props {
+  tierChanged: (a) => void;
+  advancedSearchBody: any;
+}
 interface State {}
 const tires = [
   {
@@ -65,8 +84,8 @@ class Tire extends Component<Props, State> {
   };
 
   onSelectTire = (e, selectedTire) => {
-    const currentTires: any = [...this.state.tireList];
-    const currentSelectedTire: any = [...this.state.selectedTire];
+    let currentTires: any = [...this.state.tireList];
+    let currentSelectedTire: any = [...this.state.selectedTire];
     if (e.target.checked) {
       currentSelectedTire.push(selectedTire);
       currentTires.map((tire) => {
@@ -75,12 +94,25 @@ class Tire extends Component<Props, State> {
         }
       });
 
+      this.props.tierChanged(currentTires);
+
       this.setState({
         tireList: currentTires,
         selectedTire: currentSelectedTire,
       });
     } else {
-      this.setState({
+      currentTires = currentTires.map((tire) => {
+        if (tire.id === selectedTire.id) {
+          tire["isChecked"] = e.target.checked;
+        }
+        return tire;
+      });
+
+      currentSelectedTire =  currentSelectedTire.filter(
+        (tire) => tire.id !== selectedTire.id
+      );
+
+      /*this.setState({
         tireList: currentTires.map((tire) => {
           if (tire.id === selectedTire.id) {
             tire["isChecked"] = e.target.checked;
@@ -90,6 +122,13 @@ class Tire extends Component<Props, State> {
         selectedTire: currentSelectedTire.filter(
           (tire) => tire.id !== selectedTire.id
         ),
+      });*/
+
+      this.props.tierChanged(currentTires);
+
+      this.setState({
+        tireList: currentTires,
+        selectedTire: currentSelectedTire,
       });
     }
   };
@@ -97,11 +136,19 @@ class Tire extends Component<Props, State> {
   onSelectAll = () => {
     const currentTires: any = [...this.state.tireList];
     currentTires.map((tire) => (tire["isChecked"] = true));
+    this.props.tierChanged(currentTires);
     this.setState({ tireList: currentTires, selectedTire: currentTires });
   };
 
   componentDidMount = () => {
-    tires.map((tire) => (tire["isChecked"] = false));
+    let setTiers = Array();
+    let noTier: any = false;
+    if(this.props.advancedSearchBody && this.props.advancedSearchBody.additional_filter){
+      setTiers = this.props.advancedSearchBody.additional_filter.tiers;
+      noTier = this.props.advancedSearchBody.additional_filter.is_no_tier;
+    }
+    tires.map((tire) => (tire["isChecked"] = (setTiers.includes(tire['key']) || (noTier && tire['key'] == -1) ? true : false)));
+    this.props.tierChanged(tires);
     this.setState({ tireList: tires });
   };
 
@@ -154,4 +201,7 @@ class Tire extends Component<Props, State> {
   }
 }
 
-export default Tire;
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(Tire);

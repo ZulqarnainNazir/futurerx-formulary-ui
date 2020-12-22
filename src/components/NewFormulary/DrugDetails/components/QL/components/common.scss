@@ -1,0 +1,33 @@
+.ql-replace-container {
+  background-color: #ffffff;
+  padding: 13px 20px 30px 20px;
+}
+
+.fill-limit-settings-container {
+  background-color: #ffffff;
+  padding: 13px 20px 30px 20px;
+}
+
+.panel-note {
+  font-family: Roboto;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 12px;
+  line-height: 14px;
+  color: #323C47;
+  margin-bottom: 20px;
+}
+
+
+.input-group {
+  margin-bottom: 20px;
+  .select-box {
+    margin-top: 6px;
+    .ant-select {
+      width: 373px !important;
+    }
+  }
+  .radio-group {
+    margin-top: 15px;
+  }
+}

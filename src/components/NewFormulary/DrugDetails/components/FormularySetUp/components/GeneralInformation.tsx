@@ -121,7 +121,8 @@ class GeneralInformation extends React.Component<any, any> {
             <Grid item xs={4}>
               <div className="group">
                 <label>ABBREVIATION</label>
-                <input type="text" className="setup-input-fields" name="abbreviation" value={this.props.generalInfo.abbreviation} onChange={this.props.updateInputField}/>
+                <input type="text" className="setup-input-fields" name="abbreviation" 
+                value={this.props.generalInfo.abbreviation} onChange={this.props.updateInputField} maxLength={10} />
               </div>
             </Grid>
             <Grid item sm={4}>

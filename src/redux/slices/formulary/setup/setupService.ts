@@ -69,7 +69,6 @@ export function composePostBody(input: any): any {
   payload.formulary_info.formulary_description =
     input.GENERAL_INFO?.description;
   payload.formulary_info.effective_date = input.GENERAL_INFO?.effective_date;
-  //payload.formulary_info.effective_date = "2020-12-19";
   payload.formulary_info.contract_year = input.GENERAL_INFO?.service_year;
   payload.formulary_info.id_state = input.GENERAL_INFO?.state_id;
   // TODO  - - - - - - - - - - - - -
@@ -78,10 +77,6 @@ export function composePostBody(input: any): any {
   // payload.formulary_info.id_submission_month = 5;
   payload.formulary_info.resemble_formulary_id = null;
   payload.formulary_info.is_closed_formulary = null;
-  payload.formulary_info.id_classification_system = parseInt(
-    input.GENERAL_INFO?.classification_system
-  );
-  payload.formulary_info.id_classification_system_other = "";
   payload.formulary_info.resemble_formulary_id = null;
   payload.formulary_info.is_standard_template = null;
   payload.formulary_info.parent_formulary_id = null;
@@ -91,12 +86,16 @@ export function composePostBody(input: any): any {
   payload.formulary_info.is_carve_out = null;
   payload.formulary_info.import_file_path = "";
   payload.formulary_info.import_file_name = "";
-  payload.formulary_info.medicare_types_ref_other = false;
-  // payload.formulary_info.medicare_types_ref = ["S"];
   payload.is_validation_required = false;
   payload.cms_override = false;
 
   // CLASSIFICATION  - - - - - - - - - - - - -
+
+  payload.formulary_info.id_classification_system = parseInt(
+    input.GENERAL_INFO?.classification_system
+  );
+  payload.formulary_info.id_classification_system_other = "";
+
   payload.classification_system_info = {
     id_classification_system: parseInt(
       input.GENERAL_INFO?.classification_system
@@ -107,18 +106,11 @@ export function composePostBody(input: any): any {
 
   // MEDICARE INFO  - - - - - - - - - - - - -
 
-  payload.medicare_contract_type_info = {
-    medicare_contract_types: input.medicare_contract_types,
-    // custom_medicare_contract_type: {
-    //   id_medicare_contract_type: null,
-    //   id_formulary_medicare_contract: "",
-    //   medicare_contract_type: "MedInfo_OTHER111",
-    // },
-    custom_medicare_contract_type: {},
-    removed_formulary_medicare_contracts: [],
-  };
+  payload.formulary_info.medicare_types_ref_other =
+    input.GENERAL_INFO?.state_id;
+  payload.medicare_contract_type_info = input.medicare_contract_type_info;
 
-  // DESIGN  - - - - - - - - - - - - - OTHERs Pending...
+  // DESIGN  - - - - - - - - - - - - -
 
   payload.edit_info = {
     edits: input?.edit_info?.edits,
@@ -127,13 +119,6 @@ export function composePostBody(input: any): any {
     removed_formulary_edits: [],
   };
 
-  // payload.edit_info = {
-  //   edits: [1, 6],
-  //   edits_no: [5],
-  //   custom_edits: [],
-  //   removed_formulary_edits: [],
-  // };
-
   // TIER DETAILS  - - - - - - - - - - - - -
 
   payload.tiers = input?.tiers;
@@ -141,21 +126,6 @@ export function composePostBody(input: any): any {
   // payload.formulary_info.number_of_tiers = 1;
   // payload.formulary_info.min_tiers = 1;
   // payload.formulary_info.max_tiers = 7;
-
-  // payload.tiers = [
-  //   {
-  //     id_formulary_tier: null,
-  //     id_tier_label: 1,
-  //     id_tier: 0,
-  //   },
-  //   {
-  //     id_formulary_tier: null,
-  //     id_tier_label: 3,
-  //     id_tier: 1,
-  //   },
-  // ];
-
-  // TIER DETAILS  - - - - - - - - - - - - - OTHERs Pending...
 
   payload.supplemental_benefit_info = {
     supplemental_benefits:

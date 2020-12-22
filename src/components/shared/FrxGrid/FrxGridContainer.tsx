@@ -41,6 +41,14 @@ interface FrxGridContainerProps<T> extends Grid<T> {
   searchOptions?: any;
   isCustomCheckboxEnabled?: boolean;
   handleCustomRowSelectionChange?: any;
+  getPerPageItemSize?: any;
+  onGridPageChangeHandler?: any;
+  clearFilterHandler?:any;
+  totalRowsCount?:any;
+  pageSize?: any;
+  selectedCurrentPage?: any;
+  applyFilter?: any;
+  getColumnSettings?: any;
 }
 class FrxGridContainer extends Component<FrxGridContainerProps<any>> {
   /**
@@ -102,40 +110,51 @@ class FrxGridContainer extends Component<FrxGridContainerProps<any>> {
       <div className="frx-grid-container">
         {this.props.enableSearch ? this.getSearchComponent() : null}
         <FrxGrid
-          customCheckbox={this.props.isCustomCheckboxEnabled}
-          isPinningEnabled={this.props.isPinningEnabled}
-          customRowSelectionChange={this.props.handleCustomRowSelectionChange}
-          columns={this.props.columns}
-          gridName={this.props.gridName}
-          fixedColumnKeys={this.props.fixedColumnKeys}
-          showSettingsMenu
-          hideClearFilter={this.props.hideClearFilter}
-          hideItemsPerPage={this.props.hideItemsPerPage}
-          enableColumnDrag={this.props.enableColumnDrag}
-          loading={{
-            spinning: this.props.isFetchingData,
-            indicator: <FrxLoader />,
-          }}
-          hideMultiSort={this.props.hideMultiSort}
-          hidePagination={this.props.hidePagination}
-          hidePageJumper={this.props.hidePageJumper}
-          hideResults={this.props.hideResults}
-          pagintionPosition={this.props.pagintionPosition}
-          data={this.props.data}
-          scroll={this.props.scroll ? this.props.scroll : { x: 400, y: 420 }}
-          enableSettings={this.props.enableSettings}
-          onSettingsClick={this.props.onSettingsClick}
-          settingsTriDotMenuClick={this.props.settingsTriDotMenuClick}
-          settingsTriDotClick={this.props.settingsTriDotClick}
-          enableResizingOfColumns
-          onColumnCellClick={this.props.onColumnCellClick}
-          summary={this.props.summary ? this.props.summary : undefined}
-          isRowSelectionEnabled={this.props.isRowSelectionEnabled}
-          rowSelectionChange={this.props.rowSelectionChange}
-          settingsWidth={
-            this.props.settingsWidth ? this.props.settingsWidth : undefined
-          }
-          isRowSelectorCheckbox={this.props.isRowSelectorCheckbox}
+            customCheckbox={this.props.isCustomCheckboxEnabled}
+            customRowSelectionChange={this.props.handleCustomRowSelectionChange}
+            bordered={false}
+            isPinningEnabled={this.props.isPinningEnabled}
+            columns={this.props.columns}
+            gridName={this.props.gridName}
+            fixedColumnKeys={this.props.fixedColumnKeys}
+            showSettingsMenu
+            hideClearFilter={this.props.hideClearFilter}
+            hideItemsPerPage={this.props.hideItemsPerPage}
+            enableColumnDrag={this.props.enableColumnDrag}
+            loading={{
+              spinning: this.props.isFetchingData,
+              indicator: <FrxLoader />,
+            }}
+            hideMultiSort={this.props.hideMultiSort}
+            hidePagination={this.props.hidePagination}
+            hidePageJumper={this.props.hidePageJumper}
+            hideResults={this.props.hideResults}
+            pagintionPosition={this.props.pagintionPosition}
+            data={this.props.data}
+            scroll={this.props.scroll ? this.props.scroll : { x: 400, y: 420 }}
+            enableSettings={this.props.enableSettings}
+            onSettingsClick={this.props.onSettingsClick}
+            settingsTriDotMenuClick={this.props.settingsTriDotMenuClick}
+            settingsTriDotClick={this.props.settingsTriDotClick}
+            enableResizingOfColumns
+            onColumnCellClick={this.props.onColumnCellClick}
+            summary={this.props.summary ? this.props.summary : undefined}
+            isRowSelectionEnabled={this.props.isRowSelectionEnabled}
+            rowSelectionChange={this.props.rowSelectionChange}
+            settingsWidth={
+              this.props.settingsWidth ? this.props.settingsWidth : undefined
+            }
+            isRowSelectorCheckbox={this.props.isRowSelectorCheckbox}
+            // methods start
+            getPerPageItemSize={this.props.getPerPageItemSize}
+            onGridPageChangeHandler={this.props.onGridPageChangeHandler}
+            clearFilterHandler={this.props.clearFilterHandler}
+            pageSize={this.props.pageSize ? this.props.pageSize : 10}
+            selectedCurrentPage={this.props.selectedCurrentPage ? this.props.selectedCurrentPage : 1}
+            totalRowsCount={this.props.totalRowsCount}
+            applyFilter={this.props.applyFilter}
+            getColumnSettings={this.props.getColumnSettings}
+            // methods end
           expandable={{
             isExpandable: this.props.expandable
               ? this.props.expandable.isExpandable
