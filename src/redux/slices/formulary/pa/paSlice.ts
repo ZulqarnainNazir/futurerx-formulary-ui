@@ -2,12 +2,13 @@ import {createSlice} from "@reduxjs/toolkit";
 
 import { getPaSummary,getPaGrouptDescriptionVersions,getPaGrouptDescription } from "./paActionCreation";
 
-import { getPaFulfilled,getPaRejected,getVersionFulfilled,getVersionRejected } from "./paReducers";
+import { getPaFulfilled,getPaRejected,getVersionFulfilled,getVersionRejected,getPaDescriptionFulfilled,getPaDescriptionRejected } from "./paReducers";
 
 const paState: any = {
   data: {},
   isLoading: false,
-  paVersion:{}
+  paVersion:{},
+  description:{}
 }
   
 
@@ -31,10 +32,10 @@ export const paSlice = createSlice({
       state.isLoading = true;
     }),
     builder.addCase(getPaGrouptDescription.fulfilled, (state, action) => {
-      getPaFulfilled(state, action);
+      getPaDescriptionFulfilled(state, action);
     }),
     builder.addCase(getPaGrouptDescription.rejected, (state, action) => {
-      getPaRejected(state, action);
+      getPaDescriptionRejected(state, action);
     })
   )
 });

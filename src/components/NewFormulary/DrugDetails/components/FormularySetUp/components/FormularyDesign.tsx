@@ -1,14 +1,9 @@
 import React from "react";
 import Grid from "@material-ui/core/Grid";
-import Box from '@material-ui/core/Box';
-import Button from '../../../../../shared/Frx-components/button/Button';
-import RadioButton from "../../../../../shared/Frx-components/radio-button/RadioButton";
 import PanelHeader from "../../FormularyConfigure/components/PanelHeader";
 import Radio from '@material-ui/core/Radio';
 import RadioGroup from '@material-ui/core/RadioGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
-import FormControl from '@material-ui/core/FormControl';
-import FormLabel from '@material-ui/core/FormLabel';
 import {connect} from "react-redux";
 import { Checkbox } from 'antd';
 class FormularyDesign extends React.Component<any, any> {

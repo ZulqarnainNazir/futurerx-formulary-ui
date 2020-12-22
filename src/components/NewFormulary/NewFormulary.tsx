@@ -122,7 +122,6 @@ class Formulary extends React.Component<any, any> {
     });
     this.setState({ tabs, activeTabIndex },()=>{
       this.updateGrid(this.state.activeTabIndex);
-      
     });
   };
   updateGrid = (currentTabIndex) => {

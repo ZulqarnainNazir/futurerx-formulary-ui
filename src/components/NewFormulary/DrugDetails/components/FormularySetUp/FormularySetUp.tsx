@@ -219,6 +219,7 @@ class FormularySetUp extends React.Component<any, any> {
       this.props.verifyFormularyName(e.currentTarget.value);
     }
   };
+  
   onOtherMedicareHandler = (e) => {
     const custom = { ...this.state.medicare_contract_type_info };
     custom.custom_medicare_contract_type.medicare_contract_type =
@@ -277,48 +278,22 @@ class FormularySetUp extends React.Component<any, any> {
     this.setState({
       [section]: newObj,
     });
-  };
-  medicareCheck = (id: any) => {
-    const updatedMedicareInfo: any = {
-      ...this.state.medicare_contract_type_info,
-    };
-    const updatedMedicareInfoContract: any = [
-      ...updatedMedicareInfo.medicare_contract_types,
-    ];
-    const index = updatedMedicareInfoContract.indexOf(id);
-    if (index > -1) {
-      updatedMedicareInfoContract.splice(index, 1);
-    } else {
-      updatedMedicareInfoContract.push(id);
-    }
-    updatedMedicareInfo.medicare_contract_types = updatedMedicareInfoContract;
+  }
+  medicareCheck = (getObject:any) => {
     this.setState({
-      medicare_contract_type_info: updatedMedicareInfo,
-    });
-  };
-  onMedicareOtherCheck = (e) => {
-    const genInfo = { ...this.state.generalInformation };
-    genInfo.medicare_types_ref_other = e.target.checked;
+      medicare_contract_type_info: getObject
+    })
+  }
+  onMedicareOtherCheck = (getObject:any) => {
     this.setState({
-      generalInformation: genInfo,
-    });
-  };
-  supplementalCheck = (id: any) => {
-    const updatedSupplementalCheck: any = [
-      ...this.state.supplemental_benefit_info.supplemental_benefits,
-    ];
-    const index = updatedSupplementalCheck.indexOf(id);
-    if (index > -1) {
-      updatedSupplementalCheck.splice(index, 1);
-    } else {
-      updatedSupplementalCheck.push(id);
-    }
+      generalInformation: getObject
+    })
+  }
+  supplementalCheck = (getObject:any) => {
     this.setState({
-      supplemental_benefit_info: {
-        supplemental_benefits: updatedSupplementalCheck,
-      },
-    });
-  };
+      supplemental_benefit_info: getObject
+    })
+  }
   onSave = (e) => {
     console.log("  SAVE  ", e);
     if (this.props.mode === "NEW") {
@@ -427,10 +402,8 @@ class FormularySetUp extends React.Component<any, any> {
               <>
                 {this.state.generalInformation.type !== "Commercial" ? (
                   <MedicareInformation
-                    medicareOptions={
-                      this.state.medicare_contract_type_info
-                        .medicare_contract_types
-                    }
+                    allMedicareOptions={this.state.medicare_contract_type_info}
+                    medicareOptions={this.state.medicare_contract_type_info.medicare_contract_types}
                     medicareCheck={this.medicareCheck}
                     generalInfo={this.state.generalInformation}
                     onMedicareOtherCheck={this.onMedicareOtherCheck}
@@ -445,14 +418,13 @@ class FormularySetUp extends React.Component<any, any> {
                 ) : null}
                 <FormularyTiers
                   tiers={this.state.tiers}
+                  generalInfo={this.state.generalInformation}
                   selectTier={this.selectTierHandler}
                   changeTierValue={this.changeTierValueHandler}
                 />
                 {this.state.generalInformation.type !== "Commercial" ? (
                   <SupplementalModels
-                    supplemental={
-                      this.state.supplemental_benefit_info.supplemental_benefits
-                    }
+                    supplemental={this.state.supplemental_benefit_info}
                     supplementalCheck={this.supplementalCheck}
                     checkUncheckAllSupplemental={
                       this.onCheckUncheckAllSupplementalHandler

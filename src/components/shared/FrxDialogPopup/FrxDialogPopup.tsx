@@ -4,6 +4,7 @@ import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import { Theme, withStyles } from "@material-ui/core/styles";
+import { ReactComponent as CloseIcon } from "../../../assets/icons/CloseIcon.svg";
 import React from "react";
 import "./FrxDialogPopup.scss";
 
@@ -26,11 +27,12 @@ interface DialogPopupProps {
   className?: string;
   height?: any;
   width?: any;
+  headJSX?: any;
   headChildren?: Element;
   componentTitle?: any;
   // classes: Partial<Record<DialogClassKey, string>>;
   disablePortal?: boolean;
-
+  popupMaxWidth?: false | "xs" | "sm" | "md" | "lg" | "xl" | undefined;
   handleClose: () => void;
   handleAction: (action: string) => void;
 }
@@ -48,10 +50,12 @@ class DialogPopup extends React.Component<DialogPopupProps> {
       showActions,
       height,
       width,
+      headJSX,
       componentTitle,
       showCloseIcon,
       headChildren,
       disablePortal,
+      popupMaxWidth
     } = this.props;
     return (
       <Dialog
@@ -60,7 +64,7 @@ class DialogPopup extends React.Component<DialogPopupProps> {
         disableEscapeKeyDown
         disablePortal={disablePortal ? disablePortal : false}
         open={open}
-        maxWidth={false}
+        maxWidth={popupMaxWidth ? popupMaxWidth : false}
         className={this.props.className ? this.props.className : "dialog-popup"}
         style={{ minWidth: "1000px", minHeight: "600px" }}
         onClose={handleClose}
@@ -73,7 +77,20 @@ class DialogPopup extends React.Component<DialogPopupProps> {
         >
           {/* {!Boolean(headChildren) ? headChildren : title} */}
           {/* {title} */}
-          {componentTitle ? (
+          {Boolean(headJSX !== undefined) ? (
+            <div className="header-flexbox-container">
+              <div>{title}</div>
+              <div>
+                {headJSX()}
+                <span
+                  className="frx-dialog-root__close-icon"
+                  onClick={(e) => handleClose()}
+                >
+                  <CloseIcon />
+                </span>
+              </div>
+            </div>
+          ) : componentTitle ? (
             <React.Fragment>
               <label>{title.split(":")[0]}</label>:{" "}
               <span>{title.split(":")[1]}</span>

@@ -68,6 +68,7 @@ class GPM extends React.Component<any, any>{
             }
         ],
         searchInput: "",
+        selectedGroup:-1,
 
     }
     onClickTab = (selectedTabIndex: number) => {
@@ -97,6 +98,7 @@ class GPM extends React.Component<any, any>{
         });
         this.setState({
             newGroup: true,
+            selectedGroup: param,
         })
     }
     addNewGroup = () => {
@@ -190,9 +192,9 @@ class GPM extends React.Component<any, any>{
                                         this.state.groupsData.map((group, key) => (
                                             (this.state.searchInput == "" || (this.state.searchInput != "" && group.label.indexOf(this.state.searchInput) > -1)) ? (
                                                 (this.state.activeTabIndex == 0 && group.is_archived == false) ?
-                                                    <Groups key={key} id={group.id} title={group.label} statusType={group.status} selectGroup={this.selectGroup} />
+                                                    <Groups key={key} id={group.id} title={group.label} statusType={group.status} selectGroup={this.selectGroup} isSelected={this.state.selectedGroup==group.id}/>
                                                     : (this.state.activeTabIndex == 1 && group.is_archived == true) ?
-                                                        <Groups key={key} id={group.id} title={group.label} statusType={group.status} selectGroup={this.selectGroup} />
+                                                        <Groups key={key} id={group.id} title={group.label} statusType={group.status} selectGroup={this.selectGroup} isSelected={this.state.selectedGroup==group.id} />
                                                         : ""
                                             ) : ""
                                         ))
