@@ -129,10 +129,15 @@ class PaGroupDescriptionManagement extends React.Component<any, any>{
         this.props.getPaGrouptDescriptions(apiDetails).then((json) => {
 
             let tmpData = json.payload.data;
-
+            let groupProp = "";
+            if (this.props.formulary_lob_id==1){
+                groupProp= "id_mcr_base_pa_group_description"
+            }else if (this.props.formulary_lob_id==4){
+                groupProp = "id_base_pa_group_description"; 
+            }
             var result = tmpData.map(function (el) {
                 var element = {};
-                element["id"] = el.id_mcr_base_pa_group_description; 
+                element["id"] = el[groupProp]; 
                 element["label"] = el.pa_group_description_name;
                 element["status"] = el.is_setup_complete ? "completed" : "warning";
                 element["is_archived"] = el.is_archived;
