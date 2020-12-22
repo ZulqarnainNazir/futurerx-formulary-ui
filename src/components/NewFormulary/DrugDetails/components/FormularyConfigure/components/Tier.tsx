@@ -107,26 +107,28 @@ class Tier extends React.Component<any, tabsState> {
 
     const TierDefinationData = this.props.getTier(apiDetails).then((json => {
       //debugger;
-      let tmpData = json.payload.data;
-      var tierOption: any[] = [];
-      var result = tmpData.map(function (el) {
-        var element = Object.assign({}, el);
-        tierOption.push(element)
-        element.is_validated = "false";
-        if (element.added_count > 0) {
-          element.is_validated = "true";
+      if (json.payload && json.payload.data) {
+        let tmpData = json.payload.data;
+        var tierOption: any[] = [];
+        var result = tmpData.map(function (el) {
+          var element = Object.assign({}, el);
+          tierOption.push(element)
+          element.is_validated = "false";
+          if (element.added_count > 0) {
+            element.is_validated = "true";
+          }
+          return element;
+        })
+        if (tierOption.length > 0) {
+          let lastTier = tierOption[tierOption.length - 1];
+          this.state.newTierId = lastTier.id_tier + 1;
         }
-        return element;
-      })
-      if (tierOption.length > 0) {
-        let lastTier = tierOption[tierOption.length - 1];
-        this.state.newTierId = lastTier.id_tier + 1;
+        this.setState({
+          tierDefinationColumns: TierColumns,
+          tierDefinationData: result,
+          tierOption: tierOption
+        })
       }
-      this.setState({
-        tierDefinationColumns: TierColumns,
-        tierDefinationData: result,
-        tierOption: tierOption
-      })
     }))
   }
 
@@ -136,17 +138,19 @@ class Tier extends React.Component<any, tabsState> {
     apiDetails['pathParams'] = this.props?.formulary_type_id + "/0/" + this.props?.formulary_id;
 
     const TierDefinationData = this.props.getTierLabels(apiDetails).then((json => {
-      let tmpData = json.payload.data;
-      let labelNames: any[] = [];
-      var result = tmpData.map(function (el) {
-        var element = Object.assign({}, el);
-        labelNames.push(element.tier_label);
-        return element;
-      })
-      this.setState({
-        tierLabels: result,
-        tierLabelNames: labelNames
-      })
+      if (json.payload && json.payload.data) {
+        let tmpData = json.payload.data;
+        let labelNames: any[] = [];
+        var result = tmpData.map(function (el) {
+          var element = Object.assign({}, el);
+          labelNames.push(element.tier_label);
+          return element;
+        })
+        this.setState({
+          tierLabels: result,
+          tierLabelNames: labelNames
+        })
+      }
     }))
   }
 
@@ -278,7 +282,7 @@ class Tier extends React.Component<any, tabsState> {
           showMessage('Tier Added', 'success');
           const TierColumns = tierDefinationColumns();
           this.populateTierDetails(TierColumns);
-        }else{
+        } else {
           showMessage('Error: Failed to add tier', 'error');
         }
       }))

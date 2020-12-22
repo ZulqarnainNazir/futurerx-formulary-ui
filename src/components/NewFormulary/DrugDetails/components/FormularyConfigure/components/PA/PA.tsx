@@ -33,6 +33,7 @@ function mapDispatchToProps(dispatch) {
 function mapStateToProps(state){
   return {
     current_formulary: state.application.formulary,
+    paData: state.paReducer.data,
   }
 }
 
@@ -88,10 +89,41 @@ class PA extends React.Component<any, any>  {
     }
   };
 
+  componentWillReceiveProps(nextProps) {
+    debugger;
+    console.log('TIER: componentWillReceiveProps', nextProps);
+    
+    let tmpData = nextProps.paData;
+    if (tmpData && Array.isArray(tmpData) && tmpData.length > 0) {
+      var tierOption: any[] = [];
+      var result = tmpData.map(function (el) {
+        var curRow=[ el["pa_type_name"],
+        el["total_group_description_count"],
+        el["added_group_description_count"],
+        el["removed_group_description_count"],
+        el["total_drug_count"],
+        el["added_drug_count"],
+        el["removed_drug_count"]
+      ]
+        return curRow;
+      })
+      // if (tierOption.length > 0) {
+      //   let lastTier = tierOption[tierOption.length - 1];
+      //   this.state.newTierId = lastTier.id_tier + 1;
+      // }
+      this.setState({
+       // tierDefinationColumns: TierColumns,
+        panelGridValue: result,
+        //tierOption: tierOption
+      })
+    }
+  }
+
   componentDidMount() {
     
     this.props.getPaSummary(this.props.current_formulary.id_formulary).then((json => {
       //
+
       let tmpData = json.payload && json.payload.result?json.payload.result:[];
       
       var rows = tmpData.map(function(el) {

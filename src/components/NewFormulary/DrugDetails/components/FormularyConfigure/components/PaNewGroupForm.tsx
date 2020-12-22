@@ -22,7 +22,7 @@ import { Box, Grid, Input } from '@material-ui/core';
 import PAGroupHeader from './PAGroupHeader';
 import AlertMessages from "./AlertMessages"
 import RadioButton from '../../../../../shared/Frx-components/radio-button/RadioButton';
-import { getPaGrouptDescription, getPaTypes, getDrugLists, postPAGroupDescription } from "../../../../../../redux/slices/formulary/pa/paActionCreation";
+import { getPaGrouptDescription, getPaTypes, getDrugLists,postPAGroupDescription,putPAGroupDescription } from "../../../../../../redux/slices/formulary/pa/paActionCreation";
 
 interface Props {
   tooltip?: string;
@@ -149,13 +149,15 @@ function mapDispatchToProps(dispatch) {
   return {
     getPaGrouptDescription: (a) => dispatch(getPaGrouptDescription(a)),
     postPAGroupDescription: (a) => dispatch(postPAGroupDescription(a)),
+    putPAGroupDescription: (a) => dispatch(putPAGroupDescription(a)),
   };
 }
 
 function mapStateToProps(state) {
   return {
     formulary_id: state.application.formulary_id,
-    PaGDData: state.paReducer.data,
+    client_id: state.application.clientId,
+    PaGDData: state.paReducer.description,
     version: state.paVersion.paVersion,
   };
 }
@@ -193,29 +195,32 @@ function NewGroup(props: any) {
       id_indication_indicator: e
     });
   };
-  const handleSubmit = (e) => {
-    e.preventDefault()
-    console.log(formData)
-    props.saveGDM({ formularyId: props.formulary_id, latestId: latestId, body: formData })
-  };
+ 
 
   const saveGroupDescription = (is_validation: boolean) => {
 
     let requestData = {};
-    //debugger;
-    requestData['apiPart'] = 'api/1/mcr-pa-group-description/1';
-    requestData['pathParams'] = '/3086?entity_id=0';
-    requestData['keyVals'] = [{ key: 'index', value: 0 }, { key: 'limit', value: 10 }, { key: 'entity_id', value: 1262 }];
+    
+    debugger;
+    //requestData['keyVals'] = [{ key: 'index', value: 0 }, { key: 'limit', value: 10 }, { key: 'entity_id', value: 1262 }];
     formData["is_validation_required"] = is_validation;
     requestData['messageBody'] = formData;
-    props.postPAGroupDescription(requestData);
+    if (props.formType==1){
+      requestData['apiPart'] = 'api/1/mcr-pa-group-description';
+      requestData['pathParams'] = '/'+formData["id_pa_group_description"]+'/'+props?.formulary_id + '?entity_id=0';
+      props.putPAGroupDescription(requestData);
+    }else{
+      requestData['apiPart'] = 'api/1/mcr-pa-group-description/'+props.client_id;
+      requestData['pathParams'] = '/'+props?.formulary_id + '?entity_id=0';
+      props.postPAGroupDescription(requestData);
+    }
+    
   };
 
   const onChange = (e) => {
     console.log(props.version);
     const latestVerion = Object.keys(props.version).length > 0 ? props.version[Number(e)]?.id_pa_group_description : 0;
     setLatestId(latestVerion)
-    props.getPaGrouptDescription(latestVerion)
     if (Object.keys(props.PaGDData).length > 0) {
       updateFormData({
         ...formData,
@@ -250,7 +255,7 @@ function NewGroup(props: any) {
       <div className="panel header">
         <span>{props.title ? props.title : formData.pa_group_description_name}</span>
       </div>
-      <PAGroupHeader popuptitle={props.title ? props.title : formData.pa_group_description_name} onChange={onChange} />
+      <PAGroupHeader popuptitle={props.title ? props.title : formData.pa_group_description_name} onChange={onChange} /> 
       <div className="inner-container pa-new-group-form">
         <div className="setting-1">
           <span>What file type is this group description for? *</span>
