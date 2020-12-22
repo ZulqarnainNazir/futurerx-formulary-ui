@@ -37,7 +37,7 @@ export interface GeneralOptions {
   submission_months: any[];
   classification_systems: any[];
   states: any[];
-  prior_year_resemble_formularies: any[];
+  clone_source_formularies: any[];
 }
 
 const generalOptionsInitialState: GeneralOptions = {
@@ -46,7 +46,7 @@ const generalOptionsInitialState: GeneralOptions = {
   submission_months: [],
   classification_systems: [],
   states: [],
-  prior_year_resemble_formularies: [],
+  clone_source_formularies: [],
 };
 
 export interface MedicareOptions {
@@ -100,6 +100,8 @@ const setup = createSlice({
       state.generalOptions.contractYear = payload?.contractYear;
       state.generalOptions.classification_systems =
         payload?.classification_systems;
+      state.generalOptions.clone_source_formularies =
+        payload?.clone_source_formularies;
 
       state.isLoading = false;
       state.error = null;
