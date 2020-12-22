@@ -6,11 +6,18 @@ import Button from '../../../../../shared/Frx-components/button/Button';
 import {connect} from "react-redux";
 
 const tierCount = {
-  medicare: [1,2,3,4,5,6,7],
+  medicare: 7,
   commercial: 20
 }
 class FormularyTiers extends React.Component<any, any> {
-  
+  getTierDropDownVal = () => {
+    const type = this.props.generalInfo.type.toLowerCase();
+    const val:any = [];
+    for(let i=1; i<=tierCount[type]; i++){
+      val.push(i)
+    }
+    return val;
+  }
   getAllTierOptions = () => {
     let options = [] as any;
     let htmlElement:any;
@@ -52,7 +59,7 @@ class FormularyTiers extends React.Component<any, any> {
     let htmlElement = <DropDown
         className="formulary-type-dropdown number-of-tier-dropdown"
         placeholder="Select Tiers"
-        options={tierCount.medicare}
+        options={this.getTierDropDownVal()}
         value={selectedCount}
         onChange={this.props.selectTier}
       />

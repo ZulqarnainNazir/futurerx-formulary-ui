@@ -9,20 +9,37 @@ class SupplementalModels extends React.Component<any, any> {
     getChecked = (id) => {
         let isChecked = false;
         if(this.props.supplemental){
-            isChecked = this.props.supplemental.indexOf(id) !== -1;
+            isChecked = this.props.supplemental.supplemental_benefits.indexOf(id) !== -1;
         }
         return isChecked;
     }
     renderCheckbox = () => {
         let checkbox = [];
+
         if(this.props.supplementalOptions){
+
             checkbox = this.props.supplementalOptions.map(el => {
                 return <Grid item xs={4}>
-                    <Checkbox className="custom-checkbox mb-16" onChange={() => this.props.supplementalCheck(el.id_supplemental_benefit)} checked={this.getChecked(el.id_supplemental_benefit)}>{el.supplemental_benefit}</Checkbox>
+                    <Checkbox 
+                        className="custom-checkbox mb-16" 
+                        onChange={() => this.supplementalCheck(el.id_supplemental_benefit)} 
+                        checked={this.getChecked(el.id_supplemental_benefit)}>
+                            {el.supplemental_benefit}
+                    </Checkbox>
                 </Grid>
             })
         }
         return checkbox; 
+    }
+    supplementalCheck = (id:any) => {
+        const updatedSupplementalCheck:any = {...this.props.supplemental};
+        const index = updatedSupplementalCheck.supplemental_benefits.indexOf(id);
+        if(index > -1){
+          updatedSupplementalCheck.supplemental_benefits.splice(index,1);
+        }else{
+          updatedSupplementalCheck.supplemental_benefits.push(id)
+        }
+        this.props.supplementalCheck(updatedSupplementalCheck);
     }
   render() {
     return (
@@ -31,15 +48,18 @@ class SupplementalModels extends React.Component<any, any> {
         <div className="formulary-design-fields-wrapper setup-label">
         <Grid container>
             <Grid item xs={11}>
-                <Grid container>
-                    {this.renderCheckbox()}
-                </Grid>
+                <Checkbox 
+                    className="custom-checkbox mb-16" 
+                    onChange={() => this.props.checkUncheckAllSupplemental('uncheck')} 
+                    checked={true}>
+                        N/A
+                </Checkbox>
             </Grid>
             <Grid item xs={1}>
                 <ul>
                     <li>
                     <Box display="flex" justifyContent="flex-end" className="compare-btn">
-                        {this.props.supplemental.length > 0 ? (
+                        {this.props.supplemental.supplemental_benefits.length > 0 ? (
                             <Button label="Uncheck All" className="uncheck-btn" onClick={() => this.props.checkUncheckAllSupplemental('uncheck')}/>
                         ) : (
                             <Button label="Check All" className="uncheck-btn" onClick={() => this.props.checkUncheckAllSupplemental('check')}/>
@@ -47,6 +67,13 @@ class SupplementalModels extends React.Component<any, any> {
                     </Box>
                     </li>
                 </ul>
+            </Grid>
+        </Grid>
+        <Grid container>
+            <Grid item xs={11}>
+                <Grid container>
+                    {this.renderCheckbox()}
+                </Grid>
             </Grid>
         </Grid>
         </div>
