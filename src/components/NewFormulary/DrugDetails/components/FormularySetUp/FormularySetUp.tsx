@@ -3,6 +3,7 @@ import { connect } from "react-redux";
 import "./FormularySetUp.scss";
 import GeneralInformation from "./components/GeneralInformation";
 import FormularyDesign from "./components/FormularyDesign";
+import FormularyDesignCommercial from "./components/FormularyDesignCommercial";
 import FormularyTiers from "./components/FormularyTiers";
 import MedicareInformation from "./components/MedicareInformation";
 import SupplementalModels from "./components/SupplementalModels";
@@ -41,7 +42,7 @@ class FormularySetUp extends React.Component<any, any> {
       service_year: "",
       description: "",
       classification_system: "",
-      is_closed_formulary: false,
+      is_closed_formulary: null,
       isState: false,
       selectedState: "",
       state_id: (null as unknown) as number,
@@ -62,6 +63,7 @@ class FormularySetUp extends React.Component<any, any> {
     supplemental_benefit_info: {
       supplemental_benefits: [] as any,
     },
+    designOptions: [],
     tiers: [],
     edit_info: {
       edits: [],
@@ -135,8 +137,7 @@ class FormularySetUp extends React.Component<any, any> {
           description: newProps.formulary.formulary_info.formulary_description,
           classification_system:
             newProps.formulary.formulary_info.id_classification_system,
-          is_closed_formulary:
-            newProps.formulary.formulary_info.is_closed_formulary,
+          is_closed_formulary: newProps.formulary.formulary_info.is_closed_formulary,
           medicare_types_ref_other: false,
         },
         medicare_contract_type_info: medeicareContract,
@@ -148,6 +149,7 @@ class FormularySetUp extends React.Component<any, any> {
         tiers: [...newProps.formulary.tiers],
         fetchedEditInfo: newProps.formulary.edit_info,
         edit_info: this.getEditInfo(newProps.formulary.edit_info),
+        designOptions: [...newProps.setupOptions.designOptions],
         setupOptions: newProps.setupOptions,
       });
     }
@@ -264,7 +266,8 @@ class FormularySetUp extends React.Component<any, any> {
     _section
   ) => {
     const newObj = { ...this.state.generalInformation };
-    newObj[event.target.name] = event.target.value;
+    const val = event.target.value === 'true' ? true : event.target.value === 'false' ? false : event.target.value
+    newObj[event.target.name] = val;
     this.setState({
       generalInformation: newObj,
     });
@@ -412,6 +415,12 @@ class FormularySetUp extends React.Component<any, any> {
                 ) : null}
                 {this.state.generalInformation.type !== "Commercial" ? (
                   <FormularyDesign
+                    edit_info={this.state.edit_info}
+                    formularyRadioChange={this.formularyRadioChangeHandler}
+                  />
+                ) : null}
+                {this.state.generalInformation.type === "Commercial" ? (
+                  <FormularyDesignCommercial
                     edit_info={this.state.edit_info}
                     formularyRadioChange={this.formularyRadioChangeHandler}
                   />
