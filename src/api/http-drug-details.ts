@@ -66,14 +66,33 @@ export const GET_SO_CRITERIA_LIST = "api/1/criteria-list-sboth/";
 export const GET_DRUG_SUMMARY_SSM = "api/1/formulary-drug-summary-ssm/";
 export const GET_SSM_FORMULARY_DRUGS = "api/1/formulary-drugs-ssm/";
 
+// AL TAB
+export const GET_DRUG_SUMMARY_AL = "api/1/formulary-drug-summary-al/";
+
+// GL TAB
+export const GET_DRUG_SUMMARY_GL = "api/1/formulary-drug-summary-gl/"
+
+// ICD TAB
+export const GET_DRUG_SUMMARY_ICD = "api/1/formulary-drug-summary-icdl/"
+
+// PN TAB
+export const GET_DRUG_SUMMARY_PN = "api/1/formulary-drug-summary-phnw/"
+
+// PT TAB
+export const GET_DRUG_SUMMARY_PT = "api/1/formulary-drug-summary-prtx/";
+
+// POS TAB
+export const GET_DRUG_SUMMARY_POS = "api/1/formulary-drug-summary-pos/"
+
+// PR TAB
+export const GET_DRUG_SUMMARY_PR = "api/1/formulary-drug-summary-patrs/";
+
 export const KEY_ENTITY_ID = "entity_id";
 export const KEY_INDEX = "index";
 export const KEY_LIMIT = "limit";
 
 export const TYPE_REPLACE = "replace";
 export const TYPE_REMOVE = "remove";
-
-const BEARER_KEY = "b8625daa-ccbd-4167-8cde-673de141fd11";
 
 export const buildUrl = ({ refUrl = BASE_URL1, apiDetails }) => {
   let apiPart = apiDetails.apiPart;
@@ -95,11 +114,6 @@ export const buildUrl = ({ refUrl = BASE_URL1, apiDetails }) => {
 export const getHeaders = () => {
   return {
     headers: REQUEST_HEADER,
-    // headers: {
-    //   Authorization: `Bearer ${BEARER_KEY}`,
-    //   Accept: "application/json",
-    //   "Content-Type": "application/json;charset=UTF-8",
-    // },
   };
 };
 
@@ -108,11 +122,6 @@ export const postHeaders = (apiDetails) => {
     method: "POST",
     body: JSON.stringify(apiDetails?.messageBody),
     headers: REQUEST_HEADER,
-    // headers: {
-    //   Authorization: `Bearer ${BEARER_KEY}`,
-    //   Accept: "application/json",
-    //   "Content-Type": "application/json;charset=UTF-8",
-    // },
   };
 };
 
