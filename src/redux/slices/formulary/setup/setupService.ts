@@ -57,7 +57,7 @@ export async function checkNameExist(name: string): Promise<boolean | any> {
 }
 
 export function composePostBody(input: any): any {
-  console.log("***** composePostBody");
+  //console.log("***** composePostBody");
 
   const payload: any = {};
   payload.formulary_info = {};
@@ -168,7 +168,7 @@ export async function createFormulary(payload: any): Promise<any> {
     return null;
   } catch (error) {
     console.log("***** createFormulary - Error");
-    console.log(error);
+    //console.log(error);
     const { response } = error;
     const { request, ...errorObject } = response; // take everything but 'request'
     console.log(errorObject);
