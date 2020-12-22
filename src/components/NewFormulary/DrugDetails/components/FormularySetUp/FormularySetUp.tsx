@@ -26,7 +26,7 @@ import {
 } from "../../../../.././redux/slices/formulary/setup/setupOptionsSlice";
 import { ToastContainer } from "react-toastify";
 import showMessage from "../../../Utils/Toast";
-import { trim } from "lodash";
+import { trim,throttle } from "lodash";
 import { Save } from "@material-ui/icons";
 
 class FormularySetUp extends React.Component<any, any> {
@@ -85,7 +85,7 @@ class FormularySetUp extends React.Component<any, any> {
   }
 
   manageFormularyType(type: number, id: number) {
-    console.log(" Manage - TYPE : " + type + " ID : " + id);
+    // console.log(" Manage - TYPE : " + type + " ID : " + id);
 
     if (type === -1) {
       this.props.fetchGeneralOptions({ type: 1, id: -1 });
@@ -331,9 +331,9 @@ class FormularySetUp extends React.Component<any, any> {
       medicare_contract_type_info: this.state.medicare_contract_type_info,
       tiers: this.state.tiers,
     };
-    console.log("Calling Save................");
+    //console.log("Calling Save................");
     this.props.saveFormulary(input).then((arg) => {
-      console.log("SAVE Callback ", arg?.payload);
+      //console.log("SAVE Callback ", arg?.payload);
       if (arg?.payload?.type > 0 && arg?.payload?.id > 0) {
         console.log(
           "REFRESH.... TYPE : " +
@@ -485,12 +485,23 @@ class FormularySetUp extends React.Component<any, any> {
   }
 }
 
+var throt_fun = throttle(
+  function (message,messageType) {
+    //console.log(">>>>>>>>...");
+    showMessage(message, messageType);
+  },
+  800,
+  { leading: true, trailing:false }
+);
+
 const mapStateToProps = (state) => {
   //  console.log("SP  -  -  -  -  -  -  -  -  -  -  -  - STATE");
   //  console.log(state?.setup?.messageType +" - "+ state?.setup?.message  );
   if (state?.setup?.messageType !== "" && state?.setup?.message !== "") {
     // console.log(">>>>>>>>>>> " + state?.setup?.messageType +" | "+state?.setup?.message);
-    showMessage(state?.setup?.message, state?.setup?.messageType);
+    // showMessage(state?.setup?.message, state?.setup?.messageType);
+    // console.log("--------");
+    throt_fun(state?.setup?.message, state?.setup?.messageType);
   }
   return {
     mode: state?.application?.mode,
