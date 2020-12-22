@@ -1,6 +1,8 @@
 import axios from "axios";
 import { Formulary } from "./formulary";
 import { BASE_URL1 } from "../../../../api/http-helper";
+import { REQUEST_HEADER } from "../../../../api/http-commons";
+
 import {
   DesignOptions,
   GeneralOptions,
@@ -8,11 +10,6 @@ import {
   SupplementalOptions,
 } from "./setupOptionsSlice";
 
-const headers = {
-  Authorization: "Bearer 5d123376-9888-4a4f-a167-9494485fe10d",
-  Accept: "application/json",
-  "Content-Type": "application/json;charset=UTF-8",
-};
 
 export async function getGeneralOptions(
   type: number,
@@ -27,13 +24,13 @@ export async function getGeneralOptions(
   }
 
   const request0 = axios.get(url0, {
-    headers: headers,
+    headers: REQUEST_HEADER,
   });
   const request1 = axios.get(url1, {
-    headers: headers,
+    headers: REQUEST_HEADER,
   });
   const request2 = axios.get(url2, {
-    headers: headers,
+    headers: REQUEST_HEADER,
   });
 
   return await axios
@@ -76,7 +73,7 @@ export async function getSubMthsOptions(
   let url = `${BASE_URL1}api/1/formulary-submission-months/${year}`;
   try {
     const response = await axios.get(url, {
-      headers: headers,
+      headers: REQUEST_HEADER,
     });
     // console.log("***** getSubMthsOptions  - Success");
     // console.log(response);
@@ -100,7 +97,7 @@ export async function getStatesOptions(
   }
   try {
     const response = await axios.get(url, {
-      headers: headers,
+      headers: REQUEST_HEADER,
     });
     //  console.log("***** getStatesOptions  - Success");
     //  console.log(response);
@@ -131,7 +128,7 @@ export async function getMedicareOptions(
   }
   try {
     const response = await axios.get(url, {
-      headers: headers,
+      headers: REQUEST_HEADER,
     });
     //console.log("***** SETUP getMedicareOptions  - Success");
     //console.log(response);
@@ -156,7 +153,7 @@ export async function getDesignOptions(
   }
   try {
     const response = await axios.get(url, {
-      headers: headers,
+      headers: REQUEST_HEADER,
     });
     //console.log("***** SETUP getDesignOptions  - API");
     //console.log(response);
@@ -181,7 +178,7 @@ export async function getSupplementalOptions(
   }
   try {
     const response = await axios.get(url, {
-      headers: headers,
+      headers: REQUEST_HEADER,
     });
     //console.log("***** SETUP getDesignOptions  - API");
     //console.log(response);
@@ -210,7 +207,7 @@ export async function getTierOptions(
   }
   try {
     const response = await axios.get(url, {
-      headers: headers,
+      headers: REQUEST_HEADER,
     });
     //console.log("***** SETUP getDesignOptions  - API");
     //console.log(response);

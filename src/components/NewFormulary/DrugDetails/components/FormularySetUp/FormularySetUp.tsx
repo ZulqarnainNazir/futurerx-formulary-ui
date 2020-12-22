@@ -13,7 +13,7 @@ import FrxLoader from "../../../../shared/FrxLoader/FrxLoader";
 import {
   fetchSelectedFormulary,
   verifyFormularyName,
-  saveFormulary
+  saveFormulary,
 } from "../../../../.././redux/slices/formulary/setup/setupSlice";
 import { Formulary } from "../../../../../redux/slices/formulary/setup/formulary";
 import {
@@ -25,9 +25,10 @@ import {
   fetchSubMthsOptions,
   fetchStatesOptions,
 } from "../../../../.././redux/slices/formulary/setup/setupOptionsSlice";
-import { ToastContainer } from 'react-toastify';
+import { ToastContainer } from "react-toastify";
 import showMessage from "../../../Utils/Toast";
-import { trim } from "lodash";
+import { trim,throttle } from "lodash";
+import { Save } from "@material-ui/icons";
 
 class FormularySetUp extends React.Component<any, any> {
   state = {
@@ -86,7 +87,7 @@ class FormularySetUp extends React.Component<any, any> {
   }
 
   manageFormularyType(type: number, id: number) {
-    console.log(" TYPE :: " + type);
+    // console.log(" Manage - TYPE : " + type + " ID : " + id);
 
     if (type === -1) {
       this.props.fetchGeneralOptions({ type: 1, id: -1 });
@@ -221,7 +222,7 @@ class FormularySetUp extends React.Component<any, any> {
       this.props.verifyFormularyName(e.currentTarget.value);
     }
   };
-  
+
   onOtherMedicareHandler = (e) => {
     const custom = { ...this.state.medicare_contract_type_info };
     custom.custom_medicare_contract_type.medicare_contract_type =
@@ -281,24 +282,24 @@ class FormularySetUp extends React.Component<any, any> {
     this.setState({
       [section]: newObj,
     });
-  }
-  medicareCheck = (getObject:any) => {
+  };
+  medicareCheck = (getObject: any) => {
     this.setState({
-      medicare_contract_type_info: getObject
-    })
-  }
-  onMedicareOtherCheck = (getObject:any) => {
+      medicare_contract_type_info: getObject,
+    });
+  };
+  onMedicareOtherCheck = (getObject: any) => {
     this.setState({
-      generalInformation: getObject
-    })
-  }
-  supplementalCheck = (getObject:any) => {
+      generalInformation: getObject,
+    });
+  };
+  supplementalCheck = (getObject: any) => {
     this.setState({
-      supplemental_benefit_info: getObject
-    })
-  }
+      supplemental_benefit_info: getObject,
+    });
+  };
   onSave = (e) => {
-    console.log("  SAVE  ", e);
+    console.log("  SAVE ", e);
     if (this.props.mode === "NEW") {
       let msg: string[] = [];
       if (this.state.generalInformation.type_id === "") {
@@ -320,7 +321,6 @@ class FormularySetUp extends React.Component<any, any> {
         msg.forEach((m) => {
           showMessage(m, "info");
         });
-        //showMessage(msg[0], 'error');
         return;
       }
     }
@@ -334,7 +334,20 @@ class FormularySetUp extends React.Component<any, any> {
       medicare_contract_type_info: this.state.medicare_contract_type_info,
       tiers: this.state.tiers,
     };
-    this.props.saveFormulary(input);
+    //console.log("Calling Save................");
+    this.props.saveFormulary(input).then((arg) => {
+      //console.log("SAVE Callback ", arg?.payload);
+      if (arg?.payload?.type > 0 && arg?.payload?.id > 0) {
+        console.log(
+          "REFRESH.... TYPE : " +
+            arg?.payload?.type +
+            " ID : " +
+            arg?.payload?.id
+        );
+        this.manageFormularyType(arg?.payload?.type, arg?.payload?.id);
+        this.props.fetchSelectedFormulary(arg?.payload?.id);
+      }
+    });
   };
   onCheckUncheckAllSupplementalHandler = (val) => {
     if (val === "uncheck") {
@@ -406,7 +419,10 @@ class FormularySetUp extends React.Component<any, any> {
                 {this.state.generalInformation.type !== "Commercial" ? (
                   <MedicareInformation
                     allMedicareOptions={this.state.medicare_contract_type_info}
-                    medicareOptions={this.state.medicare_contract_type_info.medicare_contract_types}
+                    medicareOptions={
+                      this.state.medicare_contract_type_info
+                        .medicare_contract_types
+                    }
                     medicareCheck={this.medicareCheck}
                     generalInfo={this.state.generalInformation}
                     onMedicareOtherCheck={this.onMedicareOtherCheck}
@@ -478,11 +494,23 @@ class FormularySetUp extends React.Component<any, any> {
   }
 }
 
+var throt_fun = throttle(
+  function (message,messageType) {
+    //console.log(">>>>>>>>...");
+    showMessage(message, messageType);
+  },
+  800,
+  { leading: true, trailing:false }
+);
+
 const mapStateToProps = (state) => {
   //  console.log("SP  -  -  -  -  -  -  -  -  -  -  -  - STATE");
   //  console.log(state?.setup?.messageType +" - "+ state?.setup?.message  );
-  if(state?.setup?.messageType!=="" && state?.setup?.message !==""){
-    showMessage(state?.setup?.message, state?.setup?.messageType);
+  if (state?.setup?.messageType !== "" && state?.setup?.message !== "") {
+    // console.log(">>>>>>>>>>> " + state?.setup?.messageType +" | "+state?.setup?.message);
+    // showMessage(state?.setup?.message, state?.setup?.messageType);
+    // console.log("--------");
+    throt_fun(state?.setup?.message, state?.setup?.messageType);
   }
   return {
     mode: state?.application?.mode,

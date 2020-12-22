@@ -186,7 +186,7 @@ const setup = createSlice({
 export const fetchGeneralOptions = createAsyncThunk(
   "setupOptions",
   async (input: TypeAndId, { dispatch }) => {
-    console.log("***** fetchGeneralOptions : " + input);
+    //console.log("***** fetchGeneralOptions : " + input);
     try {
       dispatch(getGeneralOptionsStart());
       const genOptions: any = await getGeneralOptions(input.type, input.id);
@@ -234,7 +234,7 @@ export const fetchStatesOptions = createAsyncThunk(
 export const fetchMedicareOptions = createAsyncThunk(
   "setupOptions",
   async (input: TypeAndId, { dispatch }) => {
-    console.log("***** fetchMedicareOptions  " + input);
+    // console.log("***** fetchMedicareOptions  " + input);
     try {
       dispatch(getMedicareOptionsStart());
       const options: any = await getMedicareOptions(input.type, input.id);
@@ -250,7 +250,7 @@ export const fetchMedicareOptions = createAsyncThunk(
 export const fetchDesignOptions = createAsyncThunk(
   "setupOptions",
   async (input: TypeAndId, { dispatch }) => {
-    console.log("***** fetchDesignOptions AC ");
+    // console.log("***** fetchDesignOptions AC ");
     try {
       dispatch(getDesignOptionsStart());
       const options: any = await getDesignOptions(input.type, input.id);
@@ -295,43 +295,43 @@ export const fetchSupplementalOptions = createAsyncThunk(
   }
 );
 
-export const manageFormularyType = createAsyncThunk(
-  "setupOptions",
-  async (input: TypeAndId, { dispatch }) => {
-    const type = input.type;
-    const id = input.id;
+// export const manageFormularyType = createAsyncThunk(
+//   "setupOptions",
+//   async (input: TypeAndId, { dispatch }) => {
+//     const type = input.type;
+//     const id = input.id;
 
-    console.log(" TYPE :: " + type + " - " + id);
+//     console.log(" TYPE :: " + type + " - " + id);
 
-    if (type === -1) {
-      dispatch(fetchGeneralOptions({ type: 1, id: -1 }));
-      return;
-    }
+//     if (type === -1) {
+//       dispatch(fetchGeneralOptions({ type: 1, id: -1 }));
+//       return;
+//     }
 
-    dispatch(fetchGeneralOptions({ type: type, id: id }));
-    dispatch(fetchDesignOptions({ type: type, id: id }));
-    dispatch(fetchTierOptions({ type: type, id: id }));
+//     dispatch(fetchGeneralOptions({ type: type, id: id }));
+//     dispatch(fetchDesignOptions({ type: type, id: id }));
+//     dispatch(fetchTierOptions({ type: type, id: id }));
 
-    if (type === 1) {
-      dispatch(fetchMedicareOptions({ type: type, id: id }));
-      dispatch(fetchSupplementalOptions({ type: type, id: id }));
-    } else if (type === 2) {
-      dispatch(fetchStatesOptions(type));
-      dispatch(fetchMedicareOptions({ type: type, id: id }));
-      dispatch(fetchSupplementalOptions({ type: type, id: id }));
-    } else if (type === 3) {
-      // TODO ... MEDICADE...
-      dispatch(fetchStatesOptions(0));
-    } else if (type === 4) {
-      // TODO ... MEDICADE...
-      dispatch(fetchStatesOptions(0));
-    } else if (type === 5) {
-    } else if (type === 6) {
-      // COMMERCIAL...
-    }
-    dispatch(fetchSubMthsOptions(2021));
-  }
-);
+//     if (type === 1) {
+//       dispatch(fetchMedicareOptions({ type: type, id: id }));
+//       dispatch(fetchSupplementalOptions({ type: type, id: id }));
+//     } else if (type === 2) {
+//       dispatch(fetchStatesOptions(type));
+//       dispatch(fetchMedicareOptions({ type: type, id: id }));
+//       dispatch(fetchSupplementalOptions({ type: type, id: id }));
+//     } else if (type === 3) {
+//       // TODO ... MEDICADE...
+//       dispatch(fetchStatesOptions(0));
+//     } else if (type === 4) {
+//       // TODO ... MEDICADE...
+//       dispatch(fetchStatesOptions(0));
+//     } else if (type === 5) {
+//     } else if (type === 6) {
+//       // COMMERCIAL...
+//     }
+//     dispatch(fetchSubMthsOptions(2021));
+//   }
+// );
 
 export const {
   getGeneralOptionsStart,
