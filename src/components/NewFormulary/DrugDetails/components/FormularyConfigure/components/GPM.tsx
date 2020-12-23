@@ -25,7 +25,12 @@ import { getStSummary, getStGrouptDescriptions, getStTypes, getStGrouptDescripti
 
 function mapStateToProps(state) {
     return {
-        formulary_id: state.application.formulary_id
+        formulary_id: state.application.formulary_id,
+        client_id: state.application.clientId,
+        current_formulary: state.application.formulary,
+        formulary: state?.application?.formulary,
+        formulary_lob_id: state?.application?.formulary_lob_id, //comme- 4, medicare-1 , medicate-2, exchnage -3 
+        formulary_type_id: state?.application?.formulary_type_id,
     }
 }
 
@@ -85,11 +90,20 @@ class GPM extends React.Component<any, any>{
 
     selectGroup = (param: any, groupType: string) => {
         this.props.cleanMessages({error:'',success:''})
-        this.props.getStGrouptDescriptionVersions(param).then((json) => {
+        let apiDetails= {};
+        apiDetails["lob_type"] = this.props.formulary_lob_id;
+        apiDetails['pathParams'] = param;
+
+        this.props.getStGrouptDescriptionVersions(apiDetails).then((json) => {
             let tmpData = json.payload.data;
             let dataLength = tmpData.length
             let latestVerion = tmpData.length > 0 ? tmpData[dataLength - 1].id_st_group_description : 0
-            this.props.getStGrouptDescription(latestVerion)
+            
+            let apiDetails= {};
+            apiDetails["lob_type"] = this.props.formulary_lob_id;
+            apiDetails['pathParams'] = latestVerion;
+
+            this.props.getStGrouptDescription(apiDetails)
             this.props.getSTGroupDetails({
                 formulary_id: this.props.formulary_id,
                 current_group_id: param,
@@ -110,15 +124,24 @@ class GPM extends React.Component<any, any>{
             current_group_id: 0,
             current_group_des_id: 0
         })
+
+        let apiDetails= {};
+        apiDetails["lob_type"] = this.props.formulary_lob_id;
+        apiDetails['pathParams'] = 0;
+
         this.props.cleanMessages({error:'',success:''})
-        this.props.getStGrouptDescriptions(this.props.formulary_id)
-        this.props.getStGrouptDescriptionVersions(0)
-        this.props.getStGrouptDescription(0)
+        this.props.getStGrouptDescriptions(apiDetails)
+        this.props.getStGrouptDescriptionVersions(apiDetails)
+        this.props.getStGrouptDescription(apiDetails)
         this.props.getStTypes(this.props.formulary_id)
     }
 
     componentDidMount() {
-        this.props.getStGrouptDescriptions(this.props.formulary_id).then((json) => {
+        let apiDetails= {};
+        apiDetails["lob_type"] = this.props.formulary_lob_id;
+        apiDetails['pathParams'] = this.props?.client_id + '?entity_id='+this.props?.formulary_id;
+
+        this.props.getStGrouptDescriptions(apiDetails).then((json) => {
             let tmpData = json.payload.data;
             var result = tmpData.map(function (el) {
                 var element = {};

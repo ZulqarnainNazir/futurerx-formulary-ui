@@ -23,6 +23,10 @@ import PAGroupHeader from './PAGroupHeader';
 import AlertMessages from "./AlertMessages"
 import RadioButton from '../../../../../shared/Frx-components/radio-button/RadioButton';
 import { getPaGrouptDescription, getPaTypes, getDrugLists,postPAGroupDescription,putPAGroupDescription } from "../../../../../../redux/slices/formulary/pa/paActionCreation";
+import SearchableDropdown from "../../../../../shared/Frx-components/SearchableDropdown";
+import { Tag } from "antd";
+import { ReactComponent as CrossCircleWhiteBGIcon } from "../../../../../../assets/icons/crosscirclewhitebg.svg";
+
 
 interface Props {
   tooltip?: string;
@@ -33,7 +37,9 @@ interface Props {
 const initialFormData = {
   is_validation_required: true,
   pa_group_description: '',
+  pa_criteria:'',
   file_type: 'FAOTC',
+  id_pa_type:'', 
   is_rx_drug_type: false,
   is_otc_drug_type: false,
   change_indicator: 0,
@@ -43,7 +49,6 @@ const initialFormData = {
   pa_criteria_change_indicator: '',
   is_additional_criteria_defined: false,
   is_suppress_criteria_dispaly_cms_approval: false,
-
   is_display_criteria_drugs_not_frf: false,
   id_indication_indicator: 1,
   off_label_uses: '',
@@ -156,6 +161,7 @@ function mapDispatchToProps(dispatch) {
 function mapStateToProps(state) {
   return {
     formulary_id: state.application.formulary_id,
+    formulary_lob_id: state?.application?.formulary_lob_id,
     client_id: state.application.clientId,
     PaGDData: state.paReducer.description,
     version: state.paVersion.paVersion,
@@ -169,6 +175,7 @@ function NewGroup(props: any) {
   const [latestId, setLatestId] = React.useState(props.latestVerion);
   const [panelColor, setPanelColor] = React.useState('');
   const handleChange = (e) => {
+    debugger;
     let tmp_value = e.target.value;
     if (e.target.value == 'true') {
       tmp_value = true;
@@ -204,16 +211,54 @@ function NewGroup(props: any) {
     debugger;
     //requestData['keyVals'] = [{ key: 'index', value: 0 }, { key: 'limit', value: 10 }, { key: 'entity_id', value: 1262 }];
     formData["is_validation_required"] = is_validation;
-    requestData['messageBody'] = formData;
-    if (props.formType==1){
-      requestData['apiPart'] = 'api/1/mcr-pa-group-description';
-      requestData['pathParams'] = '/'+formData["id_pa_group_description"]+'/'+props?.formulary_id + '?entity_id=0';
-      props.putPAGroupDescription(requestData);
+    requestData["lob_type"] = props.formulary_lob_id;
+    requestData['messageBody'] ={};
+    if (props.formulary_lob_id==1){
+      requestData['messageBody'] ['is_validation_required'] = formData['is_validation_required'];
+      requestData['messageBody'] ['file_type'] = formData['file_type'];
+      requestData['messageBody'] ['is_rx_drug_type'] = formData['is_rx_drug_type'];
+      requestData['messageBody'] ['is_otc_drug_type'] = formData['is_otc_drug_type'];
+      requestData['messageBody'] ['change_indicator'] = formData['change_indicator'];
+      requestData['messageBody'] ['excluded_drug_file'] = formData['excluded_drug_file'];
+      requestData['messageBody'] ['pa_group_description_name'] = formData['pa_group_description_name'];
+      requestData['messageBody'] ['mmp_pa_criteria'] = formData['mmp_pa_criteria'];
+      requestData['messageBody'] ['pa_criteria_change_indicator'] = formData['pa_criteria_change_indicator'];
+      requestData['messageBody'] ['is_additional_criteria_defined'] = formData['is_additional_criteria_defined'];
+      requestData['messageBody'] ['is_suppress_criteria_dispaly_cms_approval'] = formData['is_suppress_criteria_dispaly_cms_approval'];
+      requestData['messageBody'] ['is_display_criteria_drugs_not_frf'] = formData['is_display_criteria_drugs_not_frf'];
+      requestData['messageBody'] ['id_indication_indicator'] = formData['id_indication_indicator'];
+      requestData['messageBody'] ['off_label_uses'] = formData['off_label_uses'];
+      requestData['messageBody'] ['exclusion_criteria'] = formData['exclusion_criteria'];
+      requestData['messageBody'] ['required_medical_info'] = formData['required_medical_info'];
+      requestData['messageBody'] ['age_restrictions'] = formData['age_restrictions'];
+      requestData['messageBody'] ['prescriber_restrictions'] = formData['prescriber_restrictions'];
+      requestData['messageBody'] ['coverage_restrictions'] = formData['coverage_restrictions'];
+      requestData['messageBody'] ['other_criteria'] = formData['other_criteria'];
+
+      if (props.formType==1){
+        requestData['apiPart'] = 'api/1/mcr-pa-group-description';
+        requestData['pathParams'] = '/'+formData["id_pa_group_description"]+'/'+props?.formulary_id + '?entity_id=0';
+        props.putPAGroupDescription(requestData);
+      }else{
+        requestData['apiPart'] = 'api/1/mcr-pa-group-description/'+props.client_id;
+        requestData['pathParams'] = '/'+props?.formulary_id + '?entity_id=0';
+        props.postPAGroupDescription(requestData);
+      }
     }else{
-      requestData['apiPart'] = 'api/1/mcr-pa-group-description/'+props.client_id;
-      requestData['pathParams'] = '/'+props?.formulary_id + '?entity_id=0';
-      props.postPAGroupDescription(requestData);
+      requestData['messageBody'] ['is_validation_required'] = formData['is_validation_required'];
+      requestData['messageBody'] ['pa_group_description_name'] = formData['pa_group_description_name'];
+      requestData['messageBody'] ['pa_criteria'] = formData['pa_criteria'];
+      requestData['messageBody'] ['id_pa_type'] = Number(formData['id_pa_type']);
+      requestData['messageBody'] ['is_additional_criteria_defined'] = formData['is_additional_criteria_defined'];
+      if (props.formType==1){
+        requestData['pathParams'] = '/'+formData["id_pa_group_description"]+'/'+props?.formulary_id + '?entity_id=0';
+        props.putPAGroupDescription(requestData);
+      }else{
+        requestData['pathParams'] = '/'+props?.formulary_id + '?entity_id=0';
+        props.postPAGroupDescription(requestData);
+      }
     }
+    
     
   };
 
@@ -236,6 +281,13 @@ function NewGroup(props: any) {
     });
   };
 
+  const [isAdditionalCriteriaPopupOpen, setAdditionalCriteriaPopup] = useState(
+    false
+  );
+  const additionalCriteriaHandler = () => {
+    setAdditionalCriteriaPopup(!isAdditionalCriteriaPopupOpen);
+  };
+
   useEffect(() => {
     //debugger;
     setPanelColor(props.editable ? '-green' : '')
@@ -256,6 +308,7 @@ function NewGroup(props: any) {
         <span>{props.title ? props.title : formData.pa_group_description_name}</span>
       </div>
       <PAGroupHeader popuptitle={props.title ? props.title : formData.pa_group_description_name} onChange={onChange} /> 
+      { (props.formulary_lob_id==1) ? (
       <div className="inner-container pa-new-group-form">
         <div className="setting-1">
           <span>What file type is this group description for? *</span>
@@ -388,12 +441,100 @@ function NewGroup(props: any) {
             </RadioGroup>
           </div>
         </div>
+
         <div className="button-wrapper">
           <Button label="Save Version Progress" className="Button" onClick={() => saveGroupDescription(false)} />
           <Button label="Version to Initiate Change Request" className="Button" onClick={() => saveGroupDescription(false)} />
           <Button label="Version Submitted to CMS" className="Button" onClick={() => saveGroupDescription(true)} />
         </div>
       </div>
+      ):null}
+      { (props.formulary_lob_id==4) ? (
+      <div className='inner-container pa-new-group-form'>
+        <div className='setting-1'>
+          <span className='required-field'>
+            What is the default pa type for this description?
+          </span>
+          <div className='marketing-material radio-group'>
+
+          <RadioGroup aria-label="marketing-material-radio1" className="gdp-radio" name="id_pa_type" onChange={handleChange}>
+              <FormControlLabel value="8" control={<Radio checked={formData.id_pa_type == "8" ? true : false} />} label="Always Applies" disabled={props.editable} />
+              <FormControlLabel value="9" control={<Radio checked={formData.id_pa_type == "9" ? true : false} />} label="New Starts Only" disabled={props.editable} />
+          </RadioGroup>
+
+          </div>
+          <Grid container>
+            <Grid item xs={12}>
+              <div className='group'>
+                <label className='required-field'>PA GROUP DESCRIPTION</label>
+                <input type="text" name="pa_group_description_name" onChange={handleChange} defaultValue={formData.pa_group_description_name} disabled={props.editable} />
+              </div>
+            </Grid>
+            <Grid item xs={12}>
+              <div className='group'>
+                <label className='required-field'>PA Criteria</label>
+                <input type="text" name="pa_criteria" onChange={handleChange} defaultValue={formData.pa_criteria} disabled={props.editable} />
+              </div>
+            </Grid>
+            <Grid item xs={6}>
+              <div className='group'>
+                <label className='required-field'>LIST</label>
+                <SearchableDropdown options={[1, 2, 3]} />
+                <Box className='pg-group-list-tags-box'>
+                  <Tag
+                    className='pg-group-list-tags'
+                    closable
+                    onClose={() => {}}
+                    closeIcon={<CrossCircleWhiteBGIcon />}
+                  >
+                    Tag 1
+                  </Tag>
+                  <Tag
+                    className='pg-group-list-tags'
+                    closable
+                    onClose={() => {}}
+                    closeIcon={<CrossCircleWhiteBGIcon />}
+                  >
+                    Tag 4
+                  </Tag>
+                </Box>
+              </div>
+            </Grid>
+            <Grid className='additional-criteria' item xs={6}>
+              <span className='required-field'>
+                do you want to add additional criteria?
+              </span>
+              <div className='marketing-material radio-group'>
+                <RadioButton
+                  defaultChecked={true}
+                  onClick={
+                    !props.isReadOnly
+                      ? () => additionalCriteriaHandler()
+                      : () => {}
+                  }
+                  label='Yes'
+                  name='additional-criteria-material-radio'
+                />
+                <RadioButton
+                  label='No'
+                  name='additional-criteria-material-radio'
+                />
+              </div>
+            </Grid>
+          </Grid>
+        </div>
+        <div className='button-wrapper'>
+          {!props.isReadOnly ? (
+            <>
+              <Button label='Save Version Progress' className='Button'  onClick={() => saveGroupDescription(false)} />
+              <Button
+                label='Save Final Version and Continue' className='Button'  onClick={() => saveGroupDescription(true)}
+              />
+            </>
+          ) : null}
+        </div>
+      </div>
+      ):null}
 
     </div>
   )

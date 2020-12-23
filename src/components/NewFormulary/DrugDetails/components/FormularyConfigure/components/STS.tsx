@@ -1,4 +1,5 @@
 import React from 'react';
+import { connect } from "react-redux";
 import PanelHeader from './PanelHeader';
 import CustomizedSwitches from './CustomizedSwitches';
 import { TabInfo } from "../../../../../../models/tab.model";
@@ -26,7 +27,15 @@ interface MemberAuditPopupState {
 }
 
 
-export default class STS extends React.Component<any,any>{
+function mapStateToProps(state){
+    return {
+      current_formulary: state.application.formulary,
+      formulary_lob_id: state?.application?.formulary_lob_id,
+    }
+  }
+
+  
+ class STS extends React.Component<any,any>{
     state={
         panelGridValue1: [],
         filteredData: [],
@@ -34,15 +43,18 @@ export default class STS extends React.Component<any,any>{
         tabs: [
             {
                 id: 1,
-                text: "Replace"
+                text: "Replace",
+                disabled:false
             },
             {
                 id: 2,
-                text: "Append"
+                text: "Append",
+                disabled:(this.props.formulary_lob_id==1?true:false)
             },
             {
                 id: 3,
-                text: "Remove"
+                text: "Remove",
+                disabled:false
             },
         ]
     }
@@ -63,10 +75,24 @@ export default class STS extends React.Component<any,any>{
         const columns = getAuditMockColumns();
         switch (tabIndex) {
           case 0:
+
             return <STF />;
 
         case 1:
-            return <STF />;
+
+            switch (this.props.formulary_lob_id) {
+                case 1:
+                  return "";
+                  
+                  break;
+                case 4:
+                    return <STF tab_type="append"/>;
+                    break;
+                default:
+                  break;
+              }
+              break;
+            
 
         case 2:
         //     return <FrxGrid
@@ -110,8 +136,7 @@ export default class STS extends React.Component<any,any>{
                                         tabList={this.state.tabs}
                                         activeTabIndex={this.state.activeTabIndex}
                                         onClickTab={this.onClickTab}
-                                        disabledIndex={1}
-                                        disabled
+                                        
                                     />
                                 </div>
                                
@@ -124,3 +149,8 @@ export default class STS extends React.Component<any,any>{
         )
     }
 }
+
+export default connect(
+    mapStateToProps,
+    null
+  )(STS);

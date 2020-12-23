@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Fragment} from 'react';
 import { connect } from "react-redux";
 import Radio from '@material-ui/core/Radio';
 import RadioGroup from '@material-ui/core/RadioGroup';
@@ -12,7 +12,7 @@ import AlertMessages from "./AlertMessages"
 import { ToastContainer } from 'react-toastify';
 import showMessage from "../../../../Utils/Toast";
 import { scrollPage } from '../../../../../../utils/formulary'
-import { saveGDM } from "../../../../../../redux/slices/formulary/gdm/gdmSlice";
+import { saveGDM,editGDM } from "../../../../../../redux/slices/formulary/gdm/gdmSlice";
 import { getStGrouptDescription } from "../../../../../../redux/slices/formulary/stepTherapy/stepTherapyActionCreation";
 
 interface Props {
@@ -35,6 +35,8 @@ interface initialFormData{
   is_suppress_criteria_dispaly_cms_approval:  any;
   is_display_criteria_drugs_not_frf:  any;
   is_validation_required:  any;
+  st_type:any;
+  id_st_type:any;
 }
 
 const initialFormData:initialFormData = {
@@ -50,30 +52,40 @@ const initialFormData:initialFormData = {
   is_additional_criteria_defined: false,
   is_suppress_criteria_dispaly_cms_approval: false,
   is_display_criteria_drugs_not_frf: false,
-  is_validation_required: false
+  is_validation_required: false,
+  st_type:'Always Applies(1)',
+  id_st_type:7
 }
 
 function mapStateToProps(state) {
   if(state?.saveGdm?.success!=="" && state?.saveGdm?.success!==null){
     showMessage('Saved Successfully', 'info');
   }
-  if(state?.saveGdm?.error !==""){
-    // {state?.saveGdm?.error.length > 1 && state?.saveGdm?.error.map(err => {
-    //   showMessage(err.message, 'error');
-    // })}
-    showMessage(state?.saveGdm?.error?.data?.message, 'error');
+  if(state?.saveGdm?.error){
+    if(state.saveGdm.error.length>0){
+      state.saveGdm.error.map(err => {
+        showMessage(err.message, 'error');
+      })}else{
+      showMessage(state?.saveGdm?.error?.data?.message, 'error');
+    }
   }
   return {
     formulary_id: state.application.formulary_id,
-    StGDData: state.stepTherapyReducer.data,
+    StGDData: state.stepTherapyReducer.description, // earlier it data
     version: state.stVerion.stVersion,
-    saveGdm: state.saveGdm
+    saveGdm: state.saveGdm,
+    client_id: state.application.clientId,
+    current_formulary: state.application.formulary,
+    formulary: state?.application?.formulary,
+    formulary_lob_id: state?.application?.formulary_lob_id, //comme- 4, medicare-1 , medicate-2, exchnage -3 
+    formulary_type_id: state?.application?.formulary_type_id,
   }
 }
 
 function mapDispatchToProps(dispatch) {
   return {
     saveGDM: (data) => dispatch(saveGDM(data)),
+    editGDM: (data) => dispatch(editGDM(data)),
     getStGrouptDescription: (a) => dispatch(getStGrouptDescription(a)),
   }
 }
@@ -135,15 +147,52 @@ function NewGroup(props: any) {
     setErrorClass('');
   }, [props.StGDData || props.saveGdm || props.editMode])
 
-  const handleSubmit = (e) => {
+  const handleSubmit = (e,is_validation: boolean) => {
     e.preventDefault()
-    if(props.formType===0){
+    if(props.formType===0 && props.formulary_lob_id===1){
       let msg:string[]=[];
       if(formData.st_group_description_name === ''){
-          msg.push("Formulary Build Method is required.");
+          msg.push("Formulary Description Name is required.");
       }
+      if(formData.st_criteria === ''){
+          msg.push("ST Criteria is required.");
+      }
+      if(formData.change_indicator === ''){
+        msg.push("Change Indicator is required.");
+      }
+      if(msg.length>0){
+          console.log(msg)
+          setErrorClass('invalid');
+          return;
+      }
+    }
+    if(props.formType===1 && props.formulary_lob_id===1){
+      let msg:string[]=[];
       if(formData.st_group_description_name === ''){
-          msg.push("Formulary Effective Date is required.");
+          msg.push("Formulary Description Name is required.");
+      }
+      if(msg.length>0){
+          console.log(msg)
+          setErrorClass('invalid');
+          return;
+      }
+    }
+
+    if(props.formType===0 && props.formulary_lob_id===4){
+      let msg:string[]=[];
+      if(formData.st_group_description_name === ''){
+          msg.push("Formulary Description Name is required.");
+      }
+      if(msg.length>0){
+          console.log(msg)
+          setErrorClass('invalid');
+          return;
+      }
+    }
+    if(props.formType===1 && props.formulary_lob_id===4){
+      let msg:string[]=[];
+      if(formData.st_group_description_name === ''){
+          msg.push("Formulary Description Name is required.");
       }
       if(msg.length>0){
           console.log(msg)
@@ -152,22 +201,34 @@ function NewGroup(props: any) {
       }
     }
     setErrorClass('');
-    formData.change_indicator = parseInt(formData.change_indicator)
-    props.saveGDM({
-      formularyId: props.formulary_id,
-      latestId: props.saveGdm.current_group_des_id,
-      ...formData
-    })
+    formData["id_st_type"] = (formData["st_type"]==="New Starts Only (2)")?8:7;
+    formData["is_validation_required"] = is_validation;
+    let requestData = {};
+    if (props.formType==1){
+      requestData['messageBody'] = {...formData}
+      requestData["lob_type"] = props.formulary_lob_id;
+      requestData['apiPart'] = 'api/1/mcr-st-group-description';
+      let id_st_group_description = formData["id_st_group_description"]?formData["id_st_group_description"]:0;
+      requestData['pathParams'] = '/'+id_st_group_description+'/'+props?.formulary_id + '?entity_id=0';
+      props.editGDM(requestData)
+    }else{
+      formData.change_indicator = parseInt(formData.change_indicator)
+      requestData['messageBody'] = {...formData}
+      requestData["lob_type"] = props.formulary_lob_id;
+      requestData['apiPart'] = 'api/1/mcr-st-group-description/'+props.client_id;
+      requestData['pathParams'] = '/'+props?.formulary_id + '?entity_id=0';
+      props.saveGDM(requestData)
+    }
     setShowHeader(1)
     scrollPage(0, 500)
   };
   return (
     <div className="new-group-des">
       <div className="panel header">
-        <span>{props.title ? props.title : formData.st_group_description_name}</span>
+        <span>{showHeader>0&&formData.st_group_description_name ? formData.st_group_description_name : props.title}</span>
       </div>
-      {(props.formType > 0 || showHeader>0) && <GroupHeader popuptitle={props.title ? props.title : formData.st_group_description_name} onChange={onChange}/>}
-      <div className="inner-container">
+      {(props.formType > 0 || showHeader>0) && <GroupHeader popuptitle={formData.st_group_description_name ? formData.st_group_description_name : props.title} onChange={onChange}/>}
+      {props.formulary_lob_id===1&&<div className="inner-container">
         <div className="setting-1">
           <span>What file type is this group description for? *</span>
           {/* <AlertMessages delay="10000" error={props.saveGdm.error} success={props.saveGdm.success} /> */}
@@ -280,11 +341,63 @@ function NewGroup(props: any) {
           </div>
         </div>
         <div className="button-wrapper">
-          <Button label="Save Version Progress" className="Button" onClick={handleSubmit} />
-          <Button label="Version to Initiate Change Request" className="Button" />
-          <Button label="Version Submitted to CMS" className="Button" />
+          <Button label="Save Version Progress" className="Button" onClick={(event)=>handleSubmit(event,false)} />
+          <Button label="Version to Initiate Change Request" className="Button" onClick={(event)=>handleSubmit(event,false)}/>
+          <Button label="Version Submitted to CMS" className="Button" onClick={(event)=>handleSubmit(event,true)}/>
         </div>
-      </div>
+      </div>}
+      {props.formulary_lob_id===4&&<div className="inner-container">
+                <div className="setting-1">
+                  <Fragment>
+                    <span>What is the defualt ST Type for this description? <span className="astrict">*</span></span>
+                    <div className="marketing-material radio-group">
+                      <RadioGroup aria-label="marketing-material-radio1" className="gdp-radio" name="st_type" onChange={handleChange}>
+                        <FormControlLabel value="Always Applies(1)" control={<Radio checked={formData.id_st_type === 7 ? true : false} />} label="Always Applies" disabled={editable} />
+                        <FormControlLabel value="New Starts Only (2)" control={<Radio checked={formData.id_st_type ===8 ? true : false} />} label="New Starts Only" disabled={editable} />
+                      </RadioGroup>
+                    </div> 
+                    </Fragment>
+                    <Grid container>
+                        <Grid item xs={6}>
+                            <div className="group">
+                                <label>ST GROUP DESCRIPTION <span className="astrict">*</span></label>
+                                <input type="text" name="st_group_description_name" onChange={handleChange} defaultValue={formData.st_group_description_name} disabled={editable} className={errorClass} />
+                            </div>
+                        </Grid>
+                    </Grid>
+                    {props.formType>0 && (<Grid container className="mb-20">
+                        <Grid item xs={6}>
+                            <div className="group">
+                                <label>EXCLUDED DRUG FILE</label>
+                                <input type="text" name="excluded_drug_file" onChange={handleChange} defaultValue={formData.excluded_drug_file} disabled={editable} />
+                            </div>
+                        </Grid>
+                    </Grid>)}
+                </div>
+                {props.formType===0 && (<div className="setting-1 mb-20">
+                    <Grid container>
+                        <Grid item xs={6}>
+                            <div className="group">
+                           
+                                <input type="text" />
+                            </div>
+                        </Grid>
+                    </Grid>
+                </div>)}
+                <div className="setting-1 mb-20">
+                  <span>do you want to add additional criteria? <span className="astrict">*</span></span>
+                  <div className="marketing-material radio-group">
+                      <RadioGroup aria-label="marketing-material-radio1" name="is_additional_criteria_defined" onChange={handleChange} className="gdp-radio" value={formData.is_additional_criteria_defined}>
+                        <FormControlLabel value={true} control={<Radio />} label='Yes' disabled={editable} />
+                        <FormControlLabel value={false} control={<Radio />} label='No' disabled={editable} />
+                      </RadioGroup>
+                  </div>
+                </div>
+                <div className="button-wrapper st-button-wrapper">
+                  <Button label="Save Version Progress" className="Button" onClick={(event)=>handleSubmit(event,false)}/>
+                  <Button label="Save Final Version And Continue" className="Button" onClick={(event)=>handleSubmit(event,false)}/>
+                </div>
+      </div>}
       <ToastContainer/>
     </div>
   )

@@ -8,9 +8,26 @@ import {
   Input,
 } from "@material-ui/core";
 import { Select } from "antd";
+import { setAdvancedSearch } from "../../../../../redux/slices/formulary/advancedSearch/advancedSearchSlice";
+import { connect } from "react-redux";
 
 import "./ListItemContainer.scss";
 const { Option } = Select;
+
+function mapDispatchToProps(dispatch) {
+  return {
+    setAdvancedSearch: (a) => dispatch(setAdvancedSearch(a))
+  };
+}
+
+const mapStateToProps = (state) => {
+  return {
+    advancedSearchBody: state?.advancedSearch?.advancedSearchBody,
+    populateGrid: state?.advancedSearch?.populateGrid,
+    closeDialog: state?.advancedSearch?.closeDialog,
+    listItemStatus: state?.advancedSearch?.listItemStatus,
+  };
+};
 
 interface BorderType {
   className: string;
@@ -20,20 +37,42 @@ interface Props {
   title: string;
   children?: any;
   nodeId: any;
-  onParentDataUpdated: (nodeId,isIncluded) => void;
+  listItemStatus: any;
+  onParentDataUpdated: (nodeId, isIncluded) => void;
 }
-interface State {}
+interface State { }
 
 class ListItemContainer extends Component<Props, State> {
   state = {
     selectedOpt: "",
+    generalTitles: ["File Type", "Tier", "UM Filter"]
   };
 
-  constructor(props){
+  constructor(props) {
     super(props);
   }
 
-  componentDidMount(){
+  componentDidMount() {
+    let option = 'exclude';
+    if (this.props.listItemStatus) {
+      console.log('List item container. props list:'+JSON.stringify(this.props.listItemStatus));
+      option = this.props.listItemStatus['' + this.props.nodeId] === true ? 'include' : 'exclude';
+    }
+    this.setState({
+      selectedOpt: option
+    });
+  }
+
+  componentWillReceiveProps(nextProps) {
+    console.log('LIST CONTAINER: props received:' + JSON.stringify(nextProps.listItemStatus));
+    if (nextProps.listItemStatus) {
+      let option = 'exclude';
+      option = nextProps.listItemStatus['' + this.props.nodeId] === true ? 'include' : 'exclude';
+      console.log('Node is:'+this.props.nodeId+' Option:'+option);
+      this.setState({
+        selectedOpt: option
+      });
+    }
   }
 
   onHandleSelected = (opt) => {
@@ -121,7 +160,7 @@ class ListItemContainer extends Component<Props, State> {
                   </svg>
                 </span>
               </span>
-              <div className={`__icon-select-box `}>
+              {!this.state.generalTitles.includes(this.props.title) ? <div className={`__icon-select-box `}>
                 {borderColor.showIcon}
                 {/* <svg
                   width="13"
@@ -138,6 +177,7 @@ class ListItemContainer extends Component<Props, State> {
                 <Select
                   size="small"
                   className="__select-box"
+                  value={this.state.selectedOpt}
                   suffixIcon={
                     <svg
                       width="6"
@@ -157,7 +197,7 @@ class ListItemContainer extends Component<Props, State> {
                   <Option value="include">include</Option>
                   <Option value="exclude">exclude</Option>
                 </Select>
-              </div>
+              </div> : null}
             </div>
 
             <div className="dynamic-contenet">{this.props.children}</div>
@@ -183,4 +223,7 @@ class ListItemContainer extends Component<Props, State> {
   }
 }
 
-export default ListItemContainer;
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(ListItemContainer);

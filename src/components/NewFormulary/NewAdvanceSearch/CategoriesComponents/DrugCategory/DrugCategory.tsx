@@ -20,7 +20,10 @@ const mapStateToProps = (state) => {
     formulary_id: state?.application?.formulary_id,
     formulary: state?.application?.formulary,
     formulary_lob_id: state?.application?.formulary_lob_id,
-    formulary_type_id: state?.application?.formulary_type_id
+    formulary_type_id: state?.application?.formulary_type_id,
+    advancedSearchBody: state?.advancedSearch?.advancedSearchBody,
+    populateGrid: state?.advancedSearch?.populateGrid,
+    closeDialog: state?.advancedSearch?.closeDialog,
   };
 };
 
@@ -30,6 +33,8 @@ interface Props {
   formulary_lob_id: any;
   formulary_type_id: any;
   nodeId: any;
+  advancedSearchBody: any;
+  initialValues: any;
   getCategoryClasses: (a) => any;
   onChildDataUpdated: (nodeId, childData) => void;
 }
@@ -165,10 +170,31 @@ class DrugCategory extends Component<Props, State> {
   };
 
   componentDidMount = () => {
+    if(this.props.initialValues && this.props.initialValues.length > 0){
+      this.state.choosenElements = this.props.initialValues;
+    }
+    let resultData = this.getResult(this.state.choosenElements);
+    this.props.onChildDataUpdated(this.props.nodeId, resultData);
     let lobCode = getLobCode(this.props.formulary_lob_id);
     this.setState({
       lobCode: lobCode,
     });
+  }
+
+  getResult = (rawData) => {
+    let result = { drug_categories: Array(), drug_classes: Array() };
+    if (rawData.length > 0) {
+      rawData.map(data => {
+        let classValue = data.substring(data.lastIndexOf("[") + 1, (data.lastIndexOf("]")));
+        let category = data.substring(0, (data.lastIndexOf("[")));
+        category = category.trim();
+        classValue = classValue.trim();
+
+        result.drug_categories.push(category);
+        result.drug_classes.push(classValue);
+      });
+    }
+    return result;
   }
 
   onSearch = (e) => {
@@ -239,19 +265,44 @@ class DrugCategory extends Component<Props, State> {
   };
 
   onClearSearch = () => {
-    this.props.onChildDataUpdated(this.props.nodeId, {});
     this.setState({
       searchValue: '',
       treeClosed: true,
+      currentItems: Array(),
     });
   };
 
   setCategoryClass = (e, category, classValue) => {
     console.log('Set category class called');
+    let categoryItem = category + '[' + classValue + ']';
+    let tobeRemoved = Array();
+    if (this.state.currentItems.length > 0) {
+      tobeRemoved = this.state.currentItems.filter(item => item !== categoryItem);
+    }
+    this.state.currentItems = Array();
+    this.state.currentItems.push(categoryItem);
+    let newChoosenItems = Array.from(new Set([...this.state.choosenElements, ...[categoryItem]])).filter(item => !tobeRemoved.includes(item));
+    let resultData = this.getResult(newChoosenItems);
+    this.props.onChildDataUpdated(this.props.nodeId, resultData);
+    this.setState({
+      choosenElements: newChoosenItems
+    });
   }
 
   removeSearchElement = (element) => {
-    
+    let currentChosenElements = this.state.choosenElements.filter(item => item !== element);
+    let resultData = this.getResult(currentChosenElements);
+    this.props.onChildDataUpdated(this.props.nodeId, resultData);
+    if (!this.state.treeClosed) {
+      this.setState({
+        currentItems: this.state.currentItems.filter(item => item !== element),
+        choosenElements: currentChosenElements,
+      });
+    } else {
+      this.setState({
+        choosenElements: currentChosenElements,
+      });
+    }
   }
 
 
