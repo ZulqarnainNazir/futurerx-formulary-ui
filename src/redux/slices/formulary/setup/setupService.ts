@@ -72,7 +72,7 @@ export function composePostBody(input: any): any {
   // payload.formulary_info.code_value = "MC";
   // payload.formulary_info.id_submission_month = 5;
   payload.formulary_info.resemble_formulary_id = null;
-  payload.formulary_info.is_closed_formulary = null;
+  payload.formulary_info.is_closed_formulary = input.GENERAL_INFO?.is_closed_formulary;;
   payload.formulary_info.resemble_formulary_id = null;
   payload.formulary_info.is_standard_template = null;
   payload.formulary_info.parent_formulary_id = null;
@@ -111,7 +111,7 @@ export function composePostBody(input: any): any {
   payload.edit_info = {
     edits: input?.edit_info?.edits,
     edits_no: input?.edit_info?.edits_no,
-    custom_edits: [],
+    custom_edits: input?.edit_info?.custom_edits,
     removed_formulary_edits: [],
   };
 
