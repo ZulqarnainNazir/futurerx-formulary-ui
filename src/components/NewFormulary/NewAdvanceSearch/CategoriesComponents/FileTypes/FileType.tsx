@@ -76,7 +76,7 @@ class FileType extends Component<Props, State> {
   componentDidMount = () => {
     let keystoSet = Array();
     if(this.props.advancedSearchBody && this.props.advancedSearchBody.additional_filter){
-      keystoSet = Object.keys(this.props.advancedSearchBody.additional_filter).filter(key => this.props.advancedSearchBody.additional_filter[key]);
+      keystoSet = Object.keys(this.props.advancedSearchBody.additional_filter).filter(key => this.props.advancedSearchBody.additional_filter[key] === true);
     }
     const checkList = fileTypes.map((file) => {
       let parentChecked = true;

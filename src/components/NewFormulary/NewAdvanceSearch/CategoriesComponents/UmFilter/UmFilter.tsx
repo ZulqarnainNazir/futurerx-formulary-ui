@@ -63,7 +63,7 @@ class UmFilter extends Component<Props, State> {
 
   componentDidMount() {
     if(this.props.advancedSearchBody && this.props.advancedSearchBody.additional_filter){
-      let keystoSet = Object.keys(this.props.advancedSearchBody.additional_filter).filter(key => this.props.advancedSearchBody.additional_filter[key]);
+      let keystoSet = Object.keys(this.props.advancedSearchBody.additional_filter).filter(key => this.props.advancedSearchBody.additional_filter[key] === true);
       if(keystoSet && keystoSet.length > 0){
         let umSelected = Array();
         this.state.umFilterList.map(um => {
