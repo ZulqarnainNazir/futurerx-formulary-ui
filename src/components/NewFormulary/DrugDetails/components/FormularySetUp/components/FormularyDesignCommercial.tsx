@@ -6,8 +6,36 @@ import PanelHeader from "../../FormularyConfigure/components/PanelHeader";
 import {connect} from "react-redux";
 import { Checkbox } from 'antd';
 class SupplementalModels extends React.Component<any, any> {
-    state = {
-        custom_design: []
+    checkFormularyDesign = (id:any) => {
+        const des_opt:any = {...this.props.edit_info};
+        if(des_opt.edits.indexOf(id) === -1) {
+            des_opt.edits.push(id)
+        }else{
+            let index = des_opt.edits.indexOf(id);
+            des_opt.edits.splice(index,1);
+        }
+        this.props.formularyDesignCommercialCheck(des_opt)
+    }
+    customCheckboxClickHandler = (e) => {
+        const des_opt:any = {...this.props.edit_info};
+        if(des_opt.custom_edits.length > 0){
+            des_opt.custom_edits = []
+        }else{
+            let newObj = {
+                "id_formulary_edit": null,
+                "id_edit": null,
+                "edit_name": "",
+                "is_custom": true,
+                "code_value": null
+            }
+            des_opt.custom_edits.push(newObj);
+        }
+        this.props.formularyDesignCommercialCheck(des_opt);
+    }
+    onCustomeInputChangeHandler = (e,index) => {
+        const des_opt = {...this.props.edit_info};
+        des_opt.custom_edits[index].edit_name = e.target.value;
+        this.props.formularyDesignCommercialCheck(des_opt);
     }
     getChecked = (id) => {
         let isChecked = false;
@@ -18,20 +46,23 @@ class SupplementalModels extends React.Component<any, any> {
     }
     renderCustomCheckbox = () => {
         let checkbox:any = [];
-        let custom:any=[];
-        if(this.props.designOptions){
-            custom = this.props.designOptions?.filter(e => e.is_custom === true);
-            if(custom.length > 0){
-                checkbox = custom?.map(el => {
-                    return <input type="text" className="setup-input-fields other-input" value={el.edit_name} /> 
-                })
-            }
+        let custom:any= this.props.edit_info?.custom_edits ? this.props.edit_info.custom_edits : this.props.designOptions?.filter(e => e.is_custom === true);
+        if(custom.length > 0){
+            checkbox = custom?.map((el,index) => {
+                return (
+                    <input 
+                    type="text" 
+                    className="setup-input-fields other-input" 
+                    value={el.edit_name}
+                    onChange={(e) => this.onCustomeInputChangeHandler(e,index)} /> 
+                )
+            })
         }
         let finalEle = (
             <div>
                 <Checkbox 
                     className="custom-checkbox mb-16" 
-                    onChange={() => {}} 
+                    onChange={this.customCheckboxClickHandler} 
                     checked={custom.length > 0}>
                         Other
                 </Checkbox>
@@ -51,7 +82,7 @@ class SupplementalModels extends React.Component<any, any> {
                 return <Grid item xs={6}>
                     <Checkbox 
                         className="custom-checkbox mb-16" 
-                        onChange={() => {}} 
+                        onChange={() => this.checkFormularyDesign(el.id_edit)} 
                         checked={this.getChecked(el.id_edit)}>
                             {el.edit_name}
                     </Checkbox>
@@ -65,12 +96,14 @@ class SupplementalModels extends React.Component<any, any> {
         if(this.props.designOptions){
             const des_opt = this.props.designOptions?.filter(e => (e.is_custom === false && e.edit_name === 'Prescriber Taxonomy'));
             checkbox = des_opt?.map(el => {
-                return <Checkbox 
+                return (
+                    <Checkbox 
                         className="custom-checkbox mb-16" 
-                        onChange={() => {}} 
+                        onChange={() => this.checkFormularyDesign(el.id_edit)} 
                         checked={this.getChecked(el.id_edit)}>
                             {el.edit_name}
                     </Checkbox>
+                )
             })
         }
         return checkbox; 
