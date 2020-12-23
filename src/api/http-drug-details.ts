@@ -68,6 +68,7 @@ export const GET_SSM_FORMULARY_DRUGS = "api/1/formulary-drugs-ssm/";
 
 // AL TAB
 export const GET_DRUG_SUMMARY_AL = "api/1/formulary-drug-summary-al/";
+export const GET_AL_DRUGS = "api/1/formulary-drugs-al/";
 
 // GL TAB
 export const GET_DRUG_SUMMARY_GL = "api/1/formulary-drug-summary-gl/"
