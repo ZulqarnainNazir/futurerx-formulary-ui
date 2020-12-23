@@ -43,6 +43,8 @@ interface State {
   searchData: any[];
   treeClosed: boolean;
   drugCategory: any[];
+  choosenElements: any[];
+  currentItems: any[];
 }
 
 const ClearIcon = (props) => (
@@ -57,6 +59,23 @@ const ClearIcon = (props) => (
       <path
         d="M6.5 0C2.91594 0 0 2.91594 0 6.5C0 10.0841 2.91594 13 6.5 13C10.0841 13 13 10.0841 13 6.5C13 2.91594 10.0841 0 6.5 0ZM8.85344 8.14656C8.90182 8.19253 8.94051 8.24772 8.96723 8.30888C8.99395 8.37003 9.00816 8.43592 9.00901 8.50265C9.00986 8.56938 8.99735 8.63561 8.97221 8.69743C8.94706 8.75925 8.9098 8.81541 8.86261 8.86261C8.81541 8.9098 8.75925 8.94706 8.69743 8.97221C8.63561 8.99735 8.56938 9.00986 8.50265 9.00901C8.43592 9.00816 8.37003 8.99395 8.30888 8.96723C8.24772 8.94051 8.19253 8.90182 8.14656 8.85344L6.5 7.20719L4.85344 8.85344C4.75891 8.94325 4.63303 8.99258 4.50265 8.99091C4.37227 8.98924 4.2477 8.9367 4.1555 8.8445C4.0633 8.7523 4.01076 8.62773 4.00909 8.49735C4.00742 8.36697 4.05675 8.24109 4.14656 8.14656L5.79281 6.5L4.14656 4.85344C4.05675 4.75891 4.00742 4.63303 4.00909 4.50265C4.01076 4.37227 4.0633 4.2477 4.1555 4.1555C4.2477 4.0633 4.37227 4.01076 4.50265 4.00909C4.63303 4.00742 4.75891 4.05675 4.85344 4.14656L6.5 5.79281L8.14656 4.14656C8.24109 4.05675 8.36697 4.00742 8.49735 4.00909C8.62773 4.01076 8.7523 4.0633 8.8445 4.1555C8.9367 4.2477 8.98924 4.37227 8.99091 4.50265C8.99258 4.63303 8.94325 4.75891 8.85344 4.85344L7.20719 6.5L8.85344 8.14656Z"
         fill="#C4C4C4"
+      />
+    </svg>
+  </span>
+);
+
+const RemoveIcon = (props) => (
+  <span {...props}>
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="8"
+      height="8"
+      viewBox="0 0 8 8"
+      fill="none"
+    >
+      <path
+        d="M8 0.805714L7.19429 0L4 3.19429L0.805714 0L0 0.805714L3.19429 4L0 7.19429L0.805714 8L4 4.80571L7.19429 8L8 7.19429L4.80571 4L8 0.805714Z"
+        fill="white"
       />
     </svg>
   </span>
@@ -141,6 +160,8 @@ class DrugCategory extends Component<Props, State> {
     lobCode: '',
     searchData: Array(),
     treeClosed: false,
+    currentItems: Array(),
+    choosenElements: Array(),
   };
 
   componentDidMount = () => {
@@ -229,6 +250,11 @@ class DrugCategory extends Component<Props, State> {
     console.log('Set category class called');
   }
 
+  removeSearchElement = (element) => {
+    
+  }
+
+
   render() {
     const { drugCategory } = this.state;
     return (
@@ -245,6 +271,14 @@ class DrugCategory extends Component<Props, State> {
             className="search-box-container__clear-action"
             onClick={this.onClearSearch}
           />
+        </div>
+
+        <div className="search-tag-list">
+          {this.state.choosenElements.map((ndc, index) => {
+            return <div className="search-tag-list__item">
+              {ndc} <RemoveIcon className="search-tag-list__remove-action" onClick={() => this.removeSearchElement(ndc)} />
+            </div>
+          })}
         </div>
 
         {this.state.searchValue.length > 0 && (
