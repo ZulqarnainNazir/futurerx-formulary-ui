@@ -297,6 +297,7 @@ class GeneralInformation extends React.Component<any, GeneralInformationState> {
                 placeholder={FORMULARY ? FORMULARY_Values.effective_date : ''}
                 disabled={disabled}
                 disabledDate={this.disabledDate}
+                format={'MM/DD/YYYY'}
                 onChange={(e) => this.props.datePickerChange(e,'generalInformation','effective_date')}
                 suffixIcon={
                   <svg
