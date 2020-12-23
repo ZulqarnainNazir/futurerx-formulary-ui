@@ -278,7 +278,7 @@ class GeneralInformation extends React.Component<any, GeneralInformationState> {
                 <label>
                   FORMULARY NAME <span className="astrict">*</span>
                 </label>
-                <input type="text" id="name" className="setup-input-fields" name="name" value={this.props.generalInfo.name} onChange={this.props.updateInputField}/>
+                <input disabled={disabled} type="text" id="name" className="setup-input-fields" name="name" value={this.props.generalInfo.name} onChange={this.props.updateInputField}/>
               </div>
             </Grid>
             <Grid item xs={4}>
@@ -330,9 +330,9 @@ class GeneralInformation extends React.Component<any, GeneralInformationState> {
                     name="method"
                     value={this.props.generalInfo.method?.toString()} 
                     onChange={(e) => this.props.onRadioChange(e,'generalInformation')}>
-                    <FormControlLabel value="clone" control={<Radio />} label="Clone" />
-                    <FormControlLabel value="upload" control={<Radio />} label="Upload" />
-                    <FormControlLabel value="N" control={<Radio />} label="Create New" />
+                    <FormControlLabel disabled={disabled} value="clone" control={<Radio />} label="Clone" />
+                    <FormControlLabel disabled={disabled} value="upload" control={<Radio />} label="Upload" />
+                    <FormControlLabel disabled={disabled} value="N" control={<Radio />} label="Create New" />
                   </RadioGroup>
                 </div>
                 
