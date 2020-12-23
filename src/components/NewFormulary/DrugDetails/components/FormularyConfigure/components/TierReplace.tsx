@@ -186,7 +186,7 @@ class TierReplace extends React.Component<any, tabsState> {
     this.initialize(nextProps);
     if (nextProps.advancedSearchBody && nextProps.populateGrid) {
       this.populateGridData(nextProps.advancedSearchBody);
-      let payload = { advancedSearchBody: nextProps.advancedSearchBody, populateGrid: false, closeDialog: nextProps.closeDialog };
+      let payload = { advancedSearchBody: nextProps.advancedSearchBody, populateGrid: false, closeDialog: nextProps.closeDialog , listItemStatus: nextProps.listItemStatus};
       if (nextProps.closeDialog) {
         this.state.isSearchOpen = false;
         payload['closeDialog'] = false;
