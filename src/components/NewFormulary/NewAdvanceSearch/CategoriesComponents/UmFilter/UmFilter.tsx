@@ -17,6 +17,10 @@ const mapStateToProps = (state) => {
     advancedSearchBody: state?.advancedSearch?.advancedSearchBody,
     populateGrid: state?.advancedSearch?.populateGrid,
     closeDialog: state?.advancedSearch?.closeDialog,
+    formulary_id: state?.application?.formulary_id,
+    formulary: state?.application?.formulary,
+    formulary_lob_id: state?.application?.formulary_lob_id,
+    formulary_type_id: state?.application?.formulary_type_id
   };
 };
 
@@ -47,9 +51,36 @@ const umfilter = [
   { id: 24, lable: "other" , key: 'NA24' },
 ];
 
+const umfilterNonMcr = [
+  { id: 1, lable: "N/A" , key: 'NA1'},
+  { id: 2, lable: "Prior Authorization" , key: 'is_pa'},
+  { id: 3, lable: "Age Limits" , key: 'is_al' },
+  { id: 4, lable: "Patient Residence", key: 'is_pr' },
+  { id: 5, lable: "Place of Service" , key: 'is_ps' },
+  { id: 6, lable: "Free First Fill" , key: 'is_fff' },
+  { id: 7, lable: "ST Type 1" , key: 'NA7' },
+  { id: 8, lable: "ST Type 2" , key: 'NA8' },
+  { id: 9, lable: "Gender Limits" , key: 'is_gl' },
+  { id: 10, lable: "Pharmacy Networks" , key: 'is_pn' },
+  { id: 11, lable: "ICD Limits" , key: 'is_icdl' },
+  { id: 12, lable: "Presciber Taxonomy" , key: 'is_pt' },
+  { id: 13, lable: "PA Type 1" , key: 'NA9' },
+  { id: 14, lable: "PA Type 2" , key: 'NA10' },
+  { id: 15, lable: "UM Criteria" , key: 'NA11' },
+  { id: 16, lable: "QL Type 1" , key: 'NA17' },
+  { id: 17, lable: "QL Type 2" , key: 'NA18' },
+  { id: 18, lable: "QL Type 9" , key: 'NA19' },
+  { id: 19, lable: "Other 1" , key: 'is_other1' },
+  { id: 20, lable: "Other 2" , key: 'is_other2' },
+  { id: 21, lable: "Other 3" , key: 'is_other3' },
+  { id: 22, lable: "Other 4" , key: 'is_other4' },
+  { id: 23, lable: "Other 5" , key: 'is_other5' },
+];
+
 interface Props {
   umFiltersChanged: (a) => void;
   advancedSearchBody: any;
+  formulary_lob_id: any;
 }
 interface State {}
 
@@ -62,6 +93,11 @@ class UmFilter extends Component<Props, State> {
   };
 
   componentDidMount() {
+    if(this.props.formulary_lob_id === 1){
+      this.state.umFilterList = umfilter;
+    }else{
+      this.state.umFilterList = umfilterNonMcr;
+    }
     if(this.props.advancedSearchBody && this.props.advancedSearchBody.additional_filter){
       let keystoSet = Object.keys(this.props.advancedSearchBody.additional_filter).filter(key => this.props.advancedSearchBody.additional_filter[key] === true);
       if(keystoSet && keystoSet.length > 0){
@@ -136,6 +172,11 @@ class UmFilter extends Component<Props, State> {
   };
 
   render() {
+    if(this.props.formulary_lob_id === 1){
+      this.state.umFilterList = umfilter;
+    }else{
+      this.state.umFilterList = umfilterNonMcr;
+    }
     const { umFilterList } = this.state;
     return (
       <div className="__root-um-filter-container">
@@ -166,7 +207,7 @@ class UmFilter extends Component<Props, State> {
                 </label>
               </span>
             ))}
-            <div className="button-container">
+            {this.props.formulary_lob_id === 1 && (<div className="button-container">
               <div className="__add-input-delete-container">
                 <input
                   type="text"
@@ -217,7 +258,7 @@ class UmFilter extends Component<Props, State> {
                   </span>
                 </div>
               </div>
-            </div>
+            </div>)}
           </div>
         </div>
       </div>
