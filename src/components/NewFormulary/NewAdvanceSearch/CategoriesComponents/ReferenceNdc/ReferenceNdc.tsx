@@ -99,6 +99,7 @@ interface Props {
   formulary_lob_id: any;
   formulary_type_id: any;
   nodeId: any;
+  initialValues: any;
   getIntelliscenseSearch: (a) => any;
   onChildDataUpdated: (nodeId,childData) => void;
 }
@@ -132,6 +133,10 @@ class ReferenceNdc extends Component<Props, State> {
   }
 
   componentDidMount = () => {
+    if(this.props.initialValues && this.props.initialValues.length > 0){
+      this.state.choosenElements = this.props.initialValues;
+    }
+    this.props.onChildDataUpdated(this.props.nodeId, {'reference_ndcs': this.state.choosenElements});
     let lobCode = getLobCode(this.props.formulary_lob_id);
     this.setState({
       lobCode: lobCode,
