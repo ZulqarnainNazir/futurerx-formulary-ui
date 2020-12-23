@@ -181,7 +181,7 @@ class TierRemove extends React.Component<any, tabsState> {
   componentWillReceiveProps(nextProps) {
     if(nextProps.advancedSearchBody && nextProps.populateGrid){
       this.populateGridData(nextProps.advancedSearchBody);
-      let payload = {advancedSearchBody:nextProps.advancedSearchBody,  populateGrid: false , closeDialog: nextProps.closeDialog};
+      let payload = {advancedSearchBody:nextProps.advancedSearchBody,  populateGrid: false , closeDialog: nextProps.closeDialog, listItemStatus: nextProps.listItemStatus};
       if(nextProps.closeDialog){
         this.state.isSearchOpen = false;
         payload['closeDialog'] = false;
