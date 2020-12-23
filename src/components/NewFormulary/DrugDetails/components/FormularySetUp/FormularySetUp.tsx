@@ -152,7 +152,7 @@ class FormularySetUp extends React.Component<any, any> {
         tiers: [...newProps.formulary.tiers],
         fetchedEditInfo: newProps.formulary.edit_info,
         edit_info: this.getEditInfo(newProps.formulary.edit_info),
-        designOptions: [...newProps.setupOptions.designOptions],
+        designOptions: [...newProps.setupOptions?.designOptions],
         setupOptions: newProps.setupOptions,
       });
     }
