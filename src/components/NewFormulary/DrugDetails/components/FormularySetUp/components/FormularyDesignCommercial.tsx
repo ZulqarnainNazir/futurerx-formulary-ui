@@ -60,9 +60,11 @@ class SupplementalModels extends React.Component<any, any> {
         const custom_edits = [...des_opt.custom_edits];
         if(des_opt.edits.indexOf(id) === -1){
             des_opt.edits = [];
+            des_opt.custom_edits = [];
             des_opt.edits.push(id)
         }else{
             des_opt.edits = [];
+            des_opt.custom_edits = [];
         }
         this.props.formularyDesignCommercialCheck(des_opt);
     }
