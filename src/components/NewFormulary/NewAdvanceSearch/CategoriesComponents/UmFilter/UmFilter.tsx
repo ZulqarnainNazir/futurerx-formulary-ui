@@ -25,56 +25,58 @@ const mapStateToProps = (state) => {
 };
 
 const umfilter = [
-  { id: 1, lable: "N/A" , key: 'NA1'},
-  { id: 2, lable: "Limited Access" , key: 'NA2'},
-  { id: 3, lable: "MO/NM Indicator" , key: 'NA3' },
-  { id: 4, lable: "Additional Demonstration Drugs", key: 'is_add' },
-  { id: 5, lable: "Indication Based Coverage" , key: 'NA5' },
-  { id: 6, lable: "Full Gap Coverage" , key: 'is_pgc' },
-  { id: 7, lable: "ST Type 1" , key: 'NA7' },
-  { id: 8, lable: "ST Type 2" , key: 'NA8' },
-  { id: 9, lable: "QL Type 1" , key: 'NA9' },
-  { id: 10, lable: "QL Type 2" , key: 'NA10' },
-  { id: 11, lable: "Partial Gap Coverage" , key: 'is_pa' },
-  { id: 12, lable: "Free First Fill" , key: 'is_fff' },
-  { id: 13, lable: "Home Infusion" , key: 'is_hi' },
-  { id: 14, lable: "Value-Based Insurance Design" , key: 'is_vbid' },
-  { id: 15, lable: "Capped Benefits" , key: 'NA15' },
-  { id: 16, lable: "PA Type 1" , key: 'NA16' },
-  { id: 17, lable: "PA Type 2" , key: 'NA17' },
-  { id: 18, lable: "PA Type 3" , key: 'NA18' },
-  { id: 19, lable: "UM Criteria" , key: 'NA19' },
-  { id: 20, lable: "LIS Cost-Sharing Reduction" , key: 'is_lis' },
-  { id: 21, lable: "Part B Step Therapy" , key: 'NA21' },
-  { id: 22, lable: "Senior Savings Model" , key: 'NA22' },
-  { id: 23, lable: "Abridged Formulary" , key: 'NA23' },
-  { id: 24, lable: "other" , key: 'NA24' },
+  { id: 1, lable: "N/A" , key: 'NA1', code:1, isDisabled: false},
+  { id: 2, lable: "Limited Access" , key: 'NA2', code:1, isDisabled: false},
+  { id: 3, lable: "MO/NM Indicator" , key: 'NA3', code:1, isDisabled: false},
+  { id: 4, lable: "Additional Demonstration Drugs", key: 'is_add', code:1, isDisabled: false },
+  { id: 5, lable: "Indication Based Coverage" , key: 'NA5' , code:1, isDisabled: false},
+  { id: 6, lable: "Full Gap Coverage" , key: 'is_pgc', code:1, isDisabled: false},
+  { id: 7, lable: "ST Type 1" , key: 'NA7' , code:1, isDisabled: false},
+  { id: 8, lable: "ST Type 2" , key: 'NA8' , code:1, isDisabled: false},
+  { id: 9, lable: "QL Type 1" , key: 'NA9' , code:1, isDisabled: false},
+  { id: 10, lable: "QL Type 2" , key: 'NA10' , code:1, isDisabled: false},
+  { id: 11, lable: "Partial Gap Coverage" , key: 'is_pa' , code:1, isDisabled: false },
+  { id: 12, lable: "Free First Fill" , key: 'is_fff' , code:1, isDisabled: false},
+  { id: 13, lable: "Home Infusion" , key: 'is_hi' , code:1, isDisabled: false},
+  { id: 14, lable: "Value-Based Insurance Design" , key: 'is_vbid' , code:1, isDisabled: false},
+  { id: 15, lable: "Capped Benefits" , key: 'NA15' , code:1, isDisabled: false},
+  { id: 16, lable: "PA Type 1" , key: 'NA16' , code:1, isDisabled: false},
+  { id: 17, lable: "PA Type 2" , key: 'NA17' , code:1, isDisabled: false},
+  { id: 18, lable: "PA Type 3" , key: 'NA18' , code:1, isDisabled: false},
+  { id: 19, lable: "UM Criteria" , key: 'NA19' , code:1, isDisabled: false},
+  { id: 20, lable: "LIS Cost-Sharing Reduction" , key: 'is_lis' , code:1, isDisabled: false},
+  { id: 21, lable: "Part B Step Therapy" , key: 'NA21' , code:1, isDisabled: false},
+  { id: 22, lable: "Senior Savings Model" , key: 'NA22' , code:1, isDisabled: false},
+  { id: 23, lable: "Abridged Formulary" , key: 'NA23' , code:1, isDisabled: false},
+  { id: 24, lable: "other" , key: 'NA24' , code:1, isDisabled: false},
 ];
 
 const umfilterNonMcr = [
-  { id: 1, lable: "N/A" , key: 'NA1'},
-  { id: 2, lable: "Prior Authorization" , key: 'is_pa'},
-  { id: 3, lable: "Age Limits" , key: 'is_al' },
-  { id: 4, lable: "Patient Residence", key: 'is_pr' },
-  { id: 5, lable: "Place of Service" , key: 'is_ps' },
-  { id: 6, lable: "Free First Fill" , key: 'is_fff' },
-  { id: 7, lable: "ST Type 1" , key: 'NA7' },
-  { id: 8, lable: "ST Type 2" , key: 'NA8' },
-  { id: 9, lable: "Gender Limits" , key: 'is_gl' },
-  { id: 10, lable: "Pharmacy Networks" , key: 'is_pn' },
-  { id: 11, lable: "ICD Limits" , key: 'is_icdl' },
-  { id: 12, lable: "Presciber Taxonomy" , key: 'is_pt' },
-  { id: 13, lable: "PA Type 1" , key: 'NA9' },
-  { id: 14, lable: "PA Type 2" , key: 'NA10' },
-  { id: 15, lable: "UM Criteria" , key: 'NA11' },
-  { id: 16, lable: "QL Type 1" , key: 'NA17' },
-  { id: 17, lable: "QL Type 2" , key: 'NA18' },
-  { id: 18, lable: "QL Type 9" , key: 'NA19' },
-  { id: 19, lable: "Other 1" , key: 'is_other1' },
-  { id: 20, lable: "Other 2" , key: 'is_other2' },
-  { id: 21, lable: "Other 3" , key: 'is_other3' },
-  { id: 22, lable: "Other 4" , key: 'is_other4' },
-  { id: 23, lable: "Other 5" , key: 'is_other5' },
+  { id: 1, lable: "N/A" , key: 'NA1', code:68, isDisabled: false},
+  { id: 2, lable: "Prior Authorization" , key: 'is_pa', code:58, isDisabled: false},
+  { id: 3, lable: "Age Limits" , key: 'is_al' , code:61, isDisabled: false},
+  { id: 4, lable: "Patient Residence", key: 'is_pr' , code:64, isDisabled: false},
+  { id: 5, lable: "Place of Service" , key: 'is_ps' , code:67, isDisabled: false},
+  { id: 6, lable: "Free First Fill" , key: 'is_fff' , code:439, isDisabled: false},
+  { id: 7, lable: "ST Type 1" , key: 'NA7' , code:1, isDisabled: true},
+  { id: 8, lable: "ST Type 2" , key: 'NA8' , code:1, isDisabled: true},
+  { id: 9, lable: "Gender Limits" , key: 'is_gl' , code:62, isDisabled: false},
+  { id: 10, lable: "Pharmacy Networks" , key: 'is_pn' , code:65, isDisabled: false},
+  { id: 11, lable: "ICD Limits" , key: 'is_icdl' , code:63, isDisabled: false},
+  { id: 12, lable: "Presciber Taxonomy" , key: 'is_pt' , code:66, isDisabled: false},
+  { id: 13, lable: "PA Type 1" , key: 'NA9' , code:1, isDisabled: true},
+  { id: 14, lable: "PA Type 2" , key: 'NA10' , code:1, isDisabled: true},
+  { id: 15, lable: "UM Criteria" , key: 'NA11' , code:1, isDisabled: true},
+  { id: 16, lable: "QL Type 1" , key: 'NA17' , code:1, isDisabled: true},
+  { id: 17, lable: "QL Type 2" , key: 'NA18' , code:1, isDisabled: true},
+  { id: 18, lable: "QL Type 9" , key: 'NA19' , code:1, isDisabled: true},
+  { id: 19, lable: "Quantity Limits" , key: 'is_ql' , code:59, isDisabled: false},
+  { id: 20, lable: "Step Therapy" , key: 'is_st' , code:60, isDisabled: false},
+  { id: 21, lable: "Other 1" , key: 'is_other1' , code:1, isDisabled: false},
+  { id: 22, lable: "Other 2" , key: 'is_other2' , code:1, isDisabled: false},
+  { id: 23, lable: "Other 3" , key: 'is_other3' , code:1, isDisabled: false},
+  { id: 24, lable: "Other 4" , key: 'is_other4' , code:1, isDisabled: false},
+  { id: 25, lable: "Other 5" , key: 'is_other5' , code:1, isDisabled: false},
 ];
 
 interface Props {
@@ -127,7 +129,9 @@ class UmFilter extends Component<Props, State> {
     const newUmFilter = {
       id: curretUmFilteList.length,
       lable: this.state.newUmlable,
-      key: 'NA'+curretUmFilteList.length
+      key: 'NA'+curretUmFilteList.length,
+      code: 1,
+      isDisabled: false
     };
     curretUmFilteList.push(newUmFilter);
     this.setState({ umFilterList: curretUmFilteList, newUmlable: "" });
@@ -201,6 +205,7 @@ class UmFilter extends Component<Props, State> {
                   checked={this.state.selectedKeys.includes(filterList.key)}
                   style={{ borderRadius: "15px" }}
                   onClick={(e) => this.onSelect(e, filterList)}
+                  disabled={filterList.isDisabled}
                 />
                 <label htmlFor="" className="__list-lable">
                   {filterList.lable}

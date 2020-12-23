@@ -16,14 +16,19 @@ const mapStateToProps = (state) => {
     advancedSearchBody: state?.advancedSearch?.advancedSearchBody,
     populateGrid: state?.advancedSearch?.populateGrid,
     closeDialog: state?.advancedSearch?.closeDialog,
+    formulary_id: state?.application?.formulary_id,
+    formulary: state?.application?.formulary,
+    formulary_lob_id: state?.application?.formulary_lob_id,
+    formulary_type_id: state?.application?.formulary_type_id
   };
 };
 
 interface Props {
   tierChanged: (a) => void;
   advancedSearchBody: any;
+  formulary_lob_id: any;
 }
-interface State {}
+interface State { }
 const tires = [
   {
     id: 1,
@@ -77,6 +82,114 @@ const tires = [
   },
 ];
 
+const tiresNonMcr = [
+  {
+    id: 2,
+    lable: "Tier 1",
+    key: 1
+  },
+  {
+    id: 3,
+    lable: "Tier 2",
+    key: 2
+  },
+  {
+    id: 4,
+    lable: "Tier 3",
+    key: 3
+  },
+  {
+    id: 5,
+    lable: "Tier 4",
+    key: 4
+  },
+  {
+    id: 6,
+    lable: "Tier 5",
+    key: 5
+  },
+  {
+    id: 7,
+    lable: "Tier 6",
+    key: 6
+  },
+  {
+    id: 8,
+    lable: "Tier 7",
+    key: 7
+  },
+  {
+    id: 9,
+    lable: "Tier 8",
+    key: 8
+  },
+  {
+    id: 10,
+    lable: "Tier 9",
+    key: 9
+  },
+  {
+    id: 11,
+    lable: "Tier 10",
+    key: 10
+  },
+  {
+    id: 12,
+    lable: "Tier 11",
+    key: 11
+  },
+  {
+    id: 13,
+    lable: "Tier 12",
+    key: 12
+  },
+  {
+    id: 14,
+    lable: "Tier 13",
+    key: 13
+  },
+  {
+    id: 15,
+    lable: "Tier 14",
+    key: 14
+  },
+  {
+    id: 16,
+    lable: "Tier 15",
+    key: 15
+  },
+  {
+    id: 17,
+    lable: "Tier 16",
+    key: 16
+  },
+  {
+    id: 18,
+    lable: "Tier 17",
+    key: 17
+  },
+  {
+    id: 19,
+    lable: "Tier 18",
+    key: 18
+  },
+  {
+    id: 20,
+    lable: "Tier 19",
+    key: 19
+  },
+  {
+    id: 21,
+    lable: "Tier 20",
+    key: 20
+  },
+  {
+    id: 22,
+    lable: "No Tier ",
+    key: -1
+  },
+];
+
 class Tire extends Component<Props, State> {
   state = {
     tireList: [],
@@ -108,7 +221,7 @@ class Tire extends Component<Props, State> {
         return tire;
       });
 
-      currentSelectedTire =  currentSelectedTire.filter(
+      currentSelectedTire = currentSelectedTire.filter(
         (tire) => tire.id !== selectedTire.id
       );
 
@@ -143,13 +256,19 @@ class Tire extends Component<Props, State> {
   componentDidMount = () => {
     let setTiers = Array();
     let noTier: any = false;
-    if(this.props.advancedSearchBody && this.props.advancedSearchBody.additional_filter){
+    if (this.props.advancedSearchBody && this.props.advancedSearchBody.additional_filter) {
       setTiers = this.props.advancedSearchBody.additional_filter.tiers;
       noTier = this.props.advancedSearchBody.additional_filter.is_no_tier;
     }
-    tires.map((tire) => (tire["isChecked"] = (setTiers.includes(tire['key']) || (noTier && tire['key'] == -1) ? true : false)));
-    this.props.tierChanged(tires);
-    this.setState({ tireList: tires });
+    if (this.props.formulary_lob_id == 1) {
+      tires.map((tire) => (tire["isChecked"] = (setTiers.includes(tire['key']) || (noTier && tire['key'] == -1) ? true : false)));
+      this.props.tierChanged(tires);
+      this.setState({ tireList: tires });
+    } else {
+      tiresNonMcr.map((tire) => (tire["isChecked"] = (setTiers.includes(tire['key']) || (noTier && tire['key'] == -1) ? true : false)));
+      this.props.tierChanged(tiresNonMcr);
+      this.setState({ tireList: tiresNonMcr });
+    }
   };
 
   render() {
