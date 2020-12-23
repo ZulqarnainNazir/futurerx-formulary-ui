@@ -69,6 +69,7 @@ class FormularySetUp extends React.Component<any, any> {
     edit_info: {
       edits: [],
       edits_no: [],
+      custom_edits: []
     },
     setupOptions: {},
   };
@@ -165,20 +166,30 @@ class FormularySetUp extends React.Component<any, any> {
     }
   };
   getEditInfo = (editInfo: any) => {
-    const editTrue = editInfo
+    let editTrue = editInfo
       .filter((obj) => obj.id_checked === true)
       .map((e) => e.id_edit);
     const editFalse = editInfo
       .filter((obj) => obj.id_checked === false)
       .map((e) => e.id_edit);
-    const customEdit = editInfo;
+    let customEdit:any = '';
+    if(this.props.formulary_type_id === 6){
+      customEdit = this.props.setupOptions.designOptions.filter(e => e.is_custom === true);
+      const customEditId = customEdit.map(e=> e.id_edit);
+      editTrue = editTrue.filter(e => customEditId.indexOf(e) === -1);
+    }
     const newObj = {
       edits: editTrue,
       edits_no: editFalse,
-      custom_edits: "",
+      custom_edits: customEdit,
     };
     return newObj;
   };
+  formularyDesignCommercialCheckHandler = (getObj:any) => {
+    this.setState({
+      edit_info: getObj
+    })
+  }
   formularyRadioChangeHandler = (
     event: React.ChangeEvent<HTMLInputElement>,
     id: any,
@@ -438,6 +449,7 @@ class FormularySetUp extends React.Component<any, any> {
                 {this.state.generalInformation.type === "Commercial" ? (
                   <FormularyDesignCommercial
                     edit_info={this.state.edit_info}
+                    formularyDesignCommercialCheck = {this.formularyDesignCommercialCheckHandler}
                     formularyRadioChange={this.formularyRadioChangeHandler}
                   />
                 ) : null}
