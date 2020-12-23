@@ -348,7 +348,8 @@ class FormularySetUp extends React.Component<any, any> {
       medicare_contract_type_info: this.state.medicare_contract_type_info,
       tiers: this.state.tiers,
     };
-    //console.log("Calling Save................");
+
+
     this.props.saveFormulary(input).then((arg) => {
       //console.log("SAVE Callback ", arg?.payload);
       if (arg?.payload?.type > 0 && arg?.payload?.id > 0) {
