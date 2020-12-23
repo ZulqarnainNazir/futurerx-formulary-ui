@@ -211,7 +211,7 @@ export const postPAGroupDescription = createAsyncThunk(
     if (apiDetails.lob_type==1){
       POST_URL = POSt_PA_GROUP_DESCRIPTION_URL + pathParams ;
     }else  if (apiDetails.lob_type==4){
-      POST_URL = BASE_URL1 +POSt_PA_COMM_GROUP_DESCRIPTION_URL + pathParams ;
+      POST_URL = POSt_PA_COMM_GROUP_DESCRIPTION_URL + pathParams ;
     }
     if(keyVals){
       keyVals = keyVals.map(pair => pair.key+'='+pair.value);
