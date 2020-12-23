@@ -8,6 +8,11 @@ import { Checkbox } from 'antd';
 class SupplementalModels extends React.Component<any, any> {
     checkFormularyDesign = (id:any) => {
         const des_opt:any = {...this.props.edit_info};
+        const naCheckId = this.props.designOptions?.filter(e => e.is_custom !== true && e.edit_name === 'N/A').map(e=>e.id_edit);
+        if(des_opt.edits.indexOf(parseInt(naCheckId)) !== -1){
+            let ind = des_opt.edits.indexOf(naCheckId);
+            des_opt.edits.splice(ind,1);
+        }
         if(des_opt.edits.indexOf(id) === -1) {
             des_opt.edits.push(id)
         }else{
@@ -18,6 +23,11 @@ class SupplementalModels extends React.Component<any, any> {
     }
     customCheckboxClickHandler = (e) => {
         const des_opt:any = {...this.props.edit_info};
+        const naCheckId = this.props.designOptions?.filter(e => e.is_custom !== true && e.edit_name === 'N/A').map(e=>e.id_edit);
+        if(des_opt.edits.indexOf(parseInt(naCheckId)) !== -1){
+            let ind = des_opt.edits.indexOf(naCheckId);
+            des_opt.edits.splice(ind,1);
+        }
         if(des_opt.custom_edits.length > 0){
             des_opt.custom_edits = []
         }else{
@@ -43,6 +53,31 @@ class SupplementalModels extends React.Component<any, any> {
             isChecked = this.props.edit_info.edits.indexOf(id) !== -1;
         }
         return isChecked;
+    }
+    checkNAHandler = (id) => {
+        const des_opt = {...this.props.edit_info};
+        const edits = [...des_opt.edits];
+        const custom_edits = [...des_opt.custom_edits];
+        if(des_opt.edits.indexOf(id) === -1){
+            des_opt.edits = [];
+            des_opt.edits.push(id)
+        }else{
+            des_opt.edits = [];
+        }
+        this.props.formularyDesignCommercialCheck(des_opt);
+    }
+    checkUncheckHandler = () => {
+        const des_opt = {...this.props.edit_info};
+        const edits = [...des_opt.edits];
+        const custom_edits = [...des_opt.custom_edits];
+        if(edits.length > 0 || custom_edits.length > 0){
+            des_opt.edits = [];
+            des_opt.custom_edits = []
+        }else{
+            const newEdits = this.props.designOptions?.filter(e => e.is_custom !== true && e.edit_name !== 'N/A').map(e=>e.id_edit);
+            des_opt.edits = newEdits
+        }
+        this.props.formularyDesignCommercialCheck(des_opt);
     }
     renderCustomCheckbox = () => {
         let checkbox:any = [];
@@ -108,6 +143,23 @@ class SupplementalModels extends React.Component<any, any> {
         }
         return checkbox; 
     }
+    renderNACheckbox = () => {
+        let checkbox = [];
+        if(this.props.designOptions){
+            const des_opt = this.props.designOptions?.filter(e => (e.is_custom === false && e.edit_name === 'N/A'));
+            checkbox = des_opt?.map(el => {
+                return (
+                    <Checkbox 
+                        className="custom-checkbox mb-16" 
+                        onChange={() => this.checkNAHandler(el.id_edit)} 
+                        checked={this.getChecked(el.id_edit)}>
+                            {el.edit_name}
+                    </Checkbox>
+                )
+            })
+        }
+        return checkbox; 
+    }
   render() {
     return (
       <div className="supplemental-models-container">
@@ -115,21 +167,16 @@ class SupplementalModels extends React.Component<any, any> {
         <div className="formulary-design-fields-wrapper setup-label">
         <Grid container>
             <Grid item xs={11}>
-                <Checkbox 
-                    className="custom-checkbox mb-16" 
-                    onChange={() => this.props.checkUncheckAllSupplemental('uncheck')} 
-                    checked={true}>
-                        N/A
-                </Checkbox>
+                {this.renderNACheckbox()}
             </Grid>
             <Grid item xs={1}>
                 <ul>
                     <li>
                     <Box display="flex" justifyContent="flex-end" className="compare-btn">
-                        {this.props.edit_info.edits.length > 0 ? (
-                            <Button label="Uncheck All" className="uncheck-btn" onClick={() => this.props.checkUncheckAllSupplemental('uncheck')}/>
+                        {(this.props.edit_info.edits.length > 0 || this.props.edit_info.custom_edits.length > 0) ? (
+                            <Button label="Uncheck All" className="uncheck-btn" onClick={this.checkUncheckHandler}/>
                         ) : (
-                            <Button label="Check All" className="uncheck-btn" onClick={() => this.props.checkUncheckAllSupplemental('check')}/>
+                            <Button label="Check All" className="uncheck-btn" onClick={this.checkUncheckHandler}/>
                         )}
                     </Box>
                     </li>
