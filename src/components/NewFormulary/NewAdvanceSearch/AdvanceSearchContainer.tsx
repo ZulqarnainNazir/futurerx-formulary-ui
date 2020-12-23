@@ -217,7 +217,7 @@ class AdvanceSearchContainer extends Component<Props, State> {
               id: this.state.idCount,
               type: 1,
               isIncluded: included,
-              content: <ListItemContainer title={"GPI/Generic Name/Label Name/ RXCUI"} onParentDataUpdated={this.onParentDataUpdated} nodeId={this.state.idCount}>
+              content: <ListItemContainer title={this.props.formulary_lob_id === 1 ? "GPI/Generic Name/Label Name/ RXCUI" : "GPI/Generic Name/Label Name/ DDID"} onParentDataUpdated={this.onParentDataUpdated} nodeId={this.state.idCount}>
                 <GpiLableSearch nodeId={this.state.idCount} onChildDataUpdated={this.onChildDataUpdated} initialValues={values} />
               </ListItemContainer>
             });
@@ -507,7 +507,7 @@ class AdvanceSearchContainer extends Component<Props, State> {
                 id: this.state.idCount,
                 type: 1,
                 isIncluded: true,
-                content: <ListItemContainer title={"GPI/Generic Name/Label Name/ RXCUI"} onParentDataUpdated={this.onParentDataUpdated} nodeId={this.state.idCount}>
+                content: <ListItemContainer title={this.props.formulary_lob_id === 1 ? "GPI/Generic Name/Label Name/ RXCUI" : "GPI/Generic Name/Label Name/ DDID"} onParentDataUpdated={this.onParentDataUpdated} nodeId={this.state.idCount}>
                   <GpiLableSearch nodeId={this.state.idCount} onChildDataUpdated={this.onChildDataUpdated} initialValues={[]} />
                 </ListItemContainer>
               },
@@ -527,7 +527,7 @@ class AdvanceSearchContainer extends Component<Props, State> {
                 id: this.state.idCount,
                 type: 1,
                 isIncluded: includedStatus,
-                content: <ListItemContainer title={"GPI/Generic Name/Label Name/ RXCUI"} onParentDataUpdated={this.onParentDataUpdated} nodeId={this.state.idCount}>
+                content: <ListItemContainer title={this.props.formulary_lob_id === 1 ? "GPI/Generic Name/Label Name/ RXCUI" : "GPI/Generic Name/Label Name/ DDID"} onParentDataUpdated={this.onParentDataUpdated} nodeId={this.state.idCount}>
                   <GpiLableSearch nodeId={this.state.idCount} onChildDataUpdated={this.onChildDataUpdated} initialValues={[]} />
                 </ListItemContainer>
               },
@@ -930,7 +930,7 @@ class AdvanceSearchContainer extends Component<Props, State> {
                       />
                     </svg>
                   </span>
-                  <div className="category-text">{category.category}</div>
+                  <div className="category-text">{this.props.formulary_lob_id !== 1 && category.id === 1 ? 'GPI/Generic Name/Label Name/ DDID' : category.category}</div>
                 </div>
               ))}
             </Grid>
