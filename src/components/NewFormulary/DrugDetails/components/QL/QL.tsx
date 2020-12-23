@@ -286,16 +286,28 @@ class Tier extends React.Component<any, tabsState> {
                   </div>
                 </div>
               </Grid>
-              <Button
-                label="Apply"
-                onClick={this.openTierGridContainer}
-                // disabled={this.props.configureSwitch}
-              ></Button>
+              <div
+                className="apply-button"
+                style={{
+                  display: "flex",
+                  justifyContent: "flex-end",
+                  width: "100%",
+                }}
+              >
+                <Button
+                  label="Apply"
+                  onClick={this.openTierGridContainer}
+                  // disabled={this.props.configureSwitch}
+                ></Button>
+              </div>
             </Grid>
             {this.state.tierGridContainer && (
               <div className="select-drug-from-table">
                 <div className="bordered white-bg">
-                  <div className="header space-between pr-10">
+                  <div
+                    className="header space-between pr-10"
+                    style={{ display: "flex", justifyContent: "flex-end" }}
+                  >
                     <div className="button-wrapper">
                       <Button
                         className="Button normal"

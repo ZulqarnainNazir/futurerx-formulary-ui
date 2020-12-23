@@ -3,6 +3,7 @@ import { Grid } from "@material-ui/core";
 import DropDown from "../../../../../shared/Frx-components/dropdown/DropDown";
 import Label from "../../../../../shared/Frx-components/label/Label";
 import Button from "../../../../../shared/Frx-components/button/Button";
+import { Input } from "@material-ui/core";
 import "./common.scss";
 
 const Replace = () => {
@@ -18,19 +19,39 @@ const Replace = () => {
         <Grid item xs={4}>
           <div className="input-group">
             <Label required={true}>QUANTITY</Label>
-            <DropDown options={[1, 2, 3]} />
+            {/* <DropDown options={[1, 2, 3]} /> */}
+            <Input
+              className="formulary-list-search"
+              // placeholder="Search"
+              type="text"
+              disableUnderline={true}
+            />
           </div>
         </Grid>
         <Grid item xs={4}>
           <div className="input-group">
-            <Label required={true}>DAYS</Label>
-            <DropDown options={[1, 2, 3]} />
+            <Label required={true}>DAYS </Label>
+            {/* <DropDown options={[1, 2, 3]} /> */}
+            <div>
+              <Input
+                className="formulary-list-search"
+                // placeholder="Search"
+                type="text"
+                disableUnderline={true}
+              />
+            </div>
           </div>
         </Grid>
         <Grid item xs={4}>
           <div className="input-group">
             <Label required={true}>PERIOD OF TIME IN DAYS</Label>
-            <DropDown options={[1, 2, 3]} />
+            {/* <DropDown options={[1, 2, 3]} /> */}
+            <Input
+              className="formulary-list-search"
+              // placeholder="Search"
+              type="text"
+              disableUnderline={true}
+            />
           </div>
         </Grid>
         {/* <Button
