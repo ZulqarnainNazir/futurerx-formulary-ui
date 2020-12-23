@@ -22,6 +22,7 @@ export async function getGeneralOptions(
   if (id > 0) {
     url2 += `/${id}`;
   }
+  let url3 = `${BASE_URL1}api/1/formularies/${type}`;
 
   const request0 = axios.get(url0, {
     headers: REQUEST_HEADER,
@@ -32,15 +33,20 @@ export async function getGeneralOptions(
   const request2 = axios.get(url2, {
     headers: REQUEST_HEADER,
   });
+  const request3 = axios.get(url3, {
+    headers: REQUEST_HEADER,
+  });
 
   return await axios
-    .all([request0, request1, request2])
+    .all([request0, request1, request2, request3])
     .then(
       axios.spread((...responses) => {
         const response0 = responses[0];
         const response1 = responses[1];
         const response2 = responses[2];
+        const response3 = responses[3];
         //console.log(response0, response1, response2);
+        console.log(response3);
         let list0 = [];
         if (response0?.data?.code === "200") {
           list0 = response0?.data?.data;
@@ -53,12 +59,17 @@ export async function getGeneralOptions(
         if (response2?.data?.code === "200") {
           list2 = response2?.data?.data;
         }
+        let list3 = [];
+        if (response3?.data?.code === "200") {
+          list3 = response3?.data?.data;
+        }
 
         //console.log(list0, list1, list2);
         return {
           formularyType: list0,
           contractYear: list1,
           classification_systems: list2,
+          clone_source_formularies: list3
         };
       })
     )

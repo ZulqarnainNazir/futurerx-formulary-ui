@@ -250,7 +250,7 @@ class AdvanceSearchContainer extends Component<Props, State> {
             {
               id: this.state.idCount,
               content:<ListItemContainer title={"Drug Category/Class"} onParentDataUpdated={this.onParentDataUpdated} nodeId={this.state.idCount}>
-              <DrugCategory onCkick={this.handleOnClick} />
+              <DrugCategory nodeId={this.state.idCount} onChildDataUpdated={this.onChildDataUpdated}/>
             </ListItemContainer>
             },
           ],
