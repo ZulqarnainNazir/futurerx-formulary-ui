@@ -166,6 +166,7 @@ export const saveFormulary = createAsyncThunk(
             return {
               type: payload?.formulary_info?.id_formulary_type,
               id: resp?.data,
+              continue:input?.CONTINUE
             };
           } else {
             return null;

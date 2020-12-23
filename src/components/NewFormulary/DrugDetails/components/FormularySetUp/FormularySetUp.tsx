@@ -357,10 +357,15 @@ class FormularySetUp extends React.Component<any, any> {
           "REFRESH.... TYPE : " +
             arg?.payload?.type +
             " ID : " +
-            arg?.payload?.id
+            arg?.payload?.id +
+            " CONTINUE : " +
+            arg?.payload?.continue            
         );
         this.manageFormularyType(arg?.payload?.type, arg?.payload?.id);
         this.props.fetchSelectedFormulary(arg?.payload?.id);
+        if(arg?.payload?.continue){
+          //
+        }
       }
     });
   };
