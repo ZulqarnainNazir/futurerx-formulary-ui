@@ -28,6 +28,10 @@ const mapStateToProps = (state) => {
     populateGrid: state?.advancedSearch?.populateGrid,
     closeDialog: state?.advancedSearch?.closeDialog,
     listItemStatus: state?.advancedSearch?.listItemStatus,
+    formulary_id: state?.application?.formulary_id,
+    formulary: state?.application?.formulary,
+    formulary_lob_id: state?.application?.formulary_lob_id,
+    formulary_type_id: state?.application?.formulary_type_id
   };
 };
 
@@ -39,6 +43,7 @@ interface Props {
   populateGrid: any;
   closeDialog: any;
   listItemStatus: any;
+  formulary_lob_id: any;
 }
 interface State { }
 
@@ -67,6 +72,27 @@ class AdvanceSearchContainer extends Component<Props, State> {
       is_user_defined4: false,
       is_user_defined5: false,
       is_vbid: false,
+      is_no_tier: false,
+      tiers: Array()
+    },
+    additionalFilterNonMcr: {
+      is_al: false,
+      is_all_tiers: false,
+      is_gl: false,
+      is_icdl: false,
+      is_pa: false,
+      is_st: false,
+      is_pn: false,
+      is_pr: false,
+      is_ps: false,
+      is_pt: false,
+      is_ql: false,
+      is_frf: false,
+      is_other1: false,
+      is_other2: false,
+      is_other3: false,
+      is_other4: false,
+      is_other5: false,
       is_no_tier: false,
       tiers: Array()
     },
@@ -121,11 +147,11 @@ class AdvanceSearchContainer extends Component<Props, State> {
       }
 
       let payload = { advancedSearchBody: this.props.advancedSearchBody, populateGrid: this.props.populateGrid, closeDialog: this.props.closeDialog, listItemStatus: Object.assign({}, this.props.listItemStatus) };
-      console.log('State count:'+this.state.idCount);
+      console.log('State count:' + this.state.idCount);
       if (this.props.advancedSearchBody.covered) {
         this.appendNonGenericSections(this.props.advancedSearchBody.covered, selectedCateoryList, true, payload);
       }
-      console.log('State count:'+this.state.idCount);
+      console.log('State count:' + this.state.idCount);
       if (this.props.advancedSearchBody.not_covered) {
         this.appendNonGenericSections(this.props.advancedSearchBody.not_covered, selectedCateoryList, false, payload);
       }
@@ -191,7 +217,7 @@ class AdvanceSearchContainer extends Component<Props, State> {
               id: this.state.idCount,
               type: 1,
               isIncluded: included,
-              content: <ListItemContainer title={"GPI/Generic Name/Label Name/ RXCUI"} onParentDataUpdated={this.onParentDataUpdated} nodeId={this.state.idCount}>
+              content: <ListItemContainer title={this.props.formulary_lob_id === 1 ? "GPI/Generic Name/Label Name/ RXCUI" : "GPI/Generic Name/Label Name/ DDID"} onParentDataUpdated={this.onParentDataUpdated} nodeId={this.state.idCount}>
                 <GpiLableSearch nodeId={this.state.idCount} onChildDataUpdated={this.onChildDataUpdated} initialValues={values} />
               </ListItemContainer>
             });
@@ -202,7 +228,7 @@ class AdvanceSearchContainer extends Component<Props, State> {
         if (!categoryHandled) {
           values = [];
           if (refList['drug_categories'] && refList['drug_categories'].length > 0 &&
-          refList['drug_classes'] && refList['drug_classes'].length > 0) {
+            refList['drug_classes'] && refList['drug_classes'].length > 0) {
             for (let index = 0; index < refList['drug_categories'].length; index++) {
               if (index < refList['drug_classes'].length) {
                 values.push(refList['drug_categories'][index] + '[' + refList['drug_classes'][index] + ']');
@@ -213,12 +239,12 @@ class AdvanceSearchContainer extends Component<Props, State> {
             this.state.idCount++;
             this.state.nodeList.push({ type: 'cat_class', id: this.state.idCount, childData: {}, isIncluded: included });
             payload.listItemStatus[this.state.idCount] = included;
-            selectedCateoryList.push( {
+            selectedCateoryList.push({
               id: this.state.idCount,
               type: 3,
               isIncluded: included,
               content: <ListItemContainer title={"Drug Category/Class"} onParentDataUpdated={this.onParentDataUpdated} nodeId={this.state.idCount}>
-                <DrugCategory nodeId={this.state.idCount} onChildDataUpdated={this.onChildDataUpdated} initialValues={values}/>
+                <DrugCategory nodeId={this.state.idCount} onChildDataUpdated={this.onChildDataUpdated} initialValues={values} />
               </ListItemContainer>
             });
           }
@@ -234,33 +260,61 @@ class AdvanceSearchContainer extends Component<Props, State> {
         this.state.additionalFilter[filterKey] = false;
       }
     });*/
-    this.state.additionalFilter = {
-      is_all_tiers: this.state.additionalFilter['is_all_tiers'],
-      is_no_tier: this.state.additionalFilter['is_no_tier'],
-      tiers: this.state.additionalFilter['tiers'],
-      is_add: false,
-      is_exd: false,
-      is_fff: false,
-      is_frf: false,
-      is_hi: false,
-      is_ibf: false,
-      is_lis: false,
-      is_non_frf: false,
-      is_otc: false,
-      is_pa: false,
-      is_st: false,
-      is_pgc: false,
-      is_user_defined1: false,
-      is_user_defined2: false,
-      is_user_defined3: false,
-      is_user_defined4: false,
-      is_user_defined5: false,
-      is_vbid: false,
-    };
+    if (this.props.formulary_lob_id === 1) {
+      this.state.additionalFilter = {
+        is_all_tiers: this.state.additionalFilter['is_all_tiers'],
+        is_no_tier: this.state.additionalFilter['is_no_tier'],
+        tiers: this.state.additionalFilter['tiers'],
+        is_add: false,
+        is_exd: false,
+        is_fff: false,
+        is_frf: false,
+        is_hi: false,
+        is_ibf: false,
+        is_lis: false,
+        is_non_frf: false,
+        is_otc: false,
+        is_pa: false,
+        is_st: false,
+        is_pgc: false,
+        is_user_defined1: false,
+        is_user_defined2: false,
+        is_user_defined3: false,
+        is_user_defined4: false,
+        is_user_defined5: false,
+        is_vbid: false,
+      };
+    } else {
+      this.state.additionalFilterNonMcr = {
+        is_al: false,
+        is_all_tiers: this.state.additionalFilterNonMcr['is_all_tiers'],
+        is_gl: false,
+        is_icdl: false,
+        is_pa: false,
+        is_st: false,
+        is_pn: false,
+        is_pr: false,
+        is_ps: false,
+        is_pt: false,
+        is_ql: false,
+        is_frf: false,
+        is_other1: false,
+        is_other2: false,
+        is_other3: false,
+        is_other4: false,
+        is_other5: false,
+        is_no_tier: this.state.additionalFilterNonMcr['is_no_tier'],
+        tiers: this.state.additionalFilterNonMcr['tiers']
+      }
+    }
     if (umFilters.length > 0) {
       umFilters.map(umItem => {
         if (!umItem.key.startsWith('NA')) {
-          this.state.additionalFilter[umItem.key] = true;
+          if (this.props.formulary_lob_id === 1) {
+            this.state.additionalFilter[umItem.key] = true;
+          } else {
+            this.state.additionalFilterNonMcr[umItem.key] = true;
+          }
         }
       })
     }
@@ -272,34 +326,62 @@ class AdvanceSearchContainer extends Component<Props, State> {
         this.state.additionalFilter[filterKey] = false;
       }
     });*/
-    this.state.additionalFilter = {
-      is_all_tiers: this.state.additionalFilter['is_all_tiers'],
-      is_no_tier: this.state.additionalFilter['is_no_tier'],
-      tiers: this.state.additionalFilter['tiers'],
-      is_add: false,
-      is_exd: false,
-      is_fff: false,
-      is_frf: false,
-      is_hi: false,
-      is_ibf: false,
-      is_lis: false,
-      is_non_frf: false,
-      is_otc: false,
-      is_pa: false,
-      is_st: false,
-      is_pgc: false,
-      is_user_defined1: false,
-      is_user_defined2: false,
-      is_user_defined3: false,
-      is_user_defined4: false,
-      is_user_defined5: false,
-      is_vbid: false,
-    };
+    if (this.props.formulary_lob_id === 1) {
+      this.state.additionalFilter = {
+        is_all_tiers: this.state.additionalFilter['is_all_tiers'],
+        is_no_tier: this.state.additionalFilter['is_no_tier'],
+        tiers: this.state.additionalFilter['tiers'],
+        is_add: false,
+        is_exd: false,
+        is_fff: false,
+        is_frf: false,
+        is_hi: false,
+        is_ibf: false,
+        is_lis: false,
+        is_non_frf: false,
+        is_otc: false,
+        is_pa: false,
+        is_st: false,
+        is_pgc: false,
+        is_user_defined1: false,
+        is_user_defined2: false,
+        is_user_defined3: false,
+        is_user_defined4: false,
+        is_user_defined5: false,
+        is_vbid: false,
+      };
+    } else {
+      this.state.additionalFilterNonMcr = {
+        is_al: false,
+        is_all_tiers: this.state.additionalFilterNonMcr['is_all_tiers'],
+        is_gl: false,
+        is_icdl: false,
+        is_pa: false,
+        is_st: false,
+        is_pn: false,
+        is_pr: false,
+        is_ps: false,
+        is_pt: false,
+        is_ql: false,
+        is_frf: false,
+        is_other1: false,
+        is_other2: false,
+        is_other3: false,
+        is_other4: false,
+        is_other5: false,
+        is_no_tier: this.state.additionalFilterNonMcr['is_no_tier'],
+        tiers: this.state.additionalFilterNonMcr['tiers']
+      }
+    }
     if (filters.length > 0) {
       filters.map(item => {
         item.types.map(type => {
           if (!type['key'].startsWith('NA')) {
-            this.state.additionalFilter[type['key']] = type['isChecked'];
+            if (this.props.formulary_lob_id === 1) {
+              this.state.additionalFilter[type['key']] = type['isChecked'];
+            } else {
+              this.state.additionalFilterNonMcr[type['key']] = type['isChecked'];
+            }
           }
         });
       })
@@ -308,25 +390,45 @@ class AdvanceSearchContainer extends Component<Props, State> {
 
   tierChanged = (tiers) => {
     console.log('Selected tiers:' + JSON.stringify(tiers));
-    this.state.additionalFilter.tiers = Array();
+    if (this.props.formulary_lob_id === 1) {
+      this.state.additionalFilter.tiers = Array();
+    } else {
+      this.state.additionalFilterNonMcr.tiers = Array();
+    }
     let isAllTier: boolean = true;
     tiers.map(tier => {
       if (tier.key != -1) {
         isAllTier = isAllTier && tier['isChecked'];
         if (tier.isChecked) {
-          this.state.additionalFilter.tiers.push(tier.key);
+          if (this.props.formulary_lob_id === 1) {
+            this.state.additionalFilter.tiers.push(tier.key);
+          } else {
+            this.state.additionalFilterNonMcr.tiers.push(tier.key);
+          }
         }
       } else {
         if (tier.isChecked) {
-          this.state.additionalFilter.is_no_tier = true;
+          if (this.props.formulary_lob_id === 1) {
+            this.state.additionalFilter.is_no_tier = true;
+          } else {
+            this.state.additionalFilterNonMcr.is_no_tier = true;
+          }
           isAllTier = true;
         } else {
-          this.state.additionalFilter.is_no_tier = false;
+          if (this.props.formulary_lob_id === 1) {
+            this.state.additionalFilter.is_no_tier = false;
+          } else {
+            this.state.additionalFilterNonMcr.is_no_tier = false;
+          }
         }
       }
     });
 
-    this.state.additionalFilter.is_all_tiers = isAllTier;
+    if (this.props.formulary_lob_id === 1) {
+      this.state.additionalFilter.is_all_tiers = isAllTier;
+    } else {
+      this.state.additionalFilterNonMcr.is_all_tiers = isAllTier;
+    }
   }
 
   onChildDataUpdated = (id, data) => {
@@ -405,7 +507,7 @@ class AdvanceSearchContainer extends Component<Props, State> {
                 id: this.state.idCount,
                 type: 1,
                 isIncluded: true,
-                content: <ListItemContainer title={"GPI/Generic Name/Label Name/ RXCUI"} onParentDataUpdated={this.onParentDataUpdated} nodeId={this.state.idCount}>
+                content: <ListItemContainer title={this.props.formulary_lob_id === 1 ? "GPI/Generic Name/Label Name/ RXCUI" : "GPI/Generic Name/Label Name/ DDID"} onParentDataUpdated={this.onParentDataUpdated} nodeId={this.state.idCount}>
                   <GpiLableSearch nodeId={this.state.idCount} onChildDataUpdated={this.onChildDataUpdated} initialValues={[]} />
                 </ListItemContainer>
               },
@@ -425,7 +527,7 @@ class AdvanceSearchContainer extends Component<Props, State> {
                 id: this.state.idCount,
                 type: 1,
                 isIncluded: includedStatus,
-                content: <ListItemContainer title={"GPI/Generic Name/Label Name/ RXCUI"} onParentDataUpdated={this.onParentDataUpdated} nodeId={this.state.idCount}>
+                content: <ListItemContainer title={this.props.formulary_lob_id === 1 ? "GPI/Generic Name/Label Name/ RXCUI" : "GPI/Generic Name/Label Name/ DDID"} onParentDataUpdated={this.onParentDataUpdated} nodeId={this.state.idCount}>
                   <GpiLableSearch nodeId={this.state.idCount} onChildDataUpdated={this.onChildDataUpdated} initialValues={[]} />
                 </ListItemContainer>
               },
@@ -491,7 +593,7 @@ class AdvanceSearchContainer extends Component<Props, State> {
                 type: 3,
                 isIncluded: true,
                 content: <ListItemContainer title={"Drug Category/Class"} onParentDataUpdated={this.onParentDataUpdated} nodeId={this.state.idCount}>
-                  <DrugCategory nodeId={this.state.idCount} onChildDataUpdated={this.onChildDataUpdated} initialValues={[]}/>
+                  <DrugCategory nodeId={this.state.idCount} onChildDataUpdated={this.onChildDataUpdated} initialValues={[]} />
                 </ListItemContainer>
               },
             ],
@@ -511,7 +613,7 @@ class AdvanceSearchContainer extends Component<Props, State> {
                 type: 3,
                 isIncluded: includedStatus,
                 content: <ListItemContainer title={"Drug Category/Class"} onParentDataUpdated={this.onParentDataUpdated} nodeId={this.state.idCount}>
-                  <DrugCategory nodeId={this.state.idCount} onChildDataUpdated={this.onChildDataUpdated} initialValues={[]}/>
+                  <DrugCategory nodeId={this.state.idCount} onChildDataUpdated={this.onChildDataUpdated} initialValues={[]} />
                 </ListItemContainer>
               },
             ],
@@ -671,31 +773,59 @@ class AdvanceSearchContainer extends Component<Props, State> {
     });
   };
   onClear = () => {
-    this.state.additionalFilter = {
-      is_add: false,
-      is_all_tiers: false,
-      is_exd: false,
-      is_fff: false,
-      is_frf: false,
-      is_hi: false,
-      is_ibf: false,
-      is_lis: false,
-      is_non_frf: false,
-      is_otc: false,
-      is_pa: false,
-      is_st: false,
-      is_pgc: false,
-      is_user_defined1: false,
-      is_user_defined2: false,
-      is_user_defined3: false,
-      is_user_defined4: false,
-      is_user_defined5: false,
-      is_vbid: false,
-      is_no_tier: false,
-      tiers: Array()
-    };
+    if (this.props.formulary_lob_id === 1) {
+      this.state.additionalFilter = {
+        is_add: false,
+        is_all_tiers: false,
+        is_exd: false,
+        is_fff: false,
+        is_frf: false,
+        is_hi: false,
+        is_ibf: false,
+        is_lis: false,
+        is_non_frf: false,
+        is_otc: false,
+        is_pa: false,
+        is_st: false,
+        is_pgc: false,
+        is_user_defined1: false,
+        is_user_defined2: false,
+        is_user_defined3: false,
+        is_user_defined4: false,
+        is_user_defined5: false,
+        is_vbid: false,
+        is_no_tier: false,
+        tiers: Array()
+      };
+    } else {
+      this.state.additionalFilterNonMcr = {
+        is_al: false,
+        is_all_tiers: false,
+        is_gl: false,
+        is_icdl: false,
+        is_pa: false,
+        is_st: false,
+        is_pn: false,
+        is_pr: false,
+        is_ps: false,
+        is_pt: false,
+        is_ql: false,
+        is_frf: false,
+        is_other1: false,
+        is_other2: false,
+        is_other3: false,
+        is_other4: false,
+        is_other5: false,
+        is_no_tier: false,
+        tiers: Array()
+      }
+    }
     let payload = { advancedSearchBody: {}, populateGrid: false, closeDialog: false, listItemStatus: {} };
-    payload.advancedSearchBody['additional_filter'] = this.state.additionalFilter;
+    if (this.props.formulary_lob_id === 1) {
+      payload.advancedSearchBody['additional_filter'] = this.state.additionalFilter;
+    } else {
+      payload.advancedSearchBody['additional_filter'] = this.state.additionalFilterNonMcr;
+    }
     payload.advancedSearchBody["covered"] = {};
     payload.advancedSearchBody["not_covered"] = {};
     payload.advancedSearchBody["is_advance_search"] = false;
@@ -717,7 +847,11 @@ class AdvanceSearchContainer extends Component<Props, State> {
 
   applySearch = () => {
     let payload = { advancedSearchBody: {}, populateGrid: false, closeDialog: true, listItemStatus: {} };
-    payload.advancedSearchBody['additional_filter'] = this.state.additionalFilter;
+    if (this.props.formulary_lob_id === 1) {
+      payload.advancedSearchBody['additional_filter'] = this.state.additionalFilter;
+    } else {
+      payload.advancedSearchBody['additional_filter'] = this.state.additionalFilterNonMcr;
+    }
     payload.advancedSearchBody["covered"] = {};
     payload.advancedSearchBody["not_covered"] = {};
     if (this.state.nodeList.length > 0) {
@@ -796,7 +930,7 @@ class AdvanceSearchContainer extends Component<Props, State> {
                       />
                     </svg>
                   </span>
-                  <div className="category-text">{category.category}</div>
+                  <div className="category-text">{this.props.formulary_lob_id !== 1 && category.id === 1 ? 'GPI/Generic Name/Label Name/ DDID' : category.category}</div>
                 </div>
               ))}
             </Grid>
