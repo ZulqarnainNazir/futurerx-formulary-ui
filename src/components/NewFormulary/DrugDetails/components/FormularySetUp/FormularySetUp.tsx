@@ -328,6 +328,9 @@ class FormularySetUp extends React.Component<any, any> {
       if (this.state.generalInformation.service_year === "") {
         msg.push("Formulary Service year is required.");
       }
+      // if(this.tierCheck()){
+      //   msg.push("Formulary Service year is required.");
+      // }
       if (msg.length > 0) {
         msg.forEach((m) => {
           showMessage(m, "info");
