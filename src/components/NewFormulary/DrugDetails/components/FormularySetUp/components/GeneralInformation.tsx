@@ -94,12 +94,12 @@ class GeneralInformation extends React.Component<any, GeneralInformationState> {
   }
   getClassificationRadio = () => {
     let classificationRadio:any = null;
-    let value = this.props.generalInfo.classification_system;
+    let value = parseInt(this.props.generalInfo.classification_system);
     const radi = <RadioGroup 
     className="radio-group-custom" 
     aria-label={'classification_system'} 
     name="classification_system"
-    value={this.props.generalInfo.classification_system?.toString()} 
+    value={value} 
     onChange={(e) => this.props.onRadioChange(e,'generalInformation')}>
       {this.props.general_options.classification_systems.map(el => {
         return (
@@ -391,7 +391,8 @@ class GeneralInformation extends React.Component<any, GeneralInformationState> {
                   required
                 />
                 <div className="marketing-material radio-group">
-                  <RadioGroup 
+                  {this.getClassificationRadio()}
+                  {/* <RadioGroup 
                   className="radio-group-custom" 
                   aria-label={'classification_system'} 
                   name="classification_system"
@@ -405,7 +406,7 @@ class GeneralInformation extends React.Component<any, GeneralInformationState> {
                           label={el.classification_system} />
                       )
                     })}
-                  </RadioGroup>
+                  </RadioGroup> */}
                 </div>
               </div>
             </Grid>

@@ -125,7 +125,9 @@ class FormularySetUp extends React.Component<any, any> {
       medeicareContract.medicare_contract_types = newProps.formulary?.medicare_contract_types?.map(
         (e) => e.id_medicare_contract_type
       );
-
+      
+      const classificationSystem = newProps.formulary.formulary_info.id_classification_system;
+      console.log(classificationSystem)
       this.setState({
         isUpdate: true,
         generalInformation: {
@@ -137,8 +139,7 @@ class FormularySetUp extends React.Component<any, any> {
           method: newProps.formulary.formulary_info.formulary_build_method,
           service_year: newProps.formulary.formulary_info.contract_year,
           description: newProps.formulary.formulary_info.formulary_description,
-          classification_system:
-            newProps.formulary.formulary_info.id_classification_system,
+          classification_system: classificationSystem ,
           is_closed_formulary: newProps.formulary.formulary_info.is_closed_formulary,
           medicare_types_ref_other: false,
         },
@@ -151,13 +152,19 @@ class FormularySetUp extends React.Component<any, any> {
         tiers: [...newProps.formulary.tiers],
         fetchedEditInfo: newProps.formulary.edit_info,
         edit_info: this.getEditInfo(newProps.formulary.edit_info),
-        designOptions: [...newProps.setupOptions.designOptions],
+        designOptions: [...newProps.setupOptions?.designOptions],
         setupOptions: newProps.setupOptions,
       });
     }
     if (newProps.mode === "NEW" && newProps.setupOptions.generalOptions) {
+      const classificationSystem = newProps.setupOptions.generalOptions.classification_systems?.length === 1 && 
+                                   newProps.setupOptions.generalOptions.classification_systems[0].id_classification_system === 10 ? 
+                                   10 : '';
+      const newGeneralOption:any = {...this.state.generalInformation};
+      newGeneralOption.classification_system = classificationSystem;
       this.setState({
         isUpdate: true,
+        generalInformation: newGeneralOption,
         supplemental_benefit_info: {
           supplemental_benefits: [],
         },
@@ -420,6 +427,13 @@ class FormularySetUp extends React.Component<any, any> {
       tiers: updatedTiers,
     });
   };
+  setDefaultClassificationHandler = (id) => {
+    let newObj:any = {...this.state.generalInformation};
+    newObj.classification_system = parseInt(id);
+    this.setState({
+      generalInformation: newObj
+    })
+  }
   render() {
     return (
       <div>
