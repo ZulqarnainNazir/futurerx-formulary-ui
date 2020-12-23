@@ -27,58 +27,69 @@ interface Props {
   tierChanged: (a) => void;
   advancedSearchBody: any;
   formulary_lob_id: any;
+  formulary: any;
 }
 interface State { }
 const tires = [
   {
     id: 1,
     lable: "Tier 0",
-    key: 0
+    key: 0,
+    isDisabled: false,
   },
   {
     id: 2,
     lable: "Tier 1",
-    key: 1
+    key: 1,
+    isDisabled: false,
   },
   {
     id: 3,
     lable: "Tier 2",
-    key: 2
+    key: 2,
+    isDisabled: false,
   },
   {
     id: 4,
     lable: "Tier 3",
-    key: 3
+    key: 3,
+    isDisabled: false,
   },
   {
     id: 5,
     lable: "Tier 4",
-    key: 4
+    key: 4,
+    isDisabled: false,
   },
   {
     id: 6,
     lable: "Tier 5",
-    key: 5
+    key: 5,
+    isDisabled: false,
   },
   {
     id: 7,
     lable: "Tier 6",
-    key: 6
+    key: 6,
+    isDisabled: false,
   },
   {
     id: 8,
     lable: "Tier 7",
-    key: 7
+    key: 7,
+    isDisabled: false,
   },
   {
     id: 9,
     lable: "Tier 8",
-    key: 8
+    key: 8,
+    isDisabled: false,
   },
   {
     id: 10,
     lable: "No Tier ",
-    key: -1
+    key: -1,
+    isDisabled: false,
   },
 ];
 
@@ -86,107 +97,128 @@ const tiresNonMcr = [
   {
     id: 2,
     lable: "Tier 1",
-    key: 1
+    key: 1,
+    isDisabled: false,
   },
   {
     id: 3,
     lable: "Tier 2",
-    key: 2
+    key: 2,
+    isDisabled: false,
   },
   {
     id: 4,
     lable: "Tier 3",
-    key: 3
+    key: 3,
+    isDisabled: false,
   },
   {
     id: 5,
     lable: "Tier 4",
-    key: 4
+    key: 4,
+    isDisabled: false,
   },
   {
     id: 6,
     lable: "Tier 5",
-    key: 5
+    key: 5,
+    isDisabled: false,
   },
   {
     id: 7,
     lable: "Tier 6",
-    key: 6
+    key: 6,
+    isDisabled: false,
   },
   {
     id: 8,
     lable: "Tier 7",
-    key: 7
+    key: 7,
+    isDisabled: false,
   },
   {
     id: 9,
     lable: "Tier 8",
-    key: 8
+    key: 8,
+    isDisabled: false,
   },
   {
     id: 10,
     lable: "Tier 9",
-    key: 9
+    key: 9,
+    isDisabled: false,
   },
   {
     id: 11,
     lable: "Tier 10",
-    key: 10
+    key: 10,
+    isDisabled: false,
   },
   {
     id: 12,
     lable: "Tier 11",
-    key: 11
+    key: 11,
+    isDisabled: false,
   },
   {
     id: 13,
     lable: "Tier 12",
-    key: 12
+    key: 12,
+    isDisabled: false,
   },
   {
     id: 14,
     lable: "Tier 13",
-    key: 13
+    key: 13,
+    isDisabled: false,
   },
   {
     id: 15,
     lable: "Tier 14",
-    key: 14
+    key: 14,
+    isDisabled: false,
   },
   {
     id: 16,
     lable: "Tier 15",
-    key: 15
+    key: 15,
+    isDisabled: false,
   },
   {
     id: 17,
     lable: "Tier 16",
-    key: 16
+    key: 16,
+    isDisabled: false,
   },
   {
     id: 18,
     lable: "Tier 17",
-    key: 17
+    key: 17,
+    isDisabled: false,
   },
   {
     id: 19,
     lable: "Tier 18",
-    key: 18
+    key: 18,
+    isDisabled: false,
   },
   {
     id: 20,
     lable: "Tier 19",
-    key: 19
+    key: 19,
+    isDisabled: false,
   },
   {
     id: 21,
     lable: "Tier 20",
-    key: 20
+    key: 20,
+    isDisabled: false,
   },
   {
     id: 22,
     lable: "No Tier ",
-    key: -1
+    key: -1,
+    isDisabled: false,
   },
 ];
 
@@ -248,7 +280,9 @@ class Tire extends Component<Props, State> {
 
   onSelectAll = () => {
     const currentTires: any = [...this.state.tireList];
-    currentTires.map((tire) => (tire["isChecked"] = true));
+    currentTires.map((tire) => { 
+      tire["isChecked"] = tire["isDisabled"] ? false : true;
+    });
     this.props.tierChanged(currentTires);
     this.setState({ tireList: currentTires, selectedTire: currentTires });
   };
@@ -265,6 +299,18 @@ class Tire extends Component<Props, State> {
       this.props.tierChanged(tires);
       this.setState({ tireList: tires });
     } else {
+      if (this.props.formulary && this.props.formulary.tiers && this.props.formulary.tiers.length > 0) {
+        let formularyTiers = this.props.formulary.tiers.map(option => option.id_tier);
+        tiresNonMcr.map(tierItem => {
+          if (formularyTiers.includes(tierItem.key)) {
+            tierItem.isDisabled = false;
+          } else {
+            if (tierItem.key != -1) {
+              tierItem.isDisabled = true;
+            }
+          }
+        })
+      }
       tiresNonMcr.map((tire) => (tire["isChecked"] = (setTiers.includes(tire['key']) || (noTier && tire['key'] == -1) ? true : false)));
       this.props.tierChanged(tiresNonMcr);
       this.setState({ tireList: tiresNonMcr });
@@ -287,7 +333,8 @@ class Tire extends Component<Props, State> {
                 onClick={(e) => {
                   this.onSelectTire(e, tire);
                 }}
-                checked={tire.isChecked}
+                checked={tire.isDisabled ? false : tire.isChecked}
+                disabled={tire.isDisabled}
                 size="small"
               />
               <label htmlFor="" className="__list-lable">

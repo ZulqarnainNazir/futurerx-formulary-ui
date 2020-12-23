@@ -52,7 +52,7 @@ const umfilter = [
 ];
 
 const umfilterNonMcr = [
-  { id: 1, lable: "N/A" , key: 'NA1', code:68, isDisabled: false},
+  { id: 1, lable: "N/A" , key: 'is_na', code:68, isDisabled: false},
   { id: 2, lable: "Prior Authorization" , key: 'is_pa', code:58, isDisabled: false},
   { id: 3, lable: "Age Limits" , key: 'is_al' , code:61, isDisabled: false},
   { id: 4, lable: "Patient Residence", key: 'is_pr' , code:64, isDisabled: false},
@@ -72,17 +72,18 @@ const umfilterNonMcr = [
   { id: 18, lable: "QL Type 9" , key: 'NA19' , code:1, isDisabled: true},
   { id: 19, lable: "Quantity Limits" , key: 'is_ql' , code:59, isDisabled: false},
   { id: 20, lable: "Step Therapy" , key: 'is_st' , code:60, isDisabled: false},
-  { id: 21, lable: "Other 1" , key: 'is_other1' , code:1, isDisabled: false},
-  { id: 22, lable: "Other 2" , key: 'is_other2' , code:1, isDisabled: false},
-  { id: 23, lable: "Other 3" , key: 'is_other3' , code:1, isDisabled: false},
-  { id: 24, lable: "Other 4" , key: 'is_other4' , code:1, isDisabled: false},
-  { id: 25, lable: "Other 5" , key: 'is_other5' , code:1, isDisabled: false},
+  { id: 21, lable: "Other 1" , key: 'is_other1' , code:1, isDisabled: true},
+  { id: 22, lable: "Other 2" , key: 'is_other2' , code:1, isDisabled: true},
+  { id: 23, lable: "Other 3" , key: 'is_other3' , code:1, isDisabled: true},
+  { id: 24, lable: "Other 4" , key: 'is_other4' , code:1, isDisabled: true},
+  { id: 25, lable: "Other 5" , key: 'is_other5' , code:1, isDisabled: true},
 ];
 
 interface Props {
   umFiltersChanged: (a) => void;
   advancedSearchBody: any;
   formulary_lob_id: any;
+  formulary: any;
 }
 interface State {}
 
@@ -98,6 +99,33 @@ class UmFilter extends Component<Props, State> {
     if(this.props.formulary_lob_id === 1){
       this.state.umFilterList = umfilter;
     }else{
+      if(this.props.formulary && this.props.formulary.edit_info && this.props.formulary.edit_info.length > 0){
+        let checkedOptions = this.props.formulary.edit_info.filter(option => option.id_checked);
+        let checkedIds = checkedOptions.map(option => option.id_edit);
+        if(checkedIds.length > 0){
+          let normalIds = checkedIds.filter(id => [58,59,60,61,62,63,64,65,66,67,68,439].includes(id));
+          let otherIds = checkedIds.filter(id => ![58,59,60,61,62,63,64,65,66,67,68,439].includes(id));
+
+          if(normalIds.length > 0){
+            umfilterNonMcr.map(umFilter => {
+              if(normalIds.includes(umFilter.code)){
+                umFilter.isDisabled = false;
+              }else{
+                umFilter.isDisabled = true;
+              }
+            })
+          }
+
+          if(otherIds.length > 0){
+            for(let index = 20 ; index < (20+otherIds.length) ; index++){
+              if(index < umfilterNonMcr.length){
+                let umFilter = umfilterNonMcr[index];
+                umFilter.isDisabled = false;
+              }
+            }
+          }
+        }
+      }
       this.state.umFilterList = umfilterNonMcr;
     }
     if(this.props.advancedSearchBody && this.props.advancedSearchBody.additional_filter){
@@ -176,6 +204,33 @@ class UmFilter extends Component<Props, State> {
   };
 
   render() {
+    if(this.props.formulary && this.props.formulary.edit_info && this.props.formulary.edit_info.length > 0){
+      let checkedOptions = this.props.formulary.edit_info.filter(option => option.id_checked);
+      let checkedIds = checkedOptions.map(option => option.id_edit);
+      if(checkedIds.length > 0){
+        let normalIds = checkedIds.filter(id => [58,59,60,61,62,63,64,65,66,67,68,439].includes(id));
+        let otherIds = checkedIds.filter(id => ![58,59,60,61,62,63,64,65,66,67,68,439].includes(id));
+
+        if(normalIds.length > 0){
+          umfilterNonMcr.map(umFilter => {
+            if(normalIds.includes(umFilter.code)){
+              umFilter.isDisabled = false;
+            }else{
+              umFilter.isDisabled = true;
+            }
+          })
+        }
+
+        if(otherIds.length > 0){
+          for(let index = 20 ; index < (20+otherIds.length) ; index++){
+            if(index < umfilterNonMcr.length){
+              let umFilter = umfilterNonMcr[index];
+              umFilter.isDisabled = false;
+            }
+          }
+        }
+      }
+    }
     if(this.props.formulary_lob_id === 1){
       this.state.umFilterList = umfilter;
     }else{
