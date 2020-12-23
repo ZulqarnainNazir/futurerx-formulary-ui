@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import { saveStGroup,deleteStGroup,cloneStGroup,archiveStGroup,newVersionStGroup } from "./services";
+import { saveStGroup,editStGroup,deleteStGroup,cloneStGroup,archiveStGroup,newVersionStGroup } from "./services";
 
 interface GDMState {
   formulary_id: number;
@@ -89,6 +89,19 @@ export const saveGDM = createAsyncThunk(
     try {
       dispatch(getPending());
       const response = await saveStGroup(arg);
+      dispatch(getSuccess(response));
+    } catch (err) {
+      dispatch(getFailed(err));
+    }
+  }
+);
+
+export const editGDM = createAsyncThunk(
+  "gdm",
+  async (arg: any, { dispatch }) => {
+    try {
+      dispatch(getPending());
+      const response = await editStGroup(arg);
       dispatch(getSuccess(response));
     } catch (err) {
       dispatch(getFailed(err));

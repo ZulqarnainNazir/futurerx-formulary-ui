@@ -698,7 +698,6 @@ export const PaColumns: () => Column<any>[] = () => {
       hidden: false,
       sortDirections: ["ascend", "descend"],
     },
-    
 
     {
       position: 7,
@@ -809,7 +808,6 @@ export const stColumns: () => Column<any>[] = () => {
       hidden: false,
       sortDirections: ["ascend", "descend"],
     },
-    
 
     {
       position: 8,
@@ -827,13 +825,257 @@ export const stColumns: () => Column<any>[] = () => {
   ];
 };
 
+//ql grid column
+
+export const QlColumns: () => Column<any>[] = () => {
+  return [
+    {
+      position: 1,
+      sorter: {},
+      textCase: "upper",
+      // pixelWidth: 163,
+      key: "covered_genders",
+      displayTitle: "Covered Genders",
+      isFilterable: true,
+      dataType: "string",
+      filters: textFilters,
+      hidden: false,
+      sortDirections: ["ascend", "descend"],
+    },
+    {
+      position: 2,
+      sorter: {},
+      textCase: "upper",
+      pixelWidth: 163,
+      key: "covered_icds",
+      displayTitle: "Covered Icds",
+      isFilterable: true,
+      dataType: "string",
+      filters: textFilters,
+      hidden: false,
+      sortDirections: ["ascend", "descend"],
+    },
+    {
+      position: 3,
+      sorter: {},
+      textCase: "upper",
+      pixelWidth: 163,
+      key: "covered_max_ages",
+      displayTitle: "Covered Max Ages",
+      isFilterable: true,
+      dataType: "string",
+      filters: textFilters,
+      hidden: false,
+      sortDirections: ["ascend", "descend"],
+    },
+    {
+      position: 4,
+      sorter: {},
+      textCase: "upper",
+      pixelWidth: 163,
+      key: "covered_max_operators",
+      displayTitle: "Covered Max Operators",
+      isFilterable: true,
+      dataType: "string",
+      filters: textFilters,
+      hidden: false,
+      sortDirections: ["ascend", "descend"],
+    },
+    {
+      position: 5,
+      sorter: {},
+      textCase: "upper",
+      pixelWidth: 100,
+      key: "covered_min_ages",
+      displayTitle: "Covered Min Ages",
+      isFilterable: true,
+      dataType: "string",
+      filters: textFilters,
+      hidden: false,
+      sortDirections: ["ascend", "descend"],
+    },
+    {
+      position: 6,
+      sorter: {},
+      textCase: "upper",
+      pixelWidth: 122,
+      key: "covered_min_operators",
+      displayTitle: "Covered Min Operators",
+      isFilterable: true,
+      dataType: "string",
+      filters: textFilters,
+      hidden: false,
+      sortDirections: ["ascend", "descend"],
+    },
+    {
+      position: 7,
+      sorter: {},
+      textCase: "upper",
+      pixelWidth: 137,
+      key: "covered_patient_residences",
+      displayTitle: "Covered Patient Residences",
+      isFilterable: true,
+      dataType: "string",
+      filters: textFilters,
+      hidden: false,
+      sortDirections: ["ascend", "descend"],
+    },
+
+    {
+      position: 8,
+      sorter: {},
+      textCase: "upper",
+      pixelWidth: 100,
+      key: "covered_pharmacy_networks",
+      displayTitle: "covered_pharmacy Networks",
+      isFilterable: true,
+      dataType: "string",
+      filters: textFilters,
+      hidden: false,
+      sortDirections: ["ascend", "descend"],
+    },
+    {
+      position: 9,
+      sorter: {},
+      textCase: "upper",
+      pixelWidth: 100,
+      key: "drug_label_name",
+      displayTitle: "drug label name",
+      isFilterable: true,
+      dataType: "string",
+      filters: textFilters,
+      hidden: false,
+      sortDirections: ["ascend", "descend"],
+    },
+    {
+      position: 10,
+      sorter: {},
+      textCase: "upper",
+      pixelWidth: 100,
+      key: "trademark_code",
+      displayTitle: "trademark code",
+      isFilterable: true,
+      dataType: "string",
+      filters: textFilters,
+      hidden: false,
+      sortDirections: ["ascend", "descend"],
+    },
+    {
+      position: 11,
+      sorter: {},
+      textCase: "upper",
+      pixelWidth: 100,
+      key: "database_category",
+      displayTitle: "database category",
+      isFilterable: true,
+      dataType: "string",
+      filters: textFilters,
+      hidden: false,
+      sortDirections: ["ascend", "descend"],
+    },
+    {
+      position: 12,
+      sorter: {},
+      textCase: "upper",
+      pixelWidth: 100,
+      key: "covered_place_of_services",
+      displayTitle: "covered place of services",
+      isFilterable: true,
+      dataType: "string",
+      filters: textFilters,
+      hidden: false,
+      sortDirections: ["ascend", "descend"],
+    },
+    {
+      position: 13,
+      sorter: {},
+      textCase: "upper",
+      pixelWidth: 100,
+      key: "covered_prescriber_taxonomies",
+      displayTitle: "covered prescriber taxonomies",
+      isFilterable: true,
+      dataType: "string",
+      filters: textFilters,
+      hidden: false,
+      sortDirections: ["ascend", "descend"],
+    },
+    {
+      position: 14,
+      sorter: {},
+      textCase: "upper",
+      pixelWidth: 100,
+      key: "created_by",
+      displayTitle: "created by",
+      isFilterable: true,
+      dataType: "string",
+      filters: textFilters,
+      hidden: false,
+      sortDirections: ["ascend", "descend"],
+    },
+    {
+      position: 15,
+      sorter: {},
+      textCase: "upper",
+      pixelWidth: 100,
+      key: "created_date",
+      displayTitle: "created date",
+      isFilterable: true,
+      dataType: "string",
+      filters: textFilters,
+      hidden: false,
+      sortDirections: ["ascend", "descend"],
+    },
+    {
+      position: 16,
+      sorter: {},
+      textCase: "upper",
+      pixelWidth: 100,
+      key: "data_source",
+      displayTitle: "data source",
+      isFilterable: true,
+      dataType: "string",
+      filters: textFilters,
+      hidden: false,
+      sortDirections: ["ascend", "descend"],
+    },
+    {
+      position: 17,
+      sorter: {},
+      textCase: "upper",
+      pixelWidth: 100,
+      key: "database_class",
+      displayTitle: "database class",
+      isFilterable: true,
+      dataType: "string",
+      filters: textFilters,
+      hidden: false,
+      sortDirections: ["ascend", "descend"],
+    },
+    {
+      position: 18,
+      sorter: {},
+      textCase: "upper",
+      pixelWidth: 100,
+      key: "drug_descriptor_identifier",
+      displayTitle: "drug descriptor identifier",
+      isFilterable: true,
+      dataType: "string",
+      filters: textFilters,
+      hidden: false,
+      sortDirections: ["ascend", "descend"],
+    },
+  ];
+};
+
+//
+
 export const setupHmpsColumns: () => Column<any>[] = () => {
   return [
     {
       position: 1,
       sorter: {},
       textCase: "upper",
-      pixelWidth: 100 ,
+      pixelWidth: 100,
       key: "files",
       displayTitle: "Files",
       isFilterable: true,
@@ -843,7 +1085,7 @@ export const setupHmpsColumns: () => Column<any>[] = () => {
       sortDirections: ["ascend", "descend"],
     },
     {
-      position:2,
+      position: 2,
       sorter: {},
       textCase: "upper",
       pixelWidth: 122,
@@ -855,9 +1097,8 @@ export const setupHmpsColumns: () => Column<any>[] = () => {
       hidden: false,
       sortDirections: ["ascend", "descend"],
     },
-    
-  ]
-}
+  ];
+};
 
 export const setupStandardReportingColumns: () => Column<any>[] = () => {
   return [
@@ -865,7 +1106,7 @@ export const setupStandardReportingColumns: () => Column<any>[] = () => {
       position: 1,
       sorter: {},
       textCase: "upper",
-      pixelWidth: 100 ,
+      pixelWidth: 100,
       key: "items",
       displayTitle: "Items",
       //isFilterable: true,
@@ -875,7 +1116,7 @@ export const setupStandardReportingColumns: () => Column<any>[] = () => {
       sortDirections: ["ascend", "descend"],
     },
     {
-      position:2,
+      position: 2,
       sorter: {},
       textCase: "upper",
       pixelWidth: 122,
@@ -887,13 +1128,14 @@ export const setupStandardReportingColumns: () => Column<any>[] = () => {
       hidden: false,
       sortDirections: ["ascend", "descend"],
     },
-    
-  ]
-}
+  ];
+};
 
-
-export const formularyDetailsGridColumns: (data?, hiddenColumns?) => Column<any>[] = (data,hiddenColumns) => {
-  console.log(hiddenColumns)
+export const formularyDetailsGridColumns: (
+  data?,
+  hiddenColumns?
+) => Column<any>[] = (data, hiddenColumns) => {
+  console.log(hiddenColumns);
   return [
     {
       position: 1,
@@ -905,7 +1147,10 @@ export const formularyDetailsGridColumns: (data?, hiddenColumns?) => Column<any>
       isFilterable: true,
       dataType: "string",
       filters: textFilters,
-      hidden: hiddenColumns && hiddenColumns.indexOf('contract_year') !== -1 ? true : false,
+      hidden:
+        hiddenColumns && hiddenColumns.indexOf("contract_year") !== -1
+          ? true
+          : false,
       sortDirections: ["ascend", "descend"],
     },
     {
@@ -926,7 +1171,8 @@ export const formularyDetailsGridColumns: (data?, hiddenColumns?) => Column<any>
       isFilterable: true,
       dataType: "string",
       filters: textFilters,
-      hidden: hiddenColumns && hiddenColumns.indexOf('bazaar') !== -1 ? true : false,
+      hidden:
+        hiddenColumns && hiddenColumns.indexOf("bazaar") !== -1 ? true : false,
       sortDirections: ["ascend", "descend"],
     },
     {
@@ -947,7 +1193,8 @@ export const formularyDetailsGridColumns: (data?, hiddenColumns?) => Column<any>
       isFilterable: true,
       dataType: "string",
       filters: textFilters,
-      hidden: hiddenColumns && hiddenColumns.indexOf('origin') !== -1 ? true : false,
+      hidden:
+        hiddenColumns && hiddenColumns.indexOf("origin") !== -1 ? true : false,
       sortDirections: ["ascend", "descend"],
     },
     {
@@ -958,14 +1205,20 @@ export const formularyDetailsGridColumns: (data?, hiddenColumns?) => Column<any>
       key: "formulary_name",
       displayTitle: "formulary name",
       customContent: (props) => (
-        <div className="input-link" onClick={() => data.onFormularyNameClick(props.data.key)}>
+        <div
+          className="input-link"
+          onClick={() => data.onFormularyNameClick(props.data.key)}
+        >
           {props.data.formulary_name}
         </div>
       ),
       isFilterable: true,
       dataType: "string",
       filters: textFilters,
-      hidden: hiddenColumns && hiddenColumns.indexOf('formulary_name') !== -1 ? true : false,
+      hidden:
+        hiddenColumns && hiddenColumns.indexOf("formulary_name") !== -1
+          ? true
+          : false,
       sortDirections: ["ascend", "descend"],
     },
     {
@@ -978,7 +1231,10 @@ export const formularyDetailsGridColumns: (data?, hiddenColumns?) => Column<any>
       isFilterable: true,
       dataType: "string",
       filters: textFilters,
-      hidden: hiddenColumns && hiddenColumns.indexOf('id_formulary') !== -1 ? true : false,
+      hidden:
+        hiddenColumns && hiddenColumns.indexOf("id_formulary") !== -1
+          ? true
+          : false,
       sortDirections: ["ascend", "descend"],
     },
     {
@@ -991,7 +1247,10 @@ export const formularyDetailsGridColumns: (data?, hiddenColumns?) => Column<any>
       isFilterable: true,
       dataType: "string",
       filters: textFilters,
-      hidden: hiddenColumns && hiddenColumns.indexOf('version_number') !== -1 ? true : false,
+      hidden:
+        hiddenColumns && hiddenColumns.indexOf("version_number") !== -1
+          ? true
+          : false,
       sortDirections: ["ascend", "descend"],
     },
     {
@@ -1007,7 +1266,10 @@ export const formularyDetailsGridColumns: (data?, hiddenColumns?) => Column<any>
       isFilterable: true,
       dataType: "string",
       filters: textFilters,
-      hidden: hiddenColumns && hiddenColumns.indexOf('timeRemaining') !== -1 ? true : false,
+      hidden:
+        hiddenColumns && hiddenColumns.indexOf("timeRemaining") !== -1
+          ? true
+          : false,
       sortDirections: ["ascend", "descend"],
     },
     {
@@ -1023,7 +1285,8 @@ export const formularyDetailsGridColumns: (data?, hiddenColumns?) => Column<any>
       isFilterable: true,
       dataType: "string",
       filters: textFilters,
-      hidden: hiddenColumns && hiddenColumns.indexOf('step') !== -1 ? true : false,
+      hidden:
+        hiddenColumns && hiddenColumns.indexOf("step") !== -1 ? true : false,
       sortDirections: ["ascend", "descend"],
     },
   ];

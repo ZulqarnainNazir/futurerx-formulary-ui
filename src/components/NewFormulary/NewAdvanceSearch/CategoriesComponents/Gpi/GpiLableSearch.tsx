@@ -250,6 +250,7 @@ interface Props {
   formulary_lob_id: any;
   formulary_type_id: any;
   nodeId: any;
+  initialValues: any;
   getIntelliscenseSearch: (a) => any;
   onChildDataUpdated: (nodeId, childData) => void;
 }
@@ -283,6 +284,11 @@ class GpiLableSearch extends Component<Props, State> {
   }
 
   componentDidMount = () => {
+    if(this.props.initialValues && this.props.initialValues.length > 0){
+      this.state.choosenElements = this.props.initialValues;
+    }
+    let resultData = this.getResult(this.state.choosenElements);
+    this.props.onChildDataUpdated(this.props.nodeId, resultData);
     let lobCode = getLobCode(this.props.formulary_lob_id);
     this.setState({
       lobCode: lobCode,

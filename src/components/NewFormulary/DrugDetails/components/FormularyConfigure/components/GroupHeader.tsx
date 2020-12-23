@@ -19,6 +19,11 @@ function mapStateToProps(state) {
         StGDData: state.stepTherapyReducer.data,
         saveGdm: state.saveGdm,
         version: state.stVerion.stVersion,
+        client_id: state.application.clientId,
+        current_formulary: state.application.formulary,
+        formulary: state?.application?.formulary,
+        formulary_lob_id: state?.application?.formulary_lob_id, //comme- 4, medicare-1 , medicate-2, exchnage -3 
+        formulary_type_id: state?.application?.formulary_type_id,
     }
 }
 
@@ -102,36 +107,45 @@ function GroupHeader(props: any) {
     }
 
     const deleteGroup = (e: any,param:any) => {
+        let lob_type = props.formulary_lob_id;
+        let pathParams = props.saveGdm.current_group_des_id+'/CV?entity_id='+props.formulary_id;
         props.cleanMessages({error:'',success:''})
-        props.deleteGroupDescription({ current_group_des_id: props.saveGdm.current_group_des_id })
-        props.getStGrouptDescriptions(props.saveGdm.formulary_id)
-        props.getStGrouptDescriptionVersions(props.saveGdm.current_group_des_id)
-        props.getStGrouptDescription(props.saveGdm.current_group_id)
+        props.deleteGroupDescription({ lob_type:lob_type,pathParams:pathParams  })
+        props.getStGrouptDescriptions({lob_type:lob_type,pathParams:props.saveGdm.formulary_id})
+        props.getStGrouptDescriptionVersions({lob_type:lob_type,pathParams: props.saveGdm.current_group_id})
+        props.getStGrouptDescription({lob_type:lob_type,pathParams:props.saveGdm.current_group_des_id})
         props.getStTypes(props.saveGdm.formulary_id)
     }
     const cloneGroup = (e: any,param:any) => {
+        let lob_type = props.formulary_lob_id;
+        let pathParams = props?.client_id+'/'+props.saveGdm.current_group_des_id+'?entity_id='+props.formulary_id;
         props.cleanMessages({error:'',success:''})
         props.cloneGroupDescription({
-            current_group_des_id: props.saveGdm.current_group_des_id,
+            lob_type:lob_type,
+            pathParams: pathParams,
             st_group_description_name: param.st_group_description_name // clone page input
         })
-        props.getStGrouptDescriptions(props.saveGdm.formulary_id)
+        props.getStGrouptDescriptions({lob_type:lob_type,pathParams:props.saveGdm.formulary_id})
     }
     const archiveGroup = (e: any,param:any) => {
+        let lob_type = props.formulary_lob_id;
+        let pathParams = props?.client_id+'/'+props.saveGdm.current_group_des_id+'/CV?entity_id='+props.formulary_id;
         props.cleanMessages({error:'',success:''})
-        props.archiveGroupDescription({ current_group_des_id: props.saveGdm.current_group_des_id })
-        props.getStGrouptDescriptions(props.saveGdm.formulary_id)
-        props.getStGrouptDescriptionVersions(props.saveGdm.current_group_des_id)
-        props.getStGrouptDescription(props.saveGdm.current_group_id)
+        props.archiveGroupDescription({lob_type:lob_type,pathParams:pathParams  })
+        props.getStGrouptDescriptions({lob_type:lob_type,pathParams:props.saveGdm.formulary_id})
+        props.getStGrouptDescriptionVersions({lob_type:lob_type,pathParams:props.saveGdm.current_group_id})
+        props.getStGrouptDescription({lob_type:lob_type,pathParams:props.saveGdm.current_group_des_id})
         props.getStTypes(props.saveGdm.formulary_id)
     }
 
     const newVersionGroup = (e: any,param:any) => {
+        let lob_type = props.formulary_lob_id;
+        let pathParams = props.saveGdm.current_group_des_id+'?entity_id='+props.formulary_id;
         props.cleanMessages({error:'',success:''})
-        props.newVersionGroupDescription({ current_group_des_id: props.saveGdm.current_group_des_id })
-        props.getStGrouptDescriptions(props.saveGdm.formulary_id)
-        props.getStGrouptDescriptionVersions(props.saveGdm.current_group_des_id)
-        props.getStGrouptDescription(props.saveGdm.current_group_id)
+        props.newVersionGroupDescription({ lob_type:lob_type,pathParams: pathParams })
+        props.getStGrouptDescriptions({lob_type:lob_type,pathParams:props.saveGdm.formulary_id})
+        props.getStGrouptDescriptionVersions({lob_type:lob_type,pathParams:props.saveGdm.current_group_id})
+        props.getStGrouptDescription({lob_type:lob_type,pathParams:props.saveGdm.current_group_des_id})
         props.getStTypes(props.saveGdm.formulary_id)
     }
     return (
