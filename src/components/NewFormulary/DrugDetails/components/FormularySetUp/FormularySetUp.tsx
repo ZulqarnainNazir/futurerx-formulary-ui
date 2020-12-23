@@ -69,7 +69,8 @@ class FormularySetUp extends React.Component<any, any> {
     edit_info: {
       edits: [],
       edits_no: [],
-      custom_edits: []
+      custom_edits: [],
+      removed_formulary_edits: []
     },
     setupOptions: {},
   };
@@ -189,6 +190,7 @@ class FormularySetUp extends React.Component<any, any> {
       edits: editTrue,
       edits_no: editFalse,
       custom_edits: customEdit,
+      removed_formulary_edits: []
     };
     return newObj;
   };
