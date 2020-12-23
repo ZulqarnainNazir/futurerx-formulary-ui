@@ -15,7 +15,7 @@ import { getDrugDetailsColumn } from "../DrugGridColumn";
 import { getDrugDetailData } from "../../../../../../mocks/DrugGridMock";
 import FrxLoader from "../../../../../shared/FrxLoader/FrxLoader";
 import AdvancedSearch from "./search/AdvancedSearch";
-import { getDrugDetailsSOSummary, getDrugDetailsSOList } from "../../../../../../redux/slices/formulary/drugDetails/so/soActionCreation";
+import { getDrugDetailsSOSummary, getDrugDetailsSOList, getSOCriteriaList } from "../../../../../../redux/slices/formulary/drugDetails/so/soActionCreation";
 import FrxDrugGridContainer from "../../../../../shared/FrxGrid/FrxDrugGridContainer";
 import * as soConstants from "../../../../../../api/http-drug-details";
 import getLobCode from "../../../../Utils/LobUtils";
@@ -24,6 +24,7 @@ function mapDispatchToProps(dispatch) {
   return {
     getDrugDetailsSOSummary: (a) => dispatch(getDrugDetailsSOSummary(a)),
     getDrugDetailsSOList: (a) => dispatch(getDrugDetailsSOList(a)),
+    getSOCriteriaList: (a) => dispatch(getSOCriteriaList(a)),
   };
 }
 
@@ -34,8 +35,23 @@ const mapStateToProps = (state) => {
   };
 };
 
+interface SOState {
+  isSearchOpen: boolean,
+  panelGridTitle1: any[],
+  panelTitleAlignment1: any[],
+  panelGridValue1: any[],
+  isNotesOpen: false,
+  activeTabIndex: number,
+  columns: any,
+  data: any[],
+  tabs: any[],
+  showGrid: boolean,
+  showApply: boolean,
+  udfs: any[],
+}
+
 class SO extends React.Component<any, any> {
-  state = {
+  state:SOState = {
     isSearchOpen: false,
     panelGridTitle1: [
       "Medicare User Defined Field",
@@ -54,6 +70,9 @@ class SO extends React.Component<any, any> {
       { id: 2, text: "Append" },
       { id: 3, text: "Remove" },
     ],
+    showGrid: false,
+    showApply: false,
+    udfs: [],
   };
 
   onClickTab = (selectedTabIndex: number) => {
@@ -65,7 +84,12 @@ class SO extends React.Component<any, any> {
       }
       return tab;
     });
-    this.setState({ tabs, activeTabIndex });
+
+    if(activeTabIndex === 2) {
+      this.getSOCriteriaList();
+    }
+
+    this.setState({ tabs, activeTabIndex, showGrid: false, showApply: false, udfs: [] }, () => this.getSOSummary());
   };
 
   advanceSearchClickHandler = (event) => {
@@ -102,9 +126,29 @@ class SO extends React.Component<any, any> {
         return curRow;
       });
 
+
+      console.log("THe Rows = ", rows);
+      let drpDwnList = tmpData.map(e => e.supplemental_benefit_name);
+      console.log("THe DropDown List = ", drpDwnList);
+
       this.setState({
-        panelGridValue1: rows
+        panelGridValue1: rows,
+        udfs: drpDwnList,
       });
+    });
+  }
+
+  getSOCriteriaList = () => {
+    let apiDetails = {};
+    apiDetails["apiPart"] = soConstants.GET_SO_CRITERIA_LIST
+    apiDetails["pathParams"] = this.props?.formulary_id + "/" + getLobCode(this.props.formulary_lob_id);
+    apiDetails["keyVals"] = [
+      { key: soConstants.KEY_ENTITY_ID, value: this.props?.formulary_id },
+    ];
+
+    this.props.getSOCriteriaList(apiDetails).then((json) => {
+      let tmpData = json.payload && json.payload.result ? json.payload.result : [];
+      console.log("The Criteria List = ", tmpData);
     });
   }
 
@@ -129,6 +173,20 @@ class SO extends React.Component<any, any> {
         let gridItem = {};
         gridItem["id"] = count;
         gridItem["key"] = count;
+        gridItem["is_abr_formulary"] = element.is_abr_formulary ? "" + element.is_abr_formulary : "";
+        gridItem["is_cb"] = element.is_cb ? "" + element.is_cb : "";
+        gridItem["is_fff"] = element.is_fff ? "" + element.is_fff : "";
+        gridItem["is_gc"] = element.is_gc ? "" + element.is_gc : "";
+        gridItem["is_hi"] = element.is_hi ? "" + element.is_hi : "";
+        gridItem["is_ibf"] = element.is_ibf ? "" + element.is_ibf : "";
+        gridItem["is_la"] = element.is_la ? "" + element.is_la : "";
+        gridItem["is_lis"] = element.is_lis ? "" + element.is_lis : "";
+        gridItem["is_mo"] = element.is_mo ? "" + element.is_mo : "";
+        gridItem["is_nm"] = element.is_nm ? "" + element.is_nm : "";
+        gridItem["is_pgc"] = element.is_pgc ? "" + element.is_pgc : "";
+        gridItem["is_pbst"] = element.is_pbst ? "" + element.is_pbst : "";
+        gridItem["is_ssm"] = element.is_ssm ? "" + element.is_ssm : "";
+        gridItem["is_vbid"] = element.is_vbid ? "" + element.is_vbid : "";
         gridItem["labelName"] = element.drug_label_name
           ? "" + element.drug_label_name
           : "";
@@ -239,7 +297,16 @@ class SO extends React.Component<any, any> {
   };
 
   settingFormApplyHandler = () => {
-    alert(1);
+    // alert(1);
+    this.setState({ showGrid: true })
+  };
+
+  onUDFSChangeHandler = (e: any) => {
+    console.log("THe Changed Value = ", e);
+    // const cuidValue = this.state.cuids.find((el) => el.value === e);
+    // console.log("The UDFS Value = ", cuidValue)
+    // this.setState({ selectedCuid: cuidValue, gridApply: true, showGrid: false })
+    this.setState({ showApply: true })
   };
 
   render() {
@@ -256,7 +323,7 @@ class SO extends React.Component<any, any> {
           gridName="DRUGSDETAILS"
           enableSettings={false}
           columns={getDrugDetailsColumn()}
-          scroll={{ x: 5200, y: 377 }}
+          scroll={{ x: 7000, y: 377 }}
           isFetchingData={false}
           enableResizingOfColumns
           data={this.state.data}
@@ -267,6 +334,18 @@ class SO extends React.Component<any, any> {
             type: "checkbox",
             onChange: () => {},
           }}
+        />
+      );
+    }
+
+    let dropDown: any;
+    if (this.state.udfs.length > 0) {
+      console.log("THe UDFS = ", this.state.udfs)
+      dropDown = (
+        <DropDown
+          placeholder=""
+          options={this.state.udfs}
+          onChange={this.onUDFSChangeHandler}
         />
       );
     }
@@ -341,42 +420,45 @@ class SO extends React.Component<any, any> {
                       <label>
                         User Defined Field <span className="astrict">*</span>
                       </label>
-                      <DropDown options={[1, 2, 3]} />
+                      {/* <DropDown options={[1, 2, 3]} /> */}
+                      {dropDown}
                     </div>
                   </Grid>
                 </Grid>
                 <Box display="flex" justifyContent="flex-end">
                   <Button
                     label="Apply"
-                    disabled
                     onClick={this.settingFormApplyHandler}
+                    disabled={!this.state.showApply}
                   />
                 </Box>
               </div>
             </div>
           </div>
         </div>
-        <div className="bordered">
-          <div className="header space-between pr-10">
-            Drug Grid
-            <div className="button-wrapper">
-              <Button
-                className="Button normal"
-                label="Advance Search"
-                onClick={this.advanceSearchClickHandler}
-              />
-              <Button label="Save" onClick={this.saveClickHandler} disabled />
+        {this.state.showGrid ? (
+          <div className="bordered">
+            <div className="header space-between pr-10">
+              Drug Grid
+              <div className="button-wrapper">
+                <Button
+                  className="Button normal"
+                  label="Advance Search"
+                  onClick={this.advanceSearchClickHandler}
+                />
+                <Button label="Save" onClick={this.saveClickHandler} disabled />
+              </div>
             </div>
+            {dataGrid}
+            {this.state.isSearchOpen ? (
+              <AdvancedSearch
+                category="Grievances"
+                openPopup={this.state.isSearchOpen}
+                onClose={this.advanceSearchClosekHandler}
+              />
+            ) : null}
           </div>
-          {dataGrid}
-          {this.state.isSearchOpen ? (
-            <AdvancedSearch
-              category="Grievances"
-              openPopup={this.state.isSearchOpen}
-              onClose={this.advanceSearchClosekHandler}
-            />
-          ) : null}
-        </div>
+        ) : null}
       </>
     );
   }

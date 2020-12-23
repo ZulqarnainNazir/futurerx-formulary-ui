@@ -2,6 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 import {
   getDrugDetailsSOSummary,
   getDrugDetailsSOList,
+  getSOCriteriaList,
 } from "./soActionCreation";
 import {
   getSOSummaryFulfilled,
@@ -48,3 +49,20 @@ export const soListSlice = createSlice({
     })
   ),
 });
+
+export const sOCriteriaList = createSlice({
+  name: "soCriteriaList",
+  initialState: soState,
+  reducers: {},
+  extraReducers: (builder) => (
+    builder.addCase(getSOCriteriaList.pending, (state, action) => {
+      state.isLoading = true;
+    }),
+    builder.addCase(getSOCriteriaList.fulfilled, (state, action) => {
+      postSOListFulfilled(state, action);
+    }),
+    builder.addCase(getSOCriteriaList.rejected, (state, action) => {
+      postSOListRejected(state, action);
+    })
+  ),
+}); 

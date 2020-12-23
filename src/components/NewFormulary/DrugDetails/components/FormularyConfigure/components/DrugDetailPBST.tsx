@@ -210,6 +210,20 @@ class DrugDetailPBST extends React.Component<any, any> {
         let gridItem = {};
         gridItem["id"] = count;
         gridItem["key"] = count;
+        gridItem["is_abr_formulary"] = element.is_abr_formulary ? "" + element.is_abr_formulary : "";
+        gridItem["is_cb"] = element.is_cb ? "" + element.is_cb : "";
+        gridItem["is_fff"] = element.is_fff ? "" + element.is_fff : "";
+        gridItem["is_gc"] = element.is_gc ? "" + element.is_gc : "";
+        gridItem["is_hi"] = element.is_hi ? "" + element.is_hi : "";
+        gridItem["is_ibf"] = element.is_ibf ? "" + element.is_ibf : "";
+        gridItem["is_la"] = element.is_la ? "" + element.is_la : "";
+        gridItem["is_lis"] = element.is_lis ? "" + element.is_lis : "";
+        gridItem["is_mo"] = element.is_mo ? "" + element.is_mo : "";
+        gridItem["is_nm"] = element.is_nm ? "" + element.is_nm : "";
+        gridItem["is_pgc"] = element.is_pgc ? "" + element.is_pgc : "";
+        gridItem["is_pbst"] = element.is_pbst ? "" + element.is_pbst : "";
+        gridItem["is_ssm"] = element.is_ssm ? "" + element.is_ssm : "";
+        gridItem["is_vbid"] = element.is_vbid ? "" + element.is_vbid : "";
         gridItem["labelName"] = element.drug_label_name
           ? "" + element.drug_label_name
           : "";
@@ -338,7 +352,7 @@ class DrugDetailPBST extends React.Component<any, any> {
           gridName="DRUGSDETAILS"
           enableSettings={false}
           columns={getDrugDetailsColumn()}
-          scroll={{ x: 5200, y: 377 }}
+          scroll={{ x: 7000, y: 377 }}
           isFetchingData={false}
           enableResizingOfColumns
           data={this.state.data}

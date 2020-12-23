@@ -10,7 +10,13 @@ const headers = {
 
 export async function savePaGroup(payload: any): Promise<PAGDMSaveResponse> {
   if(payload.latestId===0){
-    let url = `${BASE_URL1}api/1/mcr-pa-group-description/1/${payload.formularyId}?entity_id=0`;
+    
+    let url = ``;
+  if (payload.lob_type==1){
+    url =`${BASE_URL1}api/1/mcr-pa-group-description/1/${payload.formularyId}?entity_id=0`;
+  }else{
+    url = `${BASE_URL1}api/1/pa-group-description/1/${payload.formularyId}?entity_id=0`;
+  }
     try {
       const response = await axios.post(url, payload, {
         headers: headers,
@@ -23,7 +29,12 @@ export async function savePaGroup(payload: any): Promise<PAGDMSaveResponse> {
       throw error.response;
     }
   }else{
-    let url = `${BASE_URL1}api/1/mcr-pa-group-description/${payload.latestId}/${payload.formularyId}?entity_id=0`;
+    let url = ``;
+  if (payload.lob_type==1){
+    url = `${BASE_URL1}api/1/mcr-pa-group-description/${payload.latestId}/${payload.formularyId}?entity_id=0`;
+  }else{
+    url = `${BASE_URL1}api/1/pa-group-description/${payload.latestId}/${payload.formularyId}?entity_id=0`;
+  }
     try {
       const response = await axios.put(url, payload, {
         headers: headers,
@@ -39,7 +50,12 @@ export async function savePaGroup(payload: any): Promise<PAGDMSaveResponse> {
 };
 
 export async function deletePaGroup(payload: any): Promise<PAGDMSaveResponse> {
-  let url = `${BASE_URL1}api/1/mcr-pa-group-description/${payload.current_group_des_id}/CV?entity_id=0`;
+  let url = ``;
+  if (payload.lob_type==1){
+    url = `${BASE_URL1}api/1/mcr-pa-group-description/${payload.current_group_des_id}/CV?entity_id=0`;
+  }else{
+    url = `${BASE_URL1}api/1/pa-group-description/${payload.current_group_des_id}/CV?entity_id=0`;
+  }
   try {
     const response = await axios.delete(url,{
       headers: headers
@@ -54,7 +70,13 @@ export async function deletePaGroup(payload: any): Promise<PAGDMSaveResponse> {
 };
 
 export async function clonePaGroup(payload: any): Promise<PAGDMSaveResponse> {
-  let url = `${BASE_URL1}api/1/clone-mcr-pa-group-description/1/${payload.current_group_des_id}?entity_id=0`;
+  let url = ``;
+  if (payload.lob_type==1){
+    url = `${BASE_URL1}api/1/clone-mcr-pa-group-description/1/${payload.current_group_des_id}?entity_id=0`;
+  }else{
+    url = `${BASE_URL1}api/1/clone-pa-group-description/1/${payload.current_group_des_id}?entity_id=0`;
+  }
+  
   try {
     const response = await axios.post(url,payload,{
       headers: headers
@@ -70,7 +92,14 @@ export async function clonePaGroup(payload: any): Promise<PAGDMSaveResponse> {
 
 
 export async function archivePaGroup(payload: any): Promise<PAGDMSaveResponse> {
-  let url = `${BASE_URL1}api/1/archive-mcr-pa-group-description/${payload.current_group_des_id}/GD?entity_id=0`;
+
+  let url = ``;
+  if (payload.lob_type==1){
+    url = `${BASE_URL1}api/1/archive-mcr-pa-group-description/${payload.current_group_des_id}/GD?entity_id=0`;
+  }else{
+    url = `${BASE_URL1}api/1/archive-pa-group-description/${payload.current_group_des_id}/GD?entity_id=0`;
+  }
+
   try {
     const response = await axios.post(url,{},{
       headers: headers
@@ -85,7 +114,12 @@ export async function archivePaGroup(payload: any): Promise<PAGDMSaveResponse> {
 };
 
 export async function newVersionPaGroup(payload: any): Promise<PAGDMSaveResponse> {
-  let url = `${BASE_URL1}api/1/mcr-pa-group-description-version/${payload.current_group_des_id}`;
+  let url = ``;
+  if (payload.lob_type==1){
+    url = `${BASE_URL1}api/1/mcr-pa-group-description-version/${payload.current_group_des_id}`;
+  }else{
+    url = `${BASE_URL1}api/1/pa-group-description-version/${payload.current_group_des_id}`;
+  }
   try {
     const response = await axios.post(url,{},{
       headers: headers

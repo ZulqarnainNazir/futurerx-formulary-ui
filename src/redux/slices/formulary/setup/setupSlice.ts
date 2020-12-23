@@ -113,13 +113,10 @@ export const fetchSelectedFormulary = createAsyncThunk(
   async (id: number, { dispatch }) => {
     console.log("***** fetchSelectedFormulary ( " + id + " ) ");
     try {
-      console.log("--------------0");
       if (id === -1) {
         dispatch(setNewFormularySuccess());
         return;
       }
-      console.log("--------------1");
-
       dispatch(getformularyStart());
       const formulary: Formulary = await getformulary(id);
 
@@ -165,7 +162,13 @@ export const saveFormulary = createAsyncThunk(
         if (resp) {
           dispatch(saveFormularySuccess(resp));
           if (resp?.status === 200) {
-            dispatch(fetchSelectedFormulary(resp?.data));
+            //dispatch(fetchSelectedFormulary(resp?.data));
+            return {
+              type: payload?.formulary_info?.id_formulary_type,
+              id: resp?.data,
+            };
+          } else {
+            return null;
           }
         }
       } catch (err) {
