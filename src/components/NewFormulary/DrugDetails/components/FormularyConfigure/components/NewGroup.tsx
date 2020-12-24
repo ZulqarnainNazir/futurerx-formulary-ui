@@ -248,6 +248,16 @@ function NewGroup(props: any) {
     setShowHeader(1)
     scrollPage(0, 500)
   };
+  const getAutoCompleteChangeHandler = (val) => {
+    // drug_list_ids = [...val];
+    updateFormData({
+      ...formData,
+      val
+    });
+    console.log('*****')
+    console.log(val)
+    console.log('*****')
+  }
   return (
     <div className="new-group-des">
       <div className="panel header">
@@ -413,7 +423,7 @@ function NewGroup(props: any) {
                 <Fragment>
                       <Grid item xs={6}>
                       <label className="st-label">List <span className="astrict">*</span></label>
-                      <Tags options={drug_list_ids}/>
+                      <Tags options={drug_list_ids} getAutoCompleteChange={getAutoCompleteChangeHandler}/>
                       </Grid>
                     </Fragment>
                 <div className="setting-1 mb-20">

@@ -11,7 +11,9 @@ const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
 const checkedIcon = <CheckBoxIcon fontSize="small" />;
 
 export default function CheckboxesTags(props:any) {
-  console.log(props.options)
+  const onchangeHandler = (e,val) => {
+    props.getAutoCompleteChange(val)
+  }
   return (
     <Autocomplete
       multiple
@@ -19,6 +21,7 @@ export default function CheckboxesTags(props:any) {
       options={props.options}
       disableCloseOnSelect
       getOptionLabel={(option:any) => option.name}
+      onChange={onchangeHandler}
       renderOption={(option, { selected }) => (
         <React.Fragment>
           <Checkbox
