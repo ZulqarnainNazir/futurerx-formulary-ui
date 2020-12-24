@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import PanelHeader from '../../../../shared/Frx-components/panel-header/PanelHeader';
 import DropDown from "../../../../shared/Frx-components/dropdown/DropDown";
 
@@ -14,87 +14,150 @@ const AddIcon = () => (
   </svg>
 );
 
-const AgeLimitSettings = () => {
-  return (
-    <div className="age-limit-settings bordered mb-10">
-      <PanelHeader title="Age Limit Settings" tooltip="Age Limit Settings" />
-      
-      <div className="inner-container">
-        <StatusContentFormPanel title="Age" type="covered">
-            <div className="input-field-group">
-              <div className="input-field-group__label">Minimum</div>
-            
-              <div className="input-field-group__dropdown-field">
-                <DropDown
-                  className=""
-                  placeholder="inclusive of"
-                  options={["inclusive of", "exclusive of"]}
-                />
-              </div>
-              
-              <div className="input-field-group__text-field">
-                <input type="text" className="setup-input-fields" />
-              </div>
-            </div>
+// interface initialFormData {
+//   minimumVal: any,
+//   maximumVal: any,
+//   minimumType: any,
+//   maximumType: any,
+// }
 
-            <div className="input-field-group">
-              <div className="input-field-group__label">Maximum</div>
-              
-              <div className="input-field-group__dropdown-field">
-                <DropDown
-                  className=""
-                  placeholder="inclusive of"
-                  options={["inclusive of", "exclusive of"]}
-                />
-              </div>
-              
-              <div className="input-field-group__text-field">
-                <input type="text" className="setup-input-fields" />
-              </div>
-            </div>
-        </StatusContentFormPanel>
-        
-        <StatusContentFormPanel title="Age" type="not-covered">
-            <div className="input-field-group">
-              <div className="input-field-group__label">Minimum</div>
-            
-              <div className="input-field-group__dropdown-field">
-                <DropDown
-                  className=""
-                  placeholder="inclusive of"
-                  options={["inclusive of", "exclusive of"]}
-                />
-              </div>
-              
-              <div className="input-field-group__text-field">
-                <input type="text" className="setup-input-fields" />
-              </div>
-            </div>
+// interface ageLimitSettingsState {
+//   ageLimitsCount: number,
+//   ageLimitHtml: any[],
+//   maxLimits: number,
+//   ageCovered: boolean,
+//   formData: initialFormData[],
+// }
 
-            <div className="input-field-group">
-              <div className="input-field-group__label">Maximum</div>
-              
-              <div className="input-field-group__dropdown-field">
-                <DropDown
-                  className=""
-                  placeholder="inclusive of"
-                  options={["inclusive of", "exclusive of"]}
-                />
-              </div>
-              
-              <div className="input-field-group__text-field">
-                <input type="text" className="setup-input-fields" />
-              </div>
-            </div>
-        </StatusContentFormPanel>
+// const initialFormData: initialFormData = {
+//   minimumVal: "",
+//   maximumVal: "",
+//   minimumType: "IO",
+//   maximumType: "IO",
+// }
+
+class AgeLimitSettings extends React.Component<any, any> {
+  state = {
+    ageLimitsCount: 1,
+    ageLimitHtml: [],
+    maxLimits: 3,
+    ageCovered: true,
+    // formData: initialFormData,
+  }
+  
+  // formData1: initialFormData = {
+  //   minimumVal: "",
+  //   maximumVal: "",
+  //   minimumType: "IO",
+  //   maximumType: "IO",
+  // }
+
+  addNewAgeLimit = () => {
+    console.log("The State of the app = ", this.state);
+    this.setState({ ageLimitsCount: this.state.ageLimitsCount + 1 }, () => this.loadAgeLimits());
+  }
+
+  componentDidMount() {
+    this.loadAgeLimits();
+  }
+
+  // handleMinChange = (e) => {
+  //   console.log("The Min input Value = ", e);
+  //   console.log("THe Min input value = ", e.target?.value);
+  //   this.formData1.minimumVal = e.target?.value;
+  //   this.setState({ formData: this.formData1 });
+  // };
+
+  // handleMaxChange = (e) => {
+  //   console.log("The Max input Value = ", e);
+  //   console.log("THe Max input value = ", e.target?.value);
+  //   this.formData1.maximumVal = e.target?.value;
+  //   this.setState({ formData: this.formData1 });
+  // };
+
+  // onMinChangeHandler = (e) => {
+  //   console.log("The ON MIN Change Handler data = ", e);
+  //   this.formData1.minimumType = (e === "Greater Than") ? "GT" : "IO" ;
+  //   this.setState({ formData: this.formData1 });
+  // };
+
+  // onMaxChangeHandler = (e) => {
+  //   console.log("The ON MAX Change Handler data = ", e);
+  //   this.formData1.minimumType = (e === "Less Than") ? "LT" : "IO" ;
+  //   this.setState({ formData: this.formData1 });
+  // }
+
+  getStatusContentForm = (index) => {
+    return (
+      <StatusContentFormPanel title="Age" type={this.state.ageCovered ? "covered" : "not-covered"}>
+        <div className="input-field-group">
+          <div className="input-field-group__label">Minimum</div>
         
-        <div className="age-limit-settings__add-new-form-action">
-          <AddIcon/>
-          <span className="age-limit-settings__add-new-form-action-text">Add New Age Limit Criteria</span>
+          <div className="input-field-group__dropdown-field">
+            <DropDown
+              className=""
+              placeholder="inclusive of"
+              options={["inclusive of", "Greater Than"]}
+              onChange={() => this.props.onMinChangeHandler(index)}
+            />
+          </div>
+          
+          <div className="input-field-group__text-field">
+            <input type="text" className="setup-input-fields" onChange={(e) => this.props.handleMinChange(e, index)} />
+          </div>
+        </div>
+  
+        <div className="input-field-group">
+          <div className="input-field-group__label">Maximum</div>
+          
+          <div className="input-field-group__dropdown-field">
+            <DropDown
+              className=""
+              placeholder="inclusive of"
+              options={["inclusive of", "Less Than"]}
+              onChange={() => this.props.onMaxChangeHandler(index)}
+            />
+          </div>
+          
+          <div className="input-field-group__text-field">
+            <input type="text" className="setup-input-fields" onChange={(e) => this.props.handleMaxChange(e, index)} />
+          </div>
+        </div>
+      </StatusContentFormPanel>
+    )
+  }
+
+  loadAgeLimits = () => {
+    console.log("The Age Limits Count = ", this.state.ageLimitsCount);
+    let ageLimitHtml:any = [];
+    for(let i=0; i<this.state.ageLimitsCount; i++) {
+      ageLimitHtml.push(this.getStatusContentForm(i));
+    }
+    console.log("The HTML AGE LIMIT = ", ageLimitHtml)
+    console.log("The State HTML AGE LIMIT = ", this.state.ageLimitHtml);
+    this.setState({ ageLimitHtml })
+  }
+
+  render () {
+    return (
+    <>
+      <div className="age-limit-settings bordered mb-10">
+        <PanelHeader title="Age Limit Settings" tooltip="Age Limit Settings" />
+        
+        <div className="inner-container">
+          {this.state.ageLimitHtml}
+          
+          {!(this.state.ageLimitsCount === this.state.maxLimits) ? (
+            <div className="age-limit-settings__add-new-form-action" onClick={() => this.addNewAgeLimit()}>
+              <AddIcon/>
+              <span className="age-limit-settings__add-new-form-action-text">Add New Age Limit Criteria</span>
+            </div>
+          ) : null }
         </div>
       </div>
-    </div>
-  )
+    </>
+    )
+  }
 }
 
 export default AgeLimitSettings

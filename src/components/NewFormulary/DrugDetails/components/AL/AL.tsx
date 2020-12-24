@@ -10,17 +10,19 @@ import { getDrugDetailsColumnAL } from "../../../DrugDetails/components/Formular
 import { getDrugDetailData } from "../../../../../mocks/DrugGridMock";
 import FrxLoader from "../../../../shared/FrxLoader/FrxLoader";
 import AdvancedSearch from "../../../DrugDetails/components/FormularyConfigure/components/search/AdvancedSearch";
-import { getDrugDetailsALSummary, getDrugDetailsALList } from "../../../../../redux/slices/formulary/drugDetails/al/alActionCreation";
+import { getDrugDetailsALSummary, getDrugDetailsALList, postReplaceALDrug } from "../../../../../redux/slices/formulary/drugDetails/al/alActionCreation";
 import * as alConstants from "../../../../../api/http-drug-details";
 import getLobCode from "../../../Utils/LobUtils";
 
 import AgeLimitSettings from "./AgeLimitSettings";
 import FrxDrugGridContainer from "../../../../shared/FrxGrid/FrxDrugGridContainer";
+import showMessage from "../../../Utils/Toast";
 
 function mapDispatchToProps(dispatch) {
   return {
     getDrugDetailsALSummary: (a) => dispatch(getDrugDetailsALSummary(a)),
     getDrugDetailsALList: (a) => dispatch(getDrugDetailsALList(a)),
+    postReplaceALDrug: (a) => dispatch(postReplaceALDrug(a)),
   };
 }
 
@@ -31,14 +33,49 @@ const mapStateToProps = (state) => {
   };
 };
 
+interface initialFormData {
+  minimumVal: any,
+  maximumVal: any,
+  minimumType: any,
+  maximumType: any,
+  index: any,
+}
+
+interface drugDetailALState {
+  isSearchOpen: boolean,
+  panelGridTitle1: any,
+  panelTitleAlignment1: any,
+  panelGridValue1: any,
+  isNotesOpen: boolean,
+  activeTabIndex: number,
+  columns: any,
+  data: any,
+  tabs: any,
+  selectedDrugs: any,
+  drugData: any,
+  lobCode: any,
+  listCount: number,
+  ageLimitsCount: number,
+  isCovered: boolean,
+  formData: initialFormData[],
+}
+
 const defaultListPayload = {
   index: 0,
   limit: 10,
   filter: [],
 }
 
+const initialFormData: initialFormData = {
+  minimumVal: "",
+  maximumVal: "",
+  minimumType: "IO",
+  maximumType: "IO",
+  index: "",
+}
+
 class DrugDetailAL extends React.Component<any, any> {
-  state = {
+  state: drugDetailALState = {
     isSearchOpen: false,
     panelGridTitle1: ["", "NUMBER OF DRUGS", "ADDED DRUGS", "REMOVED DRUGS"],
     panelTitleAlignment1: ["center", "center", "center", "center"],
@@ -56,6 +93,9 @@ class DrugDetailAL extends React.Component<any, any> {
     drugData: Array(),
     lobCode: null,
     listCount: 0,
+    ageLimitsCount: 1,
+    isCovered: true,
+    formData: [],
   };
 
   listPayload: any = {
@@ -63,6 +103,16 @@ class DrugDetailAL extends React.Component<any, any> {
     limit: 10,
     filter: [],
   }
+  
+  formData1: initialFormData[] = [
+    {
+      minimumVal: "",
+      maximumVal: "",
+      minimumType: "IO",
+      maximumType: "IO",
+      index: ""
+    }
+  ]
 
   advanceSearchClickHandler = (event) => {
     event.stopPropagation();
@@ -75,6 +125,73 @@ class DrugDetailAL extends React.Component<any, any> {
 
   saveClickHandler = () => {
     console.log("Save data");
+    console.log("The Saved Form Data - ", this.state.formData);
+    console.log("The Selected Drugs For Save = ", this.state.selectedDrugs);
+    if (this.state.selectedDrugs && this.state.selectedDrugs.length > 0) {
+      let apiDetails = {};
+      apiDetails["apiPart"] = alConstants.APPLY_AL_DRUG;
+      apiDetails["keyVals"] = [
+        { key: alConstants.KEY_ENTITY_ID, value: this.props?.formulary_id },
+      ];
+      apiDetails["messageBody"] = {};
+      apiDetails["messageBody"]["selected_drug_ids"] = this.state.selectedDrugs;
+      apiDetails["messageBody"]["is_select_all"] = false;
+      apiDetails["messageBody"]["covered"] = {};
+      apiDetails["messageBody"]["not_covered"] = {};
+      apiDetails["messageBody"]["selected_criteria_ids"] = [];
+      apiDetails["messageBody"]["filter"] = [];
+      apiDetails["messageBody"]["search_key"] = "";
+      apiDetails["messageBody"]["limited_access"] = "";
+      apiDetails["messageBody"]["is_covered"] = this.state.isCovered;
+      apiDetails["messageBody"]["age_limits"] = [{"min_age_condition":"GT","min_age_limit":10,"max_age_condition":"LT","max_age_limit":50,"sequence_number":1}];
+
+      if (this.state.activeTabIndex === 0) {
+        apiDetails["pathParams"] =
+          this.props?.formulary_id +
+          "/" + 
+          getLobCode(this.props.formulary_lob_id) +
+          "/" +
+          alConstants.TYPE_REPLACE;
+          console.log("The API Details - ", apiDetails);
+
+        // Replace Drug method call
+        // this.props.postReplaceAFDrug(apiDetails).then((json) => {
+        //   if (
+        //     json.payload &&
+        //     json.payload.code &&
+        //     json.payload.code === "200"
+        //   ) {
+        //     showMessage("Success", "success");
+        //     // this.getAFSummary();
+        //     // this.getAFDrugsList();
+        //   } else {
+        //     showMessage("Failure", "error");
+        //   }
+        // });
+      // } else if (this.state.activeTabIndex === 2) {
+      //   apiDetails["pathParams"] =
+      //     this.props?.formulary_id +
+      //     "/" +
+      //     this.state.lobCode +
+      //     "/" +
+      //     alConstants.TYPE_REMOVE;
+
+      //   // Remove Drug method call
+      //   this.props.postRemoveAFDrug(apiDetails).then((json) => {
+      //     if (
+      //       json.payload &&
+      //       json.payload.code &&
+      //       json.payload.code === "200"
+      //     ) {
+      //       showMessage("Success", "success");
+      //       // this.getAFSummary();
+      //       // this.getAFDrugsList();
+      //     } else {
+      //       showMessage("Failure", "error");
+      //     }
+      //   });
+      }
+    }
   };
 
   onPageSize = (pageSize) => {
@@ -91,6 +208,53 @@ class DrugDetailAL extends React.Component<any, any> {
     this.listPayload.index = 0;
     this.listPayload.limit = 10;
     this.getALDrugsList({ index: defaultListPayload.index, limit: defaultListPayload.limit });
+  }
+
+  onSelectedTableRowChanged = (selectedRowKeys) => {
+    this.state.selectedDrugs = [];
+    if (selectedRowKeys && selectedRowKeys.length > 0) {
+      let selDrugs = selectedRowKeys.map((ele) => {
+        return this.state.drugData[ele - 1]["md5_id"]
+          ? this.state.drugData[ele - 1]["md5_id"]
+          : "";
+      });
+
+      this.setState({ selectedDrugs: selDrugs });
+    } else {
+      this.setState({ selectedDrugs: [] });
+    }
+  };
+
+  handleMinChange = (e, index) => {
+    console.log("The Min input Value = ", e);
+    console.log("THe Min input value = ", e.target?.value);
+    this.formData1[index].minimumVal = e.target?.value;
+    this.formData1[index].index = index;
+    this.setState({ formData: this.formData1 });
+  };
+
+  handleMaxChange = (e, index) => {
+    console.log("The Max input Value = ", e);
+    console.log("THe Max input value = ", e.target?.value);
+    this.formData1[index].maximumVal = e.target?.value;
+    this.formData1[index].index = index;
+    this.setState({ formData: this.formData1 });
+  };
+
+  onMinChangeHandler = (e, index) => {
+    console.log("The ON MIN Change Handler data = ", e);
+    console.log("The on MIN Change Index data = ", index);
+    this.formData1[index].minimumType = (e === "Greater Than") ? "GT" : "IO" ;
+    this.formData1[index].index = index;
+    this.setState({ formData: this.formData1 });
+  };
+
+  onMaxChangeHandler = (e, index) => {
+    console.log("The ON MAX Change Handler data = ", e);
+    console.log("The on MAX Change Index data = ", index);
+    this.formData1[index].maximumType = (e === "Less Than") ? "LT" : "IO" ;
+    this.formData1[index].index = index;
+    this.setState({ formData: this.formData1 });
   }
 
   getALSummary = () => {
@@ -157,6 +321,7 @@ class DrugDetailAL extends React.Component<any, any> {
         gridItem["created_date"] = element.created_date ? "" + element.created_date : "";
         gridItem["modified_by"] = element.modified_by ? "" + element.modified_by : "";
         gridItem["modified_date"] = element.modified_date ? "" + element.modified_date : "";
+        gridItem["md5_id"] = element.md5_id ? "" + element.md5_id : "";
         count++;
         return gridItem;
       });
@@ -233,7 +398,7 @@ class DrugDetailAL extends React.Component<any, any> {
               columnWidth: 50,
               fixed: true,
               type: "checkbox",
-              onChange: null,
+              onChange: this.onSelectedTableRowChanged,
             }}
           />
         </div>
@@ -268,6 +433,8 @@ class DrugDetailAL extends React.Component<any, any> {
                     tabList={this.state.tabs}
                     activeTabIndex={this.state.activeTabIndex}
                     onClickTab={this.onClickTab}
+                    disabledIndex={1}
+                    disabled
                   />
                 </div>
               </div>
@@ -275,7 +442,7 @@ class DrugDetailAL extends React.Component<any, any> {
           </div>
         </div>
 
-        <AgeLimitSettings />
+        <AgeLimitSettings handleMinChange={this.handleMinChange} handleMaxChange={this.handleMaxChange} onMinChangeHandler={this.onMinChangeHandler} onMaxChangeHandler={this.onMaxChangeHandler}/>
 
         <div className="bordered">
           <div className="header space-between pr-10">
@@ -286,7 +453,7 @@ class DrugDetailAL extends React.Component<any, any> {
                 label="Advance Search"
                 onClick={this.advanceSearchClickHandler}
               />
-              <Button label="Save" onClick={this.saveClickHandler} disabled />
+              <Button label="Save" onClick={this.saveClickHandler} disabled={!(this.state.selectedDrugs.length > 0)} />
             </div>
           </div>
           {dataGrid}
