@@ -22,7 +22,7 @@ import { Box, Grid, Input } from '@material-ui/core';
 import PAGroupHeader from './PAGroupHeader';
 import AlertMessages from "./AlertMessages"
 import RadioButton from '../../../../../shared/Frx-components/radio-button/RadioButton';
-import { getPaGrouptDescription, getPaTypes, getDrugLists,postPAGroupDescription,putPAGroupDescription } from "../../../../../../redux/slices/formulary/pa/paActionCreation";
+import { getPaGrouptDescription, getPaTypes, getDrugLists,postPAGroupDescription,putPAGroupDescription,getPaGrouptDescriptionVersions } from "../../../../../../redux/slices/formulary/pa/paActionCreation";
 import SearchableDropdown from "../../../../../shared/Frx-components/SearchableDropdown";
 import { Tag } from "antd";
 import { ReactComponent as CrossCircleWhiteBGIcon } from "../../../../../../assets/icons/crosscirclewhitebg.svg";
@@ -155,6 +155,7 @@ function mapDispatchToProps(dispatch) {
     getPaGrouptDescription: (a) => dispatch(getPaGrouptDescription(a)),
     postPAGroupDescription: (a) => dispatch(postPAGroupDescription(a)),
     putPAGroupDescription: (a) => dispatch(putPAGroupDescription(a)),
+    
   };
 }
 
