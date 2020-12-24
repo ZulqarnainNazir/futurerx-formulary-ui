@@ -14,6 +14,7 @@ const POST_PA_GROUP_DESCRIPTION_VERSTION_URL = BASE_URL1 + "/api/1/mcr-pa-group-
 const GET_PA_GROUP_DESCRIPTION_DETAIL_URL = BASE_URL1 + "/api/1/mcr-pa-group-description/462?entity_id=0";
 const POSt_PA_GROUP_DESCRIPTION_URL = BASE_URL1 + "api/1/mcr-pa-group-description/1/";
 const PUT_PA_GROUP_DESCRIPTION_URL = BASE_URL1 + "api/1/mcr-pa-group-description/";
+const POSt_PA_GROUP_DESCRIPTION_FORMULARIES_URL = BASE_URL1 + "api/1/mcr-pa-group-description-formularies/";
 
 const GET_PA_COMM_GROUP_DESCRIPTIONS_URL = BASE_URL1 + "/api/1/pa-group-descriptions/";
 const GET_PA_COMM_GROUP_DESCRIPTION_URL = BASE_URL1 + "/api/1/pa-group-description/";
@@ -22,6 +23,7 @@ const POST_PA_COMM_GROUP_DESCRIPTION_VERSTION_URL = BASE_URL1 + "/api/1/pa-group
 const GET_PA_COMM_GROUP_DESCRIPTION_DETAIL_URL = BASE_URL1 + "/api/1/pa-group-description/462?entity_id=0";
 const POSt_PA_COMM_GROUP_DESCRIPTION_URL = BASE_URL1 + "api/1/pa-group-description/1/";
 const PUT_PA_COMM_GROUP_DESCRIPTION_URL = BASE_URL1 + "api/1/pa-group-description/";
+const POSt_PA_COMM_GROUP_DESCRIPTION_FORMULARIES_URL = BASE_URL1 + "api/1/pa-group-description-formularies/";
 
 const POST_FORUMULARY_DRUG_PA_URL = BASE_URL1 + "api/1/formulary-drugs-pa/";
 const POST_APPLY_FORUMULARY_DRUG_PA_URL = BASE_URL1 + "api/1/apply-formulary-drug-pa/";
@@ -483,6 +485,42 @@ export const postRelatedFormularyDrugPA = createAsyncThunk(
       })
       .then((json) => {
         console.log("postFormularyDrugPA: ", json);
+        return json;
+      });
+  }
+);
+
+export const postPAGroupDescriptionFormularies = createAsyncThunk(
+  "tier/postPAGroupDescriptionFormularies",
+  async (apiDetails: any) => {
+    
+    let pathParams = apiDetails.pathParams;
+    let keyVals = pathParams.keyVals;
+    let messageBody = apiDetails.messageBody;
+    
+    let POST_URL ="";
+    if (apiDetails.lob_type==1){
+      POST_URL = POSt_PA_GROUP_DESCRIPTION_FORMULARIES_URL + pathParams ;
+    }else  if (apiDetails.lob_type==4){
+      POST_URL = POSt_PA_COMM_GROUP_DESCRIPTION_FORMULARIES_URL + pathParams ;
+    }
+    if(keyVals){
+      keyVals = keyVals.map(pair => pair.key+'='+pair.value);
+      POST_URL = POST_URL + "?" + keyVals.join('&');
+    }
+    console.log("postPAGroupDescriptionFormularies action creator:: url: " + POST_URL);
+    const requestHeaders  = {
+        method: 'POST',
+        body: JSON.stringify(messageBody),
+        headers: commonConstants.REQUEST_HEADER
+    }
+    return fetch(POST_URL,requestHeaders)
+      .then((response) => {
+        if (!response.ok) throw Error(response.statusText);
+        return response.json();
+      })
+      .then((json) => {
+        console.log("postPAGroupDescription: ", json);
         return json;
       });
   }
