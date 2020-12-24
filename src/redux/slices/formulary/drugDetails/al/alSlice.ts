@@ -1,6 +1,14 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { getDrugDetailsALSummary } from "./alActionCreation";
-import { getALSummaryFulfilled, getALSummaryRejected } from "./alReducers";
+import {
+  getDrugDetailsALSummary,
+  getDrugDetailsALList,
+} from "./alActionCreation";
+import {
+  getALSummaryFulfilled,
+  getALSummaryRejected,
+  postALListFulfilled,
+  postALListRejected,
+} from "./alReducers";
 
 const alState: any = {
   data: {},
@@ -20,6 +28,23 @@ export const alSlice = createSlice({
     }),
     builder.addCase(getDrugDetailsALSummary.rejected, (state, action) => {
       getALSummaryRejected(state, action);
+    })
+  ),
+});
+
+export const alListSlice = createSlice({
+  name: "alDrugList",
+  initialState: alState,
+  reducers: {},
+  extraReducers: (builder) => (
+    builder.addCase(getDrugDetailsALList.pending, (state, action) => {
+      state.isLoading = true;
+    }),
+    builder.addCase(getDrugDetailsALList.fulfilled, (state, action) => {
+      postALListFulfilled(state, action);
+    }),
+    builder.addCase(getDrugDetailsALList.rejected, (state, action) => {
+      postALListRejected(state, action);
     })
   ),
 });

@@ -12,7 +12,10 @@ import { getDrugDetailData } from "../../../../../mocks/DrugGridMock";
 import FrxLoader from "../../../../shared/FrxLoader/FrxLoader";
 import DrugGrid from "../../../DrugDetails/components/DrugGrid";
 import AdvancedSearch from "../../../DrugDetails/components/FormularyConfigure/components/search/AdvancedSearch";
-import { getDrugDetailsPOSSummary } from "../../../../../redux/slices/formulary/drugDetails/pos/posActionCreation";
+import {
+  getDrugDetailsPOSSummary,
+  getDrugDetailsPOSSettings,
+} from "../../../../../redux/slices/formulary/drugDetails/pos/posActionCreation";
 import * as posConstants from "../../../../../api/http-drug-details";
 
 import PosSettings from "./PosSettings";
@@ -20,6 +23,7 @@ import PosSettings from "./PosSettings";
 function mapDispatchToProps(dispatch) {
   return {
     getDrugDetailsPOSSummary: (a) => dispatch(getDrugDetailsPOSSummary(a)),
+    getDrugDetailsPOSSettings: (a) => dispatch(getDrugDetailsPOSSettings(a)),
   };
 }
 
@@ -29,12 +33,15 @@ const mapStateToProps = (state) => {
   };
 };
 
+// GET_DRUG_SETTING_POS
+
 class DrugDetailPOS extends React.Component<any, any> {
   state = {
     isSearchOpen: false,
     panelGridTitle1: ["", "NUMBER OF DRUGS", "ADDED DRUGS", "REMOVED DRUGS"],
     panelTitleAlignment1: ["center", "center", "center", "center"],
     panelGridValue1: [],
+    posSettings: [],
     isNotesOpen: false,
     activeTabIndex: 0,
     columns: null,
@@ -44,54 +51,14 @@ class DrugDetailPOS extends React.Component<any, any> {
       { id: 2, text: "Append" },
       { id: 3, text: "Remove" },
     ],
-  };
 
-  advanceSearchClickHandler = (event) => {
-    event.stopPropagation();
-    this.setState({ isSearchOpen: !this.state.isSearchOpen });
-  };
-
-  advanceSearchClosekHandler = () => {
-    this.setState({ isSearchOpen: !this.state.isSearchOpen });
-  };
-
-  saveClickHandler = () => {
-    console.log("Save data");
-  };
-
-  getPOSSummary = () => {
-    let apiDetails = {};
-    apiDetails["apiPart"] = posConstants.GET_DRUG_SUMMARY_POS;
-    apiDetails["pathParams"] = this.props?.formulary_id;
-    apiDetails["keyVals"] = [
-      { key: posConstants.KEY_ENTITY_ID, value: this.props?.formulary_id },
-    ];
-
-    this.props.getDrugDetailsPOSSummary(apiDetails).then((json) => {
-      let tmpData =
-        json.payload && json.payload.result ? json.payload.result : [];
-      console.log("The POS Temp Data = ", tmpData);
-
-      let rows = tmpData.map((ele) => {
-        let curRow = [
-          ele["attribute_name"],
-          ele["total_drug_count"],
-          ele["added_drug_count"],
-          ele["removed_drug_count"],
-        ];
-        return curRow;
-      });
-      console.log("The POS Rows = ", rows);
-
-      this.setState({
-        panelGridValue1: rows,
-      });
-    });
+    isSelectAll: false,
+    showGrid: false,
   };
 
   componentDidMount() {
-    const data = getDrugDetailData();
     const columns = getDrugDetailsColumn();
+    const data = getDrugDetailData();
     const FFFColumn: any = {
       id: 0,
       position: 0,
@@ -116,7 +83,103 @@ class DrugDetailPOS extends React.Component<any, any> {
       data: data,
     });
     this.getPOSSummary();
+    this.getPOSSettings();
   }
+  advanceSearchClickHandler = (event) => {
+    event.stopPropagation();
+    this.setState({ isSearchOpen: !this.state.isSearchOpen });
+  };
+
+  advanceSearchClosekHandler = () => {
+    this.setState({ isSearchOpen: !this.state.isSearchOpen });
+  };
+
+  saveClickHandler = () => {
+    console.log("Save data");
+  };
+
+  getPOSSummary = () => {
+    let apiDetails = {};
+    apiDetails["apiPart"] = posConstants.GET_DRUG_SUMMARY_POS;
+    apiDetails["pathParams"] = this.props?.formulary_id;
+    apiDetails["keyVals"] = [
+      { key: posConstants.KEY_ENTITY_ID, value: this.props?.formulary_id },
+    ];
+
+    console.log("apiDetails 1: ", apiDetails);
+    this.props.getDrugDetailsPOSSummary(apiDetails).then((json) => {
+      let tmpData =
+        json.payload && json.payload.result ? json.payload.result : [];
+      // console.log("The POS Temp Data = ", tmpData);
+
+      let rows = tmpData.map((ele) => {
+        let curRow = [
+          ele["attribute_name"],
+          ele["total_drug_count"],
+          ele["added_drug_count"],
+          ele["removed_drug_count"],
+        ];
+        return curRow;
+      });
+      console.log("The POS Rows = ", rows);
+
+      this.setState({
+        panelGridValue1: rows,
+      });
+    });
+  };
+
+  getPOSSettings = () => {
+    let apiDetails = {};
+    apiDetails["apiPart"] = posConstants.GET_DRUG_SETTING_POS;
+    // apiDetails["pathParams"] = this.props?.formulary_id;
+    // apiDetails["keyVals"] = [
+    //   { key: posConstants.KEY_ENTITY_ID, value: this.props?.formulary_id },
+    // ];
+
+    console.log("apiDetails: ", apiDetails);
+    this.props.getDrugDetailsPOSSettings(apiDetails).then((json) => {
+      const posSettings =
+        json.payload && json.payload.data ? json.payload.data : [];
+
+      posSettings.forEach((s) => {
+        s["isChecked"] = false;
+      });
+      this.setState({
+        posSettings,
+      });
+    });
+  };
+
+  serviceSettingsChecked = (e) => {
+    // console.log(e.target.id);
+    // console.log(e.target.name);
+    // console.log(e.target.checked);
+
+    const { posSettings } = this.state;
+
+    posSettings.forEach((s: any) => {
+      if (s.id_place_of_service_type === e.target.id) {
+        s.isChecked = e.target.checked;
+      }
+    });
+
+    this.setState({
+      posSettings,
+    });
+  };
+
+  handleSelectAll = () => {
+    const { posSettings, isSelectAll } = this.state;
+    posSettings.forEach((s: any) => {
+      s.isChecked = !isSelectAll;
+    });
+
+    this.setState({
+      posSettings,
+      isSelectAll: !isSelectAll,
+    });
+  };
 
   onClickTab = (selectedTabIndex: number) => {
     let activeTabIndex = 0;
@@ -143,6 +206,11 @@ class DrugDetailPOS extends React.Component<any, any> {
     alert(1);
   };
 
+  showGridHandler = () => {
+    this.setState({
+      showGrid: !this.state.showGrid,
+    });
+  };
   render() {
     let dataGrid = <FrxLoader />;
     if (this.state.data) {
@@ -150,7 +218,7 @@ class DrugDetailPOS extends React.Component<any, any> {
         <DrugGrid columns={this.state.columns} data={this.state.data} />
       );
     }
-
+    const { posSettings, isSelectAll, showGrid } = this.state;
     return (
       <>
         <div className="bordered mb-10">
@@ -186,29 +254,39 @@ class DrugDetailPOS extends React.Component<any, any> {
           </div>
         </div>
 
-        <PosSettings />
+        <PosSettings
+          posSettingsServies={posSettings}
+          serviceSettingsChecked={this.serviceSettingsChecked}
+          selectAllHandler={{
+            isSelectAll: isSelectAll,
+            handleSelectAll: this.handleSelectAll,
+          }}
+          showGridHandler={this.showGridHandler}
+        />
 
-        <div className="bordered">
-          <div className="header space-between pr-10">
-            Drug Grid
-            <div className="button-wrapper">
-              <Button
-                className="Button normal"
-                label="Advance Search"
-                onClick={this.advanceSearchClickHandler}
-              />
-              <Button label="Save" onClick={this.saveClickHandler} disabled />
+        {showGrid ? (
+          <div className="bordered">
+            <div className="header space-between pr-10">
+              Drug Grid
+              <div className="button-wrapper">
+                <Button
+                  className="Button normal"
+                  label="Advance Search"
+                  onClick={this.advanceSearchClickHandler}
+                />
+                <Button label="Save" onClick={this.saveClickHandler} disabled />
+              </div>
             </div>
+            {dataGrid}
+            {this.state.isSearchOpen ? (
+              <AdvancedSearch
+                category="Grievances"
+                openPopup={this.state.isSearchOpen}
+                onClose={this.advanceSearchClosekHandler}
+              />
+            ) : null}
           </div>
-          {dataGrid}
-          {this.state.isSearchOpen ? (
-            <AdvancedSearch
-              category="Grievances"
-              openPopup={this.state.isSearchOpen}
-              onClose={this.advanceSearchClosekHandler}
-            />
-          ) : null}
-        </div>
+        ) : null}
       </>
     );
   }

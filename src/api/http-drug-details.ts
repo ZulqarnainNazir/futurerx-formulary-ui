@@ -42,7 +42,7 @@ export const GET_LIS_FORMULARY_DRUGS = "api/1/formulary-drugs-lis/";
 // IBF TAB
 export const GET_DRUG_SUMMARY_IBF = "api/1/formulary-drug-summary-ibf/";
 export const GET_IBF_FORMULARY_DRUGS = "api/1/formulary-drugs-ibf/";
-export const GET_IBF_CUIS = "api/1/drug-me-shcuis"
+export const GET_IBF_CUIS = "api/1/drug-me-shcuis";
 export const APPLY_IBF_DRUG = "api/1/apply-formulary-drug-ibf/";
 
 // CB TAB
@@ -68,21 +68,23 @@ export const GET_SSM_FORMULARY_DRUGS = "api/1/formulary-drugs-ssm/";
 
 // AL TAB
 export const GET_DRUG_SUMMARY_AL = "api/1/formulary-drug-summary-al/";
+export const GET_AL_DRUGS = "api/1/formulary-drugs-al/";
 
 // GL TAB
-export const GET_DRUG_SUMMARY_GL = "api/1/formulary-drug-summary-gl/"
+export const GET_DRUG_SUMMARY_GL = "api/1/formulary-drug-summary-gl/";
 
 // ICD TAB
-export const GET_DRUG_SUMMARY_ICD = "api/1/formulary-drug-summary-icdl/"
+export const GET_DRUG_SUMMARY_ICD = "api/1/formulary-drug-summary-icdl/";
 
 // PN TAB
-export const GET_DRUG_SUMMARY_PN = "api/1/formulary-drug-summary-phnw/"
+export const GET_DRUG_SUMMARY_PN = "api/1/formulary-drug-summary-phnw/";
 
 // PT TAB
 export const GET_DRUG_SUMMARY_PT = "api/1/formulary-drug-summary-prtx/";
 
 // POS TAB
-export const GET_DRUG_SUMMARY_POS = "api/1/formulary-drug-summary-pos/"
+export const GET_DRUG_SUMMARY_POS = "api/1/formulary-drug-summary-pos/";
+export const GET_DRUG_SETTING_POS = "api/1/place-of-services/";
 
 // PR TAB
 export const GET_DRUG_SUMMARY_PR = "api/1/formulary-drug-summary-patrs/";
@@ -100,7 +102,7 @@ export const buildUrl = ({ refUrl = BASE_URL1, apiDetails }) => {
   let keyVals = apiDetails.keyVals;
   let url = refUrl + apiPart;
 
-  if(pathParams) {
+  if (pathParams) {
     url = url + pathParams;
   }
 
