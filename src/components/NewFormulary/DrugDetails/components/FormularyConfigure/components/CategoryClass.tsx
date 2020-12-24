@@ -12,6 +12,8 @@ import PanelGrid from "./panelGrid";
 import DropDown from "../../../../../shared/Frx-components/dropdown/DropDown";
 import Button from "../../../../../shared/Frx-components/button/Button";
 import Box from "@material-ui/core/Box";
+import AdvanceSearchContainer from '../../../../NewAdvanceSearch/AdvanceSearchContainer';
+import { setAdvancedSearch } from "../../../../../../redux/slices/formulary/advancedSearch/advancedSearchSlice";
 import FrxDrugGridContainer from "../../../../../shared/FrxGrid/FrxDrugGridContainer";
 import {
   categoryCommercialClassColumns,
@@ -41,6 +43,7 @@ function mapDispatchToProps(dispatch) {
     postDrugsCategory: (a) => dispatch(postDrugsCategory(a)),
     getIntelliscenseSearch: (a) => dispatch(getIntelliscenseSearch(a)),
     postDrugsClassCategoryOverride: (a) => dispatch(postDrugsClassCategoryOverride(a)),
+    setAdvancedSearch: (a) => dispatch(setAdvancedSearch(a))
   };
 }
 
@@ -49,7 +52,10 @@ const mapStateToProps = (state) => {
     formulary_id: state?.application?.formulary_id,
     formulary: state?.application?.formulary,
     formulary_lob_id: state?.application?.formulary_lob_id,
-    formulary_type_id: state?.application?.formulary_type_id
+    formulary_type_id: state?.application?.formulary_type_id,
+    advancedSearchBody: state?.advancedSearch?.advancedSearchBody,
+    populateGrid: state?.advancedSearch?.populateGrid,
+    closeDialog: state?.advancedSearch?.closeDialog,
   };
 };
 
@@ -432,6 +438,24 @@ class CategoryClass extends React.Component<any, any> {
     this.state.overriddenClass = classValue;
     this.state.customClass = true;
   }
+  advanceSearchClosekHandler = () => {
+    this.setState({ isSearchOpen: !this.state.isSearchOpen })
+  }
+  advanceSearchClickHandler = (event) => {
+    event.stopPropagation();
+    this.setState({ isSearchOpen: !this.state.isSearchOpen })
+  }
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.advancedSearchBody && nextProps.populateGrid) {
+      this.populateGridData(nextProps.advancedSearchBody);
+      let payload = { advancedSearchBody: nextProps.advancedSearchBody, populateGrid: false, closeDialog: nextProps.closeDialog, listItemStatus: nextProps.listItemStatus };
+      if (nextProps.closeDialog) {
+        this.state.isSearchOpen = false;
+        payload['closeDialog'] = false;
+      }
+      this.props.setAdvancedSearch(payload);
+    }
+  }
   render() {
     return (
       <div className='drug-detail-LA-root'>
@@ -461,7 +485,7 @@ class CategoryClass extends React.Component<any, any> {
                     </div>
                     <div
                       className='advance-search-button'
-                      onClick={(e) => this.handlePopupButtonClick("advancesearch", "Advanced Search")}
+                      onClick={(e) => this.advanceSearchClickHandler(e)}
                     >
                       Advanced Search
                         </div>
@@ -513,13 +537,18 @@ class CategoryClass extends React.Component<any, any> {
           showActions={this.state.showActionsInd}
           open={this.state.materialPopupInd}
         >
-          {this.state.popupName === "advancesearch" ?
-            <STPopup />
-            : this.state.popupName === "override" ?
+          {this.state.popupName === "override" ?
               <OverridePopup onOverrideCategoryClass={this.onOverrideCategoryClass} onOverrideCategory={this.onOverrideCategory} onOverrideClass={this.onOverrideClass} />
               : ""
           }
         </DialogPopup>
+        {this.state.isSearchOpen ? (
+              <AdvanceSearchContainer
+                openPopup={this.state.isSearchOpen}
+                onClose={this.advanceSearchClosekHandler} />
+            ) : (
+                null
+        )}
         <ToastContainer />
       </div>
     );
