@@ -161,14 +161,18 @@ class FormularySetUp extends React.Component<any, any> {
       const classificationSystem = newProps.setupOptions.generalOptions.classification_systems?.length === 1 && 
                                    newProps.setupOptions.generalOptions.classification_systems[0].id_classification_system === 10 ? 
                                    10 : '';
+      const defaultDesignId = newProps.setupOptions?.designOptions?.filter(e => e.edit_name === 'N/A')?.map(e => e.id_edit);
+      const newEditInfo:any = {...this.state.edit_info};
       const newGeneralOption:any = {...this.state.generalInformation};
       newGeneralOption.classification_system = classificationSystem;
+      newEditInfo.edits = defaultDesignId !== undefined ? [...defaultDesignId] : [];
       this.setState({
         isUpdate: true,
         generalInformation: newGeneralOption,
         supplemental_benefit_info: {
           supplemental_benefits: [],
         },
+        edit_info: newEditInfo,
         tiers: [],
       });
     }
@@ -337,7 +341,7 @@ class FormularySetUp extends React.Component<any, any> {
       if (this.state.generalInformation.service_year === "") {
         msg.push("Formulary Service year is required.");
       }
-      // if(this.tierCheck()){
+      // if(e && this.tierCheck()){
       //   msg.push("Formulary Service year is required.");
       // }
       if (msg.length > 0) {
