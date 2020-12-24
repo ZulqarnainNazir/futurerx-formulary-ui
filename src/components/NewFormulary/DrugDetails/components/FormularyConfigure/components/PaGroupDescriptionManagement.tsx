@@ -14,6 +14,7 @@ import { getPaSummary, getPaGrouptDescriptions,getPaGrouptDescriptionDetail, get
 
 function mapStateToProps(state) {
     return {
+        descriptions: state.paReducer.descriptions,
         client_id: state.application.clientId,
         current_formulary: state.application.formulary,
         formulary_id: state?.application?.formulary_id,
@@ -117,6 +118,22 @@ class PaGroupDescriptionManagement extends React.Component<any, any>{
             newGroup:false,
             selectedGrp:false
         })
+
+        this.props.getPAGroupDetails({
+            formulary_id: this.props.formulary_id,
+            current_group_id: 0,
+            current_group_des_id: 0
+        })
+
+        let apiDetails= {};
+        apiDetails["lob_type"] = this.props.formulary_lob_id;
+        apiDetails['pathParams'] = 0;
+
+        //this.props.cleanMessages({error:'',success:''})
+        this.props.getPaGrouptDescriptions(apiDetails)
+        this.props.getPaGrouptDescriptionVersions(apiDetails)
+        this.props.getPaGrouptDescription(apiDetails)
+        this.props.getPaTypes(this.props.formulary_id)
     }
 
     componentDidMount() {
@@ -163,6 +180,34 @@ class PaGroupDescriptionManagement extends React.Component<any, any>{
 
 
 
+    }
+
+    componentWillReceiveProps(nextProps) {
+        debugger;
+        console.log('TIER: componentWillReceiveProps', nextProps);
+        
+        let tmpData = nextProps.descriptions;
+        if (tmpData && Array.isArray(tmpData) && tmpData.length > 0) {
+            let groupProp = "";
+            if (this.props.formulary_lob_id==1){
+                groupProp= "id_mcr_base_pa_group_description"
+            }else if (this.props.formulary_lob_id==4){
+                groupProp = "id_base_pa_group_description"; 
+            }
+            var result = tmpData.map(function (el) {
+                var element = {};
+                element["id"] = el[groupProp]; 
+                element["label"] = el.pa_group_description_name;
+                element["status"] = el.is_setup_complete ? "completed" : "warning";
+                element["is_archived"] = el.is_archived;
+                console.log(element);
+                
+                return element;
+            })
+            this.setState({
+                groupsData: result,
+            });
+        }
     }
 
     handleInputChange = (event) => {
