@@ -9,9 +9,6 @@ class SupplementalModels extends React.Component<any, any> {
     checkFormularyDesign = (id:any) => {
         const des_opt:any = {...this.props.edit_info};
         const naCheckId = this.props.designOptions?.filter(e => e.is_custom !== true && e.edit_name === 'N/A').map(e=>e.id_edit);
-        const storeEdit = this.props.storeEditInfo;
-        const getId = storeEdit?.find(e => e.id_edit === id)?.id_formulary_edit;
-        const removedFormularyIndex = getId !== undefined ? des_opt.removed_formulary_edits.indexOf(getId) : null;
         if(des_opt.edits.indexOf(parseInt(naCheckId)) !== -1){
             let ind = des_opt.edits.indexOf(naCheckId);
             des_opt.edits.splice(ind,1);
@@ -22,13 +19,7 @@ class SupplementalModels extends React.Component<any, any> {
             let index = des_opt.edits.indexOf(id);
             des_opt.edits.splice(index,1);
         }
-        if(removedFormularyIndex !== -1 && removedFormularyIndex) {
-            des_opt.removed_formulary_edits.splice(removedFormularyIndex,1)
-        }else{
-            if(getId !== undefined)
-                des_opt.removed_formulary_edits.push(getId)
-        }
-        this.props.formularyDesignCommercialCheck(des_opt)
+        this.props.formularyDesignCommercialCheck(des_opt,'static')
     }
     customCheckboxClickHandler = (e) => {
         const des_opt:any = {...this.props.edit_info};
@@ -38,7 +29,7 @@ class SupplementalModels extends React.Component<any, any> {
             des_opt.edits.splice(ind,1);
         }
         if(des_opt.custom_edits.length > 0){
-            des_opt.custom_edits = []
+            des_opt.custom_edits = [];
         }else{
             let newObj = {
                 "id_formulary_edit": null,
@@ -49,7 +40,7 @@ class SupplementalModels extends React.Component<any, any> {
             }
             des_opt.custom_edits.push(newObj);
         }
-        this.props.formularyDesignCommercialCheck(des_opt);
+        this.props.formularyDesignCommercialCheck(des_opt,'customCheck');
     }
     customCheckboxAddNewClickHandler = () => {
         const des_opt:any = {...this.props.edit_info};
@@ -77,48 +68,26 @@ class SupplementalModels extends React.Component<any, any> {
     }
     checkNAHandler = (id) => {
         const des_opt = {...this.props.edit_info};
-        const edits = [...des_opt.edits].length > 0 ? [...des_opt.edits] : this.props.designOptions?.filter(e => e.is_custom !== true && e.edit_name !== 'N/A').map(e=>e.id_edit);
-        const custom_edits =  [...des_opt.custom_edits].length > 0 ? 
-                              [...des_opt.custom_edits].map(e => e.id_edit) : 
-                              this.props.designOptions?.filter(e => e.is_custom === true && e.edit_name !== 'N/A').map(e=>e.id_edit);
-        const storeEditStatic = this.props.storeEditInfo?.filter(e => edits.indexOf(e.id_edit) !== -1).map(el => el.id_formulary_edit);
-        const storeEditCustom = this.props.storeEditInfo?.filter(e => custom_edits.indexOf(e.id_edit) !== -1).map(el => el.id_formulary_edit);
-        
         if(des_opt.edits.indexOf(id) === -1){
             des_opt.edits = [];
             des_opt.custom_edits = [];
-            des_opt.edits.push(id)
-            des_opt.removed_formulary_edits = storeEditStatic !== undefined && storeEditCustom !== undefined ?
-                                              [...storeEditStatic,...storeEditCustom] : []
+            des_opt.edits.push(id);
         }else{
             des_opt.edits = [];
             des_opt.custom_edits = [];
-            des_opt.removed_formulary_edits = storeEditCustom !== undefined ? [...storeEditCustom] : [];
         }
-        this.props.formularyDesignCommercialCheck(des_opt);
+        this.props.formularyDesignCommercialCheck(des_opt,'NA');
     }
     checkUncheckHandler = () => {
         const des_opt = {...this.props.edit_info};
-        const edits = [...des_opt.edits].length > 0 ? [...des_opt.edits] : this.props.designOptions?.filter(e => e.is_custom !== true && e.edit_name !== 'N/A').map(e=>e.id_edit);
-        const isNa = this.props.designOptions.filter(e => e.id_edit == edits[0]).map(e => e.edit_name)[0] === 'N/A';
-        const newEdits = isNa ? this.props.designOptions?.filter(e => e.is_custom !== true && e.edit_name !== 'N/A').map(e=>e.id_edit) : edits;
-        const custom_edits =  [...des_opt.custom_edits].length > 0 ? 
-                              [...des_opt.custom_edits].map(e => e.id_edit) : 
-                              this.props.designOptions?.filter(e => e.is_custom === true && e.edit_name !== 'N/A').map(e=>e.id_edit);
-        
-        const storeEditStatic = this.props.storeEditInfo?.filter(e => newEdits.indexOf(e.id_edit) !== -1).map(el => el.id_formulary_edit);
-        const storeEditCustom = this.props.storeEditInfo?.filter(e => custom_edits.indexOf(e.id_edit) !== -1).map(el => el.id_formulary_edit);
         if(des_opt.edits.length > 0 || des_opt.custom_edits.length > 0){
             des_opt.edits = [];
             des_opt.custom_edits = [];
-            des_opt.removed_formulary_edits = storeEditStatic !== undefined && storeEditCustom !== undefined ?
-                                              [...storeEditStatic,...storeEditCustom] : [];
         }else{
             const newEdits = this.props.designOptions?.filter(e => e.is_custom !== true && e.edit_name !== 'N/A').map(e=>e.id_edit);
-            des_opt.edits = newEdits
-            des_opt.removed_formulary_edits = storeEditCustom !== undefined ? [...storeEditCustom] : [];
+            des_opt.edits = newEdits;
         }
-        this.props.formularyDesignCommercialCheck(des_opt);
+        this.props.formularyDesignCommercialCheck(des_opt,'uncheck');
     }
     deleteCustomInput = (ind) => {
         const des_opt = {...this.props.edit_info};

@@ -198,9 +198,40 @@ class FormularySetUp extends React.Component<any, any> {
     };
     return newObj;
   };
-  formularyDesignCommercialCheckHandler = (getObj:any) => {
+  formularyDesignCommercialCheckHandler = (getObj:any,type) => {
+    const receivedObj = {...getObj};
+    const customId = this.props.setupOptions.designOptions.filter(e => e.is_custom && receivedObj.custom_edits.indexOf(e.id_edit) === -1).map(e => e.id_edit);
+    const staticDBId = this.props.formulary.edit_info.filter(e => receivedObj.edits.indexOf(e.id_edit) === -1).map(e => e.id_formulary_edit);
+    const customFID = customId.filter(e => receivedObj.custom_edits.indexOf(e) === -1);
+    const customDBID = this.props.formulary.edit_info.filter(e => customFID.indexOf(e.id_edit) !== -1).map(e => e.id_formulary_edit);
+    const storedEdits = this.props.formulary.edit_info.map(e => e.id_formulary_edit);
+    let finalRemoveId = staticDBId.concat(customDBID);
+    finalRemoveId = finalRemoveId.filter((item,index)=>{
+        return (finalRemoveId.indexOf(item) == index)
+    })
+    // debugger;
+    if(type === 'uncheck' && type !== undefined){
+      if(receivedObj.edits.length < 1){
+        receivedObj.removed_formulary_edits = [...storedEdits]
+      }else{
+        receivedObj.removed_formulary_edits = [...customDBID]
+      }
+    }
+    if(type === 'NA' && type !== undefined){
+      if(receivedObj.edits.length < 2 && receivedObj.custom_edits.length === 0){
+        receivedObj.removed_formulary_edits = [...storedEdits]
+      }
+    }
+    if(type === 'customCheck' && type !== undefined){
+        const removedArr = [...receivedObj.removed_formulary_edits];
+        let newArr = removedArr.concat(customDBID);
+        newArr = newArr.filter((item,index)=>{
+          return (newArr.indexOf(item) == index)
+        })
+        receivedObj.removed_formulary_edits = [...newArr]
+    }
     this.setState({
-      edit_info: getObj
+      edit_info: receivedObj
     })
   }
   formularyRadioChangeHandler = (
@@ -341,7 +372,7 @@ class FormularySetUp extends React.Component<any, any> {
       if (this.state.generalInformation.service_year === "") {
         msg.push("Formulary Service year is required.");
       }
-      // if(e && this.tierCheck()){
+      // if(this.tierCheck()){
       //   msg.push("Formulary Service year is required.");
       // }
       if (msg.length > 0) {
@@ -351,7 +382,7 @@ class FormularySetUp extends React.Component<any, any> {
         return;
       }
     }
-
+    
     const input = {
       MODE: this.props.mode,
       CONTINUE: e,
@@ -382,6 +413,11 @@ class FormularySetUp extends React.Component<any, any> {
       }
     });
   };
+  tierCheck = () => {
+    console.log(this.state)
+    debugger
+    return true;
+  }
   onCheckUncheckAllSupplementalHandler = (val) => {
     if (val === "uncheck") {
       this.setState({
