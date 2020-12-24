@@ -20,6 +20,7 @@ export default function CheckboxesTags(props:any) {
       id="checkboxes-tags-demo"
       options={props.options}
       disableCloseOnSelect
+      defaultValue = {props.seleted}
       getOptionLabel={(option:any) => option.name}
       onChange={onchangeHandler}
       renderOption={(option, { selected }) => (

@@ -41,6 +41,7 @@ interface initialFormData{
   is_validation_required:  any;
   st_type:any;
   id_st_type:any;
+  drug_list_ids:any;
 }
 
 const initialFormData:initialFormData = {
@@ -58,7 +59,8 @@ const initialFormData:initialFormData = {
   is_display_criteria_drugs_not_frf: false,
   is_validation_required: false,
   st_type:'Always Applies(1)',
-  id_st_type:7
+  id_st_type:7,
+  drug_list_ids:[]
 }
 
 function mapStateToProps(state) {
@@ -95,7 +97,7 @@ function mapDispatchToProps(dispatch) {
   }
 }
 
-const drug_list_ids=[
+const drug_list=[
   {
     "name":"my dl1",
     "key":1,
@@ -122,6 +124,7 @@ function NewGroup(props: any) {
   const [changeEvent, setChangeEvent] = React.useState(false);
   const [showHeader, setShowHeader] = React.useState(props.formType);
   const [errorClass, setErrorClass] = React.useState('');
+  const [drug_list_ids, setDrug_list_ids] = React.useState([]);
 
   const handleChange = (e) => {
     const formVal = (e.target.value === 'yes' || e.target.value === 'true') ? true : (e.target.value === 'no' || e.target.value === 'false') ? false : e.target.value;
@@ -229,6 +232,7 @@ function NewGroup(props: any) {
     setErrorClass('');
     formData["id_st_type"] = (formData["st_type"]==="New Starts Only (2)")?8:7;
     formData["is_validation_required"] = is_validation;
+    formData["drug_list_ids"] = drug_list_ids;
     let requestData = {};
     if (props.formType==1){
       requestData['messageBody'] = {...formData}
@@ -249,14 +253,7 @@ function NewGroup(props: any) {
     scrollPage(0, 500)
   };
   const getAutoCompleteChangeHandler = (val) => {
-    // drug_list_ids = [...val];
-    updateFormData({
-      ...formData,
-      val
-    });
-    console.log('*****')
-    console.log(val)
-    console.log('*****')
+    setDrug_list_ids(val);
   }
   return (
     <div className="new-group-des">
@@ -423,7 +420,7 @@ function NewGroup(props: any) {
                 <Fragment>
                       <Grid item xs={6}>
                       <label className="st-label">List <span className="astrict">*</span></label>
-                      <Tags options={drug_list_ids} getAutoCompleteChange={getAutoCompleteChangeHandler}/>
+                      <Tags options={drug_list} getAutoCompleteChange={getAutoCompleteChangeHandler} seleted={formData.drug_list_ids}/>
                       </Grid>
                     </Fragment>
                 <div className="setting-1 mb-20">
