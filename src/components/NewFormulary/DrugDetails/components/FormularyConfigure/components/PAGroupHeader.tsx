@@ -129,7 +129,10 @@ function PAGroupHeader(props: any) {
             const latestVerion = verLength > 0 ? props.version[Number(selectedVersion.split(" ")[1]) - 1]?.id_pa_group_description : 0;
             setPanelColor(isEditable ? '-green' : '')
             setPlaceHolder(selectedVersion)
-            props.getPaGrouptDescription(latestVerion)
+            let apiDetails= {};
+            apiDetails["lob_type"] = props.formulary_lob_id;
+            apiDetails['pathParams'] = '/'+latestVerion;
+            props.getPaGrouptDescription(apiDetails);
         }
         props.onChange(selectedVersion);
     }
