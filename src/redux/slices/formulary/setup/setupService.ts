@@ -82,7 +82,6 @@ export function composePostBody(input: any): any {
   payload.formulary_info.is_carve_out = null;
   payload.formulary_info.import_file_path = "";
   payload.formulary_info.import_file_name = "";
-  payload.is_validation_required = false;
   payload.cms_override = false;
 
   // CLASSIFICATION  - - - - - - - - - - - - -
@@ -140,6 +139,12 @@ export function composePostBody(input: any): any {
     custom_carve_outs: [],
     removed_formulary_carve_outs: [],
   };
+
+//  requestBody["is_validation_required"]= this.formularyId ==0 || (this.formularyId>0 && flag)? flag:this.formularyDetails.formulary_info.is_setup_complete;
+
+
+  payload.is_validation_required = false;
+
 
   return payload;
 }
