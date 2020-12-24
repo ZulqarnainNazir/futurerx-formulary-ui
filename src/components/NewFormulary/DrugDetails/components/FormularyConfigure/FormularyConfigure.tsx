@@ -7,6 +7,8 @@ import PaData from './components/PA/PaData';
 import StepTherpayDetails from "./components/StepTherapyData";
 import CategoryClass from "./components/CategoryClass";
 import QL from '../QL/QL';
+import {connect} from 'react-redux';
+import { setAdvancedSearch } from "../../../../../redux/slices/formulary/advancedSearch/advancedSearchSlice";
 
 const tabs = [
   { id: 1, text: "TIER" },
@@ -17,13 +19,28 @@ const tabs = [
   { id: 6, text: "DRUG DETAILS" },
 ];
 
+function mapDispatchToProps(dispatch) {
+  return {
+    setAdvancedSearch: (a) => dispatch(setAdvancedSearch(a))
+  };
+}
+
+const mapStateToProps = (state) => {
+  //console.log(state)
+  return{
+    current_formulary: state?.application?.formulary
+  }
+}
+
 interface configureState {
   tabs: Array<TabInfo>;
   activeTabIndex: number;
 }
-interface configureProps {}
+interface configureProps {
+  setAdvancedSearch : (a) => void;
+}
 
-export default class FormularyConfigure extends React.Component<
+class FormularyConfigure extends React.Component<
   configureProps,
   configureState
 > {
@@ -40,6 +57,8 @@ export default class FormularyConfigure extends React.Component<
       }
       return tab;
     });
+    let payload = { advancedSearchBody: {}, populateGrid: false, closeDialog: false, listItemStatus: {} };
+    this.props.setAdvancedSearch(payload);
     this.setState({ tabs, activeTabIndex });
   };
   renderActiveTabContent = () => {
@@ -86,3 +105,5 @@ export default class FormularyConfigure extends React.Component<
     );
   }
 }
+
+export default connect(mapStateToProps,mapDispatchToProps)(FormularyConfigure);
