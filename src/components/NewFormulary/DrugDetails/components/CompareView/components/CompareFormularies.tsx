@@ -8,7 +8,7 @@ import vector from "../../../../../../assets/img/Vector.png";
 import "../../../../../shared/FrxGrid/FrxGridContainer.scss";
 import { ReactComponent as EditIcon } from "../../../../../../assets/icons/EditIcon.svg";
 import "./CompareView.scss";
-// import CloneFormularyPopup from "../../FormularySetUp/components/CloneFormularyPopup";
+import CloneFormularyPopup from "../../FormularySetUp/components/CloneFormularyPopup";
 
 enum PopUpTypes {
   TYPE1 = "SELECTFORMULARY",
@@ -144,7 +144,8 @@ class CompareFormularies extends React.Component<any, any> {
             width="90%"
           >
             {/* <SelectFormularyPopUp formularyToggle={this.formularyToggle} /> */}
-            {/* <CloneFormularyPopup /> */}
+            {/* <CloneFormularyPopup type="medicare" /> */}
+            <CloneFormularyPopup type="commercial" />
           </DialogPopup>
         ) : null}
       </div>

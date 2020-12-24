@@ -185,9 +185,9 @@ class CompareTable extends Component {
               // settingsWidth
               settingsWidth={15}
               // checkBoxWidth
-              // checkBoxWidth={15}
+              checkBoxWidth={15}
               // settings icon prop
-              // customSettingIcon={"NONE"}
+              customSettingIcon={"NONE"}
             />
           </DialogPopup>
         ) : null}

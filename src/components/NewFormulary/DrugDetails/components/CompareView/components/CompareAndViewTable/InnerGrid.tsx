@@ -143,7 +143,7 @@ function InnerGrid(props: InnerGridProps) {
                 handleCustomRowSelectionChange={(r) => {
                   console.log(r);
                 }}
-                // customSettingIcon={"NONE"}
+                customSettingIcon={"NONE"}
               />
             </DialogPopup>
           ) : null}
@@ -207,7 +207,7 @@ function InnerGrid(props: InnerGridProps) {
                 handleCustomRowSelectionChange={(r) => {
                   console.log(r);
                 }}
-                // customSettingIcon={"NONE"}
+                customSettingIcon={"NONE"}
               />
             </DialogPopup>
           ) : null}
