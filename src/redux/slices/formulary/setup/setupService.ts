@@ -4,7 +4,6 @@ import { Formulary } from "./../setup/formulary";
 import { FormularyPost } from "./../setup/formularyPayload";
 import { REQUEST_HEADER } from "../../../../api/http-commons";
 
-
 export async function getformulary(
   formulary_id: any
 ): Promise<Formulary | any> {
@@ -66,13 +65,18 @@ export function composePostBody(input: any): any {
     input.GENERAL_INFO?.description;
   payload.formulary_info.effective_date = input.GENERAL_INFO?.effective_date;
   payload.formulary_info.contract_year = input.GENERAL_INFO?.service_year;
-  payload.formulary_info.id_state = input.GENERAL_INFO?.state_id;
+  console.log(" STATE :", input.GENERAL_INFO?.state_id);
+
+  payload.formulary_info.id_state = !input.GENERAL_INFO?.state_id
+    ? null
+    : input.GENERAL_INFO?.state_id;
   // TODO  - - - - - - - - - - - - -
   //payload.formulary_info.id_lob = 1;
   // payload.formulary_info.code_value = "MC";
   // payload.formulary_info.id_submission_month = 5;
   payload.formulary_info.resemble_formulary_id = null;
-  payload.formulary_info.is_closed_formulary = input.GENERAL_INFO?.is_closed_formulary;;
+  payload.formulary_info.is_closed_formulary =
+    input.GENERAL_INFO?.is_closed_formulary;
   payload.formulary_info.resemble_formulary_id = null;
   payload.formulary_info.is_standard_template = null;
   payload.formulary_info.parent_formulary_id = null;
@@ -101,8 +105,16 @@ export function composePostBody(input: any): any {
 
   // MEDICARE INFO  - - - - - - - - - - - - -
 
-  payload.formulary_info.medicare_types_ref_other =
-    input.GENERAL_INFO?.state_id;
+  payload.formulary_info.medicare_types_ref_other = false;
+  console.log(
+    " CONT :",
+    input.medicare_contract_type_info.medicare_contract_types
+  );
+
+  if (!input.medicare_contract_type_info.medicare_contract_types) {
+    console.log("--->");
+    input.medicare_contract_type_info.medicare_contract_types = [];
+  }
   payload.medicare_contract_type_info = input.medicare_contract_type_info;
 
   // DESIGN  - - - - - - - - - - - - -
@@ -121,10 +133,15 @@ export function composePostBody(input: any): any {
   // payload.formulary_info.number_of_tiers = 1;
   // payload.formulary_info.min_tiers = 1;
   // payload.formulary_info.max_tiers = 7;
-
+  console.log(
+    " SUPP :",
+    input?.supplemental_benefit_info?.supplemental_benefits
+  );
   payload.supplemental_benefit_info = {
-    supplemental_benefits:
-      input?.supplemental_benefit_info?.supplemental_benefits,
+    supplemental_benefits: !input?.supplemental_benefit_info
+      ?.supplemental_benefits
+      ? []
+      : input?.supplemental_benefit_info?.supplemental_benefits,
     custom_supplemental_benefits: [],
     removed_formulary_supplemental_benefits: [],
   };
@@ -139,26 +156,40 @@ export function composePostBody(input: any): any {
     custom_carve_outs: [],
     removed_formulary_carve_outs: [],
   };
-
-//  requestBody["is_validation_required"]= this.formularyId ==0 || (this.formularyId>0 && flag)? flag:this.formularyDetails.formulary_info.is_setup_complete;
-
-
-  payload.is_validation_required = false;
-
+  //  requestBody["is_validation_required"]= this.formularyId ==0 || (this.formularyId>0 && flag)? flag:this.formularyDetails.formulary_info.is_setup_complete;
+  // || input?.formulary_id < 1
+  let validation = false;
+  if (input?.CONTINUE) {
+    validation = true;
+  }
+  payload.is_validation_required = validation;
 
   return payload;
 }
 
-export async function createFormulary(payload: any): Promise<any> {
-  //POST: https://api-dev-config-formulary.futurerx.com/api/1/formulary-setup/1
+export async function createORUpdateFormulary(
+  payload: any,
+  id_formulary: number
+): Promise<any> {
   // TODO: CLIENT_ID
-  console.log("***** createFormulary ");
-  let url = `${BASE_URL1}api/1/formulary-setup/1`;
+  const clientId = 1;
+  console.log("***** createORUpdateFormulary ");
+  let url = `${BASE_URL1}api/1/formulary-setup`;
   try {
-    const response = await axios.post(url, payload, {
-      headers: REQUEST_HEADER,
-    });
-    console.log("***** createFormulary - Success");
+    let response;
+    if (id_formulary > 0) {
+      url += `/${id_formulary}/${clientId}?entity_id=${id_formulary}`;
+      response = await axios.put(url, payload, {
+        headers: REQUEST_HEADER,
+      });
+    } else {
+      url += `/${clientId}`;
+      response = await axios.post(url, payload, {
+        headers: REQUEST_HEADER,
+      });
+    }
+
+    console.log("***** createORUpdateFormulary - Success");
     console.log(response);
     if (response?.data?.code === "200") {
       return {
@@ -168,7 +199,7 @@ export async function createFormulary(payload: any): Promise<any> {
     }
     return null;
   } catch (error) {
-    console.log("***** createFormulary - Error");
+    console.log("***** createORUpdateFormulary - Error");
     //console.log(error);
     const { response } = error;
     const { request, ...errorObject } = response; // take everything but 'request'
