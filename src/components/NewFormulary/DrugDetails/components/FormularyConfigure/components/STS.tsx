@@ -76,7 +76,7 @@ function mapStateToProps(state){
         switch (tabIndex) {
           case 0:
 
-            return <STF />;
+            return <STF tab_type="replace" />;
 
         case 1:
 
