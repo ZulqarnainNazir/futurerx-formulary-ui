@@ -386,6 +386,8 @@ class FormularySetUp extends React.Component<any, any> {
     const input = {
       MODE: this.props.mode,
       CONTINUE: e,
+      formulary_id: -1,
+      is_setup_complete:false,
       GENERAL_INFO: this.state.generalInformation,
       edit_info: this.state.edit_info,
       supplemental_benefit_info: this.state.supplemental_benefit_info,
@@ -393,6 +395,13 @@ class FormularySetUp extends React.Component<any, any> {
       tiers: this.state.tiers,
     };
 
+    if(this.props.mode==="EXISTING"){
+      input.formulary_id = this.props.formulary_id;
+      input.is_setup_complete = this.props?.formulary?.formulary_info?.is_setup_complete;
+    } else {
+      input.formulary_id = -1;
+      input.is_setup_complete = false; 
+    }
 
     this.props.saveFormulary(input).then((arg) => {
       //console.log("SAVE Callback ", arg?.payload);
@@ -403,13 +412,18 @@ class FormularySetUp extends React.Component<any, any> {
             " ID : " +
             arg?.payload?.id +
             " CONTINUE : " +
-            arg?.payload?.continue            
+            arg?.payload?.continue + 
+            " EARLIER MODE : " +
+            arg?.payload?.earlier_mode  
         );
         this.manageFormularyType(arg?.payload?.type, arg?.payload?.id);
         this.props.fetchSelectedFormulary(arg?.payload?.id);
-        if(arg?.payload?.continue){
-          //
+        if(arg?.payload?.earlier_mode ==="NEW"){
+          showMessage(`Formulary Created. ID:${arg?.payload?.id}`, "success");
+        } else if(arg?.payload?.earlier_mode ==="EXISTING"){
+          showMessage(`Formulary Updated. ID: ${arg?.payload?.id}`, "success");
         }
+
       }
     });
   };
@@ -545,7 +559,6 @@ class FormularySetUp extends React.Component<any, any> {
                 <Button
                   label="Save"
                   onClick={() => this.onSave(false)}
-                  disabled={this.props.mode === "EXISTING"}
                 />
               </Box>
               <Box
@@ -556,7 +569,6 @@ class FormularySetUp extends React.Component<any, any> {
                 <Button
                   label="Save & Continue"
                   onClick={() => this.onSave(true)}
-                  disabled="true"
                 />
               </Box>
             </div>
