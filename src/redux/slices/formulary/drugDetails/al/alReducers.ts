@@ -22,3 +22,26 @@ export const getALSummaryRejected = (state, action) => {
   state.isLoading = false;
   state.data = {};
 };
+
+export const postALListFulfilled = (state, action) => {
+  console.log("Reducer::postALListFulfilled");
+  state.isLoading = false;
+  console.log(action);
+  if (
+    action.payload.result === undefined ||
+    !Array.isArray(action.payload.result) ||
+    action.payload.result.length === 0
+  ) {
+    console.log("postALListFulfilled: Payload invalid");
+    return;
+  }
+  const data = action.payload.result;
+  // Response stored in the redux store.
+  state.applyData = data;
+};
+
+export const postALListRejected = (state, action) => {
+  console.log("Reducer::postALListRejected");
+  state.isLoading = false;
+  state.applyData = {};
+};

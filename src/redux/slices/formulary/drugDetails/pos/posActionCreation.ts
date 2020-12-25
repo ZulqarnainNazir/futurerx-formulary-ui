@@ -16,3 +16,12 @@ export const getDrugDetailsPOSSummary = createAsyncThunk(
     return fetchRequest(GET_URL, requestHeaders);
   }
 );
+
+export const getDrugDetailsPOSSettings = createAsyncThunk(
+  "drug_details/pos_settings",
+  async (apiDetails: any) => {
+    let GET_URL = buildUrl({ apiDetails });
+    const requestHeaders = getHeaders();
+    return fetchRequest(GET_URL, requestHeaders);
+  }
+);

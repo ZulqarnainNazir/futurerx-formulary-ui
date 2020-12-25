@@ -1,5 +1,5 @@
 import React from "react";
-import { connect}  from 'react-redux'
+import { connect } from "react-redux";
 import { withStyles, Theme, createStyles } from "@material-ui/core/styles";
 import { purple } from "@material-ui/core/colors";
 import FormGroup from "@material-ui/core/FormGroup";
@@ -7,7 +7,7 @@ import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Switch, { SwitchClassKey, SwitchProps } from "@material-ui/core/Switch";
 import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
-import { switchSlice } from '../../../../../../redux/slices/formulary/switch/switchSlice'
+import { switchSlice } from "../../../../../../redux/slices/formulary/switch/switchSlice";
 
 interface Styles extends Partial<Record<SwitchClassKey, string>> {
   focusVisible?: string;
@@ -17,11 +17,12 @@ interface Props extends SwitchProps {
   classes: Styles;
 }
 
-const mapPropToState = (dispatch) =>{
- return{
-  switchBtn:(switchValue)=>dispatch(switchSlice.actions.switchButton(switchValue))
- }
-}
+const mapPropToState = (dispatch) => {
+  return {
+    switchBtn: (switchValue) =>
+      dispatch(switchSlice.actions.switchButton(switchValue)),
+  };
+};
 
 const AntSwitch = withStyles((theme: Theme) =>
   createStyles({
@@ -61,14 +62,14 @@ const AntSwitch = withStyles((theme: Theme) =>
 
 function CustomizedSwitches(props: any) {
   const [state, setState] = React.useState({
-    checkedC: true,
+    checkedC: false,
   });
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setState({ ...state, [event.target.name]: event.target.checked });
-    props.switchBtn(event.target.checked)
+    props.switchBtn(event.target.checked);
   };
-  
+
   return (
     <FormGroup>
       <Typography component="div">
@@ -92,4 +93,4 @@ function CustomizedSwitches(props: any) {
   );
 }
 
-export default connect(null,mapPropToState)(CustomizedSwitches)
+export default connect(null, mapPropToState)(CustomizedSwitches);

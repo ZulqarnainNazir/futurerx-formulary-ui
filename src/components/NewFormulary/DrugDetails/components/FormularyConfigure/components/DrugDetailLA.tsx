@@ -279,7 +279,6 @@ class DrugDetailLA extends React.Component<any, any> {
         listCount: listCount,
       });
     });
-
   }
 
   componentDidMount() {

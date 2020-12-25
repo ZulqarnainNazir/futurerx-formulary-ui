@@ -23,6 +23,308 @@ import FrxTimeProgressBar from "../../components/shared/FrxTimeProgressBar/FrxTi
 // );
 // };
 
+export const selectFormularyGridMedicare: (data) => Column<any>[] = (data) => {
+  return [
+    {
+      position: 1,
+      sorter: {},
+      textCase: "upper",
+      pixelWidth: 100,
+      key: "serviceYear",
+      displayTitle: "Service Year",
+      dataType: "string",
+      hidden: false,
+      sortDirections: ["ascend", "descend"],
+    },
+    {
+      position: 2,
+      sorter: {},
+      textCase: "upper",
+      pixelWidth: 100,
+      key: "lob",
+      displayTitle: "LOB",
+      customContent: (props) => (
+        <FrxStatusField
+          text={"Medicare"}
+          type={"pill"}
+          fill={"fill"}
+          variant={4}
+        />
+      ),
+      isFilterable: true,
+      dataType: "string",
+      hidden: false,
+      sortDirections: ["ascend", "descend"],
+    },
+    {
+      position: 3,
+      sorter: {},
+      textCase: "upper",
+      pixelWidth: 100,
+      key: "fromularyName",
+      displayTitle: "FORMULARY NAME",
+      customContent: (props) => (
+        <div className="input-link" onClick={() => {}}>
+          2021Care1234
+        </div>
+      ),
+      dataType: "string",
+      hidden: false,
+      sortDirections: ["ascend", "descend"],
+    },
+    {
+      position: 4,
+      sorter: {},
+      textCase: "upper",
+      pixelWidth: 100,
+      key: "formularyId",
+      displayTitle: "FORMULARY ID",
+      dataType: "string",
+      hidden: false,
+      sortDirections: ["ascend", "descend"],
+    },
+    {
+      position: 5,
+      sorter: {},
+      textCase: "upper",
+      pixelWidth: 100,
+      key: "version",
+      displayTitle: "VERSION",
+      dataType: "string",
+      hidden: false,
+      sortDirections: ["ascend", "descend"],
+    },
+    {
+      position: 6,
+      sorter: {},
+      textCase: "upper",
+      pixelWidth: 100,
+      key: "tierCount",
+      displayTitle: "TIER COUNT",
+      dataType: "string",
+      hidden: false,
+      sortDirections: ["ascend", "descend"],
+    },
+    {
+      position: 7,
+      sorter: {},
+      textCase: "upper",
+      pixelWidth: 100,
+      key: "drugCount",
+      displayTitle: "DRUG COUNT",
+      dataType: "string",
+      hidden: false,
+      sortDirections: ["ascend", "descend"],
+    },
+    {
+      position: 8,
+      sorter: {},
+      textCase: "upper",
+      pixelWidth: 100,
+      key: "step",
+      displayTitle: "STEP",
+      dataType: "string",
+      hidden: false,
+      sortDirections: ["ascend", "descend"],
+    },
+    {
+      position: 9,
+      sorter: {},
+      textCase: "upper",
+      pixelWidth: 100,
+      key: "assign",
+      displayTitle: "ASSIGNED",
+      dataType: "string",
+      hidden: false,
+      sortDirections: ["ascend", "descend"],
+    },
+    {
+      position: 10,
+      sorter: {},
+      textCase: "upper",
+      pixelWidth: 100,
+      key: "status",
+      displayTitle: "status",
+      dataType: "string",
+      hidden: false,
+      sortDirections: ["ascend", "descend"],
+    },
+    {
+      position: 11,
+      sorter: {},
+      textCase: "upper",
+      pixelWidth: 100,
+      key: "effectiveDate",
+      displayTitle: "effective date",
+      dataType: "string",
+      hidden: false,
+      sortDirections: ["ascend", "descend"],
+    },
+    {
+      position: 12,
+      sorter: {},
+      textCase: "upper",
+      pixelWidth: 100,
+      key: "dueDate",
+      displayTitle: "due date",
+      dataType: "string",
+      hidden: false,
+      sortDirections: ["ascend", "descend"],
+    },
+  ];
+};
+
+export const selectFormularyGrid: (data) => Column<any>[] = (data) => {
+  return [
+    {
+      position: 1,
+      sorter: {},
+      textCase: "upper",
+      pixelWidth: 100,
+      key: "serviceYear",
+      displayTitle: "Service Year",
+      dataType: "string",
+      hidden: false,
+      sortDirections: ["ascend", "descend"],
+    },
+    {
+      position: 2,
+      sorter: {},
+      textCase: "upper",
+      pixelWidth: 100,
+      key: "lob",
+      displayTitle: "LOB",
+      customContent: (props) => (
+        <FrxStatusField
+          text={"Commercial"}
+          type={"pill"}
+          fill={"fill"}
+          variant={5}
+        />
+      ),
+      isFilterable: true,
+      dataType: "string",
+      hidden: false,
+      sortDirections: ["ascend", "descend"],
+    },
+    {
+      position: 3,
+      sorter: {},
+      textCase: "upper",
+      pixelWidth: 100,
+      key: "fromularyName",
+      displayTitle: "FORMULARY NAME",
+      customContent: (props) => (
+        <div className="input-link" onClick={() => {}}>
+          2021Care1234
+        </div>
+      ),
+      dataType: "string",
+      hidden: false,
+      sortDirections: ["ascend", "descend"],
+    },
+    {
+      position: 4,
+      sorter: {},
+      textCase: "upper",
+      pixelWidth: 100,
+      key: "formularyId",
+      displayTitle: "FORMULARY ID",
+      dataType: "string",
+      hidden: false,
+      sortDirections: ["ascend", "descend"],
+    },
+    {
+      position: 5,
+      sorter: {},
+      textCase: "upper",
+      pixelWidth: 100,
+      key: "version",
+      displayTitle: "VERSION",
+      dataType: "string",
+      hidden: false,
+      sortDirections: ["ascend", "descend"],
+    },
+    {
+      position: 6,
+      sorter: {},
+      textCase: "upper",
+      pixelWidth: 100,
+      key: "tierCount",
+      displayTitle: "TIER COUNT",
+      dataType: "string",
+      hidden: false,
+      sortDirections: ["ascend", "descend"],
+    },
+    {
+      position: 7,
+      sorter: {},
+      textCase: "upper",
+      pixelWidth: 100,
+      key: "drugCount",
+      displayTitle: "DRUG COUNT",
+      dataType: "string",
+      hidden: false,
+      sortDirections: ["ascend", "descend"],
+    },
+    {
+      position: 8,
+      sorter: {},
+      textCase: "upper",
+      pixelWidth: 100,
+      key: "step",
+      displayTitle: "STEP",
+      dataType: "string",
+      hidden: false,
+      sortDirections: ["ascend", "descend"],
+    },
+    {
+      position: 9,
+      sorter: {},
+      textCase: "upper",
+      pixelWidth: 100,
+      key: "assign",
+      displayTitle: "ASSIGNED",
+      dataType: "string",
+      hidden: false,
+      sortDirections: ["ascend", "descend"],
+    },
+    {
+      position: 10,
+      sorter: {},
+      textCase: "upper",
+      pixelWidth: 100,
+      key: "status",
+      displayTitle: "status",
+      dataType: "string",
+      hidden: false,
+      sortDirections: ["ascend", "descend"],
+    },
+    {
+      position: 11,
+      sorter: {},
+      textCase: "upper",
+      pixelWidth: 100,
+      key: "effectiveDate",
+      displayTitle: "effective date",
+      dataType: "string",
+      hidden: false,
+      sortDirections: ["ascend", "descend"],
+    },
+    {
+      position: 12,
+      sorter: {},
+      textCase: "upper",
+      pixelWidth: 100,
+      key: "dueDate",
+      displayTitle: "due date",
+      dataType: "string",
+      hidden: false,
+      sortDirections: ["ascend", "descend"],
+    },
+  ];
+};
+
 export const categoryClassColumns: () => Column<any>[] = () => {
   return [
     {
