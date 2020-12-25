@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect,Fragment } from 'react';
 import { connect } from "react-redux";
 import Radio from '@material-ui/core/Radio';
 import RadioGroup from '@material-ui/core/RadioGroup';
@@ -23,6 +23,7 @@ import PAGroupHeader from './PAGroupHeader';
 import AlertMessages from "./AlertMessages"
 import { ToastContainer } from 'react-toastify';
 import showMessage from "../../../../Utils/Toast";
+import Tags from './Tags'
 
 import RadioButton from '../../../../../shared/Frx-components/radio-button/RadioButton';
 import { getPaGrouptDescription, getPaTypes, getDrugLists,postPAGroupDescription,putPAGroupDescription,getPaGrouptDescriptionVersions,getPaGrouptDescriptions } from "../../../../../../redux/slices/formulary/pa/paActionCreation";
@@ -35,6 +36,7 @@ interface Props {
   tooltip?: string;
   formType?: number;
   editable?: boolean;
+  drugList?:any;
 }
 interface initialFormData {
   is_validation_required: any,
@@ -60,6 +62,7 @@ interface initialFormData {
   prescriber_restrictions: any,
   coverage_restrictions: any,
   other_criteria: any,
+  drug_list_ids:any;
 }
 
 const initialFormData:initialFormData = {
@@ -86,6 +89,7 @@ const initialFormData:initialFormData = {
   prescriber_restrictions: '',
   coverage_restrictions: "",
   other_criteria: '',
+  drug_list_ids:[]
 }
 const formInformationPanelTabs = [
   {
@@ -184,6 +188,8 @@ function mapDispatchToProps(dispatch) {
     postPAGroupDescription: (a) => dispatch(postPAGroupDescription(a)),
     putPAGroupDescription: (a) => dispatch(putPAGroupDescription(a)),
     getPaGrouptDescriptions: (a) => dispatch(getPaGrouptDescriptions(a)),
+    getDrugLists: (a) => dispatch(getDrugLists(a)),
+    
   };
 }
 
@@ -207,6 +213,8 @@ function NewGroup(props: any) {
   const [changeEvent, setChangeEvent] = React.useState(false);
   const [showHeader, setShowHeader] = React.useState(props.formType);
   const [errorClass, setErrorClass] = React.useState('');
+  const [drug_list_ids, setDrug_list_ids] = React.useState([]);
+  const [drug_list, setDrug_list] = React.useState([]);
 
   const handleChange = (e) => {
     debugger;
@@ -394,6 +402,8 @@ function NewGroup(props: any) {
     setAdditionalCriteriaPopup(!isAdditionalCriteriaPopupOpen);
   };
 
+  
+
   useEffect(() => {
     //debugger;
     //setPanelColor(props.editable ? '-green' : '')
@@ -418,6 +428,10 @@ function NewGroup(props: any) {
     setErrorClass('');
   }, [props.PaGDData || props.versionList || props.activeTabIndex || props.editMode] )
 
+  const getAutoCompleteChangeHandler = (val) => {
+    debugger;
+    setDrug_list_ids(val);
+  }
   return (
     <div className="new-group-des">
       {/* <div className="panel header">
@@ -600,31 +614,19 @@ function NewGroup(props: any) {
                 <input type="text" name="pa_criteria" onChange={handleChange} defaultValue={formData.pa_criteria} disabled={props.editable} />
               </div>
             </Grid>
-            <Grid item xs={6}>
+            <Grid item xs={12}>
               <div className='group'>
-                <label className='required-field'>LIST</label>
-                <SearchableDropdown options={[1, 2, 3]} />
-                <Box className='pg-group-list-tags-box'>
-                  <Tag
-                    className='pg-group-list-tags'
-                    closable
-                    onClose={() => {}}
-                    closeIcon={<CrossCircleWhiteBGIcon />}
-                  >
-                    Tag 1
-                  </Tag>
-                  <Tag
-                    className='pg-group-list-tags'
-                    closable
-                    onClose={() => {}}
-                    closeIcon={<CrossCircleWhiteBGIcon />}
-                  >
-                    Tag 4
-                  </Tag>
-                </Box>
+              <Fragment>
+                      <Grid item xs={6}>
+                      <label className="st-label">List <span className="astrict">*</span></label>
+                      <Tags options={props.drugList} getAutoCompleteChange={getAutoCompleteChangeHandler} seleted={formData.drug_list_ids}/>
+                      </Grid>
+                    </Fragment>
               </div>
             </Grid>
-            <Grid className='additional-criteria' item xs={6}>
+
+            
+            <Grid className='additional-criteria' item xs={12}>
               <span className='required-field'>
                 do you want to add additional criteria?
               </span>

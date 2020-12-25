@@ -62,6 +62,7 @@ class PaGroupDescriptionManagement extends React.Component<any, any>{
         groupsData: [],
         searchInput:"",
         selectedGroup: -1,
+        drugList:[]
     }
     onClickTab = (selectedTabIndex: number) => {
         let activeTabIndex = 0;
@@ -177,6 +178,22 @@ class PaGroupDescriptionManagement extends React.Component<any, any>{
 
         });
 
+        this.props.getDrugLists(this.props.client_id).then((json) => {
+            //debugger;
+            let tmp_list:any = [];
+            json.payload.data.map(obj => {
+                let tmp_obj ={
+                    key: obj.key, value: obj.value, text: obj.text,
+                    name: obj.text
+                };
+                tmp_list.push(tmp_obj);
+            });
+
+            this.setState({
+                drugList: tmp_list,
+            });
+
+        });
 
 
 
@@ -279,8 +296,11 @@ class PaGroupDescriptionManagement extends React.Component<any, any>{
                                 </div>
                             </div>
                         </div>
-                        {this.state.newGroup ? <PaNewGroupForm tooltip={this.state.tooltip} formType={1} editable={this.state.selectedGrp} versionList={this.state.versionList} versionTitle={this.state.versionTitle} activeTabIndex={this.state.activeTabIndex} latestVerion={this.state.latestVerion}/> : (
-                            <PaNewGroupForm tooltip={this.state.tooltip} formType={0} editable={this.state.selectedGrp} versionList={this.state.versionList} title={'NEW GROUP DESCRIPTION'} versionTitle={this.state.versionTitle} activeTabIndex={this.state.activeTabIndex} latestVerion={this.state.latestVerion}/>
+                        {this.state.newGroup ? <PaNewGroupForm tooltip={this.state.tooltip} formType={1} editable={this.state.selectedGrp} 
+                        versionList={this.state.versionList}  drugList={this.state.drugList}
+                        versionTitle={this.state.versionTitle} activeTabIndex={this.state.activeTabIndex} latestVerion={this.state.latestVerion}/> : (
+                            <PaNewGroupForm tooltip={this.state.tooltip} formType={0} editable={this.state.selectedGrp} drugList={this.state.drugList}
+                            versionList={this.state.versionList} title={'NEW GROUP DESCRIPTION'} versionTitle={this.state.versionTitle} activeTabIndex={this.state.activeTabIndex} latestVerion={this.state.latestVerion}/>
                         )}
                         {/* <PaNewGroupForm selectedGroupId={this.state.selectedGroup}/> */}
                         {/* {this.state.newGroup ? <NewGroup tooltip={this.state.tooltip} formType={1}/>: (
