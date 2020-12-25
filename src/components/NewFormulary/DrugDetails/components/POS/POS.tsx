@@ -15,8 +15,10 @@ import AdvancedSearch from "../../../DrugDetails/components/FormularyConfigure/c
 import {
   getDrugDetailsPOSSummary,
   getDrugDetailsPOSSettings,
+  getDrugDetailsPOSGridData,
 } from "../../../../../redux/slices/formulary/drugDetails/pos/posActionCreation";
 import * as posConstants from "../../../../../api/http-drug-details";
+import getLobCode from "../../../Utils/LobUtils";
 
 import PosSettings from "./PosSettings";
 import FrxGridContainer from "../../../../shared/FrxGrid/FrxGridContainer";
@@ -25,16 +27,22 @@ function mapDispatchToProps(dispatch) {
   return {
     getDrugDetailsPOSSummary: (a) => dispatch(getDrugDetailsPOSSummary(a)),
     getDrugDetailsPOSSettings: (a) => dispatch(getDrugDetailsPOSSettings(a)),
+    getDrugDetailsPOSGridData: (a) => dispatch(getDrugDetailsPOSGridData(a)),
   };
 }
 
 const mapStateToProps = (state) => {
   return {
     formulary_id: state?.application?.formulary_id,
+    formulary_lob_id: state?.application?.formulary_lob_id,
   };
 };
 
-// GET_DRUG_SETTING_POS
+const defaultListPayload = {
+  index: 0,
+  limit: 10,
+  filter: [],
+}
 
 class DrugDetailPOS extends React.Component<any, any> {
   state = {
@@ -47,6 +55,7 @@ class DrugDetailPOS extends React.Component<any, any> {
       type: "covered",
       covered: true,
     },
+    listCount: 0,
 
     isNotesOpen: false,
     activeTabIndex: 0,
@@ -61,6 +70,13 @@ class DrugDetailPOS extends React.Component<any, any> {
     isSelectAll: false,
     showGrid: false,
   };
+
+  listPayload: any = {
+    index: 0,
+    limit: 10,
+    filter: [],
+    is_covered: this.state.posSettingsStatus.covered
+  }
 
   componentDidMount() {
     // const columns = getDrugDetailsColumnPOS();
@@ -117,15 +133,61 @@ class DrugDetailPOS extends React.Component<any, any> {
     });
   };
 
+  getPOSDrugsList = ({index = 0, limit = 10, listPayload = {}} = {}) => {
+    let apiDetails = {};
+    apiDetails['apiPart'] = posConstants.GET_POS_DRUGS;
+    apiDetails['pathParams'] = this.props?.formulary_id + "/" + getLobCode(this.props.formulary_lob_id);
+    apiDetails['keyVals'] = [{ key: posConstants.KEY_ENTITY_ID, value: this.props?.formulary_id }, { key: posConstants.KEY_INDEX, value: index }, { key: posConstants.KEY_LIMIT, value: limit }];
+    apiDetails['messageBody'] = listPayload;
+
+    let listCount = 0;
+    this.props.getDrugDetailsPOSGridData(apiDetails).then((json) => {
+      let tmpData = json.payload.result;
+      listCount = json.payload.count;
+      var data: any[] = [];
+      let count = 1;
+      var gridData = tmpData.map((el) => {
+        var element = Object.assign({}, el);
+        data.push(element);
+        let gridItem = {};
+        gridItem["id"] = count;
+        gridItem["key"] = count;
+        gridItem["placeOfService"] = element.is_pos ? "" + element.is_pos : "";
+        gridItem["coveredPlaceOfService"] = element.covered_place_of_services ? "" + element.covered_place_of_services : "";
+        gridItem["notCoveredPlaceOfService"] = element.not_covered_place_of_services ? "" + element.not_covered_place_of_services : "";
+        gridItem["tier"] = element.tier_value ? "" + element.tier_value : "";
+        gridItem["labelName"] = element.drug_label_name ? "" + element.drug_label_name : "";
+        gridItem["ddid"] = element.drug_descriptor_identifier ? "" + element.drug_descriptor_identifier : "";
+        gridItem["gpi"] = element.generic_product_identifier ? "" + element.generic_product_identifier : "";
+        gridItem["coverAgeMax"] = element.covered_max_ages ? "" + element.covered_max_ages : "";
+        gridItem["notCoverMin"] = element.not_covered_min_operators ? "" + element.not_covered_min_operators : "";
+        gridItem["notCoverAgeMin"] = element.not_covered_min_ages ? "" + element.not_covered_min_ages : "";
+        gridItem["notCoverMax"] = element.not_covered_max_operators ? "" + element.not_covered_max_operators : "";
+        gridItem["notCoverAgeMax"] = element.not_covered_max_ages ? "" + element.not_covered_max_ages : "";
+        gridItem["tier"] = element.tier_value ? "" + element.tier_value : "";
+        gridItem["trademark"] = element.trademark_code ? "" + element.trademark_code : "";
+        gridItem["databaseCategory"] = element.database_category ? "" + element.database_category : "";
+        gridItem["databaseClass"] = element.database_class ? "" + element.database_class : "";
+        gridItem["createdBy"] = element.created_by ? "" + element.created_by : "";
+        gridItem["createdOn"] = element.created_date ? "" + element.created_date : "";
+        gridItem["modifiedBy"] = element.modified_by ? "" + element.modified_by : "";
+        gridItem["modifiedOn"] = element.modified_date ? "" + element.modified_date : "";
+        gridItem["md5_id"] = element.md5_id ? "" + element.md5_id : "";
+        count++;
+        return gridItem;
+      });
+      this.setState({
+        drugData: data,
+        data: gridData,
+        listCount: listCount,
+        showGrid: true,
+      });
+    });
+  }
+
   getPOSSettings = () => {
     let apiDetails = {};
     apiDetails["apiPart"] = posConstants.GET_DRUG_SETTING_POS;
-    // apiDetails["pathParams"] = this.props?.formulary_id;
-    // apiDetails["keyVals"] = [
-    //   { key: posConstants.KEY_ENTITY_ID, value: this.props?.formulary_id },
-    // ];
-
-    console.log("apiDetails: ", apiDetails);
     this.props.getDrugDetailsPOSSettings(apiDetails).then((json) => {
       const posSettings =
         json.payload && json.payload.data ? json.payload.data : [];
@@ -139,6 +201,22 @@ class DrugDetailPOS extends React.Component<any, any> {
     });
   };
 
+  onPageSize = (pageSize) => {
+    this.listPayload.limit = pageSize
+    this.getPOSDrugsList({ limit: this.listPayload.limit, listPayload: this.listPayload });
+  }
+
+  onGridPageChangeHandler = (pageNumber: any) => {
+    this.listPayload.index = (pageNumber - 1) * this.listPayload.limit;
+    this.getPOSDrugsList({ index: this.listPayload.index, limit: this.listPayload.limit, listPayload: this.listPayload });
+  }
+
+  onClearFilterHandler = () => {
+    this.listPayload.index = 0;
+    this.listPayload.limit = 10;
+    this.getPOSDrugsList({ index: defaultListPayload.index, limit: defaultListPayload.limit, listPayload: this.listPayload });
+  }
+
   handleStatus = (key: string) => {
     const COVERED = "covered";
     const isCovered: boolean = key === COVERED ? true : false;
@@ -147,8 +225,9 @@ class DrugDetailPOS extends React.Component<any, any> {
       covered: isCovered,
     };
 
-    this.setState({ posSettingsStatus });
+    this.setState({ posSettingsStatus, showGrid: false });
   };
+
   serviceSettingsChecked = (e) => {
     // console.log(e.target.id);
     // console.log(e.target.name);
@@ -205,18 +284,9 @@ class DrugDetailPOS extends React.Component<any, any> {
   };
 
   showGridHandler = () => {
-    this.setState(
-      {
-        showGrid: !this.state.showGrid,
-      },
-      () => {
-        console.log({
-          settings: this.state.posSettings,
-          status: this.state.posSettingsStatus,
-        });
-      }
-    );
+    this.getPOSDrugsList(this.listPayload);
   };
+
   render() {
     let dataGrid = <FrxLoader />;
     if (this.state.data) {
@@ -266,8 +336,6 @@ class DrugDetailPOS extends React.Component<any, any> {
         </div>
 
         <PosSettings
-          // posSettings,
-          // posSettingsStatus,
           posSettingsServies={{ posSettings, posSettingsStatus }}
           handleStatus={this.handleStatus}
           serviceSettingsChecked={this.serviceSettingsChecked}
@@ -317,6 +385,12 @@ class DrugDetailPOS extends React.Component<any, any> {
                   scroll={{ x: 4000, y: 377 }}
                   enableResizingOfColumns
                   data={this.state.data}
+                  getPerPageItemSize={this.onPageSize}
+                  selectedCurrentPage={(this.listPayload.index/this.listPayload.limit + 1)}
+                  pageSize={this.listPayload.limit}
+                  onGridPageChangeHandler={this.onGridPageChangeHandler}
+                  totalRowsCount={this.state.listCount}
+                  clearFilterHandler={this.onClearFilterHandler}
                 />
               </div>
             </div>

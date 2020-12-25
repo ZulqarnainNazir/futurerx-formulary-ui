@@ -91,6 +91,7 @@ export const GET_DRUG_SUMMARY_PT = "api/1/formulary-drug-summary-prtx/";
 // POS TAB
 export const GET_DRUG_SUMMARY_POS = "api/1/formulary-drug-summary-pos/";
 export const GET_DRUG_SETTING_POS = "api/1/place-of-services/";
+export const GET_POS_DRUGS = "api/1/formulary-drugs-pos/";
 
 // PR TAB
 export const GET_DRUG_SUMMARY_PR = "api/1/formulary-drug-summary-patrs/";
