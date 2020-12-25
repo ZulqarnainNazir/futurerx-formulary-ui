@@ -12,7 +12,8 @@ import "./STF.scss";
 import * as constants from "../../../../../../api/http-commons";
 import FrxDrugGridContainer from "../../../../../shared/FrxGrid/FrxDrugGridContainer";
 import { stColumns } from "../../../../../../utils/grid/columns";
-import AdvancedSearch from './search/AdvancedSearch';
+import AdvanceSearchContainer from '../../../../NewAdvanceSearch/AdvanceSearchContainer';
+import { setAdvancedSearch } from "../../../../../../redux/slices/formulary/advancedSearch/advancedSearchSlice";
 
 function mapDispatchToProps(dispatch) {
     return {
@@ -23,6 +24,7 @@ function mapDispatchToProps(dispatch) {
       postFormularyDrugST:(a) => dispatch(postFormularyDrugST(a)),
       getStGrouptDescriptionVersions:(a) => dispatch(getStGrouptDescriptionVersions(a)),
       postApplyFormularyDrugST:(a) => dispatch(postApplyFormularyDrugST(a)),
+      setAdvancedSearch: (a) => dispatch(setAdvancedSearch(a))
     };
   }
 
@@ -122,6 +124,18 @@ function mapDispatchToProps(dispatch) {
       advanceSearchClosekHandler = () => {
         this.setState({ isSearchOpen: !this.state.isSearchOpen })
       }
+      componentWillReceiveProps(nextProps) {
+        //this.initialize(nextProps);
+        if (nextProps.advancedSearchBody && nextProps.populateGrid) {
+          this.populateGridData(nextProps.advancedSearchBody);
+          let payload = { advancedSearchBody: nextProps.advancedSearchBody, populateGrid: false, closeDialog: nextProps.closeDialog , listItemStatus: nextProps.listItemStatus};
+          if (nextProps.closeDialog) {
+            this.state.isSearchOpen = false;
+            payload['closeDialog'] = false;
+          }
+          this.props.setAdvancedSearch(payload);
+        }
+      }
       dropDownSelectHandlerGroupDescription = (value, event) => {
         let tmp_index = event.key;
         let tmp_value = event.value;
@@ -194,12 +208,14 @@ function mapDispatchToProps(dispatch) {
         apiDetails['keyVals'] = [{ key: constants.KEY_ENTITY_ID, value: this.props?.formulary_id }, { key: constants.KEY_INDEX, value: 0 }, { key: constants.KEY_LIMIT, value: 10 }];
         apiDetails['messageBody'] = {};
     
-        apiDetails['messageBody']['base_st_group_description_id'] = this.state.selectedGroupDescription;
-        apiDetails['messageBody']['id_st_type'] = this.state.selectedStType;
-    
+        
         if(searchBody){
           apiDetails['messageBody'] = Object.assign(apiDetails['messageBody'],searchBody);
         }
+
+        apiDetails['messageBody']['base_st_group_description_id'] = this.state.selectedGroupDescription;
+        apiDetails['messageBody']['id_st_type'] = this.state.selectedStType;
+    
         const drugGridDate = this.props.postFormularyDrugST(apiDetails).then((json => {
           debugger;
           let tmpData = json.payload.result;
@@ -369,7 +385,7 @@ function mapDispatchToProps(dispatch) {
               <div className="header space-between pr-10">
                 
                 <div className="button-wrapper">
-                  <Button className="Button normal" label="Advance Search" onClick={this.advanceSearchClickHandler}  />
+                  <Button className="Button normal" label="Advance Search" onClick={this.advanceSearchClickHandler} disabled={this.props.configureSwitch} />
                   <Button label="Save" onClick={this.handleSave}  />
                 </div>
               </div>
@@ -399,11 +415,10 @@ function mapDispatchToProps(dispatch) {
               </div>
             </div>
             {this.state.isSearchOpen ? (
-              <AdvancedSearch
-                {...searchProps}
-                category="Grievances"
-                openPopup={this.state.isSearchOpen}
-                onClose={this.advanceSearchClosekHandler} />
+             <AdvanceSearchContainer
+             {...searchProps}
+             openPopup={this.state.isSearchOpen}
+             onClose={this.advanceSearchClosekHandler} />
             ) : (
                 null
               )}

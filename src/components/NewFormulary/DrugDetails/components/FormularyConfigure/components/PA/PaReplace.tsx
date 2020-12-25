@@ -12,7 +12,9 @@ import {
 } from "../../../../../../../mocks/formulary/mock-data";
 
 import showMessage from "../../../../../Utils/Toast";
-import AdvancedSearch from './../search/AdvancedSearch';
+//import AdvancedSearch from './../search/AdvancedSearch';
+import AdvanceSearchContainer from '../../../../../NewAdvanceSearch/AdvanceSearchContainer';
+import { setAdvancedSearch } from "../../../../../../../redux/slices/formulary/advancedSearch/advancedSearchSlice";
 import FrxDrugGridContainer from "../../../../../../shared/FrxGrid/FrxDrugGridContainer";
 import { PaColumns } from "../../../../../../../utils/grid/columns";
 import DropDownMap from "../../../../../../shared/Frx-components/dropdown/DropDownMap";
@@ -42,6 +44,7 @@ function mapDispatchToProps(dispatch) {
     postApplyFormularyDrugPA:(a) => dispatch(postApplyFormularyDrugPA(a)),
     getLobFormularies:(a) => dispatch(getLobFormularies(a)),
     postRelatedFormularyDrugPA:(a) => dispatch(postRelatedFormularyDrugPA(a)),
+    setAdvancedSearch: (a) => dispatch(setAdvancedSearch(a))
   };
 }
 
@@ -94,6 +97,27 @@ class PaReplace extends React.Component<any,any> {
     this.populateGridData();
   };
 
+  componentWillReceiveProps(nextProps) {
+    //this.initialize(nextProps);
+    if (nextProps.advancedSearchBody && nextProps.populateGrid) {
+      this.populateGridData(nextProps.advancedSearchBody);
+      let payload = { advancedSearchBody: nextProps.advancedSearchBody, populateGrid: false, closeDialog: nextProps.closeDialog , listItemStatus: nextProps.listItemStatus};
+      if (nextProps.closeDialog) {
+        this.state.isSearchOpen = false;
+        payload['closeDialog'] = false;
+      }
+      this.props.setAdvancedSearch(payload);
+    }
+  }
+
+  advanceSearchClickHandler = (event) => {
+    event.stopPropagation();
+    this.setState({ isSearchOpen: !this.state.isSearchOpen })
+  }
+  advanceSearchClosekHandler = () => {
+    this.setState({ isSearchOpen: !this.state.isSearchOpen })
+  }
+
   handleSave = () => {
     if (this.state.selectedDrugs && this.state.selectedDrugs.length > 0) {
       let apiDetails = {};
@@ -130,13 +154,7 @@ class PaReplace extends React.Component<any,any> {
     }
   }
   
-  advanceSearchClickHandler = (event) => {
-    event.stopPropagation();
-    this.setState({ isSearchOpen: !this.state.isSearchOpen })
-  }
-  advanceSearchClosekHandler = () => {
-    this.setState({ isSearchOpen: !this.state.isSearchOpen })
-  }
+  
   dropDownSelectHandlerGroupDescription = (value, event) => {
     let tmp_index = event.key;
     let tmp_value = event.value;
@@ -223,12 +241,13 @@ class PaReplace extends React.Component<any,any> {
     apiDetails['keyVals'] = [{ key: constants.KEY_ENTITY_ID, value: this.props?.formulary_id }, { key: constants.KEY_INDEX, value: 0 }, { key: constants.KEY_LIMIT, value: 10 }];
     apiDetails['messageBody'] = {};
 
+    if (searchBody) {
+      apiDetails['messageBody'] = Object.assign(apiDetails['messageBody'], searchBody);
+    }
+    
     apiDetails['messageBody']['base_pa_group_description_id'] = this.state.selectedGroupDescription;
     apiDetails['messageBody']['id_pa_type'] = this.state.selectedPaType;
 
-    if(searchBody){
-      apiDetails['messageBody'] = Object.assign(apiDetails['messageBody'],searchBody);
-    }
     if (this.state.showPaConfiguration){
       apiDetails['pathParams'] = this.props?.formulary_id + "/" + this.state.selectedLobFormulary + '/' +this.state.fileType + "/PA/" ;
       this.props.postRelatedFormularyDrugPA(apiDetails).then((json => this.loadGridData(json) ));
@@ -390,7 +409,7 @@ class PaReplace extends React.Component<any,any> {
               <div className="header space-between pr-10">
                 
                 <div className="button-wrapper">
-                  <Button className="Button normal" label="Advance Search" onClick={this.advanceSearchClickHandler}  />
+                  <Button className="Button normal" label="Advance Search" onClick={this.advanceSearchClickHandler} disabled={this.props.configureSwitch} />
                   <Button label="Save" onClick={this.handleSave}  />
                 </div>
               </div>
@@ -420,11 +439,10 @@ class PaReplace extends React.Component<any,any> {
               </div>
             </div>
             {this.state.isSearchOpen ? (
-              <AdvancedSearch
-                {...searchProps}
-                category="Grievances"
-                openPopup={this.state.isSearchOpen}
-                onClose={this.advanceSearchClosekHandler} />
+              <AdvanceSearchContainer
+              {...searchProps}
+              openPopup={this.state.isSearchOpen}
+              onClose={this.advanceSearchClosekHandler} />
             ) : (
                 null
               )}
