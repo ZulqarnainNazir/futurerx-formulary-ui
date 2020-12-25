@@ -29,6 +29,7 @@ export default class CloneFormularyPopup extends React.Component<any, any> {
           isFetchingData={false}
           enableResizingOfColumns
           data={selectFormularyGridMock()}
+          settingsTriDotClick={this.props.settingsTriDotClick}
           expandable={{
             isExpandable: true,
             expandIconColumnIndex: selectFormularyGridMedicare({}).length + 1,
@@ -92,6 +93,7 @@ export default class CloneFormularyPopup extends React.Component<any, any> {
           isFetchingData={false}
           enableResizingOfColumns
           data={selectFormularyGridMock()}
+          settingsTriDotClick={this.props.settingsTriDotClick}
           expandable={{
             isExpandable: true,
             expandIconColumnIndex: selectFormularyGrid({}).length + 1,

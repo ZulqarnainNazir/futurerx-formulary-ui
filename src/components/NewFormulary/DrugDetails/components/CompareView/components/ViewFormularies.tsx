@@ -5,6 +5,7 @@ import Button from "../../../../../shared/Frx-components/button/Button";
 import { ReactComponent as EditIcon } from "../../../../../../assets/icons/EditIcon.svg";
 import DialogPopup from "../../../../../shared/FrxDialogPopup/FrxDialogPopup";
 // import CloneFormularyPopup from "../../FormularySetUp/components/CloneFormularyPopup";
+import CloneFormularyPopup from "../../FormularySetUp/components/CloneFormularyPopup";
 
 import "./CompareView.scss";
 
@@ -28,6 +29,10 @@ class ViewFormularies extends React.Component<any, any> {
   };
   handleIconClick = () => {
     this.setState({ selectFormulary: true });
+  };
+
+  selectFormularyClick = (dataRow) => {
+    console.log(dataRow);
   };
   render() {
     return (
@@ -87,7 +92,10 @@ class ViewFormularies extends React.Component<any, any> {
             width="90%"
           >
             {/* <SelectFormularyPopUp formularyToggle={this.formularyToggle} /> */}
-            {/* <CloneFormularyPopup /> */}
+            <CloneFormularyPopup
+              type="commercial" // type will be dynamic based on the LOB
+              settingsTriDotClick={this.selectFormularyClick}
+            />
           </DialogPopup>
         ) : null}
       </div>

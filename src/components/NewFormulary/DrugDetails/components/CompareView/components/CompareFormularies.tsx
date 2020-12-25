@@ -55,6 +55,10 @@ class CompareFormularies extends React.Component<any, any> {
       PopUpType: type,
     });
   };
+
+  selectFormularyClick = (dataRow) => {
+    console.log(dataRow);
+  };
   render() {
     const { handleCompareBtn } = this.props;
     return (
@@ -145,7 +149,10 @@ class CompareFormularies extends React.Component<any, any> {
           >
             {/* <SelectFormularyPopUp formularyToggle={this.formularyToggle} /> */}
             {/* <CloneFormularyPopup type="medicare" /> */}
-            <CloneFormularyPopup type="commercial" />
+            <CloneFormularyPopup
+              type="commercial" // type will be dynamic based on the LOB
+              settingsTriDotClick={this.selectFormularyClick}
+            />
           </DialogPopup>
         ) : null}
       </div>
