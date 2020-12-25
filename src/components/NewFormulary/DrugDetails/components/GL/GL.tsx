@@ -9,19 +9,21 @@ import Button from "../../../../shared/Frx-components/button/Button";
 import { getDrugDetailsColumnGL } from "../../../DrugDetails/components/FormularyConfigure/DrugGridColumn";
 import { getDrugDetailData } from "../../../../../mocks/DrugGridMock";
 import FrxLoader from "../../../../shared/FrxLoader/FrxLoader";
-import DrugGrid from "../../../DrugDetails/components/DrugGrid";
 import AdvancedSearch from "../../../DrugDetails/components/FormularyConfigure/components/search/AdvancedSearch";
-import { getDrugDetailsGLSummary, getDrugDetailsGLList } from "../../../../../redux/slices/formulary/drugDetails/gl/glActionCreation";
+import { getDrugDetailsGLSummary, getDrugDetailsGLList, postReplaceGLDrug, postGLCriteriaList } from "../../../../../redux/slices/formulary/drugDetails/gl/glActionCreation";
 import * as glConstants from "../../../../../api/http-drug-details";
 import getLobCode from "../../../Utils/LobUtils";
 
 import GenderLimitSettings from "./GenderLimitSettings";
 import FrxDrugGridContainer from "../../../../shared/FrxGrid/FrxDrugGridContainer";
+import showMessage from "../../../Utils/Toast";
 
 function mapDispatchToProps(dispatch) {
   return {
     getDrugDetailsGLSummary: (a) => dispatch(getDrugDetailsGLSummary(a)),
     getDrugDetailsGLList: (a) => dispatch(getDrugDetailsGLList(a)),
+    postReplaceGLDrug: (a) => dispatch(postReplaceGLDrug(a)),
+    postGLCriteriaList: (a) => dispatch(postGLCriteriaList(a)),
   };
 }
 
@@ -57,6 +59,16 @@ class DrugDetailGL extends React.Component<any, any> {
     drugData: Array(),
     lobCode: null,
     listCount: 0,
+    showGrid: false,
+    glSettings: [
+      { index: 0, isChecked: false, gl_type_name: "female", gl_code: "F" },
+      { index: 1, isChecked: false, gl_type_name: "male", gl_code: "M" },
+      { index: 2, isChecked: false, gl_type_name: "unknown", gl_code: "U" },
+    ],
+    glSettingsStatus: {
+      type: "covered",
+      covered: true,
+    },
   };
 
   listPayload: any = {
@@ -76,6 +88,75 @@ class DrugDetailGL extends React.Component<any, any> {
 
   saveClickHandler = () => {
     console.log("Save data");
+
+    let glRows = this.state.glSettings.filter(f => f.isChecked).map(e => {
+      if(e.isChecked && e.isChecked !== undefined) {
+        return e.gl_code
+      }
+    });
+
+    console.log("The Selected Drugs For Save = ", this.state.selectedDrugs);
+    console.log("The GL Rows = ", glRows);
+
+    if (this.state.selectedDrugs && this.state.selectedDrugs.length > 0) {
+      let apiDetails = {};
+      apiDetails["apiPart"] = glConstants.APPLY_GL_DRUGS;
+      apiDetails["keyVals"] = [
+        { key: glConstants.KEY_ENTITY_ID, value: this.props?.formulary_id },
+      ];
+      apiDetails["messageBody"] = {};
+      apiDetails["messageBody"]["is_covered"] = this.state.glSettingsStatus.covered;
+      apiDetails["messageBody"]["selected_drug_ids"] = this.state.selectedDrugs;
+      apiDetails["messageBody"]["is_select_all"] = false;
+      apiDetails["messageBody"]["covered"] = {};
+      apiDetails["messageBody"]["not_covered"] = {};
+      apiDetails["messageBody"]["gender_limits"] = glRows;
+      apiDetails["messageBody"]["breadcrumb_code_value"] = "GL";
+      apiDetails["messageBody"]["filter"] = [];
+      apiDetails["messageBody"]["search_key"] = "";
+
+      if (this.state.activeTabIndex === 0) {
+        apiDetails["pathParams"] = this.props?.formulary_id + "/" + getLobCode(this.props.formulary_lob_id) + "/" + glConstants.TYPE_REPLACE;
+        console.log("The API Details - ", apiDetails);
+
+        // Replace Drug method call
+        this.props.postReplaceGLDrug(apiDetails).then((json) => {
+          if (
+            json.payload &&
+            json.payload.code &&
+            json.payload.code === "200"
+          ) {
+            showMessage("Success", "success");
+            this.getGLSummary();
+            this.getGLDrugsList();
+          } else {
+            showMessage("Failure", "error");
+          }
+        });
+      // } else if (this.state.activeTabIndex === 2) {
+      //   apiDetails["pathParams"] =
+      //     this.props?.formulary_id +
+      //     "/" +
+      //     this.state.lobCode +
+      //     "/" +
+      //     alConstants.TYPE_REMOVE;
+
+      //   // Remove Drug method call
+      //   this.props.postRemoveAFDrug(apiDetails).then((json) => {
+      //     if (
+      //       json.payload &&
+      //       json.payload.code &&
+      //       json.payload.code === "200"
+      //     ) {
+      //       showMessage("Success", "success");
+      //       // this.getAFSummary();
+      //       // this.getAFDrugsList();
+      //     } else {
+      //       showMessage("Failure", "error");
+      //     }
+      //   });
+      }
+    }
   };
 
   onPageSize = (pageSize) => {
@@ -103,10 +184,21 @@ class DrugDetailGL extends React.Component<any, any> {
           : "";
       });
 
-      this.setState({ selectedDrugs: selDrugs });
+      this.setState({ selectedDrugs: selDrugs }, () => console.log("The Selected Drugs = ",  this.state.selectedDrugs));
     } else {
       this.setState({ selectedDrugs: [] });
     }
+  };
+
+  handleStatus = (key: string) => {
+    const COVERED = "covered";
+    const isCovered: boolean = key === COVERED ? true : false;
+    let glSettingsStatus = {
+      type: key,
+      covered: isCovered,
+    };
+
+    this.setState({ glSettingsStatus, showGrid: false });
   };
 
   getGLSummary = () => {
@@ -117,7 +209,6 @@ class DrugDetailGL extends React.Component<any, any> {
 
     this.props.getDrugDetailsGLSummary(apiDetails).then((json) => {
       let tmpData = json.payload && json.payload.result ? json.payload.result : [];
-      console.log("The GL Temp Data = ", tmpData);
 
       let rows = tmpData.map((ele) => {
         let curRow = [
@@ -128,11 +219,29 @@ class DrugDetailGL extends React.Component<any, any> {
         ];
         return curRow;
       });
-      console.log("The Rows = ", rows);
 
       this.setState({
         panelGridValue1: rows,
       });
+    });
+  }
+
+  getGLCriteriaList = () => {
+    let apiDetails = {};
+    apiDetails["apiPart"] = glConstants.APPLY_GL_DRUGS;
+    apiDetails["keyVals"] = [
+      { key: glConstants.KEY_ENTITY_ID, value: this.props?.formulary_id },
+    ];
+    apiDetails["messageBody"] = {};
+    apiDetails["messageBody"]["is_advance_search"] = false;
+    apiDetails["messageBody"]["filter"] = [];
+    apiDetails["messageBody"]["search_key"] = "";
+    apiDetails["messageBody"]["is_covered"] = this.state.glSettingsStatus.covered;
+    apiDetails["messageBody"]["selected_criteria_ids"] = [];
+    apiDetails["messageBody"]["not_covered"] = {};
+    
+    this.props.postGLCriteriaList(apiDetails).then((json) => {
+      // {"code":"200","message":"ok","result":[{"id_gender_type":3,"gender_type_code":"U","gender_type_name":"Unknown","is_covered":false}]}
     });
   }
 
@@ -155,26 +264,26 @@ class DrugDetailGL extends React.Component<any, any> {
         let gridItem = {};
         gridItem["id"] = count;
         gridItem["key"] = count;
-        gridItem["ageLimit"] = element.is_al ? "" + element.is_al : "";
-        gridItem["coverMin"] = element.covered_min_operators ? "" + element.covered_min_operators : "";
+        gridItem["genderLimit"] = element.is_gl ? "" + element.is_gl : "";
+        gridItem["coveredGender"] = element.covered_genders ? "" + element.covered_genders : "";
         gridItem["coverAgeMin"] = element.covered_min_ages ? "" + element.covered_min_ages : "";
         gridItem["coverMax"] = element.covered_max_operators ? "" + element.covered_max_operators : "";
         gridItem["coverAgeMax"] = element.covered_max_ages ? "" + element.covered_max_ages : "";
-        gridItem["notCoverMin"] = element.not_covered_min_operators ? "" + element.not_covered_min_operators : "";
+        gridItem["noCoveredGender"] = element.not_covered_genders ? "" + element.not_covered_genders : "";
         gridItem["notCoverAgeMin"] = element.not_covered_min_ages ? "" + element.not_covered_min_ages : "";
         gridItem["notCoverMax"] = element.not_covered_max_operators ? "" + element.not_covered_max_operators : "";
         gridItem["notCoverAgeMax"] = element.not_covered_max_ages ? "" + element.not_covered_max_ages : "";
         gridItem["tier"] = element.tier_value ? "" + element.tier_value : "";
-        gridItem["labelNamae"] = element.drug_label_name ? "" + element.drug_label_name : "";
+        gridItem["labelName"] = element.drug_label_name ? "" + element.drug_label_name : "";
         gridItem["ddid"] = element.drug_descriptor_identifier ? "" + element.drug_descriptor_identifier : "";
         gridItem["gpi"] = element.generic_product_identifier ? "" + element.generic_product_identifier : "";
         gridItem["trademark"] = element.trademark_code ? "" + element.trademark_code : "";
         gridItem["databaseCategory"] = element.database_category ? "" + element.database_category : "";
         gridItem["databaseClass"] = element.database_class ? "" + element.database_class : "";
-        gridItem["created_by"] = element.created_by ? "" + element.created_by : "";
-        gridItem["created_date"] = element.created_date ? "" + element.created_date : "";
-        gridItem["modified_by"] = element.modified_by ? "" + element.modified_by : "";
-        gridItem["modified_date"] = element.modified_date ? "" + element.modified_date : "";
+        gridItem["createdBy"] = element.created_by ? "" + element.created_by : "";
+        gridItem["createdOn"] = element.created_date ? "" + element.created_date : "";
+        gridItem["modifiedBy"] = element.modified_by ? "" + element.modified_by : "";
+        gridItem["modifiedOn"] = element.modified_date ? "" + element.modified_date : "";
         gridItem["md5_id"] = element.md5_id ? "" + element.md5_id : "";
         count++;
         return gridItem;
@@ -183,6 +292,7 @@ class DrugDetailGL extends React.Component<any, any> {
         drugData: data,
         data: gridData,
         listCount: listCount,
+        showGrid: true,
       });
     });
   }
@@ -195,7 +305,7 @@ class DrugDetailGL extends React.Component<any, any> {
       data: data,
     });
     this.getGLSummary();
-    this.getGLDrugsList();
+    // this.getGLDrugsList();
   }
 
   onClickTab = (selectedTabIndex: number) => {
@@ -223,6 +333,35 @@ class DrugDetailGL extends React.Component<any, any> {
     alert(1);
   };
 
+  serviceSettingsChecked = (e) => {
+    const { glSettings } = this.state;
+
+    glSettings.forEach((s: any) => {
+      if (s.index === e.target.id) {
+        s.isChecked = e.target.checked;
+      }
+    });
+
+    this.setState({
+      glSettings,
+    });
+  };
+
+  showGridHandler = () => {
+    this.getGLDrugsList();
+    // this.setState(
+    //   {
+    //     showGrid: !this.state.showGrid,
+    //   },
+    //   () => {
+    //     console.log({
+    //       settings: this.state.glSettings,
+    //       status: this.state.glSettingsStatus,
+    //     });
+    //   }
+    // );
+  };
+
   render() {
     let dataGrid = <FrxLoader />;
     if (this.state.data) {
@@ -238,7 +377,7 @@ class DrugDetailGL extends React.Component<any, any> {
             gridName="DRUGSDETAILS"
             enableSettings={false}
             columns={getDrugDetailsColumnGL()}
-            scroll={{ x: 7000, y: 377 }}
+            scroll={{ x: 3200, y: 377 }}
             isFetchingData={false}
             enableResizingOfColumns
             data={this.state.data}
@@ -258,6 +397,12 @@ class DrugDetailGL extends React.Component<any, any> {
         </div>
       );
     }
+
+    const {
+      glSettings,
+      glSettingsStatus,
+      showGrid,
+    } = this.state;
 
     return (
       <>
@@ -294,29 +439,31 @@ class DrugDetailGL extends React.Component<any, any> {
           </div>
         </div>
 
-        <GenderLimitSettings />
+        <GenderLimitSettings glSettingsServies={{ glSettings, glSettingsStatus }} handleStatus={this.handleStatus} serviceSettingsChecked={this.serviceSettingsChecked} showGridHandler={this.showGridHandler} />
 
-        <div className="bordered">
-          <div className="header space-between pr-10">
-            Drug Grid
-            <div className="button-wrapper">
-              <Button
-                className="Button normal"
-                label="Advance Search"
-                onClick={this.advanceSearchClickHandler}
-              />
-              <Button label="Save" onClick={this.saveClickHandler} disabled />
+        {this.state.showGrid ? (
+          <div className="bordered">
+            <div className="header space-between pr-10">
+              Drug Grid
+              <div className="button-wrapper">
+                <Button
+                  className="Button normal"
+                  label="Advance Search"
+                  onClick={this.advanceSearchClickHandler}
+                />
+                <Button label="Save" onClick={this.saveClickHandler} disabled={!(this.state.selectedDrugs.length > 0)} />
+              </div>
             </div>
+            {dataGrid}
+            {this.state.isSearchOpen ? (
+              <AdvancedSearch
+                category="Grievances"
+                openPopup={this.state.isSearchOpen}
+                onClose={this.advanceSearchClosekHandler}
+              />
+            ) : null}
           </div>
-          {dataGrid}
-          {this.state.isSearchOpen ? (
-            <AdvancedSearch
-              category="Grievances"
-              openPopup={this.state.isSearchOpen}
-              onClose={this.advanceSearchClosekHandler}
-            />
-          ) : null}
-        </div>
+        ) : null}
       </>
     );
   }

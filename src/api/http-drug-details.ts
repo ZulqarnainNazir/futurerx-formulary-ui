@@ -75,6 +75,8 @@ export const GET_AL_CRITERIA_LIST = "api/1/criteria-list-al/";
 // GL TAB
 export const GET_DRUG_SUMMARY_GL = "api/1/formulary-drug-summary-gl/";
 export const GET_GL_DRUGS = "api/1/formulary-drugs-gl/";
+export const APPLY_GL_DRUGS = "api/1/apply-formulary-drug-gl/"
+export const GET_GL_CRITERIA_LIST = "api/1/criteria-list-gl/"
 
 // ICD TAB
 export const GET_DRUG_SUMMARY_ICD = "api/1/formulary-drug-summary-icdl/"

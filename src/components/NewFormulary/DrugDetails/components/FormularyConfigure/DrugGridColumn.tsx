@@ -1117,6 +1117,30 @@ export const getDrugDetailsColumnGL: () => Column<any>[] = () => {
       hidden: false,
       sortDirections: [],
     },
+    {
+      position: 11,
+      sorter: {},
+      pixelWidth: 150,
+      key: "modifiedBy",
+      displayTitle: "Modified By",
+      isFilterable: true,
+      dataType: "string",
+      filters: textFilters,
+      hidden: false,
+      sortDirections: [],
+    },
+    {
+      position: 12,
+      sorter: {},
+      pixelWidth: 150,
+      key: "modifiedOn",
+      displayTitle: "Modified On",
+      isFilterable: true,
+      dataType: "string",
+      filters: textFilters,
+      hidden: false,
+      sortDirections: [],
+    },
   ];
 };
 
