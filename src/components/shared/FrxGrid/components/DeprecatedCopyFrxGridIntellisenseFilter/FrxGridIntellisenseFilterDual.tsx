@@ -4,7 +4,7 @@
  * @version 1.0.0
  */
 
-import { CaretDownOutlined } from "@ant-design/icons";
+// import { CaretDownOutlined } from "@ant-design/icons";
 import {
   Input,
   FormControl,
@@ -19,7 +19,7 @@ import "./FrxGridIntellisenseFilter.scss";
 import "../FrxGridFilterDropDown/FrxGridFilterDropdown.scss";
 const { Option } = Select;
 
-class FrxGridIntellisenseFilter extends React.Component<any, any> {
+class FrxGridIntellisenseFilterDual extends React.Component<any, any> {
   constructor(props) {
     super(props);
 
@@ -29,25 +29,10 @@ class FrxGridIntellisenseFilter extends React.Component<any, any> {
       selectedSuggestions: {},
       isRefilteringOn: false,
       isCurrentSelectionOn: false,
-
-      selected: [],
-      optionValue: "",
-
-      disableIntelliCheck: false,
     };
   }
 
   componentDidUpdate(previousProps, previousState) {
-    if (previousProps.selectedKeys && this.props.selectedKeys) {
-      if (
-        JSON.stringify(previousProps.selectedKeys) !==
-        JSON.stringify(this.props.selectedKeys)
-      ) {
-        if (this.props.selectedKeys && this.props.selectedKeys.length === 0) {
-          this.setState({ selected: [], inputText: "", optionValue: "" });
-        }
-      }
-    }
     if (previousProps.suggestions && this.props.suggestions) {
       if (
         JSON.stringify(previousProps.suggestions) !==
@@ -149,74 +134,29 @@ class FrxGridIntellisenseFilter extends React.Component<any, any> {
   };
 
   /**
-   * @function onSelect
-   * triggered on selecting a condition
-   * @param value the selected value
-   * @author Deepak_T
-   */
-  onSelect = (value: string) => {
-    let selected = [...this.state.selected];
-    let { disableIntelliCheck, selectedSuggestions } = this.state;
-    if (value) {
-      selected = [value];
-      disableIntelliCheck = true;
-      selectedSuggestions = disableIntelliCheck ? {} : selectedSuggestions;
-    }
-    this.setState({
-      optionValue: value,
-      selected,
-      disableIntelliCheck,
-      selectedSuggestions,
-    });
-  };
-
-  /**
    * @function renderOptions
    * to construct JSX for rendering the filters
    * @author Deepak_T
    */
-  renderOptions() {
-    const { disableIntelliCheck } = this.state;
+  renderIntelliOptions() {
     return (
       <div>
-        {this.props.isMultiFilterOn ? (
+        {/* <Radio */}
+        <div className="frx-grid-intellisense-filter__filter-block__value-block">
+          <span className="frx-grid-intellisense-filter__filter-block__value-block__label">
+            Filter by value
+          </span>
           <div>
-            <Select
-              placeholder="Filter by condition"
-              value={this.state.optionValue}
-              onChange={this.onSelect}
-              className="frx-grid-filter-dropdown__filter-block__select"
-              suffixIcon={
-                <CaretDownOutlined className="frx-grid-filter-dropdown__filter-block__select__icon" />
-              }
-            >
-              <Option value="">Filter by condition</Option>
+            <Input
+              className="frx-grid-intellisense-filter__filter-block__value-block__input"
+              placeholder="Input value..."
+              type="text"
+              value={this.state.inputText}
+              onChange={this.handleInputChange}
+            />
+          </div>
+        </div>
 
-              {this.props.filters.map((option) => (
-                <Option key={option.value} value={option.value}>
-                  {option.text}
-                </Option>
-              ))}
-            </Select>
-          </div>
-        ) : null}
-        {this.state.optionValue !== "exists" &&
-        this.state.optionValue !== "does not exist" ? (
-          <div className="frx-grid-intellisense-filter__filter-block__value-block">
-            <span className="frx-grid-intellisense-filter__filter-block__value-block__label">
-              Filter by value
-            </span>
-            <div>
-              <Input
-                className="frx-grid-intellisense-filter__filter-block__value-block__input"
-                placeholder="Input value..."
-                type="text"
-                value={this.state.inputText}
-                onChange={this.handleInputChange}
-              />
-            </div>
-          </div>
-        ) : null}
         {this.props.suggestions &&
         this.props.suggestions[this.props.columnKey] &&
         this.props.suggestions[this.props.columnKey].length > 0 &&
@@ -240,7 +180,6 @@ class FrxGridIntellisenseFilter extends React.Component<any, any> {
                           : false
                       }
                       name="selectAll"
-                      disabled={disableIntelliCheck}
                     />
                   }
                   label="Select All"
@@ -259,17 +198,14 @@ class FrxGridIntellisenseFilter extends React.Component<any, any> {
                             : false
                         }
                         name="currentSelection"
-                        disabled={disableIntelliCheck}
                       />
                     }
                     label="Add Current Selection to filter"
                   />
                 ) : null}
                 {this.props.suggestions[this.props.columnKey].map(
-                  // (s: string, i: number) => {
                   (s: string | number, i: number) => {
                     if ((s = s.toString())) {
-                      // if (s) {
                       return (
                         <FormControlLabel
                           key={i + ""}
@@ -286,7 +222,6 @@ class FrxGridIntellisenseFilter extends React.Component<any, any> {
                                   : false
                               }
                               name={s.toLowerCase()}
-                              disabled={disableIntelliCheck}
                             />
                           }
                           label={
@@ -313,7 +248,7 @@ class FrxGridIntellisenseFilter extends React.Component<any, any> {
    * @author Deepak_T
    */
   onConfirm() {
-    const { inputText, selectedSuggestions, optionValue } = this.state;
+    const { inputText, selectedSuggestions } = this.state;
 
     if (selectedSuggestions) {
       const suggestions = this.props.suggestions;
@@ -325,7 +260,6 @@ class FrxGridIntellisenseFilter extends React.Component<any, any> {
 
     this.props.confirm();
     this.setState({ isRefilteringOn: true });
-    console.log(this.state);
   }
 
   /**
@@ -340,7 +274,6 @@ class FrxGridIntellisenseFilter extends React.Component<any, any> {
       selectedSuggestions: {},
       isRefilteringOn: false,
     });
-    // this.props.onClearAll();
     this.props.clearFilters();
   }
 
@@ -350,8 +283,6 @@ class FrxGridIntellisenseFilter extends React.Component<any, any> {
    * @author Deepak_T
    */
   handleCloseFilter = () => {
-    // this.setState({ suggestions: [], inputText: "", selectedSuggestions: {} });
-
     this.props.confirm();
   };
 
@@ -360,7 +291,7 @@ class FrxGridIntellisenseFilter extends React.Component<any, any> {
    * to render apply and clear buttons
    * @author Deepak_T
    */
-  renderButtons() {
+  renderIntelliButtons() {
     return (
       <div className="filter-btns">
         <Button className="clear-button" onClick={(e) => this.onReset()}>
@@ -394,11 +325,11 @@ class FrxGridIntellisenseFilter extends React.Component<any, any> {
           </svg>
         </div>
         <div className="frx-grid-intellisense-filter__filter-block">
-          {this.renderOptions()}
-          {this.renderButtons()}
+          {this.renderIntelliOptions()}
+          {this.renderIntelliButtons()}
         </div>
       </div>
     );
   }
 }
-export default FrxGridIntellisenseFilter;
+export default FrxGridIntellisenseFilterDual;
