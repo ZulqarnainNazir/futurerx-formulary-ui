@@ -84,17 +84,20 @@ const CLAIMS_GRID_SETTINGS_WIDTH = 28;
 const DEFAULT_GRID_WIDTH = 1284;
 
 interface FrxGridProps<T> extends Grid<T> {
+  customSettingIcon?: string;
+  checkBoxWidth?: number;
+
   handleCheck?: any;
   customCheckbox?: boolean;
   customRowSelectionChange?: any;
-  getPerPageItemSize?:any;
+  getPerPageItemSize?: any;
   onGridPageChangeHandler?: any;
   clearFilterHandler?: any;
   totalRowsCount?: any;
   pageSize?: any;
   selectedCurrentPage?: any;
-  applyFilter?:any;
-  getColumnSettings?:any;
+  applyFilter?: any;
+  getColumnSettings?: any;
 }
 interface FrxGridState<T> {
   filteredInfo: null;
@@ -147,10 +150,14 @@ class FrxGrid extends Component<FrxGridProps<any>, FrxGridState<any>> {
     placement: "left",
     expandedKeys: [],
     // currentPage: 1,
-    currentPage: this.props.selectedCurrentPage ? this.props.selectedCurrentPage : 1,
+    currentPage: this.props.selectedCurrentPage
+      ? this.props.selectedCurrentPage
+      : 1,
 
     // goToPageValue: 1,
-    goToPageValue: this.props.selectedCurrentPage ? this.props.selectedCurrentPage : 1,
+    goToPageValue: this.props.selectedCurrentPage
+      ? this.props.selectedCurrentPage
+      : 1,
     settingsAnchor: null,
     settingsMenuItems: [],
     rowSelectionArr: [],
@@ -581,6 +588,7 @@ class FrxGrid extends Component<FrxGridProps<any>, FrxGridState<any>> {
                     setingsComponent={
                       settingsComponentEnabled ? setingsComponent : undefined
                     }
+                    customSettingIcon={this.props.customSettingIcon}
                     isRowSelectionEnabled={this.props.isRowSelectionEnabled}
                     settingsAnchor={
                       settingsComponentEnabled
@@ -604,7 +612,7 @@ class FrxGrid extends Component<FrxGridProps<any>, FrxGridState<any>> {
             );
           };
         } else if (c.key === "checkbox") {
-          c["width"] = 60;
+          c["width"] = this.props.checkBoxWidth ? this.props.checkBoxWidth : 60;
           c["render"] = (record: any) => {
             return (
               <>
@@ -869,7 +877,12 @@ class FrxGrid extends Component<FrxGridProps<any>, FrxGridState<any>> {
       +this.state.pageSize;
 
     // let toData = to < data.length ? to : data.length;
-    let toData = (to < (this.props.totalRowsCount ? this.props.totalRowsCount : data.length)) ? to : (this.props.totalRowsCount ? this.props.totalRowsCount : data.length);
+    let toData =
+      to < (this.props.totalRowsCount ? this.props.totalRowsCount : data.length)
+        ? to
+        : this.props.totalRowsCount
+        ? this.props.totalRowsCount
+        : data.length;
 
     return data.slice(from - 1, toData);
   };
@@ -911,8 +924,8 @@ class FrxGrid extends Component<FrxGridProps<any>, FrxGridState<any>> {
     }
 
     if (filters && extra.action === "filter") {
-      this.props.applyFilter(filters)
-      // this.getDataOnFilter(filters);
+      this.props.applyFilter(filters);
+      this.getDataOnFilter(filters);
     }
 
     //ADD NOT MULTISORT CHECK
@@ -1420,11 +1433,17 @@ class FrxGrid extends Component<FrxGridProps<any>, FrxGridState<any>> {
         : [...this.props.data];
 
     // const toData = to < data.length ? to : data.length;
-    const toData = (to < (this.props.totalRowsCount ? this.props.totalRowsCount : data.length)) ? to : (this.props.totalRowsCount ? this.props.totalRowsCount : data.length);
-    const length = this.props.totalRowsCount ? this.props.totalRowsCount : 
-      this.state.filterTable && this.state.filterTable.length > 0
-        ? this.state.filterTable.length
-        : this.props.data.length;
+    const toData =
+      to < (this.props.totalRowsCount ? this.props.totalRowsCount : data.length)
+        ? to
+        : this.props.totalRowsCount
+        ? this.props.totalRowsCount
+        : data.length;
+    const length = this.props.totalRowsCount
+      ? this.props.totalRowsCount
+      : this.state.filterTable && this.state.filterTable.length > 0
+      ? this.state.filterTable.length
+      : this.props.data.length;
 
     return `${from} to ${toData} of ${length}`;
   };
@@ -1436,14 +1455,13 @@ class FrxGrid extends Component<FrxGridProps<any>, FrxGridState<any>> {
    */
   getTotalPages: () => number = () => {
     let totalRows: any;
-    if(this.props.totalRowsCount){
+    if (this.props.totalRowsCount) {
       totalRows = this.props.totalRowsCount;
-    }else{
+    } else {
       totalRows =
         this.state.filterTable && this.state.filterTable.length > 0
           ? this.state.filterTable.length
           : this.props.data.length;
-
     }
     const currentPageSize = this.state.pageSize;
     return Math.ceil(totalRows / currentPageSize);
@@ -1522,8 +1540,8 @@ class FrxGrid extends Component<FrxGridProps<any>, FrxGridState<any>> {
       return c;
     });
 
-    this.setState({ columns: columns },() => {
-      this.props.clearFilterHandler()
+    this.setState({ columns: columns }, () => {
+      this.props.clearFilterHandler();
     });
   };
 
@@ -1554,9 +1572,12 @@ class FrxGrid extends Component<FrxGridProps<any>, FrxGridState<any>> {
    * @author Deepak _T
    */
   onPageChange: (p: number) => void = (pageNumber: number) => {
-    this.setState({ currentPage: pageNumber, goToPageValue: pageNumber }, () => {
-      this.props.onGridPageChangeHandler(pageNumber)
-    });
+    this.setState(
+      { currentPage: pageNumber, goToPageValue: pageNumber },
+      () => {
+        this.props.onGridPageChangeHandler(pageNumber);
+      }
+    );
   };
 
   /**
@@ -1567,9 +1588,8 @@ class FrxGrid extends Component<FrxGridProps<any>, FrxGridState<any>> {
    */
   onPageSizeChange: (v: number) => void = (value: number) => {
     this.setState({ pageSize: value, currentPage: 1, goToPageValue: 1 }, () => {
-      this.props.getPerPageItemSize(value)
+      this.props.getPerPageItemSize(value);
     });
-
   };
 
   /**
@@ -1579,12 +1599,15 @@ class FrxGrid extends Component<FrxGridProps<any>, FrxGridState<any>> {
    */
   onGoToSpecificPage: () => void = () => {
     if (!this.state.goToPageValue) return;
-    this.setState({
-      goToPageValue: +this.state.goToPageValue,
-      currentPage: +this.state.goToPageValue,
-    },() => {
-      this.props.onGridPageChangeHandler(this.state.goToPageValue)
-    });
+    this.setState(
+      {
+        goToPageValue: +this.state.goToPageValue,
+        currentPage: +this.state.goToPageValue,
+      },
+      () => {
+        this.props.onGridPageChangeHandler(this.state.goToPageValue);
+      }
+    );
   };
 
   /**
@@ -1650,12 +1673,30 @@ class FrxGrid extends Component<FrxGridProps<any>, FrxGridState<any>> {
     );
 
     if (selectedSuggestions["selectAll"]) {
-      selectedValues = [...suggestedValues[key]];
+      if (record[key] && typeof record[key] === "number") {
+        if (record[key])
+          selectedValues = suggestedValues[key].map((values) =>
+            values.toString()
+          );
+      } else {
+        if (record[key])
+          selectedValues = suggestedValues[key].map((values) =>
+            values.toLowerCase()
+          );
+      }
     }
 
-    if (value && selectedValues.length > 0)
-      return selectedValues.indexOf(record[key]) > -1;
-    else return true;
+    if (value && selectedValues.length > 0) {
+      let found = false;
+      if (record[key] && typeof record[key] === "string") {
+        if (record[key])
+          found = selectedValues.indexOf(record[key].toLowerCase()) > -1;
+      } else {
+        if (record[key])
+          found = selectedValues.indexOf(record[key].toString()) > -1;
+      }
+      return found;
+    } else return true;
   };
 
   /**
@@ -2324,14 +2365,20 @@ class FrxGrid extends Component<FrxGridProps<any>, FrxGridState<any>> {
   onApplySettings = () => {
     const cols = [...this.state.visibleColumns, ...this.state.hiddenColumns];
     const columns = [...this.sortColumnsByPosition(cols)];
-    this.setState({
-      columns,
-      visibleColumns: columns.filter((c) => !c.hidden),
-      hiddenColumns: columns.filter((c) => c.hidden),
-      showGridSettingsModal: false,
-    },() => {
-      this.props.getColumnSettings(columns.filter((c) => c.hidden),columns.filter((c) => !c.hidden));
-    });
+    this.setState(
+      {
+        columns,
+        visibleColumns: columns.filter((c) => !c.hidden),
+        hiddenColumns: columns.filter((c) => c.hidden),
+        showGridSettingsModal: false,
+      },
+      () => {
+        this.props.getColumnSettings(
+          columns.filter((c) => c.hidden),
+          columns.filter((c) => !c.hidden)
+        );
+      }
+    );
   };
 
   /**
@@ -2620,7 +2667,11 @@ class FrxGrid extends Component<FrxGridProps<any>, FrxGridState<any>> {
                 hideResults={hideResults}
                 filterTable={this.state.filterTable}
                 position={this.props.pagintionPosition}
-                data={this.props.totalRowsCount ? this.props.totalRowsCount : this.props.data}
+                data={
+                  this.props.totalRowsCount
+                    ? this.props.totalRowsCount
+                    : this.props.data
+                }
                 isMultiSort={this.state.isMultiSort}
                 sortedInfo={this.state.sortedInfo}
                 filteredInfo={this.state.filteredInfo}

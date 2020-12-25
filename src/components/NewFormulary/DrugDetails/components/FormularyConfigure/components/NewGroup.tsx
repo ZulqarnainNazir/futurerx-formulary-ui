@@ -7,13 +7,17 @@ import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
 import Tooltip from '@material-ui/core/Tooltip';
 import GroupHeader from './GroupHeader';
-import { Grid } from '@material-ui/core';
+import { Box, Grid, Input } from '@material-ui/core';
 import AlertMessages from "./AlertMessages"
 import { ToastContainer } from 'react-toastify';
 import showMessage from "../../../../Utils/Toast";
+import SearchableDropdown from "../../../../../shared/Frx-components/SearchableDropdown";
 import { scrollPage } from '../../../../../../utils/formulary'
+import { Tag } from "antd";
+import Tags from './Tags'
+import { ReactComponent as CrossCircleWhiteBGIcon } from "../../../../../../assets/icons/crosscirclewhitebg.svg";
 import { saveGDM,editGDM } from "../../../../../../redux/slices/formulary/gdm/gdmSlice";
-import { getStGrouptDescription } from "../../../../../../redux/slices/formulary/stepTherapy/stepTherapyActionCreation";
+import { getStGrouptDescription,getDrugLists } from "../../../../../../redux/slices/formulary/stepTherapy/stepTherapyActionCreation";
 
 interface Props {
   tooltip?: string;
@@ -37,6 +41,7 @@ interface initialFormData{
   is_validation_required:  any;
   st_type:any;
   id_st_type:any;
+  drug_list_ids:any;
 }
 
 const initialFormData:initialFormData = {
@@ -54,7 +59,8 @@ const initialFormData:initialFormData = {
   is_display_criteria_drugs_not_frf: false,
   is_validation_required: false,
   st_type:'Always Applies(1)',
-  id_st_type:7
+  id_st_type:7,
+  drug_list_ids:[]
 }
 
 function mapStateToProps(state) {
@@ -87,8 +93,30 @@ function mapDispatchToProps(dispatch) {
     saveGDM: (data) => dispatch(saveGDM(data)),
     editGDM: (data) => dispatch(editGDM(data)),
     getStGrouptDescription: (a) => dispatch(getStGrouptDescription(a)),
+    getDrugLists: (a) => dispatch(getDrugLists(a)),
   }
 }
+
+const drug_list=[
+  {
+    "name":"my dl1",
+    "key":1,
+    "show":true,
+    "is_list":false,
+    "value":"my dl1",
+    "type":"",
+    "text":"my dl1"
+    },
+    {
+    "name":"my dl2",
+    "key":2,
+    "show":true,
+    "is_list":false,
+    "value":"my dl2",
+    "type":"",
+    "text":"my dl2"
+    }
+]
 
 function NewGroup(props: any) {
   const [formData, updateFormData] = React.useState(initialFormData);
@@ -96,6 +124,7 @@ function NewGroup(props: any) {
   const [changeEvent, setChangeEvent] = React.useState(false);
   const [showHeader, setShowHeader] = React.useState(props.formType);
   const [errorClass, setErrorClass] = React.useState('');
+  const [drug_list_ids, setDrug_list_ids] = React.useState([]);
 
   const handleChange = (e) => {
     const formVal = (e.target.value === 'yes' || e.target.value === 'true') ? true : (e.target.value === 'no' || e.target.value === 'false') ? false : e.target.value;
@@ -203,6 +232,7 @@ function NewGroup(props: any) {
     setErrorClass('');
     formData["id_st_type"] = (formData["st_type"]==="New Starts Only (2)")?8:7;
     formData["is_validation_required"] = is_validation;
+    formData["drug_list_ids"] = drug_list_ids;
     let requestData = {};
     if (props.formType==1){
       requestData['messageBody'] = {...formData}
@@ -222,6 +252,9 @@ function NewGroup(props: any) {
     setShowHeader(1)
     scrollPage(0, 500)
   };
+  const getAutoCompleteChangeHandler = (val) => {
+    setDrug_list_ids(val);
+  }
   return (
     <div className="new-group-des">
       <div className="panel header">
@@ -384,6 +417,12 @@ function NewGroup(props: any) {
                         </Grid>
                     </Grid>
                 </div>)}
+                <Fragment>
+                      <Grid item xs={6}>
+                      <label className="st-label">List <span className="astrict">*</span></label>
+                      <Tags options={drug_list} getAutoCompleteChange={getAutoCompleteChangeHandler} seleted={formData.drug_list_ids}/>
+                      </Grid>
+                    </Fragment>
                 <div className="setting-1 mb-20">
                   <span>do you want to add additional criteria? <span className="astrict">*</span></span>
                   <div className="marketing-material radio-group">

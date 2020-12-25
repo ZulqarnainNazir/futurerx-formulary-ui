@@ -7,19 +7,24 @@ import { TabInfo } from "../../../../../models/tab.model";
 import FrxMiniTabs from "../../../../shared/FrxMiniTabs/FrxMiniTabs";
 import Button from "../../../../shared/Frx-components/button/Button";
 import { textFilters } from "../../../../../utils/grid/filters";
-import { getDrugDetailsColumn } from "../../../DrugDetails/components/FormularyConfigure/DrugGridColumn";
+import { getDrugDetailsColumnPOS } from "../../../DrugDetails/components/FormularyConfigure/DrugGridColumn";
 import { getDrugDetailData } from "../../../../../mocks/DrugGridMock";
 import FrxLoader from "../../../../shared/FrxLoader/FrxLoader";
 import DrugGrid from "../../../DrugDetails/components/DrugGrid";
 import AdvancedSearch from "../../../DrugDetails/components/FormularyConfigure/components/search/AdvancedSearch";
-import { getDrugDetailsPOSSummary } from "../../../../../redux/slices/formulary/drugDetails/pos/posActionCreation";
+import {
+  getDrugDetailsPOSSummary,
+  getDrugDetailsPOSSettings,
+} from "../../../../../redux/slices/formulary/drugDetails/pos/posActionCreation";
 import * as posConstants from "../../../../../api/http-drug-details";
 
 import PosSettings from "./PosSettings";
+import FrxGridContainer from "../../../../shared/FrxGrid/FrxGridContainer";
 
 function mapDispatchToProps(dispatch) {
   return {
     getDrugDetailsPOSSummary: (a) => dispatch(getDrugDetailsPOSSummary(a)),
+    getDrugDetailsPOSSettings: (a) => dispatch(getDrugDetailsPOSSettings(a)),
   };
 }
 
@@ -29,23 +34,45 @@ const mapStateToProps = (state) => {
   };
 };
 
+// GET_DRUG_SETTING_POS
+
 class DrugDetailPOS extends React.Component<any, any> {
   state = {
     isSearchOpen: false,
     panelGridTitle1: ["", "NUMBER OF DRUGS", "ADDED DRUGS", "REMOVED DRUGS"],
     panelTitleAlignment1: ["center", "center", "center", "center"],
     panelGridValue1: [],
+    posSettings: [],
+    posSettingsStatus: {
+      type: "covered",
+      covered: true,
+    },
+
     isNotesOpen: false,
     activeTabIndex: 0,
-    columns: null,
-    data: null,
+    columns: getDrugDetailsColumnPOS(),
+    data: getDrugDetailData(),
     tabs: [
       { id: 1, text: "Replace" },
       { id: 2, text: "Append" },
       { id: 3, text: "Remove" },
     ],
+
+    isSelectAll: false,
+    showGrid: false,
   };
 
+  componentDidMount() {
+    // const columns = getDrugDetailsColumnPOS();
+    // const data = getDrugDetailData();
+
+    // this.setState({
+    //   columns: columns,
+    //   data: data,
+    // });
+    this.getPOSSummary();
+    this.getPOSSettings();
+  }
   advanceSearchClickHandler = (event) => {
     event.stopPropagation();
     this.setState({ isSearchOpen: !this.state.isSearchOpen });
@@ -67,10 +94,11 @@ class DrugDetailPOS extends React.Component<any, any> {
       { key: posConstants.KEY_ENTITY_ID, value: this.props?.formulary_id },
     ];
 
+    console.log("apiDetails 1: ", apiDetails);
     this.props.getDrugDetailsPOSSummary(apiDetails).then((json) => {
       let tmpData =
         json.payload && json.payload.result ? json.payload.result : [];
-      console.log("The POS Temp Data = ", tmpData);
+      // console.log("The POS Temp Data = ", tmpData);
 
       let rows = tmpData.map((ele) => {
         let curRow = [
@@ -89,34 +117,67 @@ class DrugDetailPOS extends React.Component<any, any> {
     });
   };
 
-  componentDidMount() {
-    const data = getDrugDetailData();
-    const columns = getDrugDetailsColumn();
-    const FFFColumn: any = {
-      id: 0,
-      position: 0,
-      textCase: "upper",
-      pixelWidth: 238,
-      sorter: {},
-      isFilterable: true,
-      showToolTip: false,
-      key: "fff",
-      displayTitle: "Free First Fill",
-      filters: textFilters,
-      dataType: "string",
-      hidden: false,
-      sortDirections: [],
-    };
-    columns.unshift(FFFColumn);
-    for (let el of data) {
-      el["fff"] = "Y";
-    }
-    this.setState({
-      columns: columns,
-      data: data,
+  getPOSSettings = () => {
+    let apiDetails = {};
+    apiDetails["apiPart"] = posConstants.GET_DRUG_SETTING_POS;
+    // apiDetails["pathParams"] = this.props?.formulary_id;
+    // apiDetails["keyVals"] = [
+    //   { key: posConstants.KEY_ENTITY_ID, value: this.props?.formulary_id },
+    // ];
+
+    console.log("apiDetails: ", apiDetails);
+    this.props.getDrugDetailsPOSSettings(apiDetails).then((json) => {
+      const posSettings =
+        json.payload && json.payload.data ? json.payload.data : [];
+
+      posSettings.forEach((s) => {
+        s["isChecked"] = false;
+      });
+      this.setState({
+        posSettings,
+      });
     });
-    this.getPOSSummary();
-  }
+  };
+
+  handleStatus = (key: string) => {
+    const COVERED = "covered";
+    const isCovered: boolean = key === COVERED ? true : false;
+    let posSettingsStatus = {
+      type: key,
+      covered: isCovered,
+    };
+
+    this.setState({ posSettingsStatus });
+  };
+  serviceSettingsChecked = (e) => {
+    // console.log(e.target.id);
+    // console.log(e.target.name);
+    // console.log(e.target.checked);
+
+    const { posSettings } = this.state;
+
+    posSettings.forEach((s: any) => {
+      if (s.id_place_of_service_type === e.target.id) {
+        s.isChecked = e.target.checked;
+      }
+    });
+
+    this.setState({
+      posSettings,
+    });
+  };
+
+  handleSelectAll = () => {
+    const { posSettings, isSelectAll } = this.state;
+    posSettings.forEach((s: any) => {
+      s.isChecked = !isSelectAll;
+    });
+
+    this.setState({
+      posSettings,
+      isSelectAll: !isSelectAll,
+    });
+  };
 
   onClickTab = (selectedTabIndex: number) => {
     let activeTabIndex = 0;
@@ -143,6 +204,19 @@ class DrugDetailPOS extends React.Component<any, any> {
     alert(1);
   };
 
+  showGridHandler = () => {
+    this.setState(
+      {
+        showGrid: !this.state.showGrid,
+      },
+      () => {
+        console.log({
+          settings: this.state.posSettings,
+          status: this.state.posSettingsStatus,
+        });
+      }
+    );
+  };
   render() {
     let dataGrid = <FrxLoader />;
     if (this.state.data) {
@@ -150,7 +224,12 @@ class DrugDetailPOS extends React.Component<any, any> {
         <DrugGrid columns={this.state.columns} data={this.state.data} />
       );
     }
-
+    const {
+      posSettings,
+      posSettingsStatus,
+      isSelectAll,
+      showGrid,
+    } = this.state;
     return (
       <>
         <div className="bordered mb-10">
@@ -186,29 +265,70 @@ class DrugDetailPOS extends React.Component<any, any> {
           </div>
         </div>
 
-        <PosSettings />
+        <PosSettings
+          // posSettings,
+          // posSettingsStatus,
+          posSettingsServies={{ posSettings, posSettingsStatus }}
+          handleStatus={this.handleStatus}
+          serviceSettingsChecked={this.serviceSettingsChecked}
+          selectAllHandler={{
+            isSelectAll: isSelectAll,
+            handleSelectAll: this.handleSelectAll,
+          }}
+          showGridHandler={this.showGridHandler}
+        />
 
-        <div className="bordered">
-          <div className="header space-between pr-10">
-            Drug Grid
-            <div className="button-wrapper">
-              <Button
-                className="Button normal"
-                label="Advance Search"
-                onClick={this.advanceSearchClickHandler}
-              />
-              <Button label="Save" onClick={this.saveClickHandler} disabled />
+        {showGrid ? (
+          <div className="bordered">
+            <div className="header space-between pr-10">
+              Drug Grid
+              <div className="button-wrapper">
+                <Button
+                  className="Button normal"
+                  label="Advance Search"
+                  onClick={this.advanceSearchClickHandler}
+                />
+                <Button label="Save" onClick={this.saveClickHandler} disabled />
+              </div>
             </div>
+            {/* {dataGrid} */}
+            <div className="inner-container">
+              <div className="pinned-table">
+                <FrxGridContainer
+                  enableSearch={false}
+                  enableColumnDrag
+                  customSettingIcon={"RED-DOT"}
+                  onSearch={() => {}}
+                  fixedColumnKeys={[
+                    "placeOfService",
+                    "coveredPlaceOfService",
+                    "notCoveredplaceOfService",
+                  ]}
+                  pagintionPosition="topRight"
+                  gridName="DRUGSDETAILS"
+                  enableSettings
+                  isFetchingData={false}
+                  columns={this.state.columns}
+                  isCustomCheckboxEnabled
+                  handleCustomRowSelectionChange={() => {}}
+                  settingsWidth={15}
+                  checkBoxWidth={15}
+                  isPinningEnabled={true}
+                  scroll={{ x: 4000, y: 377 }}
+                  enableResizingOfColumns
+                  data={this.state.data}
+                />
+              </div>
+            </div>
+            {this.state.isSearchOpen ? (
+              <AdvancedSearch
+                category="Grievances"
+                openPopup={this.state.isSearchOpen}
+                onClose={this.advanceSearchClosekHandler}
+              />
+            ) : null}
           </div>
-          {dataGrid}
-          {this.state.isSearchOpen ? (
-            <AdvancedSearch
-              category="Grievances"
-              openPopup={this.state.isSearchOpen}
-              onClose={this.advanceSearchClosekHandler}
-            />
-          ) : null}
-        </div>
+        ) : null}
       </>
     );
   }
