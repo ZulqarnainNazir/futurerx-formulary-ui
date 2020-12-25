@@ -392,7 +392,9 @@ class FormularySetUp extends React.Component<any, any> {
         } else if(arg?.payload?.earlier_mode ==="EXISTING"){
           showMessage(`Formulary Updated. ID: ${arg?.payload?.id}`, "success");
         }
-
+        if(arg?.payload?.continue){
+          this.props.saveAndContinue(1);
+        }
       }
     });
   };
