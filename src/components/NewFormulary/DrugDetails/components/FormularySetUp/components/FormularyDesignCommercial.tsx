@@ -19,7 +19,7 @@ class SupplementalModels extends React.Component<any, any> {
             let index = des_opt.edits.indexOf(id);
             des_opt.edits.splice(index,1);
         }
-        this.props.formularyDesignCommercialCheck(des_opt,'static')
+        this.props.formularyDesignCommercialCheck(des_opt)
     }
     customCheckboxClickHandler = (e) => {
         const des_opt:any = {...this.props.edit_info};
@@ -40,7 +40,7 @@ class SupplementalModels extends React.Component<any, any> {
             }
             des_opt.custom_edits.push(newObj);
         }
-        this.props.formularyDesignCommercialCheck(des_opt,'customCheck');
+        this.props.formularyDesignCommercialCheck(des_opt);
     }
     customCheckboxAddNewClickHandler = () => {
         const des_opt:any = {...this.props.edit_info};
@@ -76,7 +76,7 @@ class SupplementalModels extends React.Component<any, any> {
             des_opt.edits = [];
             des_opt.custom_edits = [];
         }
-        this.props.formularyDesignCommercialCheck(des_opt,'NA');
+        this.props.formularyDesignCommercialCheck(des_opt);
     }
     checkUncheckHandler = () => {
         const des_opt = {...this.props.edit_info};
@@ -87,15 +87,13 @@ class SupplementalModels extends React.Component<any, any> {
             const newEdits = this.props.designOptions?.filter(e => e.is_custom !== true && e.edit_name !== 'N/A').map(e=>e.id_edit);
             des_opt.edits = newEdits;
         }
-        this.props.formularyDesignCommercialCheck(des_opt,'uncheck');
+        this.props.formularyDesignCommercialCheck(des_opt);
     }
     deleteCustomInput = (ind) => {
         const des_opt = {...this.props.edit_info};
         const custom_edits = [...des_opt.custom_edits];
-        const removedFormulary = [...des_opt.removed_formulary_edits,custom_edits[ind].id_edit];
         custom_edits.splice(ind,1);
         des_opt.custom_edits = custom_edits;
-        des_opt.removed_formulary_edits = removedFormulary;
         this.props.formularyDesignCommercialCheck(des_opt);
     }
     renderCustomCheckbox = () => {

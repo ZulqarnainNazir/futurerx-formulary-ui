@@ -31,7 +31,7 @@ class FormularyTiers extends React.Component<any, any> {
             tierName: e.tier_name
           }
         }else{
-          return this.props.tierOptionsOptions.find(el => el.id_tier_label === e.id_tier_label) ? {
+          return this.props.tierOptionsOptions?.find(el => el.id_tier_label === e.id_tier_label) ? {
             seletedVal: this.props.tierOptionsOptions.find(el => el.id_tier_label === e.id_tier_label).tier_label,
             tierName: e.tier_name
           } : '';
