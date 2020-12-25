@@ -199,9 +199,21 @@ class FormularySetUp extends React.Component<any, any> {
     return newObj;
   };
   formularyDesignCommercialCheckHandler = (getObj:any) => {
+    const receivedObj = {...getObj};
+    const customId = this.props.setupOptions.designOptions.filter(e => e.is_custom).map(e => e.id_edit);
+    const received_customId = receivedObj.custom_edits.map(e => e.id_edit);
+    const staticFId = this.props.setupOptions.designOptions.filter(e => !e.is_custom).map(e => e.id_edit);
+    let staticRemovedID = this.props.formulary?.edit_info?.filter(e => customId.indexOf(e.id_edit) === -1)
+                            .filter(e => receivedObj.edits.indexOf(e.id_edit) === -1).map(e => e.id_formulary_edit);
+    let customRemovedId = this.props.formulary?.edit_info?.filter(e => staticFId.indexOf(e.id_edit) === -1).
+                            filter(e => received_customId.indexOf(e.id_edit) === -1).map(e => e.id_formulary_edit)
+    staticRemovedID = staticRemovedID === undefined ? [] : staticRemovedID;
+    customRemovedId = customRemovedId === undefined ? [] : customRemovedId;
+    const finalRemovedID = [...staticRemovedID,...customRemovedId];
+    receivedObj.removed_formulary_edits = [...finalRemovedID];
     this.setState({
-      edit_info: getObj
-    })
+      edit_info: receivedObj
+    });
   }
   formularyRadioChangeHandler = (
     event: React.ChangeEvent<HTMLInputElement>,
@@ -341,7 +353,7 @@ class FormularySetUp extends React.Component<any, any> {
       if (this.state.generalInformation.service_year === "") {
         msg.push("Formulary Service year is required.");
       }
-      // if(e && this.tierCheck()){
+      // if(this.tierCheck()){
       //   msg.push("Formulary Service year is required.");
       // }
       if (msg.length > 0) {
@@ -351,7 +363,7 @@ class FormularySetUp extends React.Component<any, any> {
         return;
       }
     }
-
+    
     const input = {
       MODE: this.props.mode,
       CONTINUE: e,
@@ -398,6 +410,11 @@ class FormularySetUp extends React.Component<any, any> {
       }
     });
   };
+  tierCheck = () => {
+    console.log(this.state)
+    debugger
+    return true;
+  }
   onCheckUncheckAllSupplementalHandler = (val) => {
     if (val === "uncheck") {
       this.setState({
