@@ -38,7 +38,9 @@ const StatusContentFormPanel = (props) => {
   const [statusType, setStatusType] = useState(type ? type : "covered");
   
   const handleDropdown = (value) => {
+    console.log("The handle Dropdown = ", value);
     setStatusType(value)
+    props.coveredHandler(value);
   }
   
   const menu = (

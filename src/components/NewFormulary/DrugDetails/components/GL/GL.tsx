@@ -16,6 +16,7 @@ import * as glConstants from "../../../../../api/http-drug-details";
 import getLobCode from "../../../Utils/LobUtils";
 
 import GenderLimitSettings from "./GenderLimitSettings";
+import FrxDrugGridContainer from "../../../../shared/FrxGrid/FrxDrugGridContainer";
 
 function mapDispatchToProps(dispatch) {
   return {
@@ -31,6 +32,12 @@ const mapStateToProps = (state) => {
   };
 };
 
+const defaultListPayload = {
+  index: 0,
+  limit: 10,
+  filter: [],
+}
+
 class DrugDetailGL extends React.Component<any, any> {
   state = {
     isSearchOpen: false,
@@ -40,13 +47,23 @@ class DrugDetailGL extends React.Component<any, any> {
     isNotesOpen: false,
     activeTabIndex: 0,
     columns: null,
-    data: null,
+    data: [],
     tabs: [
       { id: 1, text: "Replace" },
       { id: 2, text: "Append" },
       { id: 3, text: "Remove" },
     ],
+    selectedDrugs: Array(),
+    drugData: Array(),
+    lobCode: null,
+    listCount: 0,
   };
+
+  listPayload: any = {
+    index: 0,
+    limit: 10,
+    filter: [],
+  }
 
   advanceSearchClickHandler = (event) => {
     event.stopPropagation();
@@ -59,6 +76,37 @@ class DrugDetailGL extends React.Component<any, any> {
 
   saveClickHandler = () => {
     console.log("Save data");
+  };
+
+  onPageSize = (pageSize) => {
+    this.listPayload.limit = pageSize
+    this.getGLDrugsList({ limit: this.listPayload.limit });
+  }
+
+  onGridPageChangeHandler = (pageNumber: any) => {
+    this.listPayload.index = (pageNumber - 1) * this.listPayload.limit;
+    this.getGLDrugsList({ index: this.listPayload.index, limit: this.listPayload.limit });
+  }
+
+  onClearFilterHandler = () => {
+    this.listPayload.index = 0;
+    this.listPayload.limit = 10;
+    this.getGLDrugsList({ index: defaultListPayload.index, limit: defaultListPayload.limit });
+  }
+
+  onSelectedTableRowChanged = (selectedRowKeys) => {
+    this.state.selectedDrugs = [];
+    if (selectedRowKeys && selectedRowKeys.length > 0) {
+      let selDrugs = selectedRowKeys.map((ele) => {
+        return this.state.drugData[ele - 1]["md5_id"]
+          ? this.state.drugData[ele - 1]["md5_id"]
+          : "";
+      });
+
+      this.setState({ selectedDrugs: selDrugs });
+    } else {
+      this.setState({ selectedDrugs: [] });
+    }
   };
 
   getGLSummary = () => {
@@ -127,6 +175,7 @@ class DrugDetailGL extends React.Component<any, any> {
         gridItem["created_date"] = element.created_date ? "" + element.created_date : "";
         gridItem["modified_by"] = element.modified_by ? "" + element.modified_by : "";
         gridItem["modified_date"] = element.modified_date ? "" + element.modified_date : "";
+        gridItem["md5_id"] = element.md5_id ? "" + element.md5_id : "";
         count++;
         return gridItem;
       });
@@ -178,7 +227,35 @@ class DrugDetailGL extends React.Component<any, any> {
     let dataGrid = <FrxLoader />;
     if (this.state.data) {
       dataGrid = (
-        <DrugGrid columns={this.state.columns} data={this.state.data} />
+        <div className="tier-grid-container">
+          <FrxDrugGridContainer
+            isPinningEnabled={false}
+            enableSearch={false}
+            enableColumnDrag
+            onSearch={() => {}}
+            fixedColumnKeys={[]}
+            pagintionPosition="topRight"
+            gridName="DRUGSDETAILS"
+            enableSettings={false}
+            columns={getDrugDetailsColumnGL()}
+            scroll={{ x: 7000, y: 377 }}
+            isFetchingData={false}
+            enableResizingOfColumns
+            data={this.state.data}
+            getPerPageItemSize={this.onPageSize}
+            selectedCurrentPage={(this.listPayload.index/this.listPayload.limit + 1)}
+            pageSize={this.listPayload.limit}
+            onGridPageChangeHandler={this.onGridPageChangeHandler}
+            totalRowsCount={this.state.listCount}
+            clearFilterHandler={this.onClearFilterHandler}
+            rowSelection={{
+              columnWidth: 50,
+              fixed: true,
+              type: "checkbox",
+              onChange: this.onSelectedTableRowChanged,
+            }}
+          />
+        </div>
       );
     }
 

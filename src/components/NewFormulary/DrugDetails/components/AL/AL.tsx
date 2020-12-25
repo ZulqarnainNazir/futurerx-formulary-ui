@@ -1,5 +1,9 @@
 import React from "react";
 import { connect } from "react-redux";
+import Box from "@material-ui/core/Box";
+import { Row, Col } from "antd";
+import { Table } from "antd";
+import Grid from "@material-ui/core/Grid";
 import PanelHeader from "../../../../shared/Frx-components/panel-header/PanelHeader";
 import PanelGrid from "../../../../shared/Frx-components/panel-grid/PanelGrid";
 import CustomizedSwitches from "../FormularyConfigure/components/CustomizedSwitches";
@@ -10,7 +14,7 @@ import { getDrugDetailsColumnAL } from "../../../DrugDetails/components/Formular
 import { getDrugDetailData } from "../../../../../mocks/DrugGridMock";
 import FrxLoader from "../../../../shared/FrxLoader/FrxLoader";
 import AdvancedSearch from "../../../DrugDetails/components/FormularyConfigure/components/search/AdvancedSearch";
-import { getDrugDetailsALSummary, getDrugDetailsALList, postReplaceALDrug } from "../../../../../redux/slices/formulary/drugDetails/al/alActionCreation";
+import { getDrugDetailsALSummary, getDrugDetailsALList, postReplaceALDrug, getALCriteriaList } from "../../../../../redux/slices/formulary/drugDetails/al/alActionCreation";
 import * as alConstants from "../../../../../api/http-drug-details";
 import getLobCode from "../../../Utils/LobUtils";
 
@@ -23,6 +27,7 @@ function mapDispatchToProps(dispatch) {
     getDrugDetailsALSummary: (a) => dispatch(getDrugDetailsALSummary(a)),
     getDrugDetailsALList: (a) => dispatch(getDrugDetailsALList(a)),
     postReplaceALDrug: (a) => dispatch(postReplaceALDrug(a)),
+    getALCriteriaList: (a) => dispatch(getALCriteriaList(a)),
   };
 }
 
@@ -39,6 +44,7 @@ interface initialFormData {
   minimumType: any,
   maximumType: any,
   index: any,
+  covered: boolean,
 }
 
 interface drugDetailALState {
@@ -58,6 +64,9 @@ interface drugDetailALState {
   ageLimitsCount: number,
   isCovered: boolean,
   formData: initialFormData[],
+  showGrid: boolean,
+  showApply: boolean,
+  removeData: any,
 }
 
 const defaultListPayload = {
@@ -72,6 +81,7 @@ const initialFormData: initialFormData = {
   minimumType: "IO",
   maximumType: "IO",
   index: "",
+  covered: true,
 }
 
 class DrugDetailAL extends React.Component<any, any> {
@@ -95,7 +105,35 @@ class DrugDetailAL extends React.Component<any, any> {
     listCount: 0,
     ageLimitsCount: 1,
     isCovered: true,
-    formData: [],
+    showGrid: false,
+    showApply: false,
+    removeData: [],
+    formData: [
+      {
+        minimumVal: "",
+        maximumVal: "",
+        minimumType: "IO",
+        maximumType: "IO",
+        index: 0,
+        covered: true,
+      },
+      {
+        minimumVal: "",
+        maximumVal: "",
+        minimumType: "IO",
+        maximumType: "IO",
+        index: 1,
+        covered: true,
+      },
+      {
+        minimumVal: "",
+        maximumVal: "",
+        minimumType: "IO",
+        maximumType: "IO",
+        index: 2,
+        covered: true,
+      }
+    ],
   };
 
   listPayload: any = {
@@ -110,7 +148,24 @@ class DrugDetailAL extends React.Component<any, any> {
       maximumVal: "",
       minimumType: "IO",
       maximumType: "IO",
-      index: ""
+      index: 0,
+      covered: true,
+    },
+    {
+      minimumVal: "",
+      maximumVal: "",
+      minimumType: "IO",
+      maximumType: "IO",
+      index: 1,
+      covered: true,
+    },
+    {
+      minimumVal: "",
+      maximumVal: "",
+      minimumType: "IO",
+      maximumType: "IO",
+      index: 2,
+      covered: true,
     }
   ]
 
@@ -142,8 +197,21 @@ class DrugDetailAL extends React.Component<any, any> {
       apiDetails["messageBody"]["filter"] = [];
       apiDetails["messageBody"]["search_key"] = "";
       apiDetails["messageBody"]["limited_access"] = "";
-      apiDetails["messageBody"]["is_covered"] = this.state.isCovered;
-      apiDetails["messageBody"]["age_limits"] = [{"min_age_condition":"GT","min_age_limit":10,"max_age_condition":"LT","max_age_limit":50,"sequence_number":1}];
+      apiDetails["messageBody"]["is_covered"] = this.state.formData[0].covered;
+
+      let ageLimits: any[] = [];
+      for(let i=0; i<this.state.formData.length; i++) {
+        let ageObj = {
+          min_age_condition: this.state.formData[i].minimumType,
+          min_age_limit: this.state.formData[i].minimumVal,
+          max_age_condition: this.state.formData[i].maximumType,
+          max_age_limit: this.state.formData[i].maximumVal,
+          sequence_number: this.state.formData[i].index,
+        }
+        ageLimits.push(ageObj);
+      }
+      console.log("***********The Age Limits = ", ageLimits);
+      apiDetails["messageBody"]["age_limits"] = ageLimits;
 
       if (this.state.activeTabIndex === 0) {
         apiDetails["pathParams"] =
@@ -230,7 +298,7 @@ class DrugDetailAL extends React.Component<any, any> {
     console.log("THe Min input value = ", e.target?.value);
     this.formData1[index].minimumVal = e.target?.value;
     this.formData1[index].index = index;
-    this.setState({ formData: this.formData1 });
+    this.setState({ formData: this.formData1, showApply: true });
   };
 
   handleMaxChange = (e, index) => {
@@ -238,7 +306,7 @@ class DrugDetailAL extends React.Component<any, any> {
     console.log("THe Max input value = ", e.target?.value);
     this.formData1[index].maximumVal = e.target?.value;
     this.formData1[index].index = index;
-    this.setState({ formData: this.formData1 });
+    this.setState({ formData: this.formData1, showApply: true });
   };
 
   onMinChangeHandler = (e, index) => {
@@ -255,6 +323,20 @@ class DrugDetailAL extends React.Component<any, any> {
     this.formData1[index].maximumType = (e === "Less Than") ? "LT" : "IO" ;
     this.formData1[index].index = index;
     this.setState({ formData: this.formData1 });
+  }
+
+  coveredHandler = (e, index) => {
+    // this.formData1[index].covered = e.value === "covered" ? true : false;
+    let covered = e.value === "covered" ? true : false;
+    this.formData1.forEach(ele => {
+      ele.covered = covered
+    });
+    console.log("The covered formData1 = ", this.formData1);
+    this.setState({ formData: this.formData1 });
+  }
+
+  showGrid = () => {
+    this.getALDrugsList();
   }
 
   getALSummary = () => {
@@ -279,6 +361,39 @@ class DrugDetailAL extends React.Component<any, any> {
       this.setState({
         panelGridValue1: rows,
       });
+    });
+  }
+
+  getALCriteriaList = () => {
+    let apiDetails = {};
+    apiDetails["apiPart"] = alConstants.GET_AL_CRITERIA_LIST;
+    apiDetails["pathParams"] = this.props?.formulary_id;
+    apiDetails["keyVals"] = [{ key: alConstants.KEY_ENTITY_ID, value: this.props?.formulary_id }];
+    apiDetails["messageBody"] = {};
+    apiDetails["messageBody"]["is_advance_search"] = false;
+    apiDetails["messageBody"]["filter"] = [];
+    apiDetails["messageBody"]["search_key"] = "";
+    apiDetails["messageBody"]["selected_criteria_ids"] = [];
+    apiDetails["messageBody"]["not_covered"] = {};
+    apiDetails["messageBody"]["is_covered"] = this.state.isCovered;
+    console.log("The Api Details for Criteria Request = ", apiDetails);
+
+    this.props.getALCriteriaList(apiDetails).then((json) => {
+      let tmpData = json.payload && json.payload.result ? json.payload.result : [];
+      console.log("The Criteria LIst = ", tmpData);
+
+      let rows: any[] = []
+      for(let i=0; i<tmpData.length; i++) {
+        let obj = {};
+        obj["key"] = i;
+        obj["minAgeLimit"] = tmpData[i]["min_age_limit"];
+        obj["maxAgeLimit"] = tmpData[i]["max_age_limit"];
+
+        rows.push(obj);
+      }
+
+      console.log("The Remove Rows = ", rows);
+      this.setState({ removeData: rows });
     });
   }
 
@@ -329,6 +444,7 @@ class DrugDetailAL extends React.Component<any, any> {
         drugData: data,
         data: gridData,
         listCount: listCount,
+        showGrid: true,
       });
     });
   }
@@ -341,7 +457,6 @@ class DrugDetailAL extends React.Component<any, any> {
       data: data,
     });
     this.getALSummary();
-    this.getALDrugsList();
   }
 
   onClickTab = (selectedTabIndex: number) => {
@@ -353,6 +468,11 @@ class DrugDetailAL extends React.Component<any, any> {
       }
       return tab;
     });
+
+    if (activeTabIndex === 2) {
+      this.getALCriteriaList();
+    }
+
     this.setState({ tabs, activeTabIndex });
   };
 
@@ -404,6 +524,22 @@ class DrugDetailAL extends React.Component<any, any> {
         </div>
       );
     }
+
+    const removeColumns = [
+      {
+        title: "Min Age Limit",
+        dataIndex: "minAgeLimit",
+        key: "minAgeLimit",
+      },
+      {
+        title: "Maximum Age Limit",
+        dataIndex: "maxAgeLimit",
+        key: "maxAgeLimit",
+      },
+    ];
+
+    console.log("The Remove columns = ", removeColumns)
+    console.log("Remove State Data = ", this.state.removeData);
     
     return (
       <>
@@ -442,29 +578,65 @@ class DrugDetailAL extends React.Component<any, any> {
           </div>
         </div>
 
-        <AgeLimitSettings handleMinChange={this.handleMinChange} handleMaxChange={this.handleMaxChange} onMinChangeHandler={this.onMinChangeHandler} onMaxChangeHandler={this.onMaxChangeHandler}/>
+        <AgeLimitSettings
+          handleMinChange={this.handleMinChange}
+          handleMaxChange={this.handleMaxChange}
+          onMinChangeHandler={this.onMinChangeHandler}
+          onMaxChangeHandler={this.onMaxChangeHandler}
+          formData={this.state.formData}
+          showApply={this.state.showApply}
+          showGrid={this.showGrid}
+          coveredHandler={this.coveredHandler}
+        />
 
-        <div className="bordered">
-          <div className="header space-between pr-10">
-            Drug Grid
-            <div className="button-wrapper">
-              <Button
-                className="Button normal"
-                label="Advance Search"
-                onClick={this.advanceSearchClickHandler}
-              />
-              <Button label="Save" onClick={this.saveClickHandler} disabled={!(this.state.selectedDrugs.length > 0)} />
-            </div>
+        {this.state.activeTabIndex === 2 ? (
+          <div className="white-bg">
+            <Grid item xs={5}>
+              <div className="tier-grid-remove-container">
+                <Table
+                  columns={removeColumns}
+                  dataSource={this.state.removeData}
+                  pagination={false}
+                  rowSelection={{
+                    columnWidth: 20,
+                    fixed: true,
+                    type: "checkbox",
+                    onChange: () => {},
+                  }}
+                />
+              </div>
+            </Grid>
+            <Row justify="end">
+              <Col>
+                <Button label="Apply" onClick={() => {}}></Button>
+              </Col>
+            </Row>
           </div>
-          {dataGrid}
-          {this.state.isSearchOpen ? (
-            <AdvancedSearch
-              category="Grievances"
-              openPopup={this.state.isSearchOpen}
-              onClose={this.advanceSearchClosekHandler}
-            />
-          ) : null}
-        </div>
+        ) : null}
+
+        {this.state.showGrid ? (
+          <div className="bordered">
+            <div className="header space-between pr-10">
+              Drug Grid
+              <div className="button-wrapper">
+                <Button
+                  className="Button normal"
+                  label="Advance Search"
+                  onClick={this.advanceSearchClickHandler}
+                />
+                <Button label="Save" onClick={this.saveClickHandler} disabled={!(this.state.selectedDrugs.length > 0)} />
+              </div>
+            </div>
+            {dataGrid}
+            {this.state.isSearchOpen ? (
+              <AdvancedSearch
+                category="Grievances"
+                openPopup={this.state.isSearchOpen}
+                onClose={this.advanceSearchClosekHandler}
+              />
+            ) : null}
+          </div>
+        ) : null}
       </>
     );
   }

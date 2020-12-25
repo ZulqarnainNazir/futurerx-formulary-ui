@@ -1,6 +1,14 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { getDrugDetailsICDSummary } from "./icdActionCreation";
-import { getICDSummaryFulfilled, getICDSummaryRejected } from "./icdReducers";
+import {
+  getDrugDetailsICDSummary,
+  getDrugDetailsICDList,
+} from "./icdActionCreation";
+import {
+  getICDSummaryFulfilled,
+  getICDSummaryRejected,
+  postICDListFulfilled,
+  postICDListRejected,
+} from "./icdReducers";
 
 const icdState: any = {
   data: {},
@@ -20,6 +28,23 @@ export const icdSlice = createSlice({
     }),
     builder.addCase(getDrugDetailsICDSummary.rejected, (state, action) => {
       getICDSummaryRejected(state, action);
+    })
+  ),
+});
+
+export const icdListSlice = createSlice({
+  name: "icdDrugList",
+  initialState: icdState,
+  reducers: {},
+  extraReducers: (builder) => (
+    builder.addCase(getDrugDetailsICDList.pending, (state, action) => {
+      state.isLoading = true;
+    }),
+    builder.addCase(getDrugDetailsICDList.fulfilled, (state, action) => {
+      postICDListFulfilled(state, action);
+    }),
+    builder.addCase(getDrugDetailsICDList.rejected, (state, action) => {
+      postICDListRejected(state, action);
     })
   ),
 });

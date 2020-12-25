@@ -70,6 +70,7 @@ export const GET_SSM_FORMULARY_DRUGS = "api/1/formulary-drugs-ssm/";
 export const GET_DRUG_SUMMARY_AL = "api/1/formulary-drug-summary-al/";
 export const GET_AL_DRUGS = "api/1/formulary-drugs-al/";
 export const APPLY_AL_DRUG = "api/1/apply-formulary-drug-al/";
+export const GET_AL_CRITERIA_LIST = "api/1/criteria-list-al/";
 
 // GL TAB
 export const GET_DRUG_SUMMARY_GL = "api/1/formulary-drug-summary-gl/"
@@ -77,6 +78,7 @@ export const GET_GL_DRUGS = "api/1/formulary-drugs-gl/"
 
 // ICD TAB
 export const GET_DRUG_SUMMARY_ICD = "api/1/formulary-drug-summary-icdl/"
+export const GET_ICD_DRUGS = "api/1/formulary-drugs-icdl/";
 
 // PN TAB
 export const GET_DRUG_SUMMARY_PN = "api/1/formulary-drug-summary-phnw/"
@@ -89,6 +91,7 @@ export const GET_DRUG_SUMMARY_POS = "api/1/formulary-drug-summary-pos/"
 
 // PR TAB
 export const GET_DRUG_SUMMARY_PR = "api/1/formulary-drug-summary-patrs/";
+export const GET_PR_LIST = "api/1/patient-residences";
 
 export const KEY_ENTITY_ID = "entity_id";
 export const KEY_INDEX = "index";
