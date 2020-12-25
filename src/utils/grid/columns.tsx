@@ -1327,10 +1327,6 @@ export const QlColumns: () => Column<any>[] = () => {
       hidden: false,
       sortDirections: ["ascend", "descend"],
     },
-<<<<<<< HEAD
-
-=======
->>>>>>> b779b5187d8c53a7b9a2cd9db89e0d1fcabb786e
     {
       position: 16,
       sorter: {},
@@ -1521,10 +1517,6 @@ export const formularyDetailsGridColumns: (
       isFilterable: true,
       dataType: "string",
       filters: textFilters,
-<<<<<<< HEAD
-      // enableIntellisense: true,
-=======
->>>>>>> b779b5187d8c53a7b9a2cd9db89e0d1fcabb786e
       hidden:
         hiddenColumns && hiddenColumns.indexOf("formulary_name") !== -1
           ? true
