@@ -3,6 +3,7 @@ import { connect } from "react-redux";
 import "./FormularySetUp.scss";
 import GeneralInformation from "./components/GeneralInformation";
 import FormularyDesign from "./components/FormularyDesign";
+import FormularyDesignCommercial from "./components/FormularyDesignCommercial";
 import FormularyTiers from "./components/FormularyTiers";
 import MedicareInformation from "./components/MedicareInformation";
 import SupplementalModels from "./components/SupplementalModels";
@@ -12,7 +13,7 @@ import FrxLoader from "../../../../shared/FrxLoader/FrxLoader";
 import {
   fetchSelectedFormulary,
   verifyFormularyName,
-  saveFormulary
+  saveFormulary,
 } from "../../../../.././redux/slices/formulary/setup/setupSlice";
 import { Formulary } from "../../../../../redux/slices/formulary/setup/formulary";
 import {
@@ -24,9 +25,10 @@ import {
   fetchSubMthsOptions,
   fetchStatesOptions,
 } from "../../../../.././redux/slices/formulary/setup/setupOptionsSlice";
-import { ToastContainer } from 'react-toastify';
+import { ToastContainer } from "react-toastify";
 import showMessage from "../../../Utils/Toast";
-import { trim } from "lodash";
+import { trim,throttle } from "lodash";
+import { Save } from "@material-ui/icons";
 
 class FormularySetUp extends React.Component<any, any> {
   state = {
@@ -41,7 +43,7 @@ class FormularySetUp extends React.Component<any, any> {
       service_year: "",
       description: "",
       classification_system: "",
-      is_closed_formulary: false,
+      is_closed_formulary: null,
       isState: false,
       selectedState: "",
       state_id: (null as unknown) as number,
@@ -62,10 +64,13 @@ class FormularySetUp extends React.Component<any, any> {
     supplemental_benefit_info: {
       supplemental_benefits: [] as any,
     },
+    designOptions: [],
     tiers: [],
     edit_info: {
       edits: [],
       edits_no: [],
+      custom_edits: [],
+      removed_formulary_edits: []
     },
     setupOptions: {},
   };
@@ -84,7 +89,7 @@ class FormularySetUp extends React.Component<any, any> {
   }
 
   manageFormularyType(type: number, id: number) {
-    console.log(" TYPE :: " + type);
+    // console.log(" Manage - TYPE : " + type + " ID : " + id);
 
     if (type === -1) {
       this.props.fetchGeneralOptions({ type: 1, id: -1 });
@@ -121,7 +126,9 @@ class FormularySetUp extends React.Component<any, any> {
       medeicareContract.medicare_contract_types = newProps.formulary?.medicare_contract_types?.map(
         (e) => e.id_medicare_contract_type
       );
-
+      
+      const classificationSystem = newProps.formulary.formulary_info.id_classification_system;
+      console.log(classificationSystem)
       this.setState({
         isUpdate: true,
         generalInformation: {
@@ -133,10 +140,8 @@ class FormularySetUp extends React.Component<any, any> {
           method: newProps.formulary.formulary_info.formulary_build_method,
           service_year: newProps.formulary.formulary_info.contract_year,
           description: newProps.formulary.formulary_info.formulary_description,
-          classification_system:
-            newProps.formulary.formulary_info.id_classification_system,
-          is_closed_formulary:
-            newProps.formulary.formulary_info.is_closed_formulary,
+          classification_system: classificationSystem ,
+          is_closed_formulary: newProps.formulary.formulary_info.is_closed_formulary,
           medicare_types_ref_other: false,
         },
         medicare_contract_type_info: medeicareContract,
@@ -148,34 +153,56 @@ class FormularySetUp extends React.Component<any, any> {
         tiers: [...newProps.formulary.tiers],
         fetchedEditInfo: newProps.formulary.edit_info,
         edit_info: this.getEditInfo(newProps.formulary.edit_info),
+        designOptions: [...newProps.setupOptions?.designOptions],
         setupOptions: newProps.setupOptions,
       });
     }
     if (newProps.mode === "NEW" && newProps.setupOptions.generalOptions) {
+      const classificationSystem = newProps.setupOptions.generalOptions.classification_systems?.length === 1 && 
+                                   newProps.setupOptions.generalOptions.classification_systems[0].id_classification_system === 10 ? 
+                                   10 : '';
+      const defaultDesignId = newProps.setupOptions?.designOptions?.filter(e => e.edit_name === 'N/A')?.map(e => e.id_edit);
+      const newEditInfo:any = {...this.state.edit_info};
+      const newGeneralOption:any = {...this.state.generalInformation};
+      newGeneralOption.classification_system = classificationSystem;
+      newEditInfo.edits = defaultDesignId !== undefined ? [...defaultDesignId] : [];
       this.setState({
         isUpdate: true,
+        generalInformation: newGeneralOption,
         supplemental_benefit_info: {
           supplemental_benefits: [],
         },
+        edit_info: newEditInfo,
         tiers: [],
       });
     }
   };
   getEditInfo = (editInfo: any) => {
-    const editTrue = editInfo
+    let editTrue = editInfo
       .filter((obj) => obj.id_checked === true)
       .map((e) => e.id_edit);
     const editFalse = editInfo
       .filter((obj) => obj.id_checked === false)
       .map((e) => e.id_edit);
-    const customEdit = editInfo;
+    let customEdit:any = '';
+    if(this.props.formulary_type_id === 6){
+      customEdit = this.props.setupOptions.designOptions.filter(e => e.is_custom === true);
+      const customEditId = customEdit.map(e=> e.id_edit);
+      editTrue = editTrue.filter(e => customEditId.indexOf(e) === -1);
+    }
     const newObj = {
       edits: editTrue,
       edits_no: editFalse,
-      custom_edits: "",
+      custom_edits: customEdit,
+      removed_formulary_edits: []
     };
     return newObj;
   };
+  formularyDesignCommercialCheckHandler = (getObj:any) => {
+    this.setState({
+      edit_info: getObj
+    })
+  }
   formularyRadioChangeHandler = (
     event: React.ChangeEvent<HTMLInputElement>,
     id: any,
@@ -219,7 +246,7 @@ class FormularySetUp extends React.Component<any, any> {
       this.props.verifyFormularyName(e.currentTarget.value);
     }
   };
-  
+
   onOtherMedicareHandler = (e) => {
     const custom = { ...this.state.medicare_contract_type_info };
     custom.custom_medicare_contract_type.medicare_contract_type =
@@ -264,7 +291,8 @@ class FormularySetUp extends React.Component<any, any> {
     _section
   ) => {
     const newObj = { ...this.state.generalInformation };
-    newObj[event.target.name] = event.target.value;
+    const val = event.target.value === 'true' ? true : event.target.value === 'false' ? false : event.target.value
+    newObj[event.target.name] = val;
     this.setState({
       generalInformation: newObj,
     });
@@ -278,24 +306,24 @@ class FormularySetUp extends React.Component<any, any> {
     this.setState({
       [section]: newObj,
     });
-  }
-  medicareCheck = (getObject:any) => {
+  };
+  medicareCheck = (getObject: any) => {
     this.setState({
-      medicare_contract_type_info: getObject
-    })
-  }
-  onMedicareOtherCheck = (getObject:any) => {
+      medicare_contract_type_info: getObject,
+    });
+  };
+  onMedicareOtherCheck = (getObject: any) => {
     this.setState({
-      generalInformation: getObject
-    })
-  }
-  supplementalCheck = (getObject:any) => {
+      generalInformation: getObject,
+    });
+  };
+  supplementalCheck = (getObject: any) => {
     this.setState({
-      supplemental_benefit_info: getObject
-    })
-  }
+      supplemental_benefit_info: getObject,
+    });
+  };
   onSave = (e) => {
-    console.log("  SAVE  ", e);
+    console.log("  SAVE ", e);
     if (this.props.mode === "NEW") {
       let msg: string[] = [];
       if (this.state.generalInformation.type_id === "") {
@@ -313,11 +341,13 @@ class FormularySetUp extends React.Component<any, any> {
       if (this.state.generalInformation.service_year === "") {
         msg.push("Formulary Service year is required.");
       }
+      // if(e && this.tierCheck()){
+      //   msg.push("Formulary Service year is required.");
+      // }
       if (msg.length > 0) {
         msg.forEach((m) => {
           showMessage(m, "info");
         });
-        //showMessage(msg[0], 'error');
         return;
       }
     }
@@ -325,13 +355,46 @@ class FormularySetUp extends React.Component<any, any> {
     const input = {
       MODE: this.props.mode,
       CONTINUE: e,
+      formulary_id: -1,
+      is_setup_complete:false,
       GENERAL_INFO: this.state.generalInformation,
       edit_info: this.state.edit_info,
       supplemental_benefit_info: this.state.supplemental_benefit_info,
       medicare_contract_type_info: this.state.medicare_contract_type_info,
       tiers: this.state.tiers,
     };
-    this.props.saveFormulary(input);
+
+    if(this.props.mode==="EXISTING"){
+      input.formulary_id = this.props.formulary_id;
+      input.is_setup_complete = this.props?.formulary?.formulary_info?.is_setup_complete;
+    } else {
+      input.formulary_id = -1;
+      input.is_setup_complete = false; 
+    }
+
+    this.props.saveFormulary(input).then((arg) => {
+      //console.log("SAVE Callback ", arg?.payload);
+      if (arg?.payload?.type > 0 && arg?.payload?.id > 0) {
+        console.log(
+          "REFRESH.... TYPE : " +
+            arg?.payload?.type +
+            " ID : " +
+            arg?.payload?.id +
+            " CONTINUE : " +
+            arg?.payload?.continue + 
+            " EARLIER MODE : " +
+            arg?.payload?.earlier_mode  
+        );
+        this.manageFormularyType(arg?.payload?.type, arg?.payload?.id);
+        this.props.fetchSelectedFormulary(arg?.payload?.id);
+        if(arg?.payload?.earlier_mode ==="NEW"){
+          showMessage(`Formulary Created. ID:${arg?.payload?.id}`, "success");
+        } else if(arg?.payload?.earlier_mode ==="EXISTING"){
+          showMessage(`Formulary Updated. ID: ${arg?.payload?.id}`, "success");
+        }
+
+      }
+    });
   };
   onCheckUncheckAllSupplementalHandler = (val) => {
     if (val === "uncheck") {
@@ -384,6 +447,13 @@ class FormularySetUp extends React.Component<any, any> {
       tiers: updatedTiers,
     });
   };
+  setDefaultClassificationHandler = (id) => {
+    let newObj:any = {...this.state.generalInformation};
+    newObj.classification_system = parseInt(id);
+    this.setState({
+      generalInformation: newObj
+    })
+  }
   render() {
     return (
       <div>
@@ -403,7 +473,10 @@ class FormularySetUp extends React.Component<any, any> {
                 {this.state.generalInformation.type !== "Commercial" ? (
                   <MedicareInformation
                     allMedicareOptions={this.state.medicare_contract_type_info}
-                    medicareOptions={this.state.medicare_contract_type_info.medicare_contract_types}
+                    medicareOptions={
+                      this.state.medicare_contract_type_info
+                        .medicare_contract_types
+                    }
                     medicareCheck={this.medicareCheck}
                     generalInfo={this.state.generalInformation}
                     onMedicareOtherCheck={this.onMedicareOtherCheck}
@@ -413,6 +486,13 @@ class FormularySetUp extends React.Component<any, any> {
                 {this.state.generalInformation.type !== "Commercial" ? (
                   <FormularyDesign
                     edit_info={this.state.edit_info}
+                    formularyRadioChange={this.formularyRadioChangeHandler}
+                  />
+                ) : null}
+                {this.state.generalInformation.type === "Commercial" ? (
+                  <FormularyDesignCommercial
+                    edit_info={this.state.edit_info}
+                    formularyDesignCommercialCheck = {this.formularyDesignCommercialCheckHandler}
                     formularyRadioChange={this.formularyRadioChangeHandler}
                   />
                 ) : null}
@@ -443,7 +523,6 @@ class FormularySetUp extends React.Component<any, any> {
                 <Button
                   label="Save"
                   onClick={() => this.onSave(false)}
-                  disabled={this.props.mode === "EXISTING"}
                 />
               </Box>
               <Box
@@ -454,7 +533,6 @@ class FormularySetUp extends React.Component<any, any> {
                 <Button
                   label="Save & Continue"
                   onClick={() => this.onSave(true)}
-                  disabled="true"
                 />
               </Box>
             </div>
@@ -469,11 +547,23 @@ class FormularySetUp extends React.Component<any, any> {
   }
 }
 
+var throt_fun = throttle(
+  function (message,messageType) {
+    //console.log(">>>>>>>>...");
+    showMessage(message, messageType);
+  },
+  800,
+  { leading: true, trailing:false }
+);
+
 const mapStateToProps = (state) => {
   //  console.log("SP  -  -  -  -  -  -  -  -  -  -  -  - STATE");
   //  console.log(state?.setup?.messageType +" - "+ state?.setup?.message  );
-  if(state?.setup?.messageType!=="" && state?.setup?.message !==""){
-    showMessage(state?.setup?.message, state?.setup?.messageType);
+  if (state?.setup?.messageType !== "" && state?.setup?.message !== "") {
+    // console.log(">>>>>>>>>>> " + state?.setup?.messageType +" | "+state?.setup?.message);
+    // showMessage(state?.setup?.message, state?.setup?.messageType);
+    // console.log("--------");
+    throt_fun(state?.setup?.message, state?.setup?.messageType);
   }
   return {
     mode: state?.application?.mode,

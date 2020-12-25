@@ -6,7 +6,7 @@ import { Table } from "antd";
 import Grid from "@material-ui/core/Grid";
 import { Row, Col } from "antd";
 import Button from "../../../../../shared/Frx-components/button/Button";
-import AdvancedSearch from './search/AdvancedSearch';
+import AdvanceSearchContainer from '../../../../NewAdvanceSearch/AdvanceSearchContainer';
 import * as tierConstants from "../../../../../../api/http-tier";
 import * as commonConstants from "../../../../../../api/http-commons";
 import FrxDrugGridContainer from "../../../../../shared/FrxGrid/FrxDrugGridContainer";
@@ -109,8 +109,8 @@ class TierRemove extends React.Component<any, tabsState> {
         apiDetails['messageBody']['selected_criteria_ids'] = this.state.selectedCriteria;
       }
 
-      if(searchBody){
-        apiDetails['messageBody'] = Object.assign(apiDetails['messageBody'],searchBody);
+      if (searchBody) {
+        apiDetails['messageBody'] = Object.assign(apiDetails['messageBody'], searchBody);
       }
 
       const drugGridData = this.props.postTierApplyInfo(apiDetails).then((json => {
@@ -171,7 +171,7 @@ class TierRemove extends React.Component<any, tabsState> {
           const TierDefinationData = this.props.getTier(apiDetails).then((json => {
             this.setState({ tierGridContainer: true });
           }))
-        }else{
+        } else {
           showMessage('Failure', 'error');
         }
       }))
@@ -179,10 +179,10 @@ class TierRemove extends React.Component<any, tabsState> {
   }
 
   componentWillReceiveProps(nextProps) {
-    if(nextProps.advancedSearchBody && nextProps.populateGrid){
+    if (nextProps.advancedSearchBody && nextProps.populateGrid) {
       this.populateGridData(nextProps.advancedSearchBody);
-      let payload = {advancedSearchBody:nextProps.advancedSearchBody,  populateGrid: false , closeDialog: nextProps.closeDialog};
-      if(nextProps.closeDialog){
+      let payload = { advancedSearchBody: nextProps.advancedSearchBody, populateGrid: false, closeDialog: nextProps.closeDialog, listItemStatus: nextProps.listItemStatus };
+      if (nextProps.closeDialog) {
         this.state.isSearchOpen = false;
         payload['closeDialog'] = false;
       }
@@ -314,8 +314,7 @@ class TierRemove extends React.Component<any, tabsState> {
               </div>
             </div>
             {this.state.isSearchOpen ? (
-              <AdvancedSearch
-                category="Grievances"
+              <AdvanceSearchContainer
                 openPopup={this.state.isSearchOpen}
                 onClose={this.advanceSearchClosekHandler} />
             ) : (

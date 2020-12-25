@@ -95,7 +95,6 @@ const mapStateToProps = (state) => {
   return {
     tierOptionsOptions: state?.setupOptions?.tierOptions,
     selectedTiersOptions: state?.setup?.formulary?.tiers,
-    designOptions: state?.setupOptions?.designOptions,
     editInfo: state?.setup?.formulary?.edit_info
   };
 };

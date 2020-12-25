@@ -3,6 +3,7 @@ import Grid from "@material-ui/core/Grid";
 import DropDown from "../../../../../shared/Frx-components/dropdown/DropDown";
 import RadioButton from "../../../../../shared/Frx-components/radio-button/RadioButton";
 import { DatePicker, Select } from "antd";
+import moment from 'moment';
 import PanelHeader from "../../FormularyConfigure/components/PanelHeader";
 import Button from '../../../../../shared/Frx-components/button/Button';
 import {connect} from "react-redux";
@@ -17,7 +18,7 @@ import DialogPopup from "../../../../../shared/FrxDialogPopup/FrxDialogPopup";
 import FormControl from '@material-ui/core/FormControl';
 import FormLabel from '@material-ui/core/FormLabel';
 const mapStateToProps = (state) => {
-  console.log(state);
+  //console.log(state);
   return {
     formulary: state?.setup?.formulary,
     formulary_mode: state?.setup?.mode,
@@ -86,19 +87,19 @@ class GeneralInformation extends React.Component<any, GeneralInformationState> {
     return radioGroup;
   }
   changeMethodHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
-    console.log((event.target.value))
+    //console.log((event.target.value))
     this.setState({
       selectedMethod: event.target.value
     })
   }
   getClassificationRadio = () => {
     let classificationRadio:any = null;
-    let value = this.props.generalInfo.classification_system;
+    let value = parseInt(this.props.generalInfo.classification_system);
     const radi = <RadioGroup 
     className="radio-group-custom" 
     aria-label={'classification_system'} 
     name="classification_system"
-    value={this.props.generalInfo.classification_system?.toString()} 
+    value={value} 
     onChange={(e) => this.props.onRadioChange(e,'generalInformation')}>
       {this.props.general_options.classification_systems.map(el => {
         return (
@@ -207,6 +208,23 @@ class GeneralInformation extends React.Component<any, GeneralInformationState> {
       tagCategories: [...value],
     });
   };
+  isOpenFormularyOptions = () => {
+    const val = (this.props.generalInfo?.is_closed_formulary === 'true' || this.props.generalInfo?.is_closed_formulary === true) ? true : 
+                (this.props.generalInfo?.is_closed_formulary === 'false' || this.props.generalInfo?.is_closed_formulary === false) ? false : null;
+    return <RadioGroup 
+              className="radio-group-custom" 
+              aria-label={'is_closed_formulary'} 
+              name="is_closed_formulary"
+              value={val} 
+              onChange={(e) => this.props.onRadioChange(e,"generalInformation")}>
+              <FormControlLabel value={true} control={<Radio />} label="Closed" />
+              <FormControlLabel value={false} control={<Radio />} label="Open" />
+          </RadioGroup>
+  }
+  disabledDate = (current) => {
+    // Can not select days before today and today
+    return current && current < moment().endOf('day');
+  }
   render() {
     const { Option } = Select;
     const {
@@ -260,7 +278,7 @@ class GeneralInformation extends React.Component<any, GeneralInformationState> {
                 <label>
                   FORMULARY NAME <span className="astrict">*</span>
                 </label>
-                <input type="text" id="name" className="setup-input-fields" name="name" value={this.props.generalInfo.name} onChange={this.props.updateInputField}/>
+                <input disabled={disabled} type="text" id="name" className="setup-input-fields" name="name" value={this.props.generalInfo.name} onChange={this.props.updateInputField}/>
               </div>
             </Grid>
             <Grid item xs={4}>
@@ -278,7 +296,8 @@ class GeneralInformation extends React.Component<any, GeneralInformationState> {
                 className="effective-date"
                 placeholder={FORMULARY ? FORMULARY_Values.effective_date : ''}
                 disabled={disabled}
-
+                disabledDate={this.disabledDate}
+                format={'MM/DD/YYYY'}
                 onChange={(e) => this.props.datePickerChange(e,'generalInformation','effective_date')}
                 suffixIcon={
                   <svg
@@ -311,9 +330,9 @@ class GeneralInformation extends React.Component<any, GeneralInformationState> {
                     name="method"
                     value={this.props.generalInfo.method?.toString()} 
                     onChange={(e) => this.props.onRadioChange(e,'generalInformation')}>
-                    <FormControlLabel value="clone" control={<Radio />} label="Clone" />
-                    <FormControlLabel value="upload" control={<Radio />} label="Upload" />
-                    <FormControlLabel value="N" control={<Radio />} label="Create New" />
+                    <FormControlLabel disabled={disabled} value="clone" control={<Radio />} label="Clone" />
+                    <FormControlLabel disabled={disabled} value="upload" control={<Radio />} label="Upload" />
+                    <FormControlLabel disabled={disabled} value="N" control={<Radio />} label="Create New" />
                   </RadioGroup>
                 </div>
                 
@@ -356,11 +375,14 @@ class GeneralInformation extends React.Component<any, GeneralInformationState> {
               </div>
             </Grid>
             <Grid item xs={4}>
-              <div className="group">
-                <label>Which prior year's formulary does this most closely resemble?</label>
-                <a href="#" className="input-link select-formulary-link">Select Formulary</a>
-              </div>
+              {this.props.generalInfo.type !== 'Commercial' ? (
+                <div className="group">
+                  <label>Which prior year's formulary does this most closely resemble?</label>
+                  <a href="#" className="input-link select-formulary-link">Select Formulary</a>
+                </div>
+              ):null}
             </Grid>
+            
             <Grid item xs={4}>
               <div className="group setup-panel">
                 <PanelHeader
@@ -369,7 +391,8 @@ class GeneralInformation extends React.Component<any, GeneralInformationState> {
                   required
                 />
                 <div className="marketing-material radio-group">
-                  <RadioGroup 
+                  {this.getClassificationRadio()}
+                  {/* <RadioGroup 
                   className="radio-group-custom" 
                   aria-label={'classification_system'} 
                   name="classification_system"
@@ -383,7 +406,7 @@ class GeneralInformation extends React.Component<any, GeneralInformationState> {
                           label={el.classification_system} />
                       )
                     })}
-                  </RadioGroup>
+                  </RadioGroup> */}
                 </div>
               </div>
             </Grid>
@@ -396,15 +419,7 @@ class GeneralInformation extends React.Component<any, GeneralInformationState> {
                     required
                   />
                   <div className="marketing-material radio-group">
-                    <RadioGroup 
-                        className="radio-group-custom" 
-                        aria-label={'classification_system'} 
-                        name="is_formulary_open"
-                        value={this.props.generalInfo?.is_closed_formulary?.toString()} 
-                        onChange={(e) => this.props.onRadioChange(e,"generalInformation")}>
-                        <FormControlLabel value="true" control={<Radio />} label="Closed" />
-                        <FormControlLabel value="false" control={<Radio />} label="Open" />
-                    </RadioGroup>
+                    {this.isOpenFormularyOptions()}
                   </div>
                 </div>
               </Grid>

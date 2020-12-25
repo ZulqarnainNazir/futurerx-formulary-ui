@@ -5,7 +5,7 @@ import {
   getformulary,
   checkNameExist,
   composePostBody,
-  createFormulary,
+  createORUpdateFormulary,
 } from "./setupService";
 import { setFullFormulary } from "./../application/applicationSlice";
 import { stat } from "fs";
@@ -92,10 +92,10 @@ const setup = createSlice({
       console.log("***** saveFormularySuccess : ", payload);
       if (payload) {
         if (payload.status === 200) {
-          state.message = "Formulary created successfully";
-          state.messageType = "success";
-          state.isLoading = false;
-          state.error = null;
+          // state.message = "Formulary created successfully";
+          // state.messageType = "success";
+          // state.isLoading = false;
+          // state.error = null;
         } else if (payload.status === 400) {
           state.message = payload?.data?.message;
           state.messageType = "error";
@@ -113,13 +113,10 @@ export const fetchSelectedFormulary = createAsyncThunk(
   async (id: number, { dispatch }) => {
     console.log("***** fetchSelectedFormulary ( " + id + " ) ");
     try {
-      console.log("--------------0");
       if (id === -1) {
         dispatch(setNewFormularySuccess());
         return;
       }
-      console.log("--------------1");
-
       dispatch(getformularyStart());
       const formulary: Formulary = await getformulary(id);
 
@@ -152,27 +149,40 @@ export const saveFormulary = createAsyncThunk(
   "setup",
   async (input: any, { dispatch }) => {
     console.log("***** saveFormulary .... ");
+    console.log(input);
     if (input?.MODE === "NEW") {
-      const payload = composePostBody(input);
-      // console.log(" - - - - - - - - - - - - - - - -");
-      // console.log(payload);
-      // console.log(" - - - - - - - - - - - - - - - -");
-      try {
-        dispatch(saveFormularyStart());
-        const resp: any = await createFormulary(payload);
-        console.log("- - - -- - - - - - -- - - -");
-        console.log(resp);
-        if (resp) {
-          dispatch(saveFormularySuccess(resp));
-          if (resp?.status === 200) {
-            dispatch(fetchSelectedFormulary(resp?.data));
-          }
-        }
-      } catch (err) {
-        console.log("***** saveFormulary - ERROR ");
-        dispatch(saveFormularyFailure(err.toString()));
-      }
     } else if (input?.MODE === "EXISTING") {
+    }
+
+    const payload = composePostBody(input);
+    // console.log(" - - - - - - - - - - - - - - - -");
+    // console.log(payload);
+    // console.log(" - - - - - - - - - - - - - - - -");
+    try {
+      dispatch(saveFormularyStart());
+      const resp: any = await createORUpdateFormulary(
+        payload,
+        input.formulary_id
+      );
+      console.log("- - - -- - - - - - -- - - -");
+      console.log(resp);
+      if (resp) {
+        dispatch(saveFormularySuccess(resp));
+        if (resp?.status === 200) {
+          //dispatch(fetchSelectedFormulary(resp?.data));
+          return {
+            type: payload?.formulary_info?.id_formulary_type,
+            id: resp?.data,
+            earlier_mode: input?.MODE,
+            continue: input?.CONTINUE,
+          };
+        } else {
+          return null;
+        }
+      }
+    } catch (err) {
+      console.log("***** saveFormulary - ERROR ");
+      dispatch(saveFormularyFailure(err.toString()));
     }
   }
 );

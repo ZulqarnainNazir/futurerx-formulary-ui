@@ -19,6 +19,28 @@ export const getStepTherapyRejected = (state, action) => {
 }
 
 
+
+export const getStDescriptionFulfilled = (state, action) => {
+  console.log("Reducer::getPaFulfilled");
+  state.isLoading = false;
+  if(action.payload.data === undefined || (action.payload.data.length === 0)) {
+    console.log("getPaFulfilled: Payload invalid");
+    return;
+  }
+  const data = action.payload.data;
+  // Response stored in the redux store.
+  state.description = data;
+  
+}
+
+export const getStDescriptionRejected = (state, action) => {
+  console.log("Reducer::getPaRejected");
+  state.isLoading = false;
+  state.description = {};
+
+}
+
+
 export const getVersionFulfilled = (state, action) => {
   state.isLoading = false;
   let stVersion

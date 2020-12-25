@@ -2,12 +2,13 @@ import {createSlice} from "@reduxjs/toolkit";
 import { combineReducers } from 'redux'
 
 import { getStSummary,getStGrouptDescription,getStGrouptDescriptionVersions } from "./stepTherapyActionCreation";
-import { getStepTherapyFulfilled,getStepTherapyRejected,getVersionFulfilled,getVersionRejected } from "./stepTherapyReducers";
+import { getStepTherapyFulfilled,getStepTherapyRejected,getVersionFulfilled,getVersionRejected,getStDescriptionFulfilled,getStDescriptionRejected } from "./stepTherapyReducers";
 
 const tierState: any = {
   data: {},
   isLoading: false,
-  stVersion:{}
+  stVersion:{},
+  description:{}
 }
 
 export const stepTherapySlice = createSlice({
@@ -30,10 +31,10 @@ export const stepTherapySlice = createSlice({
       state.isLoading = true;
     }),
     builder.addCase(getStGrouptDescription.fulfilled, (state, action) => {
-      getStepTherapyFulfilled(state, action);
+      getStDescriptionFulfilled(state, action);
     }),
     builder.addCase(getStGrouptDescription.rejected, (state, action) => {
-      getStepTherapyRejected(state, action);
+      getStDescriptionRejected(state, action);
     })
   )
 });

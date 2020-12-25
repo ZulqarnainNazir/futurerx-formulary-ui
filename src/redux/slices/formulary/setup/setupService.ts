@@ -2,12 +2,7 @@ import axios from "axios";
 import { BASE_URL1 } from "../../../../api/http-helper";
 import { Formulary } from "./../setup/formulary";
 import { FormularyPost } from "./../setup/formularyPayload";
-
-const headers = {
-  Authorization: "Bearer 5d123376-9888-4a4f-a167-9494485fe10d",
-  Accept: "application/json",
-  "Content-Type": "application/json;charset=UTF-8",
-};
+import { REQUEST_HEADER } from "../../../../api/http-commons";
 
 export async function getformulary(
   formulary_id: any
@@ -15,7 +10,7 @@ export async function getformulary(
   let url = `${BASE_URL1}api/1/formulary-setup/${formulary_id}?entity_id=${formulary_id}`;
   try {
     const response = await axios.get(url, {
-      headers: headers,
+      headers: REQUEST_HEADER,
     });
     //console.log("***** SETUP getformulary  - Success");
     //console.log(response);
@@ -41,7 +36,7 @@ export async function checkNameExist(name: string): Promise<boolean | any> {
   url = url + `/1`;
   try {
     const response = await axios.get(url, {
-      headers: headers,
+      headers: REQUEST_HEADER,
     });
     // console.log("***** checkNameExist  - Success");
     // console.log(response);
@@ -57,45 +52,59 @@ export async function checkNameExist(name: string): Promise<boolean | any> {
 }
 
 export function composePostBody(input: any): any {
-  console.log("***** composePostBody");
+  console.log("***** composeBody");
 
   const payload: any = {};
   payload.formulary_info = {};
-  payload.formulary_info.id_formulary_type = input.GENERAL_INFO?.type_id;
-  payload.formulary_info.formulary_type_name = input.GENERAL_INFO?.type;
-  payload.formulary_info.formulary_build_method = input.GENERAL_INFO?.method;
-  payload.formulary_info.formulary_name = input.GENERAL_INFO?.name;
-  payload.formulary_info.abbreviation = input.GENERAL_INFO?.abbreviation;
-  payload.formulary_info.formulary_description =
-    input.GENERAL_INFO?.description;
-  payload.formulary_info.effective_date = input.GENERAL_INFO?.effective_date;
-  payload.formulary_info.contract_year = input.GENERAL_INFO?.service_year;
-  payload.formulary_info.id_state = input.GENERAL_INFO?.state_id;
-  // TODO  - - - - - - - - - - - - -
-  //payload.formulary_info.id_lob = 1;
-  // payload.formulary_info.code_value = "MC";
-  // payload.formulary_info.id_submission_month = 5;
-  payload.formulary_info.resemble_formulary_id = null;
-  payload.formulary_info.is_closed_formulary = null;
-  payload.formulary_info.resemble_formulary_id = null;
+
   payload.formulary_info.is_standard_template = null;
   payload.formulary_info.parent_formulary_id = null;
+  payload.formulary_info.formulary_build_method = input.GENERAL_INFO?.method;
+  payload.formulary_info.formulary_name = input.GENERAL_INFO?.name;
+  payload.formulary_info.contract_year = input.GENERAL_INFO?.service_year;
+  payload.formulary_info.abbreviation = input.GENERAL_INFO?.abbreviation;
+  payload.formulary_info.resemble_formulary_id = null;
+  payload.formulary_info.formulary_description =
+    input.GENERAL_INFO?.description;
+  payload.formulary_info.is_closed_formulary =
+    input.GENERAL_INFO?.is_closed_formulary;
+  payload.formulary_info.id_formulary_type = input.GENERAL_INFO?.type_id;
   payload.formulary_info.cms_formulary_id = "";
-  payload.formulary_info.abridged_forumulary_creation = true;
+  payload.formulary_info.abridged_forumulary_creation = null;
   payload.formulary_info.formulary_basis = null;
   payload.formulary_info.is_carve_out = null;
-  payload.formulary_info.import_file_path = "";
-  payload.formulary_info.import_file_name = "";
-  payload.is_validation_required = false;
-  payload.cms_override = false;
-
-  // CLASSIFICATION  - - - - - - - - - - - - -
-
+  if (input?.tiers?.length === 0) {
+    payload.formulary_info.number_of_tiers = null;
+  } else {
+    payload.formulary_info.number_of_tiers = input?.tiers?.length;
+  }
   payload.formulary_info.id_classification_system = parseInt(
     input.GENERAL_INFO?.classification_system
   );
+  payload.formulary_info.id_state = !input.GENERAL_INFO?.state_id
+    ? null
+    : input.GENERAL_INFO?.state_id;
+  if (input.GENERAL_INFO?.type_id === 6) {
+    payload.formulary_info.id_lob = 4;
+  } else {
+    payload.formulary_info.id_lob = 1;
+  }
+  payload.formulary_info.import_file_path = "";
+  payload.formulary_info.import_file_name = "";
   payload.formulary_info.id_classification_system_other = "";
-
+  payload.formulary_info.min_tiers = 1;
+  payload.formulary_info.max_tiers = 20;
+  if (input.GENERAL_INFO?.type_id === 6) {
+    payload.formulary_info.code_value = "COMM";
+  } else {
+    payload.formulary_info.code_value = "MC";
+  }
+  payload.formulary_info.medicare_types_ref = [];
+  payload.formulary_info.medicare_types_ref_other = false;
+  payload.formulary_info.effective_date = input.GENERAL_INFO?.effective_date;
+  payload.formulary_info.id_submission_month = null;
+  payload.formulary_info.formulary_type_name = input.GENERAL_INFO?.type;
+  // CLASSIFICATION  - - - - - - - - - - - - -
   payload.classification_system_info = {
     id_classification_system: parseInt(
       input.GENERAL_INFO?.classification_system
@@ -103,61 +112,87 @@ export function composePostBody(input: any): any {
     is_custom: false,
     classification_system: "",
   };
-
-  // MEDICARE INFO  - - - - - - - - - - - - -
-
-  payload.formulary_info.medicare_types_ref_other =
-    input.GENERAL_INFO?.state_id;
-  payload.medicare_contract_type_info = input.medicare_contract_type_info;
-
-  // DESIGN  - - - - - - - - - - - - -
-
-  payload.edit_info = {
-    edits: input?.edit_info?.edits,
-    edits_no: input?.edit_info?.edits_no,
-    custom_edits: [],
-    removed_formulary_edits: [],
-  };
-
-  // TIER DETAILS  - - - - - - - - - - - - -
-
-  payload.tiers = input?.tiers;
-  payload.formulary_info.number_of_tiers = input?.tiers?.length;
-  // payload.formulary_info.number_of_tiers = 1;
-  // payload.formulary_info.min_tiers = 1;
-  // payload.formulary_info.max_tiers = 7;
-
-  payload.supplemental_benefit_info = {
-    supplemental_benefits:
-      input?.supplemental_benefit_info?.supplemental_benefits,
-    custom_supplemental_benefits: [],
-    removed_formulary_supplemental_benefits: [],
-  };
-
-  payload.asscociated_contract_pbp_info = {
-    asscociated_contract_pbps: [],
-    removed_formulary_asscociated_contract_pbps: [],
-  };
-
   payload.carve_out_info = {
     carve_outs: [],
     custom_carve_outs: [],
     removed_formulary_carve_outs: [],
   };
+  payload.asscociated_contract_pbp_info = {
+    asscociated_contract_pbps: [],
+    removed_formulary_asscociated_contract_pbps: [],
+  };
+  // TIER DETAILS  - - - - - - - - - - - - -
+  payload.tiers = input?.tiers;
+  // DESIGN  - - - - - - - - - - - - -
+  payload.edit_info = {
+    edits: input?.edit_info?.edits,
+    edits_no: input?.edit_info?.edits_no,
+    custom_edits: input?.edit_info?.custom_edits,
+    removed_formulary_edits: [],
+  };
+  if(input?.edit_info?.custom_edits===""){
+    payload.edit_info.custom_edits = [];
+  }
 
+  // SUPP
+  console.log(
+    " SUPP :",
+    input?.supplemental_benefit_info?.supplemental_benefits
+  );
+  payload.supplemental_benefit_info = {
+    supplemental_benefits: !input?.supplemental_benefit_info
+      ?.supplemental_benefits
+      ? []
+      : input?.supplemental_benefit_info?.supplemental_benefits,
+    custom_supplemental_benefits: [],
+    removed_formulary_supplemental_benefits: [],
+  };
+  let validation = false;
+  if (input?.CONTINUE) {
+    validation = true;
+  }
+  payload.is_validation_required = validation;
+  payload.cms_override = false;
+  // MEDICARE INFO  - - - - - - - - - - - - -
+  if (
+    input.GENERAL_INFO?.id_formulary_type === 1 ||
+    input.GENERAL_INFO?.id_formulary_type === 2
+  ) {
+    console.log(
+      " CONT :",
+      input.medicare_contract_type_info.medicare_contract_types
+    );
+    if (!input.medicare_contract_type_info.medicare_contract_types) {
+      input.medicare_contract_type_info.medicare_contract_types = [];
+    }
+    payload.medicare_contract_type_info = input.medicare_contract_type_info;
+  }
   return payload;
 }
 
-export async function createFormulary(payload: any): Promise<any> {
-  //POST: https://api-dev-config-formulary.futurerx.com/api/1/formulary-setup/1
+export async function createORUpdateFormulary(
+  payload: any,
+  id_formulary: number
+): Promise<any> {
   // TODO: CLIENT_ID
-  console.log("***** createFormulary ");
-  let url = `${BASE_URL1}api/1/formulary-setup/1`;
+  const clientId = 1;
+  console.log("***** createORUpdateFormulary ");
+  let url = `${BASE_URL1}api/1/formulary-setup`;
   try {
-    const response = await axios.post(url, payload, {
-      headers: headers,
-    });
-    console.log("***** createFormulary - Success");
+    let response;
+    if (id_formulary > 0) {
+      url += `/${id_formulary}/${clientId}?entity_id=${id_formulary}`;
+      response = await axios.put(url, payload, {
+        headers: REQUEST_HEADER,
+      });
+    } else {
+      url += `/${clientId}`;
+      response = await axios.post(url, payload, {
+        headers: REQUEST_HEADER,
+      });
+    }
+
+    console.log("***** createORUpdateFormulary - Success");
     console.log(response);
     if (response?.data?.code === "200") {
       return {
@@ -167,8 +202,8 @@ export async function createFormulary(payload: any): Promise<any> {
     }
     return null;
   } catch (error) {
-    console.log("***** createFormulary - Error");
-    console.log(error);
+    console.log("***** createORUpdateFormulary - Error");
+    //console.log(error);
     const { response } = error;
     const { request, ...errorObject } = response; // take everything but 'request'
     console.log(errorObject);

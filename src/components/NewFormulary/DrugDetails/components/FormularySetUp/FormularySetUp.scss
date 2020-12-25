@@ -34,6 +34,20 @@
     cursor: pointer;
   }
 }
+
+.custom-input-wrapper{
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+  input{
+    margin-left: 26px;
+    margin-top: 0 !important;
+  }
+  svg{
+    margin-left: 10px;
+    cursor: pointer;
+  }
+}
 .formulary-design-container,.general-information-container,.medicare-information-container{
   .radio-group {
     .radio-group-custom{
@@ -270,10 +284,12 @@
 .add-new-cbx-btn-wrapper {
   display: flex;
   margin-top: 10px;
-  margin-left: 7px;
+  margin-left: 26px;
+  width: 75px;
+  cursor: pointer;
 }
 
-.add-new-text a {
+.add-new-text span {
   font-size: 12px;
   text-decoration: underline dashed;
   color: #707683;

@@ -10,16 +10,21 @@ import {
 } from "../../../../../../redux/slices/formulary/pagdm/pagdmSlice";
 import {
     getPaGrouptDescriptions, getPaTypes, getPaGrouptDescriptionVersions,
-    getPaGrouptDescriptionDetail, getPaGrouptDescription
+    getPaGrouptDescriptionDetail, getPaGrouptDescription,postPAGroupDescriptionFormularies
 } from "../../../../../../redux/slices/formulary/pa/paActionCreation";
 import { connect } from 'react-redux';
+import DialogPopup from "../../../../../shared/FrxDialogPopup/FrxDialogPopup";
+import FrxGridContainer from "../../../../../shared/FrxGrid/FrxGridContainer";
+import { getCompareFormularyVersionHistoryColumn } from "../../../../../../utils/grid/columns";
 
 function mapStateToProps(state) {
     return {
+        formulary_lob_id: state?.application?.formulary_lob_id,
         formulary_id: state.application.formulary_id,
         saveGdm: state.savePaGdm,
         PaGDData: state.paReducer.description,
         version: state.paVersion.paVersion,
+
     }
 }
 
@@ -34,8 +39,9 @@ function mapDispatchToProps(dispatch) {
         deleteGroupDescription: (arg) => dispatch(deleteGroupDescription(arg)), // Delete
         cloneGroupDescription: (arg) => dispatch(cloneGroupDescription(arg)), // Clone
         archiveGroupDescription: (arg) => dispatch(archiveGroupDescription(arg)), // archive
-        newVersionGroupDescription: (arg) => dispatch(newVersionGroupDescription(arg)) // New Vesrion
-
+        newVersionGroupDescription: (arg) => dispatch(newVersionGroupDescription(arg)), // New Vesrion
+        postPAGroupDescriptionFormularies: (arg) => dispatch(postPAGroupDescriptionFormularies(arg)) // New Vesrion
+        
 
 
         // getPaGrouptDescriptions: (a) => dispatch(getPaGrouptDescriptions(a)),
@@ -53,9 +59,43 @@ function PAGroupHeader(props: any) {
     const [open, setOpen] = React.useState(false);
     const [popupType, setPopUpType] = React.useState('clone');
     const [versionList, setVersion] = useState([{ value: 'Version 1' }])
+    const [fomulariesList, setFormularies] = useState([{ }])
     const [placeHolder, setPlaceHolder] = React.useState('Version 1');
     const [panelColor, setPanelColor] = React.useState('');
     const versionListLength = versionList.length - 1;
+    const [showViewAll, setShowViewAll] = React.useState(false);
+    const getCompareFormularyViewAllGridData = [
+        
+          {
+            //id: 1,
+            //key: 1,
+            drugName: "Drug 1",
+            rxcui: "",
+            ddid: "",
+            gpi: "",
+            trademark: "",
+            baseTier: "1",
+            referenceTier: "2",
+            tierDifference: "Y",
+            referenceCategory: "",
+            categoryDifference: "",
+            referenceClass: "",
+            classDifference: "",
+            paGroupDescriptionBase: "",
+            paGroupDescriptionReference: "",
+            paGroupDescriptionDifference: "",
+          },
+    ]
+    const toggleShowViewAll = () => {
+        let apiDetails= {};
+         apiDetails["lob_type"] = props.formulary_lob_id;
+         apiDetails['pathParams'] = '/'+props.saveGdm.current_group_id;
+        props.postPAGroupDescriptionFormularies(apiDetails).then(json =>{
+            debugger;
+            setFormularies(json.payload.result);
+        });
+        setShowViewAll(!showViewAll);
+      };
 
     useEffect(() => {
         if (props.version.length > 0) {
@@ -89,7 +129,10 @@ function PAGroupHeader(props: any) {
             const latestVerion = verLength > 0 ? props.version[Number(selectedVersion.split(" ")[1]) - 1]?.id_pa_group_description : 0;
             setPanelColor(isEditable ? '-green' : '')
             setPlaceHolder(selectedVersion)
-            props.getPaGrouptDescription(latestVerion)
+            let apiDetails= {};
+            apiDetails["lob_type"] = props.formulary_lob_id;
+            apiDetails['pathParams'] = '/'+latestVerion;
+            props.getPaGrouptDescription(apiDetails);
         }
         props.onChange(selectedVersion);
     }
@@ -141,7 +184,7 @@ function PAGroupHeader(props: any) {
                             : <option value={e.value}>{e.value}</option>
                     ))}
             </select>
-            <div className="item">
+            <div className="item" onClick={toggleShowViewAll}>
                 <svg
                     width="11"
                     height="11"
@@ -235,6 +278,47 @@ function PAGroupHeader(props: any) {
                     />
                 </STAlertDialog>
             ) : null}
+
+<DialogPopup
+        showCloseIcon={true}
+        positiveActionText='Save'
+        negativeActionText=''
+        title='APPLY NEW VERSION TO FORMULARY'
+        handleClose={toggleShowViewAll}
+        handleAction={() => {}}
+        showActions={true}
+        height='80%'
+        width='80%'
+        open={showViewAll}
+      >
+        <FrxGridContainer
+          enableSearch={false}
+          enableColumnDrag
+          onSearch={() => {}}
+          fixedColumnKeys={[]}
+          pagintionPosition='topRight'
+          gridName=''
+          isFetchingData={false}
+          columns={getCompareFormularyVersionHistoryColumn()}
+          scroll={{ x: 4600, y: 500 }}
+          enableResizingOfColumns={false}
+          data={fomulariesList}
+          // pinning columns
+          isPinningEnabled={true}
+          // setting gear 1st column
+          enableSettings={true}
+          // checkbox 2nd column
+          isCustomCheckboxEnabled={true}
+          // event reference for checkbox (mandotory if checkbox is true)
+          handleCustomRowSelectionChange={(r) => {
+            console.log(r);
+          }}
+          // settingsWidth
+          settingsWidth={15}
+          // checkBoxWidth
+          //checkBoxWidth={15}
+        />
+      </DialogPopup>
         </div>
     )
 }

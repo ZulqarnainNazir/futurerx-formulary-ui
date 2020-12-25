@@ -29,6 +29,7 @@ function mapDispatchToProps(dispatch) {
    
   const mapStateToProps = (state) => {
     return {
+      client_id: state.application.clientId,
       configureSwitch: state.switchReducer.configureSwitch,
       applyData: state.tierSliceReducer.applyData,
       formulary_id: state?.application?.formulary_id,
@@ -65,6 +66,7 @@ function mapDispatchToProps(dispatch) {
         selectedLastestedVersion:null,
         fileType:null,
         stValue:null,
+        groupDescriptionProp:''
     }
 
     onSelectedTableRowChanged = (selectedRowKeys) => {
@@ -85,12 +87,13 @@ function mapDispatchToProps(dispatch) {
         if (this.state.selectedDrugs && this.state.selectedDrugs.length > 0) {
           let apiDetails = {};
          // apiDetails['apiPart'] = constants.APPLY_TIER;
-    
-          apiDetails['pathParams'] = this.props?.formulary_id + "/" + this.state.fileType + "/" + constants.TYPE_REPLACE;
+    debugger;
+         apiDetails["lob_type"] = this.props.formulary_lob_id;
+          apiDetails['pathParams'] = this.props?.formulary_id + "/" + this.state.fileType + "/" +  this.props.tab_type
           apiDetails['keyVals'] = [{ key: constants.KEY_ENTITY_ID, value: this.props?.formulary_id }];
           apiDetails['messageBody'] = {};
           apiDetails['messageBody']['selected_drug_ids'] = this.state.selectedDrugs;
-          apiDetails['messageBody']['base_st_group_description_id'] = this.state.selectedGroupDescription;
+          apiDetails['messageBody']['base_st_group_description_id'] = Number(this.state.selectedGroupDescription);
           apiDetails['messageBody']['id_st_group_description'] = this.state.selectedLastestedVersion;
           apiDetails['messageBody']['id_st_type'] = Number(this.state.selectedStType);
           apiDetails['messageBody']['search_key'] = "";
@@ -124,12 +127,28 @@ function mapDispatchToProps(dispatch) {
         let tmp_value = event.value;
     
        this.setState({ selectedGroupDescription: tmp_value });
-       this.props.getStGrouptDescriptionVersions(tmp_value).then((json)=>{
+       let apiDetails= {};
+        apiDetails["lob_type"] = this.props.formulary_lob_id;
+        apiDetails['pathParams'] = '/'+tmp_value;
+        debugger;
+       this.props.getStGrouptDescriptionVersions(apiDetails).then((json)=>{
+         debugger;
          let data = json.payload.data;
-         
+         let ftype="";
+     switch (this.props.formulary_lob_id) {
+       case 1:
+        ftype=data[0].file_type;
+         break;
+         case 4:
+          ftype='COMM';
+           break;
+       default:
+         break;
+     }
+     debugger;
          this.setState({
            selectedLastestedVersion: data[0].id_st_group_description,
-           fileType: data[0].file_type,
+           fileType: ftype,
          });
        });
       }
@@ -169,7 +188,7 @@ function mapDispatchToProps(dispatch) {
       populateGridData = (searchBody = null) => {
         console.log('Populate grid data is called');
         let apiDetails = {};
-        
+        apiDetails["lob_type"] = this.props.formulary_lob_id;
        // let tmpGroup :any = this.state.paGroupDescriptions.filter(obj  => obj.id_mcr_base_pa_group_description === this.state.selectedGroupDescription);
         apiDetails['pathParams'] = this.props?.formulary_id + "/" + this.state.fileType + "/" ;
         apiDetails['keyVals'] = [{ key: constants.KEY_ENTITY_ID, value: this.props?.formulary_id }, { key: constants.KEY_INDEX, value: 0 }, { key: constants.KEY_LIMIT, value: 10 }];
@@ -239,8 +258,26 @@ function mapDispatchToProps(dispatch) {
         this.populateGridData();
     }
     componentDidMount() {
-                   
-        this.props.getStGrouptDescriptions(this.props.formulary_id).then((json) =>{
+        debugger
+      switch (this.props.formulary_lob_id) {
+        case 1:
+          this.setState({
+            groupDescriptionProp:"id_st_group_description"
+          })
+          break;
+        case 4:
+            this.setState({
+              groupDescriptionProp:"id_st_group_description"
+            })
+            break;
+        default:
+          break;
+      }
+      let apiDetails_1= {};
+      apiDetails_1["lob_type"] = this.props.formulary_lob_id;
+      apiDetails_1['pathParams'] = '/'+this.props?.client_id;
+        this.props.getStGrouptDescriptions(apiDetails_1).then((json) =>{
+          debugger;
             let result = json.payload.data.filter(obj  => !obj.is_archived &&  obj.is_setup_complete);
               this.setState({
                 stGroupDescription: result,
@@ -248,7 +285,7 @@ function mapDispatchToProps(dispatch) {
             
         });
 
-        this.props.getStTypes(this.props.formulary_id).then((json) =>{
+        this.props.getStTypes(this.props.formulary_lob_id).then((json) =>{
             this.setState({
                 stTypes: json.payload.data,
               });
@@ -268,7 +305,7 @@ function mapDispatchToProps(dispatch) {
                                 <Grid item xs={4}>
                                     <div className="group">
                                         <label>ST GROUP DESCRIPTION<span className="astrict">*</span></label>
-                                        <DropDown options={this.state.stGroupDescription} valueProp="id_st_group_description" dispProp="text" onSelect={this.dropDownSelectHandlerGroupDescription} disabled={this.props.configureSwitch}/>
+                                        <DropDown options={this.state.stGroupDescription} valueProp={this.state.groupDescriptionProp} dispProp="text" onSelect={this.dropDownSelectHandlerGroupDescription} disabled={this.props.configureSwitch}/>
                                     </div>
 
                                     <div className="group mt-10">

@@ -32,6 +32,7 @@ import FormControlLabel from '@material-ui/core/FormControlLabel';
 
 function mapDispatchToProps(dispatch) {
   return {
+    
     getPaSummary:(a)=>dispatch(getPaSummary(a)),
     getPaGrouptDescriptions:(a)=>dispatch(getPaGrouptDescriptions(a)),
     getPaTypes:(a)=>dispatch(getPaTypes(a)),
@@ -46,6 +47,7 @@ function mapDispatchToProps(dispatch) {
 
 const mapStateToProps = (state) => {
   return {
+    client_id: state.application.clientId,
     current_formulary: state.application.formulary,
     configureSwitch: state.switchReducer.configureSwitch,
     applyData: state.tierSliceReducer.applyData,
@@ -75,6 +77,7 @@ class PaReplace extends React.Component<any,any> {
     fileType:null,
     lobFormularies:null,
     selectedLobFormulary:null,
+    groupDescriptionProp:"",
   }
 
   onSelectedTableRowChanged = (selectedRowKeys) => {
@@ -96,7 +99,7 @@ class PaReplace extends React.Component<any,any> {
       let apiDetails = {};
      // apiDetails['apiPart'] = constants.APPLY_TIER;
      apiDetails["lob_type"] = this.props.formulary_lob_id;
-      apiDetails['pathParams'] = this.props?.formulary_id + "/" + this.state.fileType + "/" + constants.TYPE_REPLACE;
+      apiDetails['pathParams'] = this.props?.formulary_id + "/" + this.state.fileType + "/" + this.props.tab_type;
       apiDetails['keyVals'] = [{ key: constants.KEY_ENTITY_ID, value: this.props?.formulary_id }];
       apiDetails['messageBody'] = {};
       apiDetails['messageBody']['selected_drug_ids'] = this.state.selectedDrugs;
@@ -145,10 +148,20 @@ class PaReplace extends React.Component<any,any> {
 
    this.props.getPaGrouptDescriptionVersions(apiDetails).then((json)=>{
      let data = json.payload.data;
-     
+     let ftype="";
+     switch (this.props.formulary_lob_id) {
+       case 1:
+        ftype=data[0].file_type;
+         break;
+         case 4:
+          ftype='COMM';
+           break;
+       default:
+         break;
+     }
      this.setState({
        selectedLastestedVersion: data[0].id_pa_group_description,
-       fileType: data[0].file_type,
+       fileType: ftype,
      });
    });
    this.setState({
@@ -259,10 +272,24 @@ class PaReplace extends React.Component<any,any> {
     }
   }
   componentDidMount() {
-                   
+    
+    switch (this.props.formulary_lob_id) {
+      case 1:
+        this.setState({
+          groupDescriptionProp:"id_mcr_base_pa_group_description"
+        })
+        break;
+      case 4:
+          this.setState({
+            groupDescriptionProp:"id_base_pa_group_description"
+          })
+          break;
+      default:
+        break;
+    }
     let apiDetails_1= {};
     apiDetails_1["lob_type"] = this.props.formulary_lob_id;
-    apiDetails_1['pathParams'] = '/'+this.props?.formulary_lob_id;
+    apiDetails_1['pathParams'] = '/'+this.props?.client_id;
 
     this.props.getPaGrouptDescriptions(apiDetails_1).then((json:any) =>{
         let result = json.payload.data.filter(obj  => !obj.is_archived &&  obj.is_setup_complete);
@@ -302,7 +329,7 @@ class PaReplace extends React.Component<any,any> {
               <label>
                 PA GROUP DESCRIPTION<span className="astrict">*</span>
               </label>
-              <DropDownMap options={this.state.paGroupDescriptions} valueProp="id_mcr_base_pa_group_description" dispProp="text" onSelect={this.dropDownSelectHandlerGroupDescription} disabled={this.props.configureSwitch}/>
+              <DropDownMap options={this.state.paGroupDescriptions} valueProp={this.state.groupDescriptionProp} dispProp="text" onSelect={this.dropDownSelectHandlerGroupDescription} disabled={this.props.configureSwitch}/>
             </Col>
             <Col lg={4}></Col>
             <Col lg={8} className="mb-10">

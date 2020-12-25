@@ -17,14 +17,19 @@ const mapStateToProps = (state) => {
     advancedSearchBody: state?.advancedSearch?.advancedSearchBody,
     populateGrid: state?.advancedSearch?.populateGrid,
     closeDialog: state?.advancedSearch?.closeDialog,
+    formulary_id: state?.application?.formulary_id,
+    formulary: state?.application?.formulary,
+    formulary_lob_id: state?.application?.formulary_lob_id,
+    formulary_type_id: state?.application?.formulary_type_id
   };
 };
 
 interface Props {
   fileFiltersChanged: (a) => void;
   advancedSearchBody: any;
+  formulary_lob_id: any;
 }
-interface State {}
+interface State { }
 
 const fileTypes = [
   {
@@ -32,7 +37,7 @@ const fileTypes = [
     lable: "Formulary",
     types: [
       { id: 1, lable: "Prior Authorization File", key: 'is_pa' },
-      { id: 2, lable: "Step Therapy File",  key: 'is_st' },
+      { id: 2, lable: "Step Therapy File", key: 'is_st' },
       { id: 3, lable: "Indication-Based Coverage File", key: 'NA1' },
     ],
   },
@@ -55,6 +60,24 @@ const fileTypes = [
   },
 ];
 
+const fileTypesNonMcr = [
+  {
+    id: 1,
+    lable: "Formulary",
+    types: [
+      { id: 1, lable: "Prior Authorization File", key: 'is_pa' },
+      { id: 2, lable: "Step Therapy File", key: 'is_st' },
+    ],
+  },
+  {
+    id: 2,
+    lable: "Supplemental",
+    types: [
+      { id: 1, lable: "Free First Fill (FFF)", key: 'is_fff' }
+    ],
+  }
+];
+
 interface TypeObject {
   id: number;
   lable: string;
@@ -75,23 +98,40 @@ class FileType extends Component<Props, State> {
 
   componentDidMount = () => {
     let keystoSet = Array();
-    if(this.props.advancedSearchBody && this.props.advancedSearchBody.additional_filter){
-      keystoSet = Object.keys(this.props.advancedSearchBody.additional_filter).filter(key => this.props.advancedSearchBody.additional_filter[key]);
+    if (this.props.advancedSearchBody && this.props.advancedSearchBody.additional_filter) {
+      keystoSet = Object.keys(this.props.advancedSearchBody.additional_filter).filter(key => this.props.advancedSearchBody.additional_filter[key] === true);
     }
-    const checkList = fileTypes.map((file) => {
-      let parentChecked = true;
-      file.types.map((type) => {
-        let value = keystoSet.includes(type['key']);
-        type["isChecked"] = value;
-        parentChecked = parentChecked && value;
-        return type; 
+    if (this.props.formulary_lob_id == 1) {
+      const checkList = fileTypes.map((file) => {
+        let parentChecked = true;
+        file.types.map((type) => {
+          let value = keystoSet.includes(type['key']);
+          type["isChecked"] = value;
+          parentChecked = parentChecked && value;
+          return type;
+        });
+        file["isChecked"] = parentChecked;
+        return file;
       });
-      file["isChecked"] = parentChecked;
-      return file;
-    });
-    console.log("[checkList]:", checkList);
-    this.props.fileFiltersChanged(checkList);
-    this.setState({ fileTypes: checkList });
+      console.log("[checkList]:", checkList);
+      this.props.fileFiltersChanged(checkList);
+      this.setState({ fileTypes: checkList });
+    } else {
+      const checkList = fileTypesNonMcr.map((file) => {
+        let parentChecked = true;
+        file.types.map((type) => {
+          let value = keystoSet.includes(type['key']);
+          type["isChecked"] = value;
+          parentChecked = parentChecked && value;
+          return type;
+        });
+        file["isChecked"] = parentChecked;
+        return file;
+      });
+      console.log("[checkList]:", checkList);
+      this.props.fileFiltersChanged(checkList);
+      this.setState({ fileTypes: checkList });
+    }
   };
 
   onParentCheck = (e, parentId) => {

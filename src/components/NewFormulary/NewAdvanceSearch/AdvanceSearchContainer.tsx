@@ -27,6 +27,11 @@ const mapStateToProps = (state) => {
     advancedSearchBody: state?.advancedSearch?.advancedSearchBody,
     populateGrid: state?.advancedSearch?.populateGrid,
     closeDialog: state?.advancedSearch?.closeDialog,
+    listItemStatus: state?.advancedSearch?.listItemStatus,
+    formulary_id: state?.application?.formulary_id,
+    formulary: state?.application?.formulary,
+    formulary_lob_id: state?.application?.formulary_lob_id,
+    formulary_type_id: state?.application?.formulary_type_id
   };
 };
 
@@ -34,6 +39,11 @@ interface Props {
   openPopup: boolean;
   onClose: () => void;
   setAdvancedSearch: (a) => void;
+  advancedSearchBody: any;
+  populateGrid: any;
+  closeDialog: any;
+  listItemStatus: any;
+  formulary_lob_id: any;
 }
 interface State { }
 
@@ -41,7 +51,7 @@ class AdvanceSearchContainer extends Component<Props, State> {
   state = {
     categories: getCategoryList(), //[],
     selectedCategory: 0,
-    selectedCateoryList: [],
+    selectedCateoryList: Array(),
     additionalFilter: {
       is_add: false,
       is_all_tiers: false,
@@ -65,6 +75,27 @@ class AdvanceSearchContainer extends Component<Props, State> {
       is_no_tier: false,
       tiers: Array()
     },
+    additionalFilterNonMcr: {
+      is_al: false,
+      is_all_tiers: false,
+      is_gl: false,
+      is_icdl: false,
+      is_pa: false,
+      is_st: false,
+      is_pn: false,
+      is_pr: false,
+      is_ps: false,
+      is_pt: false,
+      is_ql: false,
+      is_frf: false,
+      is_other1: false,
+      is_other2: false,
+      is_other3: false,
+      is_other4: false,
+      is_other5: false,
+      is_no_tier: false,
+      tiers: Array()
+    },
     nodeList: Array(),
     idCount: 0,
   };
@@ -76,39 +107,214 @@ class AdvanceSearchContainer extends Component<Props, State> {
     console.log("nothing for now");
   };
 
+  componentDidMount = () => {
+    if (this.props.advancedSearchBody && this.props.advancedSearchBody.additional_filter) {
+      let keystoSet = Object.keys(this.props.advancedSearchBody.additional_filter).filter(key => !['is_all_tiers', 'is_no_tier', 'tiers'].includes(key) && this.props.advancedSearchBody.additional_filter[key]);
+      let selectedCateoryList = [...this.state.selectedCateoryList];
+      if (keystoSet.length > 0) {
+        this.state.idCount++;
+        this.state.nodeList.push({ type: 'filetype', id: this.state.idCount, childData: {}, isIncluded: false });
+        selectedCateoryList.push({
+          id: this.state.idCount,
+          type: 4,
+          content: <ListItemContainer title={"File Type"} onParentDataUpdated={this.onParentDataUpdated} nodeId={this.state.idCount}>
+            <FileType fileFiltersChanged={this.fileFiltersChanged} />
+          </ListItemContainer>
+        });
+
+        this.state.idCount++;
+        this.state.nodeList.push({ type: 'um_filter', id: this.state.idCount, childData: {}, isIncluded: false });
+        selectedCateoryList.push({
+          id: this.state.idCount,
+          type: 6,
+          content: <ListItemContainer title={"UM Filter"} onParentDataUpdated={this.onParentDataUpdated} nodeId={this.state.idCount}>
+            <UmFilter umFiltersChanged={this.umFiltersChanged} />
+          </ListItemContainer>
+        });
+      }
+
+      keystoSet = Object.keys(this.props.advancedSearchBody.additional_filter).filter(key => ['is_all_tiers', 'is_no_tier'].includes(key) && this.props.advancedSearchBody.additional_filter[key]);
+      if (keystoSet.length > 0 || this.props.advancedSearchBody.additional_filter['tiers'].length > 0) {
+        this.state.idCount++;
+        this.state.nodeList.push({ type: 'tier', id: this.state.idCount, childData: {}, isIncluded: false });
+        selectedCateoryList.push({
+          id: this.state.idCount,
+          type: 5,
+          content: <ListItemContainer title={"Tier"} onParentDataUpdated={this.onParentDataUpdated} nodeId={this.state.idCount}>
+            <Tire tierChanged={this.tierChanged} />
+          </ListItemContainer>
+        });
+      }
+
+      let payload = { advancedSearchBody: this.props.advancedSearchBody, populateGrid: this.props.populateGrid, closeDialog: this.props.closeDialog, listItemStatus: Object.assign({}, this.props.listItemStatus) };
+      console.log('State count:' + this.state.idCount);
+      if (this.props.advancedSearchBody.covered) {
+        this.appendNonGenericSections(this.props.advancedSearchBody.covered, selectedCateoryList, true, payload);
+      }
+      console.log('State count:' + this.state.idCount);
+      if (this.props.advancedSearchBody.not_covered) {
+        this.appendNonGenericSections(this.props.advancedSearchBody.not_covered, selectedCateoryList, false, payload);
+      }
+
+      this.props.setAdvancedSearch(payload);
+      this.setState({
+        selectedCateoryList: selectedCateoryList,
+      });
+    }
+  }
+
+  appendNonGenericSections = (refList, selectedCateoryList, included, payload) => {
+    let gpiHandled = false;
+    let categoryHandled = false;
+    Object.keys(refList).map(key => {
+      let values = Array();
+      if (key === 'reference_ndcs') {
+        values = refList['reference_ndcs'];
+        if (values.length > 0) {
+          this.state.idCount++;
+          this.state.nodeList.push({ type: 'ndc', id: this.state.idCount, childData: {}, isIncluded: included });
+          payload.listItemStatus[this.state.idCount] = included;
+          selectedCateoryList.push({
+            id: this.state.idCount,
+            type: 2,
+            isIncluded: included,
+            content: <ListItemContainer title={"Reference NDC"} onParentDataUpdated={this.onParentDataUpdated} nodeId={this.state.idCount}>
+              <ReferenceNdc nodeId={this.state.idCount} onChildDataUpdated={this.onChildDataUpdated} initialValues={values} />
+            </ListItemContainer>
+          });
+        }
+      } else if (key === 'gpis' || key === 'drug_label_names' || key === 'rxcuis' || key === 'ddids') {
+        if (!gpiHandled) {
+          values = [];
+          if (refList['gpis'] && refList['gpis'].length > 0) {
+            refList['gpis'].map(dataItem => {
+              values.push(dataItem + '[gpi]');
+            });
+          }
+
+          if (refList['drug_label_names'] && refList['drug_label_names'].length > 0) {
+            refList['drug_label_names'].map(dataItem => {
+              values.push(dataItem + '[drug_label]');
+            });
+          }
+
+          if (refList['rxcuis'] && refList['rxcuis'].length > 0) {
+            refList['rxcuis'].map(dataItem => {
+              values.push(dataItem + '[rxcui]');
+            });
+          }
+
+          if (refList['ddids'] && refList['ddids'].length > 0) {
+            refList['ddids'].map(dataItem => {
+              values.push(dataItem + '[ddid]');
+            });
+          }
+          if (values.length > 0) {
+            this.state.idCount++;
+            this.state.nodeList.push({ type: 'gpi', id: this.state.idCount, childData: {}, isIncluded: included });
+            payload.listItemStatus[this.state.idCount] = included;
+            selectedCateoryList.push({
+              id: this.state.idCount,
+              type: 1,
+              isIncluded: included,
+              content: <ListItemContainer title={this.props.formulary_lob_id === 1 ? "GPI/Generic Name/Label Name/ RXCUI" : "GPI/Generic Name/Label Name/ DDID"} onParentDataUpdated={this.onParentDataUpdated} nodeId={this.state.idCount}>
+                <GpiLableSearch nodeId={this.state.idCount} onChildDataUpdated={this.onChildDataUpdated} initialValues={values} />
+              </ListItemContainer>
+            });
+          }
+          gpiHandled = true;
+        }
+      } else if (key === 'drug_categories' || key === 'drug_classes') {
+        if (!categoryHandled) {
+          values = [];
+          if (refList['drug_categories'] && refList['drug_categories'].length > 0 &&
+            refList['drug_classes'] && refList['drug_classes'].length > 0) {
+            for (let index = 0; index < refList['drug_categories'].length; index++) {
+              if (index < refList['drug_classes'].length) {
+                values.push(refList['drug_categories'][index] + '[' + refList['drug_classes'][index] + ']');
+              }
+            }
+          }
+          if (values.length > 0) {
+            this.state.idCount++;
+            this.state.nodeList.push({ type: 'cat_class', id: this.state.idCount, childData: {}, isIncluded: included });
+            payload.listItemStatus[this.state.idCount] = included;
+            selectedCateoryList.push({
+              id: this.state.idCount,
+              type: 3,
+              isIncluded: included,
+              content: <ListItemContainer title={"Drug Category/Class"} onParentDataUpdated={this.onParentDataUpdated} nodeId={this.state.idCount}>
+                <DrugCategory nodeId={this.state.idCount} onChildDataUpdated={this.onChildDataUpdated} initialValues={values} />
+              </ListItemContainer>
+            });
+          }
+          categoryHandled = true;
+        }
+      }
+    });
+  }
+
   umFiltersChanged = (umFilters) => {
     /*Object.keys(this.state.additionalFilter).map(filterKey => {
       if (filterKey !== 'tiers' && filterKey !== 'is_all_tiers' && filterKey !== 'is_no_tier') {
         this.state.additionalFilter[filterKey] = false;
       }
     });*/
-    this.state.additionalFilter = {
-      is_all_tiers: this.state.additionalFilter['is_all_tiers'],
-      is_no_tier: this.state.additionalFilter['is_no_tier'],
-      tiers: this.state.additionalFilter['tiers'],
-      is_add: false,
-      is_exd: false,
-      is_fff: false,
-      is_frf: false,
-      is_hi: false,
-      is_ibf: false,
-      is_lis: false,
-      is_non_frf: false,
-      is_otc: false,
-      is_pa: false,
-      is_st: false,
-      is_pgc: false,
-      is_user_defined1: false,
-      is_user_defined2: false,
-      is_user_defined3: false,
-      is_user_defined4: false,
-      is_user_defined5: false,
-      is_vbid: false,
-    };
+    if (this.props.formulary_lob_id === 1) {
+      this.state.additionalFilter = {
+        is_all_tiers: this.state.additionalFilter['is_all_tiers'],
+        is_no_tier: this.state.additionalFilter['is_no_tier'],
+        tiers: this.state.additionalFilter['tiers'],
+        is_add: false,
+        is_exd: false,
+        is_fff: false,
+        is_frf: false,
+        is_hi: false,
+        is_ibf: false,
+        is_lis: false,
+        is_non_frf: false,
+        is_otc: false,
+        is_pa: false,
+        is_st: false,
+        is_pgc: false,
+        is_user_defined1: false,
+        is_user_defined2: false,
+        is_user_defined3: false,
+        is_user_defined4: false,
+        is_user_defined5: false,
+        is_vbid: false,
+      };
+    } else {
+      this.state.additionalFilterNonMcr = {
+        is_al: false,
+        is_all_tiers: this.state.additionalFilterNonMcr['is_all_tiers'],
+        is_gl: false,
+        is_icdl: false,
+        is_pa: false,
+        is_st: false,
+        is_pn: false,
+        is_pr: false,
+        is_ps: false,
+        is_pt: false,
+        is_ql: false,
+        is_frf: false,
+        is_other1: false,
+        is_other2: false,
+        is_other3: false,
+        is_other4: false,
+        is_other5: false,
+        is_no_tier: this.state.additionalFilterNonMcr['is_no_tier'],
+        tiers: this.state.additionalFilterNonMcr['tiers']
+      }
+    }
     if (umFilters.length > 0) {
       umFilters.map(umItem => {
         if (!umItem.key.startsWith('NA')) {
-          this.state.additionalFilter[umItem.key] = true;
+          if (this.props.formulary_lob_id === 1) {
+            this.state.additionalFilter[umItem.key] = true;
+          } else {
+            this.state.additionalFilterNonMcr[umItem.key] = true;
+          }
         }
       })
     }
@@ -120,34 +326,62 @@ class AdvanceSearchContainer extends Component<Props, State> {
         this.state.additionalFilter[filterKey] = false;
       }
     });*/
-    this.state.additionalFilter = {
-      is_all_tiers: this.state.additionalFilter['is_all_tiers'],
-      is_no_tier: this.state.additionalFilter['is_no_tier'],
-      tiers: this.state.additionalFilter['tiers'],
-      is_add: false,
-      is_exd: false,
-      is_fff: false,
-      is_frf: false,
-      is_hi: false,
-      is_ibf: false,
-      is_lis: false,
-      is_non_frf: false,
-      is_otc: false,
-      is_pa: false,
-      is_st: false,
-      is_pgc: false,
-      is_user_defined1: false,
-      is_user_defined2: false,
-      is_user_defined3: false,
-      is_user_defined4: false,
-      is_user_defined5: false,
-      is_vbid: false,
-    };
+    if (this.props.formulary_lob_id === 1) {
+      this.state.additionalFilter = {
+        is_all_tiers: this.state.additionalFilter['is_all_tiers'],
+        is_no_tier: this.state.additionalFilter['is_no_tier'],
+        tiers: this.state.additionalFilter['tiers'],
+        is_add: false,
+        is_exd: false,
+        is_fff: false,
+        is_frf: false,
+        is_hi: false,
+        is_ibf: false,
+        is_lis: false,
+        is_non_frf: false,
+        is_otc: false,
+        is_pa: false,
+        is_st: false,
+        is_pgc: false,
+        is_user_defined1: false,
+        is_user_defined2: false,
+        is_user_defined3: false,
+        is_user_defined4: false,
+        is_user_defined5: false,
+        is_vbid: false,
+      };
+    } else {
+      this.state.additionalFilterNonMcr = {
+        is_al: false,
+        is_all_tiers: this.state.additionalFilterNonMcr['is_all_tiers'],
+        is_gl: false,
+        is_icdl: false,
+        is_pa: false,
+        is_st: false,
+        is_pn: false,
+        is_pr: false,
+        is_ps: false,
+        is_pt: false,
+        is_ql: false,
+        is_frf: false,
+        is_other1: false,
+        is_other2: false,
+        is_other3: false,
+        is_other4: false,
+        is_other5: false,
+        is_no_tier: this.state.additionalFilterNonMcr['is_no_tier'],
+        tiers: this.state.additionalFilterNonMcr['tiers']
+      }
+    }
     if (filters.length > 0) {
       filters.map(item => {
         item.types.map(type => {
-          if(!type['key'].startsWith('NA')){
-            this.state.additionalFilter[type['key']] = type['isChecked'];
+          if (!type['key'].startsWith('NA')) {
+            if (this.props.formulary_lob_id === 1) {
+              this.state.additionalFilter[type['key']] = type['isChecked'];
+            } else {
+              this.state.additionalFilterNonMcr[type['key']] = type['isChecked'];
+            }
           }
         });
       })
@@ -156,43 +390,89 @@ class AdvanceSearchContainer extends Component<Props, State> {
 
   tierChanged = (tiers) => {
     console.log('Selected tiers:' + JSON.stringify(tiers));
-    this.state.additionalFilter.tiers = Array();
+    if (this.props.formulary_lob_id === 1) {
+      this.state.additionalFilter.tiers = Array();
+    } else {
+      this.state.additionalFilterNonMcr.tiers = Array();
+    }
     let isAllTier: boolean = true;
     tiers.map(tier => {
       if (tier.key != -1) {
         isAllTier = isAllTier && tier['isChecked'];
         if (tier.isChecked) {
-          this.state.additionalFilter.tiers.push(tier.key);
+          if (this.props.formulary_lob_id === 1) {
+            this.state.additionalFilter.tiers.push(tier.key);
+          } else {
+            this.state.additionalFilterNonMcr.tiers.push(tier.key);
+          }
         }
       } else {
         if (tier.isChecked) {
-          this.state.additionalFilter.is_no_tier = true;
+          if (this.props.formulary_lob_id === 1) {
+            this.state.additionalFilter.is_no_tier = true;
+          } else {
+            this.state.additionalFilterNonMcr.is_no_tier = true;
+          }
           isAllTier = true;
-        }else{
-          this.state.additionalFilter.is_no_tier = false;
+        } else {
+          if (this.props.formulary_lob_id === 1) {
+            this.state.additionalFilter.is_no_tier = false;
+          } else {
+            this.state.additionalFilterNonMcr.is_no_tier = false;
+          }
         }
       }
     });
 
-    this.state.additionalFilter.is_all_tiers = isAllTier;
+    if (this.props.formulary_lob_id === 1) {
+      this.state.additionalFilter.is_all_tiers = isAllTier;
+    } else {
+      this.state.additionalFilterNonMcr.is_all_tiers = isAllTier;
+    }
   }
 
-  onChildDataUpdated = (id,data) => {
+  onChildDataUpdated = (id, data) => {
     let updatedNode = this.state.nodeList.filter(node => node.id === id);
-    if(updatedNode && updatedNode.length > 0){
+    if (updatedNode && updatedNode.length > 0) {
       let node = updatedNode[0];
       node.childData = data;
     }
-    console.log('onChildDataUpdated:'+JSON.stringify(this.state.nodeList));
+    console.log('onChildDataUpdated:' + JSON.stringify(this.state.nodeList));
   }
 
-  onParentDataUpdated = (id,isIncluded) => {
+  onParentDataUpdated = (id, isIncluded) => {
     let updatedNode = this.state.nodeList.filter(node => node.id === id);
-    if(updatedNode && updatedNode.length > 0){
+    console.log('Id:' + id + ' isIncluded:' + isIncluded);
+    let currentProps = Object.assign({}, this.props.listItemStatus);
+    if (updatedNode && updatedNode.length > 0) {
+      console.log('Entered');
       let node = updatedNode[0];
       node.isIncluded = isIncluded;
+
+      let filteredList = this.state.selectedCateoryList.filter(uiItem => uiItem.id === id);
+      let uiNode = filteredList[0];
+      uiNode.isIncluded = isIncluded;
+      currentProps[id] = isIncluded;
+
+      filteredList = this.state.selectedCateoryList.filter(uiItem => uiItem.type === uiNode.type);
+
+      if (filteredList.length > 1) {
+        filteredList = filteredList.filter(uiItem => uiItem.id !== id);
+        uiNode = filteredList[0];
+        uiNode.isIncluded = !isIncluded;
+
+        currentProps[uiNode.id] = !isIncluded;
+
+        updatedNode = this.state.nodeList.filter(node => node.id === uiNode.id);
+        updatedNode[0].isIncluded = !isIncluded;
+      }
     }
-    console.log('onParentDataUpdated:'+JSON.stringify(this.state.nodeList));
+    let payload = { advancedSearchBody: this.props.advancedSearchBody, populateGrid: this.props.populateGrid, closeDialog: this.props.closeDialog, listItemStatus: currentProps };
+    this.props.setAdvancedSearch(payload);
+    this.setState({
+      idCount: this.state.idCount
+    });
+    console.log('onParentDataUpdated:' + JSON.stringify(this.state.nodeList));
   }
 
   onCategrorySelect = (selectedCat) => {
@@ -209,98 +489,194 @@ class AdvanceSearchContainer extends Component<Props, State> {
     //    default: return "Please Drag and Drop here"
     //    }
 
+    let isFound = false;
+    let filteredList = Array();
+    let payload = { advancedSearchBody: this.props.advancedSearchBody, populateGrid: this.props.populateGrid, closeDialog: this.props.closeDialog, listItemStatus: Object.assign({}, this.props.listItemStatus) };
     switch (selectedCat) {
       case 1:
-        this.state.idCount++;
-        this.state.nodeList.push({type: 'gpi', id: this.state.idCount, childData: [], isIncluded: false});
-        this.setState({
-          selectedCateoryList: [
-            ...this.state.selectedCateoryList,
-            {
-              id: this.state.idCount,
-              content:<ListItemContainer title={"GPI/Generic Name/Label Name/ RXCUI"} onParentDataUpdated={this.onParentDataUpdated} nodeId={this.state.idCount}>
-              <GpiLableSearch nodeId={this.state.idCount} onChildDataUpdated={this.onChildDataUpdated}/>
-            </ListItemContainer>
-            },
-          ],
-        });
+        filteredList = this.state.selectedCateoryList.filter(uiItem => uiItem.type === 1);
+        if (filteredList.length === 0) {
+          this.state.idCount++;
+          this.state.nodeList.push({ type: 'gpi', id: this.state.idCount, childData: {}, isIncluded: true });
+          payload.listItemStatus[this.state.idCount] = true;
+          this.props.setAdvancedSearch(payload);
+          this.setState({
+            selectedCateoryList: [
+              ...this.state.selectedCateoryList,
+              {
+                id: this.state.idCount,
+                type: 1,
+                isIncluded: true,
+                content: <ListItemContainer title={this.props.formulary_lob_id === 1 ? "GPI/Generic Name/Label Name/ RXCUI" : "GPI/Generic Name/Label Name/ DDID"} onParentDataUpdated={this.onParentDataUpdated} nodeId={this.state.idCount}>
+                  <GpiLableSearch nodeId={this.state.idCount} onChildDataUpdated={this.onChildDataUpdated} initialValues={[]} />
+                </ListItemContainer>
+              },
+            ],
+          });
+        } else if (filteredList.length === 1) {
+          let currentItem = filteredList[0];
+          let includedStatus = !currentItem.isIncluded;
+          this.state.idCount++;
+          this.state.nodeList.push({ type: 'gpi', id: this.state.idCount, childData: {}, isIncluded: includedStatus });
+          payload.listItemStatus[this.state.idCount] = includedStatus;
+          this.props.setAdvancedSearch(payload);
+          this.setState({
+            selectedCateoryList: [
+              ...this.state.selectedCateoryList,
+              {
+                id: this.state.idCount,
+                type: 1,
+                isIncluded: includedStatus,
+                content: <ListItemContainer title={this.props.formulary_lob_id === 1 ? "GPI/Generic Name/Label Name/ RXCUI" : "GPI/Generic Name/Label Name/ DDID"} onParentDataUpdated={this.onParentDataUpdated} nodeId={this.state.idCount}>
+                  <GpiLableSearch nodeId={this.state.idCount} onChildDataUpdated={this.onChildDataUpdated} initialValues={[]} />
+                </ListItemContainer>
+              },
+            ],
+          });
+        }
         break;
       case 2:
-        this.state.idCount++;
-        this.state.nodeList.push({type: 'ndc', id: this.state.idCount, childData: [], isIncluded: false});
-        this.setState({
-          selectedCateoryList: [
-            ...this.state.selectedCateoryList,
-            {
-            id: this.state.idCount,
-            content:<ListItemContainer title={"Reference NDC"} onParentDataUpdated={this.onParentDataUpdated} nodeId={this.state.idCount}>
-              <ReferenceNdc nodeId={this.state.idCount} onChildDataUpdated={this.onChildDataUpdated}/>
-            </ListItemContainer>
-            },
-          ],
-        });
+        filteredList = this.state.selectedCateoryList.filter(uiItem => uiItem.type === 2);
+        if (filteredList.length === 0) {
+          this.state.idCount++;
+          this.state.nodeList.push({ type: 'ndc', id: this.state.idCount, childData: {}, isIncluded: true });
+          payload.listItemStatus[this.state.idCount] = true;
+          this.props.setAdvancedSearch(payload);
+          this.setState({
+            selectedCateoryList: [
+              ...this.state.selectedCateoryList,
+              {
+                id: this.state.idCount,
+                type: 2,
+                isIncluded: true,
+                content: <ListItemContainer title={"Reference NDC"} onParentDataUpdated={this.onParentDataUpdated} nodeId={this.state.idCount}>
+                  <ReferenceNdc nodeId={this.state.idCount} onChildDataUpdated={this.onChildDataUpdated} initialValues={[]} />
+                </ListItemContainer>
+              },
+            ],
+          });
+        } else if (filteredList.length === 1) {
+          let currentItem = filteredList[0];
+          let includedStatus = !currentItem.isIncluded;
+          this.state.idCount++;
+          this.state.nodeList.push({ type: 'ndc', id: this.state.idCount, childData: {}, isIncluded: includedStatus });
+          payload.listItemStatus[this.state.idCount] = includedStatus;
+          this.props.setAdvancedSearch(payload);
+          this.setState({
+            selectedCateoryList: [
+              ...this.state.selectedCateoryList,
+              {
+                id: this.state.idCount,
+                type: 2,
+                isIncluded: includedStatus,
+                content: <ListItemContainer title={"Reference NDC"} onParentDataUpdated={this.onParentDataUpdated} nodeId={this.state.idCount}>
+                  <ReferenceNdc nodeId={this.state.idCount} onChildDataUpdated={this.onChildDataUpdated} initialValues={[]} />
+                </ListItemContainer>
+              },
+            ],
+          });
+        }
         break;
 
       case 3:
-        this.state.idCount++;
-        this.state.nodeList.push({type: 'cat_class', id: this.state.idCount, childData: [], isIncluded: false});
-        this.setState({
-          selectedCateoryList: [
-            ...this.state.selectedCateoryList,
-            {
-              id: this.state.idCount,
-              content:<ListItemContainer title={"Drug Category/Class"} onParentDataUpdated={this.onParentDataUpdated} nodeId={this.state.idCount}>
-              <DrugCategory onCkick={this.handleOnClick} />
-            </ListItemContainer>
-            },
-          ],
-        });
+        filteredList = this.state.selectedCateoryList.filter(uiItem => uiItem.type === 3);
+        if (filteredList.length === 0) {
+          this.state.idCount++;
+          this.state.nodeList.push({ type: 'cat_class', id: this.state.idCount, childData: {}, isIncluded: true });
+          payload.listItemStatus[this.state.idCount] = true;
+          this.props.setAdvancedSearch(payload);
+          this.setState({
+            selectedCateoryList: [
+              ...this.state.selectedCateoryList,
+              {
+                id: this.state.idCount,
+                type: 3,
+                isIncluded: true,
+                content: <ListItemContainer title={"Drug Category/Class"} onParentDataUpdated={this.onParentDataUpdated} nodeId={this.state.idCount}>
+                  <DrugCategory nodeId={this.state.idCount} onChildDataUpdated={this.onChildDataUpdated} initialValues={[]} />
+                </ListItemContainer>
+              },
+            ],
+          });
+        } else if (filteredList.length === 1) {
+          let currentItem = filteredList[0];
+          let includedStatus = !currentItem.isIncluded;
+          this.state.idCount++;
+          this.state.nodeList.push({ type: 'cat_class', id: this.state.idCount, childData: {}, isIncluded: includedStatus });
+          payload.listItemStatus[this.state.idCount] = includedStatus;
+          this.props.setAdvancedSearch(payload);
+          this.setState({
+            selectedCateoryList: [
+              ...this.state.selectedCateoryList,
+              {
+                id: this.state.idCount,
+                type: 3,
+                isIncluded: includedStatus,
+                content: <ListItemContainer title={"Drug Category/Class"} onParentDataUpdated={this.onParentDataUpdated} nodeId={this.state.idCount}>
+                  <DrugCategory nodeId={this.state.idCount} onChildDataUpdated={this.onChildDataUpdated} initialValues={[]} />
+                </ListItemContainer>
+              },
+            ],
+          });
+        }
         break;
       case 4:
-        this.state.idCount++;
-        this.state.nodeList.push({type: 'filetype', id: this.state.idCount, childData: [], isIncluded: false});
-        this.setState({
-          selectedCateoryList: [
-            ...this.state.selectedCateoryList,
-            {
-              id: this.state.idCount,
-              content:<ListItemContainer title={"File Type"} onParentDataUpdated={this.onParentDataUpdated} nodeId={this.state.idCount}>
-              <FileType fileFiltersChanged={this.fileFiltersChanged}/>
-            </ListItemContainer>
-            },
-          ],
-        });
+        isFound = this.state.selectedCateoryList.filter(uiItem => uiItem.type === 4).length > 0;
+        if (!isFound) {
+          this.state.idCount++;
+          this.state.nodeList.push({ type: 'filetype', id: this.state.idCount, childData: {}, isIncluded: false });
+          this.setState({
+            selectedCateoryList: [
+              ...this.state.selectedCateoryList,
+              {
+                id: this.state.idCount,
+                type: 4,
+                content: <ListItemContainer title={"File Type"} onParentDataUpdated={this.onParentDataUpdated} nodeId={this.state.idCount}>
+                  <FileType fileFiltersChanged={this.fileFiltersChanged} />
+                </ListItemContainer>
+              },
+            ],
+          });
+        }
         break;
 
       case 5:
-        this.state.idCount++;
-        this.state.nodeList.push({type: 'tier', id: this.state.idCount, childData: [], isIncluded: false});
-        this.setState({
-          selectedCateoryList: [
-            ...this.state.selectedCateoryList,
-            {
-              id: this.state.idCount,
-              content:<ListItemContainer title={"Tier"} onParentDataUpdated={this.onParentDataUpdated} nodeId={this.state.idCount}>
-              <Tire tierChanged={this.tierChanged} />
-            </ListItemContainer>
-            },
-          ],
-        });
+        isFound = this.state.selectedCateoryList.filter(uiItem => uiItem.type === 5).length > 0;
+        if (!isFound) {
+          this.state.idCount++;
+          this.state.nodeList.push({ type: 'tier', id: this.state.idCount, childData: {}, isIncluded: false });
+          this.setState({
+            selectedCateoryList: [
+              ...this.state.selectedCateoryList,
+              {
+                id: this.state.idCount,
+                type: 5,
+                content: <ListItemContainer title={"Tier"} onParentDataUpdated={this.onParentDataUpdated} nodeId={this.state.idCount}>
+                  <Tire tierChanged={this.tierChanged} />
+                </ListItemContainer>
+              },
+            ],
+          });
+        }
         break;
       case 6:
-        this.state.idCount++;
-        this.state.nodeList.push({type: 'um_filter', id: this.state.idCount, childData: [], isIncluded: false});
-        this.setState({
-          selectedCateoryList: [
-            ...this.state.selectedCateoryList,
-            {
-              id: this.state.idCount,
-              content:<ListItemContainer title={"UM Filter"} onParentDataUpdated={this.onParentDataUpdated} nodeId={this.state.idCount}>
-              <UmFilter umFiltersChanged={this.umFiltersChanged} />
-            </ListItemContainer>
-            },
-          ],
-        });
+        isFound = this.state.selectedCateoryList.filter(uiItem => uiItem.type === 6).length > 0;
+        if (!isFound) {
+          this.state.idCount++;
+          this.state.nodeList.push({ type: 'um_filter', id: this.state.idCount, childData: {}, isIncluded: false });
+          this.setState({
+            selectedCateoryList: [
+              ...this.state.selectedCateoryList,
+              {
+                id: this.state.idCount,
+                type: 6,
+                content: <ListItemContainer title={"UM Filter"} onParentDataUpdated={this.onParentDataUpdated} nodeId={this.state.idCount}>
+                  <UmFilter umFiltersChanged={this.umFiltersChanged} />
+                </ListItemContainer>
+              },
+            ],
+          });
+        }
         break;
       /*case 7:
         this.state.idCount++;
@@ -379,42 +755,77 @@ class AdvanceSearchContainer extends Component<Props, State> {
   //   }
   // };
 
-  onDelete = (idx,id) => {
+  onDelete = (idx, id) => {
+    console.log('Delete index:' + idx + ' Id:' + id);
     const currentSelecteCategories = this.state.selectedCateoryList.filter(
-      (category, index) => index !== idx
+      (category, index) => category.id !== id
     );
     let currentNodeList = this.state.nodeList.filter(node => node.id !== id);
-    this.setState({ 
+    let currentProps = Object.assign({}, this.props.listItemStatus);
+    delete currentProps['' + id];
+    let payload = { advancedSearchBody: this.props.advancedSearchBody, populateGrid: this.props.populateGrid, closeDialog: this.props.closeDialog, listItemStatus: {} };
+    this.props.setAdvancedSearch(payload);
+    payload = { advancedSearchBody: this.props.advancedSearchBody, populateGrid: this.props.populateGrid, closeDialog: this.props.closeDialog, listItemStatus: currentProps };
+    this.props.setAdvancedSearch(payload);
+    this.setState({
       selectedCateoryList: currentSelecteCategories,
       nodeList: currentNodeList,
     });
   };
   onClear = () => {
-    this.state.additionalFilter = {
-      is_add: false,
-      is_all_tiers: false,
-      is_exd: false,
-      is_fff: false,
-      is_frf: false,
-      is_hi: false,
-      is_ibf: false,
-      is_lis: false,
-      is_non_frf: false,
-      is_otc: false,
-      is_pa: false,
-      is_st: false,
-      is_pgc: false,
-      is_user_defined1: false,
-      is_user_defined2: false,
-      is_user_defined3: false,
-      is_user_defined4: false,
-      is_user_defined5: false,
-      is_vbid: false,
-      is_no_tier: false,
-      tiers: Array()
-    };
-    let payload = { advancedSearchBody: {}, populateGrid: false, closeDialog: false };
-    payload.advancedSearchBody['additional_filter'] = this.state.additionalFilter;
+    if (this.props.formulary_lob_id === 1) {
+      this.state.additionalFilter = {
+        is_add: false,
+        is_all_tiers: false,
+        is_exd: false,
+        is_fff: false,
+        is_frf: false,
+        is_hi: false,
+        is_ibf: false,
+        is_lis: false,
+        is_non_frf: false,
+        is_otc: false,
+        is_pa: false,
+        is_st: false,
+        is_pgc: false,
+        is_user_defined1: false,
+        is_user_defined2: false,
+        is_user_defined3: false,
+        is_user_defined4: false,
+        is_user_defined5: false,
+        is_vbid: false,
+        is_no_tier: false,
+        tiers: Array()
+      };
+    } else {
+      this.state.additionalFilterNonMcr = {
+        is_al: false,
+        is_all_tiers: false,
+        is_gl: false,
+        is_icdl: false,
+        is_pa: false,
+        is_st: false,
+        is_pn: false,
+        is_pr: false,
+        is_ps: false,
+        is_pt: false,
+        is_ql: false,
+        is_frf: false,
+        is_other1: false,
+        is_other2: false,
+        is_other3: false,
+        is_other4: false,
+        is_other5: false,
+        is_no_tier: false,
+        tiers: Array()
+      }
+    }
+    let payload = { advancedSearchBody: {}, populateGrid: false, closeDialog: false, listItemStatus: {} };
+    if (this.props.formulary_lob_id === 1) {
+      payload.advancedSearchBody['additional_filter'] = this.state.additionalFilter;
+    } else {
+      payload.advancedSearchBody['additional_filter'] = this.state.additionalFilterNonMcr;
+    }
     payload.advancedSearchBody["covered"] = {};
     payload.advancedSearchBody["not_covered"] = {};
     payload.advancedSearchBody["is_advance_search"] = false;
@@ -435,10 +846,23 @@ class AdvanceSearchContainer extends Component<Props, State> {
   };
 
   applySearch = () => {
-    let payload = { advancedSearchBody: {}, populateGrid: false, closeDialog: true };
-    payload.advancedSearchBody['additional_filter'] = this.state.additionalFilter;
+    let payload = { advancedSearchBody: {}, populateGrid: false, closeDialog: true, listItemStatus: {} };
+    if (this.props.formulary_lob_id === 1) {
+      payload.advancedSearchBody['additional_filter'] = this.state.additionalFilter;
+    } else {
+      payload.advancedSearchBody['additional_filter'] = this.state.additionalFilterNonMcr;
+    }
     payload.advancedSearchBody["covered"] = {};
     payload.advancedSearchBody["not_covered"] = {};
+    if (this.state.nodeList.length > 0) {
+      this.state.nodeList.map(node => {
+        if (node.isIncluded) {
+          payload.advancedSearchBody["covered"] = Object.assign(payload.advancedSearchBody["covered"], node.childData);
+        } else {
+          payload.advancedSearchBody["not_covered"] = Object.assign(payload.advancedSearchBody["not_covered"], node.childData);
+        }
+      });
+    }
     payload.advancedSearchBody["is_advance_search"] = true;
     payload.populateGrid = true;
 
@@ -506,7 +930,7 @@ class AdvanceSearchContainer extends Component<Props, State> {
                       />
                     </svg>
                   </span>
-                  <div className="category-text">{category.category}</div>
+                  <div className="category-text">{this.props.formulary_lob_id !== 1 && category.id === 1 ? 'GPI/Generic Name/Label Name/ DDID' : category.category}</div>
                 </div>
               ))}
             </Grid>
@@ -556,7 +980,7 @@ class AdvanceSearchContainer extends Component<Props, State> {
                             viewBox="0 0 13 15"
                             fill="none"
                             xmlns="http://www.w3.org/2000/svg"
-                            onClick={() => this.onDelete(idx,renderCatory['id'])}
+                            onClick={() => this.onDelete(idx, renderCatory['id'])}
                             // onClick={this.onDelete(idx)}
                             style={{ cursor: "pointer" }}
                           >

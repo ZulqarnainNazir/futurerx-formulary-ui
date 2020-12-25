@@ -5,18 +5,21 @@ interface AdvancedSearchState {
   advancedSearchBody: any;
   populateGrid: boolean;
   closeDialog: boolean;
+  listItemStatus: any;
 }
 
 const advancedSearchInitialState: AdvancedSearchState = {
   advancedSearchBody: null,
   populateGrid: false,
-  closeDialog: false
+  closeDialog: false,
+  listItemStatus: {},
 };
 
 interface AdvancedSearchResult {
   advancedSearchBody: any;
   populateGrid: boolean;
   closeDialog: boolean;
+  listItemStatus: any;
 }
 
 const advancedSearch = createSlice({
@@ -27,6 +30,7 @@ const advancedSearch = createSlice({
       state.advancedSearchBody = payload.advancedSearchBody;
       state.populateGrid = payload.populateGrid;
       state.closeDialog = payload.closeDialog;
+      state.listItemStatus = payload.listItemStatus;
     },
   },
 });
@@ -42,6 +46,7 @@ export const setAdvancedSearch = createAsyncThunk(
       advancedSearchBody: arg.advancedSearchBody,
       populateGrid: arg.populateGrid,
       closeDialog: arg.closeDialog,
+      listItemStatus: arg.listItemStatus,
     };
     dispatch(setAdvancedSearchBody(obj));
   }

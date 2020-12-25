@@ -34,6 +34,7 @@ function mapStateToProps(state){
   return {
     current_formulary: state.application.formulary,
     paData: state.paReducer.data,
+    formulary_lob_id: state?.application?.formulary_lob_id,
   }
 }
 
@@ -46,9 +47,9 @@ class PA extends React.Component<any, any>  {
     activeMiniTabIndex: 0,
     activeTabIndex: 0,
     tabs: [
-      { id: 1, text: "Replace" },
-      { id: 2, text: "Append" },
-      { id: 3, text: "Remove" },
+      { id: 1, text: "Replace", disabled:false },
+      { id: 2, text: "Append", disabled:(this.props.formulary_lob_id==1?true:false) },
+      { id: 3, text: "Remove", disabled:false },
     ],
     panelGridTitle: [
       "Type",
@@ -81,11 +82,23 @@ class PA extends React.Component<any, any>  {
     const activeTabIndex = this.state.activeTabIndex;
     switch (activeTabIndex) {
       case 0:
-        return <PaReplace />;
+        return <PaReplace tab_type="replace"/>;
+        break;
       case 1:
-        return <div>Append</div>;
+        switch (this.props.formulary_lob_id) {
+          case 1:
+            return "";
+            break;
+          case 4:
+              return <PaReplace tab_type="append"/>;
+              break;
+          default:
+            break;
+        }
+        break;
       case 2:
         return <PaRemove />;
+        break;
     }
   };
 
