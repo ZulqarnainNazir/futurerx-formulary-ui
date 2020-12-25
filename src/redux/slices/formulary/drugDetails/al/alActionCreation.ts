@@ -10,6 +10,8 @@ import {
 
 // const POST_AL_DRUGS = BASE_URL1 + "api/1/formulary-drugs-al/3326/COMM?index=0&limit=10&entity_id=3326
 
+// const POST_REPLACE_AL_FORMULARY_DRUG = BASE_URL1 + "api/1/apply-formulary-drug-al/3266/COMM/replace?entity_id=3266";
+
 export const getDrugDetailsALSummary = createAsyncThunk(
   "drug_details/AL_Summary",
   async (apiDetails: any) => {
@@ -21,6 +23,15 @@ export const getDrugDetailsALSummary = createAsyncThunk(
 
 export const getDrugDetailsALList = createAsyncThunk(
   "drug_details/AL_list",
+  async (apiDetails: any) => {
+    let POST_URL = buildUrl({ apiDetails });
+    const requestHeaders = postHeaders(apiDetails);
+    return fetchRequest(POST_URL, requestHeaders);
+  }
+);
+
+export const postReplaceALDrug = createAsyncThunk(
+  "drug_details/postReplaceALDrug",
   async (apiDetails: any) => {
     let POST_URL = buildUrl({ apiDetails });
     const requestHeaders = postHeaders(apiDetails);
