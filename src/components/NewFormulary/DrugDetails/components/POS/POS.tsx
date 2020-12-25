@@ -7,7 +7,7 @@ import { TabInfo } from "../../../../../models/tab.model";
 import FrxMiniTabs from "../../../../shared/FrxMiniTabs/FrxMiniTabs";
 import Button from "../../../../shared/Frx-components/button/Button";
 import { textFilters } from "../../../../../utils/grid/filters";
-import { getDrugDetailsColumn } from "../../../DrugDetails/components/FormularyConfigure/DrugGridColumn";
+import { getDrugDetailsColumnPOS } from "../../../DrugDetails/components/FormularyConfigure/DrugGridColumn";
 import { getDrugDetailData } from "../../../../../mocks/DrugGridMock";
 import FrxLoader from "../../../../shared/FrxLoader/FrxLoader";
 import DrugGrid from "../../../DrugDetails/components/DrugGrid";
@@ -19,6 +19,7 @@ import {
 import * as posConstants from "../../../../../api/http-drug-details";
 
 import PosSettings from "./PosSettings";
+import FrxGridContainer from "../../../../shared/FrxGrid/FrxGridContainer";
 
 function mapDispatchToProps(dispatch) {
   return {
@@ -42,10 +43,15 @@ class DrugDetailPOS extends React.Component<any, any> {
     panelTitleAlignment1: ["center", "center", "center", "center"],
     panelGridValue1: [],
     posSettings: [],
+    posSettingsStatus: {
+      type: "covered",
+      covered: true,
+    },
+
     isNotesOpen: false,
     activeTabIndex: 0,
-    columns: null,
-    data: null,
+    columns: getDrugDetailsColumnPOS(),
+    data: getDrugDetailData(),
     tabs: [
       { id: 1, text: "Replace" },
       { id: 2, text: "Append" },
@@ -57,31 +63,13 @@ class DrugDetailPOS extends React.Component<any, any> {
   };
 
   componentDidMount() {
-    const columns = getDrugDetailsColumn();
-    const data = getDrugDetailData();
-    const FFFColumn: any = {
-      id: 0,
-      position: 0,
-      textCase: "upper",
-      pixelWidth: 238,
-      sorter: {},
-      isFilterable: true,
-      showToolTip: false,
-      key: "fff",
-      displayTitle: "Free First Fill",
-      filters: textFilters,
-      dataType: "string",
-      hidden: false,
-      sortDirections: [],
-    };
-    columns.unshift(FFFColumn);
-    for (let el of data) {
-      el["fff"] = "Y";
-    }
-    this.setState({
-      columns: columns,
-      data: data,
-    });
+    // const columns = getDrugDetailsColumnPOS();
+    // const data = getDrugDetailData();
+
+    // this.setState({
+    //   columns: columns,
+    //   data: data,
+    // });
     this.getPOSSummary();
     this.getPOSSettings();
   }
@@ -151,6 +139,16 @@ class DrugDetailPOS extends React.Component<any, any> {
     });
   };
 
+  handleStatus = (key: string) => {
+    const COVERED = "covered";
+    const isCovered: boolean = key === COVERED ? true : false;
+    let posSettingsStatus = {
+      type: key,
+      covered: isCovered,
+    };
+
+    this.setState({ posSettingsStatus });
+  };
   serviceSettingsChecked = (e) => {
     // console.log(e.target.id);
     // console.log(e.target.name);
@@ -207,9 +205,17 @@ class DrugDetailPOS extends React.Component<any, any> {
   };
 
   showGridHandler = () => {
-    this.setState({
-      showGrid: !this.state.showGrid,
-    });
+    this.setState(
+      {
+        showGrid: !this.state.showGrid,
+      },
+      () => {
+        console.log({
+          settings: this.state.posSettings,
+          status: this.state.posSettingsStatus,
+        });
+      }
+    );
   };
   render() {
     let dataGrid = <FrxLoader />;
@@ -218,7 +224,12 @@ class DrugDetailPOS extends React.Component<any, any> {
         <DrugGrid columns={this.state.columns} data={this.state.data} />
       );
     }
-    const { posSettings, isSelectAll, showGrid } = this.state;
+    const {
+      posSettings,
+      posSettingsStatus,
+      isSelectAll,
+      showGrid,
+    } = this.state;
     return (
       <>
         <div className="bordered mb-10">
@@ -255,7 +266,10 @@ class DrugDetailPOS extends React.Component<any, any> {
         </div>
 
         <PosSettings
-          posSettingsServies={posSettings}
+          // posSettings,
+          // posSettingsStatus,
+          posSettingsServies={{ posSettings, posSettingsStatus }}
+          handleStatus={this.handleStatus}
           serviceSettingsChecked={this.serviceSettingsChecked}
           selectAllHandler={{
             isSelectAll: isSelectAll,
@@ -277,7 +291,35 @@ class DrugDetailPOS extends React.Component<any, any> {
                 <Button label="Save" onClick={this.saveClickHandler} disabled />
               </div>
             </div>
-            {dataGrid}
+            {/* {dataGrid} */}
+            <div className="inner-container">
+              <div className="pinned-table">
+                <FrxGridContainer
+                  enableSearch={false}
+                  enableColumnDrag
+                  customSettingIcon={"RED-DOT"}
+                  onSearch={() => {}}
+                  fixedColumnKeys={[
+                    "placeOfService",
+                    "coveredPlaceOfService",
+                    "notCoveredplaceOfService",
+                  ]}
+                  pagintionPosition="topRight"
+                  gridName="DRUGSDETAILS"
+                  enableSettings
+                  isFetchingData={false}
+                  columns={this.state.columns}
+                  isCustomCheckboxEnabled
+                  handleCustomRowSelectionChange={() => {}}
+                  settingsWidth={15}
+                  checkBoxWidth={15}
+                  isPinningEnabled={true}
+                  scroll={{ x: 4000, y: 377 }}
+                  enableResizingOfColumns
+                  data={this.state.data}
+                />
+              </div>
+            </div>
             {this.state.isSearchOpen ? (
               <AdvancedSearch
                 category="Grievances"

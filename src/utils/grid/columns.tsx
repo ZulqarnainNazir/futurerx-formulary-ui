@@ -698,7 +698,6 @@ export const PaColumns: () => Column<any>[] = () => {
       hidden: false,
       sortDirections: ["ascend", "descend"],
     },
-    
 
     {
       position: 7,
@@ -809,7 +808,6 @@ export const stColumns: () => Column<any>[] = () => {
       hidden: false,
       sortDirections: ["ascend", "descend"],
     },
-    
 
     {
       position: 8,
@@ -833,7 +831,7 @@ export const setupHmpsColumns: () => Column<any>[] = () => {
       position: 1,
       sorter: {},
       textCase: "upper",
-      pixelWidth: 100 ,
+      pixelWidth: 100,
       key: "files",
       displayTitle: "Files",
       isFilterable: true,
@@ -843,7 +841,7 @@ export const setupHmpsColumns: () => Column<any>[] = () => {
       sortDirections: ["ascend", "descend"],
     },
     {
-      position:2,
+      position: 2,
       sorter: {},
       textCase: "upper",
       pixelWidth: 122,
@@ -855,9 +853,8 @@ export const setupHmpsColumns: () => Column<any>[] = () => {
       hidden: false,
       sortDirections: ["ascend", "descend"],
     },
-    
-  ]
-}
+  ];
+};
 
 export const setupStandardReportingColumns: () => Column<any>[] = () => {
   return [
@@ -865,7 +862,7 @@ export const setupStandardReportingColumns: () => Column<any>[] = () => {
       position: 1,
       sorter: {},
       textCase: "upper",
-      pixelWidth: 100 ,
+      pixelWidth: 100,
       key: "items",
       displayTitle: "Items",
       //isFilterable: true,
@@ -875,7 +872,7 @@ export const setupStandardReportingColumns: () => Column<any>[] = () => {
       sortDirections: ["ascend", "descend"],
     },
     {
-      position:2,
+      position: 2,
       sorter: {},
       textCase: "upper",
       pixelWidth: 122,
@@ -887,13 +884,14 @@ export const setupStandardReportingColumns: () => Column<any>[] = () => {
       hidden: false,
       sortDirections: ["ascend", "descend"],
     },
-    
-  ]
-}
+  ];
+};
 
-
-export const formularyDetailsGridColumns: (data?, hiddenColumns?) => Column<any>[] = (data,hiddenColumns) => {
-  console.log(hiddenColumns)
+export const formularyDetailsGridColumns: (
+  data?,
+  hiddenColumns?
+) => Column<any>[] = (data, hiddenColumns) => {
+  console.log(hiddenColumns);
   return [
     {
       position: 1,
@@ -905,7 +903,10 @@ export const formularyDetailsGridColumns: (data?, hiddenColumns?) => Column<any>
       isFilterable: true,
       dataType: "string",
       filters: textFilters,
-      hidden: hiddenColumns && hiddenColumns.indexOf('contract_year') !== -1 ? true : false,
+      hidden:
+        hiddenColumns && hiddenColumns.indexOf("contract_year") !== -1
+          ? true
+          : false,
       sortDirections: ["ascend", "descend"],
     },
     {
@@ -926,7 +927,8 @@ export const formularyDetailsGridColumns: (data?, hiddenColumns?) => Column<any>
       isFilterable: true,
       dataType: "string",
       filters: textFilters,
-      hidden: hiddenColumns && hiddenColumns.indexOf('bazaar') !== -1 ? true : false,
+      hidden:
+        hiddenColumns && hiddenColumns.indexOf("bazaar") !== -1 ? true : false,
       sortDirections: ["ascend", "descend"],
     },
     {
@@ -947,7 +949,8 @@ export const formularyDetailsGridColumns: (data?, hiddenColumns?) => Column<any>
       isFilterable: true,
       dataType: "string",
       filters: textFilters,
-      hidden: hiddenColumns && hiddenColumns.indexOf('origin') !== -1 ? true : false,
+      hidden:
+        hiddenColumns && hiddenColumns.indexOf("origin") !== -1 ? true : false,
       sortDirections: ["ascend", "descend"],
     },
     {
@@ -958,14 +961,21 @@ export const formularyDetailsGridColumns: (data?, hiddenColumns?) => Column<any>
       key: "formulary_name",
       displayTitle: "formulary name",
       customContent: (props) => (
-        <div className="input-link" onClick={() => data.onFormularyNameClick(props.data.key)}>
+        <div
+          className="input-link"
+          onClick={() => data.onFormularyNameClick(props.data.key)}
+        >
           {props.data.formulary_name}
         </div>
       ),
       isFilterable: true,
       dataType: "string",
       filters: textFilters,
-      hidden: hiddenColumns && hiddenColumns.indexOf('formulary_name') !== -1 ? true : false,
+      // enableIntellisense: true,
+      hidden:
+        hiddenColumns && hiddenColumns.indexOf("formulary_name") !== -1
+          ? true
+          : false,
       sortDirections: ["ascend", "descend"],
     },
     {
@@ -978,7 +988,10 @@ export const formularyDetailsGridColumns: (data?, hiddenColumns?) => Column<any>
       isFilterable: true,
       dataType: "string",
       filters: textFilters,
-      hidden: hiddenColumns && hiddenColumns.indexOf('id_formulary') !== -1 ? true : false,
+      hidden:
+        hiddenColumns && hiddenColumns.indexOf("id_formulary") !== -1
+          ? true
+          : false,
       sortDirections: ["ascend", "descend"],
     },
     {
@@ -991,7 +1004,10 @@ export const formularyDetailsGridColumns: (data?, hiddenColumns?) => Column<any>
       isFilterable: true,
       dataType: "string",
       filters: textFilters,
-      hidden: hiddenColumns && hiddenColumns.indexOf('version_number') !== -1 ? true : false,
+      hidden:
+        hiddenColumns && hiddenColumns.indexOf("version_number") !== -1
+          ? true
+          : false,
       sortDirections: ["ascend", "descend"],
     },
     {
@@ -1007,7 +1023,10 @@ export const formularyDetailsGridColumns: (data?, hiddenColumns?) => Column<any>
       isFilterable: true,
       dataType: "string",
       filters: textFilters,
-      hidden: hiddenColumns && hiddenColumns.indexOf('timeRemaining') !== -1 ? true : false,
+      hidden:
+        hiddenColumns && hiddenColumns.indexOf("timeRemaining") !== -1
+          ? true
+          : false,
       sortDirections: ["ascend", "descend"],
     },
     {
@@ -1023,7 +1042,8 @@ export const formularyDetailsGridColumns: (data?, hiddenColumns?) => Column<any>
       isFilterable: true,
       dataType: "string",
       filters: textFilters,
-      hidden: hiddenColumns && hiddenColumns.indexOf('step') !== -1 ? true : false,
+      hidden:
+        hiddenColumns && hiddenColumns.indexOf("step") !== -1 ? true : false,
       sortDirections: ["ascend", "descend"],
     },
   ];

@@ -16,10 +16,11 @@ const PosLimitSettings = (props) => {
   console.log("props: ", props.posSettingsServies);
   const {
     serviceSettingsChecked,
-    posSettingsServies,
+    posSettingsServies: { posSettings, posSettingsStatus },
 
     selectAllHandler,
     showGridHandler,
+    handleStatus,
   } = props;
 
   // id_place_of_service_type: 1,
@@ -34,7 +35,11 @@ const PosLimitSettings = (props) => {
       />
 
       <div className="inner-container">
-        <StatusContentFormPanel title="Place of Service" type="covered">
+        <StatusContentFormPanel
+          title="Place of Service"
+          type={posSettingsStatus.type}
+          handleStatus={handleStatus}
+        >
           <div className="input-field-group">
             <div className="input-field-group__header">
               <div className="input-field-group__label">Select services:</div>
@@ -47,7 +52,7 @@ const PosLimitSettings = (props) => {
             </div>
 
             <div className="input-field-group__radio-field-group">
-              {posSettingsServies.map((s) => (
+              {posSettings.map((s) => (
                 <div
                   className="input-field-group__radio-field"
                   key={s.id_place_of_service_type}
