@@ -11,18 +11,20 @@ import { getDrugDetailData } from "../../../../../mocks/DrugGridMock";
 import FrxLoader from "../../../../shared/FrxLoader/FrxLoader";
 import DrugGrid from "../../../DrugDetails/components/DrugGrid";
 import AdvancedSearch from "../../../DrugDetails/components/FormularyConfigure/components/search/AdvancedSearch";
-import { getDrugDetailsPRSummary, getPRSettings, getDrugDetailsPRList } from "../../../../../redux/slices/formulary/drugDetails/pr/prActionCreation";
+import { getDrugDetailsPRSummary, getPRSettings, getDrugDetailsPRList,getDrugDetailsRemoveTab } from "../../../../../redux/slices/formulary/drugDetails/pr/prActionCreation";
 import * as prConstants from "../../../../../api/http-drug-details";
 import getLobCode from "../../../Utils/LobUtils";
 
 import PrSettings from "./PrSettings";
 import FrxDrugGridContainer from "../../../../shared/FrxGrid/FrxDrugGridContainer";
+import PrRemove from './PrRemove'
 
 function mapDispatchToProps(dispatch) {
   return {
     getDrugDetailsPRSummary: (a) => dispatch(getDrugDetailsPRSummary(a)),
     getPRSettings: (a) => dispatch(getPRSettings(a)),
     getDrugDetailsPRList: (a) => dispatch(getDrugDetailsPRList(a)),
+    getDrugDetailsRemoveTab: (arg) => dispatch(getDrugDetailsRemoveTab(arg)),
   };
 }
 
@@ -48,6 +50,7 @@ class DrugDetailPR extends React.Component<any, any> {
     isNotesOpen: false,
     activeTabIndex: 0,
     columns: null,
+    removeTabsSettings:[],
     data: [],
     tabs: [
       { id: 1, text: "Replace" },
@@ -146,6 +149,41 @@ class DrugDetailPR extends React.Component<any, any> {
       });
     });
   };
+  getPRRemoveSettings = (e) => {
+    this.listPayload['is_covered'] = Boolean(e)
+    let apiDetails = {};
+    apiDetails["apiPart"] = prConstants.GET_PR_DRUG_REMOVE_TAB;
+    apiDetails["pathParams"] = this.props?.formulary_id;
+    apiDetails["keyVals"] = [
+      { key: prConstants.KEY_ENTITY_ID, value: this.props?.formulary_id },
+    ];
+    apiDetails['messageBody'] = this.listPayload;
+
+    this.props.getDrugDetailsRemoveTab(apiDetails).then((json) => {
+      let tmpData =
+        json.payload && json.payload.result ? json.payload.result : [];
+      console.log("The PR Temp Data = ", tmpData);
+
+      let rows = tmpData.map((ele) => {
+        let curRow = [
+          ele["id_patient_residence_type"],
+          ele["patient_residence_type_code"],
+          ele["patient_residence_type_name"],
+          ele["is_covered"],
+        ];
+        return curRow;
+      });
+      console.log("The PR Rows = ", rows);
+
+      this.setState({
+        removeTabsSettings: rows,
+      });
+    });
+  };
+
+  handleChangeEvent = (e) =>{
+    this.getPRRemoveSettings(e)
+  }
 
   getPRSettings = () => {
     let apiDetails = {};
@@ -211,6 +249,7 @@ class DrugDetailPR extends React.Component<any, any> {
   componentDidMount() {
     this.getPRSummary();
     this.getPRSettings();
+    this.getPRRemoveSettings(true)
   }
 
   onClickTab = (selectedTabIndex: number) => {
@@ -359,8 +398,7 @@ class DrugDetailPR extends React.Component<any, any> {
             </div>
           </div>
         </div>
-
-        <PrSettings
+        {(this.state.activeTabIndex==0 || this.state.activeTabIndex==1)&&<PrSettings
           prSettingsServies={{ prSettings, prSettingsStatus }}
           handleStatus={this.handleStatus}
           serviceSettingsChecked={this.serviceSettingsChecked}
@@ -369,7 +407,9 @@ class DrugDetailPR extends React.Component<any, any> {
             handleSelectAll: this.handleSelectAll,
           }}
           showGridHandler={this.showGridHandler}
-        />
+        />}
+
+        {this.state.activeTabIndex==2&&<PrRemove data={this.state.removeTabsSettings} showGridHandler={this.showGridHandler} handleChangeEvent={this.handleChangeEvent}/>}
 
         {this.state.showGrid ? (
           <div className="bordered">

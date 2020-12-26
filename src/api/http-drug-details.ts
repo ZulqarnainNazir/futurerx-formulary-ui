@@ -94,11 +94,13 @@ export const GET_PT_DRUGS = "api/1/formulary-drugs-prtx/";
 export const GET_DRUG_SUMMARY_POS = "api/1/formulary-drug-summary-pos/";
 export const GET_DRUG_SETTING_POS = "api/1/place-of-services/";
 export const GET_POS_DRUGS = "api/1/formulary-drugs-pos/";
+export const GET_POS_DRUG_REMOVE_TAB = "api/1/criteria-list-pos/"
 
 // PR TAB
 export const GET_DRUG_SUMMARY_PR = "api/1/formulary-drug-summary-patrs/";
 export const GET_PR_SETTINGS_LIST = "api/1/patient-residences";
 export const GET_PR_FORMULARY_DRUGS = "api/1/formulary-drugs-patrs/";
+export const GET_PR_DRUG_REMOVE_TAB = "api/1/criteria-list-patrs/";
 
 // OTHER TAB
 export const GET_DRUG_SUMMARY_OTHER = "api/1/formulary-drug-summary-edoth/";

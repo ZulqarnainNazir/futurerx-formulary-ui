@@ -15,18 +15,21 @@ import {
   getDrugDetailsPOSSummary,
   getDrugDetailsPOSSettings,
   getDrugDetailsPOSGridData,
+  getDrugDetailsRemoveTab
 } from "../../../../../redux/slices/formulary/drugDetails/pos/posActionCreation";
 import * as posConstants from "../../../../../api/http-drug-details";
 import getLobCode from "../../../Utils/LobUtils";
 
 import PosSettings from "./PosSettings";
 import FrxGridContainer from "../../../../shared/FrxGrid/FrxGridContainer";
+import PosRemove from './PosRemove'
 
 function mapDispatchToProps(dispatch) {
   return {
     getDrugDetailsPOSSummary: (a) => dispatch(getDrugDetailsPOSSummary(a)),
     getDrugDetailsPOSSettings: (a) => dispatch(getDrugDetailsPOSSettings(a)),
     getDrugDetailsPOSGridData: (a) => dispatch(getDrugDetailsPOSGridData(a)),
+    getDrugDetailsRemoveTab: (arg) => dispatch(getDrugDetailsRemoveTab(arg)),
   };
 }
 
@@ -50,6 +53,7 @@ class DrugDetailPOS extends React.Component<any, any> {
     panelTitleAlignment1: ["center", "center", "center", "center"],
     panelGridValue1: [],
     posSettings: [],
+    removeTabsSettings:[],
     posSettingsStatus: {
       type: "covered",
       covered: true,
@@ -80,6 +84,7 @@ class DrugDetailPOS extends React.Component<any, any> {
   componentDidMount() {
     this.getPOSSummary();
     this.getPOSSettings();
+    this.getPOSRemoveSettings(true)
   }
   advanceSearchClickHandler = (event) => {
     event.stopPropagation();
@@ -119,6 +124,37 @@ class DrugDetailPOS extends React.Component<any, any> {
 
       this.setState({
         panelGridValue1: rows,
+      });
+    });
+  };
+
+  getPOSRemoveSettings = (e) => {
+    this.listPayload['is_covered'] = Boolean(e)
+    let apiDetails = {};
+    apiDetails["apiPart"] = posConstants.GET_POS_DRUG_REMOVE_TAB;
+    apiDetails["pathParams"] = this.props?.formulary_id;
+    apiDetails["keyVals"] = [
+      { key: posConstants.KEY_ENTITY_ID, value: this.props?.formulary_id },
+    ];
+    apiDetails['messageBody'] = this.listPayload;
+
+    this.props.getDrugDetailsRemoveTab(apiDetails).then((json) => {
+      let tmpData =
+        json.payload && json.payload.result ? json.payload.result : [];
+      console.log("The PR Temp Data = ", tmpData);
+
+      let rows = tmpData.map((ele) => {
+        let curRow = [
+          ele["id_place_of_service_type"],
+          ele["place_of_service_type_name"],
+          ele["is_covered"],
+        ];
+        return curRow;
+      });
+      console.log("The PR Rows = ", rows);
+
+      this.setState({
+        removeTabsSettings: rows,
       });
     });
   };
@@ -273,6 +309,10 @@ class DrugDetailPOS extends React.Component<any, any> {
     alert(1);
   };
 
+  handleChangeEvent = (e) =>{
+    this.getPOSRemoveSettings(e)
+  }
+
   showGridHandler = () => {
     this.getPOSDrugsList(this.listPayload);
   };
@@ -325,7 +365,7 @@ class DrugDetailPOS extends React.Component<any, any> {
           </div>
         </div>
 
-        <PosSettings
+        {(this.state.activeTabIndex==0 || this.state.activeTabIndex==1)&&<PosSettings
           posSettingsServies={{ posSettings, posSettingsStatus }}
           handleStatus={this.handleStatus}
           serviceSettingsChecked={this.serviceSettingsChecked}
@@ -334,7 +374,9 @@ class DrugDetailPOS extends React.Component<any, any> {
             handleSelectAll: this.handleSelectAll,
           }}
           showGridHandler={this.showGridHandler}
-        />
+        />}
+
+        {this.state.activeTabIndex==2&&<PosRemove data={this.state.removeTabsSettings} showGridHandler={this.showGridHandler} handleChangeEvent={this.handleChangeEvent}/>}
 
         {showGrid ? (
           <div className="bordered">

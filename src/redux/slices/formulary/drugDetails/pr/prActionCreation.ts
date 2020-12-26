@@ -38,3 +38,12 @@ export const getDrugDetailsPRList = createAsyncThunk(
     return fetchRequest(POST_URL, requestHeaders);
   }
 );
+
+export const getDrugDetailsRemoveTab = createAsyncThunk(
+  "drug_details/remove_tab_settings",
+  async (apiDetails: any) => {
+    let POST_URL = buildUrl({ apiDetails });
+    const requestHeaders = postHeaders(apiDetails);
+    return fetchRequest(POST_URL, requestHeaders);
+  }
+);
