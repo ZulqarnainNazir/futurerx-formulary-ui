@@ -6,7 +6,6 @@ import CustomizedSwitches from "../FormularyConfigure/components/CustomizedSwitc
 import { TabInfo } from "../../../../../models/tab.model";
 import FrxMiniTabs from "../../../../shared/FrxMiniTabs/FrxMiniTabs";
 import Button from "../../../../shared/Frx-components/button/Button";
-import { textFilters } from "../../../../../utils/grid/filters";
 import { getDrugDetailsColumnPOS } from "../../../DrugDetails/components/FormularyConfigure/DrugGridColumn";
 import { getDrugDetailData } from "../../../../../mocks/DrugGridMock";
 import FrxLoader from "../../../../shared/FrxLoader/FrxLoader";
@@ -79,13 +78,6 @@ class DrugDetailPOS extends React.Component<any, any> {
   }
 
   componentDidMount() {
-    // const columns = getDrugDetailsColumnPOS();
-    // const data = getDrugDetailData();
-
-    // this.setState({
-    //   columns: columns,
-    //   data: data,
-    // });
     this.getPOSSummary();
     this.getPOSSettings();
   }
@@ -114,7 +106,6 @@ class DrugDetailPOS extends React.Component<any, any> {
     this.props.getDrugDetailsPOSSummary(apiDetails).then((json) => {
       let tmpData =
         json.payload && json.payload.result ? json.payload.result : [];
-      // console.log("The POS Temp Data = ", tmpData);
 
       let rows = tmpData.map((ele) => {
         let curRow = [
@@ -125,7 +116,6 @@ class DrugDetailPOS extends React.Component<any, any> {
         ];
         return curRow;
       });
-      console.log("The POS Rows = ", rows);
 
       this.setState({
         panelGridValue1: rows,
