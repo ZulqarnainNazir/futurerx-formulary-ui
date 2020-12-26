@@ -84,6 +84,7 @@ export const GET_ICD_DRUGS = "api/1/formulary-drugs-icdl/";
 
 // PN TAB
 export const GET_DRUG_SUMMARY_PN = "api/1/formulary-drug-summary-phnw/";
+export const GET_PN_DRUGS = "api/1/formulary-drugs-phnw/";
 
 // PT TAB
 export const GET_DRUG_SUMMARY_PT = "api/1/formulary-drug-summary-prtx/";

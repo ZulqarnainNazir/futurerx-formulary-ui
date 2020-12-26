@@ -11,22 +11,32 @@ import { getDrugDetailData } from "../../../../../mocks/DrugGridMock";
 import FrxLoader from "../../../../shared/FrxLoader/FrxLoader";
 import DrugGrid from "../../../DrugDetails/components/DrugGrid";
 import AdvancedSearch from "../../../DrugDetails/components/FormularyConfigure/components/search/AdvancedSearch";
-import { getDrugDetailsICDSummary } from "../../../../../redux/slices/formulary/drugDetails/icd/icdActionCreation";
+import { getDrugDetailsICDSummary, getDrugDetailsICDList } from "../../../../../redux/slices/formulary/drugDetails/icd/icdActionCreation";
 import * as icdConstants from "../../../../../api/http-drug-details";
+import getLobCode from "../../../Utils/LobUtils";
 
 import IcdLimitSettings from "./IcdLimitSettings";
+import FrxDrugGridContainer from "../../../../shared/FrxGrid/FrxDrugGridContainer";
 
 function mapDispatchToProps(dispatch) {
   return {
     getDrugDetailsICDSummary: (a) => dispatch(getDrugDetailsICDSummary(a)),
+    getDrugDetailsICDList: (a) => dispatch(getDrugDetailsICDList(a)),
   };
 }
 
 const mapStateToProps = (state) => {
   return {
     formulary_id: state?.application?.formulary_id,
+    formulary_lob_id: state?.application?.formulary_lob_id,
   };
 };
+
+const defaultListPayload = {
+  index: 0,
+  limit: 10,
+  filter: [],
+}
 
 class DrugDetailICD extends React.Component<any, any> {
   state = {
@@ -37,13 +47,22 @@ class DrugDetailICD extends React.Component<any, any> {
     isNotesOpen: false,
     activeTabIndex: 0,
     columns: null,
-    data: null,
+    data: [],
+    listCount: 0,
+    selectedDrugs: Array(),
+    drugData: Array(),
     tabs: [
       { id: 1, text: "Replace" },
       { id: 2, text: "Append" },
       { id: 3, text: "Remove" },
     ],
   };
+
+  listPayload: any = {
+    index: 0,
+    limit: 10,
+    filter: [],
+  }
 
   advanceSearchClickHandler = (event) => {
     event.stopPropagation();
@@ -85,14 +104,61 @@ class DrugDetailICD extends React.Component<any, any> {
     });
   }
 
+  getICDDrugsList = ({index = 0, limit = 10, listPayload = {}} = {}) => {
+    let apiDetails = {};
+    apiDetails['apiPart'] = icdConstants.GET_ICD_DRUGS;
+    apiDetails['pathParams'] = this.props?.formulary_id + "/" + getLobCode(this.props.formulary_lob_id);
+    apiDetails['keyVals'] = [{ key: icdConstants.KEY_ENTITY_ID, value: this.props?.formulary_id }, { key: icdConstants.KEY_INDEX, value: index }, { key: icdConstants.KEY_LIMIT, value: limit }];
+    apiDetails['messageBody'] = listPayload;
+
+    let listCount = 0;
+    this.props.getDrugDetailsICDList(apiDetails).then((json) => {
+      let tmpData = json.payload.result;
+      listCount = json.payload.count;
+      var data: any[] = [];
+      let count = 1;
+      var gridData = tmpData.map((el) => {
+        var element = Object.assign({}, el);
+        data.push(element);
+        let gridItem = {};
+        gridItem["id"] = count;
+        gridItem["key"] = count;
+        gridItem["icdLimit"] = element.is_icdl ? "" + element.is_icdl : "";
+        gridItem["coveredIcd"] = element.covered_icds ? "" + element.covered_icds : "";
+        gridItem["icdLookBack"] = element.lookback_days ? "" + element.lookback_days : "";
+        gridItem["notCoveredIcd"] = element.not_covered_icds ? "" + element.not_covered_icds : "";
+        gridItem["tier"] = element.tier_value ? "" + element.tier_value : "";
+        gridItem["labelName"] = element.drug_label_name ? "" + element.drug_label_name : "";
+        gridItem["ddid"] = element.drug_descriptor_identifier ? "" + element.drug_descriptor_identifier : "";
+        gridItem["gpi"] = element.generic_product_identifier ? "" + element.generic_product_identifier : "";
+        gridItem["trademark"] = element.trademark_code ? "" + element.trademark_code : "";
+        gridItem["databaseCategory"] = element.database_category ? "" + element.database_category : "";
+        gridItem["databaseClass"] = element.database_class ? "" + element.database_class : "";
+        
+        gridItem["createdBy"] = element.created_by ? "" + element.created_by : "";
+        gridItem["createdOn"] = element.created_date ? "" + element.created_date : "";
+        gridItem["modifiedBy"] = element.modified_by ? "" + element.modified_by : "";
+        gridItem["modifiedOn"] = element.modified_date ? "" + element.modified_date : "";
+        gridItem["md5_id"] = element.md5_id ? "" + element.md5_id : "";
+        count++;
+        return gridItem;
+      });
+      this.setState({
+        drugData: data,
+        data: gridData,
+        listCount: listCount,
+        showGrid: true,
+      });
+    });
+  }
+
   componentDidMount() {
-    const data = getDrugDetailData();
     const columns = getDrugDetailsColumnICD();
     this.setState({
       columns: columns,
-      data: data,
     });
     this.getICDSummary();
+    this.getICDDrugsList();
   }
 
   onClickTab = (selectedTabIndex: number) => {
@@ -105,6 +171,37 @@ class DrugDetailICD extends React.Component<any, any> {
       return tab;
     });
     this.setState({ tabs, activeTabIndex });
+  };
+
+  onPageSize = (pageSize) => {
+    this.listPayload.limit = pageSize
+    this.getICDDrugsList({ limit: this.listPayload.limit, listPayload: this.listPayload });
+  }
+
+  onGridPageChangeHandler = (pageNumber: any) => {
+    this.listPayload.index = (pageNumber - 1) * this.listPayload.limit;
+    this.getICDDrugsList({ index: this.listPayload.index, limit: this.listPayload.limit, listPayload: this.listPayload });
+  }
+
+  onClearFilterHandler = () => {
+    this.listPayload.index = 0;
+    this.listPayload.limit = 10;
+    this.getICDDrugsList({ index: defaultListPayload.index, limit: defaultListPayload.limit, listPayload: this.listPayload });
+  }
+
+  onSelectedTableRowChanged = (selectedRowKeys) => {
+    this.state.selectedDrugs = [];
+    if (selectedRowKeys && selectedRowKeys.length > 0) {
+      let selDrugs = selectedRowKeys.map((ele) => {
+        return this.state.drugData[ele - 1]["md5_id"]
+          ? this.state.drugData[ele - 1]["md5_id"]
+          : "";
+      });
+
+      this.setState({ selectedDrugs: selDrugs }, () => console.log("The Selected Drugs = ",  this.state.selectedDrugs));
+    } else {
+      this.setState({ selectedDrugs: [] });
+    }
   };
 
   handleNoteClick = (event: React.ChangeEvent<{}>) => {
@@ -124,7 +221,35 @@ class DrugDetailICD extends React.Component<any, any> {
     let dataGrid = <FrxLoader />;
     if (this.state.data) {
       dataGrid = (
-        <DrugGrid columns={this.state.columns} data={this.state.data} />
+        <div className="tier-grid-container">
+          <FrxDrugGridContainer
+            isPinningEnabled={false}
+            enableSearch={false}
+            enableColumnDrag
+            onSearch={() => {}}
+            fixedColumnKeys={[]}
+            pagintionPosition="topRight"
+            gridName="DRUGSDETAILS"
+            enableSettings={false}
+            columns={getDrugDetailsColumnICD()}
+            scroll={{ x: 3200, y: 377 }}
+            isFetchingData={false}
+            enableResizingOfColumns
+            data={this.state.data}
+            getPerPageItemSize={this.onPageSize}
+            selectedCurrentPage={(this.listPayload.index/this.listPayload.limit + 1)}
+            pageSize={this.listPayload.limit}
+            onGridPageChangeHandler={this.onGridPageChangeHandler}
+            totalRowsCount={this.state.listCount}
+            clearFilterHandler={this.onClearFilterHandler}
+            rowSelection={{
+              columnWidth: 50,
+              fixed: true,
+              type: "checkbox",
+              onChange: this.onSelectedTableRowChanged,
+            }}
+          />
+        </div>
       );
     }
 

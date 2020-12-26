@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { getDrugDetailsPNSummary } from "./pnActionCreation";
-import { getPNSummaryFulfilled, getPNSummaryRejected } from "./pnReducers";
+import { getDrugDetailsPNSummary, getDrugDetailsPNList } from "./pnActionCreation";
+import { getPNSummaryFulfilled, getPNSummaryRejected, postPNListFulfilled, postPNListRejected } from "./pnReducers";
 
 const pnState: any = {
   data: {},
@@ -20,6 +20,23 @@ export const pnSlice = createSlice({
     }),
     builder.addCase(getDrugDetailsPNSummary.rejected, (state, action) => {
       getPNSummaryRejected(state, action);
+    })
+  ),
+});
+
+export const pnListSlice = createSlice({
+  name: "pnDrugList",
+  initialState: pnState,
+  reducers: {},
+  extraReducers: (builder) => (
+    builder.addCase(getDrugDetailsPNList.pending, (state, action) => {
+      state.isLoading = true;
+    }),
+    builder.addCase(getDrugDetailsPNList.fulfilled, (state, action) => {
+      postPNListFulfilled(state, action);
+    }),
+    builder.addCase(getDrugDetailsPNList.rejected, (state, action) => {
+      postPNListRejected(state, action);
     })
   ),
 });
