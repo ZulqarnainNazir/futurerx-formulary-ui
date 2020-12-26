@@ -87,9 +87,6 @@ class CloneFormularyPopup extends React.Component<any, any> {
     this.listPayload.id_lob = this.props.formulary_lob_id;
     this.fetchFormularies(this.listPayload);
   }
-  onRowExpandHandler = (rowKeys) => {
-    
-  }
   fetchFormularies = async (payload) => {
     this.state.formularyData = Array();
     this.state.formularyGridData = Array();
@@ -170,7 +167,6 @@ class CloneFormularyPopup extends React.Component<any, any> {
           applyFilter={this.onApplyFilterHandler}
           getColumnSettings={this.onSettingsIconHandler}
           pageSize={this.listPayload.limit}
-          onRowExpandHandler={this.onRowExpandHandler}
           selectedCurrentPage={(this.listPayload.index / this.listPayload.limit + 1)}
           expandable={{
             isExpandable: true,
@@ -244,13 +240,13 @@ class CloneFormularyPopup extends React.Component<any, any> {
           applyFilter={this.onApplyFilterHandler}
           getColumnSettings={this.onSettingsIconHandler}
           pageSize={this.listPayload.limit}
-          onRowExpandHandler={this.onRowExpandHandler}
           selectedCurrentPage={(this.listPayload.index / this.listPayload.limit + 1)}
           expandable={{
             isExpandable: true,
             expandIconColumnIndex: selectFormularyGrid({}).length + 1,
             expandedRowRender: (props) => (
               <FormularyExpandedDetails
+                {...props}
                 formularyToggle={this.props.formularyToggle}
               />
             ),

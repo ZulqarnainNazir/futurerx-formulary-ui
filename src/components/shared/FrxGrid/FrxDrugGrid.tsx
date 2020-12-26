@@ -2204,11 +2204,10 @@ class FrxDrugGrid extends Component<FrxDrugGridProps<any>, FrxDrugGridState<any>
   withDataExpandedRow = (WrappedComponent: any, data: any) => {
     //console.log('expand row render:'+JSON.stringify(data));
     if (!WrappedComponent) return;
-    console.log('expand row render:'+JSON.stringify(data));
     return (
       <WrappedComponent
 
-        data={data}
+        data={Object.assign({},data)}
       />
     );
   };
