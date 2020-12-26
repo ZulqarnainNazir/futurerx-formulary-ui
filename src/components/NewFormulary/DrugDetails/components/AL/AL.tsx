@@ -262,6 +262,24 @@ class DrugDetailAL extends React.Component<any, any> {
     }
   };
 
+  onApplyFilterHandler = (filters) => {
+    console.log("------The FIlters = ", filters)
+    const fetchedProps = Object.keys(filters)[0];
+    console.log("The Fetched Props = ", fetchedProps);
+    const fetchedOperator = filters[fetchedProps][0].condition === 'is like' ? 'is_like' : 
+    filters[fetchedProps][0].condition === 'is not' ? 'is_not' : 
+    filters[fetchedProps][0].condition === 'is not like' ? 'is_not_like' : 
+    filters[fetchedProps][0].condition === 'does not exist' ? 'does_not_exist' : 
+    filters[fetchedProps][0].condition;
+    const fetchedValues = filters[fetchedProps][0].value !== '' ? [filters[fetchedProps][0].value.toString()] : [];
+    const newFilters = [{ prop: fetchedProps, operator: fetchedOperator,values: fetchedValues}];
+    console.log("------THe New Filters = ", newFilters);
+    this.listPayload.filter = newFilters;
+    // this.props.fetchFormularies(this.listPayload);
+    console.log("THe List Payload inside APPLy filter Handler = ", this.listPayload);
+    this.getALDrugsList({ index: this.listPayload.index, limit: this.listPayload.limit, listPayload: this.listPayload });
+  }
+
   onPageSize = (pageSize) => {
     this.listPayload.limit = pageSize
     this.getALDrugsList({ limit: this.listPayload.limit });
@@ -514,6 +532,7 @@ class DrugDetailAL extends React.Component<any, any> {
             onGridPageChangeHandler={this.onGridPageChangeHandler}
             totalRowsCount={this.state.listCount}
             clearFilterHandler={this.onClearFilterHandler}
+            applyFilter={this.onApplyFilterHandler}
             rowSelection={{
               columnWidth: 50,
               fixed: true,

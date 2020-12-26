@@ -100,6 +100,9 @@ export const GET_DRUG_SUMMARY_PR = "api/1/formulary-drug-summary-patrs/";
 export const GET_PR_SETTINGS_LIST = "api/1/patient-residences";
 export const GET_PR_FORMULARY_DRUGS = "api/1/formulary-drugs-patrs/";
 
+// OTHER TAB
+export const GET_DRUG_SUMMARY_OTHER = "api/1/formulary-drug-summary-edoth/";
+
 export const KEY_ENTITY_ID = "entity_id";
 export const KEY_INDEX = "index";
 export const KEY_LIMIT = "limit";

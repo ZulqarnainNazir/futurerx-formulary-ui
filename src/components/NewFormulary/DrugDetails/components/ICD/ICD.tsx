@@ -114,6 +114,7 @@ class DrugDetailICD extends React.Component<any, any> {
     let listCount = 0;
     this.props.getDrugDetailsICDList(apiDetails).then((json) => {
       let tmpData = json.payload.result;
+      console.log("The GEt ICd LIst Resp = ", tmpData);
       listCount = json.payload.count;
       var data: any[] = [];
       let count = 1;
@@ -126,8 +127,8 @@ class DrugDetailICD extends React.Component<any, any> {
         gridItem["icdLimit"] = element.is_icdl ? "" + element.is_icdl : "";
         gridItem["coveredIcd"] = element.covered_icds ? "" + element.covered_icds : "";
         gridItem["icdLookBack"] = element.lookback_days ? "" + element.lookback_days : "";
-        gridItem["notCoveredIcd"] = element.not_covered_icds ? "" + element.not_covered_icds : "";
-        gridItem["tier"] = element.tier_value ? "" + element.tier_value : "";
+        gridItem["not_covered_icds"] = element.not_covered_icds ? "" + element.not_covered_icds : "";
+        gridItem["tier_value"] = element.tier_value ? "" + element.tier_value : "";
         gridItem["labelName"] = element.drug_label_name ? "" + element.drug_label_name : "";
         gridItem["ddid"] = element.drug_descriptor_identifier ? "" + element.drug_descriptor_identifier : "";
         gridItem["gpi"] = element.generic_product_identifier ? "" + element.generic_product_identifier : "";
@@ -217,6 +218,24 @@ class DrugDetailICD extends React.Component<any, any> {
     alert(1);
   };
 
+  onApplyFilterHandler = (filters) => {
+    console.log("------The FIlters = ", filters)
+    const fetchedProps = Object.keys(filters)[0];
+    console.log("The Fetched Props = ", fetchedProps);
+    const fetchedOperator = filters[fetchedProps][0].condition === 'is like' ? 'is_like' : 
+    filters[fetchedProps][0].condition === 'is not' ? 'is_not' : 
+    filters[fetchedProps][0].condition === 'is not like' ? 'is_not_like' : 
+    filters[fetchedProps][0].condition === 'does not exist' ? 'does_not_exist' : 
+    filters[fetchedProps][0].condition;
+    const fetchedValues = filters[fetchedProps][0].value !== '' ? [filters[fetchedProps][0].value.toString()] : [];
+    const newFilters = [{ prop: fetchedProps, operator: fetchedOperator,values: fetchedValues}];
+    console.log("------THe New Filters = ", newFilters);
+    this.listPayload.filter = newFilters;
+    // this.props.fetchFormularies(this.listPayload);
+    console.log("THe List Payload inside APPLy filter Handler = ", this.listPayload);
+    this.getICDDrugsList({ index: this.listPayload.index, limit: this.listPayload.limit, listPayload: this.listPayload });
+  }
+
   render() {
     let dataGrid = <FrxLoader />;
     if (this.state.data) {
@@ -242,6 +261,7 @@ class DrugDetailICD extends React.Component<any, any> {
             onGridPageChangeHandler={this.onGridPageChangeHandler}
             totalRowsCount={this.state.listCount}
             clearFilterHandler={this.onClearFilterHandler}
+            applyFilter={this.onApplyFilterHandler}
             rowSelection={{
               columnWidth: 50,
               fixed: true,
