@@ -231,6 +231,19 @@ export function composePostBody(input: any): any {
   return payload;
 }
 
+export function composeCreateCloneFormularyPayload(input: any): any {
+  console.log("***** composeCreateCloneFormularyPayload");
+
+  const payload: any = {};
+  payload.formulary_info = {};
+  const typeInfo = getTypeInfo(input.GENERAL_INFO?.type_id);
+  payload.formulary_info.formulary_name = input.GENERAL_INFO?.name;
+  payload.formulary_info.effective_date = input.GENERAL_INFO?.effective_date;
+  payload.formulary_info.id_lob = typeInfo.id_lob;
+
+  return payload;
+}
+
 function getTypeInfo(
   formulary_type_id: number
 ): {
