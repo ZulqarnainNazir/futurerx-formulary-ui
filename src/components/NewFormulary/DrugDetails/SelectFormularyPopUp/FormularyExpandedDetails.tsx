@@ -47,7 +47,18 @@ export default class FormularyExpandedDetails extends React.Component<
     }
   };
 
+  componentDidMount(){
+    console.log('Expanded data is:'+JSON.stringify(this.props));
+    if(this.props.data){
+      console.log('Expanded data is:'+JSON.stringify(this.props.data));
+    }
+  }
+
   render() {
+    console.log('Expanded data is:'+JSON.stringify(this.props));
+    if(this.props.data){
+      console.log('Expanded data is:'+JSON.stringify(this.props.data));
+    }
     return (
       <div className="formulary-expanded-details custom-formulary-expanded-details">
         <Paper elevation={0}>

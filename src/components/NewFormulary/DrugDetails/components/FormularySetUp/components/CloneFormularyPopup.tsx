@@ -4,10 +4,143 @@ import {
   selectFormularyGrid,
   selectFormularyGridMedicare,
 } from "../../../../../../utils/grid/columns";
-import FrxGridContainer from "../../../../../shared/FrxGrid/FrxGridContainer";
+import FrxGridContainer from "../../../../../shared/FrxGrid/FrxDrugGridContainer";
 import FormularyExpandedDetails from "../../../SelectFormularyPopUp/FormularyExpandedDetails";
+import { getformularies } from "../../../../../../redux/slices/formulary/dashboard/dashboardService";
+import getLobName from "../../../../Utils/LobNameUtils";
+import { connect } from 'react-redux'
 
-export default class CloneFormularyPopup extends React.Component<any, any> {
+function mapDispatchToProps(dispatch) {
+  return {
+  };
+}
+
+const mapStateToProps = (state) => {
+  return {
+    formulary_id: state?.application?.formulary_id,
+    formulary: state?.application?.formulary,
+    formulary_lob_id: state?.application?.formulary_lob_id,
+    formulary_type_id: state?.application?.formulary_type_id,
+  };
+};
+
+const defaultListPayload = {
+  index: 0,
+  limit: 10,
+  filter: [],
+  id_lob: 1,
+  search_by: null,
+  search_key: "",
+  search_value: [],
+  sort_by: ["cms_formulary_id"],
+  sort_order: ["desc"],
+}
+
+class CloneFormularyPopup extends React.Component<any, any> {
+  state = {
+    formularyData: Array(),
+    formularyGridData: Array(),
+    hiddenColumns: Array(),
+    dataCount: 0,
+  };
+  listPayload: any = {
+    index: 0,
+    limit: 10,
+    filter: [],
+    id_lob: 1,
+    search_by: null,
+    search_key: "",
+    search_value: [],
+    sort_by: ["cms_formulary_id"],
+    sort_order: ["desc"],
+  }
+
+  onSettingsIconHandler = (hiddenColumn, visibleColumn) => {
+    console.log('Settings icon handler: Hidden' + JSON.stringify(hiddenColumn) + ' Visible:' + JSON.stringify(visibleColumn));
+    //this.props.setHiddenColumn(hiddenColumn)
+  }
+  onApplyFilterHandler = (filters) => {
+    const fetchedProps = Object.keys(filters)[0];
+    console.log('Fetched properties:'+JSON.stringify(fetchedProps)+ " Filters:"+JSON.stringify(filters));
+    const fetchedOperator = filters[fetchedProps][0].condition === 'is like' ? 'is_like' :
+      filters[fetchedProps][0].condition === 'is not' ? 'is_not' :
+        filters[fetchedProps][0].condition === 'is not like' ? 'is_not_like' :
+          filters[fetchedProps][0].condition === 'does not exist' ? 'does_not_exist' :
+            filters[fetchedProps][0].condition;
+    const fetchedValues = filters[fetchedProps][0].value !== '' ? [filters[fetchedProps][0].value.toString()] : [];
+    const newFilters = [{ prop: fetchedProps, operator: fetchedOperator, values: fetchedValues }];
+    this.listPayload.filter = newFilters;
+    this.fetchFormularies(this.listPayload);
+  }
+  onPageSize = (pageSize) => {
+    this.listPayload = { ...defaultListPayload };
+    this.listPayload.limit = pageSize
+    this.listPayload.id_lob = this.props.formulary_lob_id;
+    this.fetchFormularies(this.listPayload);
+  }
+  onGridPageChangeHandler = (pageNumber: any) => {
+    this.listPayload.index = (pageNumber - 1) * this.listPayload.limit;
+    this.fetchFormularies(this.listPayload);
+  }
+  onClearFilterHandler = () => {
+    this.listPayload = { ...defaultListPayload };
+    this.listPayload.id_lob = this.props.formulary_lob_id;
+    this.fetchFormularies(this.listPayload);
+  }
+  onRowExpandHandler = (rowKeys) => {
+    
+  }
+  fetchFormularies = async (payload) => {
+    this.state.formularyData = Array();
+    this.state.formularyGridData = Array();
+    try {
+      let formularies = await getformularies(payload);
+      console.log('Formularies:' + JSON.stringify(Object.keys(formularies)));
+      if (formularies['list'] && formularies['list'].length > 0) {
+        formularies['list'].map((row,index) => {
+          let item = Object.assign({}, row);
+          this.state.formularyData.push(item);
+
+          let gridItem = {};
+          gridItem['id'] = index + 1;
+          gridItem['key'] = index + 1;
+          gridItem['serviceYear'] = item['contract_year'] === null ? '' : item['contract_year'];
+          gridItem['lob'] = item['id_lob'] === null ? '' : getLobName(item['id_lob']);
+          gridItem['fromularyName'] = item['formulary_name'] === null ? '' : item['formulary_name'];
+          gridItem['formularyId'] = item['id_formulary'] === null ? '' : item['id_formulary'];
+          gridItem['version'] = item['version_number'] === null ? '' : item['version_number'];
+          gridItem['tierCount'] = item['number_of_tiers'] === null ? '' : item['number_of_tiers'];
+          gridItem['drugCount'] = item['number_of_drugs'] === null ? '' : item['number_of_drugs'];
+          gridItem['step'] = item['step'] === null ? '' : item['step'];
+          gridItem['assign'] = item['assigned_to'] === null ? '' : item['assigned_to'];
+          gridItem['status'] = item['status'] === null ? '' : item['status'];
+          gridItem['effectiveDate'] = item['effective_date'] === null ? '' : item['effective_date'];
+          gridItem['dueDate'] = item['due_date'] === null ? '' : item['due_date'];
+
+          this.state.formularyGridData.push(gridItem);
+        });
+        this.setState({
+          dataCount: formularies['count']
+        });
+      } else {
+        console.log('Else part 1');
+        this.setState({
+          dataCount: 0
+        });
+      }
+    } catch (err) {
+      console.log('Else part 2');
+      this.setState({
+        dataCount: 0
+      });
+    }
+  }
+  componentDidMount() {
+    let id_lob = this.props.formulary_lob_id;
+    this.listPayload = { ...defaultListPayload };
+    this.listPayload.id_lob = id_lob;
+    this.fetchFormularies(this.listPayload);
+  }
   render() {
     if (this.props.type === "medicare") {
       return (
@@ -15,7 +148,7 @@ export default class CloneFormularyPopup extends React.Component<any, any> {
           onSettingsClick="grid-menu"
           enableSearch={false}
           enableColumnDrag
-          onSearch={() => {}}
+          onSearch={() => { }}
           settingsWidth={50}
           fixedColumnKeys={["claimId"]}
           pagintionPosition="topRight"
@@ -28,13 +161,23 @@ export default class CloneFormularyPopup extends React.Component<any, any> {
           scroll={{ x: 2000, y: 377 }}
           isFetchingData={false}
           enableResizingOfColumns
-          data={selectFormularyGridMock()}
+          data={this.state.formularyGridData}
+          totalRowsCount={this.state.dataCount}
           settingsTriDotClick={this.props.settingsTriDotClick}
+          getPerPageItemSize={this.onPageSize}
+          onGridPageChangeHandler={this.onGridPageChangeHandler}
+          clearFilterHandler={this.onClearFilterHandler}
+          applyFilter={this.onApplyFilterHandler}
+          getColumnSettings={this.onSettingsIconHandler}
+          pageSize={this.listPayload.limit}
+          onRowExpandHandler={this.onRowExpandHandler}
+          selectedCurrentPage={(this.listPayload.index / this.listPayload.limit + 1)}
           expandable={{
             isExpandable: true,
             expandIconColumnIndex: selectFormularyGridMedicare({}).length + 1,
             expandedRowRender: (props) => (
               <FormularyExpandedDetails
+                {...props}
                 formularyToggle={this.props.formularyToggle}
               />
             ),
@@ -79,7 +222,7 @@ export default class CloneFormularyPopup extends React.Component<any, any> {
           onSettingsClick="grid-menu"
           enableSearch={false}
           enableColumnDrag
-          onSearch={() => {}}
+          onSearch={() => { }}
           settingsWidth={50}
           fixedColumnKeys={["claimId"]}
           pagintionPosition="topRight"
@@ -92,8 +235,17 @@ export default class CloneFormularyPopup extends React.Component<any, any> {
           scroll={{ x: 2000, y: 377 }}
           isFetchingData={false}
           enableResizingOfColumns
-          data={selectFormularyGridMock()}
+          data={this.state.formularyGridData}
+          totalRowsCount={this.state.dataCount}
           settingsTriDotClick={this.props.settingsTriDotClick}
+          getPerPageItemSize={this.onPageSize}
+          onGridPageChangeHandler={this.onGridPageChangeHandler}
+          clearFilterHandler={this.onClearFilterHandler}
+          applyFilter={this.onApplyFilterHandler}
+          getColumnSettings={this.onSettingsIconHandler}
+          pageSize={this.listPayload.limit}
+          onRowExpandHandler={this.onRowExpandHandler}
+          selectedCurrentPage={(this.listPayload.index / this.listPayload.limit + 1)}
           expandable={{
             isExpandable: true,
             expandIconColumnIndex: selectFormularyGrid({}).length + 1,
@@ -140,3 +292,8 @@ export default class CloneFormularyPopup extends React.Component<any, any> {
     }
   }
 }
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(CloneFormularyPopup);

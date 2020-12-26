@@ -32,9 +32,7 @@ class CompareFormularies extends React.Component<any, any> {
   state = {
     selectFormulary: false,
     show: false,
-
     PopUpType: PopUpTypes.TYPE2,
-
     hidden: false,
   };
   onClose = () => {
@@ -131,9 +129,7 @@ class CompareFormularies extends React.Component<any, any> {
             positiveActionText=""
             negativeActionText="Close"
             title={
-              this.state.PopUpType === PopUpTypes.TYPE1
-                ? "Select Formulary"
-                : "View Full Formulary"
+              "Select Formulary"
             }
             handleClose={() => {
               this.setState({
