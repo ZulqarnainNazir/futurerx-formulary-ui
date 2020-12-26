@@ -395,6 +395,8 @@ class FormularySetUp extends React.Component<any, any> {
           id_tier: tiersLength + i,
           id_tier_label: null,
           tier_name: `Tier ${tiersLength + i}`,
+          is_custom: null,
+          tier_label_name: "",
         };
         updatedTiers.push(newObj);
       }
@@ -403,19 +405,62 @@ class FormularySetUp extends React.Component<any, any> {
       tiers: updatedTiers,
     });
   };
+
+  // changeTierValueHandler = (e, val) => {
+  //   const updatedTiers: any = [...this.state.tiers];
+  //   const ind = updatedTiers.findIndex((el) => el.tier_name === val);
+  //   const getObj = { ...updatedTiers[ind] };
+  //   const getId = this.props.setupOptions.tierOptions.find(
+  //     (el) => el.tier_label === e
+  //   ).id_tier_label;
+  //   getObj.id_tier_label = getId;
+  //   updatedTiers[ind] = getObj;
+  //   this.setState({
+  //     tiers: updatedTiers,
+  //   });
+  // };
+
   changeTierValueHandler = (e, val) => {
+    console.log(" ------------------- ");
+    console.log(" > : " + e + " , " + val);
+    // Preferred , Tier 1
+    // Add New , Tier 2
     const updatedTiers: any = [...this.state.tiers];
+    // console.log(updatedTiers);
     const ind = updatedTiers.findIndex((el) => el.tier_name === val);
     const getObj = { ...updatedTiers[ind] };
-    const getId = this.props.setupOptions.tierOptions.find(
+    console.log(ind, getObj);
+    const OBJ = this.props.setupOptions.tierOptions.find(
       (el) => el.tier_label === e
-    ).id_tier_label;
-    getObj.id_tier_label = getId;
+    );
+    if (e === "Add New") {
+      getObj.id_tier_label = -1;
+      // getObj.is_custom;
+      // getObj.tier_label_name="";
+    } else {
+      getObj.id_tier_label = OBJ.id_tier_label;
+    }
+
     updatedTiers[ind] = getObj;
     this.setState({
       tiers: updatedTiers,
     });
   };
+
+  handleCustomTierChange = (e, tierID) => {
+    console.log(" handleCustomTierChange : " + e.currentTarget.value);
+    const updatedTiers: any = [...this.state.tiers];
+    console.log(updatedTiers);
+    const ind = updatedTiers.findIndex((el) => el.tier_name === tierID);
+    const getObj = { ...updatedTiers[ind] };
+    console.log(ind, getObj);
+    getObj.tier_label_name = e.currentTarget.value;
+    updatedTiers[ind] = getObj;
+    this.setState({
+      tiers: updatedTiers,
+    });
+  };
+
   setDefaultClassificationHandler = (id) => {
     let newObj: any = { ...this.state.generalInformation };
     newObj.classification_system = parseInt(id);
@@ -578,6 +623,7 @@ class FormularySetUp extends React.Component<any, any> {
                   generalInfo={this.state.generalInformation}
                   selectTier={this.selectTierHandler}
                   changeTierValue={this.changeTierValueHandler}
+                  customTierChange={this.handleCustomTierChange}
                 />
                 {this.state.generalInformation.type !== "Commercial" ? (
                   <SupplementalModels
