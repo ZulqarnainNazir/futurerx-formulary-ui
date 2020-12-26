@@ -68,9 +68,9 @@ interface initialFormData {
 const initialFormData:initialFormData = {
   is_validation_required: true,
   pa_group_description: '',
-  pa_criteria:'',
+  pa_criteria:null,
   file_type: 'FAOTC',
-  id_pa_type:'', 
+  id_pa_type:null, 
   is_rx_drug_type: false,
   is_otc_drug_type: false,
   change_indicator: '',
@@ -250,27 +250,44 @@ function NewGroup(props: any) {
 
     let requestData = {};
     e.preventDefault()
-    if(props.formType===0 && props.formulary_lob_id===1){
-      let msg:string[]=[];
-      if(formData.pa_group_description_name === ''){
-          showMessage("Formulary Description Name is required.",'error');
+    if ( props.formulary_lob_id === 1) {
+      let msg: string[] = [];
+      if (formData.pa_group_description_name === '') {
+        showMessage("Formulary Description Name is required.", 'error');
+        return;
       }
 
-      if(formData.change_indicator === ''){
-        showMessage("Change Indicator is required.",'error');
+      if (formData.change_indicator === '') {
+        showMessage("Change Indicator is required.", 'error');
+        return;
+      }
+
+      if (formData.id_indication_indicator === '') {
+        showMessage("Indication Indicator is required.", 'error');
+        return;
+      }
+      if (msg.length > 0) {
+        console.log(msg)
+        setErrorClass('invalid');
+        return;
+      }
     }
 
-    if(formData.id_indication_indicator === ''){
-      showMessage("Indication Indicator is required.",'error');
-  }
+    if ( props.formulary_lob_id === 4) {
+      let msg: string[] = [];
+      if (formData.pa_group_description_name === '') {
+        showMessage("Formulary Description Name is required.", 'error');
+        return;
+      }
 
-  
+      if (formData.id_pa_type === null) {
+        showMessage("PA Type is required.", 'error');
+        return;
+      }
 
-      
-      if(msg.length>0){
-          console.log(msg)
-          setErrorClass('invalid');
-          return;
+      if (formData.pa_criteria === null) {
+        showMessage("PA Criteria is required.", 'error');
+        return;
       }
     }
     debugger;
@@ -337,6 +354,7 @@ function NewGroup(props: any) {
       requestData['messageBody'] ['pa_criteria'] = formData['pa_criteria'];
       requestData['messageBody'] ['id_pa_type'] = Number(formData['id_pa_type']);
       requestData['messageBody'] ['is_additional_criteria_defined'] = formData['is_additional_criteria_defined'];
+      requestData['messageBody'] ['drug_list_ids'] = drug_list_ids;
       if (props.formType==1){
         requestData['pathParams'] = '/'+formData["id_pa_group_description"]+'/'+props?.formulary_id + '?entity_id=0';
         props.putPAGroupDescription(requestData).then(json=>{

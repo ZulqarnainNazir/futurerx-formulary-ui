@@ -184,7 +184,10 @@ class PaGroupDescriptionManagement extends React.Component<any, any>{
             json.payload.data.map(obj => {
                 let tmp_obj ={
                     key: obj.key, value: obj.value, text: obj.text,
-                    name: obj.text
+                    name: obj.text,
+                    "show":true,
+                    "is_list":false,
+                    "type":"",
                 };
                 tmp_list.push(tmp_obj);
             });
