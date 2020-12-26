@@ -23,7 +23,7 @@ import { Row, Col, Space } from "antd";
 import RadioButton from "../../../../../../shared/Frx-components/radio-button/RadioButton";
 import Button from "../../../../../../shared/Frx-components/button/Button";
 import * as constants from "../../../../../../../api/http-commons";
-
+import { ToastContainer } from 'react-toastify';
 import "../Tier.scss";
 import "./PA.scss";
 import { getPaSummary,getPaGrouptDescriptions, getPaTypes, getDrugLists,postFormularyDrugPA,postRelatedFormularyDrugPA,
@@ -93,7 +93,7 @@ class PaReplace extends React.Component<any,any> {
   openTierGridContainer = () => {
     this.state.drugData = [];
     this.state.drugGridData = [];
-    this.setState({ tierGridContainer: true });
+    
     this.populateGridData();
   };
 
@@ -131,6 +131,8 @@ class PaReplace extends React.Component<any,any> {
       apiDetails['messageBody']['id_pa_group_description'] = this.state.selectedLastestedVersion;
       apiDetails['messageBody']['id_pa_type'] = Number(this.state.selectedPaType);
       apiDetails['messageBody']['search_key'] = "";
+
+      
       //apiDetails['messageBody']['id_tier'] = this.state.selectedTier;
      
       
@@ -244,10 +246,26 @@ class PaReplace extends React.Component<any,any> {
     if (searchBody) {
       apiDetails['messageBody'] = Object.assign(apiDetails['messageBody'], searchBody);
     }
-    
+    debugger;
+    if (this.state.selectedGroupDescription===null){
+      showMessage('Group Description is required','info');
+      return ;
+    }
+
+    if (this.state.selectedPaType===null){
+      showMessage('PA Type is required','info');
+      return ;
+    }
+
+    if(this.state.showPaConfiguration && this.state.selectedLobFormulary===null){
+      showMessage('Related Formulary is required','info');
+      return ;
+    }
+
     apiDetails['messageBody']['base_pa_group_description_id'] = this.state.selectedGroupDescription;
     apiDetails['messageBody']['id_pa_type'] = this.state.selectedPaType;
 
+    
     if (this.state.showPaConfiguration){
       apiDetails['pathParams'] = this.props?.formulary_id + "/" + this.state.selectedLobFormulary + '/' +this.state.fileType + "/PA/" ;
       this.props.postRelatedFormularyDrugPA(apiDetails).then((json => this.loadGridData(json) ));
@@ -255,6 +273,8 @@ class PaReplace extends React.Component<any,any> {
       apiDetails['pathParams'] = this.props?.formulary_id + "/" + this.state.fileType + "/" ;
       this.props.postFormularyDrugPA(apiDetails).then((json => this.loadGridData(json) ));
      }
+
+     this.setState({ tierGridContainer: true });
     
   }
 
@@ -448,6 +468,7 @@ class PaReplace extends React.Component<any,any> {
               )}
           </div>
         )}
+        <ToastContainer/>
       </>
     );
   }

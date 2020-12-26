@@ -120,7 +120,7 @@ class DrugGrid extends React.Component<any, any> {
   openTierGridContainer = () => {
     this.state.drugData = [];
     this.state.drugGridData = [];
-    this.setState({ tierGridContainer: true });
+    
     this.populateGridData();
   };
 
@@ -142,6 +142,11 @@ class DrugGrid extends React.Component<any, any> {
 
     if (searchBody) {
       apiDetails['messageBody'] = Object.assign(apiDetails['messageBody'], searchBody);
+    }
+
+    if (this.state.selectedCriteria===null){
+      showMessage('Select criteria to remove Drugs','info');
+      return ;
     }
 
     apiDetails['messageBody']['selected_criteria_ids']=this.state.selectedCriteria;
@@ -176,6 +181,8 @@ class DrugGrid extends React.Component<any, any> {
         drugData: data,
         drugGridData: gridData
       })
+
+      this.setState({ tierGridContainer: true });
     }))
   }
 

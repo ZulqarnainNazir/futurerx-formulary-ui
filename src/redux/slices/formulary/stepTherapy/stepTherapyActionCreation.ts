@@ -10,7 +10,7 @@ const GET_DRUG_LIST_URL = BASE_URL1 + "/api/1/drug-lists/";
 //const GET_ST_GROUP_DESCRIPTION_URL = BASE_URL1 + "/api/1/st-group-description/";
 //const GET_ST_GROUP_DESCRIPTION_URL = BASE_URL1 + "api/1/mcr-st-group-description/";
 //const GET_ST_GROUP_DESCRIPTION_VERSTIONS_URL = BASE_URL1 + "api/1/mcr-st-group-description-versions/";
-
+const GET_LOB_FORMULARIES_URL = BASE_URL1 + "/api/1/lob-formularies/";
 
 
 
@@ -53,6 +53,27 @@ export const getStSummary = createAsyncThunk(
       })
       .then((json) => {
         console.log("getStSummary: ", json);
+        return json;
+      });
+  }
+);
+
+export const getLobFormularies = createAsyncThunk(
+  "formulary_summary/getLobFormularies",
+  async (apiDetails: any) => {
+    console.log("getLobFormularies action creator:: url: " + GET_LOB_FORMULARIES_URL + apiDetails.formulary_type_id);
+    const requestHeaders  = {
+        // method: 'POST',
+        // body: JSON.stringify(summary_id),
+        headers: commonConstants.REQUEST_HEADER
+    }
+    return fetch(GET_LOB_FORMULARIES_URL + apiDetails.formulary_type_id +'/'+apiDetails.formulary_lob_id ,requestHeaders)
+      .then((response) => {
+        if (!response.ok) throw Error(response.statusText);
+        return response.json();
+      })
+      .then((json) => {
+        console.log("getLobFormularies: ", json);
         return json;
       });
   }

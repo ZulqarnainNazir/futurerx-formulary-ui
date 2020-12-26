@@ -7,13 +7,21 @@ import Box from '@material-ui/core/Box';
 import Button from '../../../../../shared/Frx-components/button/Button';
 import DropDown from '../../../../../shared/Frx-components/dropdown/DropDownMap';
 import RadioButton from '../../../../../shared/Frx-components/radio-button/RadioButton';
-import { getStSummary,getStGrouptDescriptions, getStTypes, getDrugLists,postFormularyDrugST,getStGrouptDescriptionVersions,postApplyFormularyDrugST } from "../../../../../../redux/slices/formulary/stepTherapy/stepTherapyActionCreation";
+import { getStSummary,getStGrouptDescriptions, getStTypes, getDrugLists,postFormularyDrugST,
+  getStGrouptDescriptionVersions,postApplyFormularyDrugST,getLobFormularies } from "../../../../../../redux/slices/formulary/stepTherapy/stepTherapyActionCreation";
 import "./STF.scss";
 import * as constants from "../../../../../../api/http-commons";
 import FrxDrugGridContainer from "../../../../../shared/FrxGrid/FrxDrugGridContainer";
 import { stColumns } from "../../../../../../utils/grid/columns";
 import AdvanceSearchContainer from '../../../../NewAdvanceSearch/AdvanceSearchContainer';
 import { setAdvancedSearch } from "../../../../../../redux/slices/formulary/advancedSearch/advancedSearchSlice";
+import showMessage from "../../../../Utils/Toast";
+import { ToastContainer } from 'react-toastify';
+import { Row, Col, Space } from "antd";
+import Radio from '@material-ui/core/Radio';
+import RadioGroup from '@material-ui/core/RadioGroup';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+
 
 function mapDispatchToProps(dispatch) {
     return {
@@ -24,7 +32,8 @@ function mapDispatchToProps(dispatch) {
       postFormularyDrugST:(a) => dispatch(postFormularyDrugST(a)),
       getStGrouptDescriptionVersions:(a) => dispatch(getStGrouptDescriptionVersions(a)),
       postApplyFormularyDrugST:(a) => dispatch(postApplyFormularyDrugST(a)),
-      setAdvancedSearch: (a) => dispatch(setAdvancedSearch(a))
+      setAdvancedSearch: (a) => dispatch(setAdvancedSearch(a)),
+      getLobFormularies:(a) => dispatch(getLobFormularies(a)),
     };
   }
 
@@ -67,6 +76,7 @@ function mapDispatchToProps(dispatch) {
         showPaConfiguration:false,
         selectedLastestedVersion:null,
         fileType:null,
+        lobFormularies:null,
         stValue:null,
         groupDescriptionProp:''
     }
@@ -81,9 +91,15 @@ function mapDispatchToProps(dispatch) {
       openTierGridContainer = () => {
         this.state.drugData = [];
         this.state.drugGridData = [];
-        this.setState({ tierGridContainer: true });
+        
         this.populateGridData();
       };
+
+      dropDownSelectHandlerLob = (value, event) => {
+        let tmp_index = event.key;
+        let tmp_value = event.value;
+        this.setState({ selectedLobFormulary: tmp_value });
+      }
     
       handleSave = () => {
         if (this.state.selectedDrugs && this.state.selectedDrugs.length > 0) {
@@ -213,6 +229,21 @@ function mapDispatchToProps(dispatch) {
           apiDetails['messageBody'] = Object.assign(apiDetails['messageBody'],searchBody);
         }
 
+        if (this.state.selectedGroupDescription===null){
+          showMessage('Group Description is required','info');
+          return ;
+        }
+    
+        if (this.state.selectedStType===null){
+          showMessage('ST Type is required','info');
+          return ;
+        }
+    
+        // if(this.state.showPaConfiguration && this.state.selectedLobFormulary===null){
+        //   showMessage('Related Formulary is required','info');
+        //   return ;
+        // }
+
         apiDetails['messageBody']['base_st_group_description_id'] = this.state.selectedGroupDescription;
         apiDetails['messageBody']['id_st_type'] = this.state.selectedStType;
     
@@ -247,6 +278,7 @@ function mapDispatchToProps(dispatch) {
             drugGridData: gridData
           })
         }))
+        this.setState({ tierGridContainer: true });
       }
 
     onClickTab = (selectedTabIndex: number) => {
@@ -270,7 +302,7 @@ function mapDispatchToProps(dispatch) {
     settingFormApplyHandler = () => {
         this.state.drugData = [];
         this.state.drugGridData = [];
-        this.setState({ tierGridContainer: true });
+        
         this.populateGridData();
     }
     componentDidMount() {
@@ -307,6 +339,14 @@ function mapDispatchToProps(dispatch) {
               });
             
         });
+        let apiDetails = {formulary_type_id: this.props?.formulary_type_id,
+          formulary_lob_id: this.props?.formulary_lob_id}
+        this.props.getLobFormularies(apiDetails).then((json) =>{
+          this.setState({
+            lobFormularies: json.payload.result,
+            });
+          
+        });
     }
     render(){
         const searchProps = {
@@ -325,33 +365,29 @@ function mapDispatchToProps(dispatch) {
                                     </div>
 
                                     <div className="group mt-10">
-                                    <label>What indicator will be configured for Marketing Material?</label>
-                                    <div className="marketing-material radio-group">
-                                        <RadioButton 
-                                            label="ADD File"
-                                            name="marketing-material-radio"
-                                        />
-                                        <RadioButton 
-                                            label="Excluded"
-                                            name="marketing-material-radio"
-                                            checked
-                                        />
-                                    </div>
+                                      <label>
+                                        Do you want to view existing ST configurations in another
+                                        formulary? <span className="astrict">*</span>
+                                      </label>
+                                      <Space size="large">
+                                      <div className="marketing-material radio-group">
+                                        <RadioGroup aria-label="marketing-material-radio1" className="gdp-radio" name="pa_configuration" onChange={this.pa_configurationChange} >
+                                          <FormControlLabel value="true" control={<Radio  disabled={this.props.configureSwitch} />}label="Yes" />
+                                          <FormControlLabel value="false" control={<Radio disabled={this.props.configureSwitch} />} label="No" />
+                                        </RadioGroup>
+                                      </div>
+                                      </Space>
                                     </div>
 
                                     <div className="group mt-10">
-                                    <label>What indicator will be configured for Marketing Material?</label>
-                                    <div className="marketing-material radio-group">
-                                        <RadioButton 
-                                            label="ADD File"
-                                            name="marketing-material-radio"
-                                        />
-                                        <RadioButton 
-                                            label="Excluded"
-                                            name="marketing-material-radio"
-                                            checked
-                                        />
-                                    </div>
+                                      <label>
+                                        do you want to add additional criteria?{" "}
+                                        <span className="astrict">*</span>
+                                      </label>
+                                      <Space size="large">
+                                        <RadioButton label="Yes" />
+                                        <RadioButton label="No" />
+                                      </Space>
                                     </div>
                                 </Grid>
                                 <Grid item xs={4}>
@@ -362,15 +398,19 @@ function mapDispatchToProps(dispatch) {
                                     </div>
 
                                     <div className="group">
-                                        <label>ST Value <span className="astrict">*</span></label>
-                                        <input type="text" name="stValue" onChange={this.handleChange} disabled={this.props.configureSwitch} />
+                                    <label>
+                                      Select Related Formulary to View Existing configuration?{" "}
+                                      <span className="astrict">*</span>
+                                    </label>
+                                     <DropDown options={this.state.lobFormularies} valueProp="id_formulary" dispProp="formulary_name" onSelect={this.dropDownSelectHandlerLob} disabled={this.props.configureSwitch}/>
+
                                     </div>
                                 </Grid>
 
                                 <Grid item xs={4}>
                                 <div className="group">
-                                        <label>package <span className="astrict">*</span></label>
-                                        <input type="text" disabled={this.props.configureSwitch} />
+                                        <label>ST Value <span className="astrict">*</span></label>
+                                        <input type="text" name="stValue" onChange={this.handleChange} disabled={this.props.configureSwitch} />
                                     </div>
                                 </Grid>
                             </Grid>
@@ -425,7 +465,7 @@ function mapDispatchToProps(dispatch) {
           </div>
         )}
                     </div>
-                
+                    <ToastContainer/>
             </div>
         )
     }
