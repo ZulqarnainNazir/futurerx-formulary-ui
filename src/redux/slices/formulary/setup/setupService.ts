@@ -189,7 +189,7 @@ export function composePostBody(input: any): any {
     edits: input?.edit_info?.edits,
     edits_no: input?.edit_info?.edits_no,
     custom_edits: input?.edit_info?.custom_edits,
-    removed_formulary_edits: [],
+    removed_formulary_edits: input?.edit_info?.removed_formulary_edits,
   };
   if (input?.edit_info?.custom_edits === "") {
     payload.edit_info.custom_edits = [];
