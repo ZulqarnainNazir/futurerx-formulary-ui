@@ -334,6 +334,71 @@ class FormularySetUp extends React.Component<any, any> {
       supplemental_benefit_info: getObject,
     });
   };
+
+  tierCheck = () => {
+    console.log(this.state)
+    debugger
+    return true;
+  }
+  onCheckUncheckAllSupplementalHandler = (val) => {
+    if (val === "uncheck") {
+      this.setState({
+        supplemental_benefit_info: {
+          supplemental_benefits: [],
+        },
+      });
+    } else {
+      const allSupplemental = this.props.setupOptions.supplementalOptions.map(
+        (e) => e.id_supplemental_benefit
+      );
+      this.setState({
+        supplemental_benefit_info: {
+          supplemental_benefits: allSupplemental,
+        },
+      });
+    }
+  };
+  selectTierHandler = (e) => {
+    const updatedTiers: any = [...this.state.tiers];
+    const tiersLength = updatedTiers.length;
+    if (tiersLength > e) {
+      updatedTiers.length = e;
+    } else {
+      for (let i = 1; i <= e - tiersLength; i++) {
+        const newObj = {
+          id_formulary_tier: null,
+          id_tier: tiersLength + i,
+          id_tier_label: null,
+          tier_name: `Tier ${tiersLength + i}`,
+        };
+        updatedTiers.push(newObj);
+      }
+    }
+    this.setState({
+      tiers: updatedTiers,
+    });
+  };
+  changeTierValueHandler = (e, val) => {
+    const updatedTiers: any = [...this.state.tiers];
+    const ind = updatedTiers.findIndex((el) => el.tier_name === val);
+    const getObj = { ...updatedTiers[ind] };
+    const getId = this.props.setupOptions.tierOptions.find(
+      (el) => el.tier_label === e
+    ).id_tier_label;
+    getObj.id_tier_label = getId;
+    updatedTiers[ind] = getObj;
+    this.setState({
+      tiers: updatedTiers,
+    });
+  };
+  setDefaultClassificationHandler = (id) => {
+    let newObj:any = {...this.state.generalInformation};
+    newObj.classification_system = parseInt(id);
+    this.setState({
+      generalInformation: newObj
+    })
+  }
+
   onSave = (e) => {
     console.log("  SAVE ", e);
     if (this.props.mode === "NEW") {
@@ -410,69 +475,10 @@ class FormularySetUp extends React.Component<any, any> {
       }
     });
   };
-  tierCheck = () => {
-    console.log(this.state)
-    debugger
-    return true;
-  }
-  onCheckUncheckAllSupplementalHandler = (val) => {
-    if (val === "uncheck") {
-      this.setState({
-        supplemental_benefit_info: {
-          supplemental_benefits: [],
-        },
-      });
-    } else {
-      const allSupplemental = this.props.setupOptions.supplementalOptions.map(
-        (e) => e.id_supplemental_benefit
-      );
-      this.setState({
-        supplemental_benefit_info: {
-          supplemental_benefits: allSupplemental,
-        },
-      });
-    }
+  createUsingClone = (e) => {
+    console.log("clone.....");
   };
-  selectTierHandler = (e) => {
-    const updatedTiers: any = [...this.state.tiers];
-    const tiersLength = updatedTiers.length;
-    if (tiersLength > e) {
-      updatedTiers.length = e;
-    } else {
-      for (let i = 1; i <= e - tiersLength; i++) {
-        const newObj = {
-          id_formulary_tier: null,
-          id_tier: tiersLength + i,
-          id_tier_label: null,
-          tier_name: `Tier ${tiersLength + i}`,
-        };
-        updatedTiers.push(newObj);
-      }
-    }
-    this.setState({
-      tiers: updatedTiers,
-    });
-  };
-  changeTierValueHandler = (e, val) => {
-    const updatedTiers: any = [...this.state.tiers];
-    const ind = updatedTiers.findIndex((el) => el.tier_name === val);
-    const getObj = { ...updatedTiers[ind] };
-    const getId = this.props.setupOptions.tierOptions.find(
-      (el) => el.tier_label === e
-    ).id_tier_label;
-    getObj.id_tier_label = getId;
-    updatedTiers[ind] = getObj;
-    this.setState({
-      tiers: updatedTiers,
-    });
-  };
-  setDefaultClassificationHandler = (id) => {
-    let newObj:any = {...this.state.generalInformation};
-    newObj.classification_system = parseInt(id);
-    this.setState({
-      generalInformation: newObj
-    })
-  }
+
   render() {
     return (
       <div>
@@ -486,6 +492,7 @@ class FormularySetUp extends React.Component<any, any> {
               onDropdownChange={this.onDropdownChange}
               formularyTypeChanged={this.formularyTypeChanged}
               datePickerChange={this.onDatePickerChangeHandler}
+              createUsingClone={this.createUsingClone}
             />
             {this.state.generalInformation.type !== "" ? (
               <>
