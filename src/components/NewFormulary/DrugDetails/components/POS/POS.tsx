@@ -378,20 +378,19 @@ class DrugDetailPOS extends React.Component<any, any> {
   };
 
   handleRemoveChecked = (selectedRows) => {
-    // ...this.state.posCheckedList,
     this.setState(
       {
-        posCheckedList: [selectedRows],
+        posCheckedList: selectedRows,
         showGrid: false,
       },
       () => console.log("ROW CHANGE UPDATED STATE: ", this.state.posCheckedList)
     );
-    // console.log( selectedRows);
-    // console.log("ROW CHANGE2: ",);
   };
 
   showGridHandler = () => {
     this.getPOSDrugsList(this.listPayload);
+    console.log(this.state.posRemoveSettingsStatus)
+    console.log(this.state.posCheckedList)
   };
 
   render() {

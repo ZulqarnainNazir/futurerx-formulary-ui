@@ -39,13 +39,7 @@ class PosRemove extends React.Component<any, any> {
   render() {
     const { selectedRowKeys } = this.state;
     const rowSelection = {
-      // selectedRowKeys,
       onChange: (selectedRowKeys, selectedRows) => {
-        console.log(
-          `selectedRowKeys: ${selectedRowKeys}`,
-          "selectedRows: ",
-          selectedRows
-        );
         this.setState({ selectedRowKeys });
         this.props.handleRemoveChecked(selectedRows);
       },
