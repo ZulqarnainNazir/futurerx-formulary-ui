@@ -13,7 +13,13 @@ const columns = [
 class PrRemove extends React.Component<any,any> {
   state = {
     selectedRowKeys: [],
-    dataToRemove:[]
+    dataToRemove:[],
+    seletedValue:[{
+      id_patient_residence_type: 0,
+      is_covered:true,
+      patient_residence_type_code:0,
+      name: ""
+    }]
   };
 
   onSelectChange = selectedRowKeys => {
@@ -23,6 +29,7 @@ class PrRemove extends React.Component<any,any> {
 
   getSelectedVal = (e) =>{
     this.props.handleChangeEvent(e.target.value)
+    this.setState({...this.state.seletedValue,is_covered:e.target.value})
   }
 
   static getDerivedStateFromProps(props, state) {
@@ -40,7 +47,10 @@ class PrRemove extends React.Component<any,any> {
     const { selectedRowKeys } = this.state;
     const rowSelection = {
       selectedRowKeys,
-      onChange: this.onSelectChange,
+      onChange: (selectedRowKeys, selectedRows) => {
+        console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
+        this.setState({ selectedRowKeys });
+      }
     };
     const hasSelected = selectedRowKeys.length > 0;
     return (
@@ -53,8 +63,8 @@ class PrRemove extends React.Component<any,any> {
         </div>
         <div className="inner-container">
           <select name="cover" onChange={this.getSelectedVal}>
-            <option value="true" selected>Covered</option>
-            <option value="">NonCovered</option>
+            <option value="covered" selected>Covered</option>
+            <option value="non-covered">NonCovered</option>
           </select>
         <Table rowSelection={rowSelection} columns={columns} dataSource={this.state.dataToRemove} pagination={false} />
         </div>

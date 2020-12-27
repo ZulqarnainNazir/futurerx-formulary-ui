@@ -9,7 +9,7 @@ import Button from "../../../../shared/Frx-components/button/Button";
 import { getDrugDetailsColumnPT } from "../../../DrugDetails/components/FormularyConfigure/DrugGridColumn";
 import FrxLoader from "../../../../shared/FrxLoader/FrxLoader";
 import AdvancedSearch from "../../../DrugDetails/components/FormularyConfigure/components/search/AdvancedSearch";
-import { getDrugDetailsPTSummary, getPTDrugList } from "../../../../../redux/slices/formulary/drugDetails/pt/ptActionCreation";
+import { getDrugDetailsPTSummary, getPTDrugList,getPTReplaceSrch } from "../../../../../redux/slices/formulary/drugDetails/pt/ptActionCreation";
 import * as ptConstants from "../../../../../api/http-drug-details";
 import getLobCode from "../../../Utils/LobUtils";
 
@@ -20,6 +20,7 @@ function mapDispatchToProps(dispatch) {
   return {
     getDrugDetailsPTSummary: (a) => dispatch(getDrugDetailsPTSummary(a)),
     getPTDrugList: (a) => dispatch(getPTDrugList(a)),
+    getPTReplaceSrch: (arg) => dispatch(getPTReplaceSrch(arg)),
   };
 }
 
@@ -42,6 +43,9 @@ class DrugDetailPT extends React.Component<any, any> {
     panelGridTitle1: ["", "NUMBER OF DRUGS", "ADDED DRUGS", "REMOVED DRUGS"],
     panelTitleAlignment1: ["center", "center", "center", "center"],
     panelGridValue1: [],
+    replaceTab:{
+      searchResult:[]
+    },
     isNotesOpen: false,
     activeTabIndex: 0,
     columns: null,
@@ -179,6 +183,25 @@ class DrugDetailPT extends React.Component<any, any> {
     });
   }
 
+  getPTReplaceSrch = (searchTxt) => {
+    let apiDetails = {};
+    apiDetails["apiPart"] = ptConstants.GET_PT_DRUGS_REPLACE;
+    apiDetails["pathParams"] = '';
+    apiDetails["keyVals"] = [
+      { key: ptConstants.KEY_ENTITY_ID, value: this.props?.formulary_id },
+      { key: ptConstants.SEARCHKEY, value: searchTxt }
+    ];
+
+    this.props.getPTReplaceSrch(apiDetails).then((json) => {
+      let curRow = json.payload && json.payload.data ? json.payload.data : [];
+      this.setState({
+        replaceTab: {
+          searchResult:curRow
+        },
+      });
+    });
+  }
+
   componentDidMount() {
     const columns = getDrugDetailsColumnPT();
     this.setState({
@@ -212,6 +235,11 @@ class DrugDetailPT extends React.Component<any, any> {
   settingFormApplyHandler = () => {
     alert(1);
   };
+
+  handleReplaceSrch = (e) =>{
+      console.log(e)
+      this.getPTReplaceSrch(e)
+  }
 
   render() {
     let dataGrid = <FrxLoader />;
@@ -287,7 +315,7 @@ class DrugDetailPT extends React.Component<any, any> {
           </div>
         </div>
 
-        <PtSettings />
+        <PtSettings options={this.state.replaceTab.searchResult} handleReplaceSrch={this.handleReplaceSrch}/>
 
         <div className="bordered">
           <div className="header space-between pr-10">

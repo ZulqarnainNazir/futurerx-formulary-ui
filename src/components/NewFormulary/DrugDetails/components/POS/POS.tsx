@@ -53,13 +53,17 @@ class DrugDetailPOS extends React.Component<any, any> {
     panelTitleAlignment1: ["center", "center", "center", "center"],
     panelGridValue1: [],
     posSettings: [],
-    removeTabsSettings:[],
+    removeTabsData:[],
     posSettingsStatus: {
       type: "covered",
       covered: true,
     },
+    posRemoveSettingsStatus: {
+      type: "covered",
+      covered: true,
+    },
+    posCheckedList: [],
     listCount: 0,
-
     isNotesOpen: false,
     activeTabIndex: 0,
     columns: getDrugDetailsColumnPOS(),
@@ -128,8 +132,8 @@ class DrugDetailPOS extends React.Component<any, any> {
     });
   };
 
-  getPOSRemoveSettings = (e) => {
-    this.listPayload['is_covered'] = Boolean(e)
+  getPOSRemoveSettings = (isCovered) => {
+    this.listPayload['is_covered'] = isCovered;
     let apiDetails = {};
     apiDetails["apiPart"] = posConstants.GET_POS_DRUG_REMOVE_TAB;
     apiDetails["pathParams"] = this.props?.formulary_id;
@@ -154,7 +158,7 @@ class DrugDetailPOS extends React.Component<any, any> {
       console.log("The PR Rows = ", rows);
 
       this.setState({
-        removeTabsSettings: rows,
+        removeTabsData: rows,
       });
     });
   };
@@ -309,8 +313,21 @@ class DrugDetailPOS extends React.Component<any, any> {
     alert(1);
   };
 
-  handleChangeEvent = (e) =>{
-    this.getPOSRemoveSettings(e)
+  handleChangeEvent = (key: string) =>{
+    const COVERED = "covered";
+    const isCovered: boolean = key === COVERED ? true : false;
+    let posRemoveSettingsStatus = {
+      type: key,
+      covered: isCovered,
+    };
+
+    this.setState({ posRemoveSettingsStatus, showGrid: false });
+    this.getPOSRemoveSettings(isCovered)
+  }
+
+  handleRemoveChecked = (e) =>{
+    this.setState({ posCheckedList:e, showGrid: false });
+    console.log('Nagda=',this.state.posCheckedList)
   }
 
   showGridHandler = () => {
@@ -328,7 +345,7 @@ class DrugDetailPOS extends React.Component<any, any> {
       posSettings,
       posSettingsStatus,
       isSelectAll,
-      showGrid,
+      showGrid
     } = this.state;
     return (
       <>
@@ -376,7 +393,11 @@ class DrugDetailPOS extends React.Component<any, any> {
           showGridHandler={this.showGridHandler}
         />}
 
-        {this.state.activeTabIndex==2&&<PosRemove data={this.state.removeTabsSettings} showGridHandler={this.showGridHandler} handleChangeEvent={this.handleChangeEvent}/>}
+        {this.state.activeTabIndex==2&&<PosRemove data={this.state.removeTabsData} 
+        showGridHandler={this.showGridHandler} 
+        handleChangeEvent={this.handleChangeEvent}
+        handleRemoveChecked={this.handleRemoveChecked}
+        />}
 
         {showGrid ? (
           <div className="bordered">

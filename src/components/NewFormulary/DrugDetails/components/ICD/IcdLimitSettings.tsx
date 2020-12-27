@@ -2,7 +2,7 @@ import React from 'react'
 import DropDown from '../../../../shared/Frx-components/dropdown/DropDown';
 import PanelHeader from '../../../../shared/Frx-components/panel-header/PanelHeader';
 import StatusContentFormPanel from '../common/StatusContentFormPanel/StatusContentFormPanel';
-
+import Tags from '../Tags'
 import './ICD.scss';
 
 
@@ -13,7 +13,11 @@ const AddIcon = () => (
   </svg>
 );
 
-const IcdLimitSettings = () => {
+class IcdLimitSettings extends React.Component<any,any>{
+  handleReplaceSrch = (val) => {
+    this.props.handleReplaceSrch(val)
+  }
+ render(){
   return (
     <div className="icd-limit-settings bordered mb-10">
       <PanelHeader title="ICD Limit Settings" tooltip="ICD Limit Settings" />
@@ -25,24 +29,25 @@ const IcdLimitSettings = () => {
               <div className="input-field-group__label">ICD:</div>
             
               <div className="input-field-group__dropdown-field">
-                <DropDown
+                {/* <DropDown
                   className=""
                   placeholder="inclusive of"
                   options={["inclusive of", "exclusive of"]}
-                />
+                /> */}
+                 <Tags options={this.props.options} handleReplaceSrch={this.handleReplaceSrch} />
               </div>
             </div>
             
             <div className="input-field-group">
               <div className="input-field-group__label">Lookback Days:</div>
               <div className="input-field-group__text-field">
-                <input type="text" className="setup-input-fields" />
+                <input type="number" className="setup-input-fields" />
               </div>
             </div>
           </div>
         </StatusContentFormPanel>
       
-        <StatusContentFormPanel title="ICD" type="not-covered">
+        {/* <StatusContentFormPanel title="ICD" type="not-covered">
           <div className="icd-limit-settings__form">            
             <div className="input-field-group">
               <div className="input-field-group__label">ICD:</div>
@@ -63,15 +68,16 @@ const IcdLimitSettings = () => {
               </div>
             </div>
           </div>
-        </StatusContentFormPanel>
+        </StatusContentFormPanel> */}
         
-        <div className="icd-limit-settings__add-new-form-action">
+        {/* <div className="icd-limit-settings__add-new-form-action">
           <AddIcon/>
           <span className="icd-limit-settings__add-new-form-action-text">Add ICD Limit Criteria</span>
-        </div>
+        </div> */}
       </div>
     </div>
   )
+ }
 }
 
 export default IcdLimitSettings

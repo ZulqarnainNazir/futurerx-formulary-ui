@@ -50,7 +50,7 @@ class DrugDetailPR extends React.Component<any, any> {
     isNotesOpen: false,
     activeTabIndex: 0,
     columns: null,
-    removeTabsSettings:[],
+    removeTabsData:[],
     data: [],
     tabs: [
       { id: 1, text: "Replace" },
@@ -149,8 +149,8 @@ class DrugDetailPR extends React.Component<any, any> {
       });
     });
   };
-  getPRRemoveSettings = (e) => {
-    this.listPayload['is_covered'] = Boolean(e)
+  getPRRemoveSettings = (isCovered) => {
+    this.listPayload['is_covered'] = isCovered
     let apiDetails = {};
     apiDetails["apiPart"] = prConstants.GET_PR_DRUG_REMOVE_TAB;
     apiDetails["pathParams"] = this.props?.formulary_id;
@@ -176,13 +176,21 @@ class DrugDetailPR extends React.Component<any, any> {
       console.log("The PR Rows = ", rows);
 
       this.setState({
-        removeTabsSettings: rows,
+        removeTabsData: rows,
       });
     });
   };
 
-  handleChangeEvent = (e) =>{
-    this.getPRRemoveSettings(e)
+  handleChangeEvent = (key: string) =>{
+    const COVERED = "covered";
+    const isCovered: boolean = key === COVERED ? true : false;
+    let posRemoveSettingsStatus = {
+      type: key,
+      covered: isCovered,
+    };
+
+    this.setState({ posRemoveSettingsStatus, showGrid: false });
+    this.getPRRemoveSettings(isCovered)
   }
 
   getPRSettings = () => {
@@ -409,7 +417,7 @@ class DrugDetailPR extends React.Component<any, any> {
           showGridHandler={this.showGridHandler}
         />}
 
-        {this.state.activeTabIndex==2&&<PrRemove data={this.state.removeTabsSettings} showGridHandler={this.showGridHandler} handleChangeEvent={this.handleChangeEvent}/>}
+        {this.state.activeTabIndex==2&&<PrRemove data={this.state.removeTabsData} showGridHandler={this.showGridHandler} handleChangeEvent={this.handleChangeEvent}/>}
 
         {this.state.showGrid ? (
           <div className="bordered">

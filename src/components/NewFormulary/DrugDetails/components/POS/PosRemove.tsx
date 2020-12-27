@@ -16,16 +16,16 @@ class PosRemove extends React.Component<any,any> {
     dataToRemove:[]
   };
 
-  onSelectChange = selectedRowKeys => {
-    console.log('selectedRowKeys changed: ', selectedRowKeys);
-    this.setState({ selectedRowKeys });
-  };
+  // onSelectChange = selectedRowKeys => {
+  //   console.log('selectedRowKeys changed: ', selectedRowKeys);
+  //   this.setState({ selectedRowKeys });
+  // };
 
   static getDerivedStateFromProps(props, state) {
     const data:any =[]
     for (let i = 0; i <props.data.length; i++) {
       data.push({
-        key: props.data[i][2],
+        key: props.data[i][0],
         name: props.data[i][1]
       });
     }
@@ -40,7 +40,12 @@ class PosRemove extends React.Component<any,any> {
     const { selectedRowKeys } = this.state;
     const rowSelection = {
       selectedRowKeys,
-      onChange: this.onSelectChange,
+      onChange: (selectedRowKeys, selectedRows) => {
+        //console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
+        this.setState({ selectedRowKeys:[selectedRowKeys,selectedRows] },()=>{
+        this.props.handleRemoveChecked(this.state.selectedRowKeys)
+        });
+      }
     };
     const hasSelected = selectedRowKeys.length > 0;
     return (
@@ -53,8 +58,8 @@ class PosRemove extends React.Component<any,any> {
         </div>
         <div className="inner-container">
         <select name="cover" onChange={this.getSelectedVal}>
-            <option value="true" selected>Covered</option>
-            <option value="">NonCovered</option>
+            <option value="covered" selected>Covered</option>
+            <option value="non-covered">NonCovered</option>
          </select>
         <Table rowSelection={rowSelection} columns={columns} dataSource={this.state.dataToRemove} pagination={false} />
         </div>
