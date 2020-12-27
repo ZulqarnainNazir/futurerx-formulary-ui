@@ -1,6 +1,18 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { getDrugDetailsPNSummary, getDrugDetailsPNList } from "./pnActionCreation";
-import { getPNSummaryFulfilled, getPNSummaryRejected, postPNListFulfilled, postPNListRejected } from "./pnReducers";
+import {
+  getDrugDetailsPNSummary,
+  getDrugDetailsPNList,
+  postPNCriteriaList,
+  postRemovePNDrug,
+} from "./pnActionCreation";
+import {
+  getPNSummaryFulfilled,
+  getPNSummaryRejected,
+  postPNListFulfilled,
+  postPNListRejected,
+  postReplaceDrugFulfilled,
+  postReplaceDrugRejected,
+} from "./pnReducers";
 
 const pnState: any = {
   data: {},
@@ -37,6 +49,40 @@ export const pnListSlice = createSlice({
     }),
     builder.addCase(getDrugDetailsPNList.rejected, (state, action) => {
       postPNListRejected(state, action);
+    })
+  ),
+});
+
+export const pnCriteriaSlice = createSlice({
+  name: "pnCriteriaList",
+  initialState: pnState,
+  reducers: {},
+  extraReducers: (builder) => (
+    builder.addCase(postPNCriteriaList.pending, (state, action) => {
+      state.isLoading = true;
+    }),
+    builder.addCase(postPNCriteriaList.fulfilled, (state, action) => {
+      getPNSummaryFulfilled(state, action);
+    }),
+    builder.addCase(postPNCriteriaList.rejected, (state, action) => {
+      getPNSummaryRejected(state, action);
+    })
+  ),
+});
+
+export const pnRemoveDrugSlice = createSlice({
+  name: "pnRemoveDrug",
+  initialState: pnState,
+  reducers: {},
+  extraReducers: (builder) => (
+    builder.addCase(postRemovePNDrug.pending, (state, action) => {
+      state.isLoading = true;
+    }),
+    builder.addCase(postRemovePNDrug.fulfilled, (state, action) => {
+      postReplaceDrugFulfilled(state, action);
+    }),
+    builder.addCase(postRemovePNDrug.rejected, (state, action) => {
+      postReplaceDrugRejected(state, action);
     })
   ),
 });

@@ -1,10 +1,17 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { getDrugDetailsPTSummary, getPTDrugList } from "./ptActionCreation";
+import {
+  getDrugDetailsPTSummary,
+  getPTDrugList,
+  postPTCriteriaList,
+  postRemovePTDrug,
+} from "./ptActionCreation";
 import {
   getPTSummaryFulfilled,
   getPTSummaryRejected,
   postPTListFulfilled,
   postPTListRejected,
+  postReplaceDrugFulfilled,
+  postReplaceDrugRejected,
 } from "./ptReducers";
 
 const ptState: any = {
@@ -42,6 +49,40 @@ export const ptListSlice = createSlice({
     }),
     builder.addCase(getPTDrugList.rejected, (state, action) => {
       postPTListRejected(state, action);
+    })
+  ),
+});
+
+export const ptCriteriaSlice = createSlice({
+  name: "ptCriteriaList",
+  initialState: ptState,
+  reducers: {},
+  extraReducers: (builder) => (
+    builder.addCase(postPTCriteriaList.pending, (state, action) => {
+      state.isLoading = true;
+    }),
+    builder.addCase(postPTCriteriaList.fulfilled, (state, action) => {
+      getPTSummaryFulfilled(state, action);
+    }),
+    builder.addCase(postPTCriteriaList.rejected, (state, action) => {
+      getPTSummaryRejected(state, action);
+    })
+  ),
+});
+
+export const ptRemoveDrugSlice = createSlice({
+  name: "ptRemoveDrug",
+  initialState: ptState,
+  reducers: {},
+  extraReducers: (builder) => (
+    builder.addCase(postRemovePTDrug.pending, (state, action) => {
+      state.isLoading = true;
+    }),
+    builder.addCase(postRemovePTDrug.fulfilled, (state, action) => {
+      postReplaceDrugFulfilled(state, action);
+    }),
+    builder.addCase(postRemovePTDrug.rejected, (state, action) => {
+      postReplaceDrugRejected(state, action);
     })
   ),
 });

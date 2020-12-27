@@ -8,7 +8,11 @@ import {
 
 // const GET_DRUG_SUMMARY_PT = BASE_URL1 + "api/1/formulary-drug-summary-prtx/3326?entity_id=3326";
 
-// const POST_PT_DRUGS = BASE_URL1 + "api/1/formulary-drugs-prtx/3345/COMM?index=0&limit=10&entity_id=3345
+// const POST_PT_DRUGS = BASE_URL1 + "api/1/formulary-drugs-prtx/3345/COMM?index=0&limit=10&entity_id=3345";
+
+// const POST_PT_CRITERIA_LIST = BASE_URL1 + "api/1/criteria-list-prtx/3345?entity_id=3345";
+
+// const POST_PT_REPLACE = BASE_URL1 + "api/1/apply-formulary-drug-prtx/3345/COMM/remove?entity_id=3345";
 
 export const getDrugDetailsPTSummary = createAsyncThunk(
   "drug_details/pt_Summary",
@@ -37,3 +41,20 @@ export const getPTReplaceSrch = createAsyncThunk(
   }
 );
 
+export const postPTCriteriaList = createAsyncThunk(
+  "drug_details/postPTCriteriaList",
+  async (apiDetails: any) => {
+    let POST_URL = buildUrl({ apiDetails });
+    const requestHeaders = postHeaders(apiDetails);
+    return fetchRequest(POST_URL, requestHeaders);
+  }
+);
+
+export const postRemovePTDrug = createAsyncThunk(
+  "drug_details/postRemovePTDrug",
+  async (apiDetails: any) => {
+    let POST_URL = buildUrl({ apiDetails });
+    const requestHeaders = postHeaders(apiDetails);
+    return fetchRequest(POST_URL, requestHeaders);
+  }
+);

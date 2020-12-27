@@ -9,18 +9,22 @@ import Button from "../../../../shared/Frx-components/button/Button";
 import { getDrugDetailsColumnPT } from "../../../DrugDetails/components/FormularyConfigure/DrugGridColumn";
 import FrxLoader from "../../../../shared/FrxLoader/FrxLoader";
 import AdvancedSearch from "../../../DrugDetails/components/FormularyConfigure/components/search/AdvancedSearch";
-import { getDrugDetailsPTSummary, getPTDrugList,getPTReplaceSrch } from "../../../../../redux/slices/formulary/drugDetails/pt/ptActionCreation";
+import { getDrugDetailsPTSummary, getPTDrugList, getPTReplaceSrch, postPTCriteriaList, postRemovePTDrug } from "../../../../../redux/slices/formulary/drugDetails/pt/ptActionCreation";
 import * as ptConstants from "../../../../../api/http-drug-details";
 import getLobCode from "../../../Utils/LobUtils";
+import showMessage from "../../../Utils/Toast";
 
 import PtSettings from "./PtSettings";
 import FrxDrugGridContainer from "../../../../shared/FrxGrid/FrxDrugGridContainer";
+import PTRemove from "./PTRemove";
 
 function mapDispatchToProps(dispatch) {
   return {
     getDrugDetailsPTSummary: (a) => dispatch(getDrugDetailsPTSummary(a)),
     getPTDrugList: (a) => dispatch(getPTDrugList(a)),
     getPTReplaceSrch: (arg) => dispatch(getPTReplaceSrch(arg)),
+    postPTCriteriaList: (a) => dispatch(postPTCriteriaList(a)),
+    postRemovePTDrug: (a) => dispatch(postRemovePTDrug(a)),
   };
 }
 
@@ -37,8 +41,30 @@ const defaultListPayload = {
   filter: [],
 }
 
+interface ptState {
+  isSearchOpen: boolean,
+  panelGridTitle1: any[],
+  panelTitleAlignment1: any[],
+  panelGridValue1: any[],
+  replaceTab: any,
+  isNotesOpen: boolean,
+  activeTabIndex: number,
+  columns: any,
+  data: any[],
+  tabs: any[],
+  ptSettingsStatus: any,
+  listCount: number,
+  selectedList: any[],
+  selectedDrugs: any[],
+  drugData: any[],
+  removeTabsData: any[],
+  ptRemoveCheckedList: any[],
+  ptRemoveSettingsStatus: any,
+  showGrid: boolean,
+};
+
 class DrugDetailPT extends React.Component<any, any> {
-  state = {
+  state: ptState = {
     isSearchOpen: false,
     panelGridTitle1: ["", "NUMBER OF DRUGS", "ADDED DRUGS", "REMOVED DRUGS"],
     panelTitleAlignment1: ["center", "center", "center", "center"],
@@ -63,12 +89,37 @@ class DrugDetailPT extends React.Component<any, any> {
     selectedList:[],
     selectedDrugs: Array(),
     drugData: Array(),
+    removeTabsData:[],
+    ptRemoveCheckedList:[],
+    ptRemoveSettingsStatus: {
+      type: "covered",
+      covered: true,
+    },
+    showGrid: false,
   };
 
   listPayload: any = {
     index: 0,
     limit: 10,
     filter: [],
+  }
+
+  ptCriteriaPayload: any = {
+    is_advance_search: false,
+    filter: [],
+    search_key: "",
+    is_covered: true
+  }
+
+  rmSavePayload: any = {
+    is_covered: true,
+    selected_drug_ids: [],
+    is_select_all: false,
+    covered: {},
+    not_covered: {},
+    selected_criteria_ids: [],
+    filter: [],
+    search_key: "",
   }
 
   advanceSearchClickHandler = (event) => {
@@ -80,13 +131,63 @@ class DrugDetailPT extends React.Component<any, any> {
     this.setState({ isSearchOpen: !this.state.isSearchOpen });
   };
 
+  handleChangeEvent = (key: string) =>{
+    const COVERED = "covered";
+    const isCovered: boolean = key === COVERED ? true : false;
+    let ptRemoveSettingsStatus = {
+      type: key,
+      covered: isCovered,
+    };
+
+    this.setState({ ptRemoveSettingsStatus, showGrid: false });
+    this.getPTCriteriaList(isCovered)
+  }
+
   saveClickHandler = () => {
     console.log("Save data");
+
+    if (this.state.selectedDrugs && this.state.selectedDrugs.length > 0) {
+      let apiDetails = {};
+      apiDetails["apiPart"] = ptConstants.APPLY_PT_DRUGS;
+      apiDetails["keyVals"] = [
+        { key: ptConstants.KEY_ENTITY_ID, value: this.props?.formulary_id },
+      ];
+
+      if (this.state.activeTabIndex === 0) {
+        // Replace Drug method call
+
+      }else if(this.state.activeTabIndex === 2) {
+        let ptCheckedList: any[] = [];
+        if(this.state.ptRemoveCheckedList.length > 0) {
+          ptCheckedList = this.state.ptRemoveCheckedList.map(e => e?.key);
+        }
+
+        this.rmSavePayload.selected_drug_ids = this.state.selectedDrugs
+        this.rmSavePayload.is_covered = this.state.ptRemoveSettingsStatus.covered
+        this.rmSavePayload.selected_criteria_ids = ptCheckedList
+        apiDetails["messageBody"] = this.rmSavePayload;
+        apiDetails["pathParams"] = this.props?.formulary_id + "/" +  getLobCode(this.props.formulary_lob_id) + "/" + ptConstants.TYPE_REMOVE;
+        console.log("The API Details - ", apiDetails);
+
+        // Remove Drug method call
+        this.props.postRemovePTDrug(apiDetails).then((json) => {
+          console.log("The Remove PT Drug Response = ", json);
+          if (json.payload && json.payload.code && json.payload.code === "200") {
+            showMessage("Success", "success");
+            this.getPTSummary();
+            this.getPTDrugsList();
+          } else {
+            console.log("------REMOVE FAILED-------")
+            showMessage("Failure", "error");
+          }
+        });
+      }
+    }
   };
 
   showGridHandler = () => {
-   console.log(this.state.ptSettingsStatus)
-   console.log(this.state.selectedList)
+    this.getPTDrugsList();
+    console.log("The State of the PT Tab = ", this.state);
   };
 
   handleStatus = (key: string) => {
@@ -99,7 +200,6 @@ class DrugDetailPT extends React.Component<any, any> {
 
     this.setState({ ptSettingsStatus, showGrid: false });
   };
-
 
   onPageSize = (pageSize) => {
     this.listPayload.limit = pageSize
@@ -130,6 +230,47 @@ class DrugDetailPT extends React.Component<any, any> {
     } else {
       this.setState({ selectedDrugs: [] });
     }
+  };
+
+  handleRemoveChecked = (selectedRows) => {
+    this.setState(
+      {
+        ptRemoveCheckedList: selectedRows,
+        showGrid: false,
+      },
+      () => console.log("ptRemoveCheckedList: ", this.state.ptRemoveCheckedList)
+    );
+  };
+
+  getPTCriteriaList = (isCovered) => {
+    let apiDetails = {};
+    apiDetails["apiPart"] = ptConstants.GET_PT_CRITERIA_LIST;
+    apiDetails["pathParams"] = this.props?.formulary_id;
+    apiDetails["keyVals"] = [
+      { key: ptConstants.KEY_ENTITY_ID, value: this.props?.formulary_id },
+    ];
+    this.ptCriteriaPayload.is_covered = isCovered
+    apiDetails['messageBody'] = this.ptCriteriaPayload;
+
+    this.props.postPTCriteriaList(apiDetails).then((json) => {
+      let tmpData = json.payload && json.payload.result ? json.payload.result : [];
+      console.log("The PT Criteria Data = ", tmpData);
+
+      let rows = tmpData.map((ele) => {
+        let curRow = [
+          ele["id_prescriber_network"],
+          ele["prescriber_taxonomy_code"],
+          ele["prescriber_network_name"],
+          ele["is_covered"],
+        ];
+        return curRow;
+      });
+      console.log("The PT Criteria Remove Rows = ", rows);
+
+      this.setState({
+        removeTabsData: rows,
+      });
+    });
   };
 
   getPTSummary = () => {
@@ -164,6 +305,14 @@ class DrugDetailPT extends React.Component<any, any> {
     apiDetails['apiPart'] = ptConstants.GET_PT_DRUGS;
     apiDetails['pathParams'] = this.props?.formulary_id + "/" + getLobCode(this.props.formulary_lob_id);
     apiDetails['keyVals'] = [{ key: ptConstants.KEY_ENTITY_ID, value: this.props?.formulary_id }, { key: ptConstants.KEY_INDEX, value: index }, { key: ptConstants.KEY_LIMIT, value: limit }];
+    
+    if(this.state.activeTabIndex === 2) {
+      console.log("The PT LIST is Covered = ", this.state.ptRemoveSettingsStatus.covered);
+      console.log("The PT LIST is Covered = ", this.state.ptRemoveCheckedList.map(e => e?.key));
+      listPayload['is_covered'] = this.state.ptRemoveSettingsStatus.covered;
+      listPayload['selected_criteria_ids'] = this.state.ptRemoveCheckedList.map(e => e?.key);
+    }
+
     apiDetails['messageBody'] = listPayload;
 
     let listCount = 0;
@@ -225,12 +374,8 @@ class DrugDetailPT extends React.Component<any, any> {
   }
 
   componentDidMount() {
-    const columns = getDrugDetailsColumnPT();
-    this.setState({
-      columns: columns,
-    });
     this.getPTSummary();
-    this.getPTDrugsList();
+    this.getPTCriteriaList(true);
   }
 
   onClickTab = (selectedTabIndex: number) => {
@@ -341,35 +486,44 @@ class DrugDetailPT extends React.Component<any, any> {
           </div>
         </div>
 
-        <PtSettings 
-        options={this.state.replaceTab.searchResult} 
-        handleReplaceSrch={this.handleReplaceSrch}
-        handleStatus={this.handleStatus}
-        showGridHandler={this.showGridHandler}
-        ptSettingsStatus={this.state.ptSettingsStatus}
-        />
+        {(this.state.activeTabIndex==0 || this.state.activeTabIndex==1) && <PtSettings 
+          options={this.state.replaceTab.searchResult} 
+          handleReplaceSrch={this.handleReplaceSrch}
+          handleStatus={this.handleStatus}
+          showGridHandler={this.showGridHandler}
+          ptSettingsStatus={this.state.ptSettingsStatus}
+        />}
+          
+        {this.state.activeTabIndex==2 && <PTRemove 
+          data={this.state.removeTabsData} 
+          showGridHandler={this.showGridHandler} 
+          handleChangeEvent={this.handleChangeEvent}
+          handleRemoveChecked={this.handleRemoveChecked}
+        />}
 
-        <div className="bordered">
-          <div className="header space-between pr-10">
-            Drug Grid
-            <div className="button-wrapper">
-              <Button
-                className="Button normal"
-                label="Advance Search"
-                onClick={this.advanceSearchClickHandler}
-              />
-              <Button label="Save" onClick={this.saveClickHandler} disabled />
+        {this.state.showGrid ? (
+          <div className="bordered">
+            <div className="header space-between pr-10">
+              Drug Grid
+              <div className="button-wrapper">
+                <Button
+                  className="Button normal"
+                  label="Advance Search"
+                  onClick={this.advanceSearchClickHandler}
+                />
+                <Button label="Save" onClick={this.saveClickHandler} disabled={!(this.state.selectedDrugs.length > 0)} />
+              </div>
             </div>
+            {dataGrid}
+            {this.state.isSearchOpen ? (
+              <AdvancedSearch
+                category="Grievances"
+                openPopup={this.state.isSearchOpen}
+                onClose={this.advanceSearchClosekHandler}
+              />
+            ) : null}
           </div>
-          {dataGrid}
-          {this.state.isSearchOpen ? (
-            <AdvancedSearch
-              category="Grievances"
-              openPopup={this.state.isSearchOpen}
-              onClose={this.advanceSearchClosekHandler}
-            />
-          ) : null}
-        </div>
+        ) : null}
       </>
     );
   }

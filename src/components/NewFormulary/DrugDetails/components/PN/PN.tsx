@@ -7,22 +7,24 @@ import { TabInfo } from "../../../../../models/tab.model";
 import FrxMiniTabs from "../../../../shared/FrxMiniTabs/FrxMiniTabs";
 import Button from "../../../../shared/Frx-components/button/Button";
 import { getDrugDetailsColumnPN } from "../../../DrugDetails/components/FormularyConfigure/DrugGridColumn";
-import { getDrugDetailData } from "../../../../../mocks/DrugGridMock";
 import FrxLoader from "../../../../shared/FrxLoader/FrxLoader";
-import DrugGrid from "../../../DrugDetails/components/DrugGrid";
 import AdvancedSearch from "../../../DrugDetails/components/FormularyConfigure/components/search/AdvancedSearch";
-import { getDrugDetailsPNSummary, getDrugDetailsPNList,getPNReplaceSrch } from "../../../../../redux/slices/formulary/drugDetails/pn/pnActionCreation";
+import { getDrugDetailsPNSummary, getDrugDetailsPNList, getPNReplaceSrch, postPNCriteriaList, postRemovePNDrug } from "../../../../../redux/slices/formulary/drugDetails/pn/pnActionCreation";
 import * as pnConstants from "../../../../../api/http-drug-details";
 import getLobCode from "../../../Utils/LobUtils";
 
 import PnLimitSettings from "./PnLimitSettings";
 import FrxDrugGridContainer from "../../../../shared/FrxGrid/FrxDrugGridContainer";
+import PNRemove from "./PNRemove";
+import showMessage from "../../../Utils/Toast";
 
 function mapDispatchToProps(dispatch) {
   return {
     getDrugDetailsPNSummary: (a) => dispatch(getDrugDetailsPNSummary(a)),
     getDrugDetailsPNList: (a) => dispatch(getDrugDetailsPNList(a)),
     getPNReplaceSrch: (arg) => dispatch(getPNReplaceSrch(arg)),
+    postPNCriteriaList: (a) => dispatch(postPNCriteriaList(a)),
+    postRemovePNDrug: (a) => dispatch(postRemovePNDrug(a)),
   };
 }
 
@@ -39,8 +41,30 @@ const defaultListPayload = {
   filter: [],
 }
 
+interface pnState {
+  isSearchOpen: boolean,
+  panelGridTitle1: any[],
+  panelTitleAlignment1: any[],
+  panelGridValue1: any[],
+  isNotesOpen: boolean,
+  activeTabIndex: number,
+  replaceTab: any,
+  pnSettingsStatus: any,
+  columns: any,
+  selectedList: any[],
+  data: any[],
+  listCount: number,
+  tabs: any[],
+  selectedDrugs: any[],
+  drugData: any[],
+  removeTabsData: any[],
+  pnRemoveCheckedList: any[],
+  pnRemoveSettingsStatus: any,
+  showGrid: boolean,
+};
+
 class DrugDetailPN extends React.Component<any, any> {
-  state = {
+  state: pnState = {
     isSearchOpen: false,
     panelGridTitle1: ["", "NUMBER OF DRUGS", "ADDED DRUGS", "REMOVED DRUGS"],
     panelTitleAlignment1: ["center", "center", "center", "center"],
@@ -65,12 +89,37 @@ class DrugDetailPN extends React.Component<any, any> {
     ],
     selectedDrugs: Array(),
     drugData: Array(),
+    removeTabsData:[],
+    pnRemoveCheckedList:[],
+    pnRemoveSettingsStatus: {
+      type: "covered",
+      covered: true,
+    },
+    showGrid: false,
   };
 
   listPayload: any = {
     index: 0,
     limit: 10,
     filter: [],
+  }
+
+  pnCriteriaPayload: any = {
+    is_advance_search: false,
+    filter: [],
+    search_key: "",
+    is_covered: true
+  }
+
+  rmSavePayload: any = {
+    is_covered: true,
+    selected_drug_ids: [],
+    is_select_all: false,
+    covered: {},
+    not_covered: {},
+    selected_criteria_ids: [],
+    filter: [],
+    search_key: "",
   }
 
   advanceSearchClickHandler = (event) => {
@@ -82,8 +131,58 @@ class DrugDetailPN extends React.Component<any, any> {
     this.setState({ isSearchOpen: !this.state.isSearchOpen });
   };
 
+  handleChangeEvent = (key: string) =>{
+    const COVERED = "covered";
+    const isCovered: boolean = key === COVERED ? true : false;
+    let pnRemoveSettingsStatus = {
+      type: key,
+      covered: isCovered,
+    };
+
+    this.setState({ pnRemoveSettingsStatus, showGrid: false });
+    this.getPNCriteriaList(isCovered)
+  }
+
   saveClickHandler = () => {
     console.log("Save data");
+
+    if (this.state.selectedDrugs && this.state.selectedDrugs.length > 0) {
+      let apiDetails = {};
+      apiDetails["apiPart"] = pnConstants.APPLY_PN_DRUGS;
+      apiDetails["keyVals"] = [
+        { key: pnConstants.KEY_ENTITY_ID, value: this.props?.formulary_id },
+      ];
+
+      if (this.state.activeTabIndex === 0) {
+        // Replace Drug method call
+
+      }else if(this.state.activeTabIndex === 2) {
+        let pnCheckedList: any[] = [];
+        if(this.state.pnRemoveCheckedList.length > 0) {
+          pnCheckedList = this.state.pnRemoveCheckedList.map(e => e?.key);
+        }
+
+        this.rmSavePayload.selected_drug_ids = this.state.selectedDrugs
+        this.rmSavePayload.is_covered = this.state.pnRemoveSettingsStatus.covered
+        this.rmSavePayload.selected_criteria_ids = pnCheckedList
+        apiDetails["messageBody"] = this.rmSavePayload;
+        apiDetails["pathParams"] = this.props?.formulary_id + "/" +  getLobCode(this.props.formulary_lob_id) + "/" + pnConstants.TYPE_REMOVE;
+        console.log("The API Details - ", apiDetails);
+
+        // Remove Drug method call
+        this.props.postRemovePNDrug(apiDetails).then((json) => {
+          console.log("The Remove PN Drug Response = ", json);
+          if (json.payload && json.payload.code && json.payload.code === "200") {
+            showMessage("Success", "success");
+            this.getPNSummary();
+            this.getPNDrugsList();
+          } else {
+            console.log("------REMOVE FAILED-------")
+            showMessage("Failure", "error");
+          }
+        });
+      }
+    }
   };
 
   onPageSize = (pageSize) => {
@@ -115,6 +214,47 @@ class DrugDetailPN extends React.Component<any, any> {
     } else {
       this.setState({ selectedDrugs: [] });
     }
+  };
+
+  handleRemoveChecked = (selectedRows) => {
+    this.setState(
+      {
+        pnRemoveCheckedList: selectedRows,
+        showGrid: false,
+      },
+      () => console.log("pnRemoveCheckedList: ", this.state.pnRemoveCheckedList)
+    );
+  };
+
+  getPNCriteriaList = (isCovered) => {
+    let apiDetails = {};
+    apiDetails["apiPart"] = pnConstants.GET_PN_CRITERIA_LIST;
+    apiDetails["pathParams"] = this.props?.formulary_id;
+    apiDetails["keyVals"] = [
+      { key: pnConstants.KEY_ENTITY_ID, value: this.props?.formulary_id },
+    ];
+    this.pnCriteriaPayload.is_covered = isCovered
+    apiDetails['messageBody'] = this.pnCriteriaPayload;
+
+    this.props.postPNCriteriaList(apiDetails).then((json) => {
+      let tmpData = json.payload && json.payload.result ? json.payload.result : [];
+      console.log("The PN Criteria Data = ", tmpData);
+
+      let rows = tmpData.map((ele) => {
+        let curRow = [
+          ele["id_pharmacy_network"],
+          ele["pharmacy_npi"],
+          ele["pharmacy_network_name"],
+          ele["is_covered"],
+        ];
+        return curRow;
+      });
+      console.log("The PN Criteria Remove Rows = ", rows);
+
+      this.setState({
+        removeTabsData: rows,
+      });
+    });
   };
 
   getPNSummary = () => {
@@ -149,6 +289,14 @@ class DrugDetailPN extends React.Component<any, any> {
     apiDetails['apiPart'] = pnConstants.GET_PN_DRUGS;
     apiDetails['pathParams'] = this.props?.formulary_id + "/" + getLobCode(this.props.formulary_lob_id);
     apiDetails['keyVals'] = [{ key: pnConstants.KEY_ENTITY_ID, value: this.props?.formulary_id }, { key: pnConstants.KEY_INDEX, value: index }, { key: pnConstants.KEY_LIMIT, value: limit }];
+    
+    if(this.state.activeTabIndex === 2) {
+      console.log("The PN LIST is Covered = ", this.state.pnRemoveSettingsStatus.covered);
+      console.log("The PN LIST is Covered = ", this.state.pnRemoveCheckedList.map(e => e?.key));
+      listPayload['is_covered'] = this.state.pnRemoveSettingsStatus.covered;
+      listPayload['selected_criteria_ids'] = this.state.pnRemoveCheckedList.map(e => e?.key);
+    }
+
     apiDetails['messageBody'] = listPayload;
 
     let listCount = 0;
@@ -210,14 +358,8 @@ class DrugDetailPN extends React.Component<any, any> {
   }
 
   componentDidMount() {
-    // const data = getDrugDetailData();
-    const columns = getDrugDetailsColumnPN();
-    this.setState({
-      columns: columns,
-      // data: data,
-    });
     this.getPNSummary();
-    this.getPNDrugsList();
+    this.getPNCriteriaList(true);
   }
 
   onClickTab = (selectedTabIndex: number) => {
@@ -246,9 +388,10 @@ class DrugDetailPN extends React.Component<any, any> {
   };
 
   showGridHandler = () => {
-    console.log(this.state.pnSettingsStatus)
-    console.log(this.state.selectedList)
+    this.getPNDrugsList();
+    console.log("The State of the PN Tab = ", this.state);
   };
+
   handleReplaceSrch = (selectedItem) =>{
     this.setState({
       selectedList:selectedItem
@@ -339,35 +482,44 @@ class DrugDetailPN extends React.Component<any, any> {
           </div>
         </div>
 
-        <PnLimitSettings 
-        options={this.state.replaceTab.searchResult} 
-        handleReplaceSrch={this.handleReplaceSrch}
-        handleStatus={this.handleStatus}
-        showGridHandler={this.showGridHandler}
-        pnSettingsStatus={this.state.pnSettingsStatus}
-        />
+        {(this.state.activeTabIndex==0 || this.state.activeTabIndex==1) && <PnLimitSettings 
+          options={this.state.replaceTab.searchResult} 
+          handleReplaceSrch={this.handleReplaceSrch}
+          handleStatus={this.handleStatus}
+          showGridHandler={this.showGridHandler}
+          pnSettingsStatus={this.state.pnSettingsStatus}
+        />}
+        
+        {this.state.activeTabIndex==2 && <PNRemove 
+          data={this.state.removeTabsData} 
+          showGridHandler={this.showGridHandler} 
+          handleChangeEvent={this.handleChangeEvent}
+          handleRemoveChecked={this.handleRemoveChecked}
+        />}
 
-        <div className="bordered">
-          <div className="header space-between pr-10">
-            Drug Grid
-            <div className="button-wrapper">
-              <Button
-                className="Button normal"
-                label="Advance Search"
-                onClick={this.advanceSearchClickHandler}
-              />
-              <Button label="Save" onClick={this.saveClickHandler} disabled />
+        {this.state.showGrid ? (
+          <div className="bordered">
+            <div className="header space-between pr-10">
+              Drug Grid
+              <div className="button-wrapper">
+                <Button
+                  className="Button normal"
+                  label="Advance Search"
+                  onClick={this.advanceSearchClickHandler}
+                />
+                <Button label="Save" onClick={this.saveClickHandler} disabled={!(this.state.selectedDrugs.length > 0)} />
+              </div>
             </div>
+            {dataGrid}
+            {this.state.isSearchOpen ? (
+              <AdvancedSearch
+                category="Grievances"
+                openPopup={this.state.isSearchOpen}
+                onClose={this.advanceSearchClosekHandler}
+              />
+            ) : null}
           </div>
-          {dataGrid}
-          {this.state.isSearchOpen ? (
-            <AdvancedSearch
-              category="Grievances"
-              openPopup={this.state.isSearchOpen}
-              onClose={this.advanceSearchClosekHandler}
-            />
-          ) : null}
-        </div>
+        ) : null}
       </>
     );
   }

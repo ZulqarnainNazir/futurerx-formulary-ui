@@ -89,11 +89,15 @@ export const APPLY_ICD_DRUGS = "api/1/apply-formulary-drug-icdl/";
 export const GET_DRUG_SUMMARY_PN = "api/1/formulary-drug-summary-phnw/";
 export const GET_PN_DRUGS = "api/1/formulary-drugs-phnw/";
 export const GET_PN_DRUGS_REPLACE = "api/1/pharmacy-networks/";
+export const GET_PN_CRITERIA_LIST = "api/1/criteria-list-phnw/";
+export const APPLY_PN_DRUGS = "api/1/apply-formulary-drug-phnw/";
 
 // PT TAB
 export const GET_DRUG_SUMMARY_PT = "api/1/formulary-drug-summary-prtx/";
 export const GET_PT_DRUGS = "api/1/formulary-drugs-prtx/";
 export const GET_PT_DRUGS_REPLACE = "api/1/prescriber-taxonomies";
+export const GET_PT_CRITERIA_LIST = "api/1/criteria-list-prtx/";
+export const APPLY_PT_DRUGS = "api/1/apply-formulary-drug-prtx/";
 
 // POS TAB
 export const GET_DRUG_SUMMARY_POS = "api/1/formulary-drug-summary-pos/";
