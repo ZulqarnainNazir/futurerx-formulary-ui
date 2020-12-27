@@ -16,13 +16,17 @@ import {
   getDrugDetailsPOSSettings,
   getDrugDetailsPOSGridData,
   getDrugDetailsRemoveTab,
+  postPOSCriteriaList,
+  postRemovePOSDrug,
 } from "../../../../../redux/slices/formulary/drugDetails/pos/posActionCreation";
 import * as posConstants from "../../../../../api/http-drug-details";
 import getLobCode from "../../../Utils/LobUtils";
+import showMessage from "../../../Utils/Toast";
 
 import PosSettings from "./PosSettings";
 import FrxGridContainer from "../../../../shared/FrxGrid/FrxGridContainer";
 import PosRemove from "./PosRemove";
+import FrxDrugGridContainer from "../../../../shared/FrxGrid/FrxDrugGridContainer";
 
 function mapDispatchToProps(dispatch) {
   return {
@@ -30,6 +34,8 @@ function mapDispatchToProps(dispatch) {
     getDrugDetailsPOSSettings: (a) => dispatch(getDrugDetailsPOSSettings(a)),
     getDrugDetailsPOSGridData: (a) => dispatch(getDrugDetailsPOSGridData(a)),
     getDrugDetailsRemoveTab: (arg) => dispatch(getDrugDetailsRemoveTab(arg)),
+    postPOSCriteriaList: (a) => dispatch(postPOSCriteriaList(a)),
+    postRemovePOSDrug: (a) => dispatch(postRemovePOSDrug(a)),
   };
 }
 
@@ -46,8 +52,31 @@ const defaultListPayload = {
   filter: [],
 };
 
+interface posState {
+  isSearchOpen: boolean,
+  panelGridTitle1: any[],
+  panelTitleAlignment1: any[],
+  panelGridValue1: any[],
+  posSettings: any[],
+  removeTabsData: any[],
+  posSettingsStatus: any,
+  posRemoveSettingsStatus: any,
+  posCheckedList: any[],
+  listCount: number,
+  isNotesOpen: boolean,
+  activeTabIndex: number,
+  columns: any,
+  data: any[],
+  tabs: any[],
+  isSelectAll: boolean,
+  showGrid: boolean,
+  selectedList: any[],
+  selectedDrugs: any[],
+  drugData: any[],
+};
+
 class DrugDetailPOS extends React.Component<any, any> {
-  state = {
+  state: posState = {
     isSearchOpen: false,
     panelGridTitle1: ["", "NUMBER OF DRUGS", "ADDED DRUGS", "REMOVED DRUGS"],
     panelTitleAlignment1: ["center", "center", "center", "center"],
@@ -73,7 +102,9 @@ class DrugDetailPOS extends React.Component<any, any> {
       { id: 2, text: "Append" },
       { id: 3, text: "Remove" },
     ],
-
+    selectedList:[],
+    selectedDrugs: Array(),
+    drugData: Array(),
     isSelectAll: false,
     showGrid: false,
   };
@@ -85,10 +116,29 @@ class DrugDetailPOS extends React.Component<any, any> {
     is_covered: this.state.posSettingsStatus.covered,
   };
 
+  posCriteriaPayload: any = {
+    is_advance_search: false,
+    filter: [],
+    search_key: "",
+    is_covered: true
+  }
+
+  rmSavePayload: any = {
+    is_covered: true,
+    selected_drug_ids: [],
+    is_select_all: false,
+    covered: {},
+    not_covered: {},
+    selected_criteria_ids: [],
+    filter: [],
+    search_key: "",
+  }
+
   componentDidMount() {
     this.getPOSSummary();
     this.getPOSSettings();
-    this.getPOSRemoveSettings(true);
+    // this.getPOSRemoveSettings(true);
+    this.getPOSCriteriaList(true);
   }
   advanceSearchClickHandler = (event) => {
     event.stopPropagation();
@@ -101,6 +151,74 @@ class DrugDetailPOS extends React.Component<any, any> {
 
   saveClickHandler = () => {
     console.log("Save data");
+
+    if (this.state.selectedDrugs && this.state.selectedDrugs.length > 0) {
+      let apiDetails = {};
+      apiDetails["apiPart"] = posConstants.APPLY_POS_DRUGS;
+      apiDetails["keyVals"] = [
+        { key: posConstants.KEY_ENTITY_ID, value: this.props?.formulary_id },
+      ];
+
+      if (this.state.activeTabIndex === 0) {
+        // Replace Drug method call
+
+      }else if(this.state.activeTabIndex === 2) {
+        let posCheckedList: any[] = [];
+        if(this.state.posCheckedList.length > 0) {
+          posCheckedList = this.state.posCheckedList.map(e => e?.key);
+        }
+
+        this.rmSavePayload.selected_drug_ids = this.state.selectedDrugs
+        this.rmSavePayload.is_covered = this.state.posRemoveSettingsStatus.covered
+        this.rmSavePayload.selected_criteria_ids = posCheckedList
+        apiDetails["messageBody"] = this.rmSavePayload;
+        apiDetails["pathParams"] = this.props?.formulary_id + "/" +  getLobCode(this.props.formulary_lob_id) + "/" + posConstants.TYPE_REMOVE;
+        console.log("The API Details - ", apiDetails);
+
+        // Remove Drug method call
+        this.props.postRemovePOSDrug(apiDetails).then((json) => {
+          console.log("The Remove PT Drug Response = ", json);
+          if (json.payload && json.payload.code && json.payload.code === "200") {
+            showMessage("Success", "success");
+            this.getPOSSummary();
+            this.getPOSDrugsList();
+          } else {
+            console.log("------REMOVE FAILED-------")
+            showMessage("Failure", "error");
+          }
+        });
+      }
+    }
+  };
+
+  getPOSCriteriaList = (isCovered) => {
+    let apiDetails = {};
+    apiDetails["apiPart"] = posConstants.GET_POS_CRITERIA_LIST;
+    apiDetails["pathParams"] = this.props?.formulary_id;
+    apiDetails["keyVals"] = [
+      { key: posConstants.KEY_ENTITY_ID, value: this.props?.formulary_id },
+    ];
+    this.posCriteriaPayload.is_covered = isCovered
+    apiDetails['messageBody'] = this.posCriteriaPayload;
+
+    this.props.postPOSCriteriaList(apiDetails).then((json) => {
+      let tmpData = json.payload && json.payload.result ? json.payload.result : [];
+      console.log("The POS Criteria Data = ", tmpData);
+
+      let rows = tmpData.map((ele) => {
+        let curRow = [
+          ele["id_place_of_service_type"],
+          ele["place_of_service_type_name"],
+          ele["is_covered"],
+        ];
+        return curRow;
+      });
+      console.log("The POS Criteria Remove Rows = ", rows);
+
+      this.setState({
+        removeTabsData: rows,
+      });
+    });
   };
 
   getPOSSummary = () => {
@@ -173,6 +291,14 @@ class DrugDetailPOS extends React.Component<any, any> {
       { key: posConstants.KEY_INDEX, value: index },
       { key: posConstants.KEY_LIMIT, value: limit },
     ];
+        
+    if(this.state.activeTabIndex === 2) {
+      console.log("The POS LIST is Covered = ", this.state.posRemoveSettingsStatus.covered);
+      console.log("The POS LIST is Covered = ", this.state.posCheckedList.map(e => e?.key));
+      listPayload['is_covered'] = this.state.posRemoveSettingsStatus.covered;
+      listPayload['selected_criteria_ids'] = this.state.posCheckedList.map(e => e?.key);
+    }
+
     apiDetails["messageBody"] = listPayload;
 
     let listCount = 0;
@@ -299,6 +425,21 @@ class DrugDetailPOS extends React.Component<any, any> {
     });
   };
 
+  onSelectedTableRowChanged = (selectedRowKeys) => {
+    this.state.selectedDrugs = [];
+    if (selectedRowKeys && selectedRowKeys.length > 0) {
+      let selDrugs = selectedRowKeys.map((ele) => {
+        return this.state.drugData[ele - 1]["md5_id"]
+          ? this.state.drugData[ele - 1]["md5_id"]
+          : "";
+      });
+
+      this.setState({ selectedDrugs: selDrugs });
+    } else {
+      this.setState({ selectedDrugs: [] });
+    }
+  };
+
   handleStatus = (key: string) => {
     const COVERED = "covered";
     const isCovered: boolean = key === COVERED ? true : false;
@@ -374,7 +515,7 @@ class DrugDetailPOS extends React.Component<any, any> {
     };
 
     this.setState({ posRemoveSettingsStatus, showGrid: false });
-    this.getPOSRemoveSettings(isCovered);
+    this.getPOSCriteriaList(isCovered);
   };
 
   handleRemoveChecked = (selectedRows) => {
@@ -388,24 +529,53 @@ class DrugDetailPOS extends React.Component<any, any> {
   };
 
   showGridHandler = () => {
-    this.getPOSDrugsList(this.listPayload);
-    console.log(this.state.posRemoveSettingsStatus)
-    console.log(this.state.posCheckedList)
+    this.getPOSDrugsList();
+    console.log("The State of the POS Tab = ", this.state);
   };
 
   render() {
     let dataGrid = <FrxLoader />;
     if (this.state.data) {
       dataGrid = (
-        <DrugGrid columns={this.state.columns} data={this.state.data} />
+        <div className="tier-grid-container">
+          <FrxDrugGridContainer
+            isPinningEnabled={false}
+            enableSearch={false}
+            enableColumnDrag
+            onSearch={() => {}}
+            fixedColumnKeys={[]}
+            pagintionPosition="topRight"
+            gridName="DRUGSDETAILS"
+            enableSettings={false}
+            columns={getDrugDetailsColumnPOS()}
+            scroll={{ x: 3200, y: 377 }}
+            isFetchingData={false}
+            enableResizingOfColumns
+            data={this.state.data}
+            getPerPageItemSize={this.onPageSize}
+            selectedCurrentPage={(this.listPayload.index/this.listPayload.limit + 1)}
+            pageSize={this.listPayload.limit}
+            onGridPageChangeHandler={this.onGridPageChangeHandler}
+            totalRowsCount={this.state.listCount}
+            clearFilterHandler={this.onClearFilterHandler}
+            rowSelection={{
+              columnWidth: 50,
+              fixed: true,
+              type: "checkbox",
+              onChange: this.onSelectedTableRowChanged,
+            }}
+          />
+        </div>
       );
     }
+
     const {
       posSettings,
       posSettingsStatus,
       isSelectAll,
       showGrid,
     } = this.state;
+
     return (
       <>
         <div className="bordered mb-10">
@@ -475,11 +645,11 @@ class DrugDetailPOS extends React.Component<any, any> {
                   label="Advance Search"
                   onClick={this.advanceSearchClickHandler}
                 />
-                <Button label="Save" onClick={this.saveClickHandler} disabled />
+                <Button label="Save" onClick={this.saveClickHandler} disabled={!(this.state.selectedDrugs.length > 0)} />
               </div>
             </div>
-            {/* {dataGrid} */}
-            <div className="inner-container">
+            {dataGrid}
+            {/* <div className="inner-container">
               <div className="pinned-table">
                 <FrxGridContainer
                   enableSearch={false}
@@ -514,7 +684,7 @@ class DrugDetailPOS extends React.Component<any, any> {
                   clearFilterHandler={this.onClearFilterHandler}
                 />
               </div>
-            </div>
+            </div> */}
             {this.state.isSearchOpen ? (
               <AdvancedSearch
                 category="Grievances"

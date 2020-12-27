@@ -6,9 +6,13 @@ import {
   fetchRequest,
 } from "../../../../../api/http-drug-details";
 
-// const GET_DRUG_SUMMARY_POS = BASE_URL1 + "api/1/formulary-drug-summary-pos/3326?entity_id=3326"
+// const GET_DRUG_SUMMARY_POS = BASE_URL1 + "api/1/formulary-drug-summary-pos/3326?entity_id=3326";
 
-// const POST_POS_FORMULARY_DRUGS = BASE_URL1 + "api/1/formulary-drugs-pos/3326/COMM?index=0&limit=10&entity_id=3326
+// const POST_POS_FORMULARY_DRUGS = BASE_URL1 + "api/1/formulary-drugs-pos/3326/COMM?index=0&limit=10&entity_id=3326";
+
+// const POST_POS_CRITERIA_LIST = BASE_URL1 + "api/1/criteria-list-pos/3345?entity_id=3345";
+
+// const POST_POS_REMOVE = BASE_URL1 + "api/1/apply-formulary-drug-pos/3345/COMM/remove?entity_id=3345";
 
 export const getDrugDetailsPOSSummary = createAsyncThunk(
   "drug_details/pos_Summary",
@@ -39,6 +43,24 @@ export const getDrugDetailsPOSGridData = createAsyncThunk(
 
 export const getDrugDetailsRemoveTab = createAsyncThunk(
   "drug_details/remove_tab_settings",
+  async (apiDetails: any) => {
+    let POST_URL = buildUrl({ apiDetails });
+    const requestHeaders = postHeaders(apiDetails);
+    return fetchRequest(POST_URL, requestHeaders);
+  }
+);
+
+export const postPOSCriteriaList = createAsyncThunk(
+  "drug_details/postPOSCriteriaList",
+  async (apiDetails: any) => {
+    let POST_URL = buildUrl({ apiDetails });
+    const requestHeaders = postHeaders(apiDetails);
+    return fetchRequest(POST_URL, requestHeaders);
+  }
+);
+
+export const postRemovePOSDrug = createAsyncThunk(
+  "drug_details/postRemovePOSDrug",
   async (apiDetails: any) => {
     let POST_URL = buildUrl({ apiDetails });
     const requestHeaders = postHeaders(apiDetails);
