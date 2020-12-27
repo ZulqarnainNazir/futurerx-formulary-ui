@@ -57,11 +57,16 @@ class CloneFormularyPopup extends React.Component<any, any> {
 
   onSettingsIconHandler = (hiddenColumn, visibleColumn) => {
     console.log('Settings icon handler: Hidden' + JSON.stringify(hiddenColumn) + ' Visible:' + JSON.stringify(visibleColumn));
-    //this.props.setHiddenColumn(hiddenColumn)
+    if(hiddenColumn && hiddenColumn.length > 0){
+      let hiddenColumnKeys = hiddenColumn.map(column => column['key']);
+      this.setState({
+        hiddenColumns: hiddenColumnKeys
+      });
+    }
   }
   onApplyFilterHandler = (filters) => {
     const fetchedProps = Object.keys(filters)[0];
-    console.log('Fetched properties:'+JSON.stringify(fetchedProps)+ " Filters:"+JSON.stringify(filters));
+    console.log('Fetched properties:' + JSON.stringify(fetchedProps) + " Filters:" + JSON.stringify(filters));
     const fetchedOperator = filters[fetchedProps][0].condition === 'is like' ? 'is_like' :
       filters[fetchedProps][0].condition === 'is not' ? 'is_not' :
         filters[fetchedProps][0].condition === 'is not like' ? 'is_not_like' :
@@ -94,7 +99,7 @@ class CloneFormularyPopup extends React.Component<any, any> {
       let formularies = await getformularies(payload);
       console.log('Formularies:' + JSON.stringify(Object.keys(formularies)));
       if (formularies['list'] && formularies['list'].length > 0) {
-        formularies['list'].map((row,index) => {
+        formularies['list'].map((row, index) => {
           let item = Object.assign({}, row);
           this.state.formularyData.push(item);
 
@@ -138,7 +143,17 @@ class CloneFormularyPopup extends React.Component<any, any> {
     this.listPayload.id_lob = id_lob;
     this.fetchFormularies(this.listPayload);
   }
+  selectFormularyClick = (dataRow) => {
+    if (this.props.selectFormularyClick) {
+      let actualData = this.state.formularyData.filter(item => item.id_formulary === dataRow.formularyId);
+      if (actualData && actualData.length > 0) {
+        this.props.selectFormularyClick(actualData[0]);
+      }
+    }
+  };
   render() {
+    let gridColumns: any[] = this.props.type === "medicare" ? selectFormularyGridMedicare({onFormularyNameClick: null,}) : selectFormularyGrid({onFormularyNameClick: null,});
+    gridColumns = gridColumns.filter(column => !this.state.hiddenColumns.includes(column['key']));
     if (this.props.type === "medicare") {
       return (
         <FrxGridContainer
@@ -151,16 +166,14 @@ class CloneFormularyPopup extends React.Component<any, any> {
           pagintionPosition="topRight"
           gridName="Select Formulary"
           enableSettings
-          columns={selectFormularyGridMedicare({
-            onFormularyNameClick: null,
-          })}
+          columns={gridColumns}
           customSettingIcon={"PLUS-BTN"}
           scroll={{ x: 2000, y: 377 }}
           isFetchingData={false}
           enableResizingOfColumns
           data={this.state.formularyGridData}
           totalRowsCount={this.state.dataCount}
-          settingsTriDotClick={this.props.settingsTriDotClick}
+          settingsTriDotClick={this.selectFormularyClick}
           getPerPageItemSize={this.onPageSize}
           onGridPageChangeHandler={this.onGridPageChangeHandler}
           clearFilterHandler={this.onClearFilterHandler}
@@ -170,7 +183,7 @@ class CloneFormularyPopup extends React.Component<any, any> {
           selectedCurrentPage={(this.listPayload.index / this.listPayload.limit + 1)}
           expandable={{
             isExpandable: true,
-            expandIconColumnIndex: selectFormularyGridMedicare({}).length + 1,
+            expandIconColumnIndex: gridColumns.length + 1,
             expandedRowRender: (props) => (
               <FormularyExpandedDetails
                 {...props}
@@ -224,16 +237,14 @@ class CloneFormularyPopup extends React.Component<any, any> {
           pagintionPosition="topRight"
           gridName="Select Formulary"
           enableSettings
-          columns={selectFormularyGrid({
-            onFormularyNameClick: null,
-          })}
+          columns={gridColumns}
           customSettingIcon={"PLUS-BTN"}
           scroll={{ x: 2000, y: 377 }}
           isFetchingData={false}
           enableResizingOfColumns
           data={this.state.formularyGridData}
           totalRowsCount={this.state.dataCount}
-          settingsTriDotClick={this.props.settingsTriDotClick}
+          settingsTriDotClick={this.selectFormularyClick}
           getPerPageItemSize={this.onPageSize}
           onGridPageChangeHandler={this.onGridPageChangeHandler}
           clearFilterHandler={this.onClearFilterHandler}
@@ -243,7 +254,7 @@ class CloneFormularyPopup extends React.Component<any, any> {
           selectedCurrentPage={(this.listPayload.index / this.listPayload.limit + 1)}
           expandable={{
             isExpandable: true,
-            expandIconColumnIndex: selectFormularyGrid({}).length + 1,
+            expandIconColumnIndex: gridColumns.length + 1,
             expandedRowRender: (props) => (
               <FormularyExpandedDetails
                 {...props}

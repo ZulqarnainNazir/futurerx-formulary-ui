@@ -34,14 +34,31 @@ class CompareFormularies extends React.Component<any, any> {
     show: false,
     PopUpType: PopUpTypes.TYPE2,
     hidden: false,
+    currentPopupType: 0,
+    baseFormulary: {},
+    referenceFormulary: {},
   };
+  POPUP_TYPE_BASE = 0;
+  POPUP_TYPE_REFERENCE = 1;
   onClose = () => {
     console.log("close");
     this.setState({ selectFormulary: false });
     return true;
   };
-  handleIconClick = () => {
-    this.setState({ selectFormulary: true });
+  handleIconClick = (popupType) => {
+    this.setState({ selectFormulary: true, currentPopupType: popupType });
+  };
+
+  selectFormularyClick = (dataRow) => {
+    console.log(dataRow);
+    if(dataRow){
+      if(this.state.currentPopupType === this.POPUP_TYPE_BASE){
+        this.state.baseFormulary = dataRow;
+      }else if(this.state.currentPopupType === this.POPUP_TYPE_REFERENCE){
+        this.state.referenceFormulary = dataRow;
+      }
+    }
+    this.setState({ selectFormulary: false });
   };
 
   formularyToggle = () => {
@@ -52,10 +69,6 @@ class CompareFormularies extends React.Component<any, any> {
     this.setState({
       PopUpType: type,
     });
-  };
-
-  selectFormularyClick = (dataRow) => {
-    console.log(dataRow);
   };
   render() {
     const { handleCompareBtn } = this.props;
@@ -70,12 +83,13 @@ class CompareFormularies extends React.Component<any, any> {
                   Base <span className="astrict">*</span>
                 </label>
                 <div className="input-element">
-                  <div className="bordered pointer">
-                    <span onClick={(e) => this.handleIconClick()}>
-                      Formulary 1
+                  <div className="bordered pointer bg-green">
+                    <span onClick={(e) => this.handleIconClick(this.POPUP_TYPE_BASE)}
+                          className="inner-font">
+                       {this.state.baseFormulary['formulary_name'] ? this.state.baseFormulary['formulary_name'] : 'Select Formulary'}
                     </span>
                     <EditIcon
-                      onClick={(e) => this.handleIconClick()}
+                      onClick={(e) => this.handleIconClick(this.POPUP_TYPE_BASE)}
                       className={this.state.hidden ? "hide-edit-icon" : ""}
                     />
                   </div>
@@ -100,13 +114,13 @@ class CompareFormularies extends React.Component<any, any> {
                 <div className="input-element">
                   <div className="bordered pointer bg-green">
                     <span
-                      onClick={(e) => this.handleIconClick()}
+                      onClick={(e) => this.handleIconClick(this.POPUP_TYPE_REFERENCE)}
                       className="inner-font"
                     >
-                      Select Formulary
+                      {this.state.referenceFormulary['formulary_name'] ? this.state.referenceFormulary['formulary_name'] : 'Select Formulary'}
                     </span>
                     <EditIcon
-                      onClick={(e) => this.handleIconClick()}
+                      onClick={(e) => this.handleIconClick(this.POPUP_TYPE_REFERENCE)}
                       className={this.state.hidden ? "hide-edit-icon" : ""}
                     />
                   </div>
@@ -147,7 +161,7 @@ class CompareFormularies extends React.Component<any, any> {
             {/* <CloneFormularyPopup type="medicare" /> */}
             <CloneFormularyPopup
               type="commercial" // type will be dynamic based on the LOB
-              settingsTriDotClick={this.selectFormularyClick}
+              selectFormularyClick={this.selectFormularyClick}
             />
           </DialogPopup>
         ) : null}

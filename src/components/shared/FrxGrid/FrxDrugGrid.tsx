@@ -92,6 +92,7 @@ interface FrxDrugGridProps<T> extends Grid<T> {
   getColumnSettings?:any;
   customSettingIcon?:any;
   onRowExpandHandler?:any;
+  onSettingsCellClick?:any;
 }
 interface FrxDrugGridState<T> {
   filteredInfo: null;
@@ -851,7 +852,9 @@ class FrxDrugGrid extends Component<FrxDrugGridProps<any>, FrxDrugGridState<any>
     const settingsAnchor = eventTarget;
     const settingsMenuItems = data.items ? data.items : [];
     const keys = this.state.expandedKeys;
-
+    if(this.props.onSettingsCellClick){
+      this.props.onSettingsCellClick(data,eventTarget);
+    }
     const expandedKeys = expanded
       ? keys.concat(data.key)
       : keys.filter((k) => k !== data.key);

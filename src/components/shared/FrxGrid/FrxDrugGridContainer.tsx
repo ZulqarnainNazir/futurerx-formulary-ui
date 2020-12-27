@@ -50,6 +50,7 @@ interface FrxDrugGridContainerProps<T> extends Grid<T> {
   getColumnSettings?: any;
   customSettingIcon?:any;
   onRowExpandHandler?:any;
+  onSettingsCellClick?:any;
 }
 class FrxDrugGridContainer extends Component<FrxDrugGridContainerProps<any>> {
   /**
@@ -144,6 +145,7 @@ class FrxDrugGridContainer extends Component<FrxDrugGridContainerProps<any>> {
               this.props.settingsWidth ? this.props.settingsWidth : undefined
             }
             rowSelection={this.props.rowSelection}
+            onSettingsCellClick={this.props.onSettingsCellClick}
           getPerPageItemSize={this.props.getPerPageItemSize}
           onGridPageChangeHandler={this.props.onGridPageChangeHandler}
           clearFilterHandler={this.props.clearFilterHandler}
