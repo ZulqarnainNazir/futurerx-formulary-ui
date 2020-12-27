@@ -6,7 +6,7 @@ import Button from "../../../../../shared/Frx-components/button/Button";
 import { Input } from "@material-ui/core";
 import "./common.scss";
 
-const Replace = () => {
+const Replace = (props) => {
   const openTierGridContainer = () => {};
   return (
     <div className="ql-replace-container">
@@ -23,8 +23,11 @@ const Replace = () => {
             <Input
               className="formulary-list-search"
               // placeholder="Search"
-              type="text"
+              type="number"
+              name="quantity"
               disableUnderline={true}
+              onChange={props.handleOnChange}
+              required={true}
             />
           </div>
         </Grid>
@@ -36,7 +39,9 @@ const Replace = () => {
               <Input
                 className="formulary-list-search"
                 // placeholder="Search"
-                type="text"
+                type="number"
+                name="days"
+                onChange={props.handleOnChange}
                 disableUnderline={true}
               />
             </div>
@@ -49,7 +54,9 @@ const Replace = () => {
             <Input
               className="formulary-list-search"
               // placeholder="Search"
-              type="text"
+              type="number"
+              name="periodOfTime"
+              onChange={props.handleOnChange}
               disableUnderline={true}
             />
           </div>
