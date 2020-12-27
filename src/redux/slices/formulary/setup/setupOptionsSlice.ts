@@ -162,8 +162,18 @@ const setup = createSlice({
 
     getTierOptionsStart: startLoading,
     getTierOptionsSuccess(state, { payload }: PayloadAction<TierOptions>) {
-      //console.log("***** getTierOptionsSuccess Reducer");
-      //console.log(payload);
+      console.log("***** getTierOptionsSuccess Reducer");
+      // let AddNew: any = {
+      //   id_tier_label: -1,
+      //   tier_label: "Add New",
+      //   display_text: "",
+      //   code_value: "",
+      // };
+      // // TODO - Cleanup
+      // let base1: any;
+      // base1 = payload;
+      // let newList = [AddNew, ...base1];
+      // state.tierOptions = newList;
       state.tierOptions = payload;
       state.isLoading = false;
       state.error = null;
@@ -272,8 +282,20 @@ export const fetchTierOptions = createAsyncThunk(
     try {
       dispatch(getTierOptionsStart());
       const options: any = await getTierOptions(input.type, input.id, 0);
-      //console.log("*** options : ", options);
-      dispatch(getTierOptionsSuccess(options));
+      console.log("*** options : ", options);
+      if (input.type === 6) {
+        let AddNew: any = {
+          id_tier_label: -1,
+          tier_label: "Add New",
+          display_text: "",
+          code_value: "",
+        };
+        let optionsWithAddNew: any = [AddNew, ...options];
+        console.log(optionsWithAddNew);
+        dispatch(getTierOptionsSuccess(optionsWithAddNew));
+      } else {
+        dispatch(getTierOptionsSuccess(options));
+      }
     } catch (err) {
       //console.log("***** fetchTierOptions AC - ERROR ");
       dispatch(getTierOptionsFailure(err.toString()));

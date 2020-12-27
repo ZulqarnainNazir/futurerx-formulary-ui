@@ -105,6 +105,24 @@ const setup = createSlice({
       }
     },
     saveFormularyFailure: loadingFailed,
+    createCloneFormularyStart: startLoading,
+    createCloneFormularySuccess(state, { payload }: PayloadAction<any>) {
+      console.log("***** createCloneFormularySuccess : ", payload);
+      // if (payload) {
+      //   if (payload.status === 200) {
+      //     // state.message = "Formulary created successfully";
+      //     // state.messageType = "success";
+      //     // state.isLoading = false;
+      //     // state.error = null;
+      //   } else if (payload.status === 400) {
+      //     state.message = payload?.data?.message;
+      //     state.messageType = "error";
+      //     state.isLoading = false;
+      //     state.error = payload?.data?.message;
+      //   }
+      // }
+    },
+    createCloneFormularyFailure: loadingFailed,
   },
 });
 
@@ -187,6 +205,20 @@ export const saveFormulary = createAsyncThunk(
   }
 );
 
+export const createCloneFormulary = createAsyncThunk(
+  "setup",
+  async (input: any, { dispatch }) => {
+    console.log("***** createCloneFormulary .... ");
+    console.log(input);
+    try {
+      dispatch(createCloneFormularyStart());
+    } catch (err) {
+      console.log("***** createCloneFormularyFailure - ERROR ");
+      dispatch(createCloneFormularyFailure(err.toString()));
+    }
+  }
+);
+
 export const {
   getformularyStart,
   getFormularySuccess,
@@ -198,6 +230,9 @@ export const {
   saveFormularyStart,
   saveFormularySuccess,
   saveFormularyFailure,
+  createCloneFormularyStart,
+  createCloneFormularySuccess,
+  createCloneFormularyFailure,
 } = setup.actions;
 
 export default setup.reducer;

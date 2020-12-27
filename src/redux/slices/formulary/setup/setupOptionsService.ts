@@ -8,6 +8,7 @@ import {
   GeneralOptions,
   MedicareOptions,
   SupplementalOptions,
+  TierOptions,
 } from "./setupOptionsSlice";
 
 
@@ -210,7 +211,7 @@ export async function getTierOptions(
   type: number,
   id: number,
   tier_level: number
-): Promise<SupplementalOptions | any> {
+): Promise<TierOptions | any> {
   //let url = `${this.apiBaseUrl}/1/tier-labels/1/0/${id_formulary_type}`;
   let url = `${BASE_URL1}api/1/tier-labels/${type}/${tier_level}`;
   if (id > 0) {
