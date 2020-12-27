@@ -351,6 +351,10 @@ class GeneralInformation extends React.Component<any, GeneralInformationState> {
                 <div className="group">
                   <label>CLONE FORMULARY <span className="astrict">*</span></label>
                   <a href="#" className="input-link clone-formulary-link">Clone Formulary</a>
+                  <Button
+                  label="FL - C M"
+                  onClick={(e) => this.props.createUsingClone(e)}
+                />                  
                 </div>
               </Grid>
             }
