@@ -13,13 +13,7 @@ const columns = [
 class PrRemove extends React.Component<any,any> {
   state = {
     selectedRowKeys: [],
-    dataToRemove:[],
-    seletedValue:[{
-      id_patient_residence_type: 0,
-      is_covered:true,
-      patient_residence_type_code:0,
-      name: ""
-    }]
+    dataToRemove:[]
   };
 
   onSelectChange = selectedRowKeys => {
@@ -29,7 +23,6 @@ class PrRemove extends React.Component<any,any> {
 
   getSelectedVal = (e) =>{
     this.props.handleChangeEvent(e.target.value)
-    this.setState({...this.state.seletedValue,is_covered:e.target.value})
   }
 
   static getDerivedStateFromProps(props, state) {
@@ -46,11 +39,10 @@ class PrRemove extends React.Component<any,any> {
   render() {
     const { selectedRowKeys } = this.state;
     const rowSelection = {
-      selectedRowKeys,
       onChange: (selectedRowKeys, selectedRows) => {
-        console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
         this.setState({ selectedRowKeys });
-      }
+        this.props.handleRemoveChecked(selectedRows);
+      },
     };
     const hasSelected = selectedRowKeys.length > 0;
     return (
@@ -66,7 +58,12 @@ class PrRemove extends React.Component<any,any> {
             <option value="covered" selected>Covered</option>
             <option value="non-covered">NonCovered</option>
           </select>
-        <Table rowSelection={rowSelection} columns={columns} dataSource={this.state.dataToRemove} pagination={false} />
+        <Table 
+        rowSelection={rowSelection} 
+        columns={columns} 
+        dataSource={this.state.dataToRemove} 
+        pagination={false} 
+        />
         </div>
         <Button label="Apply" onClick={this.props.showGridHandler} />
       </div>

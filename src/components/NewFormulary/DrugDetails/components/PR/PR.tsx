@@ -51,6 +51,11 @@ class DrugDetailPR extends React.Component<any, any> {
     activeTabIndex: 0,
     columns: null,
     removeTabsData:[],
+    posCheckedList:[],
+    posRemoveSettingsStatus: {
+      type: "covered",
+      covered: true,
+    },
     data: [],
     tabs: [
       { id: 1, text: "Replace" },
@@ -192,6 +197,17 @@ class DrugDetailPR extends React.Component<any, any> {
     this.setState({ posRemoveSettingsStatus, showGrid: false });
     this.getPRRemoveSettings(isCovered)
   }
+
+  
+  handleRemoveChecked = (selectedRows) => {
+    this.setState(
+      {
+        posCheckedList: selectedRows,
+        showGrid: false,
+      },
+      () => console.log("ROW CHANGE UPDATED STATE: ", this.state.posCheckedList)
+    );
+  };
 
   getPRSettings = () => {
     let apiDetails = {};
@@ -417,7 +433,12 @@ class DrugDetailPR extends React.Component<any, any> {
           showGridHandler={this.showGridHandler}
         />}
 
-        {this.state.activeTabIndex==2&&<PrRemove data={this.state.removeTabsData} showGridHandler={this.showGridHandler} handleChangeEvent={this.handleChangeEvent}/>}
+        {this.state.activeTabIndex==2&&<PrRemove 
+        data={this.state.removeTabsData} 
+        showGridHandler={this.showGridHandler} 
+        handleChangeEvent={this.handleChangeEvent}
+        handleRemoveChecked={this.handleRemoveChecked}
+        />}
 
         {this.state.showGrid ? (
           <div className="bordered">
