@@ -81,7 +81,9 @@ export const GET_GL_CRITERIA_LIST = "api/1/criteria-list-gl/"
 // ICD TAB
 export const GET_DRUG_SUMMARY_ICD = "api/1/formulary-drug-summary-icdl/"
 export const GET_ICD_DRUGS = "api/1/formulary-drugs-icdl/";
-export const GET_ICD_DRUGS_REPLACE = "api/1/icds/"
+export const GET_ICD_DRUGS_REPLACE = "api/1/icds/";
+export const GET_ICD_CRITERIA_LIST = "api/1/criteria-list-icdl/";
+export const APPLY_ICD_DRUGS = "api/1/apply-formulary-drug-icdl/";
 
 // PN TAB
 export const GET_DRUG_SUMMARY_PN = "api/1/formulary-drug-summary-phnw/";
