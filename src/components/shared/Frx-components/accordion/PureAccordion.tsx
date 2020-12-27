@@ -34,9 +34,9 @@ interface PureAccordionProps {
 
 class PureAccordion extends Component<PureAccordionProps, any> {
   state = {
-    setActive: "",
-    setHeight: "0px",
-    setRotate: "accordion__icon",
+    active: "",
+    height: "0px",
+    rotate: "accordion__icon",
     openDrugsList: false,
     drugGridHeaderName: "",
     rejectedDrug: Array(),
@@ -65,11 +65,16 @@ class PureAccordion extends Component<PureAccordionProps, any> {
   // elementContent = useRef<HTMLDivElement>(null);
 
   toggleAccordion = () => {
-    this.state.setActive = this.state.setActive === "" ? "active" : "";
-
+    // this.state.active = this.state.active === "" ? "active" : "";
+    let active = this.state.active === "" ? "active" : "";
+    let rotate =
+      this.state.active === "active"
+        ? "accordion__icon"
+        : "accordion__icon rotate";
+    let height = "0px";
     if (null !== this.elementContent.current) {
-      let height =
-        this.state.setActive === "active"
+      height =
+        this.state.active === "active"
           ? "0px"
           : `${this.elementContent.current.scrollHeight}px`;
       // this.state.setHeight =
@@ -78,32 +83,43 @@ class PureAccordion extends Component<PureAccordionProps, any> {
       //     : `${this.elementContent.current.scrollHeight}px`;
     }
     this.setState({
-      setRotate:
-        this.state.setActive === "active"
-          ? "accordion__icon"
-          : "accordion__icon rotate",
+      active,
+      height,
+      rotate,
     });
   };
 
-  // toggleAccordionAll = () => {
-  //   if (this.props.toggleAllAccordion) {
-  //     this.state.setActive = "active";
-  //     if (null !== this.elementContent.current) {
-  //       this.state.setHeight = `${this.elementContent.current.scrollHeight}px`;
-  //     }
-  //     this.setState({
-  //       setRotate: "accordion__icon rotate",
-  //     });
-  //   } else {
-  //     this.state.setActive = "";
-  //     if (null !== this.elementContent.current) {
-  //       this.state.setHeight = "0px";
-  //     }
-  //     this.setState({
-  //       setRotate: "accordion__icon",
-  //     });
-  //   }
-  // };
+  toggleAccordionAll = () => {
+    let active = "";
+    let height = "0px";
+    let rotate = "accordion__icon";
+    if (this.props.toggleAllAccordion) {
+      active = "active";
+      rotate = "accordion__icon rotate";
+      if (null !== this.elementContent.current) {
+        height = `${this.elementContent.current.scrollHeight}px`;
+      }
+      // this.setState({
+      //   setRotate: "accordion__icon rotate",
+      // });
+    }
+    // else {
+    // this.state.setActive = "";
+    // if (null !== this.elementContent.current) {
+    //   this.state.setHeight = "0px";
+    // }
+    // this.setState({
+    //   active,
+    //   setRotate: "accordion__icon",
+    // });
+    // }
+
+    this.setState({
+      active,
+      height,
+      rotate,
+    });
+  };
 
   rowSelectionChange = (data: any) => {
     this.setState({
@@ -119,16 +135,17 @@ class PureAccordion extends Component<PureAccordionProps, any> {
     // this.toggleAccordion();
   }
 
-  // componentDidUpdate() {
-  //   this.toggleAccordionAll();
-  // }
+  componentDidUpdate() {
+    // this.toggleAccordionAll();
+    // this.props.toggleAllAccordion();
+  }
 
   render() {
     switch (this.props.tableType) {
       case "COMPARE":
         return (
           <div className="accordion__section">
-            <div className={`accordion ${this.state.setActive}`}>
+            <div className={`accordion ${this.state.active}`}>
               <div
                 style={{
                   backgroundColor: this.props.titleBG,
@@ -147,7 +164,7 @@ class PureAccordion extends Component<PureAccordionProps, any> {
                 ) : null}
                 <p className="accordion__title">{this.props.title}</p>
                 <Chevron
-                  className={`${this.state.setRotate}`}
+                  className={`${this.state.rotate}`}
                   width={10}
                   height={10}
                   fill={"#323C47"}
@@ -222,7 +239,7 @@ class PureAccordion extends Component<PureAccordionProps, any> {
             </div>
             <div
               ref={this.elementContent}
-              style={{ maxHeight: `${this.state.setHeight}` }}
+              style={{ maxHeight: `${this.state.height}` }}
               className="accordion__content"
             >
               <div className="accordion__text">{this.props.content()}</div>
