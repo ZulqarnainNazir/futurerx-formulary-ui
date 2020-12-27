@@ -47,7 +47,7 @@ export async function getGeneralOptions(
         const response2 = responses[2];
         const response3 = responses[3];
         //console.log(response0, response1, response2);
-        console.log(response3);
+        //console.log(response3);
         let list0 = [];
         if (response0?.data?.code === "200") {
           list0 = response0?.data?.data;
@@ -75,7 +75,7 @@ export async function getGeneralOptions(
       })
     )
     .catch((errors) => {
-      console.error(errors);
+      //console.error(errors);
     });
 }
 

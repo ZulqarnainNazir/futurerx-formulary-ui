@@ -86,7 +86,6 @@ class FormularyDetails extends React.Component<any, any> {
 
   render() {
     // console.log("=============",this.props)
-    console.log('THe Active Tab Index = ', this.state.activeTabIndex)
     const fData = this.props.data;
     return (
       <>

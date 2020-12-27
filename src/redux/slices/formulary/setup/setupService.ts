@@ -61,7 +61,7 @@ export async function createORUpdateFormulary(
 ): Promise<any> {
   // TODO: CLIENT_ID
   const clientId = 1;
-  console.log("***** createORUpdateFormulary ");
+  //console.log("***** createORUpdateFormulary ");
   let url = `${BASE_URL1}api/1/formulary-setup`;
   try {
     let response;
@@ -77,8 +77,8 @@ export async function createORUpdateFormulary(
       });
     }
 
-    console.log("***** createORUpdateFormulary - Success");
-    console.log(response);
+    // console.log("***** createORUpdateFormulary - Success");
+    // console.log(response);
     if (response?.data?.code === "200") {
       return {
         data: response?.data?.id_formulary,
@@ -87,7 +87,7 @@ export async function createORUpdateFormulary(
     }
     return null;
   } catch (error) {
-    console.log("***** createORUpdateFormulary - Error");
+    // console.log("***** createORUpdateFormulary - Error");
     //console.log(error);
     const { response } = error;
     const { request, ...errorObject } = response; // take everything but 'request'
@@ -100,7 +100,7 @@ export async function createORUpdateFormulary(
 }
 
 export function composePostBody(input: any): any {
-  console.log("***** composeBody");
+  // console.log("***** composeBody");
 
   const payload: any = {};
   payload.formulary_info = {};
@@ -183,12 +183,12 @@ export function composePostBody(input: any): any {
     removed_formulary_asscociated_contract_pbps: [],
   };
   // TIER DETAILS  - - - - - - - - - - - - -
-  console.log("------------------------------");
-  console.log(input?.tiers);
-  console.log("------------------------------");
+  // console.log("------------------------------");
+  // console.log(input?.tiers);
+  // console.log("------------------------------");
   const tierList = composeTier(input?.tiers);
-  console.log(tierList);
-  console.log("------------------------------");
+  // console.log(tierList);
+  // console.log("------------------------------");
   // payload.tiers = input?.tiers;
   payload.tiers = tierList;
 
@@ -204,10 +204,10 @@ export function composePostBody(input: any): any {
   }
 
   // SUPP
-  console.log(
-    " SUPP :",
-    input?.supplemental_benefit_info?.supplemental_benefits
-  );
+  // console.log(
+  //   " SUPP :",
+  //   input?.supplemental_benefit_info?.supplemental_benefits
+  // );
   payload.supplemental_benefit_info = {
     supplemental_benefits: !input?.supplemental_benefit_info
       ?.supplemental_benefits
@@ -227,10 +227,10 @@ export function composePostBody(input: any): any {
     input.GENERAL_INFO?.id_formulary_type === 1 ||
     input.GENERAL_INFO?.id_formulary_type === 2
   ) {
-    console.log(
-      " CONT :",
-      input.medicare_contract_type_info.medicare_contract_types
-    );
+    // console.log(
+    //   " CONT :",
+    //   input.medicare_contract_type_info.medicare_contract_types
+    // );
     if (!input.medicare_contract_type_info.medicare_contract_types) {
       input.medicare_contract_type_info.medicare_contract_types = [];
     }
@@ -264,7 +264,7 @@ function composeTier(inputList: any[]) {
 }
 
 export function composeCreateCloneFormularyPayload(input: any): any {
-  console.log("***** composeCreateCloneFormularyPayload");
+  // console.log("***** composeCreateCloneFormularyPayload");
 
   const payload: any = {};
   payload.formulary_info = {};

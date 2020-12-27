@@ -110,13 +110,6 @@ class Formulary extends React.Component<any, any> {
     this.props.fetchFormularies(this.listPayload);
   }
 
-  addNewFormulary = (id: any) => {
-    this.props.addNewFormulary();
-    this.setState({
-      showTabs: !this.state.showTabs,
-      showDrugDetails: !this.state.showDrugDetails,
-    });
-  };
   onClickTab = (selectedTabIndex: number) => {
     let activeTabIndex = 0;
 
@@ -148,11 +141,23 @@ class Formulary extends React.Component<any, any> {
     this.listPayload.id_lob = lob_id;
     this.props.fetchFormularies(this.listPayload);
   }
+
+  addNewFormulary = (id: any) => {
+    console.log("***** ADD NEW");
+    this.props.addNewFormulary();
+    this.setState({
+      showTabs: !this.state.showTabs,
+      showDrugDetails: !this.state.showDrugDetails,
+    });
+  };
+
   drugDetailsClickHandler = (id: any) => {
+    console.log("*********************************");
     let selectedRow:any = null;
     if(id !== undefined){
       selectedRow = this.props.formulary_list[id-1];
     }
+    console.log(selectedRow);
     this.props.setFormulary(selectedRow);
     this.props.clearHiddenColumns();
     this.setState({
