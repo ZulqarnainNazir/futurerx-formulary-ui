@@ -68,6 +68,7 @@ class FormularyTiers extends React.Component<any, any> {
                   height="15"
                   viewBox="0 0 13 15"
                   fill="none"
+                  className="delete-icon"
                   xmlns="http://www.w3.org/2000/svg"
                 >
                   <path

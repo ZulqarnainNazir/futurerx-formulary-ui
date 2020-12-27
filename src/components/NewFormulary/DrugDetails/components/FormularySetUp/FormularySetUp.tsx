@@ -573,6 +573,10 @@ class FormularySetUp extends React.Component<any, any> {
     }
   };
 
+  onContinue = () => {
+    this.props.saveAndContinue(1);
+  };
+
   render() {
     return (
       <div>
@@ -654,6 +658,7 @@ class FormularySetUp extends React.Component<any, any> {
                   label="Save & Continue"
                   onClick={() => this.onSave(true)}
                 />
+                <Button label="Continue" onClick={() => this.onContinue()} />
               </Box>
             </div>
           </>
