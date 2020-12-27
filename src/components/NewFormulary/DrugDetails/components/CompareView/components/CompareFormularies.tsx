@@ -71,7 +71,6 @@ class CompareFormularies extends React.Component<any, any> {
     });
   };
   render() {
-    const { handleCompareBtn } = this.props;
     return (
       <div className="compare-formularies-container">
         <h6>Select formularies for comparison</h6>
@@ -133,7 +132,7 @@ class CompareFormularies extends React.Component<any, any> {
                 justifyContent="flex-end"
                 className="compare-btn"
               >
-                <Button label="Compare" onClick={handleCompareBtn} />
+                <Button label="Compare" onClick={(event) => this.props.handleCompareBtn(this.state.baseFormulary,this.state.referenceFormulary)} />
               </Box>
             </Grid>
           </Grid>

@@ -125,13 +125,11 @@ class CloneFormularyPopup extends React.Component<any, any> {
           dataCount: formularies['count']
         });
       } else {
-        console.log('Else part 1');
         this.setState({
           dataCount: 0
         });
       }
     } catch (err) {
-      console.log('Else part 2');
       this.setState({
         dataCount: 0
       });

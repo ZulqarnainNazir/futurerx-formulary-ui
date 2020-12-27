@@ -1,0 +1,1 @@
+export const COMMERCIAL_COMPARE_ALL = "api/1/comm-formulary-summary-compare/";
