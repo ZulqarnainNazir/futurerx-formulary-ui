@@ -134,8 +134,8 @@ class CompareTable extends Component<any, any> {
         sorter: {},
         textCase: "upper",
         pixelWidth: 100,
-        key: "ndc",
-        displayTitle: "NDC",
+        key: "gpi",
+        displayTitle: "GPI",
         dataType: "string",
         isFilterable: true,
         filters: textFilters,
@@ -182,8 +182,8 @@ class CompareTable extends Component<any, any> {
           sorter: {},
           textCase: "upper",
           pixelWidth: 100,
-          key: "category",
-          displayTitle: "Category",
+          key: "class",
+          displayTitle: "Class",
           dataType: "string",
           isFilterable: true,
           filters: textFilters,
@@ -657,6 +657,7 @@ class CompareTable extends Component<any, any> {
                   attribute_field_name: subValue['attribute_field_name'],
                   attribute_field_value: subValue['attribute_field_value'],
                   attribute_name: subValue['attribute_name'],
+                  source: subValue['source'],
                   gridColumns: gridColumns,
                 }
                 header.formularies.push(subItem);
@@ -791,6 +792,9 @@ class CompareTable extends Component<any, any> {
                         tableType={"COMPARE"}
                         dataArr={accordionHeader.formularies}
                         formularyType={accordionHeader.title}
+                        baseformulary={this.props.baseformulary}
+                        referenceformulary={this.props.referenceformulary}
+                        formularyLobId={this.props.formulary_lob_id}
                       />
                     );
                   }}
