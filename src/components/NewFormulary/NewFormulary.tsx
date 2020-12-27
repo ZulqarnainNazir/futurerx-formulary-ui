@@ -85,6 +85,9 @@ const defaultListPayload = {
 }
 
 class Formulary extends React.Component<any, any> {
+  //TODO Remove
+  snow:boolean = false;
+
   state = {
     activeTabIndex: 0,
     tabs: tabs,
@@ -211,6 +214,45 @@ class Formulary extends React.Component<any, any> {
       <div className="formulary-root">
         {this.state.showTabs ? (
           <>
+{(this.snow===true)?
+(<div className="snowflakes" aria-hidden="true">
+  <div className="snowflake">
+  ❅
+  </div>
+  <div className="snowflake">
+  ❆
+  </div>
+  <div className="snowflake">
+  ❅
+  </div>
+  <div className="snowflake">
+  ❆
+  </div>
+  <div className="snowflake">
+  ❅
+  </div>
+  <div className="snowflake">
+  ❆
+  </div>
+  <div className="snowflake">
+    ❅
+  </div>
+  <div className="snowflake">
+    ❆
+  </div>
+  <div className="snowflake">
+    ❅
+  </div>
+  <div className="snowflake">
+    ❆
+  </div>
+  <div className="snowflake">
+    ❅
+  </div>
+  <div className="snowflake">
+    ❆
+  </div>
+</div>):null}
             <FormularyDashboardStats />
             <FrxTabs
               tabList={this.state.tabs}
