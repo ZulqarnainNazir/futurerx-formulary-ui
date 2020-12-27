@@ -150,47 +150,51 @@ class AdditionalCriteria extends Component<any, any> {
         );
 
         let cardName = "POS";
-        this.state.globalCardCount++;
-        if (filteredList.length === 0) {
-          // var globalCount: number = this.state.globalCardCount;
-          // globalCount++;
-          const isIncluded = true;
+        let globalCardCount = this.state.globalCardCount;
+        let isIncluded = true;
+        globalCardCount++;
+        if (filteredList.length === 1) {
+          const currentCard = filteredList[0];
+          isIncluded = !currentCard.isIncluded;
+          console.log("AGAIN: ", isIncluded);
+        }
+        if (filteredList.length <= 1) {
+          payload.listItemStatus[this.state.globalCardCount] = isIncluded;
           this.state.nodeList.push({
-            id: this.state.globalCardCount,
+            id: globalCardCount,
             cardCode: cardCode,
             cardName: cardName,
-            isIncluded: true,
+            isIncluded: isIncluded,
             childData: {},
           });
-
-          payload.listItemStatus[this.state.globalCardCount] = true;
           this.props.setAdditionalCriteria(payload);
-          this.setState({
-            selectedCriteriaList: [
-              ...this.state.selectedCriteriaList,
-              {
-                id: this.state.globalCardCount,
-                cardCode: cardCode,
-                cardName: cardName,
-                isIncluded: isIncluded,
-                render: (
-                  <ListItem
-                    nodeId={this.state.globalCardCount}
-                    deleteIconHandler={this.deleteIconHandler}
-                    onInternalStateChange={this.onInternalStateChange}
-                    card={{
-                      cardName: cardName,
-                      cardCode: cardCode,
-                      isIncluded: isIncluded,
-                    }}
-                  />
-                ),
-              },
-            ],
-          });
-        } else if (filteredList.length === 1) {
-          const currentCard = filteredList[0];
-          const isIncluded = !currentCard.isIncluded;
+          this.setState(
+            {
+              globalCardCount: globalCardCount,
+              selectedCriteriaList: [
+                ...this.state.selectedCriteriaList,
+                {
+                  id: globalCardCount,
+                  cardCode: cardCode,
+                  cardName: cardName,
+                  isIncluded: isIncluded,
+                  render: (
+                    <ListItem
+                      nodeId={globalCardCount}
+                      deleteIconHandler={this.deleteIconHandler}
+                      onInternalStateChange={this.onInternalStateChange}
+                      card={{
+                        cardName: cardName,
+                        cardCode: cardCode,
+                        isIncluded: isIncluded,
+                      }}
+                    />
+                  ),
+                },
+              ],
+            },
+            () => console.log(this.state)
+          );
         }
         break;
       case 7:
@@ -274,6 +278,7 @@ class AdditionalCriteria extends Component<any, any> {
                   selectedCriteriaList.map((criteriaObject, idx) => (
                     <div draggable="true" key={criteriaObject.id}>
                       {criteriaObject["render"]}
+                      {/* {selectedCriteriaList[0]["render"]} */}
                     </div>
                   ))
                 )}

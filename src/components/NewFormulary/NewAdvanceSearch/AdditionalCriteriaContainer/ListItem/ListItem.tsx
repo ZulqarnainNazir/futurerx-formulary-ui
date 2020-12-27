@@ -10,6 +10,7 @@ import {
   POS_SETTINGS_LIST,
   PR_SETTINGS_LIST,
 } from "../../../../../api/http-commons";
+import POSCriteria from "../CriteriaComponents/POSCriteria";
 
 function mapDispatchToProps(dispatch) {
   return {
@@ -51,12 +52,33 @@ class ListItem extends Component<any, any> {
   };
 
   componentDidMount() {
-    this.initializePOSSettingsList();
-    this.initializePRSettingsList();
-  }
+    this.initializePOSSettingsListApi();
+    this.initializePRSettingsListApi();
 
+    this.initializeParentData();
+  }
   componentWillReceiveProps(nextProps) {}
-  initializePOSSettingsList = () => {
+
+  initializeParentData = () => {
+    // isIncluded
+    const { cardCode, isIncluded } = this.props.card;
+
+    // const INCLUDE = "include";
+    // const EXCLUDE = "exclude";
+    const COVERED = "covered";
+    const NOT_COVERED = "not-covered";
+    if (cardCode === 6) {
+      const posSettingsStatus = {
+        type: isIncluded ? COVERED : NOT_COVERED,
+        covered: isIncluded,
+      };
+      this.setState({
+        posSettingsStatus,
+      });
+    }
+  };
+
+  initializePOSSettingsListApi = () => {
     let apiDetails = {};
     apiDetails["apiPart"] = POS_SETTINGS_LIST;
 
@@ -73,7 +95,7 @@ class ListItem extends Component<any, any> {
     });
   };
 
-  initializePRSettingsList = () => {
+  initializePRSettingsListApi = () => {
     let apiDetails = {};
     apiDetails["apiPart"] = PR_SETTINGS_LIST;
 
@@ -134,7 +156,10 @@ class ListItem extends Component<any, any> {
       isSelectAllPOS,
       isSelectAllPR,
     } = this.state;
-    const { cardCode, deleteIconHandler } = this.props;
+    const {
+      card: { cardName, cardCode, isIncluded },
+      deleteIconHandler,
+    } = this.props;
     switch (cardCode) {
       case 1:
         return "AGE";
@@ -148,7 +173,7 @@ class ListItem extends Component<any, any> {
         return "PT";
       case 6:
         return (
-          <PosSettings
+          <POSCriteria
             posSettingsServies={{
               posSettings,
               posSettingsStatus,
