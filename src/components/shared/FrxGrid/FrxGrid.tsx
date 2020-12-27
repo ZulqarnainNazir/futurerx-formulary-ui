@@ -925,7 +925,7 @@ class FrxGrid extends Component<FrxGridProps<any>, FrxGridState<any>> {
 
     if (filters && extra.action === "filter") {
       this.props.applyFilter(filters);
-      this.getDataOnFilter(filters);
+      //this.getDataOnFilter(filters);
     }
 
     //ADD NOT MULTISORT CHECK
