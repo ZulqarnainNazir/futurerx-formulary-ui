@@ -29,7 +29,7 @@ class PrRemove extends React.Component<any,any> {
     const data:any =[]
     for (let i = 0; i <props.data.length; i++) {
       data.push({
-        key: props.data[i][1],
+        key: props.data[i][0],
         name: props.data[i][2]
       });
     }

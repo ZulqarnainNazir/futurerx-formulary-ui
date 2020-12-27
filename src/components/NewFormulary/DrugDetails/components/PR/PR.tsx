@@ -7,13 +7,12 @@ import { TabInfo } from "../../../../../models/tab.model";
 import FrxMiniTabs from "../../../../shared/FrxMiniTabs/FrxMiniTabs";
 import Button from "../../../../shared/Frx-components/button/Button";
 import { getDrugDetailsColumnPR } from "../../../DrugDetails/components/FormularyConfigure/DrugGridColumn";
-import { getDrugDetailData } from "../../../../../mocks/DrugGridMock";
 import FrxLoader from "../../../../shared/FrxLoader/FrxLoader";
-import DrugGrid from "../../../DrugDetails/components/DrugGrid";
 import AdvancedSearch from "../../../DrugDetails/components/FormularyConfigure/components/search/AdvancedSearch";
-import { getDrugDetailsPRSummary, getPRSettings, getDrugDetailsPRList,getDrugDetailsRemoveTab } from "../../../../../redux/slices/formulary/drugDetails/pr/prActionCreation";
+import { getDrugDetailsPRSummary, getPRSettings, getDrugDetailsPRList,getDrugDetailsRemoveTab, postRemovePRDrug, postReplacePRDrug } from "../../../../../redux/slices/formulary/drugDetails/pr/prActionCreation";
 import * as prConstants from "../../../../../api/http-drug-details";
 import getLobCode from "../../../Utils/LobUtils";
+import showMessage from "../../../Utils/Toast";
 
 import PrSettings from "./PrSettings";
 import FrxDrugGridContainer from "../../../../shared/FrxGrid/FrxDrugGridContainer";
@@ -25,6 +24,8 @@ function mapDispatchToProps(dispatch) {
     getPRSettings: (a) => dispatch(getPRSettings(a)),
     getDrugDetailsPRList: (a) => dispatch(getDrugDetailsPRList(a)),
     getDrugDetailsRemoveTab: (arg) => dispatch(getDrugDetailsRemoveTab(arg)),
+    postRemovePRDrug: (arg) => dispatch(postRemovePRDrug(arg)),
+    postReplacePRDrug: (arg) => dispatch(postReplacePRDrug(arg)),
   };
 }
 
@@ -41,8 +42,30 @@ const defaultListPayload = {
   filter: [],
 }
 
+interface prState {
+  isSearchOpen: boolean,
+  panelGridTitle1: any[],
+  panelTitleAlignment1: any[],
+  panelGridValue1: any[],
+  isNotesOpen: boolean,
+  activeTabIndex: number,
+  columns: any,
+  removeTabsData: any[],
+  posCheckedList: any[],
+  posRemoveSettingsStatus: any,
+  data: any[],
+  tabs: any[],
+  prSettings: any[],
+  prSettingsStatus: any,
+  listCount: number,
+  showGrid: boolean,
+  isSelectAll: boolean,
+  selectedDrugs: any[],
+  drugData: any[],
+};
+
 class DrugDetailPR extends React.Component<any, any> {
-  state = {
+  state:prState = {
     isSearchOpen: false,
     panelGridTitle1: ["", "NUMBER OF DRUGS", "ADDED DRUGS", "REMOVED DRUGS"],
     panelTitleAlignment1: ["center", "center", "center", "center"],
@@ -78,7 +101,29 @@ class DrugDetailPR extends React.Component<any, any> {
     index: 0,
     limit: 10,
     filter: [],
-    is_covered: this.state.prSettingsStatus.covered
+  }
+
+  rmSavePayload: any = {
+    is_covered: true,
+    selected_drug_ids: [],
+    is_select_all: false,
+    covered: {},
+    not_covered: {},
+    selected_criteria_ids: [],
+    filter: [],
+    search_key: ""
+  }
+
+  rpSavePayload: any = {
+    is_covered: true,
+    selected_drug_ids: [],
+    is_select_all: false,
+    covered: {},
+    not_covered: {},
+    patient_residences: [2], // Selected Checkbox id 
+    breadcrumb_code_value: "PATRS",
+    filter: [],
+    search_key: ""
   }
 
   advanceSearchClickHandler = (event) => {
@@ -92,6 +137,60 @@ class DrugDetailPR extends React.Component<any, any> {
 
   saveClickHandler = () => {
     console.log("Save data");
+    console.log("The Selected Drugs For Save = ", this.state.selectedDrugs);
+    if (this.state.selectedDrugs && this.state.selectedDrugs.length > 0) {
+      let apiDetails = {};
+      apiDetails["apiPart"] = prConstants.APPLY_PR_DRUGS;
+      apiDetails["keyVals"] = [
+        { key: prConstants.KEY_ENTITY_ID, value: this.props?.formulary_id },
+      ];
+      apiDetails["messageBody"] = {};
+
+      if (this.state.activeTabIndex === 0) {
+        let patientResidences: any[] = [];
+        if(this.state.posCheckedList.length > 0) {
+          patientResidences = this.state.posCheckedList.map(e => e?.key);
+        }
+
+        console.log("----SAVE PR Ids === ", patientResidences);
+        this.rpSavePayload.selected_drug_ids = this.state.selectedDrugs
+        this.rpSavePayload.is_covered = this.state.posRemoveSettingsStatus.covered //this.state.posCheckedList
+        this.rpSavePayload.patient_residences = patientResidences;
+        apiDetails["messageBody"] = this.rpSavePayload;
+        apiDetails["pathParams"] = this.props?.formulary_id + "/" +  getLobCode(this.props.formulary_lob_id) + "/" + prConstants.TYPE_REPLACE;
+        console.log("The API Details - ", apiDetails);
+
+        // Replace Drug method call
+        this.props.postReplacePRDrug(apiDetails).then((json) => {
+          if (json.payload && json.payload.code && json.payload.code === "200") {
+            showMessage("Success", "success");
+            this.getPRSummary();
+          } else {
+            showMessage("Failure", "error");
+          }
+        });
+
+      } else if(this.state.activeTabIndex === 2) {
+        this.rmSavePayload.selected_drug_ids = this.state.selectedDrugs
+        this.rmSavePayload.is_covered = this.state.posRemoveSettingsStatus.covered
+        this.rmSavePayload.selected_criteria_ids = this.state.posCheckedList
+        apiDetails["messageBody"] = this.rmSavePayload;
+        apiDetails["pathParams"] = this.props?.formulary_id + "/" +  getLobCode(this.props.formulary_lob_id) + "/" + prConstants.TYPE_REMOVE;
+        console.log("The API Details - ", apiDetails);
+
+        // Remove Drug method call
+        this.props.postRemovePRDrug(apiDetails).then((json) => {
+          console.log("The Remove PR Drug Response = ", json);
+          if (json.payload && json.payload.code && json.payload.code === "200") {
+            showMessage("Success", "success");
+            this.getPRSummary();
+          } else {
+            console.log("------REMOVE FAILED-------")
+            showMessage("Failure", "error");
+          }
+        });
+      }
+    }
   };
 
   onPageSize = (pageSize) => {
@@ -154,6 +253,7 @@ class DrugDetailPR extends React.Component<any, any> {
       });
     });
   };
+
   getPRRemoveSettings = (isCovered) => {
     this.listPayload['is_covered'] = isCovered
     let apiDetails = {};
@@ -229,6 +329,14 @@ class DrugDetailPR extends React.Component<any, any> {
     apiDetails['apiPart'] = prConstants.GET_PR_FORMULARY_DRUGS;
     apiDetails['pathParams'] = this.props?.formulary_id + "/" + getLobCode(this.props.formulary_lob_id);
     apiDetails['keyVals'] = [{ key: prConstants.KEY_ENTITY_ID, value: this.props?.formulary_id }, { key: prConstants.KEY_INDEX, value: index }, { key: prConstants.KEY_LIMIT, value: limit }];
+    
+    if(this.state.activeTabIndex === 2) {
+      console.log("----LIST TAB 2 PR Ids === ", this.state.posCheckedList.map(e => e?.key));
+      console.log("----LIST TAB 2 PR COVERED Status = ", this.state.posRemoveSettingsStatus.covered);
+      listPayload['is_covered'] = this.state.posRemoveSettingsStatus.covered;
+      listPayload['selected_criteria_ids'] = this.state.posCheckedList.map(e => e?.key);
+    }
+
     apiDetails['messageBody'] = listPayload;
 
     let listCount = 0;
@@ -309,7 +417,7 @@ class DrugDetailPR extends React.Component<any, any> {
       covered: isCovered,
     };
 
-    this.setState({ prSettingsStatus, showGrid: false });
+    this.setState({ prSettingsStatus, showGrid: false }, () => {console.log("THe Pr Settings Status = ", this.state.prSettingsStatus)});
   };
 
   serviceSettingsChecked = (e) => {
@@ -416,6 +524,8 @@ class DrugDetailPR extends React.Component<any, any> {
                     tabList={this.state.tabs}
                     activeTabIndex={this.state.activeTabIndex}
                     onClickTab={this.onClickTab}
+                    disabledIndex={1}
+                    disabled
                   />
                 </div>
               </div>
@@ -450,7 +560,7 @@ class DrugDetailPR extends React.Component<any, any> {
                   label="Advance Search"
                   onClick={this.advanceSearchClickHandler}
                 />
-                <Button label="Save" onClick={this.saveClickHandler} disabled />
+                <Button label="Save" onClick={this.saveClickHandler} disabled={!(this.state.selectedDrugs.length > 0)} />
               </div>
             </div>
             {dataGrid}

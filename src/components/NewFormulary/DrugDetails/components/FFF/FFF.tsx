@@ -358,6 +358,8 @@ class DrugDetailFFF extends React.Component<any, any> {
                     tabList={this.state.tabs}
                     activeTabIndex={this.state.activeTabIndex}
                     onClickTab={this.onClickTab}
+                    disabledIndex={1}
+                    disabled
                   />
                 </div>
               </div>

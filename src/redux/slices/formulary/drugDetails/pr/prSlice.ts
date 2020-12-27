@@ -3,6 +3,8 @@ import {
   getDrugDetailsPRSummary,
   getPRSettings,
   getDrugDetailsPRList,
+  postRemovePRDrug,
+  postReplacePRDrug,
 } from "./prActionCreation";
 import {
   getPRSummaryFulfilled,
@@ -11,6 +13,8 @@ import {
   getPRSettingsRejected,
   postPRListFulfilled,
   postPRListRejected,
+  postReplaceDrugFulfilled,
+  postReplaceDrugRejected,
 } from "./prReducers";
 
 const prState: any = {
@@ -65,6 +69,40 @@ export const prListSlice = createSlice({
     }),
     builder.addCase(getDrugDetailsPRList.rejected, (state, action) => {
       postPRListRejected(state, action);
+    })
+  ),
+});
+
+export const prRemoveDrugSlice = createSlice({
+  name: "prRemoveDrug",
+  initialState: prState,
+  reducers: {},
+  extraReducers: (builder) => (
+    builder.addCase(postRemovePRDrug.pending, (state, action) => {
+      state.isLoading = true;
+    }),
+    builder.addCase(postRemovePRDrug.fulfilled, (state, action) => {
+      postReplaceDrugFulfilled(state, action);
+    }),
+    builder.addCase(postRemovePRDrug.rejected, (state, action) => {
+      postReplaceDrugRejected(state, action);
+    })
+  ),
+});
+
+export const prReplaceDrugSlice = createSlice({
+  name: "prReplaceDrug",
+  initialState: prState,
+  reducers: {},
+  extraReducers: (builder) => (
+    builder.addCase(postReplacePRDrug.pending, (state, action) => {
+      state.isLoading = true;
+    }),
+    builder.addCase(postReplacePRDrug.fulfilled, (state, action) => {
+      postReplaceDrugFulfilled(state, action);
+    }),
+    builder.addCase(postReplacePRDrug.rejected, (state, action) => {
+      postReplaceDrugRejected(state, action);
     })
   ),
 });

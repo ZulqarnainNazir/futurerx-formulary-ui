@@ -104,6 +104,7 @@ export const GET_DRUG_SUMMARY_PR = "api/1/formulary-drug-summary-patrs/";
 export const GET_PR_SETTINGS_LIST = "api/1/patient-residences";
 export const GET_PR_FORMULARY_DRUGS = "api/1/formulary-drugs-patrs/";
 export const GET_PR_DRUG_REMOVE_TAB = "api/1/criteria-list-patrs/";
+export const APPLY_PR_DRUGS = "api/1/apply-formulary-drug-patrs/";
 
 // OTHER TAB
 export const GET_DRUG_SUMMARY_OTHER = "api/1/formulary-drug-summary-edoth/";
