@@ -19,13 +19,11 @@ import AlternativeDrug from "./CategoriesComponents/AlternativeDrug/AlternativeD
 import { setAdvancedSearch } from "../../../redux/slices/formulary/advancedSearch/advancedSearchSlice";
 import { connect } from "react-redux";
 import { isEmpty } from "lodash";
-import AdditionalCriteriaContainer from "./AdditionalCriteriaContainer";
+import AdditionalCriteriaContainer from "./AdditionalCriteriaContainer/AdditionalCriteriaContainer";
 
 function mapDispatchToProps(dispatch) {
   return {
     setAdvancedSearch: (a) => dispatch(setAdvancedSearch(a)),
-    // getDrugDetailsPOSSettings: (a) => dispatch(getDrugDetailsPOSSettings(a)),
-    // getDrugDetailsPRSettings: (a) => dispatch(getDrugDetailsPRSettings(a)),
   };
 }
 
@@ -39,9 +37,6 @@ const mapStateToProps = (state) => {
     formulary: state?.application?.formulary,
     formulary_lob_id: state?.application?.formulary_lob_id,
     formulary_type_id: state?.application?.formulary_type_id,
-
-    // additional criteria state
-    // isAdvanceSearch: state?.advancedSearch?.isAdvanceSearch,
   };
 };
 
@@ -1263,7 +1258,8 @@ class AdvanceSearchContainer extends Component<Props, State> {
       criteriaList,
     } = this.state;
 
-    const { isAdvanceSearch } = this.props;
+    // const { isAdvanceSearch } = this.props;
+    const isAdvanceSearch = !this.props.isAdvanceSearch;
     // const renderCatory = this.onRenderCateory(selectedCategory);
     // console.log(renderCatory);
 

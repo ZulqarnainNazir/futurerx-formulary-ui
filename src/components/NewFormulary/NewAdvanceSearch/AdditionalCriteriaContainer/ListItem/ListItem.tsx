@@ -28,6 +28,12 @@ const mapStateToProps = (state) => {
   };
 };
 
+interface Props {
+  title: string;
+  nodeId: any;
+  listItemStatus: any;
+  onParentDataUpdated: (nodeId, isIncluded) => void;
+}
 class ListItem extends Component<any, any> {
   state = {
     posSettings: [],
@@ -49,6 +55,7 @@ class ListItem extends Component<any, any> {
     this.initializePRSettingsList();
   }
 
+  componentWillReceiveProps(nextProps) {}
   initializePOSSettingsList = () => {
     let apiDetails = {};
     apiDetails["apiPart"] = POS_SETTINGS_LIST;
