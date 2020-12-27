@@ -49,8 +49,14 @@ class DrugDetailICD extends React.Component<any, any> {
     activeTabIndex: 0,
     columns: null,
     data: [],
+    selectedList:[],
     replaceTab:{
       searchResult:[]
+    },
+    lookBackDays:0,
+    icdSettingsStatus:{
+      type: "covered",
+      covered: true,
     },
     listCount: 0,
     selectedDrugs: Array(),
@@ -241,9 +247,34 @@ class DrugDetailICD extends React.Component<any, any> {
     alert(1);
   };
 
-  handleReplaceSrch = (e) =>{
-    console.log(e)
-    this.getICDReplaceSrch(e)
+  handleReplaceSrch = (selectedItem) =>{
+    this.setState({
+      selectedList:selectedItem
+    })
+    this.getICDReplaceSrch(selectedItem)
+  }
+
+  showGridHandler = () => {
+    console.log(this.state.icdSettingsStatus)
+    console.log(this.state.selectedList)
+    console.log(this.state.lookBackDays)
+  };
+
+  handleStatus = (key: string) => {
+    const COVERED = "covered";
+    const isCovered: boolean = key === COVERED ? true : false;
+    let icdSettingsStatus = {
+      type: key,
+      covered: isCovered,
+    };
+
+    this.setState({ icdSettingsStatus, showGrid: false });
+  };
+
+  handleLookBackDays = (lookDays) =>{
+    this.setState({
+      lookBackDays:lookDays
+    })
   }
 
 
@@ -339,7 +370,14 @@ class DrugDetailICD extends React.Component<any, any> {
           </div>
         </div>
 
-        <IcdLimitSettings options={this.state.replaceTab.searchResult} handleReplaceSrch={this.handleReplaceSrch}/>
+        <IcdLimitSettings 
+        options={this.state.replaceTab.searchResult} 
+        handleReplaceSrch={this.handleReplaceSrch}
+        handleStatus={this.handleStatus}
+        showGridHandler={this.showGridHandler}
+        icdSettingsStatus={this.state.icdSettingsStatus}
+        handleLookBackDays = {this.handleLookBackDays}
+        />
 
         <div className="bordered">
           <div className="header space-between pr-10">

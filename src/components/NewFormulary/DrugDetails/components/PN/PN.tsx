@@ -50,7 +50,12 @@ class DrugDetailPN extends React.Component<any, any> {
     replaceTab:{
       searchResult:[]
     },
+    pnSettingsStatus:{
+      type: "covered",
+      covered: true,
+    },
     columns: null,
+    selectedList:[],
     data: [],
     listCount: 0,
     tabs: [
@@ -240,10 +245,27 @@ class DrugDetailPN extends React.Component<any, any> {
     alert(1);
   };
 
-  handleReplaceSrch = (e) =>{
-    console.log(e)
-    this.getPNReplaceSrch(e)
+  showGridHandler = () => {
+    console.log(this.state.pnSettingsStatus)
+    console.log(this.state.selectedList)
+  };
+  handleReplaceSrch = (selectedItem) =>{
+    this.setState({
+      selectedList:selectedItem
+    })
+    this.getPNReplaceSrch(selectedItem)
   }
+
+  handleStatus = (key: string) => {
+    const COVERED = "covered";
+    const isCovered: boolean = key === COVERED ? true : false;
+    let pnSettingsStatus = {
+      type: key,
+      covered: isCovered,
+    };
+
+    this.setState({ pnSettingsStatus, showGrid: false });
+  };
 
   render() {
     let dataGrid = <FrxLoader />;
@@ -317,7 +339,13 @@ class DrugDetailPN extends React.Component<any, any> {
           </div>
         </div>
 
-        <PnLimitSettings options={this.state.replaceTab.searchResult} handleReplaceSrch={this.handleReplaceSrch}/>
+        <PnLimitSettings 
+        options={this.state.replaceTab.searchResult} 
+        handleReplaceSrch={this.handleReplaceSrch}
+        handleStatus={this.handleStatus}
+        showGridHandler={this.showGridHandler}
+        pnSettingsStatus={this.state.pnSettingsStatus}
+        />
 
         <div className="bordered">
           <div className="header space-between pr-10">

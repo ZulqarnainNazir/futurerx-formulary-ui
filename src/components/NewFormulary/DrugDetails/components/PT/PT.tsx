@@ -55,7 +55,12 @@ class DrugDetailPT extends React.Component<any, any> {
       { id: 2, text: "Append" },
       { id: 3, text: "Remove" },
     ],
+    ptSettingsStatus:{
+      type: "covered",
+      covered: true,
+    },
     listCount: 0,
+    selectedList:[],
     selectedDrugs: Array(),
     drugData: Array(),
   };
@@ -78,6 +83,23 @@ class DrugDetailPT extends React.Component<any, any> {
   saveClickHandler = () => {
     console.log("Save data");
   };
+
+  showGridHandler = () => {
+   console.log(this.state.ptSettingsStatus)
+   console.log(this.state.selectedList)
+  };
+
+  handleStatus = (key: string) => {
+    const COVERED = "covered";
+    const isCovered: boolean = key === COVERED ? true : false;
+    let ptSettingsStatus = {
+      type: key,
+      covered: isCovered,
+    };
+
+    this.setState({ ptSettingsStatus, showGrid: false });
+  };
+
 
   onPageSize = (pageSize) => {
     this.listPayload.limit = pageSize
@@ -236,9 +258,11 @@ class DrugDetailPT extends React.Component<any, any> {
     alert(1);
   };
 
-  handleReplaceSrch = (e) =>{
-      console.log(e)
-      this.getPTReplaceSrch(e)
+  handleReplaceSrch = (selectedItem) =>{
+      this.setState({
+        selectedList:selectedItem
+      })
+      this.getPTReplaceSrch(selectedItem)
   }
 
   render() {
@@ -317,7 +341,13 @@ class DrugDetailPT extends React.Component<any, any> {
           </div>
         </div>
 
-        <PtSettings options={this.state.replaceTab.searchResult} handleReplaceSrch={this.handleReplaceSrch}/>
+        <PtSettings 
+        options={this.state.replaceTab.searchResult} 
+        handleReplaceSrch={this.handleReplaceSrch}
+        handleStatus={this.handleStatus}
+        showGridHandler={this.showGridHandler}
+        ptSettingsStatus={this.state.ptSettingsStatus}
+        />
 
         <div className="bordered">
           <div className="header space-between pr-10">
