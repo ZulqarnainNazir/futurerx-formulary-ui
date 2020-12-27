@@ -10,12 +10,19 @@ import {
 } from "../../../../../../redux/slices/formulary/pagdm/pagdmSlice";
 import {
     getPaGrouptDescriptions, getPaTypes, getPaGrouptDescriptionVersions,
-    getPaGrouptDescriptionDetail, getPaGrouptDescription,postPAGroupDescriptionFormularies
+    getPaGrouptDescriptionDetail, getPaGrouptDescription,postPAGroupDescriptionFormularies,postApplyPAGroupDescriptionFormularies
 } from "../../../../../../redux/slices/formulary/pa/paActionCreation";
 import { connect } from 'react-redux';
 import DialogPopup from "../../../../../shared/FrxDialogPopup/FrxDialogPopup";
 import FrxGridContainer from "../../../../../shared/FrxGrid/FrxGridContainer";
 import { getCompareFormularyVersionHistoryColumn } from "../../../../../../utils/grid/columns";
+import Button from "@material-ui/core/Button";
+import { Grid } from '@material-ui/core';
+import { DatePicker } from 'antd';
+import FrxDrugGridContainer from "../../../../../shared/FrxGrid/FrxDrugGridContainer";
+import { formatTimeStr } from 'antd/lib/statistic/utils';
+import showMessage from '../../../../Utils/Toast';
+import { KeyboardReturnOutlined } from '@material-ui/icons';
 
 function mapStateToProps(state) {
     return {
@@ -24,7 +31,7 @@ function mapStateToProps(state) {
         saveGdm: state.savePaGdm,
         PaGDData: state.paReducer.description,
         version: state.paVersion.paVersion,
-
+        client_id: state.application.clientId,
     }
 }
 
@@ -40,21 +47,12 @@ function mapDispatchToProps(dispatch) {
         cloneGroupDescription: (arg) => dispatch(cloneGroupDescription(arg)), // Clone
         archiveGroupDescription: (arg) => dispatch(archiveGroupDescription(arg)), // archive
         newVersionGroupDescription: (arg) => dispatch(newVersionGroupDescription(arg)), // New Vesrion
-        postPAGroupDescriptionFormularies: (arg) => dispatch(postPAGroupDescriptionFormularies(arg)) // New Vesrion
+        postPAGroupDescriptionFormularies: (arg) => dispatch(postPAGroupDescriptionFormularies(arg)), // New Vesrion
+        postApplyPAGroupDescriptionFormularies: (arg) => dispatch(postApplyPAGroupDescriptionFormularies(arg)) // New Vesrion
         
-
-
-        // getPaGrouptDescriptions: (a) => dispatch(getPaGrouptDescriptions(a)),
-        // getPaTypes: (a) => dispatch(getPaTypes(a)),
-        //getDrugLists: (a) => dispatch(getDrugLists(a)),
-       // getPaGrouptDescriptionDetail: (a) => dispatch(getPaGrouptDescriptionDetail(a)),
-       // getPaGrouptDescriptionVersions: (a) => dispatch(getPaGrouptDescriptionVersions(a)),
-        //getPaGrouptDescription: (a) => dispatch(getPaGrouptDescription(a)),
-
-
-
     };
 }
+
 function PAGroupHeader(props: any) {
     const [open, setOpen] = React.useState(false);
     const [popupType, setPopUpType] = React.useState('clone');
@@ -64,6 +62,13 @@ function PAGroupHeader(props: any) {
     const [panelColor, setPanelColor] = React.useState('');
     const versionListLength = versionList.length - 1;
     const [showViewAll, setShowViewAll] = React.useState(false);
+    const [effectiveDate, setEffectiveDate] = React.useState(null);
+    const [selectedFormularies, updateSelectedFormularies] = React.useState([]);
+    const [idField,setIdField] = React.useState('');
+    const [selectedVersion, setSelectedVersion] = useState('')
+    const [selectedVersionId,setSelectedVersionId] = useState(null);
+
+    
     const getCompareFormularyViewAllGridData = [
         
           {
@@ -90,27 +95,51 @@ function PAGroupHeader(props: any) {
         let apiDetails= {};
          apiDetails["lob_type"] = props.formulary_lob_id;
          apiDetails['pathParams'] = '/'+props.saveGdm.current_group_id;
+
+         if (props.formulary_lob_id==1){
+            setIdField('id_mcr_pa_group_description_formulary');
+         }else if (props.formulary_lob_id==4){
+            setIdField('id_pa_group_description_formulary');
+        }
+
         props.postPAGroupDescriptionFormularies(apiDetails).then(json =>{
             debugger;
-            setFormularies(json.payload.result);
+            let tmp_array:any=[];
+            let count=1;
+            json.payload.result.map(obj => {
+                obj['id'] = count;
+                obj['key'] = count;
+                tmp_array.push(obj);
+                count++;
+            });
+            setFormularies(tmp_array);
         });
         setShowViewAll(!showViewAll);
       };
 
+    const handleEffectiveDate = date => {
+        setEffectiveDate(date);
+        //this.setState({ alertFormData: { effective_date: date,...this.state.alertFormData } });
+    }
+
     useEffect(() => {
+        debugger;
         if (props.version.length > 0) {
             const verLength = Object.keys(props.version).length;
             const isEditable = props.version[verLength - 1].is_setup_complete;
             const value = props.version[verLength - 1].value;
             setPanelColor(isEditable ? '-green' : '')
-            setVersion(props.version)
+            setVersion(props.version);
+            //const latestVerion = verLength > 0 ? selectedVersion.split(" ")[1] : '';
+            setSelectedVersion(props.version[verLength - 1].version_number);
+            setSelectedVersionId(props.version[verLength - 1]['id_pa_group_description']);
             setPlaceHolder(value)
         } else {
             setVersion([{ value: 'Version 1' }])
             setPlaceHolder('Version 1')
         }
         props.onChange('no');
-    }, [props.saveGdm.current_group_id])
+    }, [props.saveGdm.current_group_id || props.version])
 
     const handleClickOpen = (type) => {
         setOpen(true);
@@ -133,6 +162,9 @@ function PAGroupHeader(props: any) {
             apiDetails["lob_type"] = props.formulary_lob_id;
             apiDetails['pathParams'] = '/'+latestVerion;
             props.getPaGrouptDescription(apiDetails);
+            const latestVerionNo = verLength > 0 ? selectedVersion.split(" ")[1] : '';
+            setSelectedVersion(latestVerionNo);
+            setSelectedVersionId(latestVerion);
         }
         props.onChange(selectedVersion);
     }
@@ -145,34 +177,130 @@ function PAGroupHeader(props: any) {
         })
     };
 
+    const onSelectedTableRowChanged = ( selectedRowKeys) => {
+        debugger;
+        fomulariesList.map(obj => obj['applied_version'] = '');
+        if (selectedRowKeys && selectedRowKeys.length > 0) {
+            let tmp : any = selectedRowKeys.map(tierId => {
+                fomulariesList[tierId - 1]['applied_version'] =selectedVersion;
+                return fomulariesList[tierId - 1][idField];
+            });
+            updateSelectedFormularies(tmp);
+        }
+      }
+    const applyFormularies = (e:any) => {
+
+        debugger;
+        let apiDetails= {};
+
+        if (effectiveDate==null){
+            showMessage('Effective Date is required','info');
+            return;
+        }
+
+        if (selectedFormularies.length==0){
+            showMessage('Please select formulary','info');
+            return;
+        }
+
+        apiDetails["lob_type"] = props.formulary_lob_id;
+        apiDetails['pathParams'] = '/'+props.saveGdm.current_group_des_id;
+
+        apiDetails['messageBody'] = {};
+        apiDetails['messageBody']['effective_date'] = effectiveDate;
+        apiDetails['messageBody']['formulary_ids'] = selectedFormularies;
+
+        apiDetails['messageBody']['id_pa_group_description'] = props.saveGdm.current_group_des_id;
+        apiDetails['messageBody']['is_select_all'] = false;
+        apiDetails['messageBody']['pa_group_description_formulary_ids'] = [];
+
+        props.postApplyPAGroupDescriptionFormularies(apiDetails).then((json => {
+            console.log("Save response is:" + JSON.stringify(json));
+            if (json.payload && json.payload.code === '200') {
+              showMessage('Success', 'success');
+            }else{
+              showMessage('Failure', 'error');
+            }
+          }))
+       
+    };
     const deleteGroup = (e: any, param: any) => {
-        props.deleteGroupDescription({ current_group_des_id: props.saveGdm.current_group_des_id })
-        props.getPaGrouptDescriptions(props.saveGdm.formulary_id)
-        props.getPaGrouptDescriptionVersions(props.saveGdm.current_group_des_id)
-        props.getPaGrouptDescription(props.saveGdm.current_group_id)
-        props.getPaTypes(props.saveGdm.formulary_id)
+        props.deleteGroupDescription({ current_group_des_id: selectedVersionId,
+            lob_type:props.formulary_lob_id }).then(json => {
+                let apiDetails= {};
+                apiDetails["lob_type"] = props.formulary_lob_id;
+                apiDetails['pathParams'] = '/'+props.client_id;
+                props.getPaGrouptDescriptions(apiDetails)
+        
+                apiDetails['pathParams'] = '/'+props.saveGdm.current_group_id;
+                props.getPaGrouptDescriptionVersions(apiDetails);
+                //current_group_des_id
+                apiDetails['pathParams'] = '/'+props.saveGdm.current_group_id;
+                props.getPaGrouptDescription(apiDetails);
+        
+                props.getPaTypes(props.saveGdm.formulary_id)
+
+            });
+        
     }
     const cloneGroup = (e: any,param:any) => {
         props.cloneGroupDescription({
-            current_group_des_id: props.saveGdm.current_group_des_id,
-            pa_group_description_name: param.st_group_description_name // clone page input
-        })
-        props.getPaGrouptDescriptions(props.saveGdm.formulary_id)
+            current_group_des_id: selectedVersionId,
+            pa_group_description_name: param.st_group_description_name,
+            lob_type:props.formulary_lob_id // clone page input
+        }).then(json => {
+            let apiDetails= {};
+            apiDetails["lob_type"] = props.formulary_lob_id;
+            apiDetails['pathParams'] = '/'+props.client_id;
+
+            props.getPaGrouptDescriptions(apiDetails);
+        });
+        
+
     }
     const archiveGroup = (e: any, param: any) => {
-        props.archiveGroupDescription({ current_group_des_id: props.saveGdm.current_group_des_id })
-        props.getPaGrouptDescriptions(props.saveGdm.formulary_id)
-        props.getPaGrouptDescriptionVersions(props.saveGdm.current_group_des_id)
-        props.getPaGrouptDescription(props.saveGdm.current_group_id)
-        props.getPaTypes(props.saveGdm.formulary_id)
+        props.archiveGroupDescription({ current_group_des_id: selectedVersionId,
+            lob_type:props.formulary_lob_id }).then(json =>{
+                let apiDetails= {};
+                apiDetails["lob_type"] = props.formulary_lob_id;
+                apiDetails['pathParams'] = '/'+props.client_id;
+                props.getPaGrouptDescriptions(apiDetails);
+        
+                apiDetails['pathParams'] = '/'+props.saveGdm.current_group_des_id;
+                props.getPaGrouptDescriptionVersions(apiDetails)
+        
+                apiDetails['pathParams'] = '/'+props.saveGdm.current_group_id;
+                props.getPaGrouptDescription(apiDetails);
+        
+                props.getPaTypes(props.saveGdm.formulary_id)
+            });
+        
+        
     }
 
     const newVersionGroup = (e: any,param:any) => {
-        props.newVersionGroupDescription({ current_group_des_id: props.saveGdm.current_group_des_id })
-        props.getPaGrouptDescriptions(props.saveGdm.formulary_id)
-        props.getPaGrouptDescriptionVersions(props.saveGdm.current_group_des_id)
-        props.getPaGrouptDescription(props.saveGdm.current_group_id)
-        props.getPaTypes(props.saveGdm.formulary_id)
+        debugger;
+        
+        props.newVersionGroupDescription({ current_group_des_id: selectedVersionId,
+        lob_type:props.formulary_lob_id }).then(json=> {
+            let apiDetails= {};
+            apiDetails["lob_type"] = props.formulary_lob_id;
+            apiDetails['pathParams'] = '/'+props.client_id;
+            props.getPaGrouptDescriptions(apiDetails);
+    
+            apiDetails['pathParams'] = '/'+props.saveGdm.current_group_id;
+            props.getPaGrouptDescriptionVersions(apiDetails).then(json=>{
+                console.log(json);
+                let v =props.version;
+            });
+    
+            apiDetails['pathParams'] = '/'+props.saveGdm.current_group_id;
+            props.getPaGrouptDescription(apiDetails);
+    
+            props.getPaTypes(props.saveGdm.formulary_id)
+
+        });
+        
     }
     return (
         <div className={`version-wrapper${panelColor}`}>
@@ -285,39 +413,46 @@ function PAGroupHeader(props: any) {
         negativeActionText=''
         title='APPLY NEW VERSION TO FORMULARY'
         handleClose={toggleShowViewAll}
-        handleAction={() => {}}
+        handleAction={applyFormularies}
         showActions={true}
         height='80%'
         width='80%'
         open={showViewAll}
       >
-        <FrxGridContainer
-          enableSearch={false}
-          enableColumnDrag
-          onSearch={() => {}}
-          fixedColumnKeys={[]}
-          pagintionPosition='topRight'
-          gridName=''
-          isFetchingData={false}
-          columns={getCompareFormularyVersionHistoryColumn()}
-          scroll={{ x: 4600, y: 500 }}
-          enableResizingOfColumns={false}
-          data={fomulariesList}
-          // pinning columns
-          isPinningEnabled={true}
-          // setting gear 1st column
-          enableSettings={true}
-          // checkbox 2nd column
-          isCustomCheckboxEnabled={true}
-          // event reference for checkbox (mandotory if checkbox is true)
-          handleCustomRowSelectionChange={(r) => {
-            console.log(r);
-          }}
-          // settingsWidth
-          settingsWidth={15}
-          // checkBoxWidth
-          //checkBoxWidth={15}
-        />
+          <div className='inner-container pa-new-group-form'>
+           <Grid container spacing={2}>
+                                <Grid xs={6}>
+                                    <div className="label">Effective Date<span className="astrict">*</span></div>
+                                    <div className="calender">
+                                        <DatePicker onChange={handleEffectiveDate} value={effectiveDate} 
+                                        placeholder="Effective Date" name="effective_date" />
+                                    </div>
+                                </Grid>
+            </Grid>
+        
+            <FrxDrugGridContainer
+                  isPinningEnabled={false}
+                  enableSearch={false}
+                  enableColumnDrag
+                  onSearch={() => { }}
+                  fixedColumnKeys={[]}
+                  pagintionPosition="topRight"
+                  gridName="DRUG GRID"
+                  enableSettings={false}
+                  columns={getCompareFormularyVersionHistoryColumn()}
+                  scroll={{ x: 2000, y: 377 }}
+                  isFetchingData={false}
+                  enableResizingOfColumns
+                  data={fomulariesList}
+                  rowSelection={{
+                    columnWidth: 50,
+                    fixed: true,
+                    type: "checkbox",
+                  onChange: onSelectedTableRowChanged,
+                  }}
+                />
+
+            </div>
       </DialogPopup>
         </div>
     )

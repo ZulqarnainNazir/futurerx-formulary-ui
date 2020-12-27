@@ -21,7 +21,9 @@ import { Row, Col, Space } from "antd";
 import Radio from '@material-ui/core/Radio';
 import RadioGroup from '@material-ui/core/RadioGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
-
+import DialogPopup from "../../../../../shared/FrxDialogPopup/FrxDialogPopup";
+import CloneFormularyPopup from "../../FormularySetUp/components/CloneFormularyPopup";
+import { ReactComponent as EditIcon } from "../../../../../../assets/icons/EditIcon.svg";
 
 function mapDispatchToProps(dispatch) {
     return {
@@ -54,6 +56,7 @@ function mapDispatchToProps(dispatch) {
   }
  class STF extends React.Component<any,any>{
     state={
+      selectFormulary: false,
         panelGridTitle1: ['Value Based Insurance','Number of Drugs','added drugs','removed drugs'],
         panelTitleAlignment1: ['left','left','left','left'],
         panelGridValue1: [],
@@ -69,7 +72,7 @@ function mapDispatchToProps(dispatch) {
         tierGridContainer: false,
         showStConfiguration:false,
         isSearchOpen:false,
-        selectedLobFormulary:null,
+        selectedLobFormulary:{},
         drugData: Array(),
         drugGridData: Array(),
         selectedDrugs: Array(),
@@ -101,6 +104,28 @@ function mapDispatchToProps(dispatch) {
         let tmp_value = event.value;
         this.setState({ selectedLobFormulary: tmp_value });
       }
+
+      onClose = () => {
+        console.log("close");
+        this.setState({ selectFormulary: false });
+        return true;
+      };
+      handleIconClick = () => {
+        this.setState({ selectFormulary: true });
+      };
+    
+      selectFormularyClick = (dataRow) => {
+        console.log(dataRow);
+        if(dataRow){
+          this.state.selectedLobFormulary = dataRow;
+          // if(this.state.currentPopupType === this.POPUP_TYPE_BASE){
+          //  // this.state.baseFormulary = dataRow;
+          // }else if(this.state.currentPopupType === this.POPUP_TYPE_REFERENCE){
+          //   //this.state.referenceFormulary = dataRow;
+          // }
+        }
+        this.setState({ selectFormulary: false });
+      };
     
       handleSave = () => {
         if (this.state.selectedDrugs && this.state.selectedDrugs.length > 0) {
@@ -181,6 +206,11 @@ function mapDispatchToProps(dispatch) {
            selectedLastestedVersion: data[0].id_st_group_description,
            fileType: ftype,
          });
+         this.setState({
+          tierGridContainer:false,
+          gridData:[],
+          drugGridData:[]
+         });
        });
       }
     
@@ -188,6 +218,11 @@ function mapDispatchToProps(dispatch) {
         let tmp_index = event.key;
         let tmp_value = event.value;
         this.setState({ selectedStType: tmp_value });
+        this.setState({
+          tierGridContainer:false,
+          gridData:[],
+          drugGridData:[]
+         });
       }
     
       st_configurationChange = (event, value) => {
@@ -239,14 +274,20 @@ function mapDispatchToProps(dispatch) {
           showMessage('ST Type is required','info');
           return ;
         }
+
+        if (this.state.stValue===null){
+          showMessage('ST Value is required','info');
+          return ;
+        }
     
-         if(this.state.showStConfiguration && this.state.selectedLobFormulary===null){
+         if(this.state.showStConfiguration && this.state.selectedLobFormulary['id_formulary']===undefined){
            showMessage('Related Formulary is required','info');
           return ;
          }
         apiDetails['messageBody']['base_st_group_description_id'] = this.state.selectedGroupDescription;
         apiDetails['messageBody']['id_st_type'] = this.state.selectedStType;
-    
+        apiDetails['messageBody']['st_value'] = this.state.stValue;
+
         const drugGridDate = this.props.postFormularyDrugST(apiDetails).then((json => {
           debugger;
           let tmpData = json.payload.result;
@@ -404,8 +445,19 @@ function mapDispatchToProps(dispatch) {
                                       Select Related Formulary to View Existing configuration?{" "}
                                       <span className="astrict">*</span>
                                     </label>
-                                     <DropDown options={this.state.lobFormularies} valueProp="id_formulary" dispProp="formulary_name" onSelect={this.dropDownSelectHandlerLob} disabled={this.props.configureSwitch}/>
-                                   
+                                     {/* <DropDown options={this.state.lobFormularies} valueProp="id_formulary" dispProp="formulary_name" onSelect={this.dropDownSelectHandlerLob} disabled={this.props.configureSwitch}/> */}
+                                     <div className="input-element">
+                                      <div className="bordered pointer bg-green">
+                                        <span onClick={(e) => this.handleIconClick()}
+                                              className="inner-font">
+                                          {this.state.selectedLobFormulary['formulary_name'] ? this.state.selectedLobFormulary['formulary_name'] : 'Select Formulary'}
+                                        </span>
+                                        <EditIcon
+                                          onClick={(e) => this.handleIconClick()}
+                                          className={ "hide-edit-icon" }
+                                        />
+                                      </div>
+                                    </div>
                                     </div>
                                      ):""}
                                 </Grid>
@@ -467,7 +519,35 @@ function mapDispatchToProps(dispatch) {
               )}
           </div>
         )}
-                    </div>
+        </div>
+        {this.state.selectFormulary ? (
+          <DialogPopup
+            positiveActionText=""
+            negativeActionText="Close"
+            title={
+              "Select Formulary"
+            }
+            handleClose={() => {
+              this.setState({
+                selectFormulary: !this.state.selectFormulary,
+              });
+            }}
+            handleAction={() => {}}
+            open={this.state.selectFormulary}
+            showActions={false}
+            className=""
+            height="80%"
+            width="90%"
+          >
+            {/* <SelectFormularyPopUp formularyToggle={this.formularyToggle} /> */}
+            {/* <CloneFormularyPopup type="medicare" /> */}
+            <CloneFormularyPopup
+              type="commercial" // type will be dynamic based on the LOB
+              selectFormularyClick={this.selectFormularyClick}
+            />
+          </DialogPopup>
+        ) : null}
+
                     <ToastContainer/>
             </div>
         )

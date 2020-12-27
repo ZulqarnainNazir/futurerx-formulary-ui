@@ -10,7 +10,8 @@ import {
   getTapList,
   getMiniTabs,
 } from "../../../../../../../mocks/formulary/mock-data";
-
+import DialogPopup from "../../../../../../shared/FrxDialogPopup/FrxDialogPopup";
+import CloneFormularyPopup from "../../../FormularySetUp/components/CloneFormularyPopup";
 import showMessage from "../../../../../Utils/Toast";
 //import AdvancedSearch from './../search/AdvancedSearch';
 import AdvanceSearchContainer from '../../../../../NewAdvanceSearch/AdvanceSearchContainer';
@@ -31,6 +32,7 @@ import { getPaSummary,getPaGrouptDescriptions, getPaTypes, getDrugLists,postForm
 import Radio from '@material-ui/core/Radio';
 import RadioGroup from '@material-ui/core/RadioGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
+import { ReactComponent as EditIcon } from "../../../../../../../assets/icons/EditIcon.svg";
 
 function mapDispatchToProps(dispatch) {
   return {
@@ -66,6 +68,7 @@ const mapStateToProps = (state) => {
 
 class PaReplace extends React.Component<any,any> {
   state={
+    selectFormulary: false,
     tierGridContainer: false,
     isSearchOpen:false,
     paTypes:[],
@@ -79,7 +82,7 @@ class PaReplace extends React.Component<any,any> {
     selectedLastestedVersion:null,
     fileType:null,
     lobFormularies:null,
-    selectedLobFormulary:null,
+    selectedLobFormulary:{},
     groupDescriptionProp:"",
   }
 
@@ -95,6 +98,28 @@ class PaReplace extends React.Component<any,any> {
     this.state.drugGridData = [];
     
     this.populateGridData();
+  };
+
+  onClose = () => {
+    console.log("close");
+    this.setState({ selectFormulary: false });
+    return true;
+  };
+  handleIconClick = () => {
+    this.setState({ selectFormulary: true });
+  };
+
+  selectFormularyClick = (dataRow) => {
+    console.log(dataRow);
+    if(dataRow){
+      this.state.selectedLobFormulary = dataRow;
+      // if(this.state.currentPopupType === this.POPUP_TYPE_BASE){
+      //  // this.state.baseFormulary = dataRow;
+      // }else if(this.state.currentPopupType === this.POPUP_TYPE_REFERENCE){
+      //   //this.state.referenceFormulary = dataRow;
+      // }
+    }
+    this.setState({ selectFormulary: false });
   };
 
   componentWillReceiveProps(nextProps) {
@@ -257,7 +282,7 @@ class PaReplace extends React.Component<any,any> {
       return ;
     }
 
-    if(this.state.showPaConfiguration && this.state.selectedLobFormulary===null){
+    if(this.state.showPaConfiguration && this.state.selectedLobFormulary['id_formulary']===undefined){
       showMessage('Related Formulary is required','info');
       return ;
     }
@@ -267,7 +292,7 @@ class PaReplace extends React.Component<any,any> {
 
     
     if (this.state.showPaConfiguration){
-      apiDetails['pathParams'] = this.props?.formulary_id + "/" + this.state.selectedLobFormulary + '/' +this.state.fileType + "/PA/" ;
+      apiDetails['pathParams'] = this.props?.formulary_id + "/" + this.state.selectedLobFormulary['id_formulary'] + '/' +this.state.fileType + "/PA/" ;
       this.props.postRelatedFormularyDrugPA(apiDetails).then((json => this.loadGridData(json) ));
      }else{
       apiDetails['pathParams'] = this.props?.formulary_id + "/" + this.state.fileType + "/" ;
@@ -399,8 +424,20 @@ class PaReplace extends React.Component<any,any> {
                   Select Related Formulary to View Existing configuration?{" "}
                   <span className="astrict">*</span>
                 </label>
-                <DropDownMap options={this.state.lobFormularies} valueProp="id_formulary" dispProp="formulary_name" onSelect={this.dropDownSelectHandlerLob} disabled={this.props.configureSwitch}/>
+                {/* <DropDownMap options={this.state.lobFormularies} valueProp="id_formulary" dispProp="formulary_name" onSelect={this.dropDownSelectHandlerLob} disabled={this.props.configureSwitch}/> */}
 
+                <div className="input-element">
+                  <div className="bordered pointer bg-green">
+                    <span onClick={(e) => this.handleIconClick()}
+                          className="inner-font">
+                       {this.state.selectedLobFormulary['formulary_name'] ? this.state.selectedLobFormulary['formulary_name'] : 'Select Formulary'}
+                    </span>
+                    <EditIcon
+                      onClick={(e) => this.handleIconClick()}
+                      className={ "hide-edit-icon" }
+                    />
+                  </div>
+                </div>
               </Col>
             ):(<Col lg={8} ></Col>)}
             <Col lg={4}></Col>
@@ -468,6 +505,33 @@ class PaReplace extends React.Component<any,any> {
               )}
           </div>
         )}
+        {this.state.selectFormulary ? (
+          <DialogPopup
+            positiveActionText=""
+            negativeActionText="Close"
+            title={
+              "Select Formulary"
+            }
+            handleClose={() => {
+              this.setState({
+                selectFormulary: !this.state.selectFormulary,
+              });
+            }}
+            handleAction={() => {}}
+            open={this.state.selectFormulary}
+            showActions={false}
+            className=""
+            height="80%"
+            width="90%"
+          >
+            {/* <SelectFormularyPopUp formularyToggle={this.formularyToggle} /> */}
+            {/* <CloneFormularyPopup type="medicare" /> */}
+            <CloneFormularyPopup
+              type="commercial" // type will be dynamic based on the LOB
+              selectFormularyClick={this.selectFormularyClick}
+            />
+          </DialogPopup>
+        ) : null}
         <ToastContainer/>
       </>
     );
