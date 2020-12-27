@@ -384,6 +384,7 @@ class DrugDetailOther extends React.Component<any, any> {
 
         this.rpSavePayload.breadcrumb_code_value = codeValue;
         this.rpSavePayload.id_edit = idEdit;
+        this.rmSavePayload.selected_criteria_ids = [];
         console.log("The Codevalue = ", codeValue, "---THe REPLACE Save Payload = ", this.rpSavePayload);
 
       } else if(this.state.activeTabIndex === 2) {
@@ -396,6 +397,8 @@ class DrugDetailOther extends React.Component<any, any> {
         }
 
         this.rmSavePayload.selected_criteria_ids = criteriaIds;
+        this.rpSavePayload.breadcrumb_code_value = "";
+        this.rpSavePayload.id_edit = "";
         console.log("The criteriaIds = ", criteriaIds, "---THe REMOVE Save Payload = ", this.rmSavePayload);
       }
 
