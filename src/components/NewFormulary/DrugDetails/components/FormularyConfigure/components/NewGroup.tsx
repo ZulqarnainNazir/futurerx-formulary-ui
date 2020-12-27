@@ -97,27 +97,6 @@ function mapDispatchToProps(dispatch) {
   }
 }
 
-const drug_list=[
-  {
-    "name":"my dl1",
-    "key":1,
-    "show":true,
-    "is_list":false,
-    "value":"my dl1",
-    "type":"",
-    "text":"my dl1"
-    },
-    {
-    "name":"my dl2",
-    "key":2,
-    "show":true,
-    "is_list":false,
-    "value":"my dl2",
-    "type":"",
-    "text":"my dl2"
-    }
-]
-
 function NewGroup(props: any) {
   const [formData, updateFormData] = React.useState(initialFormData);
   const [editable, setEditable] = React.useState(false);
@@ -125,6 +104,7 @@ function NewGroup(props: any) {
   const [showHeader, setShowHeader] = React.useState(props.formType);
   const [errorClass, setErrorClass] = React.useState('');
   const [drug_list_ids, setDrug_list_ids] = React.useState([]);
+  const [drug_list, setDrug_list] = React.useState([]);
 
   const handleChange = (e) => {
     const formVal = (e.target.value === 'yes' || e.target.value === 'true') ? true : (e.target.value === 'no' || e.target.value === 'false') ? false : e.target.value;
@@ -174,6 +154,23 @@ function NewGroup(props: any) {
     }
     setShowHeader(0)
     setErrorClass('');
+
+
+    props.getDrugLists(props.client_id).then((json) => {
+      //debugger;
+      let tmp_list:any = [];
+      json.payload.data.map(obj => {
+          let tmp_obj ={
+              key: obj.key, value: obj.value, text: obj.text,
+              name: obj.text,
+              "show":true,
+              "is_list":false,
+              "type":"",
+          };
+          tmp_list.push(tmp_obj);
+      });
+      setDrug_list(tmp_list)
+    });
   }, [props.StGDData || props.saveGdm || props.editMode])
 
   const handleSubmit = (e,is_validation: boolean) => {
@@ -230,7 +227,7 @@ function NewGroup(props: any) {
       }
     }
     setErrorClass('');
-    formData["id_st_type"] = (formData["st_type"]==="New Starts Only (2)")?8:7;
+    formData["id_st_type"] = (formData["st_type"]==="New Starts Only(2)")?8:7;
     formData["is_validation_required"] = is_validation;
     formData["drug_list_ids"] = drug_list_ids;
     let requestData = {};
@@ -384,9 +381,9 @@ function NewGroup(props: any) {
                   <Fragment>
                     <span>What is the defualt ST Type for this description? <span className="astrict">*</span></span>
                     <div className="marketing-material radio-group">
-                      <RadioGroup aria-label="marketing-material-radio1" className="gdp-radio" name="st_type" onChange={handleChange}>
-                        <FormControlLabel value="Always Applies(1)" control={<Radio checked={formData.id_st_type === 7 ? true : false} />} label="Always Applies" disabled={editable} />
-                        <FormControlLabel value="New Starts Only (2)" control={<Radio checked={formData.id_st_type ===8 ? true : false} />} label="New Starts Only" disabled={editable} />
+                      <RadioGroup aria-label="marketing-material-radio1" className="gdp-radio" name="st_type" onChange={handleChange} value={formData.st_type} >
+                        <FormControlLabel value="Always Applies(1)" control={<Radio/>} label="Always Applies" disabled={editable} />
+                        <FormControlLabel value="New Starts Only(2)" control={<Radio/>} label="New Starts Only" disabled={editable} />
                       </RadioGroup>
                     </div> 
                     </Fragment>
@@ -420,7 +417,8 @@ function NewGroup(props: any) {
                 <Fragment>
                       <Grid item xs={6}>
                       <label className="st-label">List <span className="astrict">*</span></label>
-                      <Tags options={drug_list} getAutoCompleteChange={getAutoCompleteChangeHandler} seleted={formData.drug_list_ids}/>
+                      <Tags options={drug_list} getAutoCompleteChange={getAutoCompleteChangeHandler}
+                       autoSelected={props.StGDData.drug_list_ids}/>
                       </Grid>
                     </Fragment>
                 <div className="setting-1 mb-20">

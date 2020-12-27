@@ -20,8 +20,8 @@ export default function CheckboxesTags(props:any) {
       id="checkboxes-tags-demo"
       options={props.options}
       disableCloseOnSelect
-      defaultValue = {props.seleted}
-      getOptionLabel={(option:any) => option.name}
+      defaultValue = {props.autoSelected?[props.autoSelected[0]]:[]}
+      getOptionLabel={(option:any) => option.value}
       onChange={onchangeHandler}
       renderOption={(option, { selected }) => (
         <React.Fragment>
@@ -31,7 +31,7 @@ export default function CheckboxesTags(props:any) {
             style={{ marginRight: 8 }}
             checked={selected}
           />
-          {option.name}
+          {option.value}
         </React.Fragment>
       )}
       style={{ width: 500 }}
