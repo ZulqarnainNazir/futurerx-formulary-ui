@@ -183,7 +183,15 @@ export function composePostBody(input: any): any {
     removed_formulary_asscociated_contract_pbps: [],
   };
   // TIER DETAILS  - - - - - - - - - - - - -
-  payload.tiers = input?.tiers;
+  console.log("------------------------------");
+  console.log(input?.tiers);
+  console.log("------------------------------");
+  const tierList = composeTier(input?.tiers);
+  console.log(tierList);
+  console.log("------------------------------");
+  // payload.tiers = input?.tiers;
+  payload.tiers = tierList;
+
   // DESIGN  - - - - - - - - - - - - -
   payload.edit_info = {
     edits: input?.edit_info?.edits,
@@ -229,6 +237,30 @@ export function composePostBody(input: any): any {
     payload.medicare_contract_type_info = input.medicare_contract_type_info;
   }
   return payload;
+}
+
+function composeTier(inputList: any[]) {
+  let list:any[]=[];
+
+  list = inputList.map((item) => {
+    if (item.is_custom === true) {
+      return {
+        id_formulary_tier: item.id_formulary_tier,
+        id_tier: item.id_tier,
+        id_tier_label: item.id_tier_label,
+        is_custom: item.is_custom,
+        tier_label_name: item.tier_label_name,
+      };
+    } else {
+      return {
+        id_formulary_tier: item.id_formulary_tier,
+        id_tier: item.id_tier,
+        id_tier_label: item.id_tier_label,
+      };
+    }
+  });
+
+  return list;
 }
 
 export function composeCreateCloneFormularyPayload(input: any): any {
