@@ -125,7 +125,41 @@ class FormularySetUp extends React.Component<any, any> {
   }
 
   UNSAFE_componentWillReceiveProps = (newProps) => {
-    if (newProps.formulary && newProps.setupOptions) {
+    console.log("# - - - - - - - - - ");
+    console.log("# 1 *FL       : " + (newProps?.formulary ? "" : "X"));
+    console.log("# 2  ST       : " + (newProps?.setupOptions ? "" : "X"));
+    console.log(
+      "# 3  ST.GI    : " + (newProps?.setupOptions?.generalOptions ? "" : "X")
+    );
+
+    console.log(
+      "# 4  ST.GI.TY : " +
+        (newProps?.setupOptions?.generalOptions?.formularyType ? "" : "X")
+    );
+    console.log(
+      "# 5  ST.GI.CY : " +
+        (newProps?.setupOptions?.generalOptions?.contractYear ? "" : "X")
+    );
+    console.log(
+      "# 6  ST.GI.CS : " +
+        (newProps?.setupOptions?.generalOptions?.classification_systems
+          ? ""
+          : "X")
+    );
+
+    console.log(
+      "# 7  ST.DN    : " + (newProps?.setupOptions?.designOptions ? "" : "X")
+    );
+    console.log(
+      "# 8  ST.TR    : " + (newProps?.setupOptions?.tierOptions ? "" : "X")
+    );
+
+    if (
+      newProps.formulary &&
+      newProps.setupOptions.generalOptions &&
+      newProps.setupOptions.designOptions &&
+      newProps.setupOptions.tierOptions
+    ) {
       const medeicareContract = { ...this.state.medicare_contract_type_info };
       medeicareContract.medicare_contract_types = newProps.formulary?.medicare_contract_types?.map(
         (e) => e.id_medicare_contract_type
@@ -197,7 +231,9 @@ class FormularySetUp extends React.Component<any, any> {
     const editFalse = editInfo
       .filter((obj) => obj.id_checked === false)
       .map((e) => e.id_edit);
-    let customEdit: any = "";
+    // let customEdit: any = "";
+    let customEdit:any[]=[];
+
     if (this.props.formulary_type_id === 6) {
       customEdit = this.props.setupOptions.designOptions.filter(
         (e) => e.is_custom === true
@@ -214,10 +250,14 @@ class FormularySetUp extends React.Component<any, any> {
     return newObj;
   };
   formularyDesignCommercialCheckHandler = (getObj: any) => {
+    console.log("------------------- FD");
+    console.log(getObj);
     const receivedObj = { ...getObj };
+    console.log(receivedObj);
     const customId = this.props.setupOptions.designOptions
       .filter((e) => e.is_custom)
       .map((e) => e.id_edit);
+    console.log(customId);
     const received_customId = receivedObj.custom_edits.map((e) => e.id_edit);
     const staticFId = this.props.setupOptions.designOptions
       .filter((e) => !e.is_custom)
@@ -541,7 +581,7 @@ class FormularySetUp extends React.Component<any, any> {
     }
 
     this.props.saveFormulary(input).then((arg) => {
-      //console.log("SAVE Callback ", arg?.payload);
+      console.log("SAVE Callback ", arg?.payload);
       if (arg?.payload?.type > 0 && arg?.payload?.id > 0) {
         console.log(
           "REFRESH.... TYPE : " +
@@ -594,9 +634,6 @@ class FormularySetUp extends React.Component<any, any> {
     }
   };
 
-  onContinue = () => {
-    this.props.saveAndContinue(1);
-  };
 
   render() {
     return (
