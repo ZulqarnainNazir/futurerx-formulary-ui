@@ -107,6 +107,9 @@ export const GET_PR_DRUG_REMOVE_TAB = "api/1/criteria-list-patrs/";
 
 // OTHER TAB
 export const GET_DRUG_SUMMARY_OTHER = "api/1/formulary-drug-summary-edoth/";
+export const GET_OTHER_CRITERIA_LIST = "api/1/criteria-list-edoth/";
+export const GET_OTHER_DRUGS = "api/1/formulary-drugs-edoth/";
+export const APPLY_OTHER_DRUGS = "api/1/apply-formulary-drug-edoth/";
 
 export const KEY_ENTITY_ID = "entity_id";
 export const KEY_INDEX = "index";
