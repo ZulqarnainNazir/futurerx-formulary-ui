@@ -19,7 +19,8 @@ import { Row, Col } from "antd";
 import { Table } from "antd";
 import Grid from "@material-ui/core/Grid";
 import { postCriteriaListST,postApplyFormularyDrugST,postFormularyDrugST,getStSummary } from "../../../../../../redux/slices/formulary/stepTherapy/stepTherapyActionCreation";
-
+import AdvanceSearchContainer from '../../../../NewAdvanceSearch/AdvanceSearchContainer';
+import { setAdvancedSearch } from "../../../../../../redux/slices/formulary/advancedSearch/advancedSearchSlice";
 
 function mapDispatchToProps(dispatch) {
   return {
@@ -27,6 +28,7 @@ function mapDispatchToProps(dispatch) {
     postApplyFormularyDrugST:(a)=>dispatch(postApplyFormularyDrugST(a)),
     postFormularyDrugST:(a)=>dispatch(postFormularyDrugST(a)),
     getStSummary:(a)=>dispatch(getStSummary(a)),
+    setAdvancedSearch: (a) => dispatch(setAdvancedSearch(a))
   };
 }
 
@@ -67,6 +69,27 @@ class DrugGrid extends React.Component<any, any> {
       this.state.selectedCriteria = selectedRowKeys.map(tierId => tierId);
     }
   }
+
+  advanceSearchClickHandler = (event) => {
+    event.stopPropagation();
+    this.setState({ isSearchOpen: !this.state.isSearchOpen })
+  }
+  advanceSearchClosekHandler = () => {
+    this.setState({ isSearchOpen: !this.state.isSearchOpen })
+  }
+  componentWillReceiveProps(nextProps) {
+    //this.initialize(nextProps);
+    if (nextProps.advancedSearchBody && nextProps.populateGrid) {
+      this.populateGridData(nextProps.advancedSearchBody);
+      let payload = { advancedSearchBody: nextProps.advancedSearchBody, populateGrid: false, closeDialog: nextProps.closeDialog , listItemStatus: nextProps.listItemStatus};
+      if (nextProps.closeDialog) {
+        this.state.isSearchOpen = false;
+        payload['closeDialog'] = false;
+      }
+      this.props.setAdvancedSearch(payload);
+    }
+  }
+
   componentDidMount() {
     //fetch data from API
     const data = stData();
@@ -97,7 +120,7 @@ class DrugGrid extends React.Component<any, any> {
   openTierGridContainer = () => {
     this.state.drugData = [];
     this.state.drugGridData = [];
-    this.setState({ tierGridContainer: true });
+    
     this.populateGridData();
   };
 
@@ -115,11 +138,19 @@ class DrugGrid extends React.Component<any, any> {
     apiDetails['keyVals'] = [{ key: constants.KEY_ENTITY_ID, value: this.props?.formulary_id }, { key: constants.KEY_INDEX, value: 0 }, { key: constants.KEY_LIMIT, value: 10 }];
     apiDetails['messageBody'] = {};
 
-    apiDetails['messageBody']['selected_criteria_ids']=this.state.selectedCriteria;
+    
 
     if (searchBody) {
       apiDetails['messageBody'] = Object.assign(apiDetails['messageBody'], searchBody);
     }
+
+    if (this.state.selectedCriteria===null){
+      showMessage('Select criteria to remove Drugs','info');
+      return ;
+    }
+
+    apiDetails['messageBody']['selected_criteria_ids']=this.state.selectedCriteria;
+
     const drugGridDate = this.props.postFormularyDrugST(apiDetails).then((json => {
       
       let tmpData = json.payload.result;
@@ -150,6 +181,8 @@ class DrugGrid extends React.Component<any, any> {
         drugData: data,
         drugGridData: gridData
       })
+
+      this.setState({ tierGridContainer: true });
     }))
   }
 
@@ -183,13 +216,7 @@ class DrugGrid extends React.Component<any, any> {
     }
   }
 
-  advanceSearchClickHandler = (event) => {
-    event.stopPropagation();
-    this.setState({ isSearchOpen: !this.state.isSearchOpen })
-  }
-  advanceSearchClosekHandler = () => {
-    this.setState({ isSearchOpen: !this.state.isSearchOpen })
-  }
+  
   handleSearch = (searchObject) => {
     console.log(searchObject);
     this.setState({ isFetchingData: true });
@@ -212,6 +239,10 @@ class DrugGrid extends React.Component<any, any> {
         key: "st_group_description_name",
       },
     ];
+    const searchProps = {
+      lobCode: this.props.lobCode,
+     // pageType: pageTypes.TYPE_TIER
+    };
     return (
       <>
         <div className="bordered ns-border">
@@ -245,7 +276,7 @@ class DrugGrid extends React.Component<any, any> {
             <div className="bordered white-bg">
               <div className="header space-between pr-10">
                 <div className="button-wrapper">
-                  <Button className="Button normal" label="Advance Search" onClick={this.advanceSearchClickHandler} />
+                <Button className="Button normal" label="Advance Search" onClick={this.advanceSearchClickHandler} disabled={this.props.configureSwitch} />
                   <Button label="Save" onClick={this.handleSave} />
                 </div>
               </div>
@@ -275,10 +306,10 @@ class DrugGrid extends React.Component<any, any> {
               </div>
             </div>
             {this.state.isSearchOpen ? (
-              <AdvancedSearch
-                category="Grievances"
-                openPopup={this.state.isSearchOpen}
-                onClose={this.advanceSearchClosekHandler} />
+              <AdvanceSearchContainer
+              {...searchProps}
+              openPopup={this.state.isSearchOpen}
+              onClose={this.advanceSearchClosekHandler} />
             ) : (
                 null
               )}

@@ -4,12 +4,36 @@ import FormularyServices from "../../../../services/formulary.services";
 import * as commonConstants from "../../../../api/http-commons";
 
 const GET_ST_SUMMARY_URL = BASE_URL1 + "/api/1/st-summary/";
-const GET_ST_GROUP_DESCRIPTIONS_URL = BASE_URL1 + "api/1/mcr-st-group-descriptions";
+//const GET_ST_GROUP_DESCRIPTIONS_URL = BASE_URL1 + "api/1/mcr-st-group-descriptions";
 const GET_ST_TYPES_URL = BASE_URL1 + "/api/1/st-types/4";
 const GET_DRUG_LIST_URL = BASE_URL1 + "/api/1/drug-lists/";
 //const GET_ST_GROUP_DESCRIPTION_URL = BASE_URL1 + "/api/1/st-group-description/";
+//const GET_ST_GROUP_DESCRIPTION_URL = BASE_URL1 + "api/1/mcr-st-group-description/";
+//const GET_ST_GROUP_DESCRIPTION_VERSTIONS_URL = BASE_URL1 + "api/1/mcr-st-group-description-versions/";
+const GET_LOB_FORMULARIES_URL = BASE_URL1 + "/api/1/lob-formularies/";
+
+
+
+
+
+const GET_ST_GROUP_DESCRIPTIONS_URL = BASE_URL1 + "api/1/mcr-st-group-descriptions/";
 const GET_ST_GROUP_DESCRIPTION_URL = BASE_URL1 + "api/1/mcr-st-group-description/";
-const GET_ST_GROUP_DESCRIPTION_VERSTIONS_URL = BASE_URL1 + "api/1/mcr-st-group-description-versions/";
+const GET_ST_GROUP_DESCRIPTION_VERSTIONS_URL = BASE_URL1 + "/api/1/mcr-st-group-description-versions/";
+const POST_ST_GROUP_DESCRIPTION_VERSTION_URL = BASE_URL1 + "/api/1/mcr-st-group-description-version/";
+const GET_ST_GROUP_DESCRIPTION_DETAIL_URL = BASE_URL1 + "/api/1/mcr-st-group-description/462?entity_id=0";
+const POSt_ST_GROUP_DESCRIPTION_URL = BASE_URL1 + "api/1/mcr-st-group-description/1/";
+const PUT_ST_GROUP_DESCRIPTION_URL = BASE_URL1 + "api/1/mcr-st-group-description/";
+
+const GET_ST_COMM_GROUP_DESCRIPTIONS_URL = BASE_URL1 + "/api/1/st-group-descriptions/";
+const GET_ST_COMM_GROUP_DESCRIPTION_URL = BASE_URL1 + "/api/1/st-group-description/";
+const GET_ST_COMM_GROUP_DESCRIPTION_VERSTIONS_URL = BASE_URL1 + "/api/1/st-group-description-versions/";
+const POST_ST_COMM_GROUP_DESCRIPTION_VERSTION_URL = BASE_URL1 + "/api/1/st-group-description-version/";
+const GET_ST_COMM_GROUP_DESCRIPTION_DETAIL_URL = BASE_URL1 + "/api/1/st-group-description/462?entity_id=0";
+const POSt_ST_COMM_GROUP_DESCRIPTION_URL = BASE_URL1 + "api/1/st-group-description/1/";
+const PUT_ST_COMM_GROUP_DESCRIPTION_URL = BASE_URL1 + "api/1/st-group-description/";
+
+
+
 const POST_FORUMULARY_DRUG_ST_URL = BASE_URL1 + "api/1/formulary-drugs-st/";
 const POST_APPLY_FORUMULARY_DRUG_ST_URL = BASE_URL1 + "api/1/apply-formulary-drug-st/";
 
@@ -20,8 +44,6 @@ export const getStSummary = createAsyncThunk(
   async (summary_id: string) => {
     console.log("getStSummary action creator:: url: " + GET_ST_SUMMARY_URL + summary_id);
     const requestHeaders  = {
-        // method: 'POST',
-        // body: JSON.stringify(summary_id),
         headers: commonConstants.REQUEST_HEADER
     }
     return fetch(GET_ST_SUMMARY_URL + summary_id ,requestHeaders)
@@ -36,16 +58,50 @@ export const getStSummary = createAsyncThunk(
   }
 );
 
-export const getStGrouptDescriptions = createAsyncThunk(
-  "formulary_summary/getStGrouptDescriptions",
-  async (summary_id: string) => {
-    console.log("getStGrouptDescriptions action creator:: url: " + GET_ST_GROUP_DESCRIPTIONS_URL + '/1?entity_id=0');
+export const getLobFormularies = createAsyncThunk(
+  "formulary_summary/getLobFormularies",
+  async (apiDetails: any) => {
+    console.log("getLobFormularies action creator:: url: " + GET_LOB_FORMULARIES_URL + apiDetails.formulary_type_id);
     const requestHeaders  = {
         // method: 'POST',
         // body: JSON.stringify(summary_id),
         headers: commonConstants.REQUEST_HEADER
     }
-    return fetch(GET_ST_GROUP_DESCRIPTIONS_URL + '/1?entity_id=0' ,requestHeaders)
+    return fetch(GET_LOB_FORMULARIES_URL + apiDetails.formulary_type_id +'/'+apiDetails.formulary_lob_id ,requestHeaders)
+      .then((response) => {
+        if (!response.ok) throw Error(response.statusText);
+        return response.json();
+      })
+      .then((json) => {
+        console.log("getLobFormularies: ", json);
+        return json;
+      });
+  }
+);
+
+export const getStGrouptDescriptions = createAsyncThunk(
+  "formulary_summary/getStGrouptDescriptions",
+  async (apiDetails: any) => {
+    console.log("getStGrouptDescriptions action creator:: url: " + GET_ST_GROUP_DESCRIPTIONS_URL + '/1?entity_id=0');
+    
+    let pathParams = apiDetails.pathParams;
+    let keyVals = apiDetails.keyVals;
+    let messageBody = apiDetails.messageBody;
+    let POST_URL ="";
+    if (apiDetails.lob_type==1){
+      POST_URL = GET_ST_GROUP_DESCRIPTIONS_URL + pathParams ;
+    }else if (apiDetails.lob_type==4){
+      POST_URL = GET_ST_COMM_GROUP_DESCRIPTIONS_URL + pathParams ;
+    }
+    if(keyVals){
+      keyVals = keyVals.map(pair => pair.key+'='+pair.value);
+      POST_URL = POST_URL + "?" + keyVals.join('&');
+    }
+
+    const requestHeaders  = {
+        headers: commonConstants.REQUEST_HEADER
+    }
+    return fetch(POST_URL ,requestHeaders)
       .then((response) => {
         if (!response.ok) throw Error(response.statusText);
         return response.json();
@@ -62,8 +118,6 @@ export const getStTypes = createAsyncThunk(
   async (summary_id: string) => {
     console.log("getStTypes action creator:: url: " + GET_ST_TYPES_URL + summary_id);
     const requestHeaders  = {
-        // method: 'POST',
-        // body: JSON.stringify(summary_id),
         headers: commonConstants.REQUEST_HEADER
     }
     return fetch(GET_ST_TYPES_URL  ,requestHeaders)
@@ -101,12 +155,25 @@ export const getDrugLists = createAsyncThunk(
 
 export const getStGrouptDescription = createAsyncThunk(
   "formulary_summary/getStGrouptDescription",
-  async (summary_id: string) => {
-    console.log("getStGrouptDescription action creator:: url: " + GET_ST_GROUP_DESCRIPTION_URL + summary_id);
+  async (apiDetails: any) => {
+    let pathParams = apiDetails.pathParams;
+    let keyVals = apiDetails.keyVals;
+    let messageBody = apiDetails.messageBody;
+    let POST_URL ="";
+    if (apiDetails.lob_type==1){
+      POST_URL = GET_ST_GROUP_DESCRIPTION_URL + pathParams ;
+    }else  if (apiDetails.lob_type==4){
+      POST_URL =  GET_ST_COMM_GROUP_DESCRIPTION_URL + pathParams ;
+    }
+    if(keyVals){
+      keyVals = keyVals.map(pair => pair.key+'='+pair.value);
+      POST_URL = POST_URL + "?" + keyVals.join('&');
+    }
+
     const requestHeaders  = {
       headers: commonConstants.REQUEST_HEADER
     }
-    return fetch(GET_ST_GROUP_DESCRIPTION_URL+summary_id  ,requestHeaders)
+    return fetch(POST_URL  ,requestHeaders)
       .then((response) => {
         if (!response.ok) throw Error(response.statusText);
         return response.json();
@@ -120,14 +187,28 @@ export const getStGrouptDescription = createAsyncThunk(
 
 export const getStGrouptDescriptionVersions = createAsyncThunk(
   "formulary_summary/getStGrouptDescriptionVersions",
-  async (summary_id: string) => {
-    console.log("getStGrouptDescriptionVersions action creator:: url: " + GET_ST_GROUP_DESCRIPTION_VERSTIONS_URL + summary_id);
+  async (apiDetails: any) => {
+   
+    let pathParams = apiDetails.pathParams;
+    let keyVals = apiDetails.keyVals;
+    let messageBody = apiDetails.messageBody;
+    let POST_URL ="";
+    if (apiDetails.lob_type==1){
+      POST_URL = GET_ST_GROUP_DESCRIPTION_VERSTIONS_URL + pathParams ;
+    }else  if (apiDetails.lob_type==4){
+      POST_URL =  GET_ST_COMM_GROUP_DESCRIPTION_VERSTIONS_URL + pathParams ;
+    }
+    if(keyVals){
+      keyVals = keyVals.map(pair => pair.key+'='+pair.value);
+      POST_URL = POST_URL + "?" + keyVals.join('&');
+    }
+
     const requestHeaders  = {
         // method: 'POST',
         // body: JSON.stringify(summary_id),
         headers: commonConstants.REQUEST_HEADER
     }
-    return fetch(GET_ST_GROUP_DESCRIPTION_VERSTIONS_URL + summary_id ,requestHeaders)
+    return fetch(POST_URL ,requestHeaders)
       .then((response) => {
         if (!response.ok) throw Error(response.statusText);
         return response.json();

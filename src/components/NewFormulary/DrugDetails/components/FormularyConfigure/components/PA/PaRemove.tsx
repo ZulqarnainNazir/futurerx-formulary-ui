@@ -13,7 +13,8 @@ import { postCriteriaListPA,postApplyFormularyDrugPA,postFormularyDrugPA,getPaSu
 import * as constants from "../../../../../../../api/http-commons";
 import getLobCode from "../../../../../Utils/LobUtils";
 import { tierColumns } from "../../../../../../../utils/grid/columns";
-import AdvancedSearch from './../search/AdvancedSearch';
+import AdvanceSearchContainer from '../../../../../NewAdvanceSearch/AdvanceSearchContainer';
+import { setAdvancedSearch } from "../../../../../../../redux/slices/formulary/advancedSearch/advancedSearchSlice";
 import showMessage from "../../../../../Utils/Toast";
 
 function mapDispatchToProps(dispatch) {
@@ -22,6 +23,7 @@ function mapDispatchToProps(dispatch) {
     postApplyFormularyDrugPA:(a)=>dispatch(postApplyFormularyDrugPA(a)),
     postFormularyDrugPA:(a)=>dispatch(postFormularyDrugPA(a)),
     getPaSummary:(a)=>dispatch(getPaSummary(a)),
+    setAdvancedSearch: (a) => dispatch(setAdvancedSearch(a))
   };
 }
 
@@ -83,7 +85,7 @@ class PaRemove extends React.Component<any,any> {
   openTierGridContainer = () => {
     this.state.drugData = [];
     this.state.drugGridData = [];
-    this.setState({ tierGridContainer: true });
+    
     this.populateGridData();
   };
 
@@ -102,11 +104,18 @@ class PaRemove extends React.Component<any,any> {
     apiDetails['keyVals'] = [{ key: constants.KEY_ENTITY_ID, value: this.props?.formulary_id }, { key: constants.KEY_INDEX, value: 0 }, { key: constants.KEY_LIMIT, value: 10 }];
     apiDetails['messageBody'] = {};
 
-    apiDetails['messageBody']['selected_criteria_ids']=this.state.selectedCriteria;
+    
 
     if (searchBody) {
       apiDetails['messageBody'] = Object.assign(apiDetails['messageBody'], searchBody);
     }
+
+    if (this.state.selectedCriteria===null){
+      showMessage('Select criteria to remove Drugs','info');
+      return ;
+    }
+
+    apiDetails['messageBody']['selected_criteria_ids']=this.state.selectedCriteria;
     const drugGridDate = this.props.postFormularyDrugPA(apiDetails).then((json => {
       
       let tmpData = json.payload.result;
@@ -136,6 +145,7 @@ class PaRemove extends React.Component<any,any> {
         drugData: data,
         drugGridData: gridData
       })
+      this.setState({ tierGridContainer: true });
     }))
   }
 
@@ -171,6 +181,7 @@ class PaRemove extends React.Component<any,any> {
     }
   }
 
+  
   advanceSearchClickHandler = (event) => {
     event.stopPropagation();
     this.setState({ isSearchOpen: !this.state.isSearchOpen })
@@ -178,6 +189,19 @@ class PaRemove extends React.Component<any,any> {
   advanceSearchClosekHandler = () => {
     this.setState({ isSearchOpen: !this.state.isSearchOpen })
   }
+  componentWillReceiveProps(nextProps) {
+    //this.initialize(nextProps);
+    if (nextProps.advancedSearchBody && nextProps.populateGrid) {
+      this.populateGridData(nextProps.advancedSearchBody);
+      let payload = { advancedSearchBody: nextProps.advancedSearchBody, populateGrid: false, closeDialog: nextProps.closeDialog , listItemStatus: nextProps.listItemStatus};
+      if (nextProps.closeDialog) {
+        this.state.isSearchOpen = false;
+        payload['closeDialog'] = false;
+      }
+      this.props.setAdvancedSearch(payload);
+    }
+  }
+
   render() {
     const columns = [
       {
@@ -186,7 +210,12 @@ class PaRemove extends React.Component<any,any> {
         key: "pa_group_description_name",
       },
     ];
+    const searchProps = {
+      lobCode: this.props.lobCode,
+     // pageType: pageTypes.TYPE_TIER
+    };
     return (
+      
       <>
         <div className="pa-settings-grid-container white-bg">
           
@@ -218,7 +247,7 @@ class PaRemove extends React.Component<any,any> {
             <div className="bordered white-bg">
               <div className="header space-between pr-10">
                 <div className="button-wrapper">
-                  <Button className="Button normal" label="Advance Search" onClick={this.advanceSearchClickHandler} />
+                  <Button className="Button normal" label="Advance Search" onClick={this.advanceSearchClickHandler} disabled={this.props.configureSwitch} />
                   <Button label="Save" onClick={this.handleSave} />
                 </div>
               </div>
@@ -248,10 +277,10 @@ class PaRemove extends React.Component<any,any> {
               </div>
             </div>
             {this.state.isSearchOpen ? (
-              <AdvancedSearch
-                category="Grievances"
-                openPopup={this.state.isSearchOpen}
-                onClose={this.advanceSearchClosekHandler} />
+             <AdvanceSearchContainer
+             {...searchProps}
+             openPopup={this.state.isSearchOpen}
+             onClose={this.advanceSearchClosekHandler} />
             ) : (
                 null
               )}

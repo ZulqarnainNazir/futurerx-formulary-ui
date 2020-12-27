@@ -1,6 +1,14 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { getDrugDetailsPOSSummary } from "./posActionCreation";
-import { getPOSSummaryFulfilled, getPOSSummaryRejected } from "./posReducers";
+import {
+  getDrugDetailsPOSSummary,
+  getDrugDetailsPOSSettings,
+} from "./posActionCreation";
+import {
+  getPOSSummaryFulfilled,
+  getPOSSummaryRejected,
+  getPOSSettingsFulfilled,
+  getPOSSettingsRejected,
+} from "./posReducers";
 
 const posState: any = {
   data: {},
@@ -20,6 +28,23 @@ export const posSlice = createSlice({
     }),
     builder.addCase(getDrugDetailsPOSSummary.rejected, (state, action) => {
       getPOSSummaryRejected(state, action);
+    })
+  ),
+});
+
+export const posSettingsSlice = createSlice({
+  name: "posSettings",
+  initialState: posState,
+  reducers: {},
+  extraReducers: (builder) => (
+    builder.addCase(getDrugDetailsPOSSettings.pending, (state, action) => {
+      state.isLoading = true;
+    }),
+    builder.addCase(getDrugDetailsPOSSettings.fulfilled, (state, action) => {
+      getPOSSettingsFulfilled(state, action);
+    }),
+    builder.addCase(getDrugDetailsPOSSettings.rejected, (state, action) => {
+      getPOSSettingsRejected(state, action);
     })
   ),
 });

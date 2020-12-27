@@ -18,10 +18,16 @@ import { addNewFormulary } from "../.././redux/slices/formulary/application/appl
 import "./NewFormulary.scss";
 import Medicaid from "./Medicaid/Medicaid";
 
+// const tabs = [
+//   { id: 1, text: "MEDICARE" },
+//   { id: 2, text: "MEDICAID" },
+//   { id: 3, text: "COMMERCIAL" },
+//   { id: 4, text: "EXCHANGE" },
+// ];
 const tabs = [
-  { id: 1, text: "MEDICARE" },
-  { id: 2, text: "MEDICAID" },
-  { id: 3, text: "COMMERCIAL" },
+  { id: 1, text: "COMMERCIAL" },
+  { id: 2, text: "MEDICARE" },
+  { id: 3, text: "MEDICAID" },
   { id: 4, text: "EXCHANGE" },
 ];
 
@@ -70,7 +76,7 @@ const defaultListPayload = {
   index: 0,
   limit: 10,
   filter: [],
-  id_lob: 1,
+  id_lob: 4,
   search_by: null,
   search_key: "",
   search_value: [],
@@ -92,7 +98,7 @@ class Formulary extends React.Component<any, any> {
     index: 0,
     limit: 10,
     filter: [],
-    id_lob: 1,
+    id_lob: 4,
     search_by: null,
     search_key: "",
     search_value: [],
@@ -125,10 +131,19 @@ class Formulary extends React.Component<any, any> {
     });
   };
   updateGrid = (currentTabIndex) => {
-    let lob_id = 1;
-    if(currentTabIndex === 2){
-      lob_id = 4;
+    // let lob_id = 1;
+    // if(currentTabIndex === 2){
+    //   lob_id = 4;
+    // }
+    let lob_id = 4;
+    if (currentTabIndex === 1) {
+      lob_id = 1;
+    } else if (currentTabIndex === 2) {
+      lob_id = 2;
+    } else if (currentTabIndex === 3) {
+      lob_id = 3;
     }
+
     this.listPayload = {...defaultListPayload};
     this.listPayload.id_lob = lob_id;
     this.props.fetchFormularies(this.listPayload);
@@ -170,7 +185,7 @@ class Formulary extends React.Component<any, any> {
     this.props.fetchFormularies(this.listPayload);
   }
   onPageSize = (pageSize) => {
-    let id_lob = this.listPayload.id_lob
+    let id_lob = this.listPayload.id_lob;
     this.listPayload = {...defaultListPayload};
     this.listPayload.limit = pageSize
     this.listPayload.id_lob = id_lob;

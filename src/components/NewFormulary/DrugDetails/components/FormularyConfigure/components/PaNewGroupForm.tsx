@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect,Fragment } from 'react';
 import { connect } from "react-redux";
 import Radio from '@material-ui/core/Radio';
 import RadioGroup from '@material-ui/core/RadioGroup';
@@ -21,8 +21,12 @@ import Tooltip from '@material-ui/core/Tooltip';
 import { Box, Grid, Input } from '@material-ui/core';
 import PAGroupHeader from './PAGroupHeader';
 import AlertMessages from "./AlertMessages"
+import { ToastContainer } from 'react-toastify';
+import showMessage from "../../../../Utils/Toast";
+import Tags from './Tags'
+
 import RadioButton from '../../../../../shared/Frx-components/radio-button/RadioButton';
-import { getPaGrouptDescription, getPaTypes, getDrugLists,postPAGroupDescription,putPAGroupDescription } from "../../../../../../redux/slices/formulary/pa/paActionCreation";
+import { getPaGrouptDescription, getPaTypes, getDrugLists,postPAGroupDescription,putPAGroupDescription,getPaGrouptDescriptionVersions,getPaGrouptDescriptions } from "../../../../../../redux/slices/formulary/pa/paActionCreation";
 import SearchableDropdown from "../../../../../shared/Frx-components/SearchableDropdown";
 import { Tag } from "antd";
 import { ReactComponent as CrossCircleWhiteBGIcon } from "../../../../../../assets/icons/crosscirclewhitebg.svg";
@@ -32,17 +36,44 @@ interface Props {
   tooltip?: string;
   formType?: number;
   editable?: boolean;
+  drugList?:any;
+}
+interface initialFormData {
+  is_validation_required: any,
+  pa_group_description: any,
+  pa_criteria:any,
+  file_type: any,
+  id_pa_type:any, 
+  is_rx_drug_type: any,
+  is_otc_drug_type: any,
+  change_indicator: any,
+  excluded_drug_file: any,
+  pa_group_description_name: any,
+  mmp_pa_criteria: any,
+  pa_criteria_change_indicator: any,
+  is_additional_criteria_defined: any,
+  is_suppress_criteria_dispaly_cms_approval: any,
+  is_display_criteria_drugs_not_frf: any,
+  id_indication_indicator: any,
+  off_label_uses: any,
+  exclusion_criteria: any,
+  required_medical_info: any,
+  age_restrictions: any,
+  prescriber_restrictions: any,
+  coverage_restrictions: any,
+  other_criteria: any,
+  drug_list_ids:any;
 }
 
-const initialFormData = {
+const initialFormData:initialFormData = {
   is_validation_required: true,
   pa_group_description: '',
-  pa_criteria:'',
+  pa_criteria:null,
   file_type: 'FAOTC',
-  id_pa_type:'', 
+  id_pa_type:null, 
   is_rx_drug_type: false,
   is_otc_drug_type: false,
-  change_indicator: 0,
+  change_indicator: '',
   excluded_drug_file: '',
   pa_group_description_name: '',
   mmp_pa_criteria: '',
@@ -50,7 +81,7 @@ const initialFormData = {
   is_additional_criteria_defined: false,
   is_suppress_criteria_dispaly_cms_approval: false,
   is_display_criteria_drugs_not_frf: false,
-  id_indication_indicator: 1,
+  id_indication_indicator: '',
   off_label_uses: '',
   exclusion_criteria: '',
   required_medical_info: '',
@@ -58,6 +89,7 @@ const initialFormData = {
   prescriber_restrictions: '',
   coverage_restrictions: "",
   other_criteria: '',
+  drug_list_ids:[]
 }
 const formInformationPanelTabs = [
   {
@@ -155,6 +187,9 @@ function mapDispatchToProps(dispatch) {
     getPaGrouptDescription: (a) => dispatch(getPaGrouptDescription(a)),
     postPAGroupDescription: (a) => dispatch(postPAGroupDescription(a)),
     putPAGroupDescription: (a) => dispatch(putPAGroupDescription(a)),
+    getPaGrouptDescriptions: (a) => dispatch(getPaGrouptDescriptions(a)),
+    getDrugLists: (a) => dispatch(getDrugLists(a)),
+    
   };
 }
 
@@ -171,9 +206,16 @@ function mapStateToProps(state) {
 function NewGroup(props: any) {
   // class NewGroup extends React.Component <any ,any> {
   const [formData, updateFormData] = React.useState(initialFormData);
-  const [placeHolder, setPlaceHolder] = React.useState(props.versionTitle);
-  const [latestId, setLatestId] = React.useState(props.latestVerion);
-  const [panelColor, setPanelColor] = React.useState('');
+  // const [placeHolder, setPlaceHolder] = React.useState(props.versionTitle);
+  // const [latestId, setLatestId] = React.useState(props.latestVerion);
+  // const [panelColor, setPanelColor] = React.useState('');
+  const [editable, setEditable] = React.useState(false);
+  const [changeEvent, setChangeEvent] = React.useState(false);
+  const [showHeader, setShowHeader] = React.useState(props.formType);
+  const [errorClass, setErrorClass] = React.useState('');
+  const [drug_list_ids, setDrug_list_ids] = React.useState([]);
+  const [drug_list, setDrug_list] = React.useState([]);
+
   const handleChange = (e) => {
     debugger;
     let tmp_value = e.target.value;
@@ -204,10 +246,50 @@ function NewGroup(props: any) {
   };
  
 
-  const saveGroupDescription = (is_validation: boolean) => {
+  const saveGroupDescription = (e,is_validation: boolean) => {
 
     let requestData = {};
-    
+    e.preventDefault()
+    if ( props.formulary_lob_id === 1) {
+      let msg: string[] = [];
+      if (formData.pa_group_description_name === '') {
+        showMessage("Formulary Description Name is required.", 'error');
+        return;
+      }
+
+      if (formData.change_indicator === '') {
+        showMessage("Change Indicator is required.", 'error');
+        return;
+      }
+
+      if (formData.id_indication_indicator === '') {
+        showMessage("Indication Indicator is required.", 'error');
+        return;
+      }
+      if (msg.length > 0) {
+        console.log(msg)
+        setErrorClass('invalid');
+        return;
+      }
+    }
+
+    if ( props.formulary_lob_id === 4) {
+      let msg: string[] = [];
+      if (formData.pa_group_description_name === '') {
+        showMessage("Formulary Description Name is required.", 'error');
+        return;
+      }
+
+      if (formData.id_pa_type === null) {
+        showMessage("PA Type is required.", 'error');
+        return;
+      }
+
+      if (formData.pa_criteria === null) {
+        showMessage("PA Criteria is required.", 'error');
+        return;
+      }
+    }
     debugger;
     //requestData['keyVals'] = [{ key: 'index', value: 0 }, { key: 'limit', value: 10 }, { key: 'entity_id', value: 1262 }];
     formData["is_validation_required"] = is_validation;
@@ -238,11 +320,33 @@ function NewGroup(props: any) {
       if (props.formType==1){
         requestData['apiPart'] = 'api/1/mcr-pa-group-description';
         requestData['pathParams'] = '/'+formData["id_pa_group_description"]+'/'+props?.formulary_id + '?entity_id=0';
-        props.putPAGroupDescription(requestData);
+        props.putPAGroupDescription(requestData).then(json=>{
+          if (json.payload && json.payload.code === '200') {
+            showMessage('Success', 'success');
+            let apiDetails= {};
+            apiDetails["lob_type"] = props.formulary_lob_id;
+            apiDetails['pathParams'] = '/'+props?.client_id + '?entity_id='+props?.formulary_id;
+
+            props.getPaGrouptDescriptions(apiDetails);
+          }else{
+            showMessage('Failure', 'error');
+          }
+        })
       }else{
         requestData['apiPart'] = 'api/1/mcr-pa-group-description/'+props.client_id;
         requestData['pathParams'] = '/'+props?.formulary_id + '?entity_id=0';
-        props.postPAGroupDescription(requestData);
+        props.postPAGroupDescription(requestData).then(json=>{
+          if (json.payload && json.payload.code === '200') {
+            showMessage('Success', 'success');
+            let apiDetails= {};
+            apiDetails["lob_type"] = props.formulary_lob_id;
+            apiDetails['pathParams'] = '/'+props?.client_id + '?entity_id='+props?.formulary_id;
+
+            props.getPaGrouptDescriptions(apiDetails);
+          }else{
+            showMessage('Failure', 'error');
+          }
+        });
       }
     }else{
       requestData['messageBody'] ['is_validation_required'] = formData['is_validation_required'];
@@ -250,12 +354,35 @@ function NewGroup(props: any) {
       requestData['messageBody'] ['pa_criteria'] = formData['pa_criteria'];
       requestData['messageBody'] ['id_pa_type'] = Number(formData['id_pa_type']);
       requestData['messageBody'] ['is_additional_criteria_defined'] = formData['is_additional_criteria_defined'];
+      requestData['messageBody'] ['drug_list_ids'] = drug_list_ids;
       if (props.formType==1){
         requestData['pathParams'] = '/'+formData["id_pa_group_description"]+'/'+props?.formulary_id + '?entity_id=0';
-        props.putPAGroupDescription(requestData);
+        props.putPAGroupDescription(requestData).then(json=>{
+          if (json.payload && json.payload.code === '200') {
+            showMessage('Success', 'success');
+            let apiDetails= {};
+            apiDetails["lob_type"] = props.formulary_lob_id;
+            apiDetails['pathParams'] = '/'+props?.client_id + '?entity_id='+props?.formulary_id;
+
+            props.getPaGrouptDescriptions(apiDetails);
+          }else{
+            showMessage('Failure', 'error');
+          }
+        })
       }else{
         requestData['pathParams'] = '/'+props?.formulary_id + '?entity_id=0';
-        props.postPAGroupDescription(requestData);
+        props.postPAGroupDescription(requestData).then(json=>{
+          if (json.payload && json.payload.code === '200') {
+            showMessage('Success', 'success');
+            let apiDetails= {};
+            apiDetails["lob_type"] = props.formulary_lob_id;
+            apiDetails['pathParams'] = '/'+props?.client_id + '?entity_id='+props?.formulary_id;
+
+            props.getPaGrouptDescriptions(apiDetails);
+          }else{
+            showMessage('Failure', 'error');
+          }
+        })
       }
     }
     
@@ -263,14 +390,19 @@ function NewGroup(props: any) {
   };
 
   const onChange = (e) => {
-    console.log(props.version);
-    const latestVerion = Object.keys(props.version).length > 0 ? props.version[Number(e)]?.id_pa_group_description : 0;
-    setLatestId(latestVerion)
-    if (Object.keys(props.PaGDData).length > 0) {
+
+    // const latestVerion = Object.keys(props.version).length > 0 ? props.version[Number(e)]?.id_pa_group_description : 0;
+    //setLatestId(latestVerion)
+    if (Object.keys(props.PaGDData).length > 0 && e && e != 'no') {
+      const isEditable = props.version[Number(e.split(' ')[1])-1]?props.version[Number(e.split(' ')[1])-1].is_setup_complete:false
+      setEditable(isEditable)
+      setChangeEvent(true)
       updateFormData({
         ...formData,
         ...props.PaGDData
       });
+    } else {
+      setChangeEvent(false)
     }
   }
 
@@ -288,26 +420,47 @@ function NewGroup(props: any) {
     setAdditionalCriteriaPopup(!isAdditionalCriteriaPopupOpen);
   };
 
+  
+
   useEffect(() => {
     //debugger;
-    setPanelColor(props.editable ? '-green' : '')
-    setLatestId(props.latestVerion)
+    //setPanelColor(props.editable ? '-green' : '')
+    //setLatestId(props.latestVerion)
     updateFormData(initialFormData)
-    setPlaceHolder(props.versionTitle)
+    //setPlaceHolder(props.versionTitle)
     if (Object.keys(props.PaGDData).length > 0) {
+      if (!changeEvent) {
+        const verLength = Object.keys(props.version).length;
+        const isEditable = props.version[verLength - 1]?props.version[verLength - 1].is_setup_complete:false
+        setEditable(isEditable)
+      }
       updateFormData({
         ...formData,
         ...props.PaGDData
       });
     }
-  }, [props.PaGDData || props.versionList || props.activeTabIndex])
+    if(!props.editMode){
+      setEditable(false)
+    }
+    setShowHeader(0)
+    setErrorClass('');
+  }, [props.PaGDData || props.versionList || props.activeTabIndex || props.editMode] )
 
+  const getAutoCompleteChangeHandler = (val) => {
+    debugger;
+    setDrug_list_ids(val);
+  }
   return (
     <div className="new-group-des">
-      <div className="panel header">
+      {/* <div className="panel header">
         <span>{props.title ? props.title : formData.pa_group_description_name}</span>
       </div>
-      <PAGroupHeader popuptitle={props.title ? props.title : formData.pa_group_description_name} onChange={onChange} /> 
+      <PAGroupHeader popuptitle={props.title ? props.title : formData.pa_group_description_name} onChange={onChange} />  */}
+      <div className="panel header">
+        <span>{showHeader>0&&formData.pa_group_description_name ? formData.pa_group_description_name : props.title}</span>
+      </div>
+      {(props.formType > 0 || showHeader>0) && <PAGroupHeader popuptitle={formData.pa_group_description_name ? formData.pa_group_description_name : props.title} onChange={onChange}/>}
+      
       { (props.formulary_lob_id==1) ? (
       <div className="inner-container pa-new-group-form">
         <div className="setting-1">
@@ -325,7 +478,7 @@ function NewGroup(props: any) {
               <Grid item xs={12}>
                 <div className="group group-padding">
                   <label>PA GROUP DESCRIPTION <span className="astrict">*</span></label>
-                  <input type="text" name="pa_group_description_name" onChange={handleChange} defaultValue={formData.pa_group_description_name} disabled={props.editable} />
+                  <input type="text" name="pa_group_description_name" onChange={handleChange} defaultValue={formData.pa_group_description_name} disabled={props.editable} className={errorClass}/>
                 </div>
               </Grid>
               <Grid item xs={12}>
@@ -335,11 +488,13 @@ function NewGroup(props: any) {
                     name="change_indicator"
                     className="formulary-type-dropdown"
                     placeHolder={props.change_indicator}
+                    value={props.change_indicator}
                     options={[{ key: 0, value: 0 }, { key: 1, value: 1 }]}
                     //options={[0,1]}
                     valueProp="key" dispProp="value"
                     onChange={handleChange_1}
                     disabled={props.editable}
+                  
                   />
                 </div>
               </Grid>
@@ -349,7 +504,8 @@ function NewGroup(props: any) {
                   <DropDown
                     name="id_indication_indicator"
                     className="formulary-type-dropdown"
-                    placeHolder={props.id_indication_indicator}
+                    placeholder={props.id_indication_indicator}
+                    value={props.id_indication_indicator}
                     options={[{ key: 1, value: 1 }, { key: 2, value: 2 }, { key: 3, value: 3 }, { key: 4, value: 4 }]}
                     valueProp="key" dispProp="value"
                     onChange={handleChange_2}
@@ -443,9 +599,9 @@ function NewGroup(props: any) {
         </div>
 
         <div className="button-wrapper">
-          <Button label="Save Version Progress" className="Button" onClick={() => saveGroupDescription(false)} />
-          <Button label="Version to Initiate Change Request" className="Button" onClick={() => saveGroupDescription(false)} />
-          <Button label="Version Submitted to CMS" className="Button" onClick={() => saveGroupDescription(true)} />
+          <Button label="Save Version Progress" className="Button" onClick={(event) => saveGroupDescription(event,false)} />
+          <Button label="Version to Initiate Change Request" className="Button" onClick={(event) => saveGroupDescription(event,false)} />
+          <Button label="Version Submitted to CMS" className="Button" onClick={(event) => saveGroupDescription(event,true)} />
         </div>
       </div>
       ):null}
@@ -476,31 +632,19 @@ function NewGroup(props: any) {
                 <input type="text" name="pa_criteria" onChange={handleChange} defaultValue={formData.pa_criteria} disabled={props.editable} />
               </div>
             </Grid>
-            <Grid item xs={6}>
+            <Grid item xs={12}>
               <div className='group'>
-                <label className='required-field'>LIST</label>
-                <SearchableDropdown options={[1, 2, 3]} />
-                <Box className='pg-group-list-tags-box'>
-                  <Tag
-                    className='pg-group-list-tags'
-                    closable
-                    onClose={() => {}}
-                    closeIcon={<CrossCircleWhiteBGIcon />}
-                  >
-                    Tag 1
-                  </Tag>
-                  <Tag
-                    className='pg-group-list-tags'
-                    closable
-                    onClose={() => {}}
-                    closeIcon={<CrossCircleWhiteBGIcon />}
-                  >
-                    Tag 4
-                  </Tag>
-                </Box>
+              <Fragment>
+                      <Grid item xs={6}>
+                      <label className="st-label">List <span className="astrict">*</span></label>
+                      <Tags options={props.drugList} getAutoCompleteChange={getAutoCompleteChangeHandler} seleted={formData.drug_list_ids}/>
+                      </Grid>
+                    </Fragment>
               </div>
             </Grid>
-            <Grid className='additional-criteria' item xs={6}>
+
+            
+            <Grid className='additional-criteria' item xs={12}>
               <span className='required-field'>
                 do you want to add additional criteria?
               </span>
@@ -526,16 +670,16 @@ function NewGroup(props: any) {
         <div className='button-wrapper'>
           {!props.isReadOnly ? (
             <>
-              <Button label='Save Version Progress' className='Button'  onClick={() => saveGroupDescription(false)} />
+              <Button label='Save Version Progress' className='Button'  onClick={(event) => saveGroupDescription(event,false)} />
               <Button
-                label='Save Final Version and Continue' className='Button'  onClick={() => saveGroupDescription(true)}
+                label='Save Final Version and Continue' className='Button'  onClick={(event) => saveGroupDescription(event,true)}
               />
             </>
           ) : null}
         </div>
       </div>
       ):null}
-
+<ToastContainer/>
     </div>
   )
 

@@ -6,7 +6,54 @@
 }
 
 .formulary-form {
-  padding: 10px 70px;
+  padding: 10px 200px;
+  .input-element {
+    margin-top: 6px;
+
+    .pointer {
+      cursor: pointer;
+    }
+
+    .bordered {
+      .hide-edit-icon {
+        display: none;
+      }
+      background: #eef3f7;
+      border: 1px solid #e5e5e5;
+      height: 35px;
+      width: 338px;
+
+      padding: 0 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+
+      box-sizing: border-box;
+      border-radius: 3px;
+      text-decoration: underline dotted #1d54b4;
+      .inner-font {
+        font-family: Roboto;
+        font-style: normal;
+        font-weight: 500;
+        font-size: 12px;
+        // line-height: 14px;
+        color: #1d54b4;
+        // border-bottom: 1px dashed #1d54b4;
+      }
+
+      .no-inner-font {
+        font-family: Roboto;
+        font-style: normal;
+        font-weight: normal;
+        font-size: 12px;
+        line-height: 20px;
+        color: #323c47;
+      }
+    }
+    .bg-green {
+      background-color: #d5ffd7;
+    }
+  }
 }
 
 .formulay-label label {
@@ -47,7 +94,7 @@
 }
 
 .vector-icon {
-  padding: 35px 95px;
+  padding: 35px 50px;
 }
 
 .compare-btn {
@@ -67,6 +114,7 @@
   line-height: 14px;
   left: 9px;
   top: 35px;
+  cursor: pointer;
 }
 
 .select-formulary:hover {
@@ -79,15 +127,26 @@
 
 .select-formulary-name {
   position: relative;
+
+  input {
+    width: 100% !important;
+  }
 }
 .select-formulary-write-icon {
   position: absolute;
   right: 15px;
   top: 33px;
+  cursor: pointer;
 }
 
 .view-formulary-btn button {
   margin-right: 80px !important;
   margin-top: 25px !important;
   width: 65px !important;
+}
+
+.compare-vector-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }

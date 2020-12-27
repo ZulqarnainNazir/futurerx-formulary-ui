@@ -48,6 +48,9 @@ interface FrxDrugGridContainerProps<T> extends Grid<T> {
   selectedCurrentPage?: any;
   applyFilter?: any;
   getColumnSettings?: any;
+  customSettingIcon?:any;
+  onRowExpandHandler?:any;
+  onSettingsCellClick?:any;
 }
 class FrxDrugGridContainer extends Component<FrxDrugGridContainerProps<any>> {
   /**
@@ -121,6 +124,7 @@ class FrxDrugGridContainer extends Component<FrxDrugGridContainerProps<any>> {
               spinning: this.props.isFetchingData,
               indicator: <FrxLoader />,
             }}
+            customSettingIcon={this.props.customSettingIcon}
             hideMultiSort={this.props.hideMultiSort}
             hidePagination={this.props.hidePagination}
             hidePageJumper={this.props.hidePageJumper}
@@ -141,6 +145,7 @@ class FrxDrugGridContainer extends Component<FrxDrugGridContainerProps<any>> {
               this.props.settingsWidth ? this.props.settingsWidth : undefined
             }
             rowSelection={this.props.rowSelection}
+            onSettingsCellClick={this.props.onSettingsCellClick}
           getPerPageItemSize={this.props.getPerPageItemSize}
           onGridPageChangeHandler={this.props.onGridPageChangeHandler}
           clearFilterHandler={this.props.clearFilterHandler}
@@ -151,6 +156,7 @@ class FrxDrugGridContainer extends Component<FrxDrugGridContainerProps<any>> {
           getColumnSettings={this.props.getColumnSettings}
           isRowSelectorCheckbox={this.props.isRowSelectorCheckbox}
           isPinningEnabled={this.props.isPinningEnabled}
+          onRowExpandHandler={this.props.onRowExpandHandler}
           // isSeparateCheckboxColumn={this.props.isSeparateCheckboxColumn}
           expandable={{
             isExpandable: this.props.expandable

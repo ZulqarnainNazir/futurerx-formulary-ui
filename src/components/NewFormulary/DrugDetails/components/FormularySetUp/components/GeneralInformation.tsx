@@ -94,12 +94,12 @@ class GeneralInformation extends React.Component<any, GeneralInformationState> {
   }
   getClassificationRadio = () => {
     let classificationRadio:any = null;
-    let value = this.props.generalInfo.classification_system;
+    let value = parseInt(this.props.generalInfo.classification_system);
     const radi = <RadioGroup 
     className="radio-group-custom" 
     aria-label={'classification_system'} 
     name="classification_system"
-    value={this.props.generalInfo.classification_system?.toString()} 
+    value={value} 
     onChange={(e) => this.props.onRadioChange(e,'generalInformation')}>
       {this.props.general_options.classification_systems.map(el => {
         return (
@@ -278,7 +278,7 @@ class GeneralInformation extends React.Component<any, GeneralInformationState> {
                 <label>
                   FORMULARY NAME <span className="astrict">*</span>
                 </label>
-                <input type="text" id="name" className="setup-input-fields" name="name" value={this.props.generalInfo.name} onChange={this.props.updateInputField}/>
+                <input disabled={disabled} type="text" id="name" className="setup-input-fields" name="name" value={this.props.generalInfo.name} onChange={this.props.updateInputField}/>
               </div>
             </Grid>
             <Grid item xs={4}>
@@ -297,6 +297,7 @@ class GeneralInformation extends React.Component<any, GeneralInformationState> {
                 placeholder={FORMULARY ? FORMULARY_Values.effective_date : ''}
                 disabled={disabled}
                 disabledDate={this.disabledDate}
+                format={'MM/DD/YYYY'}
                 onChange={(e) => this.props.datePickerChange(e,'generalInformation','effective_date')}
                 suffixIcon={
                   <svg
@@ -329,9 +330,9 @@ class GeneralInformation extends React.Component<any, GeneralInformationState> {
                     name="method"
                     value={this.props.generalInfo.method?.toString()} 
                     onChange={(e) => this.props.onRadioChange(e,'generalInformation')}>
-                    <FormControlLabel value="clone" control={<Radio />} label="Clone" />
-                    <FormControlLabel value="upload" control={<Radio />} label="Upload" />
-                    <FormControlLabel value="N" control={<Radio />} label="Create New" />
+                    <FormControlLabel disabled={disabled} value="clone" control={<Radio />} label="Clone" />
+                    <FormControlLabel disabled={disabled} value="upload" control={<Radio />} label="Upload" />
+                    <FormControlLabel disabled={disabled} value="N" control={<Radio />} label="Create New" />
                   </RadioGroup>
                 </div>
                 
@@ -350,6 +351,10 @@ class GeneralInformation extends React.Component<any, GeneralInformationState> {
                 <div className="group">
                   <label>CLONE FORMULARY <span className="astrict">*</span></label>
                   <a href="#" className="input-link clone-formulary-link">Clone Formulary</a>
+                  <Button
+                  label="FL - C M"
+                  onClick={(e) => this.props.createUsingClone(e)}
+                />                  
                 </div>
               </Grid>
             }
@@ -390,7 +395,8 @@ class GeneralInformation extends React.Component<any, GeneralInformationState> {
                   required
                 />
                 <div className="marketing-material radio-group">
-                  <RadioGroup 
+                  {this.getClassificationRadio()}
+                  {/* <RadioGroup 
                   className="radio-group-custom" 
                   aria-label={'classification_system'} 
                   name="classification_system"
@@ -404,7 +410,7 @@ class GeneralInformation extends React.Component<any, GeneralInformationState> {
                           label={el.classification_system} />
                       )
                     })}
-                  </RadioGroup>
+                  </RadioGroup> */}
                 </div>
               </div>
             </Grid>

@@ -7,12 +7,23 @@ import Box from '@material-ui/core/Box';
 import Button from '../../../../../shared/Frx-components/button/Button';
 import DropDown from '../../../../../shared/Frx-components/dropdown/DropDownMap';
 import RadioButton from '../../../../../shared/Frx-components/radio-button/RadioButton';
-import { getStSummary,getStGrouptDescriptions, getStTypes, getDrugLists,postFormularyDrugST,getStGrouptDescriptionVersions,postApplyFormularyDrugST } from "../../../../../../redux/slices/formulary/stepTherapy/stepTherapyActionCreation";
+import { getStSummary,getStGrouptDescriptions, getStTypes, getDrugLists,postFormularyDrugST,
+  getStGrouptDescriptionVersions,postApplyFormularyDrugST,getLobFormularies } from "../../../../../../redux/slices/formulary/stepTherapy/stepTherapyActionCreation";
 import "./STF.scss";
 import * as constants from "../../../../../../api/http-commons";
 import FrxDrugGridContainer from "../../../../../shared/FrxGrid/FrxDrugGridContainer";
 import { stColumns } from "../../../../../../utils/grid/columns";
-import AdvancedSearch from './search/AdvancedSearch';
+import AdvanceSearchContainer from '../../../../NewAdvanceSearch/AdvanceSearchContainer';
+import { setAdvancedSearch } from "../../../../../../redux/slices/formulary/advancedSearch/advancedSearchSlice";
+import showMessage from "../../../../Utils/Toast";
+import { ToastContainer } from 'react-toastify';
+import { Row, Col, Space } from "antd";
+import Radio from '@material-ui/core/Radio';
+import RadioGroup from '@material-ui/core/RadioGroup';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import DialogPopup from "../../../../../shared/FrxDialogPopup/FrxDialogPopup";
+import CloneFormularyPopup from "../../FormularySetUp/components/CloneFormularyPopup";
+import { ReactComponent as EditIcon } from "../../../../../../assets/icons/EditIcon.svg";
 
 function mapDispatchToProps(dispatch) {
     return {
@@ -23,12 +34,15 @@ function mapDispatchToProps(dispatch) {
       postFormularyDrugST:(a) => dispatch(postFormularyDrugST(a)),
       getStGrouptDescriptionVersions:(a) => dispatch(getStGrouptDescriptionVersions(a)),
       postApplyFormularyDrugST:(a) => dispatch(postApplyFormularyDrugST(a)),
+      setAdvancedSearch: (a) => dispatch(setAdvancedSearch(a)),
+      getLobFormularies:(a) => dispatch(getLobFormularies(a)),
     };
   }
 
    
   const mapStateToProps = (state) => {
     return {
+      client_id: state.application.clientId,
       configureSwitch: state.switchReducer.configureSwitch,
       applyData: state.tierSliceReducer.applyData,
       formulary_id: state?.application?.formulary_id,
@@ -42,6 +56,7 @@ function mapDispatchToProps(dispatch) {
   }
  class STF extends React.Component<any,any>{
     state={
+      selectFormulary: false,
         panelGridTitle1: ['Value Based Insurance','Number of Drugs','added drugs','removed drugs'],
         panelTitleAlignment1: ['left','left','left','left'],
         panelGridValue1: [],
@@ -55,16 +70,19 @@ function mapDispatchToProps(dispatch) {
             {id: 3,text: "Remove"}
         ],
         tierGridContainer: false,
+        showStConfiguration:false,
         isSearchOpen:false,
+        selectedLobFormulary:{},
         drugData: Array(),
         drugGridData: Array(),
         selectedDrugs: Array(),
         selectedGroupDescription:null,
         selectedStType:null,
-        showPaConfiguration:false,
         selectedLastestedVersion:null,
         fileType:null,
+        lobFormularies:[],
         stValue:null,
+        groupDescriptionProp:''
     }
 
     onSelectedTableRowChanged = (selectedRowKeys) => {
@@ -77,20 +95,49 @@ function mapDispatchToProps(dispatch) {
       openTierGridContainer = () => {
         this.state.drugData = [];
         this.state.drugGridData = [];
-        this.setState({ tierGridContainer: true });
+        
         this.populateGridData();
+      };
+
+      dropDownSelectHandlerLob = (value, event) => {
+        let tmp_index = event.key;
+        let tmp_value = event.value;
+        this.setState({ selectedLobFormulary: tmp_value });
+      }
+
+      onClose = () => {
+        console.log("close");
+        this.setState({ selectFormulary: false });
+        return true;
+      };
+      handleIconClick = () => {
+        this.setState({ selectFormulary: true });
+      };
+    
+      selectFormularyClick = (dataRow) => {
+        console.log(dataRow);
+        if(dataRow){
+          this.state.selectedLobFormulary = dataRow;
+          // if(this.state.currentPopupType === this.POPUP_TYPE_BASE){
+          //  // this.state.baseFormulary = dataRow;
+          // }else if(this.state.currentPopupType === this.POPUP_TYPE_REFERENCE){
+          //   //this.state.referenceFormulary = dataRow;
+          // }
+        }
+        this.setState({ selectFormulary: false });
       };
     
       handleSave = () => {
         if (this.state.selectedDrugs && this.state.selectedDrugs.length > 0) {
           let apiDetails = {};
          // apiDetails['apiPart'] = constants.APPLY_TIER;
-    
-          apiDetails['pathParams'] = this.props?.formulary_id + "/" + this.state.fileType + "/" + constants.TYPE_REPLACE;
+    debugger;
+         apiDetails["lob_type"] = this.props.formulary_lob_id;
+          apiDetails['pathParams'] = this.props?.formulary_id + "/" + this.state.fileType + "/" +  this.props.tab_type
           apiDetails['keyVals'] = [{ key: constants.KEY_ENTITY_ID, value: this.props?.formulary_id }];
           apiDetails['messageBody'] = {};
           apiDetails['messageBody']['selected_drug_ids'] = this.state.selectedDrugs;
-          apiDetails['messageBody']['base_st_group_description_id'] = this.state.selectedGroupDescription;
+          apiDetails['messageBody']['base_st_group_description_id'] = Number(this.state.selectedGroupDescription);
           apiDetails['messageBody']['id_st_group_description'] = this.state.selectedLastestedVersion;
           apiDetails['messageBody']['id_st_type'] = Number(this.state.selectedStType);
           apiDetails['messageBody']['search_key'] = "";
@@ -119,17 +166,50 @@ function mapDispatchToProps(dispatch) {
       advanceSearchClosekHandler = () => {
         this.setState({ isSearchOpen: !this.state.isSearchOpen })
       }
+      componentWillReceiveProps(nextProps) {
+        //this.initialize(nextProps);
+        if (nextProps.advancedSearchBody && nextProps.populateGrid) {
+          this.populateGridData(nextProps.advancedSearchBody);
+          let payload = { advancedSearchBody: nextProps.advancedSearchBody, populateGrid: false, closeDialog: nextProps.closeDialog , listItemStatus: nextProps.listItemStatus};
+          if (nextProps.closeDialog) {
+            this.state.isSearchOpen = false;
+            payload['closeDialog'] = false;
+          }
+          this.props.setAdvancedSearch(payload);
+        }
+      }
       dropDownSelectHandlerGroupDescription = (value, event) => {
         let tmp_index = event.key;
         let tmp_value = event.value;
     
        this.setState({ selectedGroupDescription: tmp_value });
-       this.props.getStGrouptDescriptionVersions(tmp_value).then((json)=>{
+       let apiDetails= {};
+        apiDetails["lob_type"] = this.props.formulary_lob_id;
+        apiDetails['pathParams'] = '/'+tmp_value;
+        debugger;
+       this.props.getStGrouptDescriptionVersions(apiDetails).then((json)=>{
+         debugger;
          let data = json.payload.data;
-         
+         let ftype="";
+     switch (this.props.formulary_lob_id) {
+       case 1:
+        ftype=data[0].file_type;
+         break;
+         case 4:
+          ftype='COMM';
+           break;
+       default:
+         break;
+     }
+     debugger;
          this.setState({
            selectedLastestedVersion: data[0].id_st_group_description,
-           fileType: data[0].file_type,
+           fileType: ftype,
+         });
+         this.setState({
+          tierGridContainer:false,
+          gridData:[],
+          drugGridData:[]
          });
        });
       }
@@ -138,16 +218,21 @@ function mapDispatchToProps(dispatch) {
         let tmp_index = event.key;
         let tmp_value = event.value;
         this.setState({ selectedStType: tmp_value });
+        this.setState({
+          tierGridContainer:false,
+          gridData:[],
+          drugGridData:[]
+         });
       }
     
-      pa_configurationChange = (event, value) => {
+      st_configurationChange = (event, value) => {
         let tmp_index = event.target.key;
         let tmp_value = event.target.value;
     
         if (tmp_value=="true"){
-            this.setState({showPaConfiguration: true});
+            this.setState({showStConfiguration: true});
         }else{
-          this.setState({showPaConfiguration: false});
+          this.setState({showStConfiguration: false});
         }
       }
     
@@ -169,18 +254,40 @@ function mapDispatchToProps(dispatch) {
       populateGridData = (searchBody = null) => {
         console.log('Populate grid data is called');
         let apiDetails = {};
-        
+        apiDetails["lob_type"] = this.props.formulary_lob_id;
        // let tmpGroup :any = this.state.paGroupDescriptions.filter(obj  => obj.id_mcr_base_pa_group_description === this.state.selectedGroupDescription);
         apiDetails['pathParams'] = this.props?.formulary_id + "/" + this.state.fileType + "/" ;
         apiDetails['keyVals'] = [{ key: constants.KEY_ENTITY_ID, value: this.props?.formulary_id }, { key: constants.KEY_INDEX, value: 0 }, { key: constants.KEY_LIMIT, value: 10 }];
         apiDetails['messageBody'] = {};
     
-        apiDetails['messageBody']['base_st_group_description_id'] = this.state.selectedGroupDescription;
-        apiDetails['messageBody']['id_st_type'] = this.state.selectedStType;
-    
+        
         if(searchBody){
           apiDetails['messageBody'] = Object.assign(apiDetails['messageBody'],searchBody);
         }
+
+        if (this.state.selectedGroupDescription===null){
+          showMessage('Group Description is required','info');
+          return ;
+        }
+    
+        if (this.state.selectedStType===null){
+          showMessage('ST Type is required','info');
+          return ;
+        }
+
+        if (this.state.stValue===null){
+          showMessage('ST Value is required','info');
+          return ;
+        }
+    
+         if(this.state.showStConfiguration && this.state.selectedLobFormulary['id_formulary']===undefined){
+           showMessage('Related Formulary is required','info');
+          return ;
+         }
+        apiDetails['messageBody']['base_st_group_description_id'] = this.state.selectedGroupDescription;
+        apiDetails['messageBody']['id_st_type'] = this.state.selectedStType;
+        apiDetails['messageBody']['st_value'] = this.state.stValue;
+
         const drugGridDate = this.props.postFormularyDrugST(apiDetails).then((json => {
           debugger;
           let tmpData = json.payload.result;
@@ -212,6 +319,7 @@ function mapDispatchToProps(dispatch) {
             drugGridData: gridData
           })
         }))
+        this.setState({ tierGridContainer: true });
       }
 
     onClickTab = (selectedTabIndex: number) => {
@@ -235,12 +343,30 @@ function mapDispatchToProps(dispatch) {
     settingFormApplyHandler = () => {
         this.state.drugData = [];
         this.state.drugGridData = [];
-        this.setState({ tierGridContainer: true });
+        
         this.populateGridData();
     }
     componentDidMount() {
-                   
-        this.props.getStGrouptDescriptions(this.props.formulary_id).then((json) =>{
+        debugger
+      switch (this.props.formulary_lob_id) {
+        case 1:
+          this.setState({
+            groupDescriptionProp:"id_st_group_description"
+          })
+          break;
+        case 4:
+            this.setState({
+              groupDescriptionProp:"id_st_group_description"
+            })
+            break;
+        default:
+          break;
+      }
+      let apiDetails_1= {};
+      apiDetails_1["lob_type"] = this.props.formulary_lob_id;
+      apiDetails_1['pathParams'] = '/'+this.props?.client_id;
+        this.props.getStGrouptDescriptions(apiDetails_1).then((json) =>{
+          debugger;
             let result = json.payload.data.filter(obj  => !obj.is_archived &&  obj.is_setup_complete);
               this.setState({
                 stGroupDescription: result,
@@ -248,11 +374,20 @@ function mapDispatchToProps(dispatch) {
             
         });
 
-        this.props.getStTypes(this.props.formulary_id).then((json) =>{
+        this.props.getStTypes(this.props.formulary_lob_id).then((json) =>{
             this.setState({
                 stTypes: json.payload.data,
               });
             
+        });
+        let apiDetails = {formulary_type_id: this.props?.formulary_type_id,
+          formulary_lob_id: this.props?.formulary_lob_id}
+        this.props.getLobFormularies(apiDetails).then((json) =>{
+          debugger;
+          this.setState({
+            lobFormularies: json.payload.result,
+            });
+          
         });
     }
     render(){
@@ -268,56 +403,69 @@ function mapDispatchToProps(dispatch) {
                                 <Grid item xs={4}>
                                     <div className="group">
                                         <label>ST GROUP DESCRIPTION<span className="astrict">*</span></label>
-                                        <DropDown options={this.state.stGroupDescription} valueProp="id_st_group_description" dispProp="text" onSelect={this.dropDownSelectHandlerGroupDescription} disabled={this.props.configureSwitch}/>
+                                        <DropDown options={this.state.stGroupDescription} valueProp={this.state.groupDescriptionProp} dispProp="text" onSelect={this.dropDownSelectHandlerGroupDescription} disabled={this.props.configureSwitch}/>
                                     </div>
 
                                     <div className="group mt-10">
-                                    <label>What indicator will be configured for Marketing Material?</label>
-                                    <div className="marketing-material radio-group">
-                                        <RadioButton 
-                                            label="ADD File"
-                                            name="marketing-material-radio"
-                                        />
-                                        <RadioButton 
-                                            label="Excluded"
-                                            name="marketing-material-radio"
-                                            checked
-                                        />
-                                    </div>
+                                      <label>
+                                        Do you want to view existing ST configurations in another
+                                        formulary? <span className="astrict">*</span>
+                                      </label>
+                                      <Space size="large">
+                                      <div className="marketing-material radio-group">
+                                        <RadioGroup aria-label="marketing-material-radio1" className="gdp-radio" name="st_configuration" onChange={this.st_configurationChange} >
+                                          <FormControlLabel value="true" control={<Radio  disabled={this.props.configureSwitch} />}label="Yes" />
+                                          <FormControlLabel value="false" control={<Radio disabled={this.props.configureSwitch} />} label="No" />
+                                        </RadioGroup>
+                                      </div>
+                                      </Space>
                                     </div>
 
                                     <div className="group mt-10">
-                                    <label>What indicator will be configured for Marketing Material?</label>
-                                    <div className="marketing-material radio-group">
-                                        <RadioButton 
-                                            label="ADD File"
-                                            name="marketing-material-radio"
-                                        />
-                                        <RadioButton 
-                                            label="Excluded"
-                                            name="marketing-material-radio"
-                                            checked
-                                        />
-                                    </div>
+                                      <label>
+                                        do you want to add additional criteria?{" "}
+                                        <span className="astrict">*</span>
+                                      </label>
+                                      <Space size="large">
+                                        <RadioButton label="Yes" />
+                                        <RadioButton label="No" />
+                                      </Space>
                                     </div>
                                 </Grid>
                                 <Grid item xs={4}>
                                    
                                     <div className="group">
                                         <label>ST Type <span className="astrict">*</span></label>
-                                        <DropDown options={this.state.stTypes} valueProp="st_type_value" dispProp="st_type_name" onSelect={this.dropDownSelectHandlerStType} disabled={this.props.configureSwitch}/>
+                                        <DropDown options={this.state.stTypes} valueProp="id_st_type" dispProp="st_type_name" onSelect={this.dropDownSelectHandlerStType} disabled={this.props.configureSwitch}/>
                                     </div>
-
+                                    {this.state.showStConfiguration ? (
                                     <div className="group">
-                                        <label>ST Value <span className="astrict">*</span></label>
-                                        <input type="text" name="stValue" onChange={this.handleChange} disabled={this.props.configureSwitch} />
+                                    
+                                    <label>
+                                      Select Related Formulary to View Existing configuration?{" "}
+                                      <span className="astrict">*</span>
+                                    </label>
+                                     {/* <DropDown options={this.state.lobFormularies} valueProp="id_formulary" dispProp="formulary_name" onSelect={this.dropDownSelectHandlerLob} disabled={this.props.configureSwitch}/> */}
+                                     <div className="input-element">
+                                      <div className="bordered pointer bg-green">
+                                        <span onClick={(e) => this.handleIconClick()}
+                                              className="inner-font">
+                                          {this.state.selectedLobFormulary['formulary_name'] ? this.state.selectedLobFormulary['formulary_name'] : 'Select Formulary'}
+                                        </span>
+                                        <EditIcon
+                                          onClick={(e) => this.handleIconClick()}
+                                          className={ "hide-edit-icon" }
+                                        />
+                                      </div>
                                     </div>
+                                    </div>
+                                     ):""}
                                 </Grid>
 
                                 <Grid item xs={4}>
                                 <div className="group">
-                                        <label>package <span className="astrict">*</span></label>
-                                        <input type="text" disabled={this.props.configureSwitch} />
+                                        <label>ST Value <span className="astrict">*</span></label>
+                                        <input type="text" name="stValue" onChange={this.handleChange} disabled={this.props.configureSwitch} />
                                     </div>
                                 </Grid>
                             </Grid>
@@ -332,7 +480,7 @@ function mapDispatchToProps(dispatch) {
               <div className="header space-between pr-10">
                 
                 <div className="button-wrapper">
-                  <Button className="Button normal" label="Advance Search" onClick={this.advanceSearchClickHandler}  />
+                  <Button className="Button normal" label="Advance Search" onClick={this.advanceSearchClickHandler} disabled={this.props.configureSwitch} />
                   <Button label="Save" onClick={this.handleSave}  />
                 </div>
               </div>
@@ -362,18 +510,45 @@ function mapDispatchToProps(dispatch) {
               </div>
             </div>
             {this.state.isSearchOpen ? (
-              <AdvancedSearch
-                {...searchProps}
-                category="Grievances"
-                openPopup={this.state.isSearchOpen}
-                onClose={this.advanceSearchClosekHandler} />
+             <AdvanceSearchContainer
+             {...searchProps}
+             openPopup={this.state.isSearchOpen}
+             onClose={this.advanceSearchClosekHandler} />
             ) : (
                 null
               )}
           </div>
         )}
-                    </div>
-                
+        </div>
+        {this.state.selectFormulary ? (
+          <DialogPopup
+            positiveActionText=""
+            negativeActionText="Close"
+            title={
+              "Select Formulary"
+            }
+            handleClose={() => {
+              this.setState({
+                selectFormulary: !this.state.selectFormulary,
+              });
+            }}
+            handleAction={() => {}}
+            open={this.state.selectFormulary}
+            showActions={false}
+            className=""
+            height="80%"
+            width="90%"
+          >
+            {/* <SelectFormularyPopUp formularyToggle={this.formularyToggle} /> */}
+            {/* <CloneFormularyPopup type="medicare" /> */}
+            <CloneFormularyPopup
+              type="commercial" // type will be dynamic based on the LOB
+              selectFormularyClick={this.selectFormularyClick}
+            />
+          </DialogPopup>
+        ) : null}
+
+                    <ToastContainer/>
             </div>
         )
     }

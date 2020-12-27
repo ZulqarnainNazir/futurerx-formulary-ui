@@ -5,7 +5,7 @@ import {
   getformulary,
   checkNameExist,
   composePostBody,
-  createFormulary,
+  createORUpdateFormulary,
 } from "./setupService";
 import { setFullFormulary } from "./../application/applicationSlice";
 import { stat } from "fs";
@@ -92,10 +92,10 @@ const setup = createSlice({
       console.log("***** saveFormularySuccess : ", payload);
       if (payload) {
         if (payload.status === 200) {
-          state.message = "Formulary created successfully";
-          state.messageType = "success";
-          state.isLoading = false;
-          state.error = null;
+          // state.message = "Formulary created successfully";
+          // state.messageType = "success";
+          // state.isLoading = false;
+          // state.error = null;
         } else if (payload.status === 400) {
           state.message = payload?.data?.message;
           state.messageType = "error";
@@ -105,6 +105,24 @@ const setup = createSlice({
       }
     },
     saveFormularyFailure: loadingFailed,
+    createCloneFormularyStart: startLoading,
+    createCloneFormularySuccess(state, { payload }: PayloadAction<any>) {
+      console.log("***** createCloneFormularySuccess : ", payload);
+      // if (payload) {
+      //   if (payload.status === 200) {
+      //     // state.message = "Formulary created successfully";
+      //     // state.messageType = "success";
+      //     // state.isLoading = false;
+      //     // state.error = null;
+      //   } else if (payload.status === 400) {
+      //     state.message = payload?.data?.message;
+      //     state.messageType = "error";
+      //     state.isLoading = false;
+      //     state.error = payload?.data?.message;
+      //   }
+      // }
+    },
+    createCloneFormularyFailure: loadingFailed,
   },
 });
 
@@ -149,33 +167,54 @@ export const saveFormulary = createAsyncThunk(
   "setup",
   async (input: any, { dispatch }) => {
     console.log("***** saveFormulary .... ");
+    console.log(input);
     if (input?.MODE === "NEW") {
-      const payload = composePostBody(input);
-      // console.log(" - - - - - - - - - - - - - - - -");
-      // console.log(payload);
-      // console.log(" - - - - - - - - - - - - - - - -");
-      try {
-        dispatch(saveFormularyStart());
-        const resp: any = await createFormulary(payload);
-        console.log("- - - -- - - - - - -- - - -");
-        console.log(resp);
-        if (resp) {
-          dispatch(saveFormularySuccess(resp));
-          if (resp?.status === 200) {
-            //dispatch(fetchSelectedFormulary(resp?.data));
-            return {
-              type: payload?.formulary_info?.id_formulary_type,
-              id: resp?.data,
-            };
-          } else {
-            return null;
-          }
-        }
-      } catch (err) {
-        console.log("***** saveFormulary - ERROR ");
-        dispatch(saveFormularyFailure(err.toString()));
-      }
     } else if (input?.MODE === "EXISTING") {
+    }
+
+    const payload = composePostBody(input);
+    // console.log(" - - - - - - - - - - - - - - - -");
+    // console.log(payload);
+    // console.log(" - - - - - - - - - - - - - - - -");
+    try {
+      dispatch(saveFormularyStart());
+      const resp: any = await createORUpdateFormulary(
+        payload,
+        input.formulary_id
+      );
+      console.log("- - - -- - - - - - -- - - -");
+      console.log(resp);
+      if (resp) {
+        dispatch(saveFormularySuccess(resp));
+        if (resp?.status === 200) {
+          //dispatch(fetchSelectedFormulary(resp?.data));
+          return {
+            type: payload?.formulary_info?.id_formulary_type,
+            id: resp?.data,
+            earlier_mode: input?.MODE,
+            continue: input?.CONTINUE,
+          };
+        } else {
+          return null;
+        }
+      }
+    } catch (err) {
+      console.log("***** saveFormulary - ERROR ");
+      dispatch(saveFormularyFailure(err.toString()));
+    }
+  }
+);
+
+export const createCloneFormulary = createAsyncThunk(
+  "setup",
+  async (input: any, { dispatch }) => {
+    console.log("***** createCloneFormulary .... ");
+    console.log(input);
+    try {
+      dispatch(createCloneFormularyStart());
+    } catch (err) {
+      console.log("***** createCloneFormularyFailure - ERROR ");
+      dispatch(createCloneFormularyFailure(err.toString()));
     }
   }
 );
@@ -191,6 +230,9 @@ export const {
   saveFormularyStart,
   saveFormularySuccess,
   saveFormularyFailure,
+  createCloneFormularyStart,
+  createCloneFormularySuccess,
+  createCloneFormularyFailure,
 } = setup.actions;
 
 export default setup.reducer;

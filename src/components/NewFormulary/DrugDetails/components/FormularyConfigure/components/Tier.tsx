@@ -33,12 +33,14 @@ import { ToastContainer } from 'react-toastify';
 
 import * as tierConstants from "../../../../../../api/http-tier";
 import * as commonConstants from "../../../../../../api/http-commons";
+import { setAdvancedSearch } from "../../../../../../redux/slices/formulary/advancedSearch/advancedSearchSlice";
 
 function mapDispatchToProps(dispatch) {
   return {
     getTier: (a) => dispatch(getTier(a)),
     getTierLabels: (a) => dispatch(getTierLabels(a)),
     postNewTier: (a) => dispatch(postNewTier(a)),
+    setAdvancedSearch: (a) => dispatch(setAdvancedSearch(a))
     //getFormularySetup:(a)=>dispatch(getFormularySetup(a))
   };
 }
@@ -198,6 +200,8 @@ class Tier extends React.Component<any, tabsState> {
       }
       return tab;
     });
+    let payload = { advancedSearchBody: {}, populateGrid: false, closeDialog: false, listItemStatus: {} };
+    this.props.setAdvancedSearch(payload);
     this.setState({ tabs, activeTabIndex });
   };
 
