@@ -1,7 +1,11 @@
 import React, { useState, useEffect, useRef } from "react";
+import DialogPopup from "../../FrxDialogPopup/FrxDialogPopup";
+import FrxGridContainer from "../../FrxGrid/FrxDrugGridContainer";
 import Chevron from "./Chevron";
 import { Checkbox } from "antd";
 import "./PureAccordion.scss";
+import { getCompareFormularyDrugsListGridColumns } from "../../../../mocks/formulary-grid/FormularyGridColumn";
+import { getCompareFormularyDrugsListGridData } from "../../../../mocks/formulary-grid/FormularyGridData";
 
 interface HeaderType {
   baseFormulary: number | null;
@@ -24,6 +28,24 @@ function PureAccordion(props: PureAccordionProps) {
   const [setActive, setActiveState] = useState("");
   const [setHeight, setHeightState] = useState("0px");
   const [setRotate, setRotateState] = useState("accordion__icon");
+
+  const [openDrugsList, setDrugsListPopup] = useState(false);
+  const [drugGridHeaderName, setDrugGridHeaderName] = useState("");
+  const [rejectedDrug, setRejectedDrug] = useState<any | any[]>([]);
+  // const [checkbox, setCheckbox] = useState(false);
+  // const [actions, setActions] = useState(false);
+
+  const toggleDrugsListGrid = (
+    gridCellName: string | null = null,
+    showCheckbox: boolean | null = null
+  ) => {
+    if (gridCellName !== null) setDrugGridHeaderName(gridCellName);
+    // if (showCheckbox !== null) {
+    // setCheckbox(showCheckbox);
+    // setActions(showCheckbox);
+    // }
+    setDrugsListPopup(!openDrugsList);
+  };
 
   const elementContent = useRef<HTMLDivElement>(null);
 
@@ -55,6 +77,15 @@ function PureAccordion(props: PureAccordionProps) {
       }
       setRotateState("accordion__icon");
     }
+  }
+
+  function rowSelectionChange(data: any) {
+    // setRejectedDrug(data); // if rejected one at a time
+    setRejectedDrug([...rejectedDrug, data]); // if rejected many at a time
+  }
+
+  function rejectDrugAction() {
+    console.log(rejectedDrug);
   }
 
   useEffect(() => {
@@ -104,7 +135,17 @@ function PureAccordion(props: PureAccordionProps) {
                   : "bg-white cell-font-style"
               }
             >
-              <span>{props.headerData.baseFormulary}</span>
+              <span
+                onClick={() => {
+                  toggleDrugsListGrid(
+                    // `${props.formularyType} - ${data.name}: Base Formulary`,
+                    "Base Formulary",
+                    false
+                  );
+                }}
+              >
+                {props.headerData.baseFormulary}
+              </span>
             </div>
             <div
               className={
@@ -113,7 +154,17 @@ function PureAccordion(props: PureAccordionProps) {
                   : "bg-white cell-font-style"
               }
             >
-              <span>{props.headerData.referenceFormulary}</span>
+              <span
+                onClick={() => {
+                  toggleDrugsListGrid(
+                    // `${props.formularyType} - ${data.name}: Base Formulary`,
+                    "Reference Formulary",
+                    false
+                  );
+                }}
+              >
+                {props.headerData.referenceFormulary}
+              </span>
             </div>
             <div
               className={
@@ -150,6 +201,49 @@ function PureAccordion(props: PureAccordionProps) {
           >
             <div className="accordion__text">{props.content()}</div>
           </div>
+          {openDrugsList ? (
+            <DialogPopup
+              // showCloseIcon={actions}
+              showCloseIcon={true}
+              positiveActionText="Reject"
+              negativeActionText=""
+              title={drugGridHeaderName}
+              handleClose={toggleDrugsListGrid}
+              handleAction={rejectDrugAction}
+              showActions={true}
+              height="80%"
+              width="80%"
+              open={openDrugsList}
+            >
+              <FrxGridContainer
+                enableSearch={false}
+                enableColumnDrag
+                onSearch={() => {}}
+                fixedColumnKeys={[]}
+                pagintionPosition="topRight"
+                gridName="MEDICARE"
+                isFetchingData={false}
+                columns={getCompareFormularyDrugsListGridColumns()}
+                scroll={{ x: 1000, y: 500 }}
+                enableResizingOfColumns={false}
+                data={getCompareFormularyDrugsListGridData()}
+                // pinning columns
+                isPinningEnabled={true}
+                // setting gear 1st column
+                enableSettings={true}
+                // checkbox 2nd column
+                // isCustomCheckboxEnabled={checkbox}
+                // event reference for checkbox (mandotory if checkbox is true)
+                // handleCustomRowSelectionChange={(r) => {
+                //   console.log(r);
+                // }}
+                // customSettingIcon={"NONE"}
+                isRowSelectionEnabled
+                rowSelectionChange={rowSelectionChange}
+                isRowSelectorCheckbox
+              />
+            </DialogPopup>
+          ) : null}
         </div>
       );
     case "VIEW":
@@ -188,7 +282,17 @@ function PureAccordion(props: PureAccordionProps) {
                   : "bg-white cell-font-style"
               }
             >
-              <span>{props.headerData.baseFormulary}</span>
+              <span
+                onClick={() => {
+                  toggleDrugsListGrid(
+                    // `${props.formularyType} - ${data.name}: Base Formulary`,
+                    "Base Formulary",
+                    false
+                  );
+                }}
+              >
+                {props.headerData.baseFormulary}
+              </span>
             </div>
           </div>
           <div
@@ -198,6 +302,48 @@ function PureAccordion(props: PureAccordionProps) {
           >
             <div className="accordion__text">{props.content()}</div>
           </div>
+          {openDrugsList ? (
+            <DialogPopup
+              showCloseIcon={true}
+              positiveActionText="Reject"
+              negativeActionText=""
+              title={drugGridHeaderName}
+              handleClose={toggleDrugsListGrid}
+              handleAction={rejectDrugAction}
+              showActions={true}
+              height="80%"
+              width="80%"
+              open={openDrugsList}
+            >
+              <FrxGridContainer
+                enableSearch={false}
+                enableColumnDrag
+                onSearch={() => {}}
+                fixedColumnKeys={[]}
+                pagintionPosition="topRight"
+                gridName="MEDICARE"
+                isFetchingData={false}
+                columns={getCompareFormularyDrugsListGridColumns()}
+                scroll={{ x: 1000, y: 500 }}
+                enableResizingOfColumns={false}
+                data={getCompareFormularyDrugsListGridData()}
+                // pinning columns
+                isPinningEnabled={true}
+                // setting gear 1st column
+                enableSettings={true}
+                // checkbox 2nd column
+                // isCustomCheckboxEnabled={checkbox}
+                // event reference for checkbox (mandotory if checkbox is true)
+                // handleCustomRowSelectionChange={(r) => {
+                //   console.log(r);
+                // }}
+                // customSettingIcon={"NONE"}
+                isRowSelectionEnabled
+                rowSelectionChange={rowSelectionChange}
+                isRowSelectorCheckbox
+              />
+            </DialogPopup>
+          ) : null}
         </div>
       );
     default:
