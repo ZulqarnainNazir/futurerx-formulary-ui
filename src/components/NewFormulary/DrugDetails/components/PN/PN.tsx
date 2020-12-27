@@ -11,7 +11,7 @@ import { getDrugDetailData } from "../../../../../mocks/DrugGridMock";
 import FrxLoader from "../../../../shared/FrxLoader/FrxLoader";
 import DrugGrid from "../../../DrugDetails/components/DrugGrid";
 import AdvancedSearch from "../../../DrugDetails/components/FormularyConfigure/components/search/AdvancedSearch";
-import { getDrugDetailsPNSummary, getDrugDetailsPNList } from "../../../../../redux/slices/formulary/drugDetails/pn/pnActionCreation";
+import { getDrugDetailsPNSummary, getDrugDetailsPNList,getPNReplaceSrch } from "../../../../../redux/slices/formulary/drugDetails/pn/pnActionCreation";
 import * as pnConstants from "../../../../../api/http-drug-details";
 import getLobCode from "../../../Utils/LobUtils";
 
@@ -22,6 +22,7 @@ function mapDispatchToProps(dispatch) {
   return {
     getDrugDetailsPNSummary: (a) => dispatch(getDrugDetailsPNSummary(a)),
     getDrugDetailsPNList: (a) => dispatch(getDrugDetailsPNList(a)),
+    getPNReplaceSrch: (arg) => dispatch(getPNReplaceSrch(arg)),
   };
 }
 
@@ -46,6 +47,9 @@ class DrugDetailPN extends React.Component<any, any> {
     panelGridValue1: [],
     isNotesOpen: false,
     activeTabIndex: 0,
+    replaceTab:{
+      searchResult:[]
+    },
     columns: null,
     data: [],
     listCount: 0,
@@ -181,6 +185,25 @@ class DrugDetailPN extends React.Component<any, any> {
     });
   }
 
+  getPNReplaceSrch = (searchTxt) => {
+    let apiDetails = {};
+    apiDetails["apiPart"] = pnConstants.GET_PN_DRUGS_REPLACE;
+    apiDetails["pathParams"] = this.props?.formulary_id;
+    apiDetails["keyVals"] = [
+      { key: pnConstants.KEY_ENTITY_ID, value: this.props?.formulary_id },
+      { key: pnConstants.SEARCHKEY, value: searchTxt }
+    ];
+
+    this.props.getPNReplaceSrch(apiDetails).then((json) => {
+      let curRow = json.payload && json.payload.data ? json.payload.data : [];
+      this.setState({
+        replaceTab: {
+          searchResult:curRow
+        },
+      });
+    });
+  }
+
   componentDidMount() {
     // const data = getDrugDetailData();
     const columns = getDrugDetailsColumnPN();
@@ -216,6 +239,11 @@ class DrugDetailPN extends React.Component<any, any> {
   settingFormApplyHandler = () => {
     alert(1);
   };
+
+  handleReplaceSrch = (e) =>{
+    console.log(e)
+    this.getPNReplaceSrch(e)
+  }
 
   render() {
     let dataGrid = <FrxLoader />;
@@ -287,7 +315,7 @@ class DrugDetailPN extends React.Component<any, any> {
           </div>
         </div>
 
-        <PnLimitSettings />
+        <PnLimitSettings options={this.state.replaceTab.searchResult} handleReplaceSrch={this.handleReplaceSrch}/>
 
         <div className="bordered">
           <div className="header space-between pr-10">

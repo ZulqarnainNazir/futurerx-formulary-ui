@@ -11,7 +11,7 @@ import { getDrugDetailData } from "../../../../../mocks/DrugGridMock";
 import FrxLoader from "../../../../shared/FrxLoader/FrxLoader";
 import DrugGrid from "../../../DrugDetails/components/DrugGrid";
 import AdvancedSearch from "../../../DrugDetails/components/FormularyConfigure/components/search/AdvancedSearch";
-import { getDrugDetailsICDSummary, getDrugDetailsICDList } from "../../../../../redux/slices/formulary/drugDetails/icd/icdActionCreation";
+import { getDrugDetailsICDSummary, getDrugDetailsICDList,getICDReplaceSrch } from "../../../../../redux/slices/formulary/drugDetails/icd/icdActionCreation";
 import * as icdConstants from "../../../../../api/http-drug-details";
 import getLobCode from "../../../Utils/LobUtils";
 
@@ -22,6 +22,7 @@ function mapDispatchToProps(dispatch) {
   return {
     getDrugDetailsICDSummary: (a) => dispatch(getDrugDetailsICDSummary(a)),
     getDrugDetailsICDList: (a) => dispatch(getDrugDetailsICDList(a)),
+    getICDReplaceSrch: (arg) => dispatch(getICDReplaceSrch(arg)),
   };
 }
 
@@ -48,6 +49,9 @@ class DrugDetailICD extends React.Component<any, any> {
     activeTabIndex: 0,
     columns: null,
     data: [],
+    replaceTab:{
+      searchResult:[]
+    },
     listCount: 0,
     selectedDrugs: Array(),
     drugData: Array(),
@@ -153,6 +157,25 @@ class DrugDetailICD extends React.Component<any, any> {
     });
   }
 
+  getICDReplaceSrch = (searchTxt) => {
+    let apiDetails = {};
+    apiDetails["apiPart"] = icdConstants.GET_ICD_DRUGS_REPLACE;
+    apiDetails["pathParams"] = this.props?.formulary_id;
+    apiDetails["keyVals"] = [
+      { key: icdConstants.KEY_ENTITY_ID, value: this.props?.formulary_id },
+      { key: icdConstants.SEARCHKEY, value: searchTxt }
+    ];
+
+    this.props.getICDReplaceSrch(apiDetails).then((json) => {
+      let curRow = json.payload && json.payload.data ? json.payload.data : [];
+      this.setState({
+        replaceTab: {
+          searchResult:curRow
+        },
+      });
+    });
+  }
+
   componentDidMount() {
     const columns = getDrugDetailsColumnICD();
     this.setState({
@@ -217,6 +240,12 @@ class DrugDetailICD extends React.Component<any, any> {
   settingFormApplyHandler = () => {
     alert(1);
   };
+
+  handleReplaceSrch = (e) =>{
+    console.log(e)
+    this.getICDReplaceSrch(e)
+  }
+
 
   onApplyFilterHandler = (filters) => {
     console.log("------The FIlters = ", filters)
@@ -308,7 +337,7 @@ class DrugDetailICD extends React.Component<any, any> {
           </div>
         </div>
 
-        <IcdLimitSettings />
+        <IcdLimitSettings options={this.state.replaceTab.searchResult} handleReplaceSrch={this.handleReplaceSrch}/>
 
         <div className="bordered">
           <div className="header space-between pr-10">

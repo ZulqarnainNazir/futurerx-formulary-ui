@@ -81,14 +81,17 @@ export const GET_GL_CRITERIA_LIST = "api/1/criteria-list-gl/"
 // ICD TAB
 export const GET_DRUG_SUMMARY_ICD = "api/1/formulary-drug-summary-icdl/"
 export const GET_ICD_DRUGS = "api/1/formulary-drugs-icdl/";
+export const GET_ICD_DRUGS_REPLACE = "api/1/icds/"
 
 // PN TAB
 export const GET_DRUG_SUMMARY_PN = "api/1/formulary-drug-summary-phnw/";
 export const GET_PN_DRUGS = "api/1/formulary-drugs-phnw/";
+export const GET_PN_DRUGS_REPLACE = "api/1/pharmacy-networks/";
 
 // PT TAB
 export const GET_DRUG_SUMMARY_PT = "api/1/formulary-drug-summary-prtx/";
 export const GET_PT_DRUGS = "api/1/formulary-drugs-prtx/";
+export const GET_PT_DRUGS_REPLACE = "api/1/prescriber-taxonomies";
 
 // POS TAB
 export const GET_DRUG_SUMMARY_POS = "api/1/formulary-drug-summary-pos/";
@@ -111,6 +114,7 @@ export const APPLY_OTHER_DRUGS = "api/1/apply-formulary-drug-edoth/";
 export const KEY_ENTITY_ID = "entity_id";
 export const KEY_INDEX = "index";
 export const KEY_LIMIT = "limit";
+export const SEARCHKEY = "search_value";
 
 export const TYPE_REPLACE = "replace";
 export const TYPE_REMOVE = "remove";

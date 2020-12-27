@@ -39,8 +39,10 @@ class PrRemove extends React.Component<any,any> {
   render() {
     const { selectedRowKeys } = this.state;
     const rowSelection = {
-      selectedRowKeys,
-      onChange: this.onSelectChange,
+      onChange: (selectedRowKeys, selectedRows) => {
+        this.setState({ selectedRowKeys });
+        this.props.handleRemoveChecked(selectedRows);
+      },
     };
     const hasSelected = selectedRowKeys.length > 0;
     return (
@@ -53,10 +55,15 @@ class PrRemove extends React.Component<any,any> {
         </div>
         <div className="inner-container">
           <select name="cover" onChange={this.getSelectedVal}>
-            <option value="true" selected>Covered</option>
-            <option value="">NonCovered</option>
+            <option value="covered" selected>Covered</option>
+            <option value="non-covered">NonCovered</option>
           </select>
-        <Table rowSelection={rowSelection} columns={columns} dataSource={this.state.dataToRemove} pagination={false} />
+        <Table 
+        rowSelection={rowSelection} 
+        columns={columns} 
+        dataSource={this.state.dataToRemove} 
+        pagination={false} 
+        />
         </div>
         <Button label="Apply" onClick={this.props.showGridHandler} />
       </div>

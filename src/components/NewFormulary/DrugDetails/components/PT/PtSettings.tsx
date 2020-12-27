@@ -2,6 +2,7 @@ import React from 'react'
 import DropDown from '../../../../shared/Frx-components/dropdown/DropDown';
 import PanelHeader from '../../../../shared/Frx-components/panel-header/PanelHeader';
 import StatusContentFormPanel from '../common/StatusContentFormPanel/StatusContentFormPanel';
+import Tags from '../Tags'
 
 import './PT.scss';
 
@@ -13,51 +14,58 @@ const AddIcon = () => (
   </svg>
 );
 
-const PrLimitSettings = () => {
-  return (
-    <div className="pt-limit-settings bordered mb-10">
-      <PanelHeader title="prescriber taxonomy settings" tooltip="prescriber taxonomy settings" />
-      
-      <div className="inner-container">
-        <StatusContentFormPanel title="Prescriber Taxonomy" type="covered">
-              <div className="pn-limit-settings__form">            
-                <div className="input-field-group">
-                  <div className="input-field-group__label">Prescriber Taxonomy:</div>
-                
-                  <div className="input-field-group__dropdown-field">
-                    <DropDown
-                      className=""
-                      placeholder="Select"
-                      options={["inclusive of", "exclusive of"]}
-                    />
-                  </div>
-                </div>
-              </div>
-          </StatusContentFormPanel>
-          
-          <StatusContentFormPanel title="Prescriber Taxonomy" type="not-covered">
-              <div className="pn-limit-settings__form">            
-                <div className="input-field-group">
-                  <div className="input-field-group__label">Prescriber Taxonomy:</div>
-                
-                  <div className="input-field-group__dropdown-field">
-                    <DropDown
-                      className=""
-                      placeholder="Select"
-                      options={["inclusive of", "exclusive of"]}
-                    />
-                  </div>
-                </div>
-              </div>
-          </StatusContentFormPanel>
+class PrLimitSettings extends React.Component<any,any> {
+  
+  handleReplaceSrch = (val) => {
+    this.props.handleReplaceSrch(val)
+  }
+  render(){
+    return (
+      <div className="pt-limit-settings bordered mb-10">
+        <PanelHeader title="prescriber taxonomy settings" tooltip="prescriber taxonomy settings" />
         
-        <div className="pt-limit-settings__add-new-form-action">
-          <AddIcon/>
-          <span className="pt-limit-settings__add-new-form-action-text">Add Prescriber Taxonomy Criteria</span>
+        <div className="inner-container">
+          <StatusContentFormPanel title="Prescriber Taxonomy" type="covered">
+                <div className="pn-limit-settings__form">            
+                  <div className="input-field-group">
+                    <div className="input-field-group__label">Prescriber Taxonomy:</div>
+                  
+                    <div className="input-field-group__dropdown-field">
+                      {/* <DropDown
+                        className=""
+                        placeholder="Select"
+                        options={["inclusive of", "exclusive of"]}
+                      /> */}
+                      <Tags options={this.props.options} handleReplaceSrch={this.handleReplaceSrch}/>
+                    </div>
+                  </div>
+                </div>
+            </StatusContentFormPanel>
+            
+            {/* <StatusContentFormPanel title="Prescriber Taxonomy" type="not-covered">
+                <div className="pn-limit-settings__form">            
+                  <div className="input-field-group">
+                    <div className="input-field-group__label">Prescriber Taxonomy:</div>
+                  
+                    <div className="input-field-group__dropdown-field">
+                      <DropDown
+                        className=""
+                        placeholder="Select"
+                        options={["inclusive of", "exclusive of"]}
+                      />
+                    </div>
+                  </div>
+                </div>
+            </StatusContentFormPanel> */}
+          
+          {/* <div className="pt-limit-settings__add-new-form-action">
+            <AddIcon/>
+            <span className="pt-limit-settings__add-new-form-action-text">Add Prescriber Taxonomy Criteria</span>
+          </div> */}
         </div>
       </div>
-    </div>
-  )
+    )
+  }
 }
 
 export default PrLimitSettings

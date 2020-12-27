@@ -27,3 +27,13 @@ export const getPTDrugList = createAsyncThunk(
     return fetchRequest(POST_URL, requestHeaders);
   }
 );
+
+export const getPTReplaceSrch = createAsyncThunk(
+  "drug_details/PT_replace_srch",
+  async (apiDetails: any) => {
+    let GET_URL = buildUrl({ apiDetails });
+    const requestHeaders = getHeaders();
+    return fetchRequest(GET_URL, requestHeaders);
+  }
+);
+

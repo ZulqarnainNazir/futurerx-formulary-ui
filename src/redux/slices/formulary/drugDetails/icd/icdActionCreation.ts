@@ -27,3 +27,12 @@ export const getDrugDetailsICDList = createAsyncThunk(
     return fetchRequest(POST_URL, requestHeaders);
   }
 );
+
+export const getICDReplaceSrch = createAsyncThunk(
+  "drug_details/ICD_replace_srch",
+  async (apiDetails: any) => {
+    let GET_URL = buildUrl({ apiDetails });
+    const requestHeaders = getHeaders();
+    return fetchRequest(GET_URL, requestHeaders);
+  }
+);

@@ -56,4 +56,10 @@
       }
     }
   }
+  .input-field-group__dropdown-field{
+    width: 275px;
+    .MuiAutocomplete-root{
+      width: 275px !important;
+    }
+  }
 }

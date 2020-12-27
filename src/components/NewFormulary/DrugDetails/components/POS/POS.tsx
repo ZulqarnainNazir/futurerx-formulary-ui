@@ -15,14 +15,14 @@ import {
   getDrugDetailsPOSSummary,
   getDrugDetailsPOSSettings,
   getDrugDetailsPOSGridData,
-  getDrugDetailsRemoveTab
+  getDrugDetailsRemoveTab,
 } from "../../../../../redux/slices/formulary/drugDetails/pos/posActionCreation";
 import * as posConstants from "../../../../../api/http-drug-details";
 import getLobCode from "../../../Utils/LobUtils";
 
 import PosSettings from "./PosSettings";
 import FrxGridContainer from "../../../../shared/FrxGrid/FrxGridContainer";
-import PosRemove from './PosRemove'
+import PosRemove from "./PosRemove";
 
 function mapDispatchToProps(dispatch) {
   return {
@@ -44,7 +44,7 @@ const defaultListPayload = {
   index: 0,
   limit: 10,
   filter: [],
-}
+};
 
 class DrugDetailPOS extends React.Component<any, any> {
   state = {
@@ -53,13 +53,17 @@ class DrugDetailPOS extends React.Component<any, any> {
     panelTitleAlignment1: ["center", "center", "center", "center"],
     panelGridValue1: [],
     posSettings: [],
-    removeTabsSettings:[],
+    removeTabsData: [],
     posSettingsStatus: {
       type: "covered",
       covered: true,
     },
+    posRemoveSettingsStatus: {
+      type: "covered",
+      covered: true,
+    },
+    posCheckedList: [],
     listCount: 0,
-
     isNotesOpen: false,
     activeTabIndex: 0,
     columns: getDrugDetailsColumnPOS(),
@@ -78,13 +82,13 @@ class DrugDetailPOS extends React.Component<any, any> {
     index: 0,
     limit: 10,
     filter: [],
-    is_covered: this.state.posSettingsStatus.covered
-  }
+    is_covered: this.state.posSettingsStatus.covered,
+  };
 
   componentDidMount() {
     this.getPOSSummary();
     this.getPOSSettings();
-    this.getPOSRemoveSettings(true)
+    this.getPOSRemoveSettings(true);
   }
   advanceSearchClickHandler = (event) => {
     event.stopPropagation();
@@ -128,15 +132,15 @@ class DrugDetailPOS extends React.Component<any, any> {
     });
   };
 
-  getPOSRemoveSettings = (e) => {
-    this.listPayload['is_covered'] = Boolean(e)
+  getPOSRemoveSettings = (isCovered) => {
+    this.listPayload["is_covered"] = isCovered;
     let apiDetails = {};
     apiDetails["apiPart"] = posConstants.GET_POS_DRUG_REMOVE_TAB;
     apiDetails["pathParams"] = this.props?.formulary_id;
     apiDetails["keyVals"] = [
       { key: posConstants.KEY_ENTITY_ID, value: this.props?.formulary_id },
     ];
-    apiDetails['messageBody'] = this.listPayload;
+    apiDetails["messageBody"] = this.listPayload;
 
     this.props.getDrugDetailsRemoveTab(apiDetails).then((json) => {
       let tmpData =
@@ -154,17 +158,22 @@ class DrugDetailPOS extends React.Component<any, any> {
       console.log("The PR Rows = ", rows);
 
       this.setState({
-        removeTabsSettings: rows,
+        removeTabsData: rows,
       });
     });
   };
 
-  getPOSDrugsList = ({index = 0, limit = 10, listPayload = {}} = {}) => {
+  getPOSDrugsList = ({ index = 0, limit = 10, listPayload = {} } = {}) => {
     let apiDetails = {};
-    apiDetails['apiPart'] = posConstants.GET_POS_DRUGS;
-    apiDetails['pathParams'] = this.props?.formulary_id + "/" + getLobCode(this.props.formulary_lob_id);
-    apiDetails['keyVals'] = [{ key: posConstants.KEY_ENTITY_ID, value: this.props?.formulary_id }, { key: posConstants.KEY_INDEX, value: index }, { key: posConstants.KEY_LIMIT, value: limit }];
-    apiDetails['messageBody'] = listPayload;
+    apiDetails["apiPart"] = posConstants.GET_POS_DRUGS;
+    apiDetails["pathParams"] =
+      this.props?.formulary_id + "/" + getLobCode(this.props.formulary_lob_id);
+    apiDetails["keyVals"] = [
+      { key: posConstants.KEY_ENTITY_ID, value: this.props?.formulary_id },
+      { key: posConstants.KEY_INDEX, value: index },
+      { key: posConstants.KEY_LIMIT, value: limit },
+    ];
+    apiDetails["messageBody"] = listPayload;
 
     let listCount = 0;
     this.props.getDrugDetailsPOSGridData(apiDetails).then((json) => {
@@ -179,25 +188,61 @@ class DrugDetailPOS extends React.Component<any, any> {
         gridItem["id"] = count;
         gridItem["key"] = count;
         gridItem["placeOfService"] = element.is_pos ? "" + element.is_pos : "";
-        gridItem["coveredPlaceOfService"] = element.covered_place_of_services ? "" + element.covered_place_of_services : "";
-        gridItem["notCoveredPlaceOfService"] = element.not_covered_place_of_services ? "" + element.not_covered_place_of_services : "";
+        gridItem["coveredPlaceOfService"] = element.covered_place_of_services
+          ? "" + element.covered_place_of_services
+          : "";
+        gridItem[
+          "notCoveredPlaceOfService"
+        ] = element.not_covered_place_of_services
+          ? "" + element.not_covered_place_of_services
+          : "";
         gridItem["tier"] = element.tier_value ? "" + element.tier_value : "";
-        gridItem["labelName"] = element.drug_label_name ? "" + element.drug_label_name : "";
-        gridItem["ddid"] = element.drug_descriptor_identifier ? "" + element.drug_descriptor_identifier : "";
-        gridItem["gpi"] = element.generic_product_identifier ? "" + element.generic_product_identifier : "";
-        gridItem["coverAgeMax"] = element.covered_max_ages ? "" + element.covered_max_ages : "";
-        gridItem["notCoverMin"] = element.not_covered_min_operators ? "" + element.not_covered_min_operators : "";
-        gridItem["notCoverAgeMin"] = element.not_covered_min_ages ? "" + element.not_covered_min_ages : "";
-        gridItem["notCoverMax"] = element.not_covered_max_operators ? "" + element.not_covered_max_operators : "";
-        gridItem["notCoverAgeMax"] = element.not_covered_max_ages ? "" + element.not_covered_max_ages : "";
+        gridItem["labelName"] = element.drug_label_name
+          ? "" + element.drug_label_name
+          : "";
+        gridItem["ddid"] = element.drug_descriptor_identifier
+          ? "" + element.drug_descriptor_identifier
+          : "";
+        gridItem["gpi"] = element.generic_product_identifier
+          ? "" + element.generic_product_identifier
+          : "";
+        gridItem["coverAgeMax"] = element.covered_max_ages
+          ? "" + element.covered_max_ages
+          : "";
+        gridItem["notCoverMin"] = element.not_covered_min_operators
+          ? "" + element.not_covered_min_operators
+          : "";
+        gridItem["notCoverAgeMin"] = element.not_covered_min_ages
+          ? "" + element.not_covered_min_ages
+          : "";
+        gridItem["notCoverMax"] = element.not_covered_max_operators
+          ? "" + element.not_covered_max_operators
+          : "";
+        gridItem["notCoverAgeMax"] = element.not_covered_max_ages
+          ? "" + element.not_covered_max_ages
+          : "";
         gridItem["tier"] = element.tier_value ? "" + element.tier_value : "";
-        gridItem["trademark"] = element.trademark_code ? "" + element.trademark_code : "";
-        gridItem["databaseCategory"] = element.database_category ? "" + element.database_category : "";
-        gridItem["databaseClass"] = element.database_class ? "" + element.database_class : "";
-        gridItem["createdBy"] = element.created_by ? "" + element.created_by : "";
-        gridItem["createdOn"] = element.created_date ? "" + element.created_date : "";
-        gridItem["modifiedBy"] = element.modified_by ? "" + element.modified_by : "";
-        gridItem["modifiedOn"] = element.modified_date ? "" + element.modified_date : "";
+        gridItem["trademark"] = element.trademark_code
+          ? "" + element.trademark_code
+          : "";
+        gridItem["databaseCategory"] = element.database_category
+          ? "" + element.database_category
+          : "";
+        gridItem["databaseClass"] = element.database_class
+          ? "" + element.database_class
+          : "";
+        gridItem["createdBy"] = element.created_by
+          ? "" + element.created_by
+          : "";
+        gridItem["createdOn"] = element.created_date
+          ? "" + element.created_date
+          : "";
+        gridItem["modifiedBy"] = element.modified_by
+          ? "" + element.modified_by
+          : "";
+        gridItem["modifiedOn"] = element.modified_date
+          ? "" + element.modified_date
+          : "";
         gridItem["md5_id"] = element.md5_id ? "" + element.md5_id : "";
         count++;
         return gridItem;
@@ -209,7 +254,7 @@ class DrugDetailPOS extends React.Component<any, any> {
         showGrid: true,
       });
     });
-  }
+  };
 
   getPOSSettings = () => {
     let apiDetails = {};
@@ -228,20 +273,31 @@ class DrugDetailPOS extends React.Component<any, any> {
   };
 
   onPageSize = (pageSize) => {
-    this.listPayload.limit = pageSize
-    this.getPOSDrugsList({ limit: this.listPayload.limit, listPayload: this.listPayload });
-  }
+    this.listPayload.limit = pageSize;
+    this.getPOSDrugsList({
+      limit: this.listPayload.limit,
+      listPayload: this.listPayload,
+    });
+  };
 
   onGridPageChangeHandler = (pageNumber: any) => {
     this.listPayload.index = (pageNumber - 1) * this.listPayload.limit;
-    this.getPOSDrugsList({ index: this.listPayload.index, limit: this.listPayload.limit, listPayload: this.listPayload });
-  }
+    this.getPOSDrugsList({
+      index: this.listPayload.index,
+      limit: this.listPayload.limit,
+      listPayload: this.listPayload,
+    });
+  };
 
   onClearFilterHandler = () => {
     this.listPayload.index = 0;
     this.listPayload.limit = 10;
-    this.getPOSDrugsList({ index: defaultListPayload.index, limit: defaultListPayload.limit, listPayload: this.listPayload });
-  }
+    this.getPOSDrugsList({
+      index: defaultListPayload.index,
+      limit: defaultListPayload.limit,
+      listPayload: this.listPayload,
+    });
+  };
 
   handleStatus = (key: string) => {
     const COVERED = "covered";
@@ -309,12 +365,32 @@ class DrugDetailPOS extends React.Component<any, any> {
     alert(1);
   };
 
-  handleChangeEvent = (e) =>{
-    this.getPOSRemoveSettings(e)
-  }
+  handleChangeEvent = (key: string) => {
+    const COVERED = "covered";
+    const isCovered: boolean = key === COVERED ? true : false;
+    let posRemoveSettingsStatus = {
+      type: key,
+      covered: isCovered,
+    };
+
+    this.setState({ posRemoveSettingsStatus, showGrid: false });
+    this.getPOSRemoveSettings(isCovered);
+  };
+
+  handleRemoveChecked = (selectedRows) => {
+    this.setState(
+      {
+        posCheckedList: selectedRows,
+        showGrid: false,
+      },
+      () => console.log("ROW CHANGE UPDATED STATE: ", this.state.posCheckedList)
+    );
+  };
 
   showGridHandler = () => {
     this.getPOSDrugsList(this.listPayload);
+    console.log(this.state.posRemoveSettingsStatus)
+    console.log(this.state.posCheckedList)
   };
 
   render() {
@@ -365,18 +441,27 @@ class DrugDetailPOS extends React.Component<any, any> {
           </div>
         </div>
 
-        {(this.state.activeTabIndex==0 || this.state.activeTabIndex==1)&&<PosSettings
-          posSettingsServies={{ posSettings, posSettingsStatus }}
-          handleStatus={this.handleStatus}
-          serviceSettingsChecked={this.serviceSettingsChecked}
-          selectAllHandler={{
-            isSelectAll: isSelectAll,
-            handleSelectAll: this.handleSelectAll,
-          }}
-          showGridHandler={this.showGridHandler}
-        />}
+        {(this.state.activeTabIndex == 0 || this.state.activeTabIndex == 1) && (
+          <PosSettings
+            posSettingsServies={{ posSettings, posSettingsStatus }}
+            handleStatus={this.handleStatus}
+            serviceSettingsChecked={this.serviceSettingsChecked}
+            selectAllHandler={{
+              isSelectAll: isSelectAll,
+              handleSelectAll: this.handleSelectAll,
+            }}
+            showGridHandler={this.showGridHandler}
+          />
+        )}
 
-        {this.state.activeTabIndex==2&&<PosRemove data={this.state.removeTabsSettings} showGridHandler={this.showGridHandler} handleChangeEvent={this.handleChangeEvent}/>}
+        {this.state.activeTabIndex == 2 && (
+          <PosRemove
+            data={this.state.removeTabsData}
+            showGridHandler={this.showGridHandler}
+            handleChangeEvent={this.handleChangeEvent}
+            handleRemoveChecked={this.handleRemoveChecked}
+          />
+        )}
 
         {showGrid ? (
           <div className="bordered">
@@ -418,7 +503,9 @@ class DrugDetailPOS extends React.Component<any, any> {
                   enableResizingOfColumns
                   data={this.state.data}
                   getPerPageItemSize={this.onPageSize}
-                  selectedCurrentPage={(this.listPayload.index/this.listPayload.limit + 1)}
+                  selectedCurrentPage={
+                    this.listPayload.index / this.listPayload.limit + 1
+                  }
                   pageSize={this.listPayload.limit}
                   onGridPageChangeHandler={this.onGridPageChangeHandler}
                   totalRowsCount={this.state.listCount}
