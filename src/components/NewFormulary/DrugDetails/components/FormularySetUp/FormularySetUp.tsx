@@ -461,6 +461,24 @@ class FormularySetUp extends React.Component<any, any> {
     });
   };
 
+  deleteCustomTier = (tierID) => {
+    console.log(" DELETE : " + tierID);
+    const updatedTiers: any = [...this.state.tiers];
+    // console.log(updatedTiers);
+    const ind = updatedTiers.findIndex((el) => el.tier_name === tierID);
+    const getObj = { ...updatedTiers[ind] };
+    // console.log(ind, getObj);
+    //getObj.tier_label_name = e.currentTarget.value;
+    getObj.id_tier_label = null;
+    getObj.tier_label_name = null;
+    getObj.is_custom = false;
+
+    updatedTiers[ind] = getObj;
+    this.setState({
+      tiers: updatedTiers,
+    });
+  };
+
   setDefaultClassificationHandler = (id) => {
     let newObj: any = { ...this.state.generalInformation };
     newObj.classification_system = parseInt(id);
@@ -624,6 +642,7 @@ class FormularySetUp extends React.Component<any, any> {
                   selectTier={this.selectTierHandler}
                   changeTierValue={this.changeTierValueHandler}
                   customTierChange={this.handleCustomTierChange}
+                  deleteCustomTier={this.deleteCustomTier}
                 />
                 {this.state.generalInformation.type !== "Commercial" ? (
                   <SupplementalModels
