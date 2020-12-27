@@ -90,10 +90,10 @@ class FormularySetUp extends React.Component<any, any> {
   }
 
   manageFormularyType(type: number, id: number) {
-     console.log(" Manage - TYPE : " + type + " ID : " + id);
-
+    console.log(" Manage - TYPE : " + type + " ID : " + id);
+    let defaultType = 4;
     if (type === -1) {
-      this.props.fetchGeneralOptions({ type: 1, id: -1 });
+      this.props.fetchGeneralOptions({ type: defaultType, id: -1 });
       return;
     }
 
@@ -102,11 +102,11 @@ class FormularySetUp extends React.Component<any, any> {
     this.props.fetchTierOptions({ type: type, id: id });
 
     if (type === 1) {
-      // MRC... 
+      // MRC...
       this.props.fetchMedicareOptions({ type: type, id: id });
       this.props.fetchSupplementalOptions({ type: type, id: id });
     } else if (type === 2) {
-      // MMP... 
+      // MMP...
       this.props.fetchStatesOptions(type);
       this.props.fetchMedicareOptions({ type: type, id: id });
       this.props.fetchSupplementalOptions({ type: type, id: id });
@@ -117,7 +117,7 @@ class FormularySetUp extends React.Component<any, any> {
       // TODO ... MEDICADE...
       this.props.fetchStatesOptions(0);
     } else if (type === 5) {
-      // EXC... 
+      // EXC...
     } else if (type === 6) {
       // COMMERCIAL...
     }
@@ -680,7 +680,6 @@ class FormularySetUp extends React.Component<any, any> {
                   label="Save & Continue"
                   onClick={() => this.onSave(true)}
                 />
-                <Button label="Continue" onClick={() => this.onContinue()} />
               </Box>
             </div>
           </>
