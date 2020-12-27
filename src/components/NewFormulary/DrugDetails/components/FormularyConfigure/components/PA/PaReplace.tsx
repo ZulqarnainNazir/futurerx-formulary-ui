@@ -11,7 +11,9 @@ import {
 } from "../../../../../../../mocks/formulary/mock-data";
 
 import showMessage from "../../../../../Utils/Toast";
-import AdvancedSearch from "./../search/AdvancedSearch";
+//import AdvancedSearch from './../search/AdvancedSearch';
+import AdvanceSearchContainer from "../../../../../NewAdvanceSearch/AdvanceSearchContainer";
+import { setAdvancedSearch } from "../../../../../../../redux/slices/formulary/advancedSearch/advancedSearchSlice";
 import FrxDrugGridContainer from "../../../../../../shared/FrxGrid/FrxDrugGridContainer";
 import { PaColumns } from "../../../../../../../utils/grid/columns";
 import DropDownMap from "../../../../../../shared/Frx-components/dropdown/DropDownMap";
@@ -20,7 +22,7 @@ import { Row, Col, Space } from "antd";
 import RadioButton from "../../../../../../shared/Frx-components/radio-button/RadioButton";
 import Button from "../../../../../../shared/Frx-components/button/Button";
 import * as constants from "../../../../../../../api/http-commons";
-
+import { ToastContainer } from "react-toastify";
 import "../Tier.scss";
 import "./PA.scss";
 import {
@@ -37,7 +39,7 @@ import {
 import Radio from "@material-ui/core/Radio";
 import RadioGroup from "@material-ui/core/RadioGroup";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
-import AdvanceSearchContainer from "../../../../../NewAdvanceSearch/AdvanceSearchContainer";
+// import AdvanceSearchContainer from "../../../../../NewAdvanceSearch/AdvanceSearchContainer";
 
 function mapDispatchToProps(dispatch) {
   return {
@@ -51,6 +53,7 @@ function mapDispatchToProps(dispatch) {
     postApplyFormularyDrugPA: (a) => dispatch(postApplyFormularyDrugPA(a)),
     getLobFormularies: (a) => dispatch(getLobFormularies(a)),
     postRelatedFormularyDrugPA: (a) => dispatch(postRelatedFormularyDrugPA(a)),
+    setAdvancedSearch: (a) => dispatch(setAdvancedSearch(a)),
   };
 }
 
@@ -102,8 +105,34 @@ class PaReplace extends React.Component<any, any> {
   openTierGridContainer = () => {
     this.state.drugData = [];
     this.state.drugGridData = [];
-    this.setState({ tierGridContainer: true });
+
     this.populateGridData();
+  };
+
+  componentWillReceiveProps(nextProps) {
+    //this.initialize(nextProps);
+    if (nextProps.advancedSearchBody && nextProps.populateGrid) {
+      this.populateGridData(nextProps.advancedSearchBody);
+      let payload = {
+        advancedSearchBody: nextProps.advancedSearchBody,
+        populateGrid: false,
+        closeDialog: nextProps.closeDialog,
+        listItemStatus: nextProps.listItemStatus,
+      };
+      if (nextProps.closeDialog) {
+        this.state.isSearchOpen = false;
+        payload["closeDialog"] = false;
+      }
+      this.props.setAdvancedSearch(payload);
+    }
+  }
+
+  advanceSearchClickHandler = (event) => {
+    event.stopPropagation();
+    this.setState({ isSearchOpen: !this.state.isSearchOpen });
+  };
+  advanceSearchClosekHandler = () => {
+    this.setState({ isSearchOpen: !this.state.isSearchOpen });
   };
 
   handleSave = () => {
@@ -132,6 +161,7 @@ class PaReplace extends React.Component<any, any> {
         this.state.selectedPaType
       );
       apiDetails["messageBody"]["search_key"] = "";
+
       //apiDetails['messageBody']['id_tier'] = this.state.selectedTier;
 
       const saveData = this.props
@@ -157,13 +187,6 @@ class PaReplace extends React.Component<any, any> {
     }
   };
 
-  advanceSearchClickHandler = (event) => {
-    event.stopPropagation();
-    this.setState({ isSearchOpen: !this.state.isSearchOpen });
-  };
-  advanceSearchClosekHandler = () => {
-    this.setState({ isSearchOpen: !this.state.isSearchOpen });
-  };
   dropDownSelectHandlerGroupDescription = (value, event) => {
     let tmp_index = event.key;
     let tmp_value = event.value;
@@ -250,17 +273,36 @@ class PaReplace extends React.Component<any, any> {
     ];
     apiDetails["messageBody"] = {};
 
-    apiDetails["messageBody"][
-      "base_pa_group_description_id"
-    ] = this.state.selectedGroupDescription;
-    apiDetails["messageBody"]["id_pa_type"] = this.state.selectedPaType;
-
     if (searchBody) {
       apiDetails["messageBody"] = Object.assign(
         apiDetails["messageBody"],
         searchBody
       );
     }
+    debugger;
+    if (this.state.selectedGroupDescription === null) {
+      showMessage("Group Description is required", "info");
+      return;
+    }
+
+    if (this.state.selectedPaType === null) {
+      showMessage("PA Type is required", "info");
+      return;
+    }
+
+    if (
+      this.state.showPaConfiguration &&
+      this.state.selectedLobFormulary === null
+    ) {
+      showMessage("Related Formulary is required", "info");
+      return;
+    }
+
+    apiDetails["messageBody"][
+      "base_pa_group_description_id"
+    ] = this.state.selectedGroupDescription;
+    apiDetails["messageBody"]["id_pa_type"] = this.state.selectedPaType;
+
     if (this.state.showPaConfiguration) {
       apiDetails["pathParams"] =
         this.props?.formulary_id +
@@ -279,6 +321,8 @@ class PaReplace extends React.Component<any, any> {
         .postFormularyDrugPA(apiDetails)
         .then((json) => this.loadGridData(json));
     }
+
+    this.setState({ tierGridContainer: true });
   };
 
   loadGridData(json: any) {
@@ -505,6 +549,7 @@ class PaReplace extends React.Component<any, any> {
                     className="Button normal"
                     label="Advance Search"
                     onClick={this.advanceSearchClickHandler}
+                    disabled={this.props.configureSwitch}
                   />
                   <Button label="Save" onClick={this.handleSave} />
                 </div>
@@ -535,15 +580,16 @@ class PaReplace extends React.Component<any, any> {
               </div>
             </div>
             {this.state.isSearchOpen ? (
-              <AdvancedSearch
+              <AdvanceSearchContainer
                 {...searchProps}
-                category="Grievances"
                 openPopup={this.state.isSearchOpen}
                 onClose={this.advanceSearchClosekHandler}
+                isAdvanceSearch={true}
               />
             ) : null}
           </div>
         )}
+        <ToastContainer />
       </>
     );
   }
