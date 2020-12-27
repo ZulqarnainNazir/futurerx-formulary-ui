@@ -2,6 +2,7 @@ import React from 'react'
 import DropDown from '../../../../shared/Frx-components/dropdown/DropDown';
 import PanelHeader from '../../../../shared/Frx-components/panel-header/PanelHeader';
 import StatusContentFormPanel from '../common/StatusContentFormPanel/StatusContentFormPanel';
+import Button from "../../../../shared/Frx-components/button/Button";
 import Tags from '../Tags'
 
 import './PN.scss';
@@ -19,12 +20,13 @@ class PnLimitSettings extends React.Component<any, any>{
     this.props.handleReplaceSrch(val)
   }
   render() {
+    const {showGridHandler, handleStatus,pnSettingsStatus} = this.props
     return (
       <div className="pn-limit-settings bordered mb-10">
         <PanelHeader title="pharmacy network settings" tooltip="pharmacy network settings" />
 
         <div className="inner-container">
-          <StatusContentFormPanel title="Pharmacy Network" type="covered">
+          <StatusContentFormPanel title="Pharmacy Network" type={pnSettingsStatus.type} handleStatus={handleStatus}>
             <div className="pn-limit-settings__form">
               <div className="input-field-group">
                 <div className="input-field-group__label">Pharmacy Network:</div>
@@ -62,6 +64,7 @@ class PnLimitSettings extends React.Component<any, any>{
           <span className="pn-limit-settings__add-new-form-action-text">Add Pharmacy Network Criteria</span>
         </div> */}
         </div>
+        <Button label="Apply" onClick={showGridHandler} />
       </div>
     )
   }

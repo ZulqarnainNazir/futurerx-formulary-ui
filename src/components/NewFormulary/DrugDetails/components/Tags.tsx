@@ -12,13 +12,11 @@ const checkedIcon = <CheckBoxIcon fontSize="small" />;
 
 export default function CheckboxesTags(props:any) {
   const onchangeHandler = (event,value) => {
-    console.log(value)
-    //props.handleReplaceSrch(e.target.value)
+    props.handleReplaceSrch(value)
   }
 
   //to select input tags
   const onInputChange = (e, value)=>{
-    console.log(value)
     props.handleReplaceSrch(value)
   }
   

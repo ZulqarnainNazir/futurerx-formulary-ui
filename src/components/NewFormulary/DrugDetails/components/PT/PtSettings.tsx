@@ -1,4 +1,5 @@
 import React from 'react'
+import Button from "../../../../shared/Frx-components/button/Button";
 import DropDown from '../../../../shared/Frx-components/dropdown/DropDown';
 import PanelHeader from '../../../../shared/Frx-components/panel-header/PanelHeader';
 import StatusContentFormPanel from '../common/StatusContentFormPanel/StatusContentFormPanel';
@@ -20,12 +21,13 @@ class PrLimitSettings extends React.Component<any,any> {
     this.props.handleReplaceSrch(val)
   }
   render(){
+    const {showGridHandler, handleStatus, ptSettingsStatus} = this.props
     return (
       <div className="pt-limit-settings bordered mb-10">
         <PanelHeader title="prescriber taxonomy settings" tooltip="prescriber taxonomy settings" />
         
         <div className="inner-container">
-          <StatusContentFormPanel title="Prescriber Taxonomy" type="covered">
+          <StatusContentFormPanel title="Prescriber Taxonomy" type={ptSettingsStatus.type} handleStatus={handleStatus}>
                 <div className="pn-limit-settings__form">            
                   <div className="input-field-group">
                     <div className="input-field-group__label">Prescriber Taxonomy:</div>
@@ -63,6 +65,7 @@ class PrLimitSettings extends React.Component<any,any> {
             <span className="pt-limit-settings__add-new-form-action-text">Add Prescriber Taxonomy Criteria</span>
           </div> */}
         </div>
+        <Button label="Apply" onClick={showGridHandler} />
       </div>
     )
   }
