@@ -4,6 +4,7 @@ import {
   getPTDrugList,
   postPTCriteriaList,
   postRemovePTDrug,
+  postReplacePTDrug,
 } from "./ptActionCreation";
 import {
   getPTSummaryFulfilled,
@@ -82,6 +83,23 @@ export const ptRemoveDrugSlice = createSlice({
       postReplaceDrugFulfilled(state, action);
     }),
     builder.addCase(postRemovePTDrug.rejected, (state, action) => {
+      postReplaceDrugRejected(state, action);
+    })
+  ),
+});
+
+export const ptReplaceDrugSlice = createSlice({
+  name: "ptReplaceDrug",
+  initialState: ptState,
+  reducers: {},
+  extraReducers: (builder) => (
+    builder.addCase(postReplacePTDrug.pending, (state, action) => {
+      state.isLoading = true;
+    }),
+    builder.addCase(postReplacePTDrug.fulfilled, (state, action) => {
+      postReplaceDrugFulfilled(state, action);
+    }),
+    builder.addCase(postReplacePTDrug.rejected, (state, action) => {
       postReplaceDrugRejected(state, action);
     })
   ),

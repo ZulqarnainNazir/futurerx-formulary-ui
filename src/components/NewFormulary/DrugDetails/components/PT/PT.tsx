@@ -9,7 +9,14 @@ import Button from "../../../../shared/Frx-components/button/Button";
 import { getDrugDetailsColumnPT } from "../../../DrugDetails/components/FormularyConfigure/DrugGridColumn";
 import FrxLoader from "../../../../shared/FrxLoader/FrxLoader";
 import AdvancedSearch from "../../../DrugDetails/components/FormularyConfigure/components/search/AdvancedSearch";
-import { getDrugDetailsPTSummary, getPTDrugList, getPTReplaceSrch, postPTCriteriaList, postRemovePTDrug } from "../../../../../redux/slices/formulary/drugDetails/pt/ptActionCreation";
+import {
+  getDrugDetailsPTSummary,
+  getPTDrugList,
+  getPTReplaceSrch,
+  postPTCriteriaList,
+  postRemovePTDrug,
+  postReplacePTDrug,
+} from "../../../../../redux/slices/formulary/drugDetails/pt/ptActionCreation";
 import * as ptConstants from "../../../../../api/http-drug-details";
 import getLobCode from "../../../Utils/LobUtils";
 import showMessage from "../../../Utils/Toast";
@@ -25,6 +32,7 @@ function mapDispatchToProps(dispatch) {
     getPTReplaceSrch: (arg) => dispatch(getPTReplaceSrch(arg)),
     postPTCriteriaList: (a) => dispatch(postPTCriteriaList(a)),
     postRemovePTDrug: (a) => dispatch(postRemovePTDrug(a)),
+    postReplacePTDrug: (a) => dispatch(postReplacePTDrug(a)),
   };
 }
 
@@ -39,29 +47,29 @@ const defaultListPayload = {
   index: 0,
   limit: 10,
   filter: [],
-}
+};
 
 interface ptState {
-  isSearchOpen: boolean,
-  panelGridTitle1: any[],
-  panelTitleAlignment1: any[],
-  panelGridValue1: any[],
-  replaceTab: any,
-  isNotesOpen: boolean,
-  activeTabIndex: number,
-  columns: any,
-  data: any[],
-  tabs: any[],
-  ptSettingsStatus: any,
-  listCount: number,
-  selectedList: any[],
-  selectedDrugs: any[],
-  drugData: any[],
-  removeTabsData: any[],
-  ptRemoveCheckedList: any[],
-  ptRemoveSettingsStatus: any,
-  showGrid: boolean,
-};
+  isSearchOpen: boolean;
+  panelGridTitle1: any[];
+  panelTitleAlignment1: any[];
+  panelGridValue1: any[];
+  replaceTab: any;
+  isNotesOpen: boolean;
+  activeTabIndex: number;
+  columns: any;
+  data: any[];
+  tabs: any[];
+  ptSettingsStatus: any;
+  listCount: number;
+  selectedList: any[];
+  selectedDrugs: any[];
+  drugData: any[];
+  removeTabsData: any[];
+  ptRemoveCheckedList: any[];
+  ptRemoveSettingsStatus: any;
+  showGrid: boolean;
+}
 
 class DrugDetailPT extends React.Component<any, any> {
   state: ptState = {
@@ -69,8 +77,8 @@ class DrugDetailPT extends React.Component<any, any> {
     panelGridTitle1: ["", "NUMBER OF DRUGS", "ADDED DRUGS", "REMOVED DRUGS"],
     panelTitleAlignment1: ["center", "center", "center", "center"],
     panelGridValue1: [],
-    replaceTab:{
-      searchResult:[]
+    replaceTab: {
+      searchResult: [],
     },
     isNotesOpen: false,
     activeTabIndex: 0,
@@ -81,16 +89,16 @@ class DrugDetailPT extends React.Component<any, any> {
       { id: 2, text: "Append" },
       { id: 3, text: "Remove" },
     ],
-    ptSettingsStatus:{
+    ptSettingsStatus: {
       type: "covered",
       covered: true,
     },
     listCount: 0,
-    selectedList:[],
+    selectedList: [],
     selectedDrugs: Array(),
     drugData: Array(),
-    removeTabsData:[],
-    ptRemoveCheckedList:[],
+    removeTabsData: [],
+    ptRemoveCheckedList: [],
     ptRemoveSettingsStatus: {
       type: "covered",
       covered: true,
@@ -102,14 +110,26 @@ class DrugDetailPT extends React.Component<any, any> {
     index: 0,
     limit: 10,
     filter: [],
-  }
+  };
 
   ptCriteriaPayload: any = {
     is_advance_search: false,
     filter: [],
     search_key: "",
-    is_covered: true
-  }
+    is_covered: true,
+  };
+
+  rpSavePayload: any = {
+    is_covered: true,
+    selected_drug_ids: [],
+    is_select_all: false,
+    covered: {},
+    not_covered: {},
+    prescriber_taxonomies: [], //{"key":2,"value":"Med Prescribers","text":"Med Prescribers","is_list":false}
+    breadcrumb_code_value: "PRTX",
+    filter: [],
+    search_key: "",
+  };
 
   rmSavePayload: any = {
     is_covered: true,
@@ -120,7 +140,7 @@ class DrugDetailPT extends React.Component<any, any> {
     selected_criteria_ids: [],
     filter: [],
     search_key: "",
-  }
+  };
 
   advanceSearchClickHandler = (event) => {
     event.stopPropagation();
@@ -131,7 +151,7 @@ class DrugDetailPT extends React.Component<any, any> {
     this.setState({ isSearchOpen: !this.state.isSearchOpen });
   };
 
-  handleChangeEvent = (key: string) =>{
+  handleChangeEvent = (key: string) => {
     const COVERED = "covered";
     const isCovered: boolean = key === COVERED ? true : false;
     let ptRemoveSettingsStatus = {
@@ -140,8 +160,8 @@ class DrugDetailPT extends React.Component<any, any> {
     };
 
     this.setState({ ptRemoveSettingsStatus, showGrid: false });
-    this.getPTCriteriaList(isCovered)
-  }
+    this.getPTCriteriaList(isCovered);
+  };
 
   saveClickHandler = () => {
     console.log("Save data");
@@ -155,29 +175,64 @@ class DrugDetailPT extends React.Component<any, any> {
 
       if (this.state.activeTabIndex === 0) {
         // Replace Drug method call
+        this.rpSavePayload.selected_drug_ids = this.state.selectedDrugs;
+        this.rpSavePayload.prescriber_taxonomies = this.state.selectedList;
+        this.rpSavePayload.breadcrumb_code_value = "PRTX";
+        this.rpSavePayload.is_covered = this.state.ptSettingsStatus.covered;
+        apiDetails["messageBody"] = this.rpSavePayload;
+        apiDetails["pathParams"] =
+          this.props?.formulary_id +
+          "/" +
+          getLobCode(this.props.formulary_lob_id) +
+          "/" +
+          ptConstants.TYPE_REPLACE;
+        console.log("The API Details - ", apiDetails);
 
-      }else if(this.state.activeTabIndex === 2) {
+        // Replace Drug method call
+        this.props.postReplacePTDrug(apiDetails).then((json) => {
+          if (
+            json.payload &&
+            json.payload.code &&
+            json.payload.code === "200"
+          ) {
+            showMessage("Success", "success");
+            this.getPTSummary();
+            this.getPTDrugsList();
+          } else {
+            showMessage("Failure", "error");
+          }
+        });
+      } else if (this.state.activeTabIndex === 2) {
         let ptCheckedList: any[] = [];
-        if(this.state.ptRemoveCheckedList.length > 0) {
-          ptCheckedList = this.state.ptRemoveCheckedList.map(e => e?.key);
+        if (this.state.ptRemoveCheckedList.length > 0) {
+          ptCheckedList = this.state.ptRemoveCheckedList.map((e) => e?.key);
         }
 
-        this.rmSavePayload.selected_drug_ids = this.state.selectedDrugs
-        this.rmSavePayload.is_covered = this.state.ptRemoveSettingsStatus.covered
-        this.rmSavePayload.selected_criteria_ids = ptCheckedList
+        this.rmSavePayload.selected_drug_ids = this.state.selectedDrugs;
+        this.rmSavePayload.is_covered = this.state.ptRemoveSettingsStatus.covered;
+        this.rmSavePayload.selected_criteria_ids = ptCheckedList;
         apiDetails["messageBody"] = this.rmSavePayload;
-        apiDetails["pathParams"] = this.props?.formulary_id + "/" +  getLobCode(this.props.formulary_lob_id) + "/" + ptConstants.TYPE_REMOVE;
+        apiDetails["pathParams"] =
+          this.props?.formulary_id +
+          "/" +
+          getLobCode(this.props.formulary_lob_id) +
+          "/" +
+          ptConstants.TYPE_REMOVE;
         console.log("The API Details - ", apiDetails);
 
         // Remove Drug method call
         this.props.postRemovePTDrug(apiDetails).then((json) => {
           console.log("The Remove PT Drug Response = ", json);
-          if (json.payload && json.payload.code && json.payload.code === "200") {
+          if (
+            json.payload &&
+            json.payload.code &&
+            json.payload.code === "200"
+          ) {
             showMessage("Success", "success");
             this.getPTSummary();
             this.getPTDrugsList();
           } else {
-            console.log("------REMOVE FAILED-------")
+            console.log("------REMOVE FAILED-------");
             showMessage("Failure", "error");
           }
         });
@@ -202,20 +257,26 @@ class DrugDetailPT extends React.Component<any, any> {
   };
 
   onPageSize = (pageSize) => {
-    this.listPayload.limit = pageSize
+    this.listPayload.limit = pageSize;
     this.getPTDrugsList({ limit: this.listPayload.limit });
-  }
+  };
 
   onGridPageChangeHandler = (pageNumber: any) => {
     this.listPayload.index = (pageNumber - 1) * this.listPayload.limit;
-    this.getPTDrugsList({ index: this.listPayload.index, limit: this.listPayload.limit });
-  }
+    this.getPTDrugsList({
+      index: this.listPayload.index,
+      limit: this.listPayload.limit,
+    });
+  };
 
   onClearFilterHandler = () => {
     this.listPayload.index = 0;
     this.listPayload.limit = 10;
-    this.getPTDrugsList({ index: defaultListPayload.index, limit: defaultListPayload.limit });
-  }
+    this.getPTDrugsList({
+      index: defaultListPayload.index,
+      limit: defaultListPayload.limit,
+    });
+  };
 
   onSelectedTableRowChanged = (selectedRowKeys) => {
     this.state.selectedDrugs = [];
@@ -249,11 +310,12 @@ class DrugDetailPT extends React.Component<any, any> {
     apiDetails["keyVals"] = [
       { key: ptConstants.KEY_ENTITY_ID, value: this.props?.formulary_id },
     ];
-    this.ptCriteriaPayload.is_covered = isCovered
-    apiDetails['messageBody'] = this.ptCriteriaPayload;
+    this.ptCriteriaPayload.is_covered = isCovered;
+    apiDetails["messageBody"] = this.ptCriteriaPayload;
 
     this.props.postPTCriteriaList(apiDetails).then((json) => {
-      let tmpData = json.payload && json.payload.result ? json.payload.result : [];
+      let tmpData =
+        json.payload && json.payload.result ? json.payload.result : [];
       console.log("The PT Criteria Data = ", tmpData);
 
       let rows = tmpData.map((ele) => {
@@ -277,10 +339,13 @@ class DrugDetailPT extends React.Component<any, any> {
     let apiDetails = {};
     apiDetails["apiPart"] = ptConstants.GET_DRUG_SUMMARY_PT;
     apiDetails["pathParams"] = this.props?.formulary_id;
-    apiDetails["keyVals"] = [{ key: ptConstants.KEY_ENTITY_ID, value: this.props?.formulary_id }];
+    apiDetails["keyVals"] = [
+      { key: ptConstants.KEY_ENTITY_ID, value: this.props?.formulary_id },
+    ];
 
     this.props.getDrugDetailsPTSummary(apiDetails).then((json) => {
-      let tmpData = json.payload && json.payload.result ? json.payload.result : [];
+      let tmpData =
+        json.payload && json.payload.result ? json.payload.result : [];
       console.log("The PT Temp Data = ", tmpData);
 
       let rows = tmpData.map((ele) => {
@@ -298,22 +363,35 @@ class DrugDetailPT extends React.Component<any, any> {
         panelGridValue1: rows,
       });
     });
-  }
+  };
 
-  getPTDrugsList = ({index = 0, limit = 10, listPayload = {}} = {}) => {
+  getPTDrugsList = ({ index = 0, limit = 10, listPayload = {} } = {}) => {
     let apiDetails = {};
-    apiDetails['apiPart'] = ptConstants.GET_PT_DRUGS;
-    apiDetails['pathParams'] = this.props?.formulary_id + "/" + getLobCode(this.props.formulary_lob_id);
-    apiDetails['keyVals'] = [{ key: ptConstants.KEY_ENTITY_ID, value: this.props?.formulary_id }, { key: ptConstants.KEY_INDEX, value: index }, { key: ptConstants.KEY_LIMIT, value: limit }];
-    
-    if(this.state.activeTabIndex === 2) {
-      console.log("The PT LIST is Covered = ", this.state.ptRemoveSettingsStatus.covered);
-      console.log("The PT LIST is Covered = ", this.state.ptRemoveCheckedList.map(e => e?.key));
-      listPayload['is_covered'] = this.state.ptRemoveSettingsStatus.covered;
-      listPayload['selected_criteria_ids'] = this.state.ptRemoveCheckedList.map(e => e?.key);
+    apiDetails["apiPart"] = ptConstants.GET_PT_DRUGS;
+    apiDetails["pathParams"] =
+      this.props?.formulary_id + "/" + getLobCode(this.props.formulary_lob_id);
+    apiDetails["keyVals"] = [
+      { key: ptConstants.KEY_ENTITY_ID, value: this.props?.formulary_id },
+      { key: ptConstants.KEY_INDEX, value: index },
+      { key: ptConstants.KEY_LIMIT, value: limit },
+    ];
+
+    if (this.state.activeTabIndex === 2) {
+      console.log(
+        "The PT LIST is Covered = ",
+        this.state.ptRemoveSettingsStatus.covered
+      );
+      console.log(
+        "The PT LIST is Covered = ",
+        this.state.ptRemoveCheckedList.map((e) => e?.key)
+      );
+      listPayload["is_covered"] = this.state.ptRemoveSettingsStatus.covered;
+      listPayload["selected_criteria_ids"] = this.state.ptRemoveCheckedList.map(
+        (e) => e?.key
+      );
     }
 
-    apiDetails['messageBody'] = listPayload;
+    apiDetails["messageBody"] = listPayload;
 
     let listCount = 0;
     this.props.getPTDrugList(apiDetails).then((json) => {
@@ -327,20 +405,48 @@ class DrugDetailPT extends React.Component<any, any> {
         let gridItem = {};
         gridItem["id"] = count;
         gridItem["key"] = count;
-        gridItem["prescriberTaxonomy"] = element.is_prtx ? "" + element.is_prtx : "";
-        gridItem["coveredTaxonomy"] = element.covered_prescriber_taxonomies ? "" + element.covered_prescriber_taxonomies : "";
-        gridItem["notCoveredTaxonomy"] = element.not_covered_prescriber_taxonomies ? "" + element.not_covered_prescriber_taxonomies : "";
+        gridItem["prescriberTaxonomy"] = element.is_prtx
+          ? "" + element.is_prtx
+          : "";
+        gridItem["coveredTaxonomy"] = element.covered_prescriber_taxonomies
+          ? "" + element.covered_prescriber_taxonomies
+          : "";
+        gridItem[
+          "notCoveredTaxonomy"
+        ] = element.not_covered_prescriber_taxonomies
+          ? "" + element.not_covered_prescriber_taxonomies
+          : "";
         gridItem["tier"] = element.tier_value ? "" + element.tier_value : "";
-        gridItem["labelName"] = element.drug_label_name ? "" + element.drug_label_name : "";
-        gridItem["ddid"] = element.drug_descriptor_identifier ? "" + element.drug_descriptor_identifier : "";
-        gridItem["gpi"] = element.generic_product_identifier ? "" + element.generic_product_identifier : "";
-        gridItem["trademark"] = element.trademark_code ? "" + element.trademark_code : "";
-        gridItem["databaseCategory"] = element.database_category ? "" + element.database_category : "";
-        gridItem["databaseClass"] = element.database_class ? "" + element.database_class : "";
-        gridItem["createdBy"] = element.created_by ? "" + element.created_by : "";
-        gridItem["createdOn"] = element.created_date ? "" + element.created_date : "";
-        gridItem["modifiedBy"] = element.modified_by ? "" + element.modified_by : "";
-        gridItem["modifiedOn"] = element.modified_date ? "" + element.modified_date : "";
+        gridItem["labelName"] = element.drug_label_name
+          ? "" + element.drug_label_name
+          : "";
+        gridItem["ddid"] = element.drug_descriptor_identifier
+          ? "" + element.drug_descriptor_identifier
+          : "";
+        gridItem["gpi"] = element.generic_product_identifier
+          ? "" + element.generic_product_identifier
+          : "";
+        gridItem["trademark"] = element.trademark_code
+          ? "" + element.trademark_code
+          : "";
+        gridItem["databaseCategory"] = element.database_category
+          ? "" + element.database_category
+          : "";
+        gridItem["databaseClass"] = element.database_class
+          ? "" + element.database_class
+          : "";
+        gridItem["createdBy"] = element.created_by
+          ? "" + element.created_by
+          : "";
+        gridItem["createdOn"] = element.created_date
+          ? "" + element.created_date
+          : "";
+        gridItem["modifiedBy"] = element.modified_by
+          ? "" + element.modified_by
+          : "";
+        gridItem["modifiedOn"] = element.modified_date
+          ? "" + element.modified_date
+          : "";
         gridItem["md5_id"] = element.md5_id ? "" + element.md5_id : "";
         count++;
         return gridItem;
@@ -352,26 +458,26 @@ class DrugDetailPT extends React.Component<any, any> {
         showGrid: true,
       });
     });
-  }
+  };
 
   getPTReplaceSrch = (searchTxt) => {
     let apiDetails = {};
     apiDetails["apiPart"] = ptConstants.GET_PT_DRUGS_REPLACE;
-    apiDetails["pathParams"] = '';
+    apiDetails["pathParams"] = "";
     apiDetails["keyVals"] = [
       { key: ptConstants.KEY_ENTITY_ID, value: this.props?.formulary_id },
-      { key: ptConstants.SEARCHKEY, value: searchTxt }
+      { key: ptConstants.SEARCHKEY, value: searchTxt },
     ];
 
     this.props.getPTReplaceSrch(apiDetails).then((json) => {
       let curRow = json.payload && json.payload.data ? json.payload.data : [];
       this.setState({
         replaceTab: {
-          searchResult:curRow
+          searchResult: curRow,
         },
       });
     });
-  }
+  };
 
   componentDidMount() {
     this.getPTSummary();
@@ -403,12 +509,12 @@ class DrugDetailPT extends React.Component<any, any> {
     alert(1);
   };
 
-  handleReplaceSrch = (selectedItem) =>{
-      this.setState({
-        selectedList:selectedItem
-      })
-      this.getPTReplaceSrch(selectedItem)
-  }
+  handleReplaceSrch = (selectedItem) => {
+    this.setState({
+      selectedList: selectedItem,
+    });
+    this.getPTReplaceSrch(selectedItem);
+  };
 
   render() {
     let dataGrid = <FrxLoader />;
@@ -430,7 +536,9 @@ class DrugDetailPT extends React.Component<any, any> {
             enableResizingOfColumns
             data={this.state.data}
             getPerPageItemSize={this.onPageSize}
-            selectedCurrentPage={(this.listPayload.index/this.listPayload.limit + 1)}
+            selectedCurrentPage={
+              this.listPayload.index / this.listPayload.limit + 1
+            }
             pageSize={this.listPayload.limit}
             onGridPageChangeHandler={this.onGridPageChangeHandler}
             totalRowsCount={this.state.listCount}
@@ -486,20 +594,24 @@ class DrugDetailPT extends React.Component<any, any> {
           </div>
         </div>
 
-        {(this.state.activeTabIndex==0 || this.state.activeTabIndex==1) && <PtSettings 
-          options={this.state.replaceTab.searchResult} 
-          handleReplaceSrch={this.handleReplaceSrch}
-          handleStatus={this.handleStatus}
-          showGridHandler={this.showGridHandler}
-          ptSettingsStatus={this.state.ptSettingsStatus}
-        />}
-          
-        {this.state.activeTabIndex==2 && <PTRemove 
-          data={this.state.removeTabsData} 
-          showGridHandler={this.showGridHandler} 
-          handleChangeEvent={this.handleChangeEvent}
-          handleRemoveChecked={this.handleRemoveChecked}
-        />}
+        {(this.state.activeTabIndex == 0 || this.state.activeTabIndex == 1) && (
+          <PtSettings
+            options={this.state.replaceTab.searchResult}
+            handleReplaceSrch={this.handleReplaceSrch}
+            handleStatus={this.handleStatus}
+            showGridHandler={this.showGridHandler}
+            ptSettingsStatus={this.state.ptSettingsStatus}
+          />
+        )}
+
+        {this.state.activeTabIndex == 2 && (
+          <PTRemove
+            data={this.state.removeTabsData}
+            showGridHandler={this.showGridHandler}
+            handleChangeEvent={this.handleChangeEvent}
+            handleRemoveChecked={this.handleRemoveChecked}
+          />
+        )}
 
         {this.state.showGrid ? (
           <div className="bordered">
@@ -511,7 +623,11 @@ class DrugDetailPT extends React.Component<any, any> {
                   label="Advance Search"
                   onClick={this.advanceSearchClickHandler}
                 />
-                <Button label="Save" onClick={this.saveClickHandler} disabled={!(this.state.selectedDrugs.length > 0)} />
+                <Button
+                  label="Save"
+                  onClick={this.saveClickHandler}
+                  disabled={!(this.state.selectedDrugs.length > 0)}
+                />
               </div>
             </div>
             {dataGrid}

@@ -4,6 +4,7 @@ import {
   getDrugDetailsPNList,
   postPNCriteriaList,
   postRemovePNDrug,
+  postReplacePNDrug,
 } from "./pnActionCreation";
 import {
   getPNSummaryFulfilled,
@@ -82,6 +83,23 @@ export const pnRemoveDrugSlice = createSlice({
       postReplaceDrugFulfilled(state, action);
     }),
     builder.addCase(postRemovePNDrug.rejected, (state, action) => {
+      postReplaceDrugRejected(state, action);
+    })
+  ),
+});
+
+export const pnReplaceDrugSlice = createSlice({
+  name: "pnReplaceDrug",
+  initialState: pnState,
+  reducers: {},
+  extraReducers: (builder) => (
+    builder.addCase(postReplacePNDrug.pending, (state, action) => {
+      state.isLoading = true;
+    }),
+    builder.addCase(postReplacePNDrug.fulfilled, (state, action) => {
+      postReplaceDrugFulfilled(state, action);
+    }),
+    builder.addCase(postReplacePNDrug.rejected, (state, action) => {
       postReplaceDrugRejected(state, action);
     })
   ),

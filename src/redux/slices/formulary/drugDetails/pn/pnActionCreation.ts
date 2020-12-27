@@ -14,6 +14,8 @@ import {
 
 // const POST_PN_REPLACE = BASE_URL1 + "api/1/apply-formulary-drug-phnw/3345/COMM/remove?entity_id=3345";
 
+// const POST_PN_REMOVE = BASE_URL1 + "api/1/apply-formulary-drug-phnw/3345/COMM/replace?entity_id=3345";
+
 export const getDrugDetailsPNSummary = createAsyncThunk(
   "drug_details/pn_Summary",
   async (apiDetails: any) => {
@@ -52,6 +54,15 @@ export const postPNCriteriaList = createAsyncThunk(
 
 export const postRemovePNDrug = createAsyncThunk(
   "drug_details/postRemovePNDrug",
+  async (apiDetails: any) => {
+    let POST_URL = buildUrl({ apiDetails });
+    const requestHeaders = postHeaders(apiDetails);
+    return fetchRequest(POST_URL, requestHeaders);
+  }
+);
+
+export const postReplacePNDrug = createAsyncThunk(
+  "drug_details/postReplacePNDrug",
   async (apiDetails: any) => {
     let POST_URL = buildUrl({ apiDetails });
     const requestHeaders = postHeaders(apiDetails);
