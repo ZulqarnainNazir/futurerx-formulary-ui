@@ -434,8 +434,8 @@ class FormularySetUp extends React.Component<any, any> {
       (el) => el.tier_label === e
     );
     if (e === "Add New") {
-      getObj.id_tier_label = -1;
-      // getObj.is_custom;
+      getObj.id_tier_label = null;
+      getObj.is_custom = true;
       // getObj.tier_label_name="";
     } else {
       getObj.id_tier_label = OBJ.id_tier_label;

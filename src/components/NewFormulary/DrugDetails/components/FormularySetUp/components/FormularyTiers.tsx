@@ -34,6 +34,7 @@ class FormularyTiers extends React.Component<any, any> {
             selecedVal: "",
             tierName: e.tier_name,
             id_tier_label: e.id_tier_label,
+            is_custom: e.is_custom,
           };
         } else {
           return this.props.tierOptionsOptions?.find(
@@ -45,6 +46,7 @@ class FormularyTiers extends React.Component<any, any> {
                 ).tier_label,
                 tierName: e.tier_name,
                 id_tier_label: e.id_tier_label,
+                is_custom: e.is_custom,
               }
             : "";
         }
@@ -54,13 +56,26 @@ class FormularyTiers extends React.Component<any, any> {
           <div className="tier border-bottom">
             <label>{e.tierName}</label>
 
-            {e.id_tier_label === -1 ? (
-              <input
-                type="text"
-                onChange={(el) =>
-                  this.props.customTierChange(el, e.tierName)
-                }
-              />
+            {e.is_custom === true ? (
+              <div className="custom-tier-wrapper">
+                <input
+                  className="custom-tier"
+                  type="text"
+                  onChange={(el) => this.props.customTierChange(el, e.tierName)}
+                />
+                <svg
+                  width="13"
+                  height="15"
+                  viewBox="0 0 13 15"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M1.75004 13.0417C1.75004 13.9125 2.46254 14.625 3.33337 14.625H9.66671C10.5375 14.625 11.25 13.9125 11.25 13.0417V3.54167H1.75004V13.0417ZM12.0417 1.16667H9.27087L8.47921 0.375H4.52087L3.72921 1.16667H0.958374V2.75H12.0417V1.16667Z"
+                    fill="#999999"
+                  ></path>
+                </svg>
+              </div>
             ) : (
               <div>
                 <DropDown
