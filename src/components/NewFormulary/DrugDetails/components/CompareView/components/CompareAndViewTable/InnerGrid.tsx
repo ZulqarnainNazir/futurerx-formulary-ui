@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import DialogPopup from "../../../../../../shared/FrxDialogPopup/FrxDialogPopup";
-import FrxGridContainer from "../../../../../../shared/FrxGrid/FrxGridContainer";
+import FrxGridContainer from "../../../../../../shared/FrxGrid/FrxDrugGridContainer";
 import { getCompareFormularyDrugsListGridColumns } from "../../../../../../../mocks/formulary-grid/FormularyGridColumn";
 import { getCompareFormularyDrugsListGridData } from "../../../../../../../mocks/formulary-grid/FormularyGridData";
 
@@ -138,11 +138,6 @@ function InnerGrid(props: InnerGridProps) {
                 // setting gear 1st column
                 enableSettings={true}
                 // checkbox 2nd column
-                isCustomCheckboxEnabled={checkbox}
-                // event reference for checkbox (mandotory if checkbox is true)
-                handleCustomRowSelectionChange={(r) => {
-                  console.log(r);
-                }}
                 customSettingIcon={"NONE"}
               />
             </DialogPopup>
@@ -202,11 +197,7 @@ function InnerGrid(props: InnerGridProps) {
                 // setting gear 1st column
                 enableSettings={true}
                 // checkbox 2nd column
-                isCustomCheckboxEnabled={checkbox}
                 // event reference for checkbox (mandotory if checkbox is true)
-                handleCustomRowSelectionChange={(r) => {
-                  console.log(r);
-                }}
                 customSettingIcon={"NONE"}
               />
             </DialogPopup>

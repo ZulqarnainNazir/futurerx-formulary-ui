@@ -81,7 +81,7 @@ class CompareTable extends Component<any, any> {
     }
   }
 
-  getGridColumns = (type, subType) => {
+  getGridColumns = (type, subType: any = null) => {
     let columns = [
       {
         id: 1,
@@ -555,6 +555,7 @@ class CompareTable extends Component<any, any> {
         }]]
         return columns;
     }
+    return Array();
   }
 
   areAllNull = (type) => {
@@ -609,6 +610,8 @@ class CompareTable extends Component<any, any> {
               id: idCount,
               title: value['attribute_type'],
               titleBG: this.getBackgroundColor(value['attribute_type']),
+              attribute_type: value['attribute_type'],
+              file_type: value['file_type'],
               headDrugsCount: {
                 baseFormulary: null,
                 referenceFormulary: null,
@@ -633,6 +636,14 @@ class CompareTable extends Component<any, any> {
             let valueId = 1;
             if (value['values'] && value['values'].length > 0) {
               value['values'].map(subValue => {
+                let gridColumns: any[] = Array();
+                if(subValue['attribute_name'] === 'PA Group Descriptions' || subValue['attribute_name'] === 'ST Group Descriptions'){
+                  gridColumns = this.getGridColumns(subValue['attribute_name']);
+                } else if(value['attribute_type'] === 'Drug Details'){
+                  gridColumns = this.getGridColumns(value['attribute_type'],subValue['attribute_name']);
+                } else{
+                  gridColumns = this.getGridColumns(value['attribute_type']);
+                }
                 let subItem = {
                   name: subValue['attribute_name'],
                   baseFormulary: subValue['base_formulary_drugs_count'],
@@ -640,6 +651,13 @@ class CompareTable extends Component<any, any> {
                   baseOnly: subValue['drugs_in_base_not_in_reference'],
                   referenceOnly: subValue['drugs_in_reference_not_in_base'],
                   nonMatch: subValue['matching_formulary_drugs_count'],
+                  attribute_type: value['attribute_type'],
+                  file_type: value['file_type'],
+                  attribute_field_data_type: subValue['attribute_field_data_type'],
+                  attribute_field_name: subValue['attribute_field_name'],
+                  attribute_field_value: subValue['attribute_field_value'],
+                  attribute_name: subValue['attribute_name'],
+                  gridColumns: gridColumns,
                 }
                 header.formularies.push(subItem);
                 valueId++;
@@ -765,6 +783,8 @@ class CompareTable extends Component<any, any> {
                   title={accordionHeader.title}
                   titleBG={accordionHeader.titleBG}
                   showCheckbox={showCheckbox}
+                  baseformulary={this.props.baseformulary}
+                  referenceformulary={this.props.referenceformulary}
                   content={() => {
                     return (
                       <InnerGrid

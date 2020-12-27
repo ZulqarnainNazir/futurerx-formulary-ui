@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, Component } from "react";
 import DialogPopup from "../../FrxDialogPopup/FrxDialogPopup";
 import FrxGridContainer from "../../FrxGrid/FrxDrugGridContainer";
 import Chevron from "./Chevron";
@@ -22,198 +22,199 @@ interface PureAccordionProps {
   headerData: HeaderType;
   showCheckbox: boolean;
   toggleAllAccordion: boolean;
+  baseformulary?: any;
+  referenceformulary?: any;
 }
 
-function PureAccordion(props: PureAccordionProps) {
-  const [setActive, setActiveState] = useState("");
-  const [setHeight, setHeightState] = useState("0px");
-  const [setRotate, setRotateState] = useState("accordion__icon");
+class PureAccordion extends Component<PureAccordionProps, any> {
+  state = {
+    setActive: '',
+    setHeight: "0px",
+    setRotate: "accordion__icon",
+    openDrugsList: false,
+    drugGridHeaderName: "",
+    rejectedDrug: Array(),
+  };
 
-  const [openDrugsList, setDrugsListPopup] = useState(false);
-  const [drugGridHeaderName, setDrugGridHeaderName] = useState("");
-  const [rejectedDrug, setRejectedDrug] = useState<any | any[]>([]);
-  // const [checkbox, setCheckbox] = useState(false);
-  // const [actions, setActions] = useState(false);
-
-  const toggleDrugsListGrid = (
+  toggleDrugsListGrid = (
     gridCellName: string | null = null,
     showCheckbox: boolean | null = null
   ) => {
-    if (gridCellName !== null) setDrugGridHeaderName(gridCellName);
-    // if (showCheckbox !== null) {
-    // setCheckbox(showCheckbox);
-    // setActions(showCheckbox);
-    // }
-    setDrugsListPopup(!openDrugsList);
+    if (gridCellName !== null) this.state.drugGridHeaderName = gridCellName;
+    this.setState({
+      openDrugsList: !this.state.openDrugsList,
+    });
   };
 
-  const elementContent = useRef<HTMLDivElement>(null);
+  elementContent = useRef<HTMLDivElement>(null);
 
-  function toggleAccordion() {
-    setActiveState(setActive === "" ? "active" : "");
-    if (null !== elementContent.current) {
-      setHeightState(
-        setActive === "active"
-          ? "0px"
-          : `${elementContent.current.scrollHeight}px`
-      );
+  toggleAccordion = () => {
+    this.state.setActive = this.state.setActive === "" ? "active" : "";
+    if (null !== this.elementContent.current) {
+      this.state.setHeight = this.state.setActive === "active"
+      ? "0px"
+      : `${this.elementContent.current.scrollHeight}px`;
     }
-    setRotateState(
-      setActive === "active" ? "accordion__icon" : "accordion__icon rotate"
-    );
+    this.setState({
+      setRotate: this.state.setActive === "active" ? "accordion__icon" : "accordion__icon rotate",
+    });
   }
 
-  function toggleAccordionAll() {
-    if (props.toggleAllAccordion) {
-      setActiveState("active");
-      if (null !== elementContent.current) {
-        setHeightState(`${elementContent.current.scrollHeight}px`);
+  toggleAccordionAll = () => {
+    if (this.props.toggleAllAccordion) {
+      this.state.setActive = "active";
+      if (null !== this.elementContent.current) {
+        this.state.setHeight = `${this.elementContent.current.scrollHeight}px`;
       }
-      setRotateState("accordion__icon rotate");
+      this.setState({
+        setRotate: "accordion__icon rotate",
+      });
     } else {
-      setActiveState("");
-      if (null !== elementContent.current) {
-        setHeightState("0px");
+      this.state.setActive = "";
+      if (null !== this.elementContent.current) {
+        this.state.setHeight = "0px";
       }
-      setRotateState("accordion__icon");
+      this.setState({
+        setRotate: "accordion__icon",
+      });
     }
   }
 
-  function rowSelectionChange(data: any) {
-    // setRejectedDrug(data); // if rejected one at a time
-    setRejectedDrug([...rejectedDrug, data]); // if rejected many at a time
+  rowSelectionChange = (data: any) => {
+    this.setState({
+      rejectedDrug: [...this.state.rejectedDrug, data],
+    });
   }
 
-  function rejectDrugAction() {
-    console.log(rejectedDrug);
+  rejectDrugAction = () => {
+    console.log(this.state.rejectedDrug);
   }
 
-  useEffect(() => {
-    toggleAccordion(); // mount
-    return () => {};
-  }, []);
+  componentDidMount(){
+    this.toggleAccordion();
+  }
 
-  useEffect(() => {
-    toggleAccordionAll(); // update
-    return () => {};
-  }, [props.toggleAllAccordion]);
+  componentDidUpdate(){
+    this.toggleAccordionAll(); 
+  }
 
-  switch (props.tableType) {
+  render(){
+  switch (this.props.tableType) {
     case "COMPARE":
       return (
         <div className="accordion__section">
-          <div className={`accordion ${setActive}`}>
+          <div className={`accordion ${this.state.setActive}`}>
             <div
               style={{
-                backgroundColor: props.titleBG,
+                backgroundColor: this.props.titleBG,
               }}
               className="title__header_container"
-              onClick={toggleAccordion}
+              onClick={this.toggleAccordion}
             >
-              {props.showCheckbox ? (
+              {this.props.showCheckbox ? (
                 <Checkbox
-                  onChange={() => console.log(props.title)}
+                  onChange={() => console.log(this.props.title)}
                   disabled={false}
                   onClick={(e) => {
                     e.stopPropagation();
                   }}
                 />
               ) : null}
-              <p className="accordion__title">{props.title}</p>
+              <p className="accordion__title">{this.props.title}</p>
               <Chevron
-                className={`${setRotate}`}
+                className={`${this.state.setRotate}`}
                 width={10}
                 height={10}
                 fill={"#323C47"}
-                toggleAccordion={toggleAccordion}
+                toggleAccordion={this.toggleAccordion}
               />
             </div>
             <div
               className={
-                props.headerData.baseFormulary === null
+                this.props.headerData.baseFormulary === null
                   ? "cell-font-style"
                   : "bg-white cell-font-style"
               }
             >
               <span
                 onClick={() => {
-                  toggleDrugsListGrid(
+                  this.toggleDrugsListGrid(
                     // `${props.formularyType} - ${data.name}: Base Formulary`,
                     "Base Formulary",
                     false
                   );
                 }}
               >
-                {props.headerData.baseFormulary}
+                {this.props.headerData.baseFormulary}
               </span>
             </div>
             <div
               className={
-                props.headerData.referenceFormulary === null
+                this.props.headerData.referenceFormulary === null
                   ? "cell-font-style"
                   : "bg-white cell-font-style"
               }
             >
               <span
                 onClick={() => {
-                  toggleDrugsListGrid(
+                  this.toggleDrugsListGrid(
                     // `${props.formularyType} - ${data.name}: Base Formulary`,
                     "Reference Formulary",
                     false
                   );
                 }}
               >
-                {props.headerData.referenceFormulary}
+                {this.props.headerData.referenceFormulary}
               </span>
             </div>
             <div
               className={
-                props.headerData.baseOnly === null
+                this.props.headerData.baseOnly === null
                   ? "cell-font-style"
                   : "bg-white cell-font-style"
               }
             >
-              <span>{props.headerData.baseOnly}</span>
+              <span>{this.props.headerData.baseOnly}</span>
             </div>
             <div
               className={
-                props.headerData.referenceOnly === null
+                this.props.headerData.referenceOnly === null
                   ? "cell-font-style"
                   : "bg-white cell-font-style"
               }
             >
-              <span>{props.headerData.referenceOnly}</span>
+              <span>{this.props.headerData.referenceOnly}</span>
             </div>
             <div
               className={
-                props.headerData.nonMatch === null
+                this.props.headerData.nonMatch === null
                   ? "cell-font-style no-border"
                   : "bg-white cell-font-style no-border"
               }
             >
-              <span>{props.headerData.nonMatch}</span>
+              <span>{this.props.headerData.nonMatch}</span>
             </div>
           </div>
           <div
-            ref={elementContent}
-            style={{ maxHeight: `${setHeight}` }}
+            ref={this.elementContent}
+            style={{ maxHeight: `${this.state.setHeight}` }}
             className="accordion__content"
           >
-            <div className="accordion__text">{props.content()}</div>
+            <div className="accordion__text">{this.props.content()}</div>
           </div>
-          {openDrugsList ? (
+          {this.state.openDrugsList ? (
             <DialogPopup
               // showCloseIcon={actions}
               showCloseIcon={true}
               positiveActionText="Reject"
               negativeActionText=""
-              title={drugGridHeaderName}
-              handleClose={toggleDrugsListGrid}
-              handleAction={rejectDrugAction}
+              title={this.state.drugGridHeaderName}
+              handleClose={this.toggleDrugsListGrid}
+              handleAction={this.rejectDrugAction}
               showActions={true}
               height="80%"
               width="80%"
-              open={openDrugsList}
+              open={this.state.openDrugsList}
             >
               <FrxGridContainer
                 enableSearch={false}
@@ -231,15 +232,9 @@ function PureAccordion(props: PureAccordionProps) {
                 isPinningEnabled={true}
                 // setting gear 1st column
                 enableSettings={true}
-                // checkbox 2nd column
-                // isCustomCheckboxEnabled={checkbox}
-                // event reference for checkbox (mandotory if checkbox is true)
-                // handleCustomRowSelectionChange={(r) => {
-                //   console.log(r);
-                // }}
-                // customSettingIcon={"NONE"}
+                //customSettingIcon={"NONE"}
                 isRowSelectionEnabled
-                rowSelectionChange={rowSelectionChange}
+                rowSelectionChange={this.rowSelectionChange}
                 isRowSelectorCheckbox
               />
             </DialogPopup>
@@ -249,71 +244,71 @@ function PureAccordion(props: PureAccordionProps) {
     case "VIEW":
       return (
         <div className="accordion__section-view">
-          <div className={`accordion ${setActive}`}>
+          <div className={`accordion ${this.state.setActive}`}>
             <div
               style={{
-                backgroundColor: props.titleBG,
+                backgroundColor: this.props.titleBG,
               }}
               className="title__header_container"
-              onClick={toggleAccordion}
+              onClick={this.toggleAccordion}
             >
-              {props.showCheckbox ? (
+              {this.props.showCheckbox ? (
                 <Checkbox
-                  onChange={() => console.log(props.title)}
+                  onChange={() => console.log(this.props.title)}
                   disabled={false}
                   onClick={(e) => {
                     e.stopPropagation();
                   }}
                 />
               ) : null}
-              <p className="accordion__title">{props.title}</p>
+              <p className="accordion__title">{this.props.title}</p>
               <Chevron
-                className={`${setRotate}`}
+                className={`${this.state.setRotate}`}
                 width={10}
                 height={10}
                 fill={"#323C47"}
-                toggleAccordion={toggleAccordion}
+                toggleAccordion={this.toggleAccordion}
               />
             </div>
             <div
               className={
-                props.headerData.baseFormulary === null
+                this.props.headerData.baseFormulary === null
                   ? "cell-font-style"
                   : "bg-white cell-font-style"
               }
             >
               <span
                 onClick={() => {
-                  toggleDrugsListGrid(
+                  this.toggleDrugsListGrid(
                     // `${props.formularyType} - ${data.name}: Base Formulary`,
                     "Base Formulary",
                     false
                   );
                 }}
               >
-                {props.headerData.baseFormulary}
+                {this.props.headerData.baseFormulary}
               </span>
             </div>
           </div>
           <div
-            ref={elementContent}
-            style={{ maxHeight: `${setHeight}` }}
+            ref={this.elementContent}
+            style={{ maxHeight: `${this.state.setHeight}` }}
             className="accordion__content"
           >
-            <div className="accordion__text">{props.content()}</div>
+            <div className="accordion__text">{this.props.content()}</div>
           </div>
-          {openDrugsList ? (
+          {this.state.openDrugsList ? (
             <DialogPopup
               showCloseIcon={true}
               positiveActionText="Reject"
               negativeActionText=""
-              title={drugGridHeaderName}
-              handleClose={toggleDrugsListGrid}
-              handleAction={rejectDrugAction}
+              title={this.state.drugGridHeaderName}
+              handleClose={this.toggleDrugsListGrid}
+              handleAction={this.rejectDrugAction}
               showActions={true}
               height="80%"
               width="80%"
-              open={openDrugsList}
+              open={this.state.openDrugsList}
             >
               <FrxGridContainer
                 enableSearch={false}
@@ -339,7 +334,7 @@ function PureAccordion(props: PureAccordionProps) {
                 // }}
                 // customSettingIcon={"NONE"}
                 isRowSelectionEnabled
-                rowSelectionChange={rowSelectionChange}
+                rowSelectionChange={this.rowSelectionChange}
                 isRowSelectorCheckbox
               />
             </DialogPopup>
@@ -349,6 +344,7 @@ function PureAccordion(props: PureAccordionProps) {
     default:
       return <h1>NOT MATCHED</h1>;
   }
+}
 }
 
 export default PureAccordion;
