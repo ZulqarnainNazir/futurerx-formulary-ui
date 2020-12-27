@@ -40,15 +40,10 @@ class PureAccordion extends Component<PureAccordionProps, any> {
     openDrugsList: false,
     drugGridHeaderName: "",
     rejectedDrug: Array(),
+    toggleAll: true,
   };
 
   private elementContent = createRef<HTMLDivElement>(); // createRef<T>(): RefObject<T>
-
-  // function createRef<T>()
-  // constructor(props) {
-  //   super(props);
-  //   this.elementContent = React.createRef();
-  // }
 
   toggleDrugsListGrid = (
     gridCellName: string | null = null,
@@ -63,7 +58,6 @@ class PureAccordion extends Component<PureAccordionProps, any> {
   };
 
   toggleAccordion = () => {
-    // this.state.active = this.state.active === "" ? "active" : "";
     let active = this.state.active === "" ? "active" : "";
     let rotate =
       this.state.active === "active"
@@ -75,10 +69,6 @@ class PureAccordion extends Component<PureAccordionProps, any> {
         this.state.active === "active"
           ? "0px"
           : `${this.elementContent.current.scrollHeight}px`;
-      // this.state.setHeight =
-      //   this.state.setActive === "active"
-      //     ? "0px"
-      //     : `${this.elementContent.current.scrollHeight}px`;
     }
     this.setState({
       active,
@@ -97,20 +87,7 @@ class PureAccordion extends Component<PureAccordionProps, any> {
       if (null !== this.elementContent.current) {
         height = `${this.elementContent.current.scrollHeight}px`;
       }
-      // this.setState({
-      //   setRotate: "accordion__icon rotate",
-      // });
     }
-    // else {
-    // this.state.setActive = "";
-    // if (null !== this.elementContent.current) {
-    //   this.state.setHeight = "0px";
-    // }
-    // this.setState({
-    //   active,
-    //   setRotate: "accordion__icon",
-    // });
-    // }
 
     this.setState({
       active,
@@ -129,13 +106,14 @@ class PureAccordion extends Component<PureAccordionProps, any> {
     console.log(this.state.rejectedDrug);
   };
 
-  componentDidMount() {
-    // this.toggleAccordion();
-  }
-
-  componentDidUpdate() {
-    // this.toggleAccordionAll();
-    // this.props.toggleAllAccordion();
+  componentWillReceiveProps(nextProps) {
+    // if (nextProps.toggleAllAccordion !== this.state.toggleAll) {
+    //   this.toggleAccordionAll();
+    //   this.setState({
+    //     toggleAll: nextProps.toggleAllAccordion,
+    //   });
+    // }
+    this.toggleAccordionAll();
   }
 
   render() {

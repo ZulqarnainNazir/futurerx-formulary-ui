@@ -55,7 +55,7 @@ class ViewTable extends Component {
                       });
                     }}
                   >
-                    <p>{toggleAllAccordion ? "Collapse All" : "Expand All"}</p>
+                    <p>{!toggleAllAccordion ? "Collapse All" : "Expand All"}</p>
                   </div>
                 </div>
               </div>
