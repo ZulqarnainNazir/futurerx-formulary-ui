@@ -511,12 +511,14 @@ class PaReplace extends React.Component<any, any> {
                   name="add-filter"
                   checked={isAdditionalCriteriaOpen}
                   onClick={this.openAdditionalCriteria}
+                  disabled={this.props.configureSwitch}
                 />
                 <RadioButton
                   label="No"
                   name="add-filter"
                   checked={!isAdditionalCriteriaOpen}
                   onClick={this.closeAdditionalCriteria}
+                  disabled={this.props.configureSwitch}
                 />
               </Space>
             </Col>
