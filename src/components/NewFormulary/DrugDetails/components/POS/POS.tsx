@@ -205,17 +205,9 @@ class DrugDetailPOS extends React.Component<any, any> {
   };
 
   showGridHandler = () => {
-    this.setState(
-      {
-        showGrid: !this.state.showGrid,
-      },
-      () => {
-        console.log({
-          settings: this.state.posSettings,
-          status: this.state.posSettingsStatus,
-        });
-      }
-    );
+    this.setState({
+      showGrid: !this.state.showGrid,
+    });
   };
   render() {
     let dataGrid = <FrxLoader />;
@@ -276,6 +268,7 @@ class DrugDetailPOS extends React.Component<any, any> {
             handleSelectAll: this.handleSelectAll,
           }}
           showGridHandler={this.showGridHandler}
+          // disableAction={true}
         />
 
         {showGrid ? (
