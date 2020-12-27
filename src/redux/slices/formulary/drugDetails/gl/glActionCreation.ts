@@ -49,3 +49,12 @@ export const postGLCriteriaList = createAsyncThunk(
     return fetchRequest(POST_URL, requestHeaders);
   }
 );
+
+export const postRemoveGLDrug = createAsyncThunk(
+  "drug_details/postRemoveGLDrug",
+  async (apiDetails: any) => {
+    let POST_URL = buildUrl({ apiDetails });
+    const requestHeaders = postHeaders(apiDetails);
+    return fetchRequest(POST_URL, requestHeaders);
+  }
+);

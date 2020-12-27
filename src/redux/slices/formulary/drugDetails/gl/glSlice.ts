@@ -4,6 +4,7 @@ import {
   getDrugDetailsGLList,
   postReplaceGLDrug,
   postGLCriteriaList,
+  postRemoveGLDrug,
 } from "./glActionCreation";
 import {
   getGLSummaryFulfilled,
@@ -83,6 +84,23 @@ export const glCriteriaSlice = createSlice({
     }),
     builder.addCase(postGLCriteriaList.rejected, (state, action) => {
       getGLSummaryRejected(state, action);
+    })
+  ),
+});
+
+export const glRemoveDrugSlice = createSlice({
+  name: "glRemoveDrug",
+  initialState: glState,
+  reducers: {},
+  extraReducers: (builder) => (
+    builder.addCase(postRemoveGLDrug.pending, (state, action) => {
+      state.isLoading = true;
+    }),
+    builder.addCase(postRemoveGLDrug.fulfilled, (state, action) => {
+      postReplaceDrugFulfilled(state, action);
+    }),
+    builder.addCase(postRemoveGLDrug.rejected, (state, action) => {
+      postReplaceDrugRejected(state, action);
     })
   ),
 });

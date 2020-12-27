@@ -120,7 +120,7 @@ class DrugDetailPR extends React.Component<any, any> {
     is_select_all: false,
     covered: {},
     not_covered: {},
-    patient_residences: [2], // Selected Checkbox id 
+    patient_residences: [], // Selected Checkbox id 
     breadcrumb_code_value: "PATRS",
     filter: [],
     search_key: ""
@@ -171,9 +171,14 @@ class DrugDetailPR extends React.Component<any, any> {
         });
 
       } else if(this.state.activeTabIndex === 2) {
+        let prCheckedList: any[] = [];
+        if(this.state.posCheckedList.length > 0) {
+          prCheckedList = this.state.posCheckedList.map(e => e?.key);
+        }
+
         this.rmSavePayload.selected_drug_ids = this.state.selectedDrugs
         this.rmSavePayload.is_covered = this.state.posRemoveSettingsStatus.covered
-        this.rmSavePayload.selected_criteria_ids = this.state.posCheckedList
+        this.rmSavePayload.selected_criteria_ids = prCheckedList
         apiDetails["messageBody"] = this.rmSavePayload;
         apiDetails["pathParams"] = this.props?.formulary_id + "/" +  getLobCode(this.props.formulary_lob_id) + "/" + prConstants.TYPE_REMOVE;
         console.log("The API Details - ", apiDetails);
