@@ -53,7 +53,7 @@ const setup = createSlice({
   reducers: {
     getformularyStart: startLoading,
     getFormularySuccess(state, { payload }: PayloadAction<Formulary>) {
-      console.log("***** getFormulariesSuccess ");
+      // console.log("***** getFormulariesSuccess ");
       state.formulary = payload;
       state.mode = "EXISTING";
       // state.message ="";
@@ -63,7 +63,7 @@ const setup = createSlice({
     },
     getFormalaryFailure: loadingFailed,
     setNewFormularySuccess(state) {
-      console.log("***** setNewFormularySuccess ");
+      // console.log("***** setNewFormularySuccess ");
       state.formulary = null;
       state.mode = "NEW";
       state.message = "";
@@ -89,7 +89,7 @@ const setup = createSlice({
     verifyFormularyNameFailure: loadingFailed,
     saveFormularyStart: startLoading,
     saveFormularySuccess(state, { payload }: PayloadAction<any>) {
-      console.log("***** saveFormularySuccess : ", payload);
+      // console.log("***** saveFormularySuccess : ", payload);
       if (payload) {
         if (payload.status === 200) {
           // state.message = "Formulary created successfully";
@@ -107,7 +107,7 @@ const setup = createSlice({
     saveFormularyFailure: loadingFailed,
     createCloneFormularyStart: startLoading,
     createCloneFormularySuccess(state, { payload }: PayloadAction<any>) {
-      console.log("***** createCloneFormularySuccess : ", payload);
+      // console.log("***** createCloneFormularySuccess : ", payload);
       // if (payload) {
       //   if (payload.status === 200) {
       //     // state.message = "Formulary created successfully";
@@ -129,7 +129,7 @@ const setup = createSlice({
 export const fetchSelectedFormulary = createAsyncThunk(
   "setup",
   async (id: number, { dispatch }) => {
-    console.log("***** fetchSelectedFormulary ( " + id + " ) ");
+    //console.log("***** fetchSelectedFormulary ( " + id + " ) ");
     try {
       if (id === -1) {
         dispatch(setNewFormularySuccess());
@@ -166,8 +166,8 @@ export const verifyFormularyName = createAsyncThunk(
 export const saveFormulary = createAsyncThunk(
   "setup",
   async (input: any, { dispatch }) => {
-    console.log("***** saveFormulary .... ");
-    console.log(input);
+    // console.log("***** saveFormulary .... ");
+    // console.log(input);
     if (input?.MODE === "NEW") {
     } else if (input?.MODE === "EXISTING") {
     }
@@ -182,8 +182,8 @@ export const saveFormulary = createAsyncThunk(
         payload,
         input.formulary_id
       );
-      console.log("- - - -- - - - - - -- - - -");
-      console.log(resp);
+      // console.log("- - - -- - - - - - -- - - -");
+      // console.log(resp);
       if (resp) {
         dispatch(saveFormularySuccess(resp));
         if (resp?.status === 200) {
@@ -199,7 +199,7 @@ export const saveFormulary = createAsyncThunk(
         }
       }
     } catch (err) {
-      console.log("***** saveFormulary - ERROR ");
+      // console.log("***** saveFormulary - ERROR ");
       dispatch(saveFormularyFailure(err.toString()));
     }
   }
@@ -208,12 +208,12 @@ export const saveFormulary = createAsyncThunk(
 export const createCloneFormulary = createAsyncThunk(
   "setup",
   async (input: any, { dispatch }) => {
-    console.log("***** createCloneFormulary .... ");
-    console.log(input);
+    // console.log("***** createCloneFormulary .... ");
+    // console.log(input);
     try {
       dispatch(createCloneFormularyStart());
     } catch (err) {
-      console.log("***** createCloneFormularyFailure - ERROR ");
+      // console.log("***** createCloneFormularyFailure - ERROR ");
       dispatch(createCloneFormularyFailure(err.toString()));
     }
   }
