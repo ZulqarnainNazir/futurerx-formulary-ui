@@ -28,6 +28,7 @@ export default class FormularyExpandedDetails extends React.Component<
         return (
           <FormularyExpandedGeneralDetails
             formularyToggle={this.props.formularyToggle}
+            rowData={this.props.data}
           />
         );
       case 1:

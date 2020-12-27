@@ -67,16 +67,17 @@ function mapDispatchToProps(dispatch) {
             {id: 3,text: "Remove"}
         ],
         tierGridContainer: false,
+        showStConfiguration:false,
         isSearchOpen:false,
+        selectedLobFormulary:null,
         drugData: Array(),
         drugGridData: Array(),
         selectedDrugs: Array(),
         selectedGroupDescription:null,
         selectedStType:null,
-        showPaConfiguration:false,
         selectedLastestedVersion:null,
         fileType:null,
-        lobFormularies:null,
+        lobFormularies:[],
         stValue:null,
         groupDescriptionProp:''
     }
@@ -189,14 +190,14 @@ function mapDispatchToProps(dispatch) {
         this.setState({ selectedStType: tmp_value });
       }
     
-      pa_configurationChange = (event, value) => {
+      st_configurationChange = (event, value) => {
         let tmp_index = event.target.key;
         let tmp_value = event.target.value;
     
         if (tmp_value=="true"){
-            this.setState({showPaConfiguration: true});
+            this.setState({showStConfiguration: true});
         }else{
-          this.setState({showPaConfiguration: false});
+          this.setState({showStConfiguration: false});
         }
       }
     
@@ -239,11 +240,10 @@ function mapDispatchToProps(dispatch) {
           return ;
         }
     
-        // if(this.state.showPaConfiguration && this.state.selectedLobFormulary===null){
-        //   showMessage('Related Formulary is required','info');
-        //   return ;
-        // }
-
+         if(this.state.showStConfiguration && this.state.selectedLobFormulary===null){
+           showMessage('Related Formulary is required','info');
+          return ;
+         }
         apiDetails['messageBody']['base_st_group_description_id'] = this.state.selectedGroupDescription;
         apiDetails['messageBody']['id_st_type'] = this.state.selectedStType;
     
@@ -342,6 +342,7 @@ function mapDispatchToProps(dispatch) {
         let apiDetails = {formulary_type_id: this.props?.formulary_type_id,
           formulary_lob_id: this.props?.formulary_lob_id}
         this.props.getLobFormularies(apiDetails).then((json) =>{
+          debugger;
           this.setState({
             lobFormularies: json.payload.result,
             });
@@ -371,7 +372,7 @@ function mapDispatchToProps(dispatch) {
                                       </label>
                                       <Space size="large">
                                       <div className="marketing-material radio-group">
-                                        <RadioGroup aria-label="marketing-material-radio1" className="gdp-radio" name="pa_configuration" onChange={this.pa_configurationChange} >
+                                        <RadioGroup aria-label="marketing-material-radio1" className="gdp-radio" name="st_configuration" onChange={this.st_configurationChange} >
                                           <FormControlLabel value="true" control={<Radio  disabled={this.props.configureSwitch} />}label="Yes" />
                                           <FormControlLabel value="false" control={<Radio disabled={this.props.configureSwitch} />} label="No" />
                                         </RadioGroup>
@@ -394,17 +395,19 @@ function mapDispatchToProps(dispatch) {
                                    
                                     <div className="group">
                                         <label>ST Type <span className="astrict">*</span></label>
-                                        <DropDown options={this.state.stTypes} valueProp="st_type_value" dispProp="st_type_name" onSelect={this.dropDownSelectHandlerStType} disabled={this.props.configureSwitch}/>
+                                        <DropDown options={this.state.stTypes} valueProp="id_st_type" dispProp="st_type_name" onSelect={this.dropDownSelectHandlerStType} disabled={this.props.configureSwitch}/>
                                     </div>
-
+                                    {this.state.showStConfiguration ? (
                                     <div className="group">
+                                    
                                     <label>
                                       Select Related Formulary to View Existing configuration?{" "}
                                       <span className="astrict">*</span>
                                     </label>
                                      <DropDown options={this.state.lobFormularies} valueProp="id_formulary" dispProp="formulary_name" onSelect={this.dropDownSelectHandlerLob} disabled={this.props.configureSwitch}/>
-
+                                   
                                     </div>
+                                     ):""}
                                 </Grid>
 
                                 <Grid item xs={4}>
