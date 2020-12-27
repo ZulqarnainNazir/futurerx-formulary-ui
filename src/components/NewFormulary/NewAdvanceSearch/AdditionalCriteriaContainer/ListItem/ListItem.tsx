@@ -134,8 +134,8 @@ class ListItem extends Component<any, any> {
       isSelectAllPOS,
       isSelectAllPR,
     } = this.state;
-    const { id, deleteIconHandler } = this.props;
-    switch (id) {
+    const { cardCode, deleteIconHandler } = this.props;
+    switch (cardCode) {
       case 1:
         return "AGE";
       case 2:
@@ -159,7 +159,7 @@ class ListItem extends Component<any, any> {
               isSelectAll: isSelectAllPOS,
               handleSelectAll: this.handlePOSSelectAll,
             }}
-            deleteIconHandler={() => deleteIconHandler(id)}
+            deleteIconHandler={() => deleteIconHandler(cardCode)}
             isAdditionalCriteria={true}
           />
         );

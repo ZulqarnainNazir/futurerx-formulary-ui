@@ -25,26 +25,23 @@ class AdditionalCriteria extends Component<any, any> {
     selectedCriteriaList: Array(),
 
     nodeList: Array(),
-    cardCount: 0,
+    globalCardCount: 0,
   };
 
   componentDidMount() {
     console.log("ADDITIONAL CRITERIA: ", this.props.formulary);
   }
 
-  deleteIconHandler = (id) => {
-    console.log("delete::icon " + id);
+  deleteIconHandler = (cardCode) => {
     const selectedCriteriaList = this.state.selectedCriteriaList.filter(
-      (item) => item.id !== id
+      (item) => item.cardCode !== cardCode
     );
     this.setState({ selectedCriteriaList });
   };
 
-  onCriteriaSelect = (id) => {
-    console.log("Criteria: ", id);
-
+  onCriteriaSelect = (cardCode) => {
     this.setState({
-      selectedCriteriaId: id,
+      selectedCriteriaId: cardCode,
     });
 
     let isFound = false;
@@ -56,16 +53,20 @@ class AdditionalCriteria extends Component<any, any> {
       listItemStatus: Object.assign({}, this.props.listItemStatus),
     };
 
-    switch (id) {
+    switch (cardCode) {
       case 1:
         this.setState({
           selectedCriteriaList: [
             ...this.state.selectedCriteriaList,
             {
-              id: id,
+              id: null,
+              cardCode: cardCode,
               name: "AGE",
-              component: (
-                <ListItem id={id} deleteIconHandler={this.deleteIconHandler} />
+              render: (
+                <ListItem
+                  cardCode={cardCode}
+                  deleteIconHandler={this.deleteIconHandler}
+                />
               ),
             },
           ],
@@ -76,10 +77,14 @@ class AdditionalCriteria extends Component<any, any> {
           selectedCriteriaList: [
             ...this.state.selectedCriteriaList,
             {
-              id: id,
+              id: null,
+              cardCode: cardCode,
               name: "GENDER",
-              component: (
-                <ListItem id={id} deleteIconHandler={this.deleteIconHandler} />
+              render: (
+                <ListItem
+                  cardCode={cardCode}
+                  deleteIconHandler={this.deleteIconHandler}
+                />
               ),
             },
           ],
@@ -90,10 +95,14 @@ class AdditionalCriteria extends Component<any, any> {
           selectedCriteriaList: [
             ...this.state.selectedCriteriaList,
             {
-              id: id,
+              id: null,
+              cardCode: cardCode,
               name: "ICD",
-              component: (
-                <ListItem id={id} deleteIconHandler={this.deleteIconHandler} />
+              render: (
+                <ListItem
+                  cardCode={cardCode}
+                  deleteIconHandler={this.deleteIconHandler}
+                />
               ),
             },
           ],
@@ -104,10 +113,14 @@ class AdditionalCriteria extends Component<any, any> {
           selectedCriteriaList: [
             ...this.state.selectedCriteriaList,
             {
-              id: id,
+              id: null,
+              cardCode: cardCode,
               name: "PN",
-              component: (
-                <ListItem id={id} deleteIconHandler={this.deleteIconHandler} />
+              render: (
+                <ListItem
+                  cardCode={cardCode}
+                  deleteIconHandler={this.deleteIconHandler}
+                />
               ),
             },
           ],
@@ -118,38 +131,81 @@ class AdditionalCriteria extends Component<any, any> {
           selectedCriteriaList: [
             ...this.state.selectedCriteriaList,
             {
-              id: id,
+              id: null,
+              cardCode: cardCode,
               name: "PT",
-              component: (
-                <ListItem id={id} deleteIconHandler={this.deleteIconHandler} />
+              render: (
+                <ListItem
+                  cardCode={cardCode}
+                  deleteIconHandler={this.deleteIconHandler}
+                />
               ),
             },
           ],
         });
         break;
       case 6:
-        this.setState({
-          selectedCriteriaList: [
-            ...this.state.selectedCriteriaList,
-            {
-              id: id,
-              name: "POS",
-              component: (
-                <ListItem id={id} deleteIconHandler={this.deleteIconHandler} />
-              ),
-            },
-          ],
-        });
+        filteredList = this.state.selectedCriteriaList.filter(
+          (card) => card.cardCode === cardCode
+        );
+
+        let cardName = "POS";
+        this.state.globalCardCount++;
+        if (filteredList.length === 0) {
+          // var globalCount: number = this.state.globalCardCount;
+          // globalCount++;
+          const isIncluded = true;
+          this.state.nodeList.push({
+            id: this.state.globalCardCount,
+            cardCode: cardCode,
+            cardName: cardName,
+            isIncluded: true,
+            childData: {},
+          });
+
+          payload.listItemStatus[this.state.globalCardCount] = true;
+          this.props.setAdditionalCriteria(payload);
+          this.setState({
+            selectedCriteriaList: [
+              ...this.state.selectedCriteriaList,
+              {
+                id: this.state.globalCardCount,
+                cardCode: cardCode,
+                cardName: cardName,
+                isIncluded: isIncluded,
+                render: (
+                  <ListItem
+                    nodeId={this.state.globalCardCount}
+                    deleteIconHandler={this.deleteIconHandler}
+                    onInternalStateChange={this.onInternalStateChange}
+                    card={{
+                      cardName: cardName,
+                      cardCode: cardCode,
+                      isIncluded: isIncluded,
+                    }}
+                  />
+                ),
+              },
+            ],
+          });
+        } else if (filteredList.length === 1) {
+          const currentCard = filteredList[0];
+          const isIncluded = !currentCard.isIncluded;
+        }
         break;
       case 7:
         this.setState({
           selectedCriteriaList: [
             ...this.state.selectedCriteriaList,
             {
-              id: id,
+              id: null,
+              cardCode: cardCode,
               name: "PR",
-              component: (
-                <ListItem id={id} deleteIconHandler={this.deleteIconHandler} />
+              render: (
+                <ListItem
+                  cardCode={cardCode}
+                  deleteIconHandler={this.deleteIconHandler}
+                />
               ),
             },
           ],
@@ -160,10 +216,14 @@ class AdditionalCriteria extends Component<any, any> {
           selectedCriteriaList: [
             ...this.state.selectedCriteriaList,
             {
-              id: id,
+              id: null,
+              cardCode: cardCode,
               name: "PCHL",
-              component: (
-                <ListItem id={id} deleteIconHandler={this.deleteIconHandler} />
+              render: (
+                <ListItem
+                  cardCode={cardCode}
+                  deleteIconHandler={this.deleteIconHandler}
+                />
               ),
             },
           ],
@@ -174,6 +234,8 @@ class AdditionalCriteria extends Component<any, any> {
         break;
     }
   };
+
+  onInternalStateChange = () => {};
   render() {
     const { accordionId, selectedCriteriaList } = this.state;
     const { criteriaList } = this.props;
@@ -211,7 +273,7 @@ class AdditionalCriteria extends Component<any, any> {
                 ) : (
                   selectedCriteriaList.map((criteriaObject, idx) => (
                     <div draggable="true" key={criteriaObject.id}>
-                      {criteriaObject["component"]}
+                      {criteriaObject["render"]}
                     </div>
                   ))
                 )}
