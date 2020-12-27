@@ -192,7 +192,7 @@ class FormularySetUp extends React.Component<any, any> {
         },
         tiers: [...newProps.formulary.tiers],
         fetchedEditInfo: newProps.formulary.edit_info,
-        edit_info: this.getEditInfo(newProps.formulary.edit_info),
+        edit_info: this.getEditInfo(newProps.formulary.edit_info, newProps.setupOptions?.designOptions),
         designOptions: [...newProps.setupOptions?.designOptions],
         setupOptions: newProps.setupOptions,
       });
@@ -224,7 +224,7 @@ class FormularySetUp extends React.Component<any, any> {
       });
     }
   };
-  getEditInfo = (editInfo: any) => {
+  getEditInfo = (editInfo: any[], options:any[] ) => {
     let editTrue = editInfo
       .filter((obj) => obj.id_checked === true)
       .map((e) => e.id_edit);
@@ -232,12 +232,14 @@ class FormularySetUp extends React.Component<any, any> {
       .filter((obj) => obj.id_checked === false)
       .map((e) => e.id_edit);
     // let customEdit: any = "";
-    let customEdit:any[]=[];
+    let customEdit: any[] = [];
 
     if (this.props.formulary_type_id === 6) {
-      customEdit = this.props.setupOptions.designOptions.filter(
+      // console.log(options);
+      customEdit = options.filter(
         (e) => e.is_custom === true
       );
+      // console.log(customEdit);
       const customEditId = customEdit.map((e) => e.id_edit);
       editTrue = editTrue.filter((e) => customEditId.indexOf(e) === -1);
     }
