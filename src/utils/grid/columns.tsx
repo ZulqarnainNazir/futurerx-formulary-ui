@@ -10368,7 +10368,7 @@ export const claimsPopupErrorMsgGrid = [
 
 export const getCompareFormularyVersionHistoryColumn: () => Column<any>[] = () => {
   return [
-    {
+      {
       id: 1,
       position: 1,
       pixelWidth: 30,
@@ -10386,11 +10386,11 @@ export const getCompareFormularyVersionHistoryColumn: () => Column<any>[] = () =
     {
       id: 2,
       position: 2,
-      pixelWidth: 30,
+      pixelWidth: 10,
       sorter: {},
       textCase: "upper",
-      key: "pa_group_description_name",
-      displayTitle: "GROUP DESCRIPTION NAME",
+      key: "applied_version",
+      displayTitle: "APPLIED VERSION",
       isFilterable: true,
       dataType: "string",
       filters: textFilters,
@@ -10401,7 +10401,7 @@ export const getCompareFormularyVersionHistoryColumn: () => Column<any>[] = () =
     {
       id: 3,
       position: 3,
-      pixelWidth: 30,
+      pixelWidth: 10,
       sorter: {},
       textCase: "upper",
       key: "version_number",
@@ -10416,7 +10416,7 @@ export const getCompareFormularyVersionHistoryColumn: () => Column<any>[] = () =
     {
       id: 4,
       position: 4,
-      pixelWidth: 30,
+      pixelWidth: 20,
       sorter: {},
       textCase: "upper",
       key: "effective_date",
@@ -10431,7 +10431,7 @@ export const getCompareFormularyVersionHistoryColumn: () => Column<any>[] = () =
     {
       id: 5,
       position: 5,
-      pixelWidth: 30,
+      pixelWidth: 15,
       sorter: {},
       textCase: "upper",
       key: "contract_year",
@@ -10445,8 +10445,8 @@ export const getCompareFormularyVersionHistoryColumn: () => Column<any>[] = () =
 
     {
       id: 6,
-      position: 6,
-      pixelWidth: 30,
+      position: 7,
+      pixelWidth: 15,
       sorter: {},
       textCase: "upper",
       key: "cms_formulary_id",
