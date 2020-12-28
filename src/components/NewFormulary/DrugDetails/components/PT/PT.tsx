@@ -494,6 +494,11 @@ class DrugDetailPT extends React.Component<any, any> {
       }
       return tab;
     });
+
+    if (activeTabIndex === 2) {
+      this.getPTCriteriaList(true);
+    }
+
     this.setState({ tabs, activeTabIndex, showGrid: false });
   };
 

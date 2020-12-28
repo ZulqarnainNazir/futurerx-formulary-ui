@@ -67,14 +67,14 @@ function mapStateToProps(state) {
   // if(state?.saveGdm?.success!=="" && state?.saveGdm?.success!==null){
   //   showMessage('Saved Successfully', 'success');
   // }
-  if(state?.saveGdm?.error){
-    if(state.saveGdm.error.length>0){
-      state.saveGdm.error.map(err => {
-        showMessage(err.message, 'error');
-      })}else{
-      showMessage(state?.saveGdm?.error?.data?.message, 'error');
-    }
-  }
+  // if(state?.saveGdm?.error){
+  //   if(state.saveGdm.error.length>0){
+  //     state.saveGdm.error.map(err => {
+  //       showMessage(err.message, 'error');
+  //     })}else{
+  //     showMessage(state?.saveGdm?.error?.data?.message, 'error');
+  //   }
+  // }
   return {
     formulary_id: state.application.formulary_id,
     StGDData: state.stepTherapyReducer.description, // earlier it data
