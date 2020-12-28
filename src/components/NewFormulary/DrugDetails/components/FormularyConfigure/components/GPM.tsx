@@ -96,9 +96,9 @@ class GPM extends React.Component<any, any>{
         apiDetails['pathParams'] = param;
 
         this.props.getStGrouptDescriptionVersions(apiDetails).then((json) => {
-            let tmpData = json.payload.data;
-            let dataLength = tmpData.length
-            let latestVerion = tmpData.length > 0 ? tmpData[dataLength - 1].id_st_group_description : 0
+            let tmpData = json.payload?.data;
+            let dataLength = tmpData&&tmpData.length?tmpData.length:0
+            let latestVerion = dataLength>0 ? tmpData[dataLength - 1].id_st_group_description : 0
             
             let apiDetails= {};
             apiDetails["lob_type"] = this.props.formulary_lob_id;
