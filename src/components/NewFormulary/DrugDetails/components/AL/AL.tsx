@@ -602,9 +602,9 @@ class DrugDetailAL extends React.Component<any, any> {
       return tab;
     });
 
-    // if (activeTabIndex === 2) {
-    //   this.getALCriteriaList();
-    // }
+    if (activeTabIndex === 2) {
+      this.getALCriteriaList(true);
+    }
 
     this.setState({ tabs, activeTabIndex, showGrid: false });
   };

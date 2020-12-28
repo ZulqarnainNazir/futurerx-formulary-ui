@@ -528,6 +528,11 @@ class DrugDetailPOS extends React.Component<any, any> {
       }
       return tab;
     });
+
+    if (activeTabIndex === 2) {
+      this.getPOSCriteriaList(true);
+    }
+
     this.setState({ tabs, activeTabIndex, showGrid: false });
   };
 
