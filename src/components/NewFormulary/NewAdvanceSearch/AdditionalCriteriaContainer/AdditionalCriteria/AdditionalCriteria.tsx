@@ -26,19 +26,30 @@ class AdditionalCriteria extends Component<any, any> {
 
     nodeList: Array(),
     globalCardCount: 0,
+
+    additionalCriteriaState: {},
   };
 
   componentDidMount() {
     console.log("ADDITIONAL CRITERIA: ", this.props.formulary);
   }
 
-  deleteIconHandler = (cardCode) => {
+  deleteIconHandler = (nodeId) => {
     const selectedCriteriaList = this.state.selectedCriteriaList.filter(
-      (item) => item.cardCode !== cardCode
+      (item) => item.id !== nodeId
     );
-    this.setState({ selectedCriteriaList });
+    const nodeList = this.state.nodeList.filter((item) => item.id !== nodeId);
+    this.setState({ selectedCriteriaList, nodeList }, () =>
+      console.log(this.state)
+    );
   };
 
+  handleAllNodesState = (updatedState) => {
+    console.log(updatedState);
+    let { additionalCriteriaState } = this.state;
+    additionalCriteriaState = [updatedState];
+    this.setState({});
+  };
   onCriteriaSelect = (cardCode) => {
     this.setState({
       selectedCriteriaId: cardCode,
@@ -50,7 +61,8 @@ class AdditionalCriteria extends Component<any, any> {
       additionalCriteriaBody: this.props.additionalCriteriaBody,
       populateGrid: this.props.populateGrid,
       closeDialog: this.props.closeDialog,
-      listItemStatus: Object.assign({}, this.props.listItemStatus),
+      // listItemStatus: Object.assign({}, this.props.listItemStatus),
+      listItemStatus: { ...this.props.listItemStatus },
     };
 
     switch (cardCode) {
@@ -156,7 +168,6 @@ class AdditionalCriteria extends Component<any, any> {
         if (filteredList.length === 1) {
           const currentCard = filteredList[0];
           isIncluded = !currentCard.isIncluded;
-          console.log("AGAIN: ", isIncluded);
         }
         if (filteredList.length <= 1) {
           payload.listItemStatus[this.state.globalCardCount] = isIncluded;
@@ -188,12 +199,13 @@ class AdditionalCriteria extends Component<any, any> {
                         cardCode: cardCode,
                         isIncluded: isIncluded,
                       }}
+                      initialState={this.handleAllNodesState}
                     />
                   ),
                 },
               ],
             },
-            () => console.log(this.state)
+            () => console.log("Additional criteria state: ", this.state)
           );
         }
         break;

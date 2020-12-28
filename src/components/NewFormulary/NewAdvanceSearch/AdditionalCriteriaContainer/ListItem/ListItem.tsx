@@ -57,6 +57,11 @@ class ListItem extends Component<any, any> {
 
     this.initializeParentData();
   }
+
+  componentDidUpdate(prevProps, prevState) {
+    console.log("POS SETTINGS: ", this.state);
+  }
+
   componentWillReceiveProps(nextProps) {}
 
   initializeParentData = () => {
@@ -114,9 +119,10 @@ class ListItem extends Component<any, any> {
 
   serviceSettingsCheckedPOS = (e) => {
     const { posSettings } = this.state;
+    const { nodeId } = this.props;
 
     posSettings.forEach((s: any) => {
-      if (s.id_place_of_service_type === e.target.id) {
+      if (s.id_place_of_service_type + "" + nodeId === e.target.id) {
         s.isChecked = e.target.checked;
       }
     });
@@ -145,7 +151,9 @@ class ListItem extends Component<any, any> {
       covered: isCovered,
     };
 
-    this.setState({ posSettingsStatus });
+    this.setState({ posSettingsStatus }, () => {
+      // this.props.handleStatusChange();
+    });
   };
   render() {
     const {
@@ -157,6 +165,7 @@ class ListItem extends Component<any, any> {
       isSelectAllPR,
     } = this.state;
     const {
+      nodeId,
       card: { cardName, cardCode, isIncluded },
       deleteIconHandler,
     } = this.props;
@@ -184,8 +193,9 @@ class ListItem extends Component<any, any> {
               isSelectAll: isSelectAllPOS,
               handleSelectAll: this.handlePOSSelectAll,
             }}
-            deleteIconHandler={() => deleteIconHandler(cardCode)}
+            deleteIconHandler={() => deleteIconHandler(nodeId)}
             isAdditionalCriteria={true}
+            nodeId={nodeId}
           />
         );
       case 7:

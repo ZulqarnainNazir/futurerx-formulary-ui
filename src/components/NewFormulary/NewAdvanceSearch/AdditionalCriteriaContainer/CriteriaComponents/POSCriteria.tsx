@@ -23,6 +23,7 @@ const POSCriteria = (props) => {
     handleStatus,
     isAdditionalCriteria,
     deleteIconHandler,
+    nodeId,
   } = props;
 
   // id_place_of_service_type: 1,
@@ -63,7 +64,7 @@ const POSCriteria = (props) => {
                   key={s.id_place_of_service_type}
                 >
                   <Checkbox
-                    id={s.id_place_of_service_type}
+                    id={s.id_place_of_service_type + "" + nodeId}
                     name={s.id_place_of_service_type}
                     onChange={serviceSettingsChecked}
                     checked={s.isChecked}
@@ -75,7 +76,7 @@ const POSCriteria = (props) => {
                     value="N/A"
                   /> */}
                   <label
-                    htmlFor={s.id_place_of_service_type}
+                    htmlFor={s.id_place_of_service_type + "" + nodeId}
                     className="checkbox-label"
                   >
                     {`${s.place_of_service_type_code} -
