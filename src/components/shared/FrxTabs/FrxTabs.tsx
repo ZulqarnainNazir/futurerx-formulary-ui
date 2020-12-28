@@ -19,8 +19,9 @@ const { TabPane } = Tabs;
 interface TabProps {
   tabList: TabInfo[];
   activeTabIndex: number;
+  // activeKey?:
   typeCard?: any;
-  count? : number;
+  count?: number;
   countIndex?: number;
   onClickTab: (clickedTab: number) => void;
 }
@@ -34,11 +35,12 @@ class FrxTabs extends React.Component<TabProps, TabState> {
    */
   onClickTab: any = (clickedTab: number) => {
     this.props.onClickTab(clickedTab - 1);
+    console.log("[clickedTab frxTab]:", clickedTab);
   };
 
   render() {
     console.log(this.props.typeCard);
-
+    console.log("[activeTabIndex]:", this.props.activeTabIndex);
     return (
       <AppBar className="frx-tabs-root">
         <Tabs
@@ -52,10 +54,22 @@ class FrxTabs extends React.Component<TabProps, TabState> {
               ? "frx-tabs-root-line"
               : "frx-tabs-root-card"
           }
+          activeKey={String(this.props.activeTabIndex + 1)}
           aria-label="tabs"
         >
           {this.props.tabList.map((tab: TabInfo, index: number) => (
-            <TabPane key={tab.id} tab={this.props.countIndex === index && this.props.count? <span className="tabs-with-count">{tab.text} <em>{this.props.count}</em></span> : tab.text} />
+            <TabPane
+              key={tab.id}
+              tab={
+                this.props.countIndex === index && this.props.count ? (
+                  <span className="tabs-with-count">
+                    {tab.text} <em>{this.props.count}</em>
+                  </span>
+                ) : (
+                  tab.text
+                )
+              }
+            />
           ))}
         </Tabs>
         <div className="dev-status wip">

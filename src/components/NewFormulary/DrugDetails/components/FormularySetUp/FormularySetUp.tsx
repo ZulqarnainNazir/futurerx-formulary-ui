@@ -90,10 +90,10 @@ class FormularySetUp extends React.Component<any, any> {
   }
 
   manageFormularyType(type: number, id: number) {
-    // console.log(" Manage - TYPE : " + type + " ID : " + id);
-
+    console.log(" Manage - TYPE : " + type + " ID : " + id);
+    let defaultType = 4;
     if (type === -1) {
-      this.props.fetchGeneralOptions({ type: 1, id: -1 });
+      this.props.fetchGeneralOptions({ type: defaultType, id: -1 });
       return;
     }
 
@@ -102,9 +102,11 @@ class FormularySetUp extends React.Component<any, any> {
     this.props.fetchTierOptions({ type: type, id: id });
 
     if (type === 1) {
+      // MRC...
       this.props.fetchMedicareOptions({ type: type, id: id });
       this.props.fetchSupplementalOptions({ type: type, id: id });
     } else if (type === 2) {
+      // MMP...
       this.props.fetchStatesOptions(type);
       this.props.fetchMedicareOptions({ type: type, id: id });
       this.props.fetchSupplementalOptions({ type: type, id: id });
@@ -115,6 +117,7 @@ class FormularySetUp extends React.Component<any, any> {
       // TODO ... MEDICADE...
       this.props.fetchStatesOptions(0);
     } else if (type === 5) {
+      // EXC...
     } else if (type === 6) {
       // COMMERCIAL...
     }
@@ -122,7 +125,41 @@ class FormularySetUp extends React.Component<any, any> {
   }
 
   UNSAFE_componentWillReceiveProps = (newProps) => {
-    if (newProps.formulary && newProps.setupOptions) {
+    console.log("# - - - - - - - - - ");
+    console.log("# 1 *FL       : " + (newProps?.formulary ? "" : "X"));
+    console.log("# 2  ST       : " + (newProps?.setupOptions ? "" : "X"));
+    console.log(
+      "# 3  ST.GI    : " + (newProps?.setupOptions?.generalOptions ? "" : "X")
+    );
+
+    console.log(
+      "# 4  ST.GI.TY : " +
+        (newProps?.setupOptions?.generalOptions?.formularyType ? "" : "X")
+    );
+    console.log(
+      "# 5  ST.GI.CY : " +
+        (newProps?.setupOptions?.generalOptions?.contractYear ? "" : "X")
+    );
+    console.log(
+      "# 6  ST.GI.CS : " +
+        (newProps?.setupOptions?.generalOptions?.classification_systems
+          ? ""
+          : "X")
+    );
+
+    console.log(
+      "# 7  ST.DN    : " + (newProps?.setupOptions?.designOptions ? "" : "X")
+    );
+    console.log(
+      "# 8  ST.TR    : " + (newProps?.setupOptions?.tierOptions ? "" : "X")
+    );
+
+    if (
+      newProps.formulary &&
+      newProps.setupOptions.generalOptions &&
+      newProps.setupOptions.designOptions &&
+      newProps.setupOptions.tierOptions
+    ) {
       const medeicareContract = { ...this.state.medicare_contract_type_info };
       medeicareContract.medicare_contract_types = newProps.formulary?.medicare_contract_types?.map(
         (e) => e.id_medicare_contract_type
@@ -130,7 +167,7 @@ class FormularySetUp extends React.Component<any, any> {
 
       const classificationSystem =
         newProps.formulary.formulary_info.id_classification_system;
-      console.log(classificationSystem);
+      // console.log(classificationSystem);
       this.setState({
         isUpdate: true,
         generalInformation: {
@@ -155,7 +192,7 @@ class FormularySetUp extends React.Component<any, any> {
         },
         tiers: [...newProps.formulary.tiers],
         fetchedEditInfo: newProps.formulary.edit_info,
-        edit_info: this.getEditInfo(newProps.formulary.edit_info),
+        edit_info: this.getEditInfo(newProps.formulary.edit_info, newProps.setupOptions?.designOptions),
         designOptions: [...newProps.setupOptions?.designOptions],
         setupOptions: newProps.setupOptions,
       });
@@ -187,18 +224,22 @@ class FormularySetUp extends React.Component<any, any> {
       });
     }
   };
-  getEditInfo = (editInfo: any) => {
+  getEditInfo = (editInfo: any[], options:any[] ) => {
     let editTrue = editInfo
       .filter((obj) => obj.id_checked === true)
       .map((e) => e.id_edit);
     const editFalse = editInfo
       .filter((obj) => obj.id_checked === false)
       .map((e) => e.id_edit);
-    let customEdit: any = "";
+    // let customEdit: any = "";
+    let customEdit: any[] = [];
+
     if (this.props.formulary_type_id === 6) {
-      customEdit = this.props.setupOptions.designOptions.filter(
+      // console.log(options);
+      customEdit = options.filter(
         (e) => e.is_custom === true
       );
+      // console.log(customEdit);
       const customEditId = customEdit.map((e) => e.id_edit);
       editTrue = editTrue.filter((e) => customEditId.indexOf(e) === -1);
     }
@@ -211,10 +252,14 @@ class FormularySetUp extends React.Component<any, any> {
     return newObj;
   };
   formularyDesignCommercialCheckHandler = (getObj: any) => {
+    console.log("------------------- FD");
+    console.log(getObj);
     const receivedObj = { ...getObj };
+    console.log(receivedObj);
     const customId = this.props.setupOptions.designOptions
       .filter((e) => e.is_custom)
       .map((e) => e.id_edit);
+    console.log(customId);
     const received_customId = receivedObj.custom_edits.map((e) => e.id_edit);
     const staticFId = this.props.setupOptions.designOptions
       .filter((e) => !e.is_custom)
@@ -240,8 +285,8 @@ class FormularySetUp extends React.Component<any, any> {
     id: any,
     type
   ) => {
-    console.log(event.target.value, id);
-    console.log(this.state.edit_info);
+    // console.log(event.target.value, id);
+    // console.log(this.state.edit_info);
     let checked = event.target.value;
     const updatedEditInfo: any = { ...this.state.edit_info };
     if (type === "checkbox") {
@@ -361,7 +406,7 @@ class FormularySetUp extends React.Component<any, any> {
   };
 
   tierCheck = () => {
-    console.log(this.state);
+    // console.log(this.state);
     debugger;
     return true;
   };
@@ -421,15 +466,15 @@ class FormularySetUp extends React.Component<any, any> {
   // };
 
   changeTierValueHandler = (e, val) => {
-    console.log(" ------------------- ");
-    console.log(" > : " + e + " , " + val);
+    // console.log(" ------------------- ");
+    // console.log(" > : " + e + " , " + val);
     // Preferred , Tier 1
     // Add New , Tier 2
     const updatedTiers: any = [...this.state.tiers];
     // console.log(updatedTiers);
     const ind = updatedTiers.findIndex((el) => el.tier_name === val);
     const getObj = { ...updatedTiers[ind] };
-    console.log(ind, getObj);
+    // console.log(ind, getObj);
     const OBJ = this.props.setupOptions.tierOptions.find(
       (el) => el.tier_label === e
     );
@@ -448,12 +493,12 @@ class FormularySetUp extends React.Component<any, any> {
   };
 
   handleCustomTierChange = (e, tierID) => {
-    console.log(" handleCustomTierChange : " + e.currentTarget.value);
+    // console.log(" handleCustomTierChange : " + e.currentTarget.value);
     const updatedTiers: any = [...this.state.tiers];
-    console.log(updatedTiers);
+    // console.log(updatedTiers);
     const ind = updatedTiers.findIndex((el) => el.tier_name === tierID);
     const getObj = { ...updatedTiers[ind] };
-    console.log(ind, getObj);
+    // console.log(ind, getObj);
     getObj.tier_label_name = e.currentTarget.value;
     updatedTiers[ind] = getObj;
     this.setState({
@@ -462,7 +507,7 @@ class FormularySetUp extends React.Component<any, any> {
   };
 
   deleteCustomTier = (tierID) => {
-    console.log(" DELETE : " + tierID);
+    // console.log(" DELETE : " + tierID);
     const updatedTiers: any = [...this.state.tiers];
     // console.log(updatedTiers);
     const ind = updatedTiers.findIndex((el) => el.tier_name === tierID);
@@ -488,7 +533,7 @@ class FormularySetUp extends React.Component<any, any> {
   };
 
   onSave = (e) => {
-    console.log("  SAVE ", e);
+    console.log("  SAVE - ", e);
     if (this.props.mode === "NEW") {
       let msg: string[] = [];
       if (this.state.generalInformation.type_id === "") {
@@ -538,7 +583,7 @@ class FormularySetUp extends React.Component<any, any> {
     }
 
     this.props.saveFormulary(input).then((arg) => {
-      //console.log("SAVE Callback ", arg?.payload);
+      console.log("SAVE Callback ", arg?.payload);
       if (arg?.payload?.type > 0 && arg?.payload?.id > 0) {
         console.log(
           "REFRESH.... TYPE : " +
@@ -565,7 +610,7 @@ class FormularySetUp extends React.Component<any, any> {
   };
 
   createUsingClone = (e) => {
-    console.log("clone......");
+    // console.log("clone......");
     if (this.props.mode === "NEW") {
       let msg: string[] = [];
       if (this.state.generalInformation.type_id === "") {
@@ -590,6 +635,7 @@ class FormularySetUp extends React.Component<any, any> {
       this.props.createCloneFormulary(input);
     }
   };
+
 
   render() {
     return (

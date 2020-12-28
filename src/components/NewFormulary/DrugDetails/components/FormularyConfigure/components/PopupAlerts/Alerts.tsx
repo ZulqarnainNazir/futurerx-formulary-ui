@@ -23,8 +23,11 @@ interface Props {
 
 
 function mapStateToProps(state) {
-    if(state?.saveGdm?.success!=="" && state?.saveGdm?.error !==""){
-        showMessage(state?.saveGdm?.success, state?.saveGdm?.error);
+    if(state?.saveGdm?.success){
+        showMessage(state?.saveGdm?.success, 'success');
+    }
+    if(state?.saveGdm?.error){
+        showMessage(state?.saveGdm?.error,'error');
     }
     return {
       success: state.saveGdm.success,

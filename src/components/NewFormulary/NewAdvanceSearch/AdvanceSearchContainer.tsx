@@ -3,7 +3,10 @@ import "./AdvanceSearchContainer.scss";
 import Grid from "@material-ui/core/Grid";
 import { Button, Input, Box } from "@material-ui/core";
 import FrxDialogPopup from "../../shared/FrxDialogPopup/FrxDialogPopup";
-import { getCategoryList } from "./advanceSearchMock";
+import {
+  getCategoryList,
+  getAdditionalCriteriaSectionList,
+} from "./advanceSearchMock";
 import ListItemContainer from "./components/ListItemContainer/ListItemContainer";
 import FileType from "./CategoriesComponents/FileTypes/FileType";
 import Tire from "./CategoriesComponents/Tire/Tire";
@@ -12,13 +15,15 @@ import DrugCategory from "./CategoriesComponents/DrugCategory/DrugCategory";
 import GpiLableSearch from "./CategoriesComponents/Gpi/GpiLableSearch";
 import ReferenceNdc from "./CategoriesComponents/ReferenceNdc/ReferenceNdc";
 import AlternativeDrug from "./CategoriesComponents/AlternativeDrug/AlternativeDrug";
+
 import { setAdvancedSearch } from "../../../redux/slices/formulary/advancedSearch/advancedSearchSlice";
 import { connect } from "react-redux";
 import { isEmpty } from "lodash";
+import AdditionalCriteriaContainer from "./AdditionalCriteriaContainer/AdditionalCriteriaContainer";
 
 function mapDispatchToProps(dispatch) {
   return {
-    setAdvancedSearch: (a) => dispatch(setAdvancedSearch(a))
+    setAdvancedSearch: (a) => dispatch(setAdvancedSearch(a)),
   };
 }
 
@@ -31,7 +36,7 @@ const mapStateToProps = (state) => {
     formulary_id: state?.application?.formulary_id,
     formulary: state?.application?.formulary,
     formulary_lob_id: state?.application?.formulary_lob_id,
-    formulary_type_id: state?.application?.formulary_type_id
+    formulary_type_id: state?.application?.formulary_type_id,
   };
 };
 
@@ -44,8 +49,13 @@ interface Props {
   closeDialog: any;
   listItemStatus: any;
   formulary_lob_id: any;
+
+  // additional Criteria
+  isAdvanceSearch: boolean;
+  // getDrugDetailsPOSSettings: (api) => void;
+  // getDrugDetailsPRSettings: (api) => void;
 }
-interface State { }
+interface State {}
 
 class AdvanceSearchContainer extends Component<Props, State> {
   state = {
@@ -73,7 +83,7 @@ class AdvanceSearchContainer extends Component<Props, State> {
       is_user_defined5: false,
       is_vbid: false,
       is_no_tier: false,
-      tiers: Array()
+      tiers: Array(),
     },
     additionalFilterNonMcr: {
       is_al: false,
@@ -94,10 +104,14 @@ class AdvanceSearchContainer extends Component<Props, State> {
       is_other4: false,
       is_other5: false,
       is_no_tier: false,
-      tiers: Array()
+      tiers: Array(),
     },
     nodeList: Array(),
     idCount: 0,
+
+    // State for additional criteria
+    // isAdvanceSearch: true,
+    criteriaList: getAdditionalCriteriaSectionList(),
   };
 
   onClose = () => {
@@ -108,52 +122,118 @@ class AdvanceSearchContainer extends Component<Props, State> {
   };
 
   componentDidMount = () => {
-    if (this.props.advancedSearchBody && this.props.advancedSearchBody.additional_filter) {
-      let keystoSet = Object.keys(this.props.advancedSearchBody.additional_filter).filter(key => !['is_all_tiers', 'is_no_tier', 'tiers'].includes(key) && this.props.advancedSearchBody.additional_filter[key]);
+    if (
+      this.props.advancedSearchBody &&
+      this.props.advancedSearchBody.additional_filter
+    ) {
+      let keystoSet = Object.keys(
+        this.props.advancedSearchBody.additional_filter
+      ).filter(
+        (key) =>
+          !["is_all_tiers", "is_no_tier", "tiers"].includes(key) &&
+          this.props.advancedSearchBody.additional_filter[key]
+      );
       let selectedCateoryList = [...this.state.selectedCateoryList];
       if (keystoSet.length > 0) {
         this.state.idCount++;
-        this.state.nodeList.push({ type: 'filetype', id: this.state.idCount, childData: {}, isIncluded: false });
+        this.state.nodeList.push({
+          type: "filetype",
+          id: this.state.idCount,
+          childData: {},
+          isIncluded: false,
+        });
         selectedCateoryList.push({
           id: this.state.idCount,
           type: 4,
-          content: <ListItemContainer title={"File Type"} onParentDataUpdated={this.onParentDataUpdated} nodeId={this.state.idCount}>
-            <FileType fileFiltersChanged={this.fileFiltersChanged} />
-          </ListItemContainer>
+          content: (
+            <ListItemContainer
+              title={"File Type"}
+              onParentDataUpdated={this.onParentDataUpdated}
+              nodeId={this.state.idCount}
+            >
+              <FileType fileFiltersChanged={this.fileFiltersChanged} />
+            </ListItemContainer>
+          ),
         });
 
         this.state.idCount++;
-        this.state.nodeList.push({ type: 'um_filter', id: this.state.idCount, childData: {}, isIncluded: false });
+        this.state.nodeList.push({
+          type: "um_filter",
+          id: this.state.idCount,
+          childData: {},
+          isIncluded: false,
+        });
         selectedCateoryList.push({
           id: this.state.idCount,
           type: 6,
-          content: <ListItemContainer title={"UM Filter"} onParentDataUpdated={this.onParentDataUpdated} nodeId={this.state.idCount}>
-            <UmFilter umFiltersChanged={this.umFiltersChanged} />
-          </ListItemContainer>
+          content: (
+            <ListItemContainer
+              title={"UM Filter"}
+              onParentDataUpdated={this.onParentDataUpdated}
+              nodeId={this.state.idCount}
+            >
+              <UmFilter umFiltersChanged={this.umFiltersChanged} />
+            </ListItemContainer>
+          ),
         });
       }
 
-      keystoSet = Object.keys(this.props.advancedSearchBody.additional_filter).filter(key => ['is_all_tiers', 'is_no_tier'].includes(key) && this.props.advancedSearchBody.additional_filter[key]);
-      if (keystoSet.length > 0 || this.props.advancedSearchBody.additional_filter['tiers'].length > 0) {
+      keystoSet = Object.keys(
+        this.props.advancedSearchBody.additional_filter
+      ).filter(
+        (key) =>
+          ["is_all_tiers", "is_no_tier"].includes(key) &&
+          this.props.advancedSearchBody.additional_filter[key]
+      );
+      if (
+        keystoSet.length > 0 ||
+        this.props.advancedSearchBody.additional_filter["tiers"].length > 0
+      ) {
         this.state.idCount++;
-        this.state.nodeList.push({ type: 'tier', id: this.state.idCount, childData: {}, isIncluded: false });
+        this.state.nodeList.push({
+          type: "tier",
+          id: this.state.idCount,
+          childData: {},
+          isIncluded: false,
+        });
         selectedCateoryList.push({
           id: this.state.idCount,
           type: 5,
-          content: <ListItemContainer title={"Tier"} onParentDataUpdated={this.onParentDataUpdated} nodeId={this.state.idCount}>
-            <Tire tierChanged={this.tierChanged} />
-          </ListItemContainer>
+          content: (
+            <ListItemContainer
+              title={"Tier"}
+              onParentDataUpdated={this.onParentDataUpdated}
+              nodeId={this.state.idCount}
+            >
+              <Tire tierChanged={this.tierChanged} />
+            </ListItemContainer>
+          ),
         });
       }
 
-      let payload = { advancedSearchBody: this.props.advancedSearchBody, populateGrid: this.props.populateGrid, closeDialog: this.props.closeDialog, listItemStatus: Object.assign({}, this.props.listItemStatus) };
-      console.log('State count:' + this.state.idCount);
+      let payload = {
+        advancedSearchBody: this.props.advancedSearchBody,
+        populateGrid: this.props.populateGrid,
+        closeDialog: this.props.closeDialog,
+        listItemStatus: Object.assign({}, this.props.listItemStatus),
+      };
+      console.log("State count:" + this.state.idCount);
       if (this.props.advancedSearchBody.covered) {
-        this.appendNonGenericSections(this.props.advancedSearchBody.covered, selectedCateoryList, true, payload);
+        this.appendNonGenericSections(
+          this.props.advancedSearchBody.covered,
+          selectedCateoryList,
+          true,
+          payload
+        );
       }
-      console.log('State count:' + this.state.idCount);
+      console.log("State count:" + this.state.idCount);
       if (this.props.advancedSearchBody.not_covered) {
-        this.appendNonGenericSections(this.props.advancedSearchBody.not_covered, selectedCateoryList, false, payload);
+        this.appendNonGenericSections(
+          this.props.advancedSearchBody.not_covered,
+          selectedCateoryList,
+          false,
+          payload
+        );
       }
 
       this.props.setAdvancedSearch(payload);
@@ -161,98 +241,173 @@ class AdvanceSearchContainer extends Component<Props, State> {
         selectedCateoryList: selectedCateoryList,
       });
     }
-  }
+  };
 
-  appendNonGenericSections = (refList, selectedCateoryList, included, payload) => {
+  appendNonGenericSections = (
+    refList,
+    selectedCateoryList,
+    included,
+    payload
+  ) => {
     let gpiHandled = false;
     let categoryHandled = false;
-    Object.keys(refList).map(key => {
+    Object.keys(refList).map((key) => {
       let values = Array();
-      if (key === 'reference_ndcs') {
-        values = refList['reference_ndcs'];
+      if (key === "reference_ndcs") {
+        values = refList["reference_ndcs"];
         if (values.length > 0) {
           this.state.idCount++;
-          this.state.nodeList.push({ type: 'ndc', id: this.state.idCount, childData: {}, isIncluded: included });
+          this.state.nodeList.push({
+            type: "ndc",
+            id: this.state.idCount,
+            childData: {},
+            isIncluded: included,
+          });
           payload.listItemStatus[this.state.idCount] = included;
           selectedCateoryList.push({
             id: this.state.idCount,
             type: 2,
             isIncluded: included,
-            content: <ListItemContainer title={"Reference NDC"} onParentDataUpdated={this.onParentDataUpdated} nodeId={this.state.idCount}>
-              <ReferenceNdc nodeId={this.state.idCount} onChildDataUpdated={this.onChildDataUpdated} initialValues={values} />
-            </ListItemContainer>
+            content: (
+              <ListItemContainer
+                title={"Reference NDC"}
+                onParentDataUpdated={this.onParentDataUpdated}
+                nodeId={this.state.idCount}
+              >
+                <ReferenceNdc
+                  nodeId={this.state.idCount}
+                  onChildDataUpdated={this.onChildDataUpdated}
+                  initialValues={values}
+                />
+              </ListItemContainer>
+            ),
           });
         }
-      } else if (key === 'gpis' || key === 'drug_label_names' || key === 'rxcuis' || key === 'ddids') {
+      } else if (
+        key === "gpis" ||
+        key === "drug_label_names" ||
+        key === "rxcuis" ||
+        key === "ddids"
+      ) {
         if (!gpiHandled) {
           values = [];
-          if (refList['gpis'] && refList['gpis'].length > 0) {
-            refList['gpis'].map(dataItem => {
-              values.push(dataItem + '[gpi]');
+          if (refList["gpis"] && refList["gpis"].length > 0) {
+            refList["gpis"].map((dataItem) => {
+              values.push(dataItem + "[gpi]");
             });
           }
 
-          if (refList['drug_label_names'] && refList['drug_label_names'].length > 0) {
-            refList['drug_label_names'].map(dataItem => {
-              values.push(dataItem + '[drug_label]');
+          if (
+            refList["drug_label_names"] &&
+            refList["drug_label_names"].length > 0
+          ) {
+            refList["drug_label_names"].map((dataItem) => {
+              values.push(dataItem + "[drug_label]");
             });
           }
 
-          if (refList['rxcuis'] && refList['rxcuis'].length > 0) {
-            refList['rxcuis'].map(dataItem => {
-              values.push(dataItem + '[rxcui]');
+          if (refList["rxcuis"] && refList["rxcuis"].length > 0) {
+            refList["rxcuis"].map((dataItem) => {
+              values.push(dataItem + "[rxcui]");
             });
           }
 
-          if (refList['ddids'] && refList['ddids'].length > 0) {
-            refList['ddids'].map(dataItem => {
-              values.push(dataItem + '[ddid]');
+          if (refList["ddids"] && refList["ddids"].length > 0) {
+            refList["ddids"].map((dataItem) => {
+              values.push(dataItem + "[ddid]");
             });
           }
           if (values.length > 0) {
             this.state.idCount++;
-            this.state.nodeList.push({ type: 'gpi', id: this.state.idCount, childData: {}, isIncluded: included });
+            this.state.nodeList.push({
+              type: "gpi",
+              id: this.state.idCount,
+              childData: {},
+              isIncluded: included,
+            });
             payload.listItemStatus[this.state.idCount] = included;
             selectedCateoryList.push({
               id: this.state.idCount,
               type: 1,
               isIncluded: included,
-              content: <ListItemContainer title={this.props.formulary_lob_id === 1 ? "GPI/Generic Name/Label Name/ RXCUI" : "GPI/Generic Name/Label Name/ DDID"} onParentDataUpdated={this.onParentDataUpdated} nodeId={this.state.idCount}>
-                <GpiLableSearch nodeId={this.state.idCount} onChildDataUpdated={this.onChildDataUpdated} initialValues={values} />
-              </ListItemContainer>
+              content: (
+                <ListItemContainer
+                  title={
+                    this.props.formulary_lob_id === 1
+                      ? "GPI/Generic Name/Label Name/ RXCUI"
+                      : "GPI/Generic Name/Label Name/ DDID"
+                  }
+                  onParentDataUpdated={this.onParentDataUpdated}
+                  nodeId={this.state.idCount}
+                >
+                  <GpiLableSearch
+                    nodeId={this.state.idCount}
+                    onChildDataUpdated={this.onChildDataUpdated}
+                    initialValues={values}
+                  />
+                </ListItemContainer>
+              ),
             });
           }
           gpiHandled = true;
         }
-      } else if (key === 'drug_categories' || key === 'drug_classes') {
+      } else if (key === "drug_categories" || key === "drug_classes") {
         if (!categoryHandled) {
           values = [];
-          if (refList['drug_categories'] && refList['drug_categories'].length > 0 &&
-            refList['drug_classes'] && refList['drug_classes'].length > 0) {
-            for (let index = 0; index < refList['drug_categories'].length; index++) {
-              if (index < refList['drug_classes'].length) {
-                values.push(refList['drug_categories'][index] + '[' + refList['drug_classes'][index] + ']');
+          if (
+            refList["drug_categories"] &&
+            refList["drug_categories"].length > 0 &&
+            refList["drug_classes"] &&
+            refList["drug_classes"].length > 0
+          ) {
+            for (
+              let index = 0;
+              index < refList["drug_categories"].length;
+              index++
+            ) {
+              if (index < refList["drug_classes"].length) {
+                values.push(
+                  refList["drug_categories"][index] +
+                    "[" +
+                    refList["drug_classes"][index] +
+                    "]"
+                );
               }
             }
           }
           if (values.length > 0) {
             this.state.idCount++;
-            this.state.nodeList.push({ type: 'cat_class', id: this.state.idCount, childData: {}, isIncluded: included });
+            this.state.nodeList.push({
+              type: "cat_class",
+              id: this.state.idCount,
+              childData: {},
+              isIncluded: included,
+            });
             payload.listItemStatus[this.state.idCount] = included;
             selectedCateoryList.push({
               id: this.state.idCount,
               type: 3,
               isIncluded: included,
-              content: <ListItemContainer title={"Drug Category/Class"} onParentDataUpdated={this.onParentDataUpdated} nodeId={this.state.idCount}>
-                <DrugCategory nodeId={this.state.idCount} onChildDataUpdated={this.onChildDataUpdated} initialValues={values} />
-              </ListItemContainer>
+              content: (
+                <ListItemContainer
+                  title={"Drug Category/Class"}
+                  onParentDataUpdated={this.onParentDataUpdated}
+                  nodeId={this.state.idCount}
+                >
+                  <DrugCategory
+                    nodeId={this.state.idCount}
+                    onChildDataUpdated={this.onChildDataUpdated}
+                    initialValues={values}
+                  />
+                </ListItemContainer>
+              ),
             });
           }
           categoryHandled = true;
         }
       }
     });
-  }
+  };
 
   umFiltersChanged = (umFilters) => {
     /*Object.keys(this.state.additionalFilter).map(filterKey => {
@@ -262,9 +417,9 @@ class AdvanceSearchContainer extends Component<Props, State> {
     });*/
     if (this.props.formulary_lob_id === 1) {
       this.state.additionalFilter = {
-        is_all_tiers: this.state.additionalFilter['is_all_tiers'],
-        is_no_tier: this.state.additionalFilter['is_no_tier'],
-        tiers: this.state.additionalFilter['tiers'],
+        is_all_tiers: this.state.additionalFilter["is_all_tiers"],
+        is_no_tier: this.state.additionalFilter["is_no_tier"],
+        tiers: this.state.additionalFilter["tiers"],
         is_add: false,
         is_exd: false,
         is_fff: false,
@@ -287,7 +442,7 @@ class AdvanceSearchContainer extends Component<Props, State> {
     } else {
       this.state.additionalFilterNonMcr = {
         is_al: false,
-        is_all_tiers: this.state.additionalFilterNonMcr['is_all_tiers'],
+        is_all_tiers: this.state.additionalFilterNonMcr["is_all_tiers"],
         is_gl: false,
         is_icdl: false,
         is_pa: false,
@@ -303,22 +458,22 @@ class AdvanceSearchContainer extends Component<Props, State> {
         is_other3: false,
         is_other4: false,
         is_other5: false,
-        is_no_tier: this.state.additionalFilterNonMcr['is_no_tier'],
-        tiers: this.state.additionalFilterNonMcr['tiers']
-      }
+        is_no_tier: this.state.additionalFilterNonMcr["is_no_tier"],
+        tiers: this.state.additionalFilterNonMcr["tiers"],
+      };
     }
     if (umFilters.length > 0) {
-      umFilters.map(umItem => {
-        if (!umItem.key.startsWith('NA')) {
+      umFilters.map((umItem) => {
+        if (!umItem.key.startsWith("NA")) {
           if (this.props.formulary_lob_id === 1) {
             this.state.additionalFilter[umItem.key] = true;
           } else {
             this.state.additionalFilterNonMcr[umItem.key] = true;
           }
         }
-      })
+      });
     }
-  }
+  };
 
   fileFiltersChanged = (filters) => {
     /*Object.keys(this.state.additionalFilter).map(filterKey => {
@@ -328,9 +483,9 @@ class AdvanceSearchContainer extends Component<Props, State> {
     });*/
     if (this.props.formulary_lob_id === 1) {
       this.state.additionalFilter = {
-        is_all_tiers: this.state.additionalFilter['is_all_tiers'],
-        is_no_tier: this.state.additionalFilter['is_no_tier'],
-        tiers: this.state.additionalFilter['tiers'],
+        is_all_tiers: this.state.additionalFilter["is_all_tiers"],
+        is_no_tier: this.state.additionalFilter["is_no_tier"],
+        tiers: this.state.additionalFilter["tiers"],
         is_add: false,
         is_exd: false,
         is_fff: false,
@@ -353,7 +508,7 @@ class AdvanceSearchContainer extends Component<Props, State> {
     } else {
       this.state.additionalFilterNonMcr = {
         is_al: false,
-        is_all_tiers: this.state.additionalFilterNonMcr['is_all_tiers'],
+        is_all_tiers: this.state.additionalFilterNonMcr["is_all_tiers"],
         is_gl: false,
         is_icdl: false,
         is_pa: false,
@@ -369,36 +524,37 @@ class AdvanceSearchContainer extends Component<Props, State> {
         is_other3: false,
         is_other4: false,
         is_other5: false,
-        is_no_tier: this.state.additionalFilterNonMcr['is_no_tier'],
-        tiers: this.state.additionalFilterNonMcr['tiers']
-      }
+        is_no_tier: this.state.additionalFilterNonMcr["is_no_tier"],
+        tiers: this.state.additionalFilterNonMcr["tiers"],
+      };
     }
     if (filters.length > 0) {
-      filters.map(item => {
-        item.types.map(type => {
-          if (!type['key'].startsWith('NA')) {
+      filters.map((item) => {
+        item.types.map((type) => {
+          if (!type["key"].startsWith("NA")) {
             if (this.props.formulary_lob_id === 1) {
-              this.state.additionalFilter[type['key']] = type['isChecked'];
+              this.state.additionalFilter[type["key"]] = type["isChecked"];
             } else {
-              this.state.additionalFilterNonMcr[type['key']] = type['isChecked'];
+              this.state.additionalFilterNonMcr[type["key"]] =
+                type["isChecked"];
             }
           }
         });
-      })
+      });
     }
-  }
+  };
 
   tierChanged = (tiers) => {
-    console.log('Selected tiers:' + JSON.stringify(tiers));
+    console.log("Selected tiers:" + JSON.stringify(tiers));
     if (this.props.formulary_lob_id === 1) {
       this.state.additionalFilter.tiers = Array();
     } else {
       this.state.additionalFilterNonMcr.tiers = Array();
     }
     let isAllTier: boolean = true;
-    tiers.map(tier => {
+    tiers.map((tier) => {
       if (tier.key != -1) {
-        isAllTier = isAllTier && tier['isChecked'];
+        isAllTier = isAllTier && tier["isChecked"];
         if (tier.isChecked) {
           if (this.props.formulary_lob_id === 1) {
             this.state.additionalFilter.tiers.push(tier.key);
@@ -429,51 +585,62 @@ class AdvanceSearchContainer extends Component<Props, State> {
     } else {
       this.state.additionalFilterNonMcr.is_all_tiers = isAllTier;
     }
-  }
+  };
 
   onChildDataUpdated = (id, data) => {
-    let updatedNode = this.state.nodeList.filter(node => node.id === id);
+    let updatedNode = this.state.nodeList.filter((node) => node.id === id);
     if (updatedNode && updatedNode.length > 0) {
       let node = updatedNode[0];
       node.childData = data;
     }
-    console.log('onChildDataUpdated:' + JSON.stringify(this.state.nodeList));
-  }
+    console.log("onChildDataUpdated:" + JSON.stringify(this.state.nodeList));
+  };
 
   onParentDataUpdated = (id, isIncluded) => {
-    let updatedNode = this.state.nodeList.filter(node => node.id === id);
-    console.log('Id:' + id + ' isIncluded:' + isIncluded);
+    let updatedNode = this.state.nodeList.filter((node) => node.id === id);
+    console.log("Id:" + id + " isIncluded:" + isIncluded);
     let currentProps = Object.assign({}, this.props.listItemStatus);
     if (updatedNode && updatedNode.length > 0) {
-      console.log('Entered');
+      console.log("Entered");
       let node = updatedNode[0];
       node.isIncluded = isIncluded;
 
-      let filteredList = this.state.selectedCateoryList.filter(uiItem => uiItem.id === id);
+      let filteredList = this.state.selectedCateoryList.filter(
+        (uiItem) => uiItem.id === id
+      );
       let uiNode = filteredList[0];
       uiNode.isIncluded = isIncluded;
       currentProps[id] = isIncluded;
 
-      filteredList = this.state.selectedCateoryList.filter(uiItem => uiItem.type === uiNode.type);
+      filteredList = this.state.selectedCateoryList.filter(
+        (uiItem) => uiItem.type === uiNode.type
+      );
 
       if (filteredList.length > 1) {
-        filteredList = filteredList.filter(uiItem => uiItem.id !== id);
+        filteredList = filteredList.filter((uiItem) => uiItem.id !== id);
         uiNode = filteredList[0];
         uiNode.isIncluded = !isIncluded;
 
         currentProps[uiNode.id] = !isIncluded;
 
-        updatedNode = this.state.nodeList.filter(node => node.id === uiNode.id);
+        updatedNode = this.state.nodeList.filter(
+          (node) => node.id === uiNode.id
+        );
         updatedNode[0].isIncluded = !isIncluded;
       }
     }
-    let payload = { advancedSearchBody: this.props.advancedSearchBody, populateGrid: this.props.populateGrid, closeDialog: this.props.closeDialog, listItemStatus: currentProps };
+    let payload = {
+      advancedSearchBody: this.props.advancedSearchBody,
+      populateGrid: this.props.populateGrid,
+      closeDialog: this.props.closeDialog,
+      listItemStatus: currentProps,
+    };
     this.props.setAdvancedSearch(payload);
     this.setState({
-      idCount: this.state.idCount
+      idCount: this.state.idCount,
     });
-    console.log('onParentDataUpdated:' + JSON.stringify(this.state.nodeList));
-  }
+    console.log("onParentDataUpdated:" + JSON.stringify(this.state.nodeList));
+  };
 
   onCategrorySelect = (selectedCat) => {
     console.log("{selsectedCate}:", selectedCat);
@@ -491,13 +658,25 @@ class AdvanceSearchContainer extends Component<Props, State> {
 
     let isFound = false;
     let filteredList = Array();
-    let payload = { advancedSearchBody: this.props.advancedSearchBody, populateGrid: this.props.populateGrid, closeDialog: this.props.closeDialog, listItemStatus: Object.assign({}, this.props.listItemStatus) };
+    let payload = {
+      advancedSearchBody: this.props.advancedSearchBody,
+      populateGrid: this.props.populateGrid,
+      closeDialog: this.props.closeDialog,
+      listItemStatus: Object.assign({}, this.props.listItemStatus),
+    };
     switch (selectedCat) {
       case 1:
-        filteredList = this.state.selectedCateoryList.filter(uiItem => uiItem.type === 1);
+        filteredList = this.state.selectedCateoryList.filter(
+          (uiItem) => uiItem.type === 1
+        );
         if (filteredList.length === 0) {
           this.state.idCount++;
-          this.state.nodeList.push({ type: 'gpi', id: this.state.idCount, childData: {}, isIncluded: true });
+          this.state.nodeList.push({
+            type: "gpi",
+            id: this.state.idCount,
+            childData: {},
+            isIncluded: true,
+          });
           payload.listItemStatus[this.state.idCount] = true;
           this.props.setAdvancedSearch(payload);
           this.setState({
@@ -507,9 +686,23 @@ class AdvanceSearchContainer extends Component<Props, State> {
                 id: this.state.idCount,
                 type: 1,
                 isIncluded: true,
-                content: <ListItemContainer title={this.props.formulary_lob_id === 1 ? "GPI/Generic Name/Label Name/ RXCUI" : "GPI/Generic Name/Label Name/ DDID"} onParentDataUpdated={this.onParentDataUpdated} nodeId={this.state.idCount}>
-                  <GpiLableSearch nodeId={this.state.idCount} onChildDataUpdated={this.onChildDataUpdated} initialValues={[]} />
-                </ListItemContainer>
+                content: (
+                  <ListItemContainer
+                    title={
+                      this.props.formulary_lob_id === 1
+                        ? "GPI/Generic Name/Label Name/ RXCUI"
+                        : "GPI/Generic Name/Label Name/ DDID"
+                    }
+                    onParentDataUpdated={this.onParentDataUpdated}
+                    nodeId={this.state.idCount}
+                  >
+                    <GpiLableSearch
+                      nodeId={this.state.idCount}
+                      onChildDataUpdated={this.onChildDataUpdated}
+                      initialValues={[]}
+                    />
+                  </ListItemContainer>
+                ),
               },
             ],
           });
@@ -517,7 +710,12 @@ class AdvanceSearchContainer extends Component<Props, State> {
           let currentItem = filteredList[0];
           let includedStatus = !currentItem.isIncluded;
           this.state.idCount++;
-          this.state.nodeList.push({ type: 'gpi', id: this.state.idCount, childData: {}, isIncluded: includedStatus });
+          this.state.nodeList.push({
+            type: "gpi",
+            id: this.state.idCount,
+            childData: {},
+            isIncluded: includedStatus,
+          });
           payload.listItemStatus[this.state.idCount] = includedStatus;
           this.props.setAdvancedSearch(payload);
           this.setState({
@@ -527,19 +725,40 @@ class AdvanceSearchContainer extends Component<Props, State> {
                 id: this.state.idCount,
                 type: 1,
                 isIncluded: includedStatus,
-                content: <ListItemContainer title={this.props.formulary_lob_id === 1 ? "GPI/Generic Name/Label Name/ RXCUI" : "GPI/Generic Name/Label Name/ DDID"} onParentDataUpdated={this.onParentDataUpdated} nodeId={this.state.idCount}>
-                  <GpiLableSearch nodeId={this.state.idCount} onChildDataUpdated={this.onChildDataUpdated} initialValues={[]} />
-                </ListItemContainer>
+                content: (
+                  <ListItemContainer
+                    title={
+                      this.props.formulary_lob_id === 1
+                        ? "GPI/Generic Name/Label Name/ RXCUI"
+                        : "GPI/Generic Name/Label Name/ DDID"
+                    }
+                    onParentDataUpdated={this.onParentDataUpdated}
+                    nodeId={this.state.idCount}
+                  >
+                    <GpiLableSearch
+                      nodeId={this.state.idCount}
+                      onChildDataUpdated={this.onChildDataUpdated}
+                      initialValues={[]}
+                    />
+                  </ListItemContainer>
+                ),
               },
             ],
           });
         }
         break;
       case 2:
-        filteredList = this.state.selectedCateoryList.filter(uiItem => uiItem.type === 2);
+        filteredList = this.state.selectedCateoryList.filter(
+          (uiItem) => uiItem.type === 2
+        );
         if (filteredList.length === 0) {
           this.state.idCount++;
-          this.state.nodeList.push({ type: 'ndc', id: this.state.idCount, childData: {}, isIncluded: true });
+          this.state.nodeList.push({
+            type: "ndc",
+            id: this.state.idCount,
+            childData: {},
+            isIncluded: true,
+          });
           payload.listItemStatus[this.state.idCount] = true;
           this.props.setAdvancedSearch(payload);
           this.setState({
@@ -549,9 +768,19 @@ class AdvanceSearchContainer extends Component<Props, State> {
                 id: this.state.idCount,
                 type: 2,
                 isIncluded: true,
-                content: <ListItemContainer title={"Reference NDC"} onParentDataUpdated={this.onParentDataUpdated} nodeId={this.state.idCount}>
-                  <ReferenceNdc nodeId={this.state.idCount} onChildDataUpdated={this.onChildDataUpdated} initialValues={[]} />
-                </ListItemContainer>
+                content: (
+                  <ListItemContainer
+                    title={"Reference NDC"}
+                    onParentDataUpdated={this.onParentDataUpdated}
+                    nodeId={this.state.idCount}
+                  >
+                    <ReferenceNdc
+                      nodeId={this.state.idCount}
+                      onChildDataUpdated={this.onChildDataUpdated}
+                      initialValues={[]}
+                    />
+                  </ListItemContainer>
+                ),
               },
             ],
           });
@@ -559,7 +788,12 @@ class AdvanceSearchContainer extends Component<Props, State> {
           let currentItem = filteredList[0];
           let includedStatus = !currentItem.isIncluded;
           this.state.idCount++;
-          this.state.nodeList.push({ type: 'ndc', id: this.state.idCount, childData: {}, isIncluded: includedStatus });
+          this.state.nodeList.push({
+            type: "ndc",
+            id: this.state.idCount,
+            childData: {},
+            isIncluded: includedStatus,
+          });
           payload.listItemStatus[this.state.idCount] = includedStatus;
           this.props.setAdvancedSearch(payload);
           this.setState({
@@ -569,9 +803,19 @@ class AdvanceSearchContainer extends Component<Props, State> {
                 id: this.state.idCount,
                 type: 2,
                 isIncluded: includedStatus,
-                content: <ListItemContainer title={"Reference NDC"} onParentDataUpdated={this.onParentDataUpdated} nodeId={this.state.idCount}>
-                  <ReferenceNdc nodeId={this.state.idCount} onChildDataUpdated={this.onChildDataUpdated} initialValues={[]} />
-                </ListItemContainer>
+                content: (
+                  <ListItemContainer
+                    title={"Reference NDC"}
+                    onParentDataUpdated={this.onParentDataUpdated}
+                    nodeId={this.state.idCount}
+                  >
+                    <ReferenceNdc
+                      nodeId={this.state.idCount}
+                      onChildDataUpdated={this.onChildDataUpdated}
+                      initialValues={[]}
+                    />
+                  </ListItemContainer>
+                ),
               },
             ],
           });
@@ -579,10 +823,17 @@ class AdvanceSearchContainer extends Component<Props, State> {
         break;
 
       case 3:
-        filteredList = this.state.selectedCateoryList.filter(uiItem => uiItem.type === 3);
+        filteredList = this.state.selectedCateoryList.filter(
+          (uiItem) => uiItem.type === 3
+        );
         if (filteredList.length === 0) {
           this.state.idCount++;
-          this.state.nodeList.push({ type: 'cat_class', id: this.state.idCount, childData: {}, isIncluded: true });
+          this.state.nodeList.push({
+            type: "cat_class",
+            id: this.state.idCount,
+            childData: {},
+            isIncluded: true,
+          });
           payload.listItemStatus[this.state.idCount] = true;
           this.props.setAdvancedSearch(payload);
           this.setState({
@@ -592,9 +843,19 @@ class AdvanceSearchContainer extends Component<Props, State> {
                 id: this.state.idCount,
                 type: 3,
                 isIncluded: true,
-                content: <ListItemContainer title={"Drug Category/Class"} onParentDataUpdated={this.onParentDataUpdated} nodeId={this.state.idCount}>
-                  <DrugCategory nodeId={this.state.idCount} onChildDataUpdated={this.onChildDataUpdated} initialValues={[]} />
-                </ListItemContainer>
+                content: (
+                  <ListItemContainer
+                    title={"Drug Category/Class"}
+                    onParentDataUpdated={this.onParentDataUpdated}
+                    nodeId={this.state.idCount}
+                  >
+                    <DrugCategory
+                      nodeId={this.state.idCount}
+                      onChildDataUpdated={this.onChildDataUpdated}
+                      initialValues={[]}
+                    />
+                  </ListItemContainer>
+                ),
               },
             ],
           });
@@ -602,7 +863,12 @@ class AdvanceSearchContainer extends Component<Props, State> {
           let currentItem = filteredList[0];
           let includedStatus = !currentItem.isIncluded;
           this.state.idCount++;
-          this.state.nodeList.push({ type: 'cat_class', id: this.state.idCount, childData: {}, isIncluded: includedStatus });
+          this.state.nodeList.push({
+            type: "cat_class",
+            id: this.state.idCount,
+            childData: {},
+            isIncluded: includedStatus,
+          });
           payload.listItemStatus[this.state.idCount] = includedStatus;
           this.props.setAdvancedSearch(payload);
           this.setState({
@@ -612,28 +878,51 @@ class AdvanceSearchContainer extends Component<Props, State> {
                 id: this.state.idCount,
                 type: 3,
                 isIncluded: includedStatus,
-                content: <ListItemContainer title={"Drug Category/Class"} onParentDataUpdated={this.onParentDataUpdated} nodeId={this.state.idCount}>
-                  <DrugCategory nodeId={this.state.idCount} onChildDataUpdated={this.onChildDataUpdated} initialValues={[]} />
-                </ListItemContainer>
+                content: (
+                  <ListItemContainer
+                    title={"Drug Category/Class"}
+                    onParentDataUpdated={this.onParentDataUpdated}
+                    nodeId={this.state.idCount}
+                  >
+                    <DrugCategory
+                      nodeId={this.state.idCount}
+                      onChildDataUpdated={this.onChildDataUpdated}
+                      initialValues={[]}
+                    />
+                  </ListItemContainer>
+                ),
               },
             ],
           });
         }
         break;
       case 4:
-        isFound = this.state.selectedCateoryList.filter(uiItem => uiItem.type === 4).length > 0;
+        isFound =
+          this.state.selectedCateoryList.filter((uiItem) => uiItem.type === 4)
+            .length > 0;
         if (!isFound) {
           this.state.idCount++;
-          this.state.nodeList.push({ type: 'filetype', id: this.state.idCount, childData: {}, isIncluded: false });
+          this.state.nodeList.push({
+            type: "filetype",
+            id: this.state.idCount,
+            childData: {},
+            isIncluded: false,
+          });
           this.setState({
             selectedCateoryList: [
               ...this.state.selectedCateoryList,
               {
                 id: this.state.idCount,
                 type: 4,
-                content: <ListItemContainer title={"File Type"} onParentDataUpdated={this.onParentDataUpdated} nodeId={this.state.idCount}>
-                  <FileType fileFiltersChanged={this.fileFiltersChanged} />
-                </ListItemContainer>
+                content: (
+                  <ListItemContainer
+                    title={"File Type"}
+                    onParentDataUpdated={this.onParentDataUpdated}
+                    nodeId={this.state.idCount}
+                  >
+                    <FileType fileFiltersChanged={this.fileFiltersChanged} />
+                  </ListItemContainer>
+                ),
               },
             ],
           });
@@ -641,38 +930,64 @@ class AdvanceSearchContainer extends Component<Props, State> {
         break;
 
       case 5:
-        isFound = this.state.selectedCateoryList.filter(uiItem => uiItem.type === 5).length > 0;
+        isFound =
+          this.state.selectedCateoryList.filter((uiItem) => uiItem.type === 5)
+            .length > 0;
         if (!isFound) {
           this.state.idCount++;
-          this.state.nodeList.push({ type: 'tier', id: this.state.idCount, childData: {}, isIncluded: false });
+          this.state.nodeList.push({
+            type: "tier",
+            id: this.state.idCount,
+            childData: {},
+            isIncluded: false,
+          });
           this.setState({
             selectedCateoryList: [
               ...this.state.selectedCateoryList,
               {
                 id: this.state.idCount,
                 type: 5,
-                content: <ListItemContainer title={"Tier"} onParentDataUpdated={this.onParentDataUpdated} nodeId={this.state.idCount}>
-                  <Tire tierChanged={this.tierChanged} />
-                </ListItemContainer>
+                content: (
+                  <ListItemContainer
+                    title={"Tier"}
+                    onParentDataUpdated={this.onParentDataUpdated}
+                    nodeId={this.state.idCount}
+                  >
+                    <Tire tierChanged={this.tierChanged} />
+                  </ListItemContainer>
+                ),
               },
             ],
           });
         }
         break;
       case 6:
-        isFound = this.state.selectedCateoryList.filter(uiItem => uiItem.type === 6).length > 0;
+        isFound =
+          this.state.selectedCateoryList.filter((uiItem) => uiItem.type === 6)
+            .length > 0;
         if (!isFound) {
           this.state.idCount++;
-          this.state.nodeList.push({ type: 'um_filter', id: this.state.idCount, childData: {}, isIncluded: false });
+          this.state.nodeList.push({
+            type: "um_filter",
+            id: this.state.idCount,
+            childData: {},
+            isIncluded: false,
+          });
           this.setState({
             selectedCateoryList: [
               ...this.state.selectedCateoryList,
               {
                 id: this.state.idCount,
                 type: 6,
-                content: <ListItemContainer title={"UM Filter"} onParentDataUpdated={this.onParentDataUpdated} nodeId={this.state.idCount}>
-                  <UmFilter umFiltersChanged={this.umFiltersChanged} />
-                </ListItemContainer>
+                content: (
+                  <ListItemContainer
+                    title={"UM Filter"}
+                    onParentDataUpdated={this.onParentDataUpdated}
+                    nodeId={this.state.idCount}
+                  >
+                    <UmFilter umFiltersChanged={this.umFiltersChanged} />
+                  </ListItemContainer>
+                ),
               },
             ],
           });
@@ -756,16 +1071,26 @@ class AdvanceSearchContainer extends Component<Props, State> {
   // };
 
   onDelete = (idx, id) => {
-    console.log('Delete index:' + idx + ' Id:' + id);
+    console.log("Delete index:" + idx + " Id:" + id);
     const currentSelecteCategories = this.state.selectedCateoryList.filter(
       (category, index) => category.id !== id
     );
-    let currentNodeList = this.state.nodeList.filter(node => node.id !== id);
+    let currentNodeList = this.state.nodeList.filter((node) => node.id !== id);
     let currentProps = Object.assign({}, this.props.listItemStatus);
-    delete currentProps['' + id];
-    let payload = { advancedSearchBody: this.props.advancedSearchBody, populateGrid: this.props.populateGrid, closeDialog: this.props.closeDialog, listItemStatus: {} };
+    delete currentProps["" + id];
+    let payload = {
+      advancedSearchBody: this.props.advancedSearchBody,
+      populateGrid: this.props.populateGrid,
+      closeDialog: this.props.closeDialog,
+      listItemStatus: {},
+    };
     this.props.setAdvancedSearch(payload);
-    payload = { advancedSearchBody: this.props.advancedSearchBody, populateGrid: this.props.populateGrid, closeDialog: this.props.closeDialog, listItemStatus: currentProps };
+    payload = {
+      advancedSearchBody: this.props.advancedSearchBody,
+      populateGrid: this.props.populateGrid,
+      closeDialog: this.props.closeDialog,
+      listItemStatus: currentProps,
+    };
     this.props.setAdvancedSearch(payload);
     this.setState({
       selectedCateoryList: currentSelecteCategories,
@@ -795,7 +1120,7 @@ class AdvanceSearchContainer extends Component<Props, State> {
         is_user_defined5: false,
         is_vbid: false,
         is_no_tier: false,
-        tiers: Array()
+        tiers: Array(),
       };
     } else {
       this.state.additionalFilterNonMcr = {
@@ -817,14 +1142,23 @@ class AdvanceSearchContainer extends Component<Props, State> {
         is_other4: false,
         is_other5: false,
         is_no_tier: false,
-        tiers: Array()
-      }
+        tiers: Array(),
+      };
     }
-    let payload = { advancedSearchBody: {}, populateGrid: false, closeDialog: false, listItemStatus: {} };
+    let payload = {
+      advancedSearchBody: {},
+      populateGrid: false,
+      closeDialog: false,
+      listItemStatus: {},
+    };
     if (this.props.formulary_lob_id === 1) {
-      payload.advancedSearchBody['additional_filter'] = this.state.additionalFilter;
+      payload.advancedSearchBody[
+        "additional_filter"
+      ] = this.state.additionalFilter;
     } else {
-      payload.advancedSearchBody['additional_filter'] = this.state.additionalFilterNonMcr;
+      payload.advancedSearchBody[
+        "additional_filter"
+      ] = this.state.additionalFilterNonMcr;
     }
     payload.advancedSearchBody["covered"] = {};
     payload.advancedSearchBody["not_covered"] = {};
@@ -846,20 +1180,35 @@ class AdvanceSearchContainer extends Component<Props, State> {
   };
 
   applySearch = () => {
-    let payload = { advancedSearchBody: {}, populateGrid: false, closeDialog: true, listItemStatus: {} };
+    let payload = {
+      advancedSearchBody: {},
+      populateGrid: false,
+      closeDialog: true,
+      listItemStatus: {},
+    };
     if (this.props.formulary_lob_id === 1) {
-      payload.advancedSearchBody['additional_filter'] = this.state.additionalFilter;
+      payload.advancedSearchBody[
+        "additional_filter"
+      ] = this.state.additionalFilter;
     } else {
-      payload.advancedSearchBody['additional_filter'] = this.state.additionalFilterNonMcr;
+      payload.advancedSearchBody[
+        "additional_filter"
+      ] = this.state.additionalFilterNonMcr;
     }
     payload.advancedSearchBody["covered"] = {};
     payload.advancedSearchBody["not_covered"] = {};
     if (this.state.nodeList.length > 0) {
-      this.state.nodeList.map(node => {
+      this.state.nodeList.map((node) => {
         if (node.isIncluded) {
-          payload.advancedSearchBody["covered"] = Object.assign(payload.advancedSearchBody["covered"], node.childData);
+          payload.advancedSearchBody["covered"] = Object.assign(
+            payload.advancedSearchBody["covered"],
+            node.childData
+          );
         } else {
-          payload.advancedSearchBody["not_covered"] = Object.assign(payload.advancedSearchBody["not_covered"], node.childData);
+          payload.advancedSearchBody["not_covered"] = Object.assign(
+            payload.advancedSearchBody["not_covered"],
+            node.childData
+          );
         }
       });
     }
@@ -867,93 +1216,153 @@ class AdvanceSearchContainer extends Component<Props, State> {
     payload.populateGrid = true;
 
     this.props.setAdvancedSearch(payload);
-  }
+  };
 
+  // Additional Criteria related methods
+  handleAdditionalCriteriaClose = () => {
+    this.onClose();
+    // this.setState({ open: !this.props.openPopup });
+  };
+  handleAdditionalCriteriaApply = () => {};
+
+  // onClose = () => {
+  //   this.setState({ open: !this.props.openPopup });
+  // };
+
+  // getPOSSettings = () => {
+  //   let apiDetails = {};
+  //   apiDetails["apiPart"] = posConstants.GET_DRUG_SETTING_POS;
+  //   // apiDetails["pathParams"] = this.props?.formulary_id;
+  //   // apiDetails["keyVals"] = [
+  //   //   { key: posConstants.KEY_ENTITY_ID, value: this.props?.formulary_id },
+  //   // ];
+
+  //   console.log("apiDetails: ", apiDetails);
+  //   this.props.getDrugDetailsPOSSettings(apiDetails).then((json) => {
+  //     const posSettings =
+  //       json.payload && json.payload.data ? json.payload.data : [];
+
+  //     posSettings.forEach((s) => {
+  //       s["isChecked"] = false;
+  //     });
+  //     this.setState({
+  //       posSettings,
+  //     });
+  //   });
+  // };
   render() {
-    const { selectedCategory, selectedCateoryList } = this.state;
+    const {
+      selectedCategory,
+      selectedCateoryList,
+      // isAdvanceSearch,
+      criteriaList,
+    } = this.state;
+
+    // const { isAdvanceSearch } = this.props;
+    const isAdvanceSearch = !this.props.isAdvanceSearch;
     // const renderCatory = this.onRenderCateory(selectedCategory);
     // console.log(renderCatory);
 
     return (
       <div className="AdvanceSearchContainer___root">
         <FrxDialogPopup
-          positiveActionText=""
-          negativeActionText="Close"
-          title="Advance Search"
-          handleClose={this.props.onClose}
-          handleAction={this.action}
+          positiveActionText="Apply"
+          negativeActionText=""
+          // negativeActionText="Close"
+          title={isAdvanceSearch ? "Advance Search" : "Additional Criteria"}
+          handleClose={
+            // isAdvanceSearch
+            // ?
+            this.props.onClose
+            // : this.handleAdditionalCriteriaClose
+          }
+          handleAction={
+            isAdvanceSearch ? this.action : this.handleAdditionalCriteriaApply
+          }
           open={this.props.openPopup}
-          showActions={false}
-          className="new-advane-search-popup  member-notes-popup-root"
+          showActions={isAdvanceSearch ? false : true}
+          showCloseIcon={isAdvanceSearch ? false : true}
+          className="new-advane-search-popup  member-notes-popup-root __root-additional-criteria-popup"
           height="100%"
           width="100%"
+          // popupMaxWidth={isAdvanceSearch ? false : "lg"}
+          fullScreen={isAdvanceSearch ? false : true}
         >
-          <Grid container spacing={0} className="drug-grid-popup-root__dialog">
+          {isAdvanceSearch ? (
             <Grid
-              xs={3}
-              className="member-notes-popup-root__dialog__categories"
-              alignContent="flex-start"
-              key={0}
-              item
+              container
+              spacing={0}
+              className="drug-grid-popup-root__dialog"
             >
-              {/* <SearchCategory
+              <Grid
+                xs={3}
+                className="member-notes-popup-root__dialog__categories"
+                alignContent="flex-start"
+                key={0}
+                item
+              >
+                {/* <SearchCategory
                 handleListItemClick={this.onCategrorySelect}
                 categoriesData={this.state.categories}
                 // activeCategoryIndex={this.state.activeCategoryIndex}
               /> */}
 
-              {this.state.categories.map((category) => (
-                <div
-                  key={category.id}
-                  className="category-list"
-                  onClick={() => this.onCategrorySelect(category.id)}
-                  style={{ cursor: "pointer" }}
-                  draggable="true"
-                  onDrag={(e) => {
-                    this.handleDrag(e, category.id);
-                  }}
-                >
-                  <span
-                    className="icon-container"
-                  // onClick={() => this.onCategrorySelect(category.id)}
+                {this.state.categories.map((category) => (
+                  <div
+                    key={category.id}
+                    className="category-list"
+                    onClick={() => this.onCategrorySelect(category.id)}
+                    style={{ cursor: "pointer" }}
+                    draggable="true"
+                    onDrag={(e) => {
+                      this.handleDrag(e, category.id);
+                    }}
                   >
-                    <svg
-                      width="14"
-                      height="13"
-                      viewBox="0 0 14 13"
-                      fill="none"
-                      xmlns="http://www.w3.org/2000/svg"
+                    <span
+                      className="icon-container"
+                      // onClick={() => this.onCategrorySelect(category.id)}
                     >
-                      <path
-                        d="M13.208 6.41113L11.2142 4.83769C11.1976 4.82457 11.1775 4.81641 11.1564 4.81415C11.1353 4.81189 11.114 4.81563 11.0949 4.82492C11.0758 4.83422 11.0598 4.8487 11.0485 4.86671C11.0373 4.88472 11.0314 4.90553 11.0314 4.92675V5.93769H7.56269V2.46894H8.57519C8.66894 2.46894 8.72206 2.35956 8.66425 2.28613L7.08925 0.292376C7.07882 0.278884 7.06545 0.267962 7.05014 0.260446C7.03484 0.252931 7.01802 0.249023 7.00097 0.249023C6.98392 0.249023 6.9671 0.252931 6.95179 0.260446C6.93649 0.267962 6.92311 0.278884 6.91269 0.292376L5.33769 2.28613C5.32456 2.30281 5.31641 2.32285 5.31415 2.34395C5.31189 2.36505 5.31562 2.38637 5.32492 2.40545C5.33421 2.42453 5.3487 2.4406 5.36671 2.45183C5.38472 2.46306 5.40553 2.46899 5.42675 2.46894H6.43769V5.93769H2.96894V4.92519C2.96894 4.83144 2.85956 4.77831 2.78613 4.83613L0.792376 6.41113C0.778884 6.42155 0.767962 6.43493 0.760446 6.45023C0.752931 6.46554 0.749023 6.48236 0.749023 6.49941C0.749023 6.51646 0.752931 6.53328 0.760446 6.54858C0.767962 6.56389 0.778884 6.57726 0.792376 6.58769L2.78456 8.16269C2.858 8.2205 2.96738 8.16894 2.96738 8.07363V7.06269H6.43612V10.5314H5.42362C5.32987 10.5314 5.27675 10.6408 5.33456 10.7143L6.90956 12.7064C6.95487 12.7643 7.04237 12.7643 7.08612 12.7064L8.66112 10.7143C8.71894 10.6408 8.66737 10.5314 8.57206 10.5314H7.56269V7.06269H11.0314V8.07519C11.0314 8.16894 11.1408 8.22206 11.2142 8.16425L13.2064 6.58925C13.2199 6.57868 13.2308 6.56522 13.2383 6.54987C13.2459 6.53452 13.2499 6.51767 13.25 6.50056C13.2502 6.48346 13.2465 6.46654 13.2392 6.45106C13.2319 6.43558 13.2213 6.42193 13.208 6.41113Z"
-                        fill="#707683"
-                      />
-                    </svg>
-                  </span>
-                  <div className="category-text">{this.props.formulary_lob_id !== 1 && category.id === 1 ? 'GPI/Generic Name/Label Name/ DDID' : category.category}</div>
-                </div>
-              ))}
-            </Grid>
-            <Grid
-              className="form-wrapper-root member-notes-popup-root__dialog__category-notes scroll-bar"
-              item
-              xs={9}
-              onDrop={(e) => this.handleDrop(e)}
-              onDragOver={this.allowDrop}
-            >
-              <Box className="right-content">
-                {/* <div className="formWrappers">ListItemContainer</div> */}
-                {/* <ListItemContainer
+                      <svg
+                        width="14"
+                        height="13"
+                        viewBox="0 0 14 13"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          d="M13.208 6.41113L11.2142 4.83769C11.1976 4.82457 11.1775 4.81641 11.1564 4.81415C11.1353 4.81189 11.114 4.81563 11.0949 4.82492C11.0758 4.83422 11.0598 4.8487 11.0485 4.86671C11.0373 4.88472 11.0314 4.90553 11.0314 4.92675V5.93769H7.56269V2.46894H8.57519C8.66894 2.46894 8.72206 2.35956 8.66425 2.28613L7.08925 0.292376C7.07882 0.278884 7.06545 0.267962 7.05014 0.260446C7.03484 0.252931 7.01802 0.249023 7.00097 0.249023C6.98392 0.249023 6.9671 0.252931 6.95179 0.260446C6.93649 0.267962 6.92311 0.278884 6.91269 0.292376L5.33769 2.28613C5.32456 2.30281 5.31641 2.32285 5.31415 2.34395C5.31189 2.36505 5.31562 2.38637 5.32492 2.40545C5.33421 2.42453 5.3487 2.4406 5.36671 2.45183C5.38472 2.46306 5.40553 2.46899 5.42675 2.46894H6.43769V5.93769H2.96894V4.92519C2.96894 4.83144 2.85956 4.77831 2.78613 4.83613L0.792376 6.41113C0.778884 6.42155 0.767962 6.43493 0.760446 6.45023C0.752931 6.46554 0.749023 6.48236 0.749023 6.49941C0.749023 6.51646 0.752931 6.53328 0.760446 6.54858C0.767962 6.56389 0.778884 6.57726 0.792376 6.58769L2.78456 8.16269C2.858 8.2205 2.96738 8.16894 2.96738 8.07363V7.06269H6.43612V10.5314H5.42362C5.32987 10.5314 5.27675 10.6408 5.33456 10.7143L6.90956 12.7064C6.95487 12.7643 7.04237 12.7643 7.08612 12.7064L8.66112 10.7143C8.71894 10.6408 8.66737 10.5314 8.57206 10.5314H7.56269V7.06269H11.0314V8.07519C11.0314 8.16894 11.1408 8.22206 11.2142 8.16425L13.2064 6.58925C13.2199 6.57868 13.2308 6.56522 13.2383 6.54987C13.2459 6.53452 13.2499 6.51767 13.25 6.50056C13.2502 6.48346 13.2465 6.46654 13.2392 6.45106C13.2319 6.43558 13.2213 6.42193 13.208 6.41113Z"
+                          fill="#707683"
+                        />
+                      </svg>
+                    </span>
+                    <div className="category-text">
+                      {this.props.formulary_lob_id !== 1 && category.id === 1
+                        ? "GPI/Generic Name/Label Name/ DDID"
+                        : category.category}
+                    </div>
+                  </div>
+                ))}
+              </Grid>
+              <Grid
+                className="form-wrapper-root member-notes-popup-root__dialog__category-notes scroll-bar"
+                item
+                xs={9}
+                onDrop={(e) => this.handleDrop(e)}
+                onDragOver={this.allowDrop}
+              >
+                <Box className="right-content">
+                  {/* <div className="formWrappers">ListItemContainer</div> */}
+                  {/* <ListItemContainer
                   title={"GPI/Generic Name/Label Name/ RXCUI"}
                 />
                 <ListItemContainer title={"File Type"}>
                   <FileType />
                 </ListItemContainer> */}
-                {selectedCateoryList.length == 0 ? (
-                  <div className="empty-message">
-                    <p> Please Select Category</p>
-                  </div>
-                ) : (
+                  {selectedCateoryList.length == 0 ? (
+                    <div className="empty-message">
+                      <p> Please Select Category</p>
+                    </div>
+                  ) : (
                     selectedCateoryList.map((renderCatory, idx) => (
                       <div className="__render-categoy ">
                         <span>
@@ -972,7 +1381,7 @@ class AdvanceSearchContainer extends Component<Props, State> {
                             />
                           </svg>
                         </span>
-                        {renderCatory['content']}
+                        {renderCatory["content"]}
                         <span>
                           <svg
                             width="13"
@@ -980,7 +1389,9 @@ class AdvanceSearchContainer extends Component<Props, State> {
                             viewBox="0 0 13 15"
                             fill="none"
                             xmlns="http://www.w3.org/2000/svg"
-                            onClick={() => this.onDelete(idx, renderCatory['id'])}
+                            onClick={() =>
+                              this.onDelete(idx, renderCatory["id"])
+                            }
                             // onClick={this.onDelete(idx)}
                             style={{ cursor: "pointer" }}
                           >
@@ -994,7 +1405,7 @@ class AdvanceSearchContainer extends Component<Props, State> {
                     ))
                   )}
 
-                {/* <Box
+                  {/* <Box
                   display="flex"
                   justifyContent="flex-end"
                   className="button-wrapper"
@@ -1028,43 +1439,55 @@ class AdvanceSearchContainer extends Component<Props, State> {
                     Apply Search
                   </button>
                 </Box> */}
-              </Box>
-              <Box
-                display="flex"
-                justifyContent="flex-end"
-                className="button-wrapper"
-              >
-                <Button
-                  className="Button advanced-grid-search__btn-clear"
-                  onClick={this.onClear}
+                </Box>
+                <Box
+                  display="flex"
+                  justifyContent="flex-end"
+                  className="button-wrapper"
                 >
-                  <svg
-                    className="advanced-grid-search__btn-clear--clearicon"
-                    width="17"
-                    height="17"
-                    viewBox="0 0 17 17"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
+                  <Button
+                    className="Button advanced-grid-search__btn-clear"
+                    onClick={this.onClear}
                   >
-                    <path
-                      fill-rule="evenodd"
-                      clip-rule="evenodd"
-                      d="M8.5 17C13.1944 17 17 13.1945 17 8.5C17 3.80554 13.1944 0 8.5 0C3.8056 0 0 3.80554 0 8.5C0 13.1945 3.8056 17 8.5 17ZM8.5 16C12.6422 16 16 12.6421 16 8.5C16 4.35791 12.6422 1 8.5 1C4.35785 1 1 4.35791 1 8.5C1 12.6421 4.35785 16 8.5 16Z"
-                      fill="#666666"
-                    />
-                    <path
-                      d="M5.31803 5.31802C5.12277 5.51328 5.12277 5.82986 5.31803 6.02513L7.7929 8.5L5.31803 10.9749C5.12277 11.1701 5.12277 11.4867 5.31803 11.682C5.51329 11.8772 5.82987 11.8772 6.02514 11.682L8.50001 9.20711L10.9749 11.682C11.1701 11.8772 11.4867 11.8772 11.682 11.682C11.8773 11.4867 11.8773 11.1701 11.682 10.9749L9.20712 8.5L11.682 6.02513C11.8773 5.82986 11.8773 5.51328 11.682 5.31802C11.4867 5.12276 11.1701 5.12276 10.9749 5.31802L8.50001 7.79289L6.02513 5.31802C5.82987 5.12276 5.51329 5.12276 5.31803 5.31802Z"
-                      fill="#666666"
-                    />
-                  </svg>
-                  <span onClick={this.onClear}>Clear</span>
-                </Button>
-                <button className="Button member-notes-popup-root__dialog__category-notes_form__submit-btn" onClick={this.applySearch}>
-                  Apply Search
-                </button>
-              </Box>
+                    <svg
+                      className="advanced-grid-search__btn-clear--clearicon"
+                      width="17"
+                      height="17"
+                      viewBox="0 0 17 17"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        fill-rule="evenodd"
+                        clip-rule="evenodd"
+                        d="M8.5 17C13.1944 17 17 13.1945 17 8.5C17 3.80554 13.1944 0 8.5 0C3.8056 0 0 3.80554 0 8.5C0 13.1945 3.8056 17 8.5 17ZM8.5 16C12.6422 16 16 12.6421 16 8.5C16 4.35791 12.6422 1 8.5 1C4.35785 1 1 4.35791 1 8.5C1 12.6421 4.35785 16 8.5 16Z"
+                        fill="#666666"
+                      />
+                      <path
+                        d="M5.31803 5.31802C5.12277 5.51328 5.12277 5.82986 5.31803 6.02513L7.7929 8.5L5.31803 10.9749C5.12277 11.1701 5.12277 11.4867 5.31803 11.682C5.51329 11.8772 5.82987 11.8772 6.02514 11.682L8.50001 9.20711L10.9749 11.682C11.1701 11.8772 11.4867 11.8772 11.682 11.682C11.8773 11.4867 11.8773 11.1701 11.682 10.9749L9.20712 8.5L11.682 6.02513C11.8773 5.82986 11.8773 5.51328 11.682 5.31802C11.4867 5.12276 11.1701 5.12276 10.9749 5.31802L8.50001 7.79289L6.02513 5.31802C5.82987 5.12276 5.51329 5.12276 5.31803 5.31802Z"
+                        fill="#666666"
+                      />
+                    </svg>
+                    <span onClick={this.onClear}>Clear</span>
+                  </Button>
+                  <button
+                    className="Button member-notes-popup-root__dialog__category-notes_form__submit-btn"
+                    onClick={this.applySearch}
+                  >
+                    Apply Search
+                  </button>
+                </Box>
+              </Grid>
             </Grid>
-          </Grid>
+          ) : (
+            <AdditionalCriteriaContainer
+              criteriaList={criteriaList}
+              // getSettingsListDispatch={{
+              //   posListHandler: this.props.getDrugDetailsPOSSettings,
+              //   prListHandler: this.props.getDrugDetailsPRSettings,
+              // }}
+            />
+          )}
         </FrxDialogPopup>
       </div>
     );

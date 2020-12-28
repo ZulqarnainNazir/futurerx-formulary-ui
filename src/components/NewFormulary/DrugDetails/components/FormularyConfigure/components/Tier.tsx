@@ -95,17 +95,17 @@ class Tier extends React.Component<any, tabsState> {
     openPopup: false,
     addNewTierPopup: false,
     tabs: [
-      { id: 1, text: "Replace" },
-      { id: 2, text: "Append" },
-      { id: 3, text: "Remove" },
+      { id: 1, text: "Replace", disabled: false},
+      { id: 2, text: "Append", disabled: true },
+      { id: 3, text: "Remove" , disabled: false },
     ]
   };
 
-  populateTierDetails = (TierColumns) => {
+  populateTierDetails = (TierColumns, formularyId) => {
     let apiDetails = {};
     apiDetails['apiPart'] = tierConstants.FORMULARY_TIERS;
-    apiDetails['pathParams'] = this.props?.formulary_id;
-    apiDetails['keyVals'] = [{ key: commonConstants.KEY_ENTITY_ID, value: this.props?.formulary_id }];
+    apiDetails['pathParams'] = formularyId;
+    apiDetails['keyVals'] = [{ key: commonConstants.KEY_ENTITY_ID, value: formularyId }];
 
     const TierDefinationData = this.props.getTier(apiDetails).then((json => {
       //debugger;
@@ -134,10 +134,10 @@ class Tier extends React.Component<any, tabsState> {
     }))
   }
 
-  populateTierLabels = () => {
+  populateTierLabels = (formularyId, formularyTypeId) => {
     let apiDetails = {};
     apiDetails['apiPart'] = tierConstants.GET_TIER_LABEL;
-    apiDetails['pathParams'] = this.props?.formulary_type_id + "/0/" + this.props?.formulary_id;
+    apiDetails['pathParams'] = formularyTypeId + "/0/" + formularyId;
 
     const TierDefinationData = this.props.getTierLabels(apiDetails).then((json => {
       if (json.payload && json.payload.data) {
@@ -181,13 +181,19 @@ class Tier extends React.Component<any, tabsState> {
         tierOption: tierOption
       })
     }
+    if(this.props.formulary_id !== nextProps.formulary_id){
+      this.populateTierDetails(TierColumns, nextProps.formulary_id);
+      this.populateTierLabels(nextProps.formulary_id, nextProps.formulary_type_id);
+      this.state.lobCode = getLobCode(nextProps.formulary_lob_id);
+    }
   }
 
   componentDidMount() {
     const TierColumns = tierDefinationColumns();
+    console.log('Formulary ID in tier:'+this.props.formulary_id);
     if (this.props.formulary_id) {
-      this.populateTierDetails(TierColumns);
-      this.populateTierLabels();
+      this.populateTierDetails(TierColumns,this.props.formulary_id);
+      this.populateTierLabels(this.props.formulary_id,this.props.formulary_type_id);
       this.state.lobCode = getLobCode(this.props.formulary_lob_id);
     }
   }
@@ -285,7 +291,7 @@ class Tier extends React.Component<any, tabsState> {
         if (json.payload && json.payload.code && json.payload.code === "200") {
           showMessage('Tier Added', 'success');
           const TierColumns = tierDefinationColumns();
-          this.populateTierDetails(TierColumns);
+          this.populateTierDetails(TierColumns,this.props.formulary_id);
         } else {
           showMessage('Error: Failed to add tier', 'error');
         }
@@ -299,6 +305,7 @@ class Tier extends React.Component<any, tabsState> {
   render() {
     const tierDefinationColumns = this.state.tierDefinationColumns;
     const tierDefinationData = this.state.tierDefinationData;
+    console.log('Tier length is:'+tierDefinationData.length);
     return (
       <div className="drug-detail-LA-root">
         <div className="drug-detail-la-container">
@@ -330,11 +337,12 @@ class Tier extends React.Component<any, tabsState> {
                         enableResizingOfColumns
                         hideClearFilter
                         hideMultiSort
-                        hideItemsPerPage
                         hidePageJumper
-                        hidePagination
                         hideResults
                         data={tierDefinationData}
+                        pageSize={tierDefinationData.length}
+                        onGridPageChangeHandler={(page) => {}}
+                        getPerPageItemSize={(size) => {}}
                       />
                       <div className='tier-popup-btn'>
                         <svg

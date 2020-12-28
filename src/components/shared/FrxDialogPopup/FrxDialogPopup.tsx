@@ -7,6 +7,7 @@ import { Theme, withStyles } from "@material-ui/core/styles";
 import { ReactComponent as CloseIcon } from "../../../assets/icons/CloseIcon.svg";
 import React from "react";
 import "./FrxDialogPopup.scss";
+import { Fullscreen } from "@material-ui/icons";
 
 const styles = (theme: Theme) => ({
   root: {
@@ -35,6 +36,7 @@ interface DialogPopupProps {
   popupMaxWidth?: false | "xs" | "sm" | "md" | "lg" | "xl" | undefined;
   handleClose: () => void;
   handleAction: (action: string) => void;
+  fullScreen?: boolean;
 }
 
 class DialogPopup extends React.Component<DialogPopupProps> {
@@ -56,6 +58,7 @@ class DialogPopup extends React.Component<DialogPopupProps> {
       headChildren,
       disablePortal,
       popupMaxWidth,
+      fullScreen,
     } = this.props;
     return (
       <Dialog
@@ -65,6 +68,7 @@ class DialogPopup extends React.Component<DialogPopupProps> {
         disablePortal={disablePortal ? disablePortal : false}
         open={open}
         maxWidth={popupMaxWidth ? popupMaxWidth : false}
+        fullScreen={fullScreen ? fullScreen : false}
         className={this.props.className ? this.props.className : "dialog-popup"}
         style={{ minWidth: "1000px", minHeight: "600px", zIndex: 9999 }}
         onClose={handleClose}

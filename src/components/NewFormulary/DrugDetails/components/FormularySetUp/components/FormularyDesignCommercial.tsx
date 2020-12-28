@@ -5,7 +5,7 @@ import Button from '../../../../../shared/Frx-components/button/Button';
 import PanelHeader from "../../FormularyConfigure/components/PanelHeader";
 import {connect} from "react-redux";
 import { Checkbox } from 'antd';
-class SupplementalModels extends React.Component<any, any> {
+class FormularyDesignCommercial extends React.Component<any, any> {
     checkFormularyDesign = (id:any) => {
         const des_opt:any = {...this.props.edit_info};
         const naCheckId = this.props.designOptions?.filter(e => e.is_custom !== true && e.edit_name === 'N/A').map(e=>e.id_edit);
@@ -247,4 +247,4 @@ const mapStateToProps = (state) => {
         storeEditInfo: state?.setup?.formulary?.edit_info
     };
 };
-export default connect(mapStateToProps)(SupplementalModels)
+export default connect(mapStateToProps)(FormularyDesignCommercial)

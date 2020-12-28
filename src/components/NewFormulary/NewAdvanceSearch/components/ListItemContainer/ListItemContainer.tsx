@@ -16,7 +16,7 @@ const { Option } = Select;
 
 function mapDispatchToProps(dispatch) {
   return {
-    setAdvancedSearch: (a) => dispatch(setAdvancedSearch(a))
+    setAdvancedSearch: (a) => dispatch(setAdvancedSearch(a)),
   };
 }
 
@@ -40,44 +40,56 @@ interface Props {
   listItemStatus: any;
   onParentDataUpdated: (nodeId, isIncluded) => void;
 }
-interface State { }
+interface State {}
 
 class ListItemContainer extends Component<Props, State> {
   state = {
     selectedOpt: "",
-    generalTitles: ["File Type", "Tier", "UM Filter"]
+    generalTitles: ["File Type", "Tier", "UM Filter"],
   };
 
-  constructor(props) {
-    super(props);
-  }
+  // constructor(props) {
+  //   super(props);
+  // }
 
   componentDidMount() {
-    let option = 'exclude';
+    let option = "exclude";
     if (this.props.listItemStatus) {
-      console.log('List item container. props list:'+JSON.stringify(this.props.listItemStatus));
-      option = this.props.listItemStatus['' + this.props.nodeId] === true ? 'include' : 'exclude';
+      console.log(
+        "List item container. props list:" +
+          JSON.stringify(this.props.listItemStatus)
+      );
+      option =
+        this.props.listItemStatus["" + this.props.nodeId] === true
+          ? "include"
+          : "exclude";
     }
     this.setState({
-      selectedOpt: option
+      selectedOpt: option,
     });
   }
 
   componentWillReceiveProps(nextProps) {
-    console.log('LIST CONTAINER: props received:' + JSON.stringify(nextProps.listItemStatus));
+    console.log(
+      "LIST CONTAINER: props received:" +
+        JSON.stringify(nextProps.listItemStatus)
+    );
     if (nextProps.listItemStatus) {
-      let option = 'exclude';
-      option = nextProps.listItemStatus['' + this.props.nodeId] === true ? 'include' : 'exclude';
-      console.log('Node is:'+this.props.nodeId+' Option:'+option);
+      let option = "exclude";
+      option =
+        nextProps.listItemStatus["" + this.props.nodeId] === true
+          ? "include"
+          : "exclude";
+      console.log("Node is:" + this.props.nodeId + " Option:" + option);
       this.setState({
-        selectedOpt: option
+        selectedOpt: option,
       });
     }
   }
 
   onHandleSelected = (opt) => {
     console.log("[opt]", opt);
-    this.props.onParentDataUpdated(this.props.nodeId, (opt === 'include'));
+    this.props.onParentDataUpdated(this.props.nodeId, opt === "include");
     this.setState({ selectedOpt: opt });
   };
 
@@ -160,9 +172,10 @@ class ListItemContainer extends Component<Props, State> {
                   </svg>
                 </span>
               </span>
-              {!this.state.generalTitles.includes(this.props.title) ? <div className={`__icon-select-box `}>
-                {borderColor.showIcon}
-                {/* <svg
+              {!this.state.generalTitles.includes(this.props.title) ? (
+                <div className={`__icon-select-box `}>
+                  {borderColor.showIcon}
+                  {/* <svg
                   width="13"
                   height="13"
                   viewBox="0 0 13 13"
@@ -174,30 +187,31 @@ class ListItemContainer extends Component<Props, State> {
                     fill="#80C483"
                   />
                 </svg> */}
-                <Select
-                  size="small"
-                  className="__select-box"
-                  value={this.state.selectedOpt}
-                  suffixIcon={
-                    <svg
-                      width="6"
-                      height="3"
-                      viewBox="0 0 6 3"
-                      fill="none"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        d="M0.403717 0H5.59628C5.9555 0 6.13512 0.382449 5.88084 0.606582L3.28556 2.89594C3.12815 3.03469 2.87185 3.03469 2.71444 2.89594L0.119165 0.606582C-0.135116 0.382449 0.0444952 0 0.403717 0Z"
-                        fill="#707683"
-                      />
-                    </svg>
-                  }
-                  onSelect={this.onHandleSelected}
-                >
-                  <Option value="include">include</Option>
-                  <Option value="exclude">exclude</Option>
-                </Select>
-              </div> : null}
+                  <Select
+                    size="small"
+                    className="__select-box"
+                    value={this.state.selectedOpt}
+                    suffixIcon={
+                      <svg
+                        width="6"
+                        height="3"
+                        viewBox="0 0 6 3"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          d="M0.403717 0H5.59628C5.9555 0 6.13512 0.382449 5.88084 0.606582L3.28556 2.89594C3.12815 3.03469 2.87185 3.03469 2.71444 2.89594L0.119165 0.606582C-0.135116 0.382449 0.0444952 0 0.403717 0Z"
+                          fill="#707683"
+                        />
+                      </svg>
+                    }
+                    onSelect={this.onHandleSelected}
+                  >
+                    <Option value="include">include</Option>
+                    <Option value="exclude">exclude</Option>
+                  </Select>
+                </div>
+              ) : null}
             </div>
 
             <div className="dynamic-contenet">{this.props.children}</div>
@@ -223,7 +237,4 @@ class ListItemContainer extends Component<Props, State> {
   }
 }
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(ListItemContainer);
+export default connect(mapStateToProps, mapDispatchToProps)(ListItemContainer);

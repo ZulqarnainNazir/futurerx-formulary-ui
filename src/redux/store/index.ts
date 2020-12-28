@@ -11,6 +11,7 @@ import { categoryClassSlice } from "../slices/formulary/categoryClass/categoryCl
 import { switchSlice } from "../slices/formulary/switch/switchSlice";
 import { validationList } from "../slices/formulary/validation/validationSlice";
 import advancedSearchReducer from "../slices/formulary/advancedSearch/advancedSearchSlice";
+import additionalCriteriaReducer from "../slices/formulary/advancedSearch/additionalCriteriaSlice";
 import setupReducer from "../slices/formulary/setup/setupSlice";
 import setupOptionsReducer from "../slices/formulary/setup/setupOptionsSlice";
 import headerReducer from "../slices/formulary/header/headerSlice";
@@ -71,6 +72,7 @@ const store = configureStore({
     qlReducer: ql,
     paVersion: paVersion,
     categoryClass: categoryClass,
+    additionalCriteria: additionalCriteriaReducer,
   },
   middleware,
 });

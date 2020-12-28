@@ -56,4 +56,19 @@
       }
     }
   }
+  .input-field-group__dropdown-field{
+    width: 275px;
+    .MuiAutocomplete-root{
+      width: 275px !important;
+    }
+  }
+  .Button{
+    float: right;
+    align-items: center;
+    text-align: center;
+    width: 71px;
+    height: 34px;
+    background: #1f55b6;
+    border-radius: 5px;
+  }
 }

@@ -26,7 +26,10 @@ const advancedSearch = createSlice({
   name: "advancedSearch",
   initialState: advancedSearchInitialState,
   reducers: {
-    setAdvancedSearchBody(state, { payload }: PayloadAction<AdvancedSearchResult>) {
+    setAdvancedSearchBody(
+      state,
+      { payload }: PayloadAction<AdvancedSearchResult>
+    ) {
       state.advancedSearchBody = payload.advancedSearchBody;
       state.populateGrid = payload.populateGrid;
       state.closeDialog = payload.closeDialog;
@@ -35,7 +38,7 @@ const advancedSearch = createSlice({
   },
 });
 
-export const {setAdvancedSearchBody} = advancedSearch.actions;
+export const { setAdvancedSearchBody } = advancedSearch.actions;
 
 export default advancedSearch.reducer;
 

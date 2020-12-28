@@ -2,7 +2,7 @@
 export const getStepTherapyFulfilled = (state, action) => {
   console.log("Reducer::getStepTherapyFulfilled");
   state.isLoading = false;
-  if(action.payload.result === undefined || (action.payload.result === 0)) {
+  if(action.payload.result === undefined || (action.payload.result.length === 0)) {
     console.log("getStepTherapyFulfilled: Payload invalid");
     return;
   }

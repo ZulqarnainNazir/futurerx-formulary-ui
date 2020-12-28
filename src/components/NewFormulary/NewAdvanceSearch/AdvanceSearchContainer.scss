@@ -314,15 +314,35 @@
 .AdvanceSearchContainer___root {
   height: 100vh;
 }
+
 .new-advane-search-popup {
   z-index: 999 !important;
   height: 100vh;
+
+  .MuiDialog-paperFullScreen {
+    width: 65%;
+  }
   .MuiPaper-root {
+    // by additional criteria - start
+    .MuiDialog-root,
+    .MuiDialogContent-root {
+      width: auto;
+      max-width: 100%;
+      // overflow-y: scroll;
+      height: 100%;
+    }
+
+    // end
     height: 100%;
   }
+
+  // commented by additional criteria - start
   .MuiDialogContent-root {
-    max-height: 95%;
+    // max-height: 95%;
+    // width: 100%;
+    // max-width: 100%;
   }
+  // commented by additional criteria - end
 
   // overflow-y: none !important;
   .drug-grid-popup-root__dialog {
@@ -331,7 +351,10 @@
       position: sticky;
     }
     // width: 1240px; //auto;
+
+    // commented by additionalCriteria - start
     height: 100vh;
+    // commented - end
     .form-wrapper-root {
       max-height: 84%;
       overflow-y: auto;

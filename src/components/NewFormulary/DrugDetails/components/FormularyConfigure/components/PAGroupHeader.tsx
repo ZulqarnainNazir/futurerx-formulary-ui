@@ -31,7 +31,7 @@ function mapStateToProps(state) {
         saveGdm: state.savePaGdm,
         PaGDData: state.paReducer.description,
         version: state.paVersion.paVersion,
-
+        client_id: state.application.clientId,
     }
 }
 
@@ -66,6 +66,9 @@ function PAGroupHeader(props: any) {
     const [selectedFormularies, updateSelectedFormularies] = React.useState([]);
     const [idField,setIdField] = React.useState('');
     const [selectedVersion, setSelectedVersion] = useState('')
+    const [selectedVersionId,setSelectedVersionId] = useState(null);
+
+    
     const getCompareFormularyViewAllGridData = [
         
           {
@@ -129,13 +132,14 @@ function PAGroupHeader(props: any) {
             setVersion(props.version);
             //const latestVerion = verLength > 0 ? selectedVersion.split(" ")[1] : '';
             setSelectedVersion(props.version[verLength - 1].version_number);
+            setSelectedVersionId(props.version[verLength - 1]['id_pa_group_description']);
             setPlaceHolder(value)
         } else {
             setVersion([{ value: 'Version 1' }])
             setPlaceHolder('Version 1')
         }
         props.onChange('no');
-    }, [props.saveGdm.current_group_id])
+    }, [props.saveGdm.current_group_id || props.version])
 
     const handleClickOpen = (type) => {
         setOpen(true);
@@ -160,6 +164,7 @@ function PAGroupHeader(props: any) {
             props.getPaGrouptDescription(apiDetails);
             const latestVerionNo = verLength > 0 ? selectedVersion.split(" ")[1] : '';
             setSelectedVersion(latestVerionNo);
+            setSelectedVersionId(latestVerion);
         }
         props.onChange(selectedVersion);
     }
@@ -220,33 +225,83 @@ function PAGroupHeader(props: any) {
        
     };
     const deleteGroup = (e: any, param: any) => {
-        props.deleteGroupDescription({ current_group_des_id: props.saveGdm.current_group_des_id })
-        props.getPaGrouptDescriptions(props.saveGdm.formulary_id)
-        props.getPaGrouptDescriptionVersions(props.saveGdm.current_group_des_id)
-        props.getPaGrouptDescription(props.saveGdm.current_group_id)
-        props.getPaTypes(props.saveGdm.formulary_id)
+        props.deleteGroupDescription({ current_group_des_id: selectedVersionId,
+            lob_type:props.formulary_lob_id }).then(json => {
+                let apiDetails= {};
+                apiDetails["lob_type"] = props.formulary_lob_id;
+                apiDetails['pathParams'] = '/'+props.client_id;
+                props.getPaGrouptDescriptions(apiDetails)
+        
+                apiDetails['pathParams'] = '/'+props.saveGdm.current_group_id;
+                props.getPaGrouptDescriptionVersions(apiDetails);
+                //current_group_des_id
+                apiDetails['pathParams'] = '/'+props.saveGdm.current_group_id;
+                props.getPaGrouptDescription(apiDetails);
+        
+                props.getPaTypes(props.saveGdm.formulary_id)
+
+            });
+        
     }
     const cloneGroup = (e: any,param:any) => {
         props.cloneGroupDescription({
-            current_group_des_id: props.saveGdm.current_group_des_id,
-            pa_group_description_name: param.st_group_description_name // clone page input
-        })
-        props.getPaGrouptDescriptions(props.saveGdm.formulary_id)
+            current_group_des_id: selectedVersionId,
+            pa_group_description_name: param.st_group_description_name,
+            lob_type:props.formulary_lob_id // clone page input
+        }).then(json => {
+            let apiDetails= {};
+            apiDetails["lob_type"] = props.formulary_lob_id;
+            apiDetails['pathParams'] = '/'+props.client_id;
+
+            props.getPaGrouptDescriptions(apiDetails);
+        });
+        
+
     }
     const archiveGroup = (e: any, param: any) => {
-        props.archiveGroupDescription({ current_group_des_id: props.saveGdm.current_group_des_id })
-        props.getPaGrouptDescriptions(props.saveGdm.formulary_id)
-        props.getPaGrouptDescriptionVersions(props.saveGdm.current_group_des_id)
-        props.getPaGrouptDescription(props.saveGdm.current_group_id)
-        props.getPaTypes(props.saveGdm.formulary_id)
+        props.archiveGroupDescription({ current_group_des_id: selectedVersionId,
+            lob_type:props.formulary_lob_id }).then(json =>{
+                let apiDetails= {};
+                apiDetails["lob_type"] = props.formulary_lob_id;
+                apiDetails['pathParams'] = '/'+props.client_id;
+                props.getPaGrouptDescriptions(apiDetails);
+        
+                apiDetails['pathParams'] = '/'+props.saveGdm.current_group_des_id;
+                props.getPaGrouptDescriptionVersions(apiDetails)
+        
+                apiDetails['pathParams'] = '/'+props.saveGdm.current_group_id;
+                props.getPaGrouptDescription(apiDetails);
+        
+                props.getPaTypes(props.saveGdm.formulary_id)
+            });
+        
+        
     }
 
     const newVersionGroup = (e: any,param:any) => {
-        props.newVersionGroupDescription({ current_group_des_id: props.saveGdm.current_group_des_id })
-        props.getPaGrouptDescriptions(props.saveGdm.formulary_id)
-        props.getPaGrouptDescriptionVersions(props.saveGdm.current_group_des_id)
-        props.getPaGrouptDescription(props.saveGdm.current_group_id)
-        props.getPaTypes(props.saveGdm.formulary_id)
+        debugger;
+        
+        props.newVersionGroupDescription({ current_group_des_id: selectedVersionId,
+        lob_type:props.formulary_lob_id }).then(json=> {
+            let apiDetails= {};
+            apiDetails["lob_type"] = props.formulary_lob_id;
+            apiDetails['pathParams'] = '/'+props.client_id;
+            props.getPaGrouptDescriptions(apiDetails);
+    
+            apiDetails['pathParams'] = '/'+props.saveGdm.current_group_id;
+            props.getPaGrouptDescriptionVersions(apiDetails).then(json=>{
+                console.log(json);
+                setVersion(json.payload.data)
+                let v =props.version;
+            });
+    
+            apiDetails['pathParams'] = '/'+props.saveGdm.current_group_id;
+            props.getPaGrouptDescription(apiDetails);
+    
+            props.getPaTypes(props.saveGdm.formulary_id)
+
+        });
+        
     }
     return (
         <div className={`version-wrapper${panelColor}`}>

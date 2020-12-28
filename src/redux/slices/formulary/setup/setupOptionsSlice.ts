@@ -162,7 +162,7 @@ const setup = createSlice({
 
     getTierOptionsStart: startLoading,
     getTierOptionsSuccess(state, { payload }: PayloadAction<TierOptions>) {
-      console.log("***** getTierOptionsSuccess Reducer");
+      //console.log("***** getTierOptionsSuccess Reducer");
       // let AddNew: any = {
       //   id_tier_label: -1,
       //   tier_label: "Add New",
@@ -282,7 +282,7 @@ export const fetchTierOptions = createAsyncThunk(
     try {
       dispatch(getTierOptionsStart());
       const options: any = await getTierOptions(input.type, input.id, 0);
-      console.log("*** options : ", options);
+      //console.log("*** options : ", options);
       if (input.type === 6) {
         let AddNew: any = {
           id_tier_label: -1,
@@ -291,7 +291,7 @@ export const fetchTierOptions = createAsyncThunk(
           code_value: "",
         };
         let optionsWithAddNew: any = [AddNew, ...options];
-        console.log(optionsWithAddNew);
+        //console.log(optionsWithAddNew);
         dispatch(getTierOptionsSuccess(optionsWithAddNew));
       } else {
         dispatch(getTierOptionsSuccess(options));

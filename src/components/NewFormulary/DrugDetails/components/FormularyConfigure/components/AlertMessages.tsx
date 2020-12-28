@@ -37,7 +37,7 @@ function AlertMessages(props: Props) {
 
   return (
     <div className={`${classes.root} ${classes.mb10}`}>
-      {error && error.length > 0 && error.map(err => {
+      {error && error.length > 1 && error.map(err => {
         return <Alert severity="error">{err.message}</Alert>
       })}
       {error && error.status != 200 && visible && <Alert severity="error">{error.data ? error.data.message : ERROR_MSG}</Alert>}
