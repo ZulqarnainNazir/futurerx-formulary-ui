@@ -62,7 +62,7 @@ function GroupHeader(props: any) {
     const [selectedVersion, setSelectedVersion] = useState('')
     const versionListLength = versionList.length-1;
     const [selectedVersionId,setSelectedVersionId] = useState(null);
-    const [selectedVersion, setSelectedVersion] = useState('')
+    
 
     const toggleShowViewAll = () => {
         let apiDetails= {};
