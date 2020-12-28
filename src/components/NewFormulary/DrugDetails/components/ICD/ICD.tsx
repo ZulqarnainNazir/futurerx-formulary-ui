@@ -384,6 +384,11 @@ class DrugDetailICD extends React.Component<any, any> {
       }
       return tab;
     });
+
+    if (activeTabIndex === 2) {
+      this.getICDCriteriaList(true);
+    }
+
     this.setState({ tabs, activeTabIndex, showGrid: false });
   };
 
