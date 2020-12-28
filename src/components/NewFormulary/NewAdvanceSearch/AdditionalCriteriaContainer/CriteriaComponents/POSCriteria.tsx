@@ -13,7 +13,6 @@ import Button from "../../../../shared/Frx-components/button/Button";
 // );
 
 const POSCriteria = (props) => {
-  console.log("props: ", props.posSettingsServies);
   const {
     serviceSettingsChecked,
     posSettingsServies: { posSettings, posSettingsStatus },
@@ -26,10 +25,6 @@ const POSCriteria = (props) => {
     nodeId,
   } = props;
 
-  // id_place_of_service_type: 1,
-  // place_of_service_type_code: "01",
-  // place_of_service_type_name: "Community/Retail Pharmacy services",
-  // checked: false
   return (
     <div className="pos-limit-settings bordered mb-10">
       {showGridHandler ? (
@@ -69,12 +64,6 @@ const POSCriteria = (props) => {
                     onChange={serviceSettingsChecked}
                     checked={s.isChecked}
                   ></Checkbox>
-                  {/* <input
-                    type="checkbox"
-                    id={s.id_place_of_service_type}
-                    name={s.id_place_of_service_type}
-                    value="N/A"
-                  /> */}
                   <label
                     htmlFor={s.id_place_of_service_type + "" + nodeId}
                     className="checkbox-label"

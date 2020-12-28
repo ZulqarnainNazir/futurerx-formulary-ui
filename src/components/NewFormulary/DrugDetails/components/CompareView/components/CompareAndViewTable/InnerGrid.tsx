@@ -36,13 +36,7 @@ class InnerGrid extends Component<InnerGridProps, any>{
     drugGridData: Array(),
     drugData: Array(),
     gridColumns: Array(),
-    attribute_type: '',
-    file_type: '',
-    attribute_field_data_type: '',
-    attribute_field_name: '',
-    attribute_field_value: '',
-    attribute_name: '',
-    source: '',
+    rowData: {},
     baseFormularyId: '',
     refFormularyId: '',
   }
@@ -204,12 +198,7 @@ class InnerGrid extends Component<InnerGridProps, any>{
             drugGridData: drugGridData,
             drugData: drugData,
             gridColumns: rowData['gridColumns'],
-            file_type: rowData['file_type'],
-            attribute_field_data_type: rowData['attribute_field_data_type'],
-            attribute_field_name: rowData['attribute_field_name'],
-            attribute_field_value: rowData['attribute_field_value'],
-            attribute_name: rowData['attribute_name'],
-            source: rowData['source'],
+            rowData: rowData,
             baseFormularyId: baseFormularyId,
             refFormularyId: refFormularyId,
             openDrugsList: !this.state.openDrugsList
@@ -220,12 +209,7 @@ class InnerGrid extends Component<InnerGridProps, any>{
             drugGridData: Array(),
             drugData: Array(),
             gridColumns: Array(),
-            file_type: '',
-            attribute_field_data_type: '',
-            attribute_field_name: '',
-            attribute_field_value: '',
-            attribute_name: '',
-            source: '',
+            rowData: {},
             baseFormularyId: '',
             refFormularyId: '',
           });
@@ -238,12 +222,7 @@ class InnerGrid extends Component<InnerGridProps, any>{
           drugGridData: Array(),
           drugData: Array(),
           gridColumns: Array(),
-          file_type: '',
-          attribute_field_data_type: '',
-          attribute_field_name: '',
-          attribute_field_value: '',
-          attribute_name: '',
-          source: '',
+          rowData: {},
           baseFormularyId: '',
           refFormularyId: '',
         });
@@ -253,12 +232,7 @@ class InnerGrid extends Component<InnerGridProps, any>{
         drugGridData: Array(),
         drugData: Array(),
         gridColumns: Array(),
-        file_type: '',
-        attribute_field_data_type: '',
-        attribute_field_name: '',
-        attribute_field_value: '',
-        attribute_name: '',
-        source: '',
+        rowData: {},
         baseFormularyId: '',
         refFormularyId: '',
       });
@@ -420,7 +394,9 @@ class InnerGrid extends Component<InnerGridProps, any>{
                   // setting gear 1st column
                   enableSettings={true}
                   // checkbox 2nd column
-                  customSettingIcon={"NONE"}
+                  customSettingIcon={this.state.checkbox ? null : "NONE"}
+                  isRowSelectionEnabled={this.state.checkbox}
+                  isRowSelectorCheckbox
                 />
               </DialogPopup>
             ) : null}
@@ -480,7 +456,9 @@ class InnerGrid extends Component<InnerGridProps, any>{
                   enableSettings={true}
                   // checkbox 2nd column
                   // event reference for checkbox (mandotory if checkbox is true)
-                  customSettingIcon={"NONE"}
+                  customSettingIcon={this.state.checkbox ? null : "NONE"}
+                  isRowSelectionEnabled={this.state.checkbox}
+                  isRowSelectorCheckbox
                 />
               </DialogPopup>
             ) : null}

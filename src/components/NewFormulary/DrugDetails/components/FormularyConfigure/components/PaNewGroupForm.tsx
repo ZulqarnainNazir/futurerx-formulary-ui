@@ -329,7 +329,11 @@ function NewGroup(props: any) {
 
             props.getPaGrouptDescriptions(apiDetails);
           }else{
-            showMessage('Failure', 'error');
+            if (json.payload && json.payload.message !==undefined) {
+              showMessage(json.payload.message, 'error');
+            }else{
+              showMessage('Failure', 'error');
+            }
           }
         })
       }else{
@@ -344,7 +348,11 @@ function NewGroup(props: any) {
 
             props.getPaGrouptDescriptions(apiDetails);
           }else{
-            showMessage('Failure', 'error');
+            if (json.payload && json.payload.message !==undefined) {
+              showMessage(json.payload.message, 'error');
+            }else{
+              showMessage('Failure', 'error');
+            }
           }
         });
       }

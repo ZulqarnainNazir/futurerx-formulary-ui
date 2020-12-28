@@ -1978,7 +1978,77 @@ export const QlColumns: () => Column<any>[] = () => {
   ];
 };
 
-//
+//qlRemoveTableColumn
+export const QlRemoveColumns: () => Column<any>[] = () => {
+  return [
+    {
+      position: 1,
+      sorter: {},
+      textCase: "upper",
+      pixelWidth: 100,
+      key: "quantity",
+      displayTitle: "Quantity",
+      isFilterable: true,
+      dataType: "string",
+      filters: textFilters,
+      hidden: false,
+      sortDirections: ["ascend", "descend"],
+    },
+    {
+      position: 2,
+      sorter: {},
+      textCase: "upper",
+      pixelWidth: 100,
+      key: "quantity_limit_days",
+      displayTitle: "Days",
+      isFilterable: true,
+      dataType: "string",
+      filters: textFilters,
+      hidden: false,
+      sortDirections: ["ascend", "descend"],
+    },
+    {
+      position: 3,
+      sorter: {},
+      textCase: "upper",
+      pixelWidth: 100,
+      key: "quantity_limit_period_of_time",
+      displayTitle: "Period of Time in Days",
+      isFilterable: true,
+      dataType: "string",
+      filters: textFilters,
+      hidden: false,
+      sortDirections: ["ascend", "descend"],
+    },
+
+    {
+      position: 4,
+      sorter: {},
+      textCase: "upper",
+      pixelWidth: 100,
+      key: "fills_allowed",
+      displayTitle: "Fills Allowed",
+      isFilterable: true,
+      dataType: "string",
+      filters: textFilters,
+      hidden: false,
+      sortDirections: ["ascend", "descend"],
+    },
+    {
+      position: 5,
+      sorter: {},
+      textCase: "upper",
+      pixelWidth: 100,
+      key: "full_limit_period_of_time",
+      displayTitle: "Fills Limit Period of Time in Days",
+      isFilterable: true,
+      dataType: "string",
+      filters: textFilters,
+      hidden: false,
+      sortDirections: ["ascend", "descend"],
+    },
+  ];
+};
 
 export const setupHmpsColumns: () => Column<any>[] = () => {
   return [
@@ -10977,7 +11047,7 @@ export const claimsPopupErrorMsgGrid = [
 
 export const getCompareFormularyVersionHistoryColumn: () => Column<any>[] = () => {
   return [
-      {
+    {
       id: 1,
       position: 1,
       pixelWidth: 30,
