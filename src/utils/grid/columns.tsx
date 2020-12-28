@@ -51,7 +51,7 @@ export const selectFormularyGridMedicare: (data) => Column<any>[] = (data) => {
           variant={4}
         />
       ),
-      isFilterable: true,
+      isFilterable: false,
       dataType: "string",
       hidden: false,
       sortDirections: ["ascend", "descend"],
@@ -196,7 +196,7 @@ export const selectFormularyGrid: (data) => Column<any>[] = (data) => {
       pixelWidth: 100,
       key: "lob",
       displayTitle: "LOB",
-      isFilterable: true,
+      isFilterable: false,
       dataType: "string",
       filters: textFilters,
       hidden: false,
@@ -238,7 +238,7 @@ export const selectFormularyGrid: (data) => Column<any>[] = (data) => {
       dataType: "string",
       hidden: false,
       isFilterable: true,
-      filters: numberFilters,
+      filters: textFilters,
       sortDirections: ["ascend", "descend"],
     },
     {
@@ -251,7 +251,7 @@ export const selectFormularyGrid: (data) => Column<any>[] = (data) => {
       dataType: "string",
       hidden: false,
       isFilterable: true,
-      filters: numberFilters,
+      filters: textFilters,
       sortDirections: ["ascend", "descend"],
     },
     {
@@ -264,7 +264,7 @@ export const selectFormularyGrid: (data) => Column<any>[] = (data) => {
       dataType: "string",
       hidden: false,
       isFilterable: true,
-      filters: numberFilters,
+      filters: textFilters,
       sortDirections: ["ascend", "descend"],
     },
     {
@@ -316,7 +316,7 @@ export const selectFormularyGrid: (data) => Column<any>[] = (data) => {
       dataType: "string",
       hidden: false,
       isFilterable: true,
-      filters: dateFilters,
+      filters: textFilters,
       sortDirections: ["ascend", "descend"],
     },
     {
@@ -329,7 +329,7 @@ export const selectFormularyGrid: (data) => Column<any>[] = (data) => {
       dataType: "string",
       hidden: false,
       isFilterable: true,
-      filters: dateFilters,
+      filters: textFilters,
       sortDirections: ["ascend", "descend"],
     },
   ];
