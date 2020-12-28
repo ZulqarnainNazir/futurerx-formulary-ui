@@ -22,3 +22,27 @@ export const getPRSummaryRejected = (state, action) => {
   state.isLoading = false;
   state.data = {};
 };
+
+export const getPRSettingsFulfilled = (state, action) => {
+  console.log("Reducer::getPRSettingsFulfilled");
+  state.isLoading = false;
+  console.log("getPRSettingsFulfilled Action - - - - - - -", action);
+  if (
+    action.payload.data === undefined ||
+    !Array.isArray(action.payload.data) ||
+    action.payload.data.length === 0
+  ) {
+    console.log("getPRSettingsFulfilled: Payload invaLid");
+    return;
+  }
+  const data = action.payload.data[0];
+  console.log("THe PR Settings Action = ", action);
+  console.log("THe PR Settings Action Payload = ", action.payload);
+  state.data = data;
+};
+
+export const getPRSettingsRejected = (state, action) => {
+  console.log("Reducer::getPRSettingsRejected");
+  state.isLoading = false;
+  state.data = {};
+};

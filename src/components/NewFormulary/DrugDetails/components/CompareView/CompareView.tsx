@@ -8,6 +8,8 @@ import ViewTable from "./components/CompareAndViewTable/ViewTable";
 import { ReactComponent as DownloadIcon } from "../../../../../assets/icons/DownloadIcon.svg";
 import "./CompareView.scss";
 import ViewFormularies from "./components/ViewFormularies";
+import showMessage from "../../../Utils/Toast";
+import { ToastContainer } from 'react-toastify';
 
 const tabs = [
   { id: 1, text: "COMPARE FORMUARIES" },
@@ -20,18 +22,22 @@ interface configureState {
   activeTabIndex: number;
   isCompareClicked: boolean;
   isViewClicked: boolean;
+  baseformulary: any;
+  referenceformulary: any;
 }
-interface configureProps {}
+interface configureProps { }
 
 export default class CompareView extends React.Component<
   configureProps,
   configureState
-> {
+  > {
   state = {
     tabs: tabs,
     activeTabIndex: 0,
     isCompareClicked: false,
     isViewClicked: false,
+    baseformulary: {},
+    referenceformulary: {},
   };
   onClickTab = (selectedTabIndex: number) => {
     let activeTabIndex = 0;
@@ -45,10 +51,16 @@ export default class CompareView extends React.Component<
     this.setState({ tabs, activeTabIndex });
   };
 
-  handleCompareBtn = () => {
-    this.setState({
-      isCompareClicked: !this.state.isCompareClicked,
-    });
+  handleCompareBtn = (baseFormulary, referenceFromulary) => {
+    if (baseFormulary && referenceFromulary && baseFormulary['id_formulary'] && referenceFromulary['id_formulary']) {
+      this.setState({
+        isCompareClicked: !this.state.isCompareClicked,
+        baseformulary: baseFormulary,
+        referenceformulary: referenceFromulary,
+      });
+    } else {
+      showMessage('Choose formularies to compare', 'error');
+    }
   };
 
   handleViewBtn = () => {
@@ -91,7 +103,7 @@ export default class CompareView extends React.Component<
               <DownloadIcon />
             </div>
             <div className="inner-container white-bg p-10">
-              <CompareTable />
+              <CompareTable baseformulary={this.state.baseformulary} referenceformulary={this.state.referenceformulary}/>
             </div>
           </div>
         ) : null}
@@ -105,6 +117,7 @@ export default class CompareView extends React.Component<
             </div>
           </div>
         ) : null}
+        <ToastContainer />
       </>
     );
   }

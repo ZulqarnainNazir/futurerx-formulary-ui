@@ -4,12 +4,10 @@ import {
   getHeaders,
   postHeaders,
   fetchRequest,
-} from "../../../../../api/http-drug-details";
+} from "../../../../api/http-common-fetch";
 
-// const GET_DRUG_SUMMARY_PR = BASE_URL1 + "api/1/formulary-drug-summary-patrs/3326?entity_id=3326";
-
-export const getDrugDetailsPRSummary = createAsyncThunk(
-  "drug_details/pr_Summary",
+export const getPOSSettingsList = createAsyncThunk(
+  "additional_criteria/pos_settings",
   async (apiDetails: any) => {
     let GET_URL = buildUrl({ apiDetails });
     const requestHeaders = getHeaders();
@@ -17,8 +15,8 @@ export const getDrugDetailsPRSummary = createAsyncThunk(
   }
 );
 
-export const getDrugDetailsPRSettings = createAsyncThunk(
-  "drug_details/pr_settings",
+export const getPRSettingsList = createAsyncThunk(
+  "additional_criteria/pr_settings",
   async (apiDetails: any) => {
     let GET_URL = buildUrl({ apiDetails });
     const requestHeaders = getHeaders();

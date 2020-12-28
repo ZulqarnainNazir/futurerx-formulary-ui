@@ -1,8 +1,8 @@
 import React from "react";
 import PanelHeader from "../../../../shared/Frx-components/panel-header/PanelHeader";
-import StatusContentFormPanel from "../common/StatusContentFormPanel/StatusContentFormPanel";
+import StatusContentFormPanel from "../../../DrugDetails/components/common/StatusContentFormPanel/StatusContentFormPanel";
 import { Checkbox } from "antd";
-import "./POS.scss";
+import "./POSCriteria.scss";
 import Button from "../../../../shared/Frx-components/button/Button";
 
 // const AddIcon = () => (
@@ -12,7 +12,7 @@ import Button from "../../../../shared/Frx-components/button/Button";
 //   </svg>
 // );
 
-const PosLimitSettings = (props) => {
+const POSCriteria = (props) => {
   console.log("props: ", props.posSettingsServies);
   const {
     serviceSettingsChecked,
@@ -23,6 +23,7 @@ const PosLimitSettings = (props) => {
     handleStatus,
     isAdditionalCriteria,
     deleteIconHandler,
+    nodeId,
   } = props;
 
   // id_place_of_service_type: 1,
@@ -63,7 +64,7 @@ const PosLimitSettings = (props) => {
                   key={s.id_place_of_service_type}
                 >
                   <Checkbox
-                    id={s.id_place_of_service_type}
+                    id={s.id_place_of_service_type + "" + nodeId}
                     name={s.id_place_of_service_type}
                     onChange={serviceSettingsChecked}
                     checked={s.isChecked}
@@ -75,7 +76,7 @@ const PosLimitSettings = (props) => {
                     value="N/A"
                   /> */}
                   <label
-                    htmlFor={s.id_place_of_service_type}
+                    htmlFor={s.id_place_of_service_type + "" + nodeId}
                     className="checkbox-label"
                   >
                     {`${s.place_of_service_type_code} -
@@ -159,4 +160,4 @@ const PosLimitSettings = (props) => {
   );
 };
 
-export default PosLimitSettings;
+export default POSCriteria;

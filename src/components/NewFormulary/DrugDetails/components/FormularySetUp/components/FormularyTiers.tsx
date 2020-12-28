@@ -26,7 +26,7 @@ class FormularyTiers extends React.Component<any, any> {
     let htmlElement: any;
     if (this.props.tiers) {
       const selectedTierOptions = this.props.tiers;
-      console.log(selectedTierOptions);
+      // console.log(selectedTierOptions);
       let allOptions = this.props.tierOptionsOptions?.map((e) => e.tier_label);
       options = selectedTierOptions.map((e) => {
         if (e.id_tier_label === null) {
@@ -68,6 +68,7 @@ class FormularyTiers extends React.Component<any, any> {
                   height="15"
                   viewBox="0 0 13 15"
                   fill="none"
+                  className="delete-icon"
                   xmlns="http://www.w3.org/2000/svg"
                   onClick={(el) => this.props.deleteCustomTier(e.tierName)}
                 >
