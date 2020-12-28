@@ -248,11 +248,12 @@ function GroupHeader(props: any) {
         }
         //let pathParams = props?.client_id+'/'+props.saveGdm.current_group_des_id+'/CV?entity_id='+props.formulary_id;
         props.cleanMessages({error:'',success:''})
-        props.archiveGroupDescription({lob_type:lob_type,pathParams:pathParams  })
-        props.getStGrouptDescriptions({lob_type:lob_type,pathParams:props.saveGdm.formulary_id})
-        props.getStGrouptDescriptionVersions({lob_type:lob_type,pathParams:props.saveGdm.current_group_id})
-        props.getStGrouptDescription({lob_type:lob_type,pathParams:props.saveGdm.current_group_des_id})
-        props.getStTypes(props.saveGdm.formulary_id)
+        props.archiveGroupDescription({lob_type:lob_type,pathParams:pathParams  }).then(json => {
+            props.getStGrouptDescriptions({lob_type:lob_type,pathParams:props.saveGdm.formulary_id})
+            props.getStGrouptDescriptionVersions({lob_type:lob_type,pathParams:props.saveGdm.current_group_id})
+            props.getStGrouptDescription({lob_type:lob_type,pathParams:props.saveGdm.current_group_des_id})
+            props.getStTypes(props.saveGdm.formulary_id)
+        })
     }
 
     const newVersionGroup = (e: any,param:any) => {

@@ -227,7 +227,15 @@ function PAGroupHeader(props: any) {
        
     };
     const deleteGroup = (e: any, param: any) => {
-        props.deleteGroupDescription({ current_group_des_id: selectedVersionId,
+        let pathParams;
+        if(param==='delete-version'){
+            pathParams = selectedVersionId+'/CV?entity_id='+props.formulary_id;
+        }else if(param==='delete-full'){
+            pathParams = props.saveGdm.current_group_id+'/GD?entity_id='+props.formulary_id;
+        }else{
+            pathParams = props.saveGdm.current_group_id+'/GD?entity_id='+props.formulary_id;
+        }
+        props.deleteGroupDescription({ pathParams:pathParams,
             lob_type:props.formulary_lob_id }).then(json => {
                 let apiDetails= {};
                 apiDetails["lob_type"] = props.formulary_lob_id;
@@ -265,7 +273,15 @@ function PAGroupHeader(props: any) {
 
     }
     const archiveGroup = (e: any, param: any) => {
-        props.archiveGroupDescription({ current_group_des_id: selectedVersionId,
+        let pathParams;
+        if(param==='archive-version'){
+            pathParams = selectedVersionId+'/CV?entity_id='+props.formulary_id;
+        }else if(param==='archive-full'){
+            pathParams = props.saveGdm.current_group_id+'/GD?entity_id='+props.formulary_id;
+        }else{
+            pathParams = props.saveGdm.current_group_id+'/GD?entity_id='+props.formulary_id;
+        }
+        props.archiveGroupDescription({ pathParams:pathParams,
             lob_type:props.formulary_lob_id }).then(json =>{
                 let apiDetails= {};
                 apiDetails["lob_type"] = props.formulary_lob_id;
