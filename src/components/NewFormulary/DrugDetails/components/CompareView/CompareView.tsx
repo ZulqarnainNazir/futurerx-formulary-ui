@@ -103,7 +103,7 @@ export default class CompareView extends React.Component<
               <DownloadIcon />
             </div>
             <div className="inner-container white-bg p-10">
-              <CompareTable baseformulary={this.state.baseformulary} referenceformulary={this.state.referenceformulary}/>
+              <CompareTable baseformulary={Object.assign({},this.state.baseformulary)} referenceformulary={Object.assign({},this.state.referenceformulary)}/>
             </div>
           </div>
         ) : null}
