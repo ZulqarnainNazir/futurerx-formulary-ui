@@ -199,7 +199,8 @@ class AdditionalCriteria extends Component<any, any> {
                         cardCode: cardCode,
                         isIncluded: isIncluded,
                       }}
-                      initialState={this.handleAllNodesState}
+                      initialGlobalState={this.state.additionalCriteriaState}
+                      handleGlobalState={this.handleAllNodesState}
                     />
                   ),
                 },
