@@ -418,7 +418,7 @@ function NewGroup(props: any) {
                         <Grid item xs={6}>
                             <div className="group">
                                 <label>ST GROUP DESCRIPTION <span className="astrict">*</span></label>
-                                <input type="text" name="st_group_description_name" onChange={handleChange} defaultValue={formData.st_group_description_name} disabled={editable} className={errorClass} />
+                                <input type="text" name="st_group_description_name" onChange={handleChange} value={formData.st_group_description_name} disabled={editable} className={errorClass} />
                             </div>
                         </Grid>
                     </Grid>
