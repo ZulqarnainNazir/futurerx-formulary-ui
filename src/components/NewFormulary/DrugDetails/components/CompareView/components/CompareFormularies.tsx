@@ -51,10 +51,10 @@ class CompareFormularies extends React.Component<any, any> {
 
   selectFormularyClick = (dataRow) => {
     console.log(dataRow);
-    if(dataRow){
-      if(this.state.currentPopupType === this.POPUP_TYPE_BASE){
+    if (dataRow) {
+      if (this.state.currentPopupType === this.POPUP_TYPE_BASE) {
         this.state.baseFormulary = dataRow;
-      }else if(this.state.currentPopupType === this.POPUP_TYPE_REFERENCE){
+      } else if (this.state.currentPopupType === this.POPUP_TYPE_REFERENCE) {
         this.state.referenceFormulary = dataRow;
       }
     }
@@ -83,12 +83,20 @@ class CompareFormularies extends React.Component<any, any> {
                 </label>
                 <div className="input-element">
                   <div className="bordered pointer bg-green">
-                    <span onClick={(e) => this.handleIconClick(this.POPUP_TYPE_BASE)}
-                          className="inner-font">
-                       {this.state.baseFormulary['formulary_name'] ? this.state.baseFormulary['formulary_name'] : 'Select Formulary'}
+                    <span
+                      onClick={(e) =>
+                        this.handleIconClick(this.POPUP_TYPE_BASE)
+                      }
+                      className="inner-font"
+                    >
+                      {this.state.baseFormulary["formulary_name"]
+                        ? this.state.baseFormulary["formulary_name"]
+                        : "Select Formulary"}
                     </span>
                     <EditIcon
-                      onClick={(e) => this.handleIconClick(this.POPUP_TYPE_BASE)}
+                      onClick={(e) =>
+                        this.handleIconClick(this.POPUP_TYPE_BASE)
+                      }
                       className={this.state.hidden ? "hide-edit-icon" : ""}
                     />
                   </div>
@@ -113,13 +121,19 @@ class CompareFormularies extends React.Component<any, any> {
                 <div className="input-element">
                   <div className="bordered pointer bg-green">
                     <span
-                      onClick={(e) => this.handleIconClick(this.POPUP_TYPE_REFERENCE)}
+                      onClick={(e) =>
+                        this.handleIconClick(this.POPUP_TYPE_REFERENCE)
+                      }
                       className="inner-font"
                     >
-                      {this.state.referenceFormulary['formulary_name'] ? this.state.referenceFormulary['formulary_name'] : 'Select Formulary'}
+                      {this.state.referenceFormulary["formulary_name"]
+                        ? this.state.referenceFormulary["formulary_name"]
+                        : "Select Formulary"}
                     </span>
                     <EditIcon
-                      onClick={(e) => this.handleIconClick(this.POPUP_TYPE_REFERENCE)}
+                      onClick={(e) =>
+                        this.handleIconClick(this.POPUP_TYPE_REFERENCE)
+                      }
                       className={this.state.hidden ? "hide-edit-icon" : ""}
                     />
                   </div>
@@ -132,7 +146,15 @@ class CompareFormularies extends React.Component<any, any> {
                 justifyContent="flex-end"
                 className="compare-btn"
               >
-                <Button label="Compare" onClick={(event) => this.props.handleCompareBtn(this.state.baseFormulary,this.state.referenceFormulary)} />
+                <Button
+                  label="Compare"
+                  onClick={(event) =>
+                    this.props.handleCompareBtn(
+                      this.state.baseFormulary,
+                      this.state.referenceFormulary
+                    )
+                  }
+                />
               </Box>
             </Grid>
           </Grid>
@@ -141,9 +163,7 @@ class CompareFormularies extends React.Component<any, any> {
           <DialogPopup
             positiveActionText=""
             negativeActionText="Close"
-            title={
-              "Select Formulary"
-            }
+            title={"Select Formulary"}
             handleClose={() => {
               this.setState({
                 selectFormulary: !this.state.selectFormulary,

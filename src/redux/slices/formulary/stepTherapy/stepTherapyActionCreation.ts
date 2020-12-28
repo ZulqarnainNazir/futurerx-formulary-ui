@@ -18,7 +18,7 @@ const GET_LOB_FORMULARIES_URL = BASE_URL1 + "/api/1/lob-formularies/";
 
 const GET_ST_GROUP_DESCRIPTIONS_URL = BASE_URL1 + "api/1/mcr-st-group-descriptions/";
 const GET_ST_GROUP_DESCRIPTION_URL = BASE_URL1 + "api/1/mcr-st-group-description/";
-const GET_ST_GROUP_DESCRIPTION_VERSTIONS_URL = BASE_URL1 + "/api/1/mcr-st-group-description-versions/";
+const GET_ST_GROUP_DESCRIPTION_VERSTIONS_URL = BASE_URL1 + "api/1/mcr-st-group-description-versions/";
 const POST_ST_GROUP_DESCRIPTION_VERSTION_URL = BASE_URL1 + "/api/1/mcr-st-group-description-version/";
 const GET_ST_GROUP_DESCRIPTION_DETAIL_URL = BASE_URL1 + "/api/1/mcr-st-group-description/462?entity_id=0";
 const POSt_ST_GROUP_DESCRIPTION_URL = BASE_URL1 + "api/1/mcr-st-group-description/1/";
@@ -28,7 +28,7 @@ const POSt_ST_GROUP_DESCRIPTION_FORMULARIES_URL = BASE_URL1 + "api/1/mcr-st-grou
 
 const GET_ST_COMM_GROUP_DESCRIPTIONS_URL = BASE_URL1 + "/api/1/st-group-descriptions/";
 const GET_ST_COMM_GROUP_DESCRIPTION_URL = BASE_URL1 + "/api/1/st-group-description/";
-const GET_ST_COMM_GROUP_DESCRIPTION_VERSTIONS_URL = BASE_URL1 + "/api/1/st-group-description-versions/";
+const GET_ST_COMM_GROUP_DESCRIPTION_VERSTIONS_URL = BASE_URL1 + "api/1/st-group-description-versions/";
 const POST_ST_COMM_GROUP_DESCRIPTION_VERSTION_URL = BASE_URL1 + "/api/1/st-group-description-version/";
 const GET_ST_COMM_GROUP_DESCRIPTION_DETAIL_URL = BASE_URL1 + "/api/1/st-group-description/462?entity_id=0";
 const POSt_ST_COMM_GROUP_DESCRIPTION_URL = BASE_URL1 + "api/1/st-group-description/1/";
