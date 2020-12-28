@@ -61,6 +61,8 @@ function GroupHeader(props: any) {
     const [selectedFormularies, updateSelectedFormularies] = React.useState([]);
     const [selectedVersion, setSelectedVersion] = useState('')
     const versionListLength = versionList.length-1;
+    const [selectedVersionId,setSelectedVersionId] = useState(null);
+    
 
     const toggleShowViewAll = () => {
         let apiDetails= {};
@@ -108,6 +110,9 @@ function GroupHeader(props: any) {
             setPanelColor(isEditable ? '-green' : '')
             setVersion(props.version)
             setPlaceHolder(value)
+
+            setSelectedVersion(props.version[verLength - 1].version_number);
+            setSelectedVersionId(props.version[verLength - 1]['id_st_group_description']);
         } else {
             setVersion([{ value: 'Version 1' }])
             setPlaceHolder('Version 1')
@@ -138,6 +143,9 @@ function GroupHeader(props: any) {
             setPanelColor(isEditable ? '-green' : '')
             setPlaceHolder(selectedVersion)
             props.getStGrouptDescription(latestVerion)
+            const latestVerionNo = verLength > 0 ? selectedVersion.split(" ")[1] : '';
+            setSelectedVersion(latestVerionNo);
+            setSelectedVersionId(latestVerion);
         }
         props.onChange(selectedVersion);
     }
@@ -221,6 +229,8 @@ function GroupHeader(props: any) {
         props.getStGrouptDescriptions({lob_type:lob_type,pathParams:props.saveGdm.formulary_id})
     }
     const archiveGroup = (e: any,param:any) => {
+
+        
         let lob_type = props.formulary_lob_id;
         let pathParams = props?.client_id+'/'+props.saveGdm.current_group_des_id+'/CV?entity_id='+props.formulary_id;
         props.cleanMessages({error:'',success:''})
@@ -233,7 +243,7 @@ function GroupHeader(props: any) {
 
     const newVersionGroup = (e: any,param:any) => {
         let lob_type = props.formulary_lob_id;
-        let pathParams = props.saveGdm.current_group_des_id+'?entity_id='+props.formulary_id;
+        let pathParams = selectedVersionId+'?entity_id='+props.formulary_id;
         props.cleanMessages({error:'',success:''})
         props.newVersionGroupDescription({ lob_type:lob_type,pathParams: pathParams }).then(json=> {
             let apiDetails= {};

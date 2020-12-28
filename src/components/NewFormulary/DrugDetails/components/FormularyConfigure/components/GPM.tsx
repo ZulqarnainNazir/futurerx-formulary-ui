@@ -174,7 +174,7 @@ class GPM extends React.Component<any, any>{
             if (this.props.formulary_lob_id==1){
                 groupProp= "id_mcr_base_st_group_description"
             }else if (this.props.formulary_lob_id==4){
-                groupProp = "id_base_st_group_description"; 
+                groupProp = "id_st_group_description"; 
             }
             var result = tmpData.map(function (el) {
                 var element = {};

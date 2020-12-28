@@ -97,9 +97,9 @@ function PAGroupHeader(props: any) {
          apiDetails['pathParams'] = '/'+props.saveGdm.current_group_id;
 
          if (props.formulary_lob_id==1){
-            setIdField('id_mcr_pa_group_description_formulary');
+            setIdField('formulary_id');
          }else if (props.formulary_lob_id==4){
-            setIdField('id_pa_group_description_formulary');
+            setIdField('formulary_id');
         }
 
         props.postPAGroupDescriptionFormularies(apiDetails).then(json =>{
@@ -109,7 +109,9 @@ function PAGroupHeader(props: any) {
             json.payload.result.map(obj => {
                 obj['id'] = count;
                 obj['key'] = count;
-                tmp_array.push(obj);
+                if (obj['is_editable']==true){
+                    tmp_array.push(obj);
+                }
                 count++;
             });
             setFormularies(tmp_array);
@@ -204,7 +206,7 @@ function PAGroupHeader(props: any) {
         }
 
         apiDetails["lob_type"] = props.formulary_lob_id;
-        apiDetails['pathParams'] = '/'+props.saveGdm.current_group_des_id;
+        apiDetails['pathParams'] = '/'+props.saveGdm.current_group_id;
 
         apiDetails['messageBody'] = {};
         apiDetails['messageBody']['effective_date'] = effectiveDate;
@@ -233,10 +235,14 @@ function PAGroupHeader(props: any) {
                 props.getPaGrouptDescriptions(apiDetails)
         
                 apiDetails['pathParams'] = '/'+props.saveGdm.current_group_id;
-                props.getPaGrouptDescriptionVersions(apiDetails);
+                props.getPaGrouptDescriptionVersions(apiDetails).then(json=>{
+                    console.log(json);
+                    setVersion(json.payload.data)
+                    let v =props.version;
+                });
                 //current_group_des_id
                 apiDetails['pathParams'] = '/'+props.saveGdm.current_group_id;
-                props.getPaGrouptDescription(apiDetails);
+                //props.getPaGrouptDescription(apiDetails);
         
                 props.getPaTypes(props.saveGdm.formulary_id)
 
@@ -266,11 +272,15 @@ function PAGroupHeader(props: any) {
                 apiDetails['pathParams'] = '/'+props.client_id;
                 props.getPaGrouptDescriptions(apiDetails);
         
-                apiDetails['pathParams'] = '/'+props.saveGdm.current_group_des_id;
-                props.getPaGrouptDescriptionVersions(apiDetails)
+                apiDetails['pathParams'] = '/'+props.saveGdm.current_group_id;
+                props.getPaGrouptDescriptionVersions(apiDetails).then(json=>{
+                    console.log(json);
+                    setVersion(json.payload.data)
+                    let v =props.version;
+                });
         
                 apiDetails['pathParams'] = '/'+props.saveGdm.current_group_id;
-                props.getPaGrouptDescription(apiDetails);
+               // props.getPaGrouptDescription(apiDetails);
         
                 props.getPaTypes(props.saveGdm.formulary_id)
             });
