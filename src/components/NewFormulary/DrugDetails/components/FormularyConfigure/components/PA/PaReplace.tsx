@@ -560,6 +560,14 @@ class PaReplace extends React.Component<any, any> {
               </Space>
             </Col>
           </Row>
+          {isAdditionalCriteriaOpen ? (
+            <AdvanceSearchContainer
+              {...searchProps}
+              openPopup={isAdditionalCriteriaOpen}
+              onClose={this.closeAdditionalCriteria}
+              isAdvanceSearch={false}
+            />
+          ) : null}
         </div>
         <div className="white-bg">
           <Row justify="end">
