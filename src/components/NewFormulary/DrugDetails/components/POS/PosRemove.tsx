@@ -51,11 +51,11 @@ class PosRemove extends React.Component<any, any> {
           title="patient residence settings"
           tooltip="patient residence settings"
         />
-        <div>
+        {/* <div>
           <span style={{ marginLeft: 8 }}>
             {hasSelected ? `Selected ${selectedRowKeys.length} items` : ""}
           </span>
-        </div>
+        </div> */}
         <div className="inner-container">
           <select name="cover" onChange={this.getSelectedVal}>
             <option value="covered" selected>
