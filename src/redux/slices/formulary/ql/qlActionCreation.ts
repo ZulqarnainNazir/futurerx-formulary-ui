@@ -49,7 +49,7 @@ const POST_APPLY_FORUMULARY_DRUG_PA_URL =
   BASE_URL1 + "api/1/apply-formulary-drug-pa/";
 //ql
 const POST_APPLY_FORUMULARY_DRUG_QL_URL =
-  BASE_URL1 + "api/1/apply-formulary-drugs-ql/";
+  BASE_URL1 + "api/1/apply-formulary-drug-ql/";
 //
 const POST_RELATED_FORUMULARY_DRUG_PA_URL =
   BASE_URL1 + "api/1/related-formulary-drugs/";

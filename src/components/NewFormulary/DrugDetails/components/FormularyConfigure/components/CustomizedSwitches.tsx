@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from 'react'
 import { connect } from "react-redux";
 import { withStyles, Theme, createStyles } from "@material-ui/core/styles";
 import { purple } from "@material-ui/core/colors";
@@ -69,6 +69,10 @@ function CustomizedSwitches(props: any) {
     setState({ ...state, [event.target.name]: event.target.checked });
     props.switchBtn(event.target.checked);
   };
+
+  useEffect(() => {
+    props.switchBtn(false);
+  }, []);
 
   return (
     <FormGroup>

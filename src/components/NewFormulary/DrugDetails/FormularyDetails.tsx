@@ -62,7 +62,7 @@ class FormularyDetails extends React.Component<any, any> {
     const tabIndex = this.state.activeTabIndex;
     switch (tabIndex) {
       case 0:
-        return <FormularySetUp />;
+        return <FormularySetUp saveAndContinue={this.onClickTab}/>;
       case 1:
         return <FormularyConfigure />;
       case 2:
@@ -86,7 +86,6 @@ class FormularyDetails extends React.Component<any, any> {
 
   render() {
     // console.log("=============",this.props)
-    console.log('THe Active Tab Index = ', this.state.activeTabIndex)
     const fData = this.props.data;
     return (
       <>

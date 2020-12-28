@@ -3,9 +3,10 @@ import { Grid } from "@material-ui/core";
 import DropDown from "../../../../../shared/Frx-components/dropdown/DropDown";
 import Label from "../../../../../shared/Frx-components/label/Label";
 import RadioButton from "../../../../../shared/Frx-components/radio-button/RadioButton";
+import { Input } from "@material-ui/core";
 import "./common.scss";
 
-const FillLimitSettings = () => {
+const FillLimitSettings = (props) => {
   const [selectedCriteria, setSelectedCriteria] = useState("yes");
 
   return (
@@ -14,13 +15,29 @@ const FillLimitSettings = () => {
         <Grid item xs={4}>
           <div className="input-group">
             <Label required={true}>fills allowed</Label>
-            <DropDown options={[1, 2, 3]} />
+            {/* <DropDown options={[1, 2, 3]} /> */}
+            <Input
+              className="formulary-list-search"
+              // placeholder="Search"
+              type="number"
+              name="fillsAllowed"
+              onChange={props.handleOnChange}
+              disableUnderline={true}
+            />
           </div>
         </Grid>
         <Grid item xs={4}>
           <div className="input-group">
             <Label required={true}>fill limit period of time in days</Label>
-            <DropDown options={[1, 2, 3]} />
+            {/* <DropDown options={[1, 2, 3]} /> */}
+            <Input
+              className="formulary-list-search"
+              // placeholder="Search"
+              type="number"
+              name="fillLimitPeriodOfTime"
+              onChange={props.handleOnChange}
+              disableUnderline={true}
+            />
           </div>
         </Grid>
         <Grid item xs={4}></Grid>

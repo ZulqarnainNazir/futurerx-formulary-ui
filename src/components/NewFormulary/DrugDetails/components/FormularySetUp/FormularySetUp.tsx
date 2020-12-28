@@ -14,6 +14,7 @@ import {
   fetchSelectedFormulary,
   verifyFormularyName,
   saveFormulary,
+  createCloneFormulary,
 } from "../../../../.././redux/slices/formulary/setup/setupSlice";
 import { Formulary } from "../../../../../redux/slices/formulary/setup/formulary";
 import {
@@ -27,7 +28,7 @@ import {
 } from "../../../../.././redux/slices/formulary/setup/setupOptionsSlice";
 import { ToastContainer } from "react-toastify";
 import showMessage from "../../../Utils/Toast";
-import { trim,throttle } from "lodash";
+import { trim, throttle } from "lodash";
 import { Save } from "@material-ui/icons";
 
 class FormularySetUp extends React.Component<any, any> {
@@ -70,7 +71,7 @@ class FormularySetUp extends React.Component<any, any> {
       edits: [],
       edits_no: [],
       custom_edits: [],
-      removed_formulary_edits: []
+      removed_formulary_edits: [],
     },
     setupOptions: {},
   };
@@ -89,10 +90,10 @@ class FormularySetUp extends React.Component<any, any> {
   }
 
   manageFormularyType(type: number, id: number) {
-    // console.log(" Manage - TYPE : " + type + " ID : " + id);
-
+    console.log(" Manage - TYPE : " + type + " ID : " + id);
+    let defaultType = 4;
     if (type === -1) {
-      this.props.fetchGeneralOptions({ type: 1, id: -1 });
+      this.props.fetchGeneralOptions({ type: defaultType, id: -1 });
       return;
     }
 
@@ -101,9 +102,11 @@ class FormularySetUp extends React.Component<any, any> {
     this.props.fetchTierOptions({ type: type, id: id });
 
     if (type === 1) {
+      // MRC...
       this.props.fetchMedicareOptions({ type: type, id: id });
       this.props.fetchSupplementalOptions({ type: type, id: id });
     } else if (type === 2) {
+      // MMP...
       this.props.fetchStatesOptions(type);
       this.props.fetchMedicareOptions({ type: type, id: id });
       this.props.fetchSupplementalOptions({ type: type, id: id });
@@ -114,6 +117,7 @@ class FormularySetUp extends React.Component<any, any> {
       // TODO ... MEDICADE...
       this.props.fetchStatesOptions(0);
     } else if (type === 5) {
+      // EXC...
     } else if (type === 6) {
       // COMMERCIAL...
     }
@@ -121,14 +125,49 @@ class FormularySetUp extends React.Component<any, any> {
   }
 
   UNSAFE_componentWillReceiveProps = (newProps) => {
-    if (newProps.formulary && newProps.setupOptions) {
+    console.log("# - - - - - - - - - ");
+    console.log("# 1 *FL       : " + (newProps?.formulary ? "" : "X"));
+    console.log("# 2  ST       : " + (newProps?.setupOptions ? "" : "X"));
+    console.log(
+      "# 3  ST.GI    : " + (newProps?.setupOptions?.generalOptions ? "" : "X")
+    );
+
+    console.log(
+      "# 4  ST.GI.TY : " +
+        (newProps?.setupOptions?.generalOptions?.formularyType ? "" : "X")
+    );
+    console.log(
+      "# 5  ST.GI.CY : " +
+        (newProps?.setupOptions?.generalOptions?.contractYear ? "" : "X")
+    );
+    console.log(
+      "# 6  ST.GI.CS : " +
+        (newProps?.setupOptions?.generalOptions?.classification_systems
+          ? ""
+          : "X")
+    );
+
+    console.log(
+      "# 7  ST.DN    : " + (newProps?.setupOptions?.designOptions ? "" : "X")
+    );
+    console.log(
+      "# 8  ST.TR    : " + (newProps?.setupOptions?.tierOptions ? "" : "X")
+    );
+
+    if (
+      newProps.formulary &&
+      newProps.setupOptions.generalOptions &&
+      newProps.setupOptions.designOptions &&
+      newProps.setupOptions.tierOptions
+    ) {
       const medeicareContract = { ...this.state.medicare_contract_type_info };
       medeicareContract.medicare_contract_types = newProps.formulary?.medicare_contract_types?.map(
         (e) => e.id_medicare_contract_type
       );
-      
-      const classificationSystem = newProps.formulary.formulary_info.id_classification_system;
-      console.log(classificationSystem)
+
+      const classificationSystem =
+        newProps.formulary.formulary_info.id_classification_system;
+      // console.log(classificationSystem);
       this.setState({
         isUpdate: true,
         generalInformation: {
@@ -140,8 +179,9 @@ class FormularySetUp extends React.Component<any, any> {
           method: newProps.formulary.formulary_info.formulary_build_method,
           service_year: newProps.formulary.formulary_info.contract_year,
           description: newProps.formulary.formulary_info.formulary_description,
-          classification_system: classificationSystem ,
-          is_closed_formulary: newProps.formulary.formulary_info.is_closed_formulary,
+          classification_system: classificationSystem,
+          is_closed_formulary:
+            newProps.formulary.formulary_info.is_closed_formulary,
           medicare_types_ref_other: false,
         },
         medicare_contract_type_info: medeicareContract,
@@ -152,20 +192,27 @@ class FormularySetUp extends React.Component<any, any> {
         },
         tiers: [...newProps.formulary.tiers],
         fetchedEditInfo: newProps.formulary.edit_info,
-        edit_info: this.getEditInfo(newProps.formulary.edit_info),
+        edit_info: this.getEditInfo(newProps.formulary.edit_info, newProps.setupOptions?.designOptions),
         designOptions: [...newProps.setupOptions?.designOptions],
         setupOptions: newProps.setupOptions,
       });
     }
     if (newProps.mode === "NEW" && newProps.setupOptions.generalOptions) {
-      const classificationSystem = newProps.setupOptions.generalOptions.classification_systems?.length === 1 && 
-                                   newProps.setupOptions.generalOptions.classification_systems[0].id_classification_system === 10 ? 
-                                   10 : '';
-      const defaultDesignId = newProps.setupOptions?.designOptions?.filter(e => e.edit_name === 'N/A')?.map(e => e.id_edit);
-      const newEditInfo:any = {...this.state.edit_info};
-      const newGeneralOption:any = {...this.state.generalInformation};
+      const classificationSystem =
+        newProps.setupOptions.generalOptions.classification_systems?.length ===
+          1 &&
+        newProps.setupOptions.generalOptions.classification_systems[0]
+          .id_classification_system === 10
+          ? 10
+          : "";
+      const defaultDesignId = newProps.setupOptions?.designOptions
+        ?.filter((e) => e.edit_name === "N/A")
+        ?.map((e) => e.id_edit);
+      const newEditInfo: any = { ...this.state.edit_info };
+      const newGeneralOption: any = { ...this.state.generalInformation };
       newGeneralOption.classification_system = classificationSystem;
-      newEditInfo.edits = defaultDesignId !== undefined ? [...defaultDesignId] : [];
+      newEditInfo.edits =
+        defaultDesignId !== undefined ? [...defaultDesignId] : [];
       this.setState({
         isUpdate: true,
         generalInformation: newGeneralOption,
@@ -177,39 +224,69 @@ class FormularySetUp extends React.Component<any, any> {
       });
     }
   };
-  getEditInfo = (editInfo: any) => {
+  getEditInfo = (editInfo: any[], options:any[] ) => {
     let editTrue = editInfo
       .filter((obj) => obj.id_checked === true)
       .map((e) => e.id_edit);
     const editFalse = editInfo
       .filter((obj) => obj.id_checked === false)
       .map((e) => e.id_edit);
-    let customEdit:any = '';
-    if(this.props.formulary_type_id === 6){
-      customEdit = this.props.setupOptions.designOptions.filter(e => e.is_custom === true);
-      const customEditId = customEdit.map(e=> e.id_edit);
-      editTrue = editTrue.filter(e => customEditId.indexOf(e) === -1);
+    // let customEdit: any = "";
+    let customEdit: any[] = [];
+
+    if (this.props.formulary_type_id === 6) {
+      // console.log(options);
+      customEdit = options.filter(
+        (e) => e.is_custom === true
+      );
+      // console.log(customEdit);
+      const customEditId = customEdit.map((e) => e.id_edit);
+      editTrue = editTrue.filter((e) => customEditId.indexOf(e) === -1);
     }
     const newObj = {
       edits: editTrue,
       edits_no: editFalse,
       custom_edits: customEdit,
-      removed_formulary_edits: []
+      removed_formulary_edits: [],
     };
     return newObj;
   };
-  formularyDesignCommercialCheckHandler = (getObj:any) => {
+  formularyDesignCommercialCheckHandler = (getObj: any) => {
+    console.log("------------------- FD");
+    console.log(getObj);
+    const receivedObj = { ...getObj };
+    console.log(receivedObj);
+    const customId = this.props.setupOptions.designOptions
+      .filter((e) => e.is_custom)
+      .map((e) => e.id_edit);
+    console.log(customId);
+    const received_customId = receivedObj.custom_edits.map((e) => e.id_edit);
+    const staticFId = this.props.setupOptions.designOptions
+      .filter((e) => !e.is_custom)
+      .map((e) => e.id_edit);
+    let staticRemovedID = this.props.formulary?.edit_info
+      ?.filter((e) => customId.indexOf(e.id_edit) === -1)
+      .filter((e) => receivedObj.edits.indexOf(e.id_edit) === -1)
+      .map((e) => e.id_formulary_edit);
+    let customRemovedId = this.props.formulary?.edit_info
+      ?.filter((e) => staticFId.indexOf(e.id_edit) === -1)
+      .filter((e) => received_customId.indexOf(e.id_edit) === -1)
+      .map((e) => e.id_formulary_edit);
+    staticRemovedID = staticRemovedID === undefined ? [] : staticRemovedID;
+    customRemovedId = customRemovedId === undefined ? [] : customRemovedId;
+    const finalRemovedID = [...staticRemovedID, ...customRemovedId];
+    receivedObj.removed_formulary_edits = [...finalRemovedID];
     this.setState({
-      edit_info: getObj
-    })
-  }
+      edit_info: receivedObj,
+    });
+  };
   formularyRadioChangeHandler = (
     event: React.ChangeEvent<HTMLInputElement>,
     id: any,
     type
   ) => {
-    console.log(event.target.value, id);
-    console.log(this.state.edit_info);
+    // console.log(event.target.value, id);
+    // console.log(this.state.edit_info);
     let checked = event.target.value;
     const updatedEditInfo: any = { ...this.state.edit_info };
     if (type === "checkbox") {
@@ -291,7 +368,12 @@ class FormularySetUp extends React.Component<any, any> {
     _section
   ) => {
     const newObj = { ...this.state.generalInformation };
-    const val = event.target.value === 'true' ? true : event.target.value === 'false' ? false : event.target.value
+    const val =
+      event.target.value === "true"
+        ? true
+        : event.target.value === "false"
+        ? false
+        : event.target.value;
     newObj[event.target.name] = val;
     this.setState({
       generalInformation: newObj,
@@ -322,79 +404,11 @@ class FormularySetUp extends React.Component<any, any> {
       supplemental_benefit_info: getObject,
     });
   };
-  onSave = (e) => {
-    console.log("  SAVE ", e);
-    if (this.props.mode === "NEW") {
-      let msg: string[] = [];
-      if (this.state.generalInformation.type_id === "") {
-        msg.push("Formulary Type is required.");
-      }
-      if (trim(this.state.generalInformation.name) === "") {
-        msg.push("Formulary Name is required.");
-      }
-      if (this.state.generalInformation.method === "") {
-        msg.push("Formulary Build Method is required.");
-      }
-      if (this.state.generalInformation.effective_date === "") {
-        msg.push("Formulary Effective Date is required.");
-      }
-      if (this.state.generalInformation.service_year === "") {
-        msg.push("Formulary Service year is required.");
-      }
-      // if(e && this.tierCheck()){
-      //   msg.push("Formulary Service year is required.");
-      // }
-      if (msg.length > 0) {
-        msg.forEach((m) => {
-          showMessage(m, "info");
-        });
-        return;
-      }
-    }
 
-    const input = {
-      MODE: this.props.mode,
-      CONTINUE: e,
-      formulary_id: -1,
-      is_setup_complete:false,
-      GENERAL_INFO: this.state.generalInformation,
-      edit_info: this.state.edit_info,
-      supplemental_benefit_info: this.state.supplemental_benefit_info,
-      medicare_contract_type_info: this.state.medicare_contract_type_info,
-      tiers: this.state.tiers,
-    };
-
-    if(this.props.mode==="EXISTING"){
-      input.formulary_id = this.props.formulary_id;
-      input.is_setup_complete = this.props?.formulary?.formulary_info?.is_setup_complete;
-    } else {
-      input.formulary_id = -1;
-      input.is_setup_complete = false; 
-    }
-
-    this.props.saveFormulary(input).then((arg) => {
-      //console.log("SAVE Callback ", arg?.payload);
-      if (arg?.payload?.type > 0 && arg?.payload?.id > 0) {
-        console.log(
-          "REFRESH.... TYPE : " +
-            arg?.payload?.type +
-            " ID : " +
-            arg?.payload?.id +
-            " CONTINUE : " +
-            arg?.payload?.continue + 
-            " EARLIER MODE : " +
-            arg?.payload?.earlier_mode  
-        );
-        this.manageFormularyType(arg?.payload?.type, arg?.payload?.id);
-        this.props.fetchSelectedFormulary(arg?.payload?.id);
-        if(arg?.payload?.earlier_mode ==="NEW"){
-          showMessage(`Formulary Created. ID:${arg?.payload?.id}`, "success");
-        } else if(arg?.payload?.earlier_mode ==="EXISTING"){
-          showMessage(`Formulary Updated. ID: ${arg?.payload?.id}`, "success");
-        }
-
-      }
-    });
+  tierCheck = () => {
+    // console.log(this.state);
+    debugger;
+    return true;
   };
   onCheckUncheckAllSupplementalHandler = (val) => {
     if (val === "uncheck") {
@@ -426,6 +440,8 @@ class FormularySetUp extends React.Component<any, any> {
           id_tier: tiersLength + i,
           id_tier_label: null,
           tier_name: `Tier ${tiersLength + i}`,
+          is_custom: null,
+          tier_label_name: "",
         };
         updatedTiers.push(newObj);
       }
@@ -434,26 +450,193 @@ class FormularySetUp extends React.Component<any, any> {
       tiers: updatedTiers,
     });
   };
+
+  // changeTierValueHandler = (e, val) => {
+  //   const updatedTiers: any = [...this.state.tiers];
+  //   const ind = updatedTiers.findIndex((el) => el.tier_name === val);
+  //   const getObj = { ...updatedTiers[ind] };
+  //   const getId = this.props.setupOptions.tierOptions.find(
+  //     (el) => el.tier_label === e
+  //   ).id_tier_label;
+  //   getObj.id_tier_label = getId;
+  //   updatedTiers[ind] = getObj;
+  //   this.setState({
+  //     tiers: updatedTiers,
+  //   });
+  // };
+
   changeTierValueHandler = (e, val) => {
+    // console.log(" ------------------- ");
+    // console.log(" > : " + e + " , " + val);
+    // Preferred , Tier 1
+    // Add New , Tier 2
     const updatedTiers: any = [...this.state.tiers];
+    // console.log(updatedTiers);
     const ind = updatedTiers.findIndex((el) => el.tier_name === val);
     const getObj = { ...updatedTiers[ind] };
-    const getId = this.props.setupOptions.tierOptions.find(
+    // console.log(ind, getObj);
+    const OBJ = this.props.setupOptions.tierOptions.find(
       (el) => el.tier_label === e
-    ).id_tier_label;
-    getObj.id_tier_label = getId;
+    );
+    if (e === "Add New") {
+      getObj.id_tier_label = null;
+      getObj.is_custom = true;
+      // getObj.tier_label_name="";
+    } else {
+      getObj.id_tier_label = OBJ.id_tier_label;
+    }
+
     updatedTiers[ind] = getObj;
     this.setState({
       tiers: updatedTiers,
     });
   };
+
+  handleCustomTierChange = (e, tierID) => {
+    // console.log(" handleCustomTierChange : " + e.currentTarget.value);
+    const updatedTiers: any = [...this.state.tiers];
+    // console.log(updatedTiers);
+    const ind = updatedTiers.findIndex((el) => el.tier_name === tierID);
+    const getObj = { ...updatedTiers[ind] };
+    // console.log(ind, getObj);
+    getObj.tier_label_name = e.currentTarget.value;
+    updatedTiers[ind] = getObj;
+    this.setState({
+      tiers: updatedTiers,
+    });
+  };
+
+  deleteCustomTier = (tierID) => {
+    // console.log(" DELETE : " + tierID);
+    const updatedTiers: any = [...this.state.tiers];
+    // console.log(updatedTiers);
+    const ind = updatedTiers.findIndex((el) => el.tier_name === tierID);
+    const getObj = { ...updatedTiers[ind] };
+    // console.log(ind, getObj);
+    //getObj.tier_label_name = e.currentTarget.value;
+    getObj.id_tier_label = null;
+    getObj.tier_label_name = null;
+    getObj.is_custom = false;
+
+    updatedTiers[ind] = getObj;
+    this.setState({
+      tiers: updatedTiers,
+    });
+  };
+
   setDefaultClassificationHandler = (id) => {
-    let newObj:any = {...this.state.generalInformation};
+    let newObj: any = { ...this.state.generalInformation };
     newObj.classification_system = parseInt(id);
     this.setState({
-      generalInformation: newObj
-    })
-  }
+      generalInformation: newObj,
+    });
+  };
+
+  onSave = (e) => {
+    console.log("  SAVE - ", e);
+    if (this.props.mode === "NEW") {
+      let msg: string[] = [];
+      if (this.state.generalInformation.type_id === "") {
+        msg.push("Formulary Type is required.");
+      }
+      if (trim(this.state.generalInformation.name) === "") {
+        msg.push("Formulary Name is required.");
+      }
+      if (this.state.generalInformation.method === "") {
+        msg.push("Formulary Build Method is required.");
+      }
+      if (this.state.generalInformation.effective_date === "") {
+        msg.push("Formulary Effective Date is required.");
+      }
+      if (this.state.generalInformation.service_year === "") {
+        msg.push("Formulary Service year is required.");
+      }
+      // if(this.tierCheck()){
+      //   msg.push("Formulary Service year is required.");
+      // }
+      if (msg.length > 0) {
+        msg.forEach((m) => {
+          showMessage(m, "info");
+        });
+        return;
+      }
+    }
+
+    const input = {
+      MODE: this.props.mode,
+      CONTINUE: e,
+      formulary_id: -1,
+      is_setup_complete: false,
+      GENERAL_INFO: this.state.generalInformation,
+      edit_info: this.state.edit_info,
+      supplemental_benefit_info: this.state.supplemental_benefit_info,
+      medicare_contract_type_info: this.state.medicare_contract_type_info,
+      tiers: this.state.tiers,
+    };
+
+    if (this.props.mode === "EXISTING") {
+      input.formulary_id = this.props.formulary_id;
+      input.is_setup_complete = this.props?.formulary?.formulary_info?.is_setup_complete;
+    } else {
+      input.formulary_id = -1;
+      input.is_setup_complete = false;
+    }
+
+    this.props.saveFormulary(input).then((arg) => {
+      console.log("SAVE Callback ", arg?.payload);
+      if (arg?.payload?.type > 0 && arg?.payload?.id > 0) {
+        console.log(
+          "REFRESH.... TYPE : " +
+            arg?.payload?.type +
+            " ID : " +
+            arg?.payload?.id +
+            " CONTINUE : " +
+            arg?.payload?.continue +
+            " EARLIER MODE : " +
+            arg?.payload?.earlier_mode
+        );
+        this.manageFormularyType(arg?.payload?.type, arg?.payload?.id);
+        this.props.fetchSelectedFormulary(arg?.payload?.id);
+        if (arg?.payload?.earlier_mode === "NEW") {
+          showMessage(`Formulary Created. ID:${arg?.payload?.id}`, "success");
+        } else if (arg?.payload?.earlier_mode === "EXISTING") {
+          showMessage(`Formulary Updated. ID: ${arg?.payload?.id}`, "success");
+        }
+        if (arg?.payload?.continue) {
+          this.props.saveAndContinue(1);
+        }
+      }
+    });
+  };
+
+  createUsingClone = (e) => {
+    // console.log("clone......");
+    if (this.props.mode === "NEW") {
+      let msg: string[] = [];
+      if (this.state.generalInformation.type_id === "") {
+        msg.push("Formulary Type is required.");
+      }
+      if (trim(this.state.generalInformation.name) === "") {
+        msg.push("Formulary Name is required.");
+      }
+      if (this.state.generalInformation.effective_date === "") {
+        msg.push("Formulary Effective Date is required.");
+      }
+      if (msg.length > 0) {
+        msg.forEach((m) => {
+          showMessage(m, "info");
+        });
+        return;
+      }
+      const input = {
+        GENERAL_INFO: this.state.generalInformation,
+        SRC_BASE_ID: 2968,
+      };
+      this.props.createCloneFormulary(input);
+    }
+  };
+
+
   render() {
     return (
       <div>
@@ -467,6 +650,7 @@ class FormularySetUp extends React.Component<any, any> {
               onDropdownChange={this.onDropdownChange}
               formularyTypeChanged={this.formularyTypeChanged}
               datePickerChange={this.onDatePickerChangeHandler}
+              createUsingClone={this.createUsingClone}
             />
             {this.state.generalInformation.type !== "" ? (
               <>
@@ -492,7 +676,9 @@ class FormularySetUp extends React.Component<any, any> {
                 {this.state.generalInformation.type === "Commercial" ? (
                   <FormularyDesignCommercial
                     edit_info={this.state.edit_info}
-                    formularyDesignCommercialCheck = {this.formularyDesignCommercialCheckHandler}
+                    formularyDesignCommercialCheck={
+                      this.formularyDesignCommercialCheckHandler
+                    }
                     formularyRadioChange={this.formularyRadioChangeHandler}
                   />
                 ) : null}
@@ -501,6 +687,8 @@ class FormularySetUp extends React.Component<any, any> {
                   generalInfo={this.state.generalInformation}
                   selectTier={this.selectTierHandler}
                   changeTierValue={this.changeTierValueHandler}
+                  customTierChange={this.handleCustomTierChange}
+                  deleteCustomTier={this.deleteCustomTier}
                 />
                 {this.state.generalInformation.type !== "Commercial" ? (
                   <SupplementalModels
@@ -520,10 +708,7 @@ class FormularySetUp extends React.Component<any, any> {
                 justifyContent="flex-end"
                 className="save-btn"
               >
-                <Button
-                  label="Save"
-                  onClick={() => this.onSave(false)}
-                />
+                <Button label="Save" onClick={() => this.onSave(false)} />
               </Box>
               <Box
                 display="flex"
@@ -548,12 +733,12 @@ class FormularySetUp extends React.Component<any, any> {
 }
 
 var throt_fun = throttle(
-  function (message,messageType) {
+  function (message, messageType) {
     //console.log(">>>>>>>>...");
     showMessage(message, messageType);
   },
   800,
-  { leading: true, trailing:false }
+  { leading: true, trailing: false }
 );
 
 const mapStateToProps = (state) => {
@@ -586,6 +771,7 @@ function mapDispatchToProps(dispatch) {
     fetchStatesOptions: (a) => dispatch(fetchStatesOptions(a)),
     verifyFormularyName: (a) => dispatch(verifyFormularyName(a)),
     saveFormulary: (a) => dispatch(saveFormulary(a)),
+    createCloneFormulary: (a) => dispatch(createCloneFormulary(a)),
   };
 }
 
