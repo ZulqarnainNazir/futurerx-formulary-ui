@@ -879,7 +879,7 @@ class CompareTable extends Component<any, any> {
             <div className="border-cells-t-l view-all-btn">
               <Button label={"View All"} onClick={this.toggleShowViewAll} />
             </div>
-            <div className="border-cells-t-l border-right-none view-all-btn">
+            <div className="border-cells-t-l view-all-btn">
               <Button label={"View All"} onClick={this.toggleShowViewAll} />
             </div>
           </div>
