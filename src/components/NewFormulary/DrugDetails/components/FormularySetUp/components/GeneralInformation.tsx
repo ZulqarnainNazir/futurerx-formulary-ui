@@ -3,26 +3,26 @@ import Grid from "@material-ui/core/Grid";
 import DropDown from "../../../../../shared/Frx-components/dropdown/DropDown";
 import RadioButton from "../../../../../shared/Frx-components/radio-button/RadioButton";
 import { DatePicker, Select } from "antd";
-import moment from 'moment';
+import moment from "moment";
 import PanelHeader from "../../FormularyConfigure/components/PanelHeader";
-import Button from '../../../../../shared/Frx-components/button/Button';
-import {connect} from "react-redux";
-import Radio from '@material-ui/core/Radio';
-import RadioGroup from '@material-ui/core/RadioGroup';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
+import Button from "../../../../../shared/Frx-components/button/Button";
+import { connect } from "react-redux";
+import Radio from "@material-ui/core/Radio";
+import RadioGroup from "@material-ui/core/RadioGroup";
+import FormControlLabel from "@material-ui/core/FormControlLabel";
 import { ReactComponent as EditIcon } from "../../../../../../assets/icons/EditIcon.svg";
 import FrxReportingTags from "../../../../../shared/FrxReportingTags/FrxReportingTags";
 import "../../../../../shared/FrxReportingTags/FrxReportingTags.scss";
 import AddNewTag from "../../../../../shared/FrxReportingTags/AddNewTag";
 import DialogPopup from "../../../../../shared/FrxDialogPopup/FrxDialogPopup";
-import FormControl from '@material-ui/core/FormControl';
-import FormLabel from '@material-ui/core/FormLabel';
+import FormControl from "@material-ui/core/FormControl";
+import FormLabel from "@material-ui/core/FormLabel";
 const mapStateToProps = (state) => {
   //console.log(state);
   return {
     formulary: state?.setup?.formulary,
     formulary_mode: state?.setup?.mode,
-    general_options: state?.setupOptions?.generalOptions
+    general_options: state?.setupOptions?.generalOptions,
   };
 };
 interface TagModule {
@@ -50,10 +50,10 @@ interface GeneralInformationState {
   DialogshowInd: boolean;
 }
 class GeneralInformation extends React.Component<any, GeneralInformationState> {
-  
   state = {
-    selectedMethod: this.props.formulary?.formulary_info?.formulary_build_method,
-    forumalry_description: '',
+    selectedMethod: this.props.formulary?.formulary_info
+      ?.formulary_build_method,
+    forumalry_description: "",
     addTagsOpened: false,
     addNewTagOpened: false,
 
@@ -66,53 +66,54 @@ class GeneralInformation extends React.Component<any, GeneralInformationState> {
     tagCategoriesWithColor: [],
     tagDesc: "",
     DialogshowInd: false,
-  }
+  };
   UNSAFE_componentWillReceiveProps = (newProps) => {
-    if(newProps.formulary){
+    if (newProps.formulary) {
       this.setState({
-        selectedMethod: newProps.formulary.formulary_info.formulary_build_method,
-        forumalry_description: newProps.formulary.formulary_info.formulary_description
-      })
+        selectedMethod:
+          newProps.formulary.formulary_info.formulary_build_method,
+        forumalry_description:
+          newProps.formulary.formulary_info.formulary_description,
+      });
     }
-  }
+  };
   getMethods = () => {
     let radioGroup: any = null;
-    if(this.props.selectedMethod !== undefined){
-      radioGroup = (
-        <div className="radio-group">
-          
-        </div>
-      );
+    if (this.props.selectedMethod !== undefined) {
+      radioGroup = <div className="radio-group"></div>;
     }
     return radioGroup;
-  }
+  };
   changeMethodHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
     //console.log((event.target.value))
     this.setState({
-      selectedMethod: event.target.value
-    })
-  }
+      selectedMethod: event.target.value,
+    });
+  };
   getClassificationRadio = () => {
-    let classificationRadio:any = null;
+    let classificationRadio: any = null;
     let value = parseInt(this.props.generalInfo.classification_system);
-    const radi = <RadioGroup 
-    className="radio-group-custom" 
-    aria-label={'classification_system'} 
-    name="classification_system"
-    value={value} 
-    onChange={(e) => this.props.onRadioChange(e,'generalInformation')}>
-      {this.props.general_options.classification_systems.map(el => {
-        return (
-          <FormControlLabel 
-            value={el.id_classification_system} 
-            control={<Radio />} 
-            label={el.classification_system} />
-        )
-      })}
-    </RadioGroup>
+    const radi = (
+      <RadioGroup
+        className="radio-group-custom"
+        aria-label={"classification_system"}
+        name="classification_system"
+        value={value}
+        onChange={(e) => this.props.onRadioChange(e, "generalInformation")}
+      >
+        {this.props.general_options.classification_systems.map((el) => {
+          return (
+            <FormControlLabel
+              value={el.id_classification_system}
+              control={<Radio />}
+              label={el.classification_system}
+            />
+          );
+        })}
+      </RadioGroup>
+    );
     return radi;
-    
-  }
+  };
   getDisplayedTags = (): string[] => {
     const displayedTags: TagModule[] = this.state.displayedTags;
     // const filteredDisplayedTags = displayedTags.filter((t) => t.id !== tag.id);
@@ -209,22 +210,31 @@ class GeneralInformation extends React.Component<any, GeneralInformationState> {
     });
   };
   isOpenFormularyOptions = () => {
-    const val = (this.props.generalInfo?.is_closed_formulary === 'true' || this.props.generalInfo?.is_closed_formulary === true) ? true : 
-                (this.props.generalInfo?.is_closed_formulary === 'false' || this.props.generalInfo?.is_closed_formulary === false) ? false : null;
-    return <RadioGroup 
-              className="radio-group-custom" 
-              aria-label={'is_closed_formulary'} 
-              name="is_closed_formulary"
-              value={val} 
-              onChange={(e) => this.props.onRadioChange(e,"generalInformation")}>
-              <FormControlLabel value={true} control={<Radio />} label="Closed" />
-              <FormControlLabel value={false} control={<Radio />} label="Open" />
-          </RadioGroup>
-  }
+    const val =
+      this.props.generalInfo?.is_closed_formulary === "true" ||
+      this.props.generalInfo?.is_closed_formulary === true
+        ? true
+        : this.props.generalInfo?.is_closed_formulary === "false" ||
+          this.props.generalInfo?.is_closed_formulary === false
+        ? false
+        : null;
+    return (
+      <RadioGroup
+        className="radio-group-custom"
+        aria-label={"is_closed_formulary"}
+        name="is_closed_formulary"
+        value={val}
+        onChange={(e) => this.props.onRadioChange(e, "generalInformation")}
+      >
+        <FormControlLabel value={true} control={<Radio />} label="Closed" />
+        <FormControlLabel value={false} control={<Radio />} label="Open" />
+      </RadioGroup>
+    );
+  };
   disabledDate = (current) => {
     // Can not select days before today and today
-    return current && current < moment().endOf('day');
-  }
+    return current && current < moment().endOf("day");
+  };
   render() {
     const { Option } = Select;
     const {
@@ -236,22 +246,31 @@ class GeneralInformation extends React.Component<any, GeneralInformationState> {
       tagDesc,
     } = this.state;
     const FORMULARY = this.props.formulary;
-    const disabled = this.props.formulary_mode === 'EXISTING' ? true : false;
-    let general_options:any;
-    if(this.props.general_options){
-      general_options = this.props.general_options.formularyType.map(e => e.formulary_type)
+    const disabled = this.props.formulary_mode === "EXISTING" ? true : false;
+    let general_options: any;
+    if (this.props.general_options) {
+      general_options = this.props.general_options.formularyType.map(
+        (e) => e.formulary_type
+      );
     }
-    let FORMULARY_Values:any;
-    if(FORMULARY){
+    let FORMULARY_Values: any;
+    if (FORMULARY) {
       FORMULARY_Values = {
-        selected_formulary_type: this.props.formulary_mode === 'EXISTING' ? FORMULARY.formulary_type_info.formulary_type : '',
+        selected_formulary_type:
+          this.props.formulary_mode === "EXISTING"
+            ? FORMULARY.formulary_type_info.formulary_type
+            : "",
         formulary_name: FORMULARY.formulary_info?.formulary_name,
         effective_date: FORMULARY.formulary_info?.effective_date,
         formulary_description: FORMULARY.formulary_info?.formulary_description,
-        formulary_build_method: FORMULARY.formulary_info?.formulary_build_method,
+        formulary_build_method:
+          FORMULARY.formulary_info?.formulary_build_method,
         abbreviation: FORMULARY.formulary_info?.abbreviation,
-        contract_year: this.props.formulary_mode === 'EXISTING' ? [FORMULARY.formulary_info?.contract_year] : ["2021","2022"]
-      }
+        contract_year:
+          this.props.formulary_mode === "EXISTING"
+            ? [FORMULARY.formulary_info?.contract_year]
+            : ["2021", "2022"],
+      };
     }
     return (
       <div className="general-information-container">
@@ -278,14 +297,28 @@ class GeneralInformation extends React.Component<any, GeneralInformationState> {
                 <label>
                   FORMULARY NAME <span className="astrict">*</span>
                 </label>
-                <input disabled={disabled} type="text" id="name" className="setup-input-fields" name="name" value={this.props.generalInfo.name} onChange={this.props.updateInputField}/>
+                <input
+                  disabled={disabled}
+                  type="text"
+                  id="name"
+                  className="setup-input-fields"
+                  name="name"
+                  value={this.props.generalInfo.name}
+                  onChange={this.props.updateInputField}
+                />
               </div>
             </Grid>
             <Grid item xs={4}>
               <div className="group">
                 <label>ABBREVIATION</label>
-                <input type="text" className="setup-input-fields" name="abbreviation" 
-                value={this.props.generalInfo.abbreviation} onChange={this.props.updateInputField} maxLength={10} />
+                <input
+                  type="text"
+                  className="setup-input-fields"
+                  name="abbreviation"
+                  value={this.props.generalInfo.abbreviation}
+                  onChange={this.props.updateInputField}
+                  maxLength={10}
+                />
               </div>
             </Grid>
             <Grid item sm={4}>
@@ -294,11 +327,17 @@ class GeneralInformation extends React.Component<any, GeneralInformationState> {
               </label>
               <DatePicker
                 className="effective-date"
-                placeholder={FORMULARY ? FORMULARY_Values.effective_date : ''}
+                placeholder={FORMULARY ? FORMULARY_Values.effective_date : ""}
                 disabled={disabled}
                 disabledDate={this.disabledDate}
-                format={'MM/DD/YYYY'}
-                onChange={(e) => this.props.datePickerChange(e,'generalInformation','effective_date')}
+                format={"MM/DD/YYYY"}
+                onChange={(e) =>
+                  this.props.datePickerChange(
+                    e,
+                    "generalInformation",
+                    "effective_date"
+                  )
+                }
                 suffixIcon={
                   <svg
                     width="18"
@@ -318,46 +357,70 @@ class GeneralInformation extends React.Component<any, GeneralInformationState> {
                 }
               />
             </Grid>
-            <Grid item xs={this.props.generalInfo.method === 'clone' ? 4 : 8}>
+            <Grid item xs={this.props.generalInfo.method === "clone" ? 4 : 8}>
               <div className="group">
                 <label>
                   Method of Formulary Build <span className="astrict">*</span>
                 </label>
                 <div className="marketing-material radio-group no-transform">
-                  <RadioGroup 
-                    className="radio-group-custom" 
-                    aria-label={this.props.generalInfo.method} 
+                  <RadioGroup
+                    className="radio-group-custom"
+                    aria-label={this.props.generalInfo.method}
                     name="method"
-                    value={this.props.generalInfo.method?.toString()} 
-                    onChange={(e) => this.props.onRadioChange(e,'generalInformation')}>
-                    <FormControlLabel disabled={disabled} value="clone" control={<Radio />} label="Clone" />
-                    <FormControlLabel disabled={disabled} value="upload" control={<Radio />} label="Upload" />
-                    <FormControlLabel disabled={disabled} value="N" control={<Radio />} label="Create New" />
+                    value={this.props.generalInfo.method?.toString()}
+                    onChange={(e) =>
+                      this.props.onRadioChange(e, "generalInformation")
+                    }
+                  >
+                    <FormControlLabel
+                      disabled={disabled}
+                      value="clone"
+                      control={<Radio />}
+                      label="Clone"
+                    />
+                    <FormControlLabel
+                      disabled={disabled}
+                      value="upload"
+                      control={<Radio />}
+                      label="Upload"
+                    />
+                    <FormControlLabel
+                      disabled={disabled}
+                      value="N"
+                      control={<Radio />}
+                      label="Create New"
+                    />
                   </RadioGroup>
                 </div>
-                
-                {
-                  this.props.generalInfo.method === 'upload' && 
+
+                {this.props.generalInfo.method === "upload" && (
                   <div>
-                    <Button label="Upload" htmlFor="upload-file" className="upload-button"/>
+                    <Button
+                      label="Upload"
+                      htmlFor="upload-file"
+                      className="upload-button"
+                    />
                   </div>
-                }
+                )}
               </div>
             </Grid>
-            
-            { 
-              this.props.generalInfo.method === 'clone' && 
+
+            {this.props.generalInfo.method === "clone" && (
               <Grid item xs={4}>
                 <div className="group">
-                  <label>CLONE FORMULARY <span className="astrict">*</span></label>
-                  <a href="#" className="input-link clone-formulary-link">Clone Formulary</a>
+                  <label>
+                    CLONE FORMULARY <span className="astrict">*</span>
+                  </label>
+                  <a href="#" className="input-link clone-formulary-link">
+                    Clone Formulary
+                  </a>
                   <Button
-                  label="FL - C M"
-                  onClick={(e) => this.props.createUsingClone(e)}
-                />                  
+                    label="FL - C M"
+                    onClick={(e) => this.props.createUsingClone(e)}
+                  />
                 </div>
               </Grid>
-            }
+            )}
             <Grid item xs={4}>
               <div className="group">
                 <label>
@@ -365,28 +428,47 @@ class GeneralInformation extends React.Component<any, GeneralInformationState> {
                 </label>
                 <DropDown
                   className="formulary-type-dropdown"
-                  options={this.props.general_options.contractYear?.map(e => e.contract_year)}
+                  options={this.props.general_options.contractYear?.map(
+                    (e) => e.contract_year
+                  )}
                   value={this.props.generalInfo.service_year}
                   disabled={disabled}
-                  onChange={(e) => this.props.onDropdownChange(e,'generalInformation','service_year')}
+                  onChange={(e) =>
+                    this.props.onDropdownChange(
+                      e,
+                      "generalInformation",
+                      "service_year"
+                    )
+                  }
                 />
               </div>
             </Grid>
             <Grid item xs={4}>
               <div className="group">
                 <label>FORMULARY DESCRIPTION</label>
-                <input type="text" className="setup-input-fields" name="description" value={this.props.generalInfo.description} onChange={this.props.updateInputField}/>
+                <input
+                  type="text"
+                  className="setup-input-fields"
+                  name="description"
+                  value={this.props.generalInfo.description}
+                  onChange={this.props.updateInputField}
+                />
               </div>
             </Grid>
             <Grid item xs={4}>
-              {this.props.generalInfo.type !== 'Commercial' ? (
+              {this.props.generalInfo.type !== "Commercial" ? (
                 <div className="group">
-                  <label>Which prior year's formulary does this most closely resemble?</label>
-                  <a href="#" className="input-link select-formulary-link">Select Formulary</a>
+                  <label>
+                    Which prior year's formulary does this most closely
+                    resemble?
+                  </label>
+                  <a href="#" className="input-link select-formulary-link">
+                    Select Formulary
+                  </a>
                 </div>
-              ):null}
+              ) : null}
             </Grid>
-            
+
             <Grid item xs={4}>
               <div className="group setup-panel">
                 <PanelHeader
@@ -414,7 +496,7 @@ class GeneralInformation extends React.Component<any, GeneralInformationState> {
                 </div>
               </div>
             </Grid>
-            {this.props.generalInfo.type === 'Commercial' ? (
+            {this.props.generalInfo.type === "Commercial" ? (
               <Grid item xs={4}>
                 <div className="group setup-panel">
                   <PanelHeader
@@ -432,14 +514,23 @@ class GeneralInformation extends React.Component<any, GeneralInformationState> {
               <Grid item xs={4}>
                 <div className="group state-group">
                   <label>
-                    What State is this formulary for? <span className="astrict">*</span>
+                    What State is this formulary for?{" "}
+                    <span className="astrict">*</span>
                   </label>
                   <DropDown
                     className="formulary-type-dropdown"
-                    options={this.props.general_options.states.map(e => e.state_name)}
+                    options={this.props.general_options.states.map(
+                      (e) => e.state_name
+                    )}
                     value={this.props.generalInfo.selectedState}
                     disabled={disabled}
-                    onChange={(e) => this.props.onDropdownChange(e,'generalInformation','selectedState')}
+                    onChange={(e) =>
+                      this.props.onDropdownChange(
+                        e,
+                        "generalInformation",
+                        "selectedState"
+                      )
+                    }
                   />
                 </div>
               </Grid>
@@ -531,8 +622,6 @@ class GeneralInformation extends React.Component<any, GeneralInformationState> {
   }
 }
 export default connect(mapStateToProps)(GeneralInformation);
-
-
 
 const categories = [
   { id: 1, name: "Category 1", color: "green" },
