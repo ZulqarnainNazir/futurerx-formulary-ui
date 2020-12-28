@@ -17,7 +17,7 @@ import { Tag } from "antd";
 import Tags from './Tags'
 import { ReactComponent as CrossCircleWhiteBGIcon } from "../../../../../../assets/icons/crosscirclewhitebg.svg";
 import { saveGDM,editGDM } from "../../../../../../redux/slices/formulary/gdm/gdmSlice";
-import { getStGrouptDescription,getDrugLists } from "../../../../../../redux/slices/formulary/stepTherapy/stepTherapyActionCreation";
+import { getStGrouptDescription,getDrugLists,getStGrouptDescriptions } from "../../../../../../redux/slices/formulary/stepTherapy/stepTherapyActionCreation";
 
 interface Props {
   tooltip?: string;
@@ -64,9 +64,9 @@ const initialFormData:initialFormData = {
 }
 
 function mapStateToProps(state) {
-  if(state?.saveGdm?.success!=="" && state?.saveGdm?.success!==null){
-    showMessage('Saved Successfully', 'info');
-  }
+  // if(state?.saveGdm?.success!=="" && state?.saveGdm?.success!==null){
+  //   showMessage('Saved Successfully', 'success');
+  // }
   if(state?.saveGdm?.error){
     if(state.saveGdm.error.length>0){
       state.saveGdm.error.map(err => {
@@ -94,6 +94,7 @@ function mapDispatchToProps(dispatch) {
     editGDM: (data) => dispatch(editGDM(data)),
     getStGrouptDescription: (a) => dispatch(getStGrouptDescription(a)),
     getDrugLists: (a) => dispatch(getDrugLists(a)),
+    getStGrouptDescriptions: (arg) => dispatch(getStGrouptDescriptions(arg))
   }
 }
 
@@ -178,13 +179,16 @@ function NewGroup(props: any) {
     if(props.formType===0 && props.formulary_lob_id===1){
       let msg:string[]=[];
       if(formData.st_group_description_name === ''){
-          msg.push("Formulary Description Name is required.");
+          //msg.push("Formulary Description Name is required.");
+          showMessage("Formulary Description Name is required.", 'error');
       }
       if(formData.st_criteria === ''){
-          msg.push("ST Criteria is required.");
+          //msg.push("ST Criteria is required.");
+          showMessage("ST Criteria is required.", 'error');
       }
       if(formData.change_indicator === ''){
-        msg.push("Change Indicator is required.");
+        //msg.push("Change Indicator is required.");
+        showMessage("Change Indicator is required.", 'error');
       }
       if(msg.length>0){
           console.log(msg)
@@ -195,7 +199,8 @@ function NewGroup(props: any) {
     if(props.formType===1 && props.formulary_lob_id===1){
       let msg:string[]=[];
       if(formData.st_group_description_name === ''){
-          msg.push("Formulary Description Name is required.");
+          //msg.push("Formulary Description Name is required.");
+          showMessage("Formulary Description Name is required.", 'error');
       }
       if(msg.length>0){
           console.log(msg)
@@ -207,7 +212,8 @@ function NewGroup(props: any) {
     if(props.formType===0 && props.formulary_lob_id===4){
       let msg:string[]=[];
       if(formData.st_group_description_name === ''){
-          msg.push("Formulary Description Name is required.");
+          //msg.push("Formulary Description Name is required.");
+          showMessage("Formulary Description Name is required.", 'error');
       }
       if(msg.length>0){
           console.log(msg)
@@ -218,7 +224,8 @@ function NewGroup(props: any) {
     if(props.formType===1 && props.formulary_lob_id===4){
       let msg:string[]=[];
       if(formData.st_group_description_name === ''){
-          msg.push("Formulary Description Name is required.");
+          //msg.push("Formulary Description Name is required.");
+          showMessage("Formulary Description Name is required.", 'error');
       }
       if(msg.length>0){
           console.log(msg)
@@ -237,14 +244,34 @@ function NewGroup(props: any) {
       requestData['apiPart'] = 'api/1/mcr-st-group-description';
       let id_st_group_description = formData["id_st_group_description"]?formData["id_st_group_description"]:0;
       requestData['pathParams'] = '/'+id_st_group_description+'/'+props?.formulary_id + '?entity_id=0';
-      props.editGDM(requestData)
+      props.editGDM(requestData).then(json=>{
+        if (json.payload && json.payload.success.data.code === '200') {
+          showMessage('Saved Successfully', 'success');
+          let apiDetails= {};
+          apiDetails["lob_type"] = props.formulary_lob_id;
+          apiDetails['pathParams'] = '/'+props?.client_id + '?entity_id='+props?.formulary_id;
+          props.getStGrouptDescriptions(apiDetails);
+        }else{
+          showMessage('Failure', 'error');
+        }
+      })
     }else{
       formData.change_indicator = parseInt(formData.change_indicator)
       requestData['messageBody'] = {...formData}
       requestData["lob_type"] = props.formulary_lob_id;
       requestData['apiPart'] = 'api/1/mcr-st-group-description/'+props.client_id;
       requestData['pathParams'] = '/'+props?.formulary_id + '?entity_id=0';
-      props.saveGDM(requestData)
+      props.saveGDM(requestData).then(json=>{
+        if (json.payload && json.payload.success.data.code === '200') {
+          showMessage('Saved Successfully', 'success');
+          let apiDetails= {};
+          apiDetails["lob_type"] = props.formulary_lob_id;
+          apiDetails['pathParams'] = '/'+props?.client_id + '?entity_id='+props?.formulary_id;
+          props.getStGrouptDescriptions(apiDetails);
+        }else{
+          showMessage('Failure', 'error');
+        }
+      })
     }
     setShowHeader(1)
     scrollPage(0, 500)

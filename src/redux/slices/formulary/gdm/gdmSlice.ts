@@ -90,6 +90,7 @@ export const saveGDM = createAsyncThunk(
       dispatch(getPending());
       const response = await saveStGroup(arg);
       dispatch(getSuccess(response));
+      return response;
     } catch (err) {
       dispatch(getFailed(err));
     }
@@ -103,6 +104,7 @@ export const editGDM = createAsyncThunk(
       dispatch(getPending());
       const response = await editStGroup(arg);
       dispatch(getSuccess(response));
+      return response;
     } catch (err) {
       dispatch(getFailed(err));
     }
