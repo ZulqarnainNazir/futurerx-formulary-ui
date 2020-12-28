@@ -27,6 +27,13 @@ interface InnerGridProps {
   referenceformulary?: any;
   formularyLobId?: any;
 }
+
+const defaultListPayload = {
+  index: 0,
+  limit: 10,
+  filter: [],
+}
+
 class InnerGrid extends Component<InnerGridProps, any>{
   state = {
     openDrugsList: false,
@@ -36,18 +43,55 @@ class InnerGrid extends Component<InnerGridProps, any>{
     drugGridData: Array(),
     drugData: Array(),
     gridColumns: Array(),
-    attribute_type: '',
-    file_type: '',
-    attribute_field_data_type: '',
-    attribute_field_name: '',
-    attribute_field_value: '',
-    attribute_name: '',
-    source: '',
+    rowData: {},
     baseFormularyId: '',
     refFormularyId: '',
+    hiddenColumns: Array(),
+    dataCount: 0,
   }
 
-  populateGridData = async (rowData, baseFormularyId, refFormularyId) => {
+  listPayload: any = {
+    index: 0,
+    limit: 10,
+    filter: [],
+  }
+
+  onSettingsIconHandler = (hiddenColumn, visibleColumn) => {
+    if (hiddenColumn && hiddenColumn.length > 0) {
+      let hiddenColumnKeys = hiddenColumn.map(column => column['key']);
+      this.setState({
+        hiddenColumns: hiddenColumnKeys
+      });
+    }
+  }
+  onApplyFilterHandler = (filters) => {
+    /*const fetchedProps = Object.keys(filters)[0];
+    console.log('Fetched properties:' + JSON.stringify(fetchedProps) + " Filters:" + JSON.stringify(filters));
+    const fetchedOperator = filters[fetchedProps][0].condition === 'is like' ? 'is_like' :
+      filters[fetchedProps][0].condition === 'is not' ? 'is_not' :
+        filters[fetchedProps][0].condition === 'is not like' ? 'is_not_like' :
+          filters[fetchedProps][0].condition === 'does not exist' ? 'does_not_exist' :
+            filters[fetchedProps][0].condition;
+    const fetchedValues = filters[fetchedProps][0].value !== '' ? [filters[fetchedProps][0].value.toString()] : [];
+    const newFilters = [{ prop: fetchedProps, operator: fetchedOperator, values: fetchedValues }];
+    this.listPayload.filter = newFilters;
+    this.fetchFormularies(this.listPayload);*/
+  }
+  onPageSize = (pageSize) => {
+    this.listPayload = { ...defaultListPayload };
+    this.listPayload.limit = pageSize;
+    this.populateGridData(this.state.rowData,this.state.baseFormularyId, this.state.refFormularyId,this.listPayload);
+  }
+  onGridPageChangeHandler = (pageNumber: any) => {
+    this.listPayload.index = (pageNumber - 1) * this.listPayload.limit;
+    this.populateGridData(this.state.rowData,this.state.baseFormularyId, this.state.refFormularyId, this.listPayload);
+  }
+  onClearFilterHandler = () => {
+    this.listPayload = { ...defaultListPayload };
+    this.populateGridData(this.state.rowData,this.state.baseFormularyId, this.state.refFormularyId, this.listPayload);
+  }
+
+  populateGridData = async (rowData, baseFormularyId, refFormularyId, payload) => {
     if (this.props.formularyLobId && this.props.formularyLobId === 4) {
       let drugGridData = Array();
       let drugData = Array();
@@ -60,11 +104,11 @@ class InnerGrid extends Component<InnerGridProps, any>{
         apiDetails['pathParams'] = baseFormularyId;
       }
       apiDetails['keyVals'] = [];
-      apiDetails['keyVals'].push({key:commonConstants.KEY_LIMIT, value: 10});
-      apiDetails['keyVals'].push({key:commonConstants.KEY_INDEX, value: 0});
+      apiDetails['keyVals'].push({ key: commonConstants.KEY_LIMIT, value: payload['limit'] });
+      apiDetails['keyVals'].push({ key: commonConstants.KEY_INDEX, value: payload['index'] });
       if (isCategoricalRow) {
-        apiDetails['keyVals'].push({key:'source', value: rowData['source']});
-        apiDetails['keyVals'].push({key:'file_type', value: rowData['file_type']});
+        apiDetails['keyVals'].push({ key: 'source', value: rowData['source'] });
+        apiDetails['keyVals'].push({ key: 'file_type', value: rowData['file_type'] });
       } else {
         apiDetails['messageBody'] = {};
         apiDetails['messageBody']['attribute_field_data_type'] = rowData['attribute_field_data_type'];
@@ -72,7 +116,7 @@ class InnerGrid extends Component<InnerGridProps, any>{
         apiDetails['messageBody']['attribute_field_value'] = rowData['attribute_field_value'];
         apiDetails['messageBody']['attribute_name'] = rowData['attribute_name'];
         apiDetails['messageBody']['file_type'] = rowData['file_type'];
-        apiDetails['messageBody']['filter'] = [];
+        apiDetails['messageBody']['filter'] = payload['filter'];
       }
 
       try {
@@ -204,15 +248,11 @@ class InnerGrid extends Component<InnerGridProps, any>{
             drugGridData: drugGridData,
             drugData: drugData,
             gridColumns: rowData['gridColumns'],
-            file_type: rowData['file_type'],
-            attribute_field_data_type: rowData['attribute_field_data_type'],
-            attribute_field_name: rowData['attribute_field_name'],
-            attribute_field_value: rowData['attribute_field_value'],
-            attribute_name: rowData['attribute_name'],
-            source: rowData['source'],
+            rowData: rowData,
             baseFormularyId: baseFormularyId,
             refFormularyId: refFormularyId,
-            openDrugsList: !this.state.openDrugsList
+            hiddenColumns: Array(),
+            dataCount: data['count'],
           });
         } else {
           showMessage('Compare data is empty', 'error');
@@ -220,14 +260,11 @@ class InnerGrid extends Component<InnerGridProps, any>{
             drugGridData: Array(),
             drugData: Array(),
             gridColumns: Array(),
-            file_type: '',
-            attribute_field_data_type: '',
-            attribute_field_name: '',
-            attribute_field_value: '',
-            attribute_name: '',
-            source: '',
+            rowData: {},
             baseFormularyId: '',
             refFormularyId: '',
+            hiddenColumns: Array(),
+            dataCount: 0,
           });
         }
       }
@@ -238,14 +275,11 @@ class InnerGrid extends Component<InnerGridProps, any>{
           drugGridData: Array(),
           drugData: Array(),
           gridColumns: Array(),
-          file_type: '',
-          attribute_field_data_type: '',
-          attribute_field_name: '',
-          attribute_field_value: '',
-          attribute_name: '',
-          source: '',
+          rowData: {},
           baseFormularyId: '',
           refFormularyId: '',
+          hiddenColumns: Array(),
+          dataCount: 0,
         });
       }
     } else {
@@ -253,14 +287,11 @@ class InnerGrid extends Component<InnerGridProps, any>{
         drugGridData: Array(),
         drugData: Array(),
         gridColumns: Array(),
-        file_type: '',
-        attribute_field_data_type: '',
-        attribute_field_name: '',
-        attribute_field_value: '',
-        attribute_name: '',
-        source: '',
+        rowData: {},
         baseFormularyId: '',
         refFormularyId: '',
+        hiddenColumns: Array(),
+        dataCount: 0,
       });
     }
   }
@@ -290,13 +321,18 @@ class InnerGrid extends Component<InnerGridProps, any>{
           this.state.checkbox = showCheckbox;
           this.state.actions = showCheckbox;
         }
+        this.state.openDrugsList= !this.state.openDrugsList;
+        this.listPayload = { ...defaultListPayload };
         //console.log('Base formulary ID:' + baseFormularyId + ' Ref formulary ID:' + refFormularyId + ' ' + JSON.stringify(this.props.baseformulary) + ' ' + JSON.stringify(this.props.referenceformulary));
-        this.populateGridData(rowData, baseFormularyId, refFormularyId);
+        this.populateGridData(rowData, baseFormularyId, refFormularyId, this.listPayload);
       }
     }
   };
 
   render() {
+    let gridColumns = [...this.state.gridColumns];
+    if (this.state.gridColumns.length > 0 && this.state.hiddenColumns.length > 0)
+      gridColumns = this.state.gridColumns.filter(column => !this.state.hiddenColumns.includes(column['key']));
     switch (this.props.tableType) {
       case "COMPARE":
         return (
@@ -411,7 +447,7 @@ class InnerGrid extends Component<InnerGridProps, any>{
                   pagintionPosition="topRight"
                   gridName="MEDICARE"
                   isFetchingData={false}
-                  columns={this.state.gridColumns}
+                  columns={gridColumns}
                   scroll={{ x: 1000, y: 500 }}
                   enableResizingOfColumns={false}
                   data={this.state.drugGridData}
@@ -420,7 +456,17 @@ class InnerGrid extends Component<InnerGridProps, any>{
                   // setting gear 1st column
                   enableSettings={true}
                   // checkbox 2nd column
-                  customSettingIcon={"NONE"}
+                  customSettingIcon={this.state.checkbox ? null : "NONE"}
+                  isRowSelectionEnabled={this.state.checkbox}
+                  isRowSelectorCheckbox
+                  getPerPageItemSize={this.onPageSize}
+                  onGridPageChangeHandler={this.onGridPageChangeHandler}
+                  clearFilterHandler={this.onClearFilterHandler}
+                  applyFilter={this.onApplyFilterHandler}
+                  getColumnSettings={this.onSettingsIconHandler}
+                  pageSize={this.listPayload.limit}
+                  selectedCurrentPage={(this.listPayload.index / this.listPayload.limit + 1)}
+                  totalRowsCount={this.state.dataCount}
                 />
               </DialogPopup>
             ) : null}
@@ -470,7 +516,7 @@ class InnerGrid extends Component<InnerGridProps, any>{
                   pagintionPosition="topRight"
                   gridName="MEDICARE"
                   isFetchingData={false}
-                  columns={this.state.gridColumns}
+                  columns={gridColumns}
                   scroll={{ x: 1000, y: 500 }}
                   enableResizingOfColumns={false}
                   data={this.state.drugGridData}
@@ -480,7 +526,17 @@ class InnerGrid extends Component<InnerGridProps, any>{
                   enableSettings={true}
                   // checkbox 2nd column
                   // event reference for checkbox (mandotory if checkbox is true)
-                  customSettingIcon={"NONE"}
+                  customSettingIcon={this.state.checkbox ? null : "NONE"}
+                  isRowSelectionEnabled={this.state.checkbox}
+                  isRowSelectorCheckbox
+                  getPerPageItemSize={this.onPageSize}
+                  onGridPageChangeHandler={this.onGridPageChangeHandler}
+                  clearFilterHandler={this.onClearFilterHandler}
+                  applyFilter={this.onApplyFilterHandler}
+                  getColumnSettings={this.onSettingsIconHandler}
+                  pageSize={this.listPayload.limit}
+                  selectedCurrentPage={(this.listPayload.index / this.listPayload.limit + 1)}
+                  totalRowsCount={this.state.dataCount}
                 />
               </DialogPopup>
             ) : null}

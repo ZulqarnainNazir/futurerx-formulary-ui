@@ -95,9 +95,9 @@ class Tier extends React.Component<any, tabsState> {
     openPopup: false,
     addNewTierPopup: false,
     tabs: [
-      { id: 1, text: "Replace" },
-      { id: 2, text: "Append" },
-      { id: 3, text: "Remove" },
+      { id: 1, text: "Replace", disabled: false},
+      { id: 2, text: "Append", disabled: true },
+      { id: 3, text: "Remove" , disabled: false },
     ]
   };
 

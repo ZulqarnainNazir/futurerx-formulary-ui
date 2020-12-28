@@ -82,7 +82,7 @@ class TierRemove extends React.Component<any, tabsState> {
     super(props);
 
     var tierOptions = Array();
-    if (this.props["tierData"]) {
+    if (this.props["tierData"] && this.props["tierData"].length > 0) {
       this.props["tierData"].map((tier) => {
         tierOptions.push(tier.tier_value);
       });

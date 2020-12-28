@@ -31,6 +31,7 @@ function mapStateToProps(state) {
         formulary: state?.application?.formulary,
         formulary_lob_id: state?.application?.formulary_lob_id, //comme- 4, medicare-1 , medicate-2, exchnage -3 
         formulary_type_id: state?.application?.formulary_type_id,
+        descriptions: state.stepTherapyReducer.descriptions,
     }
 }
 
@@ -95,9 +96,9 @@ class GPM extends React.Component<any, any>{
         apiDetails['pathParams'] = param;
 
         this.props.getStGrouptDescriptionVersions(apiDetails).then((json) => {
-            let tmpData = json.payload.data;
-            let dataLength = tmpData.length
-            let latestVerion = tmpData.length > 0 ? tmpData[dataLength - 1].id_st_group_description : 0
+            let tmpData = json.payload?.data;
+            let dataLength = tmpData&&tmpData.length?tmpData.length:0
+            let latestVerion = dataLength>0 ? tmpData[dataLength - 1].id_st_group_description : 0
             
             let apiDetails= {};
             apiDetails["lob_type"] = this.props.formulary_lob_id;
@@ -171,14 +172,14 @@ class GPM extends React.Component<any, any>{
         if (tmpData && Array.isArray(tmpData) && tmpData.length > 0) {
             let groupProp = "";
             if (this.props.formulary_lob_id==1){
-                groupProp= "id_mcr_base_pa_group_description"
+                groupProp= "id_mcr_base_st_group_description"
             }else if (this.props.formulary_lob_id==4){
-                groupProp = "id_base_pa_group_description"; 
+                groupProp = "id_st_group_description"; 
             }
             var result = tmpData.map(function (el) {
                 var element = {};
                 element["id"] = el[groupProp]; 
-                element["label"] = el.pa_group_description_name;
+                element["label"] = el.st_group_description_name;
                 element["status"] = el.is_setup_complete ? "completed" : "warning";
                 element["is_archived"] = el.is_archived;
                 console.log(element);
@@ -239,7 +240,7 @@ class GPM extends React.Component<any, any>{
                                 </div>
                                 <div className="group-wrapper scrollbar scrollbar-primary  mt-5 mx-auto view-com-sec">
                                     {
-                                        this.state.groupsData.map((group, key) => (
+                                        this.state.groupsData.length>0 && this.state.groupsData.map((group, key) => (
                                             (this.state.searchInput == "" || (this.state.searchInput != "" && group.label.indexOf(this.state.searchInput) > -1)) ? (
                                                 (this.state.activeTabIndex == 0 && group.is_archived == false) ?
                                                     <Groups key={key} id={group.id} title={group.label} statusType={group.status} selectGroup={this.selectGroup} isSelected={this.state.selectedGroup==group.id}/>
