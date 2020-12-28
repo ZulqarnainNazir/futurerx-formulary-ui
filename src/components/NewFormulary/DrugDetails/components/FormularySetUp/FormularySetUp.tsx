@@ -540,7 +540,7 @@ class FormularySetUp extends React.Component<any, any> {
     let msg: string[] = [];
 
     if (this.props.mode === "NEW") {
-      if (this.state.generalInformation.method === "clone") {
+      if (this.state.generalInformation.method === "C") {
         msg.push("Selected Formulary Build Method is Clone.");
       }
       if (this.state.generalInformation.type_id === "") {
@@ -636,7 +636,7 @@ class FormularySetUp extends React.Component<any, any> {
     );
     if (this.props.mode === "NEW") {
       let msg: string[] = [];
-      if (this.state.generalInformation.method !== "clone") {
+      if (this.state.generalInformation.method !== "C") {
         msg.push("Formulary Build Method should be Clone.");
       }
       if (this.state.generalInformation.type_id === "") {
