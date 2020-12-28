@@ -1,30 +1,29 @@
-export const getGLSummaryFulfilled = (state, action) => {
-  console.log("Reducer::getGLSummaryFulfilled");
+export const getOTHERSummaryFulfilled = (state, action) => {
+  console.log("Reducer::getOTHERSummaryFulfilled");
   state.isLoading = false;
-  console.log("getGLSummaryFulfilled Action - - - - - - -", action);
+  console.log("getOTHERSummaryFulfilled Action - - - - - - -", action);
   if (
     action.payload.data === undefined ||
     !Array.isArray(action.payload.data) ||
     action.payload.data.length === 0
   ) {
-    console.log("getGLSummaryFulfilled: Payload invaLid");
+    console.log("getOTHERSummaryFulfilled: Payload invalid");
     return;
   }
   const data = action.payload.data[0];
-  console.log("THe GL Summary Action = ", action);
-  console.log("THe GL Summary Action Payload = ", action.payload);
-  // Response stored in the redux store.
+  console.log("THe OTHER Summary Action = ", action);
+  console.log("THe OTHER Summary Action Payload = ", action.payload);
   state.data = data;
 };
 
-export const getGLSummaryRejected = (state, action) => {
-  console.log("Reducer::getGLSummaryRejected");
+export const getOTHERSummaryRejected = (state, action) => {
+  console.log("Reducer::getOTHERSummaryRejected");
   state.isLoading = false;
   state.data = {};
 };
 
-export const postGLListFulfilled = (state, action) => {
-  console.log("Reducer::postGLListFulfilled");
+export const postOTHERListFulfilled = (state, action) => {
+  console.log("Reducer::postOTHERListFulfilled");
   state.isLoading = false;
   console.log(action);
   if (
@@ -32,7 +31,7 @@ export const postGLListFulfilled = (state, action) => {
     !Array.isArray(action.payload.result) ||
     action.payload.result.length === 0
   ) {
-    console.log("postGLListFulfilled: Payload invalid");
+    console.log("postOTHERListFulfilled: Payload invalid");
     return;
   }
   const data = action.payload.result;
@@ -40,8 +39,8 @@ export const postGLListFulfilled = (state, action) => {
   state.applyData = data;
 };
 
-export const postGLListRejected = (state, action) => {
-  console.log("Reducer::postGLListRejected");
+export const postOTHERListRejected = (state, action) => {
+  console.log("Reducer::postOTHERListRejected");
   state.isLoading = false;
   state.applyData = {};
 };

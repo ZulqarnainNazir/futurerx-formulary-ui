@@ -70,30 +70,60 @@ export const GET_SSM_FORMULARY_DRUGS = "api/1/formulary-drugs-ssm/";
 export const GET_DRUG_SUMMARY_AL = "api/1/formulary-drug-summary-al/";
 export const GET_AL_DRUGS = "api/1/formulary-drugs-al/";
 export const APPLY_AL_DRUG = "api/1/apply-formulary-drug-al/";
+export const GET_AL_CRITERIA_LIST = "api/1/criteria-list-al/";
 
 // GL TAB
 export const GET_DRUG_SUMMARY_GL = "api/1/formulary-drug-summary-gl/";
 export const GET_GL_DRUGS = "api/1/formulary-drugs-gl/";
+export const APPLY_GL_DRUGS = "api/1/apply-formulary-drug-gl/"
+export const GET_GL_CRITERIA_LIST = "api/1/criteria-list-gl/"
 
 // ICD TAB
-export const GET_DRUG_SUMMARY_ICD = "api/1/formulary-drug-summary-icdl/";
+export const GET_DRUG_SUMMARY_ICD = "api/1/formulary-drug-summary-icdl/"
+export const GET_ICD_DRUGS = "api/1/formulary-drugs-icdl/";
+export const GET_ICD_DRUGS_REPLACE = "api/1/icds/";
+export const GET_ICD_CRITERIA_LIST = "api/1/criteria-list-icdl/";
+export const APPLY_ICD_DRUGS = "api/1/apply-formulary-drug-icdl/";
 
 // PN TAB
 export const GET_DRUG_SUMMARY_PN = "api/1/formulary-drug-summary-phnw/";
+export const GET_PN_DRUGS = "api/1/formulary-drugs-phnw/";
+export const GET_PN_DRUGS_REPLACE = "api/1/pharmacy-networks/";
+export const GET_PN_CRITERIA_LIST = "api/1/criteria-list-phnw/";
+export const APPLY_PN_DRUGS = "api/1/apply-formulary-drug-phnw/";
 
 // PT TAB
 export const GET_DRUG_SUMMARY_PT = "api/1/formulary-drug-summary-prtx/";
+export const GET_PT_DRUGS = "api/1/formulary-drugs-prtx/";
+export const GET_PT_DRUGS_REPLACE = "api/1/prescriber-taxonomies";
+export const GET_PT_CRITERIA_LIST = "api/1/criteria-list-prtx/";
+export const APPLY_PT_DRUGS = "api/1/apply-formulary-drug-prtx/";
 
 // POS TAB
 export const GET_DRUG_SUMMARY_POS = "api/1/formulary-drug-summary-pos/";
 export const GET_DRUG_SETTING_POS = "api/1/place-of-services/";
+export const GET_POS_DRUGS = "api/1/formulary-drugs-pos/";
+export const GET_POS_DRUG_REMOVE_TAB = "api/1/criteria-list-pos/";
+export const GET_POS_CRITERIA_LIST = "api/1/criteria-list-pos/";
+export const APPLY_POS_DRUGS = "api/1/apply-formulary-drug-pos/";
 
 // PR TAB
 export const GET_DRUG_SUMMARY_PR = "api/1/formulary-drug-summary-patrs/";
+export const GET_PR_SETTINGS_LIST = "api/1/patient-residences";
+export const GET_PR_FORMULARY_DRUGS = "api/1/formulary-drugs-patrs/";
+export const GET_PR_DRUG_REMOVE_TAB = "api/1/criteria-list-patrs/";
+export const APPLY_PR_DRUGS = "api/1/apply-formulary-drug-patrs/";
+
+// OTHER TAB
+export const GET_DRUG_SUMMARY_OTHER = "api/1/formulary-drug-summary-edoth/";
+export const GET_OTHER_CRITERIA_LIST = "api/1/criteria-list-edoth/";
+export const GET_OTHER_DRUGS = "api/1/formulary-drugs-edoth/";
+export const APPLY_OTHER_DRUGS = "api/1/apply-formulary-drug-edoth/";
 
 export const KEY_ENTITY_ID = "entity_id";
 export const KEY_INDEX = "index";
 export const KEY_LIMIT = "limit";
+export const SEARCHKEY = "search_value";
 
 export const TYPE_REPLACE = "replace";
 export const TYPE_REMOVE = "remove";

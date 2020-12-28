@@ -2,12 +2,17 @@ import { createSlice } from "@reduxjs/toolkit";
 import {
   getDrugDetailsGLSummary,
   getDrugDetailsGLList,
+  postReplaceGLDrug,
+  postGLCriteriaList,
+  postRemoveGLDrug,
 } from "./glActionCreation";
 import {
   getGLSummaryFulfilled,
   getGLSummaryRejected,
   postGLListFulfilled,
   postGLListRejected,
+  postReplaceDrugFulfilled,
+  postReplaceDrugRejected,
 } from "./glReducers";
 
 const glState: any = {
@@ -15,7 +20,7 @@ const glState: any = {
   isLoading: false,
 };
 
-export const lisSlice = createSlice({
+export const glSlice = createSlice({
   name: "glSummary",
   initialState: glState,
   reducers: {},
@@ -45,6 +50,57 @@ export const glListSlice = createSlice({
     }),
     builder.addCase(getDrugDetailsGLList.rejected, (state, action) => {
       postGLListRejected(state, action);
+    })
+  ),
+});
+
+export const glReplaceDrugSlice = createSlice({
+  name: "glReplaceDrug",
+  initialState: glState,
+  reducers: {},
+  extraReducers: (builder) => (
+    builder.addCase(postReplaceGLDrug.pending, (state, action) => {
+      state.isLoading = true;
+    }),
+    builder.addCase(postReplaceGLDrug.fulfilled, (state, action) => {
+      postReplaceDrugFulfilled(state, action);
+    }),
+    builder.addCase(postReplaceGLDrug.rejected, (state, action) => {
+      postReplaceDrugRejected(state, action);
+    })
+  ),
+});
+
+export const glCriteriaSlice = createSlice({
+  name: "glCriteriaList",
+  initialState: glState,
+  reducers: {},
+  extraReducers: (builder) => (
+    builder.addCase(postGLCriteriaList.pending, (state, action) => {
+      state.isLoading = true;
+    }),
+    builder.addCase(postGLCriteriaList.fulfilled, (state, action) => {
+      getGLSummaryFulfilled(state, action);
+    }),
+    builder.addCase(postGLCriteriaList.rejected, (state, action) => {
+      getGLSummaryRejected(state, action);
+    })
+  ),
+});
+
+export const glRemoveDrugSlice = createSlice({
+  name: "glRemoveDrug",
+  initialState: glState,
+  reducers: {},
+  extraReducers: (builder) => (
+    builder.addCase(postRemoveGLDrug.pending, (state, action) => {
+      state.isLoading = true;
+    }),
+    builder.addCase(postRemoveGLDrug.fulfilled, (state, action) => {
+      postReplaceDrugFulfilled(state, action);
+    }),
+    builder.addCase(postRemoveGLDrug.rejected, (state, action) => {
+      postReplaceDrugRejected(state, action);
     })
   ),
 });
