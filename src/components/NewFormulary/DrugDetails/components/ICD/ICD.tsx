@@ -360,7 +360,7 @@ class DrugDetailICD extends React.Component<any, any> {
       let curRow = json.payload && json.payload.data ? json.payload.data : [];
       this.setState({
         replaceTab: {
-          searchResult: curRow
+          searchResult: curRow.slice(0, 10)
         },
       });
     });
@@ -384,7 +384,7 @@ class DrugDetailICD extends React.Component<any, any> {
       }
       return tab;
     });
-    this.setState({ tabs, activeTabIndex });
+    this.setState({ tabs, activeTabIndex, showGrid: false });
   };
 
   onPageSize = (pageSize) => {

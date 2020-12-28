@@ -147,14 +147,20 @@ class DrugDetailPR extends React.Component<any, any> {
       apiDetails["messageBody"] = {};
 
       if (this.state.activeTabIndex === 0) {
-        let patientResidences: any[] = [];
-        if(this.state.posCheckedList.length > 0) {
-          patientResidences = this.state.posCheckedList.map(e => e?.key);
-        }
+        // let patientResidences: any[] = [];
+        // if(this.state.prSettings.length > 0) {
+        //   patientResidences = this.state.prSettings.map(e => e?.key);
+        // }
+
+        let patientResidences = this.state.prSettings.filter((f) => f.isChecked).map((e) => {
+          if (e.isChecked && e.isChecked !== undefined) {
+            return e.id_patient_residence_type;
+          }
+        });
 
         console.log("----SAVE PR Ids === ", patientResidences);
         this.rpSavePayload.selected_drug_ids = this.state.selectedDrugs
-        this.rpSavePayload.is_covered = this.state.posRemoveSettingsStatus.covered //this.state.posCheckedList
+        this.rpSavePayload.is_covered = this.state.prSettingsStatus.covered //this.state.posCheckedList
         this.rpSavePayload.patient_residences = patientResidences;
         apiDetails["messageBody"] = this.rpSavePayload;
         apiDetails["pathParams"] = this.props?.formulary_id + "/" +  getLobCode(this.props.formulary_lob_id) + "/" + prConstants.TYPE_REPLACE;
@@ -255,6 +261,7 @@ class DrugDetailPR extends React.Component<any, any> {
 
       this.setState({
         panelGridValue1: rows,
+        showGrid: false,
       });
     });
   };
@@ -398,7 +405,7 @@ class DrugDetailPR extends React.Component<any, any> {
       }
       return tab;
     });
-    this.setState({ tabs, activeTabIndex });
+    this.setState({ tabs, activeTabIndex, showGrid: false });
   };
 
   handleNoteClick = (event: React.ChangeEvent<{}>) => {
