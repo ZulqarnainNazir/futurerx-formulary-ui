@@ -65,7 +65,7 @@ class FormularyDetailsTop extends React.Component<any, any> {
               {this.props.currentFormulary?.formulary_info?.formulary_name}
             </span>
           </div>
-          {this.props.activeTabIndex === 0 ? (
+          {this.props.currentFormulary && this.props.activeTabIndex === 0 ? (
             <div className="version-wrapper">
               {/* <div className="item-text version-dd" style={{paddingLeft: 0}}>
               {this.props.formularyVersionList.length > 0 ? this.props.formularyVersionList[0].value : ""}

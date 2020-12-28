@@ -6,6 +6,8 @@ import {
   checkNameExist,
   composePostBody,
   createORUpdateFormulary,
+  createFormularyUsingClone,
+  composeCreateUsingClone,
 } from "./setupService";
 import { setFullFormulary } from "./../application/applicationSlice";
 import { stat } from "fs";
@@ -205,15 +207,33 @@ export const saveFormulary = createAsyncThunk(
   }
 );
 
-export const createCloneFormulary = createAsyncThunk(
+export const initCreateUsingClone = createAsyncThunk(
   "setup",
   async (input: any, { dispatch }) => {
-    // console.log("***** createCloneFormulary .... ");
-    // console.log(input);
+    console.log("***** createCloneFormulary .... ");
+    console.log(input);
     try {
       dispatch(createCloneFormularyStart());
+      const payload = composeCreateUsingClone(input);
+      const resp: any = await createFormularyUsingClone(
+        input.SRC_BASE_ID,
+        payload
+      );
+      console.log("- - - -- - - - - - -- - - -");
+      console.log(resp);
+      console.log("***** createCloneFormularySuccess ");
+      if (resp) {
+        dispatch(createCloneFormularySuccess(resp));
+        //dispatch(fetchSelectedFormulary(resp?.data));
+        return {
+          type: input?.GENERAL_INFO?.type_id,
+          id: resp,
+        };
+      } else {
+        return null;
+      }
     } catch (err) {
-      // console.log("***** createCloneFormularyFailure - ERROR ");
+      console.log("***** createCloneFormularyFailure - ERROR ");
       dispatch(createCloneFormularyFailure(err.toString()));
     }
   }

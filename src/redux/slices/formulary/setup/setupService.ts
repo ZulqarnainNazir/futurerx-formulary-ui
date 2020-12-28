@@ -240,7 +240,7 @@ export function composePostBody(input: any): any {
 }
 
 function composeTier(inputList: any[]) {
-  let list:any[]=[];
+  let list: any[] = [];
 
   list = inputList.map((item) => {
     if (item.is_custom === true) {
@@ -263,8 +263,8 @@ function composeTier(inputList: any[]) {
   return list;
 }
 
-export function composeCreateCloneFormularyPayload(input: any): any {
-  // console.log("***** composeCreateCloneFormularyPayload");
+export function composeCreateUsingClone(input: any): any {
+  // console.log("***** composeCreateUsingClone");
 
   const payload: any = {};
   payload.formulary_info = {};
@@ -274,6 +274,29 @@ export function composeCreateCloneFormularyPayload(input: any): any {
   payload.formulary_info.id_lob = typeInfo.id_lob;
 
   return payload;
+}
+
+export async function createFormularyUsingClone(
+  baseId: number,
+  payload: any
+): Promise<number | null> {
+  let url = `${BASE_URL1}api/1/clone-formulary-setup/${baseId}/1?entity_id=0`;
+  try {
+    const response = await axios.post(url, payload, {
+      headers: REQUEST_HEADER,
+    });
+    console.log("***** clone - api");
+    console.log(response);
+    console.log(response.data);
+    if (response?.data?.code === "200") {
+      return response?.data?.id_formulary;
+    }
+    return null;
+  } catch (error) {
+    console.log("***** clone - Error");
+    console.log(error);
+    throw error;
+  }
 }
 
 function getTypeInfo(

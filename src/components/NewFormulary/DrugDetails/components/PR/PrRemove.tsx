@@ -48,11 +48,11 @@ class PrRemove extends React.Component<any,any> {
     return (
       <div className="tab-prremove pr-limit-settings bordered mb-10">
         <PanelHeader title="patient residence settings" tooltip="patient residence settings" />
-        <div>
+        {/* <div>
           <span style={{ marginLeft: 8 }}>
             {hasSelected ? `Selected ${selectedRowKeys.length} items` : ''}
           </span>
-        </div>
+        </div> */}
         <div className="inner-container">
           <select name="cover" onChange={this.getSelectedVal}>
             <option value="covered" selected>Covered</option>
