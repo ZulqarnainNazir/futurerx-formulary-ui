@@ -37,6 +37,7 @@ interface Props {
 }
 class ListItem extends Component<any, any> {
   state = {
+    nodeId: null,
     posSettings: [],
     prSettings: [],
     posSettingsStatus: {
@@ -52,21 +53,64 @@ class ListItem extends Component<any, any> {
   };
 
   componentDidMount() {
+    this.setState({
+      nodeId: this.props.nodeId,
+    });
+
     this.initializePOSSettingsListApi();
     this.initializePRSettingsListApi();
 
     this.initializeParentData();
+    this.loadSavedState();
   }
 
   componentDidUpdate(prevProps, prevState) {
-    console.log("POS SETTINGS: ", this.state);
+    const {
+      nodeId,
+      initialGlobalState,
+      card: { cardName, cardCode, isIncluded },
+    } = this.props;
+    let currentNode = {};
+    if (nodeId) {
+      // currentNode = initialGlobalState.filter(
+      //   (criteria) => criteria.nodeId === nodeId
+      // );
+      currentNode = initialGlobalState[nodeId];
+      currentNode = {
+        nodeId: nodeId,
+        card: { cardName, cardCode, isIncluded },
+        posSettings: this.state.posSettings,
+        posStatus: this.state.posSettingsStatus,
+      };
+      this.props.handleGlobalState(currentNode);
+    }
   }
 
   componentWillReceiveProps(nextProps) {}
 
+  loadSavedState = () => {
+    const { initialGlobalState } = this.props;
+    const { nodeId } = this.state;
+
+    if (
+      initialGlobalState.length !== 0 &&
+      initialGlobalState.nodeId === nodeId
+    ) {
+      console.log(initialGlobalState);
+
+      this.setState({
+        posSettings: initialGlobalState.posSettings,
+        posSettingsStatus: initialGlobalState.posStatus,
+      });
+    }
+  };
+
   initializeParentData = () => {
     // isIncluded
-    const { cardCode, isIncluded } = this.props.card;
+    const {
+      initialGlobalState,
+      card: { cardCode, isIncluded },
+    } = this.props;
 
     // const INCLUDE = "include";
     // const EXCLUDE = "exclude";
@@ -80,6 +124,8 @@ class ListItem extends Component<any, any> {
       this.setState({
         posSettingsStatus,
       });
+
+      console.log("saved::state: ", initialGlobalState);
     }
   };
 
@@ -152,7 +198,8 @@ class ListItem extends Component<any, any> {
     };
 
     this.setState({ posSettingsStatus }, () => {
-      // this.props.handleStatusChange();
+      const { nodeId, card } = this.props;
+      this.props.handleStatusChange(nodeId, card);
     });
   };
   render() {
@@ -171,15 +218,15 @@ class ListItem extends Component<any, any> {
     } = this.props;
     switch (cardCode) {
       case 1:
-        return "AGE";
+        return cardName;
       case 2:
-        return "GENDER";
+        return cardName;
       case 3:
-        return "ICD";
+        return cardName;
       case 4:
-        return "PN";
+        return cardName;
       case 5:
-        return "PT";
+        return cardName;
       case 6:
         return (
           <POSCriteria
@@ -199,9 +246,9 @@ class ListItem extends Component<any, any> {
           />
         );
       case 7:
-        return "PR";
+        return cardName;
       case 8:
-        return "PCHL";
+        return cardName;
       default:
         return null;
     }
