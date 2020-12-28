@@ -23,6 +23,8 @@ const POST_ST_GROUP_DESCRIPTION_VERSTION_URL = BASE_URL1 + "/api/1/mcr-st-group-
 const GET_ST_GROUP_DESCRIPTION_DETAIL_URL = BASE_URL1 + "/api/1/mcr-st-group-description/462?entity_id=0";
 const POSt_ST_GROUP_DESCRIPTION_URL = BASE_URL1 + "api/1/mcr-st-group-description/1/";
 const PUT_ST_GROUP_DESCRIPTION_URL = BASE_URL1 + "api/1/mcr-st-group-description/";
+const POSt_APPLY_ST_GROUP_DESCRIPTION_FORMULARIES_URL = BASE_URL1 + "api/1/apply-st-group-description-formulary/";
+const POSt_ST_GROUP_DESCRIPTION_FORMULARIES_URL = BASE_URL1 + "api/1/mcr-st-group-description-formularies/";
 
 const GET_ST_COMM_GROUP_DESCRIPTIONS_URL = BASE_URL1 + "/api/1/st-group-descriptions/";
 const GET_ST_COMM_GROUP_DESCRIPTION_URL = BASE_URL1 + "/api/1/st-group-description/";
@@ -31,7 +33,8 @@ const POST_ST_COMM_GROUP_DESCRIPTION_VERSTION_URL = BASE_URL1 + "/api/1/st-group
 const GET_ST_COMM_GROUP_DESCRIPTION_DETAIL_URL = BASE_URL1 + "/api/1/st-group-description/462?entity_id=0";
 const POSt_ST_COMM_GROUP_DESCRIPTION_URL = BASE_URL1 + "api/1/st-group-description/1/";
 const PUT_ST_COMM_GROUP_DESCRIPTION_URL = BASE_URL1 + "api/1/st-group-description/";
-
+const POSt_APPLY_ST_COMM_GROUP_DESCRIPTION_FORMULARIES_URL = BASE_URL1 + "api/1/apply-st-group-description-formulary/";
+const POSt_ST_COMM_GROUP_DESCRIPTION_FORMULARIES_URL = BASE_URL1 + "api/1/st-group-description-formularies/";
 
 
 const POST_FORUMULARY_DRUG_ST_URL = BASE_URL1 + "api/1/formulary-drugs-st/";
@@ -307,6 +310,78 @@ export const postCriteriaListST = createAsyncThunk(
       })
       .then((json) => {
         console.log("postCriteriaListPA: ", json);
+        return json;
+      });
+  }
+);
+
+export const postSTGroupDescriptionFormularies = createAsyncThunk(
+  "tier/postPAGroupDescriptionFormularies",
+  async (apiDetails: any) => {
+    
+    let pathParams = apiDetails.pathParams;
+    let keyVals = pathParams.keyVals;
+    let messageBody = apiDetails.messageBody;
+    
+    let POST_URL ="";
+    if (apiDetails.lob_type==1){
+      POST_URL = POSt_ST_GROUP_DESCRIPTION_FORMULARIES_URL + pathParams ;
+    }else  if (apiDetails.lob_type==4){
+      POST_URL = POSt_ST_COMM_GROUP_DESCRIPTION_FORMULARIES_URL + pathParams ;
+    }
+    if(keyVals){
+      keyVals = keyVals.map(pair => pair.key+'='+pair.value);
+      POST_URL = POST_URL + "?" + keyVals.join('&');
+    }
+    console.log("postPAGroupDescriptionFormularies action creator:: url: " + POST_URL);
+    const requestHeaders  = {
+        method: 'POST',
+        body: JSON.stringify(messageBody),
+        headers: commonConstants.REQUEST_HEADER
+    }
+    return fetch(POST_URL,requestHeaders)
+      .then((response) => {
+        if (!response.ok) throw Error(response.statusText);
+        return response.json();
+      })
+      .then((json) => {
+        console.log("postPAGroupDescription: ", json);
+        return json;
+      });
+  }
+);
+
+export const postApplySTGroupDescriptionFormularies = createAsyncThunk(
+  "tier/postApplyPAGroupDescriptionFormularies",
+  async (apiDetails: any) => {
+    
+    let pathParams = apiDetails.pathParams;
+    let keyVals = pathParams.keyVals;
+    let messageBody = apiDetails.messageBody;
+    
+    let POST_URL ="";
+    if (apiDetails.lob_type==1){
+      POST_URL = POSt_APPLY_ST_GROUP_DESCRIPTION_FORMULARIES_URL + pathParams ;
+    }else  if (apiDetails.lob_type==4){
+      POST_URL = POSt_APPLY_ST_COMM_GROUP_DESCRIPTION_FORMULARIES_URL + pathParams ;
+    }
+    if(keyVals){
+      keyVals = keyVals.map(pair => pair.key+'='+pair.value);
+      POST_URL = POST_URL + "?" + keyVals.join('&');
+    }
+    console.log("postApplyPAGroupDescriptionFormularies action creator:: url: " + POST_URL);
+    const requestHeaders  = {
+        method: 'POST',
+        body: JSON.stringify(messageBody),
+        headers: commonConstants.REQUEST_HEADER
+    }
+    return fetch(POST_URL,requestHeaders)
+      .then((response) => {
+        if (!response.ok) throw Error(response.statusText);
+        return response.json();
+      })
+      .then((json) => {
+        console.log("postApplyPAGroupDescriptionFormularies: ", json);
         return json;
       });
   }
