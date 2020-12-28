@@ -1,90 +1,87 @@
 import Button from "../../../../shared/Frx-components/button/Button";
-import React from 'react'
-import DropDown from '../../../../shared/Frx-components/dropdown/DropDown';
-import PanelHeader from '../../../../shared/Frx-components/panel-header/PanelHeader';
-import StatusContentFormPanel from '../common/StatusContentFormPanel/StatusContentFormPanel';
-import Tags from '../Tags'
-import './ICD.scss';
-
+import React from "react";
+import DropDown from "../../../../shared/Frx-components/dropdown/DropDown";
+import PanelHeader from "../../../../shared/Frx-components/panel-header/PanelHeader";
+import StatusContentFormPanel from "../common/StatusContentFormPanel/StatusContentFormPanel";
+import Tags from "../Tags";
+import "./ICD.scss";
 
 const AddIcon = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18" fill="none">
-    <path fill-rule="evenodd" clip-rule="evenodd" d="M15.0312 15.0309C18.3507 11.7115 18.3507 6.32958 15.0312 3.0101C11.7117 -0.309383 6.32985 -0.30934 3.01041 3.0101C-0.309032 6.32954 -0.309075 11.7114 3.01041 15.0309C6.32989 18.3504 11.7118 18.3504 15.0312 15.0309ZM14.3241 14.3238C17.2531 11.3949 17.253 6.64611 14.3241 3.71721C11.3952 0.788307 6.64646 0.788264 3.71751 3.71721C0.788571 6.64615 0.788615 11.3949 3.71751 14.3238C6.64641 17.2527 11.3952 17.2528 14.3241 14.3238Z" fill="#707683"/>
-    <path d="M4.52082 9.0205C4.52082 9.29664 4.74468 9.5205 5.02082 9.5205H8.52082V13.0205C8.52082 13.2966 8.74468 13.5205 9.02082 13.5205C9.29696 13.5205 9.52082 13.2966 9.52082 13.0205V9.5205L13.0208 9.5205C13.297 9.5205 13.5208 9.29664 13.5208 9.0205C13.5208 8.74436 13.297 8.5205 13.0208 8.5205H9.52082L9.52082 5.0205C9.52082 4.74436 9.29696 4.5205 9.02082 4.5205C8.74468 4.5205 8.52082 4.74436 8.52082 5.0205V8.5205H5.02082C4.74468 8.5205 4.52082 8.74436 4.52082 9.0205Z" fill="#707683"/>
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="18"
+    height="18"
+    viewBox="0 0 18 18"
+    fill="none"
+  >
+    <path
+      fill-rule="evenodd"
+      clip-rule="evenodd"
+      d="M15.0312 15.0309C18.3507 11.7115 18.3507 6.32958 15.0312 3.0101C11.7117 -0.309383 6.32985 -0.30934 3.01041 3.0101C-0.309032 6.32954 -0.309075 11.7114 3.01041 15.0309C6.32989 18.3504 11.7118 18.3504 15.0312 15.0309ZM14.3241 14.3238C17.2531 11.3949 17.253 6.64611 14.3241 3.71721C11.3952 0.788307 6.64646 0.788264 3.71751 3.71721C0.788571 6.64615 0.788615 11.3949 3.71751 14.3238C6.64641 17.2527 11.3952 17.2528 14.3241 14.3238Z"
+      fill="#707683"
+    />
+    <path
+      d="M4.52082 9.0205C4.52082 9.29664 4.74468 9.5205 5.02082 9.5205H8.52082V13.0205C8.52082 13.2966 8.74468 13.5205 9.02082 13.5205C9.29696 13.5205 9.52082 13.2966 9.52082 13.0205V9.5205L13.0208 9.5205C13.297 9.5205 13.5208 9.29664 13.5208 9.0205C13.5208 8.74436 13.297 8.5205 13.0208 8.5205H9.52082L9.52082 5.0205C9.52082 4.74436 9.29696 4.5205 9.02082 4.5205C8.74468 4.5205 8.52082 4.74436 8.52082 5.0205V8.5205H5.02082C4.74468 8.5205 4.52082 8.74436 4.52082 9.0205Z"
+      fill="#707683"
+    />
   </svg>
 );
 
-class IcdLimitSettings extends React.Component<any,any>{
+class IcdLimitSettings extends React.Component<any, any> {
   handleReplaceSrch = (val) => {
-    this.props.handleReplaceSrch(val)
-  }
+    this.props.handleReplaceSrch(val);
+  };
 
-  handleInput = (event) =>{
-    this.props.handleLookBackDays(event.target.value)
-  }
- render(){
-  const {showGridHandler, handleStatus,icdSettingsStatus} = this.props
-  return (
-    <div className="icd-limit-settings bordered mb-10">
-      <PanelHeader title="ICD Limit Settings" tooltip="ICD Limit Settings" />
-      
-      <div className="inner-container">
-        <StatusContentFormPanel title="ICD" type={icdSettingsStatus.type} handleStatus={handleStatus}>
-          <div className="icd-limit-settings__form">            
-            <div className="input-field-group">
-              <div className="input-field-group__label">ICD:</div>
-            
-              <div className="input-field-group__dropdown-field">
-                {/* <DropDown
+  handleInput = (event) => {
+    this.props.handleLookBackDays(event.target.value);
+  };
+  render() {
+    const { showGridHandler, handleStatus, icdSettingsStatus } = this.props;
+    return (
+      <div className="icd-limit-settings bordered mb-10">
+        <PanelHeader title="ICD Limit Settings" tooltip="ICD Limit Settings" />
+
+        <div className="inner-container">
+          <StatusContentFormPanel
+            title="ICD"
+            type={icdSettingsStatus.type}
+            handleStatus={handleStatus}
+            showDelete={false}
+          >
+            <div className="icd-limit-settings__form">
+              <div className="input-field-group">
+                <div className="input-field-group__label">ICD:</div>
+
+                <div className="input-field-group__dropdown-field">
+                  {/* <DropDown
                   className=""
                   placeholder="inclusive of"
                   options={["inclusive of", "exclusive of"]}
                 /> */}
-                 <Tags options={this.props.options} handleReplaceSrch={this.handleReplaceSrch} />
+                  <Tags
+                    options={this.props.options}
+                    handleReplaceSrch={this.handleReplaceSrch}
+                  />
+                </div>
+              </div>
+
+              <div className="input-field-group">
+                <div className="input-field-group__label">Lookback Days:</div>
+                <div className="input-field-group__text-field">
+                  <input
+                    type="number"
+                    className="setup-input-fields"
+                    onChange={this.handleInput}
+                  />
+                </div>
               </div>
             </div>
-            
-            <div className="input-field-group">
-              <div className="input-field-group__label">Lookback Days:</div>
-              <div className="input-field-group__text-field">
-                <input type="number" className="setup-input-fields" onChange={this.handleInput}/>
-              </div>
-            </div>
-          </div>
-        </StatusContentFormPanel>
-      
-        {/* <StatusContentFormPanel title="ICD" type="not-covered">
-          <div className="icd-limit-settings__form">            
-            <div className="input-field-group">
-              <div className="input-field-group__label">ICD:</div>
-            
-              <div className="input-field-group__dropdown-field">
-                <DropDown
-                  className=""
-                  placeholder="inclusive of"
-                  options={["inclusive of", "exclusive of"]}
-                />
-              </div>
-            </div>
-            
-            <div className="input-field-group">
-              <div className="input-field-group__label">Lookback Days:</div>
-              <div className="input-field-group__text-field">
-                <input type="text" className="setup-input-fields" />
-              </div>
-            </div>
-          </div>
-        </StatusContentFormPanel> */}
-        
-        {/* <div className="icd-limit-settings__add-new-form-action">
-          <AddIcon/>
-          <span className="icd-limit-settings__add-new-form-action-text">Add ICD Limit Criteria</span>
-        </div> */}
+          </StatusContentFormPanel>
+        </div>
+        <Button label="Apply" onClick={showGridHandler} />
       </div>
-      <Button label="Apply" onClick={showGridHandler} />
-    </div>
-  )
- }
+    );
+  }
 }
 
-export default IcdLimitSettings
+export default IcdLimitSettings;

@@ -114,6 +114,21 @@ class DrugDetailICD extends React.Component<any, any> {
     is_covered: true
   }
 
+  rpSavePayload: any = {
+    is_covered: true,
+    selected_drug_ids: [],
+    is_select_all: false,
+    covered: {},
+    not_covered: {},
+    icd_limits: {
+      lookback_days: null,
+      icds: [],
+    },
+    breadcrumb_code_value: "ICDL",
+    filter: [],
+    search_key: "",
+  };
+
   rmSavePayload: any = {
     is_covered: true,
     selected_drug_ids: [],
@@ -158,15 +173,25 @@ class DrugDetailICD extends React.Component<any, any> {
 
       if (this.state.activeTabIndex === 0) {
         // Replace Drug method call
-        // this.props.postReplaceICDDrug(apiDetails).then((json) => {
-        //   if (json.payload && json.payload.code && json.payload.code === "200") {
-        //     showMessage("Success", "success");
-        //     this.getICDSummary();
-        //     this.getICDDrugsList();
-        //   } else {
-        //     showMessage("Failure", "error");
-        //   }
-        // });
+        this.rpSavePayload.selected_drug_ids = this.state.selectedDrugs;
+        this.rpSavePayload.icd_limits.lookback_days = this.state.lookBackDays;
+        this.rpSavePayload.icd_limits.icds = this.state.selectedList;
+        this.rpSavePayload.breadcrumb_code_value = "ICDL";
+        this.rpSavePayload.is_covered = this.state.icdSettingsStatus.covered;
+        apiDetails["messageBody"] = this.rpSavePayload;
+        apiDetails["pathParams"] = this.props?.formulary_id + "/" + getLobCode(this.props.formulary_lob_id) + "/" + icdConstants.TYPE_REPLACE;
+        console.log("The API Details - ", apiDetails);
+
+        // Replace Drug method call
+        this.props.postReplaceICDDrug(apiDetails).then((json) => {
+          if (json.payload && json.payload.code && json.payload.code === "200") {
+            showMessage("Success", "success");
+            this.getICDSummary();
+            this.getICDDrugsList();
+          } else {
+            showMessage("Failure", "error");
+          }
+        });
 
       }else if(this.state.activeTabIndex === 2) {
         let icdCheckedList: any[] = [];

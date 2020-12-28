@@ -12,6 +12,8 @@ import {
 
 // const POST_ICD_CL = BASE_URL1 + "api/1/criteria-list-icdl/3345?entity_id=3345";
 
+// const POST_ICD_REPLACE = BASE_URL1 + "api/1/apply-formulary-drug-icdl/3345/COMM/replace?entity_id=3345";
+
 export const getDrugDetailsICDSummary = createAsyncThunk(
   "drug_details/icd_Summary",
   async (apiDetails: any) => {

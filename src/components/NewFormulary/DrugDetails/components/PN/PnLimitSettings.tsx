@@ -26,7 +26,7 @@ class PnLimitSettings extends React.Component<any, any>{
         <PanelHeader title="pharmacy network settings" tooltip="pharmacy network settings" />
 
         <div className="inner-container">
-          <StatusContentFormPanel title="Pharmacy Network" type={pnSettingsStatus.type} handleStatus={handleStatus}>
+          <StatusContentFormPanel title="Pharmacy Network" type={pnSettingsStatus.type} handleStatus={handleStatus} showDelete={false}>
             <div className="pn-limit-settings__form">
               <div className="input-field-group">
                 <div className="input-field-group__label">Pharmacy Network:</div>

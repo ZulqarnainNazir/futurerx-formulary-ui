@@ -39,6 +39,7 @@ const PosLimitSettings = (props) => {
           title="Place of Service"
           type={posSettingsStatus.type}
           handleStatus={handleStatus}
+          showDelete={false}
         >
           <div className="input-field-group">
             <div className="input-field-group__header">
