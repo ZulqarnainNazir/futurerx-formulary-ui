@@ -89,10 +89,10 @@ const StatusContentFormPanel = (props) => {
     <Menu>
       {/* <Menu.Item key="covered" onClick={(e) => handleDropdown(e.key)}> */}
       <Menu.Item key="covered" onClick={(e) => handleStatus(e.key)}>
-        {isAdditionalCriteria ? "include" : "Covered"}
+        {isAdditionalCriteria ? "Include" : "Covered"}
       </Menu.Item>
       <Menu.Item key="not-covered" onClick={(e) => handleStatus(e.key)}>
-        {isAdditionalCriteria ? "exclude" : "Not Covered"}
+        {isAdditionalCriteria ? "Exclude" : "Not Covered"}
       </Menu.Item>
     </Menu>
   );
