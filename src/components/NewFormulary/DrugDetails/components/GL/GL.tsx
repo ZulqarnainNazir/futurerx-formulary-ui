@@ -68,6 +68,7 @@ interface glState {
   glSettingsStatus: any,
   glRemoveCheckedList: any[],
   glRemoveSettingsStatus: any,
+  showApply: boolean,
 };
 
 class DrugDetailGL extends React.Component<any, any> {
@@ -105,6 +106,7 @@ class DrugDetailGL extends React.Component<any, any> {
       type: "covered",
       covered: true,
     },
+    showApply: false,
   };
 
   listPayload: any = {
@@ -230,7 +232,7 @@ class DrugDetailGL extends React.Component<any, any> {
           if (json.payload && json.payload.code && json.payload.code === "200") {
             showMessage("Success", "success");
             this.getGLSummary();
-            this.getGLDrugsList();
+            // this.getGLDrugsList();
           } else {
             showMessage("Failure", "error");
           }
@@ -255,7 +257,7 @@ class DrugDetailGL extends React.Component<any, any> {
           if (json.payload && json.payload.code && json.payload.code === "200") {
             showMessage("Success", "success");
             this.getGLSummary();
-            this.getGLDrugsList();
+            // this.getGLDrugsList();
           } else {
             console.log("------REMOVE FAILED-------")
             showMessage("Failure", "error");
@@ -349,6 +351,7 @@ class DrugDetailGL extends React.Component<any, any> {
 
       this.setState({
         panelGridValue1: rows,
+        showGrid: false,
       });
     });
   };
@@ -493,14 +496,23 @@ class DrugDetailGL extends React.Component<any, any> {
   serviceSettingsChecked = (e) => {
     const { glSettings } = this.state;
 
+    let showApply = false;
     glSettings.forEach((s: any) => {
+      console.log("The Each GL Settings = ", s);
+      console.log("The Service Setting Checked Event = ", e);
       if (s.index === e.target.id) {
         s.isChecked = e.target.checked;
       }
+      showApply = (s.isChecked && e.target.checked) ? true : false;
     });
+    
+    // glSettings.forEach(s: any) => {
+
+    // });
 
     this.setState({
       glSettings,
+      showApply,
     });
   };
 
@@ -591,6 +603,7 @@ class DrugDetailGL extends React.Component<any, any> {
           handleStatus={this.handleStatus}
           serviceSettingsChecked={this.serviceSettingsChecked}
           showGridHandler={this.showGridHandler}
+          showApply={this.state.showApply}
         />}
         
         {this.state.activeTabIndex==2 && <GLRemove 
