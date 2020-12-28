@@ -606,7 +606,7 @@ class DrugDetailAL extends React.Component<any, any> {
     //   this.getALCriteriaList();
     // }
 
-    this.setState({ tabs, activeTabIndex });
+    this.setState({ tabs, activeTabIndex, showGrid: false });
   };
 
   handleChangeEvent = (key: string) =>{
