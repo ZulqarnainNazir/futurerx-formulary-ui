@@ -14,7 +14,7 @@ import {
   fetchSelectedFormulary,
   verifyFormularyName,
   saveFormulary,
-  createCloneFormulary,
+  initCreateUsingClone,
 } from "../../../../.././redux/slices/formulary/setup/setupSlice";
 import { Formulary } from "../../../../../redux/slices/formulary/setup/formulary";
 import {
@@ -192,7 +192,10 @@ class FormularySetUp extends React.Component<any, any> {
         },
         tiers: [...newProps.formulary.tiers],
         fetchedEditInfo: newProps.formulary.edit_info,
-        edit_info: this.getEditInfo(newProps.formulary.edit_info, newProps.setupOptions?.designOptions),
+        edit_info: this.getEditInfo(
+          newProps.formulary.edit_info,
+          newProps.setupOptions?.designOptions
+        ),
         designOptions: [...newProps.setupOptions?.designOptions],
         setupOptions: newProps.setupOptions,
       });
@@ -224,7 +227,7 @@ class FormularySetUp extends React.Component<any, any> {
       });
     }
   };
-  getEditInfo = (editInfo: any[], options:any[] ) => {
+  getEditInfo = (editInfo: any[], options: any[]) => {
     let editTrue = editInfo
       .filter((obj) => obj.id_checked === true)
       .map((e) => e.id_edit);
@@ -236,9 +239,7 @@ class FormularySetUp extends React.Component<any, any> {
 
     if (this.props.formulary_type_id === 6) {
       // console.log(options);
-      customEdit = options.filter(
-        (e) => e.is_custom === true
-      );
+      customEdit = options.filter((e) => e.is_custom === true);
       // console.log(customEdit);
       const customEditId = customEdit.map((e) => e.id_edit);
       editTrue = editTrue.filter((e) => customEditId.indexOf(e) === -1);
@@ -584,7 +585,12 @@ class FormularySetUp extends React.Component<any, any> {
 
     this.props.saveFormulary(input).then((arg) => {
       console.log("SAVE Callback ", arg?.payload);
-      if (arg?.payload?.type > 0 && arg?.payload?.id > 0) {
+      if (
+        arg &&
+        arg.payload &&
+        arg?.payload?.type > 0 &&
+        arg?.payload?.id > 0
+      ) {
         console.log(
           "REFRESH.... TYPE : " +
             arg?.payload?.type +
@@ -609,8 +615,8 @@ class FormularySetUp extends React.Component<any, any> {
     });
   };
 
-  createUsingClone = (e) => {
-    // console.log("clone......");
+  handleCreateUsingClone = (e) => {
+    console.log("create FL using clone......");
     if (this.props.mode === "NEW") {
       let msg: string[] = [];
       if (this.state.generalInformation.type_id === "") {
@@ -630,12 +636,37 @@ class FormularySetUp extends React.Component<any, any> {
       }
       const input = {
         GENERAL_INFO: this.state.generalInformation,
-        SRC_BASE_ID: 2968,
+        SRC_BASE_ID: 2984,
       };
-      this.props.createCloneFormulary(input);
+      this.props.initCreateUsingClone(input);
+
+      this.props.saveFormulary(input).then((arg) => {
+        // console.log("SAVE Callback ", arg?.payload);
+        // if (arg && arg.payload && arg?.payload?.type > 0 && arg?.payload?.id > 0) {
+        //   console.log(
+        //     "REFRESH.... TYPE : " +
+        //       arg?.payload?.type +
+        //       " ID : " +
+        //       arg?.payload?.id +
+        //       " CONTINUE : " +
+        //       arg?.payload?.continue +
+        //       " EARLIER MODE : " +
+        //       arg?.payload?.earlier_mode
+        //   );
+        //   this.manageFormularyType(arg?.payload?.type, arg?.payload?.id);
+        //   this.props.fetchSelectedFormulary(arg?.payload?.id);
+        //   if (arg?.payload?.earlier_mode === "NEW") {
+        //     showMessage(`Formulary Created. ID:${arg?.payload?.id}`, "success");
+        //   } else if (arg?.payload?.earlier_mode === "EXISTING") {
+        //     showMessage(`Formulary Updated. ID: ${arg?.payload?.id}`, "success");
+        //   }
+        //   if (arg?.payload?.continue) {
+        //     this.props.saveAndContinue(1);
+        //   }
+        // }
+      });
     }
   };
-
 
   render() {
     return (
@@ -650,7 +681,7 @@ class FormularySetUp extends React.Component<any, any> {
               onDropdownChange={this.onDropdownChange}
               formularyTypeChanged={this.formularyTypeChanged}
               datePickerChange={this.onDatePickerChangeHandler}
-              createUsingClone={this.createUsingClone}
+              createUsingClone={this.handleCreateUsingClone}
             />
             {this.state.generalInformation.type !== "" ? (
               <>
@@ -771,7 +802,7 @@ function mapDispatchToProps(dispatch) {
     fetchStatesOptions: (a) => dispatch(fetchStatesOptions(a)),
     verifyFormularyName: (a) => dispatch(verifyFormularyName(a)),
     saveFormulary: (a) => dispatch(saveFormulary(a)),
-    createCloneFormulary: (a) => dispatch(createCloneFormulary(a)),
+    initCreateUsingClone: (a) => dispatch(initCreateUsingClone(a)),
   };
 }
 
