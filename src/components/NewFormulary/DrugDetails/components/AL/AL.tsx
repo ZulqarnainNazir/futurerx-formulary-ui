@@ -14,13 +14,14 @@ import { getDrugDetailsColumnAL } from "../../../DrugDetails/components/Formular
 import { getDrugDetailData } from "../../../../../mocks/DrugGridMock";
 import FrxLoader from "../../../../shared/FrxLoader/FrxLoader";
 import AdvancedSearch from "../../../DrugDetails/components/FormularyConfigure/components/search/AdvancedSearch";
-import { getDrugDetailsALSummary, getDrugDetailsALList, postReplaceALDrug, getALCriteriaList } from "../../../../../redux/slices/formulary/drugDetails/al/alActionCreation";
+import { getDrugDetailsALSummary, getDrugDetailsALList, postReplaceALDrug, getALCriteriaList, postRemoveALDrug } from "../../../../../redux/slices/formulary/drugDetails/al/alActionCreation";
 import * as alConstants from "../../../../../api/http-drug-details";
 import getLobCode from "../../../Utils/LobUtils";
 
 import AgeLimitSettings from "./AgeLimitSettings";
 import FrxDrugGridContainer from "../../../../shared/FrxGrid/FrxDrugGridContainer";
 import showMessage from "../../../Utils/Toast";
+import ALRemove from "./alRemove";
 
 function mapDispatchToProps(dispatch) {
   return {
@@ -28,6 +29,7 @@ function mapDispatchToProps(dispatch) {
     getDrugDetailsALList: (a) => dispatch(getDrugDetailsALList(a)),
     postReplaceALDrug: (a) => dispatch(postReplaceALDrug(a)),
     getALCriteriaList: (a) => dispatch(getALCriteriaList(a)),
+    postRemoveALDrug: (a) => dispatch(postRemoveALDrug(a)),
   };
 }
 
@@ -67,6 +69,9 @@ interface drugDetailALState {
   showGrid: boolean,
   showApply: boolean,
   removeData: any,
+  removeTabsData: any[],
+  alRemoveCheckedList: any[],
+  alRemoveSettingsStatus: any,
 }
 
 const defaultListPayload = {
@@ -108,6 +113,12 @@ class DrugDetailAL extends React.Component<any, any> {
     showGrid: false,
     showApply: false,
     removeData: [],
+    removeTabsData:[],
+    alRemoveCheckedList: [],
+    alRemoveSettingsStatus: {
+      type: "covered",
+      covered: true,
+    },
     formData: [
       {
         minimumVal: "",
@@ -141,6 +152,13 @@ class DrugDetailAL extends React.Component<any, any> {
     limit: 10,
     filter: [],
   }
+
+  alCriteriaPayload: any = {
+    is_advance_search: false,
+    filter: [],
+    search_key: "",
+    is_covered: true,
+  }
   
   formData1: initialFormData[] = [
     {
@@ -168,6 +186,17 @@ class DrugDetailAL extends React.Component<any, any> {
       covered: true,
     }
   ]
+
+  rmSavePayload: any = {    
+    is_covered: true,
+    selected_drug_ids: [],
+    is_select_all: false,
+    covered: {},
+    not_covered: {},
+    selected_criteria_ids: [], //key
+    filter: [],
+    search_key: ""
+  }
 
   advanceSearchClickHandler = (event) => {
     event.stopPropagation();
@@ -236,28 +265,31 @@ class DrugDetailAL extends React.Component<any, any> {
         //     showMessage("Failure", "error");
         //   }
         // });
-      // } else if (this.state.activeTabIndex === 2) {
-      //   apiDetails["pathParams"] =
-      //     this.props?.formulary_id +
-      //     "/" +
-      //     this.state.lobCode +
-      //     "/" +
-      //     alConstants.TYPE_REMOVE;
+      } else if(this.state.activeTabIndex === 2) {
+        let alCheckedList: any[] = [];
+        if(this.state.alRemoveCheckedList.length > 0) {
+          alCheckedList = this.state.alRemoveCheckedList.map(e => e?.key);
+        }
 
-      //   // Remove Drug method call
-      //   this.props.postRemoveAFDrug(apiDetails).then((json) => {
-      //     if (
-      //       json.payload &&
-      //       json.payload.code &&
-      //       json.payload.code === "200"
-      //     ) {
-      //       showMessage("Success", "success");
-      //       // this.getAFSummary();
-      //       // this.getAFDrugsList();
-      //     } else {
-      //       showMessage("Failure", "error");
-      //     }
-      //   });
+        this.rmSavePayload.selected_drug_ids = this.state.selectedDrugs
+        this.rmSavePayload.is_covered = this.state.alRemoveSettingsStatus.covered
+        this.rmSavePayload.selected_criteria_ids = alCheckedList
+        apiDetails["messageBody"] = this.rmSavePayload;
+        apiDetails["pathParams"] = this.props?.formulary_id + "/" +  getLobCode(this.props.formulary_lob_id) + "/" + alConstants.TYPE_REMOVE;
+        console.log("The API Details - ", apiDetails);
+
+        // Remove Drug method call
+        this.props.postRemoveALDrug(apiDetails).then((json) => {
+          console.log("The Remove AL Drug Response = ", json);
+          if (json.payload && json.payload.code && json.payload.code === "200") {
+            showMessage("Success", "success");
+            this.getALSummary();
+            this.getALDrugsList();
+          } else {
+            console.log("------REMOVE FAILED-------")
+            showMessage("Failure", "error");
+          }
+        });
       }
     }
   };
@@ -355,6 +387,7 @@ class DrugDetailAL extends React.Component<any, any> {
 
   showGrid = () => {
     this.getALDrugsList();
+    console.log("The State of the Tab = ", this.state);
   }
 
   getALSummary = () => {
@@ -382,18 +415,20 @@ class DrugDetailAL extends React.Component<any, any> {
     });
   }
 
-  getALCriteriaList = () => {
+  getALCriteriaList = (isCovered) => {
     let apiDetails = {};
     apiDetails["apiPart"] = alConstants.GET_AL_CRITERIA_LIST;
     apiDetails["pathParams"] = this.props?.formulary_id;
     apiDetails["keyVals"] = [{ key: alConstants.KEY_ENTITY_ID, value: this.props?.formulary_id }];
     apiDetails["messageBody"] = {};
-    apiDetails["messageBody"]["is_advance_search"] = false;
-    apiDetails["messageBody"]["filter"] = [];
-    apiDetails["messageBody"]["search_key"] = "";
-    apiDetails["messageBody"]["selected_criteria_ids"] = [];
-    apiDetails["messageBody"]["not_covered"] = {};
-    apiDetails["messageBody"]["is_covered"] = this.state.isCovered;
+    // apiDetails["messageBody"]["is_advance_search"] = false;
+    // apiDetails["messageBody"]["filter"] = [];
+    // apiDetails["messageBody"]["search_key"] = "";
+    // apiDetails["messageBody"]["selected_criteria_ids"] = [];
+    // apiDetails["messageBody"]["not_covered"] = {};
+    // apiDetails["messageBody"]["is_covered"] = this.state.isCovered;
+    this.alCriteriaPayload.is_covered = isCovered
+    apiDetails['messageBody'] = this.alCriteriaPayload;
     console.log("The Api Details for Criteria Request = ", apiDetails);
 
     this.props.getALCriteriaList(apiDetails).then((json) => {
@@ -403,7 +438,7 @@ class DrugDetailAL extends React.Component<any, any> {
       let rows: any[] = []
       for(let i=0; i<tmpData.length; i++) {
         let obj = {};
-        obj["key"] = i;
+        obj["key"] = tmpData[i]["id_age_limit_criteria"];
         obj["minAgeLimit"] = tmpData[i]["min_age_limit"];
         obj["maxAgeLimit"] = tmpData[i]["max_age_limit"];
 
@@ -411,7 +446,7 @@ class DrugDetailAL extends React.Component<any, any> {
       }
 
       console.log("The Remove Rows = ", rows);
-      this.setState({ removeData: rows });
+      this.setState({ removeData: rows, removeTabsData: rows });
     });
   }
 
@@ -420,7 +455,14 @@ class DrugDetailAL extends React.Component<any, any> {
     apiDetails['apiPart'] = alConstants.GET_AL_DRUGS;
     apiDetails['pathParams'] = this.props?.formulary_id + "/" + getLobCode(this.props.formulary_lob_id);
     apiDetails['keyVals'] = [{ key: alConstants.KEY_ENTITY_ID, value: this.props?.formulary_id }, { key: alConstants.KEY_INDEX, value: index }, { key: alConstants.KEY_LIMIT, value: limit }];
-    apiDetails['messageBody'] = listPayload;
+    
+    if(this.state.activeTabIndex === 2) {
+      console.log("The AL LIST is COvered = ", this.state.alRemoveSettingsStatus.covered);
+      console.log("The AL LIST is COvered = ", this.state.alRemoveCheckedList.map(e => e?.key));
+      listPayload['is_covered'] = this.state.alRemoveSettingsStatus.covered;
+      listPayload['selected_criteria_ids'] = this.state.alRemoveCheckedList.map(e => e?.key);
+    }
+    apiDetails["messageBody"] = listPayload;
 
     let listCount = 0;
     this.props.getDrugDetailsALList(apiDetails).then((json) => {
@@ -475,6 +517,7 @@ class DrugDetailAL extends React.Component<any, any> {
       data: data,
     });
     this.getALSummary();
+    this.getALCriteriaList(true);
   }
 
   onClickTab = (selectedTabIndex: number) => {
@@ -487,12 +530,24 @@ class DrugDetailAL extends React.Component<any, any> {
       return tab;
     });
 
-    if (activeTabIndex === 2) {
-      this.getALCriteriaList();
-    }
+    // if (activeTabIndex === 2) {
+    //   this.getALCriteriaList();
+    // }
 
     this.setState({ tabs, activeTabIndex });
   };
+
+  handleChangeEvent = (key: string) =>{
+    const COVERED = "covered";
+    const isCovered: boolean = key === COVERED ? true : false;
+    let alRemoveSettingsStatus = {
+      type: key,
+      covered: isCovered,
+    };
+
+    this.setState({ alRemoveSettingsStatus, showGrid: false });
+    this.getALCriteriaList(isCovered)
+  }
 
   handleNoteClick = (event: React.ChangeEvent<{}>) => {
     event.stopPropagation();
@@ -505,6 +560,21 @@ class DrugDetailAL extends React.Component<any, any> {
 
   settingFormApplyHandler = () => {
     alert(1);
+  };
+
+  showGridHandler = () => {
+    this.getALDrugsList();
+    console.log("The State of the Tab = ", this.state);
+  };
+
+  handleRemoveChecked = (selectedRows) => {
+    this.setState(
+      {
+        alRemoveCheckedList: selectedRows,
+        showGrid: false,
+      },
+      () => console.log("alRemoveCheckedList: ", this.state.alRemoveCheckedList)
+    );
   };
 
   render() {
@@ -522,7 +592,7 @@ class DrugDetailAL extends React.Component<any, any> {
             gridName="DRUGSDETAILS"
             enableSettings={false}
             columns={getDrugDetailsColumnAL()}
-            scroll={{ x: 7000, y: 377 }}
+            scroll={{ x: 5200, y: 377 }}
             isFetchingData={false}
             enableResizingOfColumns
             data={this.state.data}
@@ -559,6 +629,7 @@ class DrugDetailAL extends React.Component<any, any> {
 
     console.log("The Remove columns = ", removeColumns)
     console.log("Remove State Data = ", this.state.removeData);
+    console.log("Remove TABS State Data = ", this.state.removeTabsData);
     
     return (
       <>
@@ -597,7 +668,7 @@ class DrugDetailAL extends React.Component<any, any> {
           </div>
         </div>
 
-        <AgeLimitSettings
+        {(this.state.activeTabIndex==0 || this.state.activeTabIndex==1) && <AgeLimitSettings
           handleMinChange={this.handleMinChange}
           handleMaxChange={this.handleMaxChange}
           onMinChangeHandler={this.onMinChangeHandler}
@@ -606,9 +677,16 @@ class DrugDetailAL extends React.Component<any, any> {
           showApply={this.state.showApply}
           showGrid={this.showGrid}
           coveredHandler={this.coveredHandler}
-        />
+        />}
+        
+        {this.state.activeTabIndex==2 && <ALRemove 
+          data={this.state.removeTabsData} 
+          showGridHandler={this.showGridHandler} 
+          handleChangeEvent={this.handleChangeEvent}
+          handleRemoveChecked={this.handleRemoveChecked}
+        />}
 
-        {this.state.activeTabIndex === 2 ? (
+        {/* {this.state.activeTabIndex === 2 ? (
           <div className="white-bg">
             <Grid item xs={5}>
               <div className="tier-grid-remove-container">
@@ -631,7 +709,7 @@ class DrugDetailAL extends React.Component<any, any> {
               </Col>
             </Row>
           </div>
-        ) : null}
+        ) : null} */}
 
         {this.state.showGrid ? (
           <div className="bordered">

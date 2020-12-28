@@ -1621,7 +1621,7 @@ export const getDrugDetailsColumnAL: () => Column<any>[] = () => {
     {
       position: 2,
       sorter: {},
-      pixelWidth: 230,
+      pixelWidth: 120,
       key: "coverMin",
       displayTitle: "Covered Min",
       isFilterable: true,
@@ -1633,7 +1633,7 @@ export const getDrugDetailsColumnAL: () => Column<any>[] = () => {
     {
       position: 3,
       sorter: {},
-      pixelWidth: 230,
+      pixelWidth: 120,
       key: "coverAgeMin",
       displayTitle: "Covered Age Min",
       isFilterable: true,
@@ -1645,7 +1645,7 @@ export const getDrugDetailsColumnAL: () => Column<any>[] = () => {
     {
       position: 4,
       sorter: {},
-      pixelWidth: 230,
+      pixelWidth: 120,
       key: "coverMax",
       displayTitle: "Coverage Max",
       isFilterable: true,
@@ -1657,7 +1657,7 @@ export const getDrugDetailsColumnAL: () => Column<any>[] = () => {
     {
       position: 5,
       sorter: {},
-      pixelWidth: 230,
+      pixelWidth: 120,
       key: "coverAgeMax",
       displayTitle: "Covered Age Max",
       isFilterable: true,
@@ -1669,7 +1669,7 @@ export const getDrugDetailsColumnAL: () => Column<any>[] = () => {
     {
       position: 6,
       sorter: {},
-      pixelWidth: 230,
+      pixelWidth: 120,
       key: "notCoverMin",
       displayTitle: "Not Covered Min",
       isFilterable: true,
@@ -1681,7 +1681,7 @@ export const getDrugDetailsColumnAL: () => Column<any>[] = () => {
     {
       position: 7,
       sorter: {},
-      pixelWidth: 230,
+      pixelWidth: 120,
       key: "notCoverAgeMin",
       displayTitle: "Not Covered Age Min",
       isFilterable: true,
@@ -1693,7 +1693,7 @@ export const getDrugDetailsColumnAL: () => Column<any>[] = () => {
     {
       position: 8,
       sorter: {},
-      pixelWidth: 230,
+      pixelWidth: 120,
       key: "notCoverMax",
       displayTitle: "Not Covered Max",
       isFilterable: true,
@@ -1705,7 +1705,7 @@ export const getDrugDetailsColumnAL: () => Column<any>[] = () => {
     {
       position: 9,
       sorter: {},
-      pixelWidth: 230,
+      pixelWidth: 120,
       key: "notCoverAgeMax",
       displayTitle: "Not Covered Age Max",
       isFilterable: true,
@@ -1717,7 +1717,7 @@ export const getDrugDetailsColumnAL: () => Column<any>[] = () => {
     {
       position: 10,
       sorter: {},
-      pixelWidth: 230,
+      pixelWidth: 120,
       key: "tier",
       displayTitle: "Tier",
       isFilterable: true,
@@ -1729,7 +1729,7 @@ export const getDrugDetailsColumnAL: () => Column<any>[] = () => {
     {
       position: 11,
       sorter: {},
-      pixelWidth: 230,
+      pixelWidth: 120,
       key: "labelNamae",
       displayTitle: "Label Name",
       isFilterable: true,
@@ -1741,7 +1741,7 @@ export const getDrugDetailsColumnAL: () => Column<any>[] = () => {
     {
       position: 12,
       sorter: {},
-      pixelWidth: 230,
+      pixelWidth: 120,
       key: "ddid",
       displayTitle: "DDID",
       isFilterable: true,
@@ -1753,7 +1753,7 @@ export const getDrugDetailsColumnAL: () => Column<any>[] = () => {
     {
       position: 13,
       sorter: {},
-      pixelWidth: 230,
+      pixelWidth: 120,
       key: "gpi",
       displayTitle: "GPI",
       isFilterable: true,
@@ -1765,7 +1765,7 @@ export const getDrugDetailsColumnAL: () => Column<any>[] = () => {
     {
       position: 14,
       sorter: {},
-      pixelWidth: 230,
+      pixelWidth: 120,
       key: "trademark",
       displayTitle: "Trademark",
       isFilterable: true,
@@ -1777,7 +1777,7 @@ export const getDrugDetailsColumnAL: () => Column<any>[] = () => {
     {
       position: 15,
       sorter: {},
-      pixelWidth: 230,
+      pixelWidth: 120,
       key: "databaseCategory",
       displayTitle: "Database Category",
       isFilterable: true,
@@ -1789,7 +1789,7 @@ export const getDrugDetailsColumnAL: () => Column<any>[] = () => {
     {
       position: 16,
       sorter: {},
-      pixelWidth: 230,
+      pixelWidth: 120,
       key: "databaseClass",
       displayTitle: "Database Class",
       isFilterable: true,
@@ -1801,7 +1801,7 @@ export const getDrugDetailsColumnAL: () => Column<any>[] = () => {
     {
       position: 17,
       sorter: {},
-      pixelWidth: 230,
+      pixelWidth: 120,
       key: "created_by",
       displayTitle: "Created By",
       isFilterable: true,
@@ -1813,7 +1813,7 @@ export const getDrugDetailsColumnAL: () => Column<any>[] = () => {
     {
       position: 18,
       sorter: {},
-      pixelWidth: 230,
+      pixelWidth: 120,
       key: "created_date",
       displayTitle: "Created On",
       isFilterable: true,
@@ -1825,7 +1825,7 @@ export const getDrugDetailsColumnAL: () => Column<any>[] = () => {
     {
       position: 18,
       sorter: {},
-      pixelWidth: 230,
+      pixelWidth: 120,
       key: "modified_by",
       displayTitle: "Modified By",
       isFilterable: true,
@@ -1837,7 +1837,7 @@ export const getDrugDetailsColumnAL: () => Column<any>[] = () => {
     {
       position: 19,
       sorter: {},
-      pixelWidth: 230,
+      pixelWidth: 120,
       key: "modified_date",
       displayTitle: "Modified On",
       isFilterable: true,
