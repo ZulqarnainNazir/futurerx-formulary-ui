@@ -17,6 +17,8 @@ import AddNewTag from "../../../../../shared/FrxReportingTags/AddNewTag";
 import DialogPopup from "../../../../../shared/FrxDialogPopup/FrxDialogPopup";
 import FormControl from "@material-ui/core/FormControl";
 import FormLabel from "@material-ui/core/FormLabel";
+import CloneFormularyPopup from "../../FormularySetUp/components/CloneFormularyPopup";
+
 const mapStateToProps = (state) => {
   //console.log(state);
   return {
@@ -48,6 +50,7 @@ interface GeneralInformationState {
   tagDesc: string;
 
   DialogshowInd: boolean;
+  showClonePopup: boolean;
 }
 class GeneralInformation extends React.Component<any, GeneralInformationState> {
   state = {
@@ -66,6 +69,7 @@ class GeneralInformation extends React.Component<any, GeneralInformationState> {
     tagCategoriesWithColor: [],
     tagDesc: "",
     DialogshowInd: false,
+    showClonePopup: false,
   };
   UNSAFE_componentWillReceiveProps = (newProps) => {
     if (newProps.formulary) {
@@ -235,6 +239,14 @@ class GeneralInformation extends React.Component<any, GeneralInformationState> {
     // Can not select days before today and today
     return current && current < moment().endOf("day");
   };
+
+  // selectFormularyClick = (dataRow) => {
+  //   console.log(dataRow);
+  //   if (dataRow) {
+  //     this.props.selectFormularyClick()
+  //   }
+  // };
+
   render() {
     const { Option } = Select;
     const {
@@ -411,13 +423,23 @@ class GeneralInformation extends React.Component<any, GeneralInformationState> {
                   <label>
                     CLONE FORMULARY <span className="astrict">*</span>
                   </label>
-                  <a href="#" className="input-link clone-formulary-link">
+                  <span
+                    onClick={(e) => {
+                      console.log("M: " + this.props.generalInfo.method);
+                      console.log("N: " + this.props.name);
+                      console.log("D: " + this.props.effective_date);
+                      this.setState({ showClonePopup: true });
+                    }}
+                    className="input-link"
+                  >
                     Clone Formulary
-                  </a>
-                  <Button
-                    label="FL - C M"
+                  </span>
+                  {/* <span
                     onClick={(e) => this.props.createUsingClone(e)}
-                  />
+                    className="input-link"
+                  >
+                    T-C
+                  </span> */}
                 </div>
               </Grid>
             )}
@@ -613,6 +635,36 @@ class GeneralInformation extends React.Component<any, GeneralInformationState> {
                     />
                   </DialogPopup>
                 </div>
+              ) : null}
+
+              {this.state.showClonePopup ? (
+                <DialogPopup
+                  positiveActionText=""
+                  negativeActionText="Close"
+                  title={"Select Formulary"}
+                  handleAction={() => {}}
+                  open={this.state.showClonePopup}
+                  handleClose={() => {
+                    this.setState({
+                      showClonePopup: false,
+                    });
+                  }}
+                  showActions={false}
+                  className=""
+                  height="80%"
+                  width="90%"
+                >
+                  <CloneFormularyPopup
+                    type="commercial" // type will be dynamic based on the LOB
+                    lobID="4"
+                    selectFormularyClick={(r) => {
+                      this.props.cloneFormularyClick(r);
+                      this.setState({
+                        showClonePopup: false,
+                      });
+                    }}
+                  />
+                </DialogPopup>
               ) : null}
             </Grid>
           </Grid>
