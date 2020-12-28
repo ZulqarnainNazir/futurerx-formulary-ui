@@ -255,9 +255,9 @@ class DrugDetailAL extends React.Component<any, any> {
       for(let i=0; i<this.state.alSettings.length; i++) {
         let ageObj = {
           min_age_condition: this.formData2[i].minimumType,
-          min_age_limit: this.formData2[i].minimumVal,
+          min_age_limit: +this.formData2[i].minimumVal,
           max_age_condition: this.formData2[i].maximumType,
-          max_age_limit: this.formData2[i].maximumVal,
+          max_age_limit: +this.formData2[i].maximumVal,
           sequence_number: this.formData2[i].index + 1,
         }
         ageLimits.push(ageObj);
