@@ -28,7 +28,7 @@ const defaultListPayload = {
   index: 0,
   limit: 10,
   filter: [],
-  id_lob: 1,
+  id_lob: 4,
   search_by: null,
   search_key: "",
   search_value: [],
@@ -97,6 +97,7 @@ class CloneFormularyPopup extends React.Component<any, any> {
     this.state.formularyGridData = Array();
     try {
       let formularies = await getformularies(payload);
+      console.log(" LIST : ",formularies.list);
       console.log('Formularies:' + JSON.stringify(Object.keys(formularies)));
       if (formularies['list'] && formularies['list'].length > 0) {
         formularies['list'].map((row, index) => {
@@ -136,9 +137,14 @@ class CloneFormularyPopup extends React.Component<any, any> {
     }
   }
   componentDidMount() {
+    console.log(" CPP componentDidMount")
     let id_lob = this.props.formulary_lob_id;
     this.listPayload = { ...defaultListPayload };
     this.listPayload.id_lob = id_lob;
+    console.log("lobID", this.props.lobID);
+    if(this.props.lobID > 0 ){
+      this.listPayload.id_lob =parseInt( this.props.lobID);
+    }
     this.fetchFormularies(this.listPayload);
   }
   selectFormularyClick = (dataRow) => {
