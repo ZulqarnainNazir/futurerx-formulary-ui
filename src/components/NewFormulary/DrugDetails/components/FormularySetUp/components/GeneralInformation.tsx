@@ -386,7 +386,7 @@ class GeneralInformation extends React.Component<any, GeneralInformationState> {
                   >
                     <FormControlLabel
                       disabled={disabled}
-                      value="clone"
+                      value="C"
                       control={<Radio />}
                       label="Clone"
                     />
