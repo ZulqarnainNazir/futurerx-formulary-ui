@@ -112,7 +112,7 @@ function GroupHeader(props: any) {
             setPlaceHolder(value)
 
             setSelectedVersion(props.version[verLength - 1].version_number);
-            setSelectedVersionId(props.version[verLength - 1]['id_pa_group_description']);
+            setSelectedVersionId(props.version[verLength - 1]['id_st_group_description']);
         } else {
             setVersion([{ value: 'Version 1' }])
             setPlaceHolder('Version 1')

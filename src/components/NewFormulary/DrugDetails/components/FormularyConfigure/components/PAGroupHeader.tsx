@@ -97,9 +97,9 @@ function PAGroupHeader(props: any) {
          apiDetails['pathParams'] = '/'+props.saveGdm.current_group_id;
 
          if (props.formulary_lob_id==1){
-            setIdField('id_mcr_pa_group_description_formulary');
+            setIdField('formulary_id');
          }else if (props.formulary_lob_id==4){
-            setIdField('id_pa_group_description_formulary');
+            setIdField('formulary_id');
         }
 
         props.postPAGroupDescriptionFormularies(apiDetails).then(json =>{
@@ -109,7 +109,9 @@ function PAGroupHeader(props: any) {
             json.payload.result.map(obj => {
                 obj['id'] = count;
                 obj['key'] = count;
-                tmp_array.push(obj);
+                if (obj['is_editable']==true){
+                    tmp_array.push(obj);
+                }
                 count++;
             });
             setFormularies(tmp_array);
