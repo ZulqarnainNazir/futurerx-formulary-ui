@@ -1258,8 +1258,8 @@ class AdvanceSearchContainer extends Component<Props, State> {
       criteriaList,
     } = this.state;
 
-    const { isAdvanceSearch } = this.props;
-    // const isAdvanceSearch = !this.props.isAdvanceSearch;
+    // const { isAdvanceSearch } = this.props;
+    const isAdvanceSearch = !this.props.isAdvanceSearch;
     // const renderCatory = this.onRenderCateory(selectedCategory);
     // console.log(renderCatory);
 

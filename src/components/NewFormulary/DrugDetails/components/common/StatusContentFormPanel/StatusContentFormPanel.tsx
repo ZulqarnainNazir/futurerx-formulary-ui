@@ -74,23 +74,17 @@ const StatusContentFormPanel = (props) => {
     handleStatus,
     isAdditionalCriteria,
     deleteIconHandler,
+    showDelete = true,
   } = props;
-  // const [statusType, setStatusType] = useState(type ? type : "covered");
 
-  // const handleDropdown = (value) => {
-  //   setStatusType(value);
-  // };
-
-const StatusContentFormPanel = (props) => {
-  const { title = "", type = 'covered', children, handleStatus, showDelete = true } = props;
   const [statusType, setStatusType] = useState(type ? type : "covered");
-  
+
   const handleDropdown = (value) => {
     console.log("The handle Dropdown = ", value);
-    setStatusType(value)
+    setStatusType(value);
     props.coveredHandler(value);
-  }
-  
+  };
+
   const menu = (
     <Menu>
       {/* <Menu.Item key="covered" onClick={(e) => handleDropdown(e.key)}> */}
@@ -198,12 +192,11 @@ const StatusContentFormPanel = (props) => {
                 />
               </svg>
             </Box>
-          </div> 
+          </div>
         ) : null}
       </div>
     </div>
   );
-};
 };
 
 export default StatusContentFormPanel;

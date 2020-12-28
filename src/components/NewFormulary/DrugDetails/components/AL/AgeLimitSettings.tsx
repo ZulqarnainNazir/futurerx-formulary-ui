@@ -31,45 +31,43 @@ class AgeLimitSettings extends React.Component<any, any> {
     console.log("The Form Data in Age Limit Settings = ", this.props.formData);
   }
 
-  getStatusContentForm = (index) => {
-    return (
-      <StatusContentFormPanel title="Age" type={this.props.formData[index].covered ? "covered" : "not-covered"} coveredHandler={this.props.coveredHandler}>
-        <div className="input-field-group">
-          <div className="input-field-group__label">Minimum</div>
+  getStatusContentForm = (index) => (
+    <StatusContentFormPanel title="Age" type={this.props.formData[index].covered ? "covered" : "not-covered"} coveredHandler={this.props.coveredHandler}>
+      <div className="input-field-group">
+        <div className="input-field-group__label">Minimum</div>
+      
+        <div className="input-field-group__dropdown-field">
+          <DropDown
+            className=""
+            placeholder="inclusive of"
+            options={["inclusive of", "Greater Than"]}
+            onChange={(e) => this.props.onMinChangeHandler(e, index)}
+          />
+        </div>
         
-          <div className="input-field-group__dropdown-field">
-            <DropDown
-              className=""
-              placeholder="inclusive of"
-              options={["inclusive of", "Greater Than"]}
-              onChange={(e) => this.props.onMinChangeHandler(e, index)}
-            />
-          </div>
-          
-          <div className="input-field-group__text-field">
-            <input type="text" className="setup-input-fields" onChange={(e) => this.props.handleMinChange(e, index)} />
-          </div>
+        <div className="input-field-group__text-field">
+          <input type="text" className="setup-input-fields" onChange={(e) => this.props.handleMinChange(e, index)} />
         </div>
-  
-        <div className="input-field-group">
-          <div className="input-field-group__label">Maximum</div>
-          
-          <div className="input-field-group__dropdown-field">
-            <DropDown
-              className=""
-              placeholder="inclusive of"
-              options={["inclusive of", "Less Than"]}
-              onChange={(e) => this.props.onMaxChangeHandler(e, index)}
-            />
-          </div>
-          
-          <div className="input-field-group__text-field">
-            <input type="text" className="setup-input-fields" onChange={(e) => this.props.handleMaxChange(e, index)} />
-          </div>
+      </div>
+
+      <div className="input-field-group">
+        <div className="input-field-group__label">Maximum</div>
+        
+        <div className="input-field-group__dropdown-field">
+          <DropDown
+            className=""
+            placeholder="inclusive of"
+            options={["inclusive of", "Less Than"]}
+            onChange={(e) => this.props.onMaxChangeHandler(e, index)}
+          />
         </div>
-      </StatusContentFormPanel>
-    )
-  }
+        
+        <div className="input-field-group__text-field">
+          <input type="text" className="setup-input-fields" onChange={(e) => this.props.handleMaxChange(e, index)} />
+        </div>
+      </div>
+    </StatusContentFormPanel>
+  )
 
   loadAgeLimits = () => {
     let ageLimitHtml:any = [];

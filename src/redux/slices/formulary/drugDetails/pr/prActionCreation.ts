@@ -32,6 +32,15 @@ export const getPRSettings = createAsyncThunk(
   }
 );
 
+export const getDrugDetailsPRSettings = createAsyncThunk(
+  "drug_details/pr1_settings",
+  async (apiDetails: any) => {
+    let GET_URL = buildUrl({ apiDetails });
+    const requestHeaders = getHeaders();
+    return fetchRequest(GET_URL, requestHeaders);
+  }
+);
+
 export const getDrugDetailsPRList = createAsyncThunk(
   "drug_details/pr_list_data",
   async (apiDetails: any) => {
