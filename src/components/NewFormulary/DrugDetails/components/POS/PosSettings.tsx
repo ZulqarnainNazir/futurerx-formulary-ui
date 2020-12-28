@@ -42,6 +42,7 @@ const PosLimitSettings = (props) => {
           title="Place of Service"
           type={posSettingsStatus.type}
           handleStatus={handleStatus}
+          showDelete={false}
           isAdditionalCriteria={isAdditionalCriteria}
           deleteIconHandler={deleteIconHandler}
         >

@@ -31,6 +31,7 @@ function mapStateToProps(state) {
         formulary: state?.application?.formulary,
         formulary_lob_id: state?.application?.formulary_lob_id, //comme- 4, medicare-1 , medicate-2, exchnage -3 
         formulary_type_id: state?.application?.formulary_type_id,
+        descriptions: state.stepTherapyReducer.descriptions,
     }
 }
 
@@ -163,6 +164,33 @@ class GPM extends React.Component<any, any>{
         });
     }
 
+    componentWillReceiveProps(nextProps) {
+        debugger;
+        console.log('TIER: componentWillReceiveProps', nextProps);
+        
+        let tmpData = nextProps.descriptions;
+        if (tmpData && Array.isArray(tmpData) && tmpData.length > 0) {
+            let groupProp = "";
+            if (this.props.formulary_lob_id==1){
+                groupProp= "id_mcr_base_st_group_description"
+            }else if (this.props.formulary_lob_id==4){
+                groupProp = "id_base_st_group_description"; 
+            }
+            var result = tmpData.map(function (el) {
+                var element = {};
+                element["id"] = el[groupProp]; 
+                element["label"] = el.st_group_description_name;
+                element["status"] = el.is_setup_complete ? "completed" : "warning";
+                element["is_archived"] = el.is_archived;
+                console.log(element);
+                
+                return element;
+            })
+            this.setState({
+                groupsData: result,
+            });
+        }
+    }
     handleInputChange = (event) => {
         this.setState({
             searchInput: event.currentTarget.value,

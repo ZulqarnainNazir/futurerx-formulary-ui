@@ -142,11 +142,23 @@ function GroupHeader(props: any) {
         let lob_type = props.formulary_lob_id;
         let pathParams = props.saveGdm.current_group_des_id+'?entity_id='+props.formulary_id;
         props.cleanMessages({error:'',success:''})
-        props.newVersionGroupDescription({ lob_type:lob_type,pathParams: pathParams })
-        props.getStGrouptDescriptions({lob_type:lob_type,pathParams:props.saveGdm.formulary_id})
-        props.getStGrouptDescriptionVersions({lob_type:lob_type,pathParams:props.saveGdm.current_group_id})
-        props.getStGrouptDescription({lob_type:lob_type,pathParams:props.saveGdm.current_group_des_id})
-        props.getStTypes(props.saveGdm.formulary_id)
+        props.newVersionGroupDescription({ lob_type:lob_type,pathParams: pathParams }).then(json=> {
+            let apiDetails= {};
+            apiDetails["lob_type"] = props.formulary_lob_id;
+            apiDetails['pathParams'] = '/'+props.client_id;
+            props.getStGrouptDescriptions({lob_type:lob_type,pathParams:props.saveGdm.formulary_id})
+    
+            apiDetails['pathParams'] = '/'+props.saveGdm.current_group_id;
+            props.getStGrouptDescriptionVersions({lob_type:lob_type,pathParams:props.saveGdm.current_group_id}).then(json=>{
+                console.log(json);
+                setVersion(json.payload.data)
+                let v =props.version;
+            });
+    
+            apiDetails['pathParams'] = '/'+props.saveGdm.current_group_id;
+            props.getStGrouptDescription({lob_type:lob_type,pathParams:props.saveGdm.current_group_des_id})
+            props.getStTypes(props.saveGdm.formulary_id)
+        });
     }
     return (
         <div className={`version-wrapper${panelColor}`}>

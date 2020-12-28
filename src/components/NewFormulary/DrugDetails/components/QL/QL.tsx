@@ -17,6 +17,7 @@ import PanelGrid from "../../../../shared/Frx-components/panel-grid/PanelGrid";
 import { TabInfo } from "../../../../../models/tab.model";
 import { getTier } from "../../../../../redux/slices/formulary/tier/tierActionCreation";
 import Replace from "./components/Replace";
+import Remove from "./components/Remove";
 import FillLimitSettings from "./components/FillLimitSettings";
 import {
   getQlSummary,
@@ -65,6 +66,7 @@ interface tabsState {
   newParameter: any; //newParamterType;
   selectedDrugs: any;
   drugData: any;
+  selectedCriteria: any;
   selectedTab: string;
   isAdvanceSearchOpen: boolean;
   isLoading: boolean;
@@ -88,6 +90,7 @@ class Tier extends React.Component<any, tabsState> {
     newParameter: {},
     selectedDrugs: [],
     drugData: [],
+    selectedCriteria: [],
     selectedTab: constants.TYPE_REPLACE,
     isAdvanceSearchOpen: false,
     isLoading: false,
@@ -110,13 +113,28 @@ class Tier extends React.Component<any, tabsState> {
     switch (activeTabIndex) {
       case 0:
         // this.setState({ selectedTab: constants.TYPE_REPLACE });
-        return <Replace handleOnChange={this.handleOnChange} />;
+        return (
+          <Replace
+            handleOnChange={this.handleOnChange}
+            onUpdateSelectedCriteria={this.onUpdateSelectedCriteria}
+          />
+        );
       case 1:
         // this.setState({ selectedTab: "append" });
-        return <Replace handleOnChange={this.handleOnChange} />;
+        return (
+          <Replace
+            handleOnChange={this.handleOnChange}
+            onUpdateSelectedCriteria={this.onUpdateSelectedCriteria}
+          />
+        );
       case 2:
         // this.setState({ selectedTab: constants.TYPE_REMOVE });
-        return <div>Remove</div>;
+        return (
+          <Remove
+            selectedCriteria={this.state.selectedCriteria}
+            onUpdateSelectedCriteria={this.onUpdateSelectedCriteria}
+          />
+        );
     }
   };
 
@@ -395,6 +413,11 @@ class Tier extends React.Component<any, tabsState> {
       );
     }
   };
+
+  onUpdateSelectedCriteria = (currentSelectedCriteriaIds) => {
+    this.setState({ selectedCriteria: currentSelectedCriteriaIds });
+  };
+
   componentDidMount() {
     // this.props.getTier("1").then((json) => {
     //   console.log("*******************************" + json);
@@ -504,7 +527,9 @@ class Tier extends React.Component<any, tabsState> {
       : null;
     apiDetails["messageBody"]["is_select_all"] = false;
     apiDetails["messageBody"]["search_key"] = "";
-    apiDetails["messageBody"]["selected_criteria_ids"] = [];
+    apiDetails["messageBody"][
+      "selected_criteria_ids"
+    ] = this.state.selectedCriteria;
 
     //  apiDetails["messageBody"]["selected_"]
     // apiDetails["messageBody"]["sort_by"] = ["not_coverd_min_ages"];
@@ -523,7 +548,7 @@ class Tier extends React.Component<any, tabsState> {
 
         if (json.payload && json.payload.code === "200") {
           // alert("in if");
-          alert("{json.payload.code}:" + json.payload.code);
+          // alert("{json.payload.code}:" + json.payload.code);
           showMessage("Success", "success");
           this.state.drugData = [];
           this.state.drugGridData = [];
@@ -540,7 +565,7 @@ class Tier extends React.Component<any, tabsState> {
               this.initailizeQlSummary(json);
             });
         } else {
-          alert("in failure");
+          // alert("in failure");
           showMessage("Failure", "error");
         }
       });

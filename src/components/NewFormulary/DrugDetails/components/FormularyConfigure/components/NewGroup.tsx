@@ -17,7 +17,7 @@ import { Tag } from "antd";
 import Tags from './Tags'
 import { ReactComponent as CrossCircleWhiteBGIcon } from "../../../../../../assets/icons/crosscirclewhitebg.svg";
 import { saveGDM,editGDM } from "../../../../../../redux/slices/formulary/gdm/gdmSlice";
-import { getStGrouptDescription,getDrugLists } from "../../../../../../redux/slices/formulary/stepTherapy/stepTherapyActionCreation";
+import { getStGrouptDescription,getDrugLists,getStGrouptDescriptions } from "../../../../../../redux/slices/formulary/stepTherapy/stepTherapyActionCreation";
 
 interface Props {
   tooltip?: string;
@@ -64,9 +64,9 @@ const initialFormData:initialFormData = {
 }
 
 function mapStateToProps(state) {
-  if(state?.saveGdm?.success!=="" && state?.saveGdm?.success!==null){
-    showMessage('Saved Successfully', 'info');
-  }
+  // if(state?.saveGdm?.success!=="" && state?.saveGdm?.success!==null){
+  //   showMessage('Saved Successfully', 'success');
+  // }
   if(state?.saveGdm?.error){
     if(state.saveGdm.error.length>0){
       state.saveGdm.error.map(err => {
@@ -94,29 +94,9 @@ function mapDispatchToProps(dispatch) {
     editGDM: (data) => dispatch(editGDM(data)),
     getStGrouptDescription: (a) => dispatch(getStGrouptDescription(a)),
     getDrugLists: (a) => dispatch(getDrugLists(a)),
+    getStGrouptDescriptions: (arg) => dispatch(getStGrouptDescriptions(arg))
   }
 }
-
-const drug_list=[
-  {
-    "name":"my dl1",
-    "key":1,
-    "show":true,
-    "is_list":false,
-    "value":"my dl1",
-    "type":"",
-    "text":"my dl1"
-    },
-    {
-    "name":"my dl2",
-    "key":2,
-    "show":true,
-    "is_list":false,
-    "value":"my dl2",
-    "type":"",
-    "text":"my dl2"
-    }
-]
 
 function NewGroup(props: any) {
   const [formData, updateFormData] = React.useState(initialFormData);
@@ -125,6 +105,7 @@ function NewGroup(props: any) {
   const [showHeader, setShowHeader] = React.useState(props.formType);
   const [errorClass, setErrorClass] = React.useState('');
   const [drug_list_ids, setDrug_list_ids] = React.useState([]);
+  const [drug_list, setDrug_list] = React.useState([]);
 
   const handleChange = (e) => {
     const formVal = (e.target.value === 'yes' || e.target.value === 'true') ? true : (e.target.value === 'no' || e.target.value === 'false') ? false : e.target.value;
@@ -174,6 +155,23 @@ function NewGroup(props: any) {
     }
     setShowHeader(0)
     setErrorClass('');
+
+
+    props.getDrugLists(props.client_id).then((json) => {
+      //debugger;
+      let tmp_list:any = [];
+      json.payload.data.map(obj => {
+          let tmp_obj ={
+              key: obj.key, value: obj.value, text: obj.text,
+              name: obj.text,
+              "show":true,
+              "is_list":false,
+              "type":"",
+          };
+          tmp_list.push(tmp_obj);
+      });
+      setDrug_list(tmp_list)
+    });
   }, [props.StGDData || props.saveGdm || props.editMode])
 
   const handleSubmit = (e,is_validation: boolean) => {
@@ -181,13 +179,16 @@ function NewGroup(props: any) {
     if(props.formType===0 && props.formulary_lob_id===1){
       let msg:string[]=[];
       if(formData.st_group_description_name === ''){
-          msg.push("Formulary Description Name is required.");
+          //msg.push("Formulary Description Name is required.");
+          showMessage("Formulary Description Name is required.", 'error');
       }
       if(formData.st_criteria === ''){
-          msg.push("ST Criteria is required.");
+          //msg.push("ST Criteria is required.");
+          showMessage("ST Criteria is required.", 'error');
       }
       if(formData.change_indicator === ''){
-        msg.push("Change Indicator is required.");
+        //msg.push("Change Indicator is required.");
+        showMessage("Change Indicator is required.", 'error');
       }
       if(msg.length>0){
           console.log(msg)
@@ -198,7 +199,8 @@ function NewGroup(props: any) {
     if(props.formType===1 && props.formulary_lob_id===1){
       let msg:string[]=[];
       if(formData.st_group_description_name === ''){
-          msg.push("Formulary Description Name is required.");
+          //msg.push("Formulary Description Name is required.");
+          showMessage("Formulary Description Name is required.", 'error');
       }
       if(msg.length>0){
           console.log(msg)
@@ -210,7 +212,8 @@ function NewGroup(props: any) {
     if(props.formType===0 && props.formulary_lob_id===4){
       let msg:string[]=[];
       if(formData.st_group_description_name === ''){
-          msg.push("Formulary Description Name is required.");
+          //msg.push("Formulary Description Name is required.");
+          showMessage("Formulary Description Name is required.", 'error');
       }
       if(msg.length>0){
           console.log(msg)
@@ -221,7 +224,8 @@ function NewGroup(props: any) {
     if(props.formType===1 && props.formulary_lob_id===4){
       let msg:string[]=[];
       if(formData.st_group_description_name === ''){
-          msg.push("Formulary Description Name is required.");
+          //msg.push("Formulary Description Name is required.");
+          showMessage("Formulary Description Name is required.", 'error');
       }
       if(msg.length>0){
           console.log(msg)
@@ -230,7 +234,7 @@ function NewGroup(props: any) {
       }
     }
     setErrorClass('');
-    formData["id_st_type"] = (formData["st_type"]==="New Starts Only (2)")?8:7;
+    formData["id_st_type"] = (formData["st_type"]==="New Starts Only(2)")?8:7;
     formData["is_validation_required"] = is_validation;
     formData["drug_list_ids"] = drug_list_ids;
     let requestData = {};
@@ -240,14 +244,34 @@ function NewGroup(props: any) {
       requestData['apiPart'] = 'api/1/mcr-st-group-description';
       let id_st_group_description = formData["id_st_group_description"]?formData["id_st_group_description"]:0;
       requestData['pathParams'] = '/'+id_st_group_description+'/'+props?.formulary_id + '?entity_id=0';
-      props.editGDM(requestData)
+      props.editGDM(requestData).then(json=>{
+        if (json.payload && json.payload.success.data.code === '200') {
+          showMessage('Saved Successfully', 'success');
+          let apiDetails= {};
+          apiDetails["lob_type"] = props.formulary_lob_id;
+          apiDetails['pathParams'] = '/'+props?.client_id + '?entity_id='+props?.formulary_id;
+          props.getStGrouptDescriptions(apiDetails);
+        }else{
+          showMessage('Failure', 'error');
+        }
+      })
     }else{
       formData.change_indicator = parseInt(formData.change_indicator)
       requestData['messageBody'] = {...formData}
       requestData["lob_type"] = props.formulary_lob_id;
       requestData['apiPart'] = 'api/1/mcr-st-group-description/'+props.client_id;
       requestData['pathParams'] = '/'+props?.formulary_id + '?entity_id=0';
-      props.saveGDM(requestData)
+      props.saveGDM(requestData).then(json=>{
+        if (json.payload && json.payload.success.data.code === '200') {
+          showMessage('Saved Successfully', 'success');
+          let apiDetails= {};
+          apiDetails["lob_type"] = props.formulary_lob_id;
+          apiDetails['pathParams'] = '/'+props?.client_id + '?entity_id='+props?.formulary_id;
+          props.getStGrouptDescriptions(apiDetails);
+        }else{
+          showMessage('Failure', 'error');
+        }
+      })
     }
     setShowHeader(1)
     scrollPage(0, 500)
@@ -384,9 +408,9 @@ function NewGroup(props: any) {
                   <Fragment>
                     <span>What is the defualt ST Type for this description? <span className="astrict">*</span></span>
                     <div className="marketing-material radio-group">
-                      <RadioGroup aria-label="marketing-material-radio1" className="gdp-radio" name="st_type" onChange={handleChange}>
-                        <FormControlLabel value="Always Applies(1)" control={<Radio checked={formData.id_st_type === 7 ? true : false} />} label="Always Applies" disabled={editable} />
-                        <FormControlLabel value="New Starts Only (2)" control={<Radio checked={formData.id_st_type ===8 ? true : false} />} label="New Starts Only" disabled={editable} />
+                      <RadioGroup aria-label="marketing-material-radio1" className="gdp-radio" name="st_type" onChange={handleChange} value={formData.st_type} >
+                        <FormControlLabel value="Always Applies(1)" control={<Radio/>} label="Always Applies" disabled={editable} />
+                        <FormControlLabel value="New Starts Only(2)" control={<Radio/>} label="New Starts Only" disabled={editable} />
                       </RadioGroup>
                     </div> 
                     </Fragment>
@@ -394,7 +418,7 @@ function NewGroup(props: any) {
                         <Grid item xs={6}>
                             <div className="group">
                                 <label>ST GROUP DESCRIPTION <span className="astrict">*</span></label>
-                                <input type="text" name="st_group_description_name" onChange={handleChange} defaultValue={formData.st_group_description_name} disabled={editable} className={errorClass} />
+                                <input type="text" name="st_group_description_name" onChange={handleChange} value={formData.st_group_description_name} disabled={editable} className={errorClass} />
                             </div>
                         </Grid>
                     </Grid>
@@ -420,7 +444,8 @@ function NewGroup(props: any) {
                 <Fragment>
                       <Grid item xs={6}>
                       <label className="st-label">List <span className="astrict">*</span></label>
-                      <Tags options={drug_list} getAutoCompleteChange={getAutoCompleteChangeHandler} seleted={formData.drug_list_ids}/>
+                      <Tags options={drug_list} getAutoCompleteChange={getAutoCompleteChangeHandler}
+                       autoSelected={props.StGDData.drug_list_ids}/>
                       </Grid>
                     </Fragment>
                 <div className="setting-1 mb-20">

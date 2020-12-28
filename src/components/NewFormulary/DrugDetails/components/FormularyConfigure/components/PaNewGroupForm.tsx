@@ -329,7 +329,11 @@ function NewGroup(props: any) {
 
             props.getPaGrouptDescriptions(apiDetails);
           }else{
-            showMessage('Failure', 'error');
+            if (json.payload && json.payload.message !==undefined) {
+              showMessage(json.payload.message, 'error');
+            }else{
+              showMessage('Failure', 'error');
+            }
           }
         })
       }else{
@@ -344,7 +348,11 @@ function NewGroup(props: any) {
 
             props.getPaGrouptDescriptions(apiDetails);
           }else{
-            showMessage('Failure', 'error');
+            if (json.payload && json.payload.message !==undefined) {
+              showMessage(json.payload.message, 'error');
+            }else{
+              showMessage('Failure', 'error');
+            }
           }
         });
       }
@@ -623,7 +631,7 @@ function NewGroup(props: any) {
             <Grid item xs={12}>
               <div className='group'>
                 <label className='required-field'>PA GROUP DESCRIPTION</label>
-                <input type="text" name="pa_group_description_name" onChange={handleChange} defaultValue={formData.pa_group_description_name} disabled={props.editable} />
+                <input type="text" name="pa_group_description_name" onChange={handleChange} value={formData.pa_group_description_name} disabled={props.editable} />
               </div>
             </Grid>
             <Grid item xs={12}>

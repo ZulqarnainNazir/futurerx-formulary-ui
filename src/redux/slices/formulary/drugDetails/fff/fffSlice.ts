@@ -3,6 +3,7 @@ import {
   getDrugDetailsFFFSummary,
   getDrugDetailsFFFList,
   postRemoveFFFDrug,
+  postReplaceFFFDrug,
 } from "./fffActionCreation";
 import {
   getFFFSummaryFulfilled,
@@ -65,6 +66,24 @@ export const fffRemoveDrugSlice = createSlice({
       postReplaceDrugFulfilled(state, action);
     }),
     builder.addCase(postRemoveFFFDrug.rejected, (state, action) => {
+      postReplaceDrugRejected(state, action);
+    })
+  ),
+});
+
+// postReplaceDrug
+export const fffReplaceDrugSlice = createSlice({
+  name: "fffReplaceDrug",
+  initialState: fffState,
+  reducers: {},
+  extraReducers: (builder) => (
+    builder.addCase(postReplaceFFFDrug.pending, (state, action) => {
+      state.isLoading = true;
+    }),
+    builder.addCase(postReplaceFFFDrug.fulfilled, (state, action) => {
+      postReplaceDrugFulfilled(state, action);
+    }),
+    builder.addCase(postReplaceFFFDrug.rejected, (state, action) => {
       postReplaceDrugRejected(state, action);
     })
   ),

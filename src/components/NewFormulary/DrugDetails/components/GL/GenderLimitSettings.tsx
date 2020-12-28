@@ -1,6 +1,8 @@
 import React from 'react'
 import PanelHeader from '../../../../shared/Frx-components/panel-header/PanelHeader';
 import StatusContentFormPanel from '../common/StatusContentFormPanel/StatusContentFormPanel';
+import { Checkbox } from "antd";
+import Button from "../../../../shared/Frx-components/button/Button";
 
 import './GL.scss';
 
@@ -12,59 +14,65 @@ const AddIcon = () => (
   </svg>
 );
 
-const GenderLimitSettings = () => {
+const GenderLimitSettings = (props) => {
+  const {
+    serviceSettingsChecked,
+    glSettingsServies: { glSettings, glSettingsStatus },
+    handleStatus,
+    showGridHandler,
+  } = props;
+
+
   return (
     <div className="gender-limit-settings bordered mb-10">
       <PanelHeader title="Gender Limit Settings" tooltip="Gender Limit Settings" />
       
       <div className="inner-container">
-        <StatusContentFormPanel title="Gender" type="covered">
+        <StatusContentFormPanel title="Gender" type={glSettingsStatus.type} handleStatus={handleStatus} showDelete={false} >
             <div className="input-field-group">
               <div className="input-field-group__label">Select Gender:</div>
             
               <div className="input-field-group__radio-field-group">
-                  <div className="input-field-group__radio-field">      
-                    <input type="checkbox" id="vehicle1" name="N/A" value="female" />
-                    <label htmlFor="N/A" className="checkbox-label"> Female</label>
-                  </div>
-                  <div className="input-field-group__radio-field">      
-                    <input type="checkbox" id="vehicle1" name="N/A" value="male" />
-                    <label htmlFor="N/A" className="checkbox-label"> Male</label>
-                  </div>
-                  <div className="input-field-group__radio-field">      
-                    <input type="checkbox" id="vehicle1" name="N/A" value="male" />
-                    <label htmlFor="N/A" className="checkbox-label"> Unknown</label>
-                  </div>
+              {glSettings.map((gl) => (
+                <div
+                  className="input-field-group__radio-field"
+                  key={gl.index}
+                >
+                  <Checkbox
+                    id={gl.index}
+                    name={gl.index}
+                    onChange={serviceSettingsChecked}
+                    checked={gl.isChecked}
+                  ></Checkbox>
+                  <label
+                    htmlFor={gl.gl_type_name}
+                    className="checkbox-label"
+                  >
+                    {`${gl.gl_type_name}`}
+                  </label>
                 </div>
-            </div>
-        </StatusContentFormPanel>
-      
-        <StatusContentFormPanel title="Gender" type="not-covered">
-            <div className="input-field-group">
-              <div className="input-field-group__label">Select Gender:</div>
-            
-              <div className="input-field-group__radio-field-group">
-                  <div className="input-field-group__radio-field">      
-                    <input type="checkbox" id="vehicle1" name="N/A" value="N/A" />
-                    <label htmlFor="N/A" className="checkbox-label"> Female</label>
-                  </div>
-                  <div className="input-field-group__radio-field">      
-                    <input type="checkbox" id="vehicle1" name="N/A" value="N/A" />
-                    <label htmlFor="N/A" className="checkbox-label"> Male</label>
-                  </div>
-                  <div className="input-field-group__radio-field">      
-                    <input type="checkbox" id="vehicle1" name="N/A" value="N/A" />
-                    <label htmlFor="N/A" className="checkbox-label"> Unknown</label>
-                  </div>
+              ))}
+                {/* <div className="input-field-group__radio-field">      
+                  <input type="checkbox" id="vehicle1" name="N/A" value="female" />
+                  <label htmlFor="N/A" className="checkbox-label"> Female</label>
                 </div>
+                <div className="input-field-group__radio-field">      
+                  <input type="checkbox" id="vehicle1" name="N/A" value="male" />
+                  <label htmlFor="N/A" className="checkbox-label"> Male</label>
+                </div>
+                <div className="input-field-group__radio-field">      
+                  <input type="checkbox" id="vehicle1" name="N/A" value="male" />
+                  <label htmlFor="N/A" className="checkbox-label"> Unknown</label>
+                </div> */}
+              </div>
             </div>
-        </StatusContentFormPanel>
+        </StatusContentFormPanel>        
         
-        
-        <div className="gender-limit-settings__add-new-form-action">
+        {/* <div className="gender-limit-settings__add-new-form-action">
           <AddIcon/>
           <span className="gender-limit-settings__add-new-form-action-text">Add Gender Age Limit Criteria</span>
-        </div>
+        </div> */}
+        <Button label="Apply" onClick={showGridHandler} />
       </div>
     </div>
   )

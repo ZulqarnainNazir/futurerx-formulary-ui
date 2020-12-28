@@ -61,7 +61,7 @@ class ListItem extends Component<any, any> {
     this.initializePRSettingsListApi();
 
     this.initializeParentData();
-    this.loadSavedState();
+    // this.loadSavedState();
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -199,7 +199,7 @@ class ListItem extends Component<any, any> {
 
     this.setState({ posSettingsStatus }, () => {
       const { nodeId, card } = this.props;
-      this.props.handleStatusChange(nodeId, card);
+      // this.props.handleStatusChange(nodeId, card);
     });
   };
   render() {
