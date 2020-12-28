@@ -1,7 +1,11 @@
 import React from "react";
 import { connect } from "react-redux";
 import { Grid, Input } from "@material-ui/core";
+
+// import css
 import "./Tier.scss";
+import "./categoryclass.scss";
+
 import DialogPopup from "../../../../../shared/FrxDialogPopup/FrxDialogPopup";
 import {
   getTapList,
@@ -593,49 +597,54 @@ class CategoryClass extends React.Component<any, any> {
                 </div>
                 <div className="bordered">
                   <div className="header space-between pr-10">
-                    <div
-                      className="add-file-button"
-                      onClick={(e) =>
-                        this.handlePopupButtonClick(
-                          "override",
-                          "CATEGORY AND CLASS ASSIGNMENT"
-                        )
-                      }
-                    >
-                      Override
+                    <div className="category-class-title">
+                      <PanelHeader title="Select Drugs From" />
                     </div>
-                    <div
-                      style={{
-                        display: "flex",
-                        flexDirection: "row",
-                        alignItems: "center",
-                        justifyContent: "space-between",
-                      }}
-                    >
-                      <DropDown
-                        value={this.state.searchValue}
-                        options={this.state.searchNames}
-                        placeholder={this.state.filterPlaceholder}
-                        showSearch={true}
-                        onSearch={this.onInputValueChanged}
-                        onSelect={this.onSearchValueChanges}
-                      />
-                      {this.state.filter.length > 0 && (
-                        <span
-                          style={{ marginLeft: 10 }}
-                          onClick={this.clearSearchFilter}
-                        >
-                          Clear
-                        </span>
-                      )}
+                    <div className="category-class-button-wrapper">
+                      <div
+                        className="add-file-button"
+                        onClick={(e) =>
+                          this.handlePopupButtonClick(
+                            "override",
+                            "CATEGORY AND CLASS ASSIGNMENT"
+                          )
+                        }
+                      >
+                        Override
+                      </div>
+                      <div
+                        style={{
+                          display: "flex",
+                          flexDirection: "row",
+                          alignItems: "center",
+                          justifyContent: "space-between",
+                        }}
+                      >
+                        <DropDown
+                          value={this.state.searchValue}
+                          options={this.state.searchNames}
+                          placeholder={this.state.filterPlaceholder}
+                          showSearch={true}
+                          onSearch={this.onInputValueChanged}
+                          onSelect={this.onSearchValueChanges}
+                        />
+                        {this.state.filter.length > 0 && (
+                          <span
+                            style={{ marginLeft: 10 }}
+                            onClick={this.clearSearchFilter}
+                          >
+                            Clear
+                          </span>
+                        )}
+                      </div>
+                      <div
+                        className="advance-search-button"
+                        onClick={(e) => this.advanceSearchClickHandler(e)}
+                      >
+                        Advanced Search
+                      </div>
+                      <Button label="Save" className="Button" disabled />
                     </div>
-                    <div
-                      className="advance-search-button"
-                      onClick={(e) => this.advanceSearchClickHandler(e)}
-                    >
-                      Advanced Search
-                    </div>
-                    <Button label="Save" className="Button" disabled />
                   </div>
                   <FrxDrugGridContainer
                     enableSearch={false}
