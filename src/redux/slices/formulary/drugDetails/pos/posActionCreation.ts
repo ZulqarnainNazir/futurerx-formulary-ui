@@ -67,3 +67,12 @@ export const postRemovePOSDrug = createAsyncThunk(
     return fetchRequest(POST_URL, requestHeaders);
   }
 );
+
+export const postReplacePOSDrug = createAsyncThunk(
+  "drug_details/postReplacePOSDrug",
+  async (apiDetails: any) => {
+    let POST_URL = buildUrl({ apiDetails });
+    const requestHeaders = postHeaders(apiDetails);
+    return fetchRequest(POST_URL, requestHeaders);
+  }
+);

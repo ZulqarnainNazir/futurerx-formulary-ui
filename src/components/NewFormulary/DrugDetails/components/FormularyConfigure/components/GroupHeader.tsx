@@ -1,6 +1,11 @@
 import React, { useEffect, useState } from 'react'
 import STAlertDialog from './STAlertDialog';
 import Alerts from './PopupAlerts/Alerts'
+import DialogPopup from "../../../../../shared/FrxDialogPopup/FrxDialogPopup";
+import { Grid } from '@material-ui/core';
+import { DatePicker } from 'antd';
+import { getCompareFormularyVersionHistoryColumn } from "../../../../../../utils/grid/columns";
+import FrxDrugGridContainer from "../../../../../shared/FrxGrid/FrxDrugGridContainer";
 import {
     deleteGroupDescription,
     cloneGroupDescription,
@@ -8,7 +13,8 @@ import {
     newVersionGroupDescription,
     cleanMessages
 } from "../../../../../../redux/slices/formulary/gdm/gdmSlice";
-import { getStGrouptDescriptions, getStTypes, getStGrouptDescriptionVersions, getStGrouptDescription } from "../../../../../../redux/slices/formulary/stepTherapy/stepTherapyActionCreation";
+import { getStGrouptDescriptions, getStTypes, getStGrouptDescriptionVersions, getStGrouptDescription,
+    postSTGroupDescriptionFormularies,postApplySTGroupDescriptionFormularies } from "../../../../../../redux/slices/formulary/stepTherapy/stepTherapyActionCreation";
 import { connect } from 'react-redux';
 import { ToastContainer } from 'react-toastify';
 import showMessage from "../../../../Utils/Toast";
@@ -37,7 +43,9 @@ function mapDispatchToProps(dispatch) {
         deleteGroupDescription: (arg) => dispatch(deleteGroupDescription(arg)), // Delete
         cloneGroupDescription: (arg) => dispatch(cloneGroupDescription(arg)), // Clone
         archiveGroupDescription: (arg) => dispatch(archiveGroupDescription(arg)), // archive
-        newVersionGroupDescription: (arg) => dispatch(newVersionGroupDescription(arg)) // New Vesrion
+        newVersionGroupDescription: (arg) => dispatch(newVersionGroupDescription(arg)), // New Vesrion
+        postSTGroupDescriptionFormularies: (arg) => dispatch(postSTGroupDescriptionFormularies(arg)), // Version History
+        postApplySTGroupDescriptionFormularies: (arg) => dispatch(postApplySTGroupDescriptionFormularies(arg)) // Version History
     };
 }
 function GroupHeader(props: any) {
@@ -46,9 +54,53 @@ function GroupHeader(props: any) {
     const [versionList, setVersion] = useState([{ value: 'Version 1' }])
     const [placeHolder, setPlaceHolder] = React.useState('Version 1');
     const [panelColor, setPanelColor] = React.useState('');
+    const [showViewAll, setShowViewAll] = React.useState(false);
+    const [idField,setIdField] = React.useState('');
+    const [fomulariesList, setFormularies] = useState([{ }])
+    const [effectiveDate, setEffectiveDate] = React.useState(null);
+    const [selectedFormularies, updateSelectedFormularies] = React.useState([]);
+    const [selectedVersion, setSelectedVersion] = useState('')
     const versionListLength = versionList.length-1;
     const [selectedVersionId,setSelectedVersionId] = useState(null);
     const [selectedVersion, setSelectedVersion] = useState('')
+
+    const toggleShowViewAll = () => {
+        let apiDetails= {};
+         apiDetails["lob_type"] = props.formulary_lob_id;
+         apiDetails['pathParams'] = '/'+props.saveGdm.current_group_id;
+
+         if (props.formulary_lob_id==1){
+            setIdField('id_mcr_pa_group_description_formulary');
+         }else if (props.formulary_lob_id==4){
+            setIdField('id_pa_group_description_formulary');
+        }
+
+        props.postSTGroupDescriptionFormularies(apiDetails).then(json =>{
+            debugger;
+            let tmp_array:any=[];
+            let count=1;
+            json.payload.result.map(obj => {
+                obj['id'] = count;
+                obj['key'] = count;
+                tmp_array.push(obj);
+                count++;
+            });
+            setFormularies(tmp_array);
+        });
+        setShowViewAll(!showViewAll);
+      };
+
+      const onSelectedTableRowChanged = ( selectedRowKeys) => {
+        debugger;
+        fomulariesList.map(obj => obj['applied_version'] = '');
+        if (selectedRowKeys && selectedRowKeys.length > 0) {
+            let tmp : any = selectedRowKeys.map(tierId => {
+                fomulariesList[tierId - 1]['applied_version'] =selectedVersion;
+                return fomulariesList[tierId - 1][idField];
+            });
+            updateSelectedFormularies(tmp);
+        }
+      }
 
     useEffect(() => {
         if (props.version.length > 0) {
@@ -114,6 +166,47 @@ function GroupHeader(props: any) {
         return true;
     }
 
+    const handleEffectiveDate = date => {
+        setEffectiveDate(date);
+        //this.setState({ alertFormData: { effective_date: date,...this.state.alertFormData } });
+    }
+
+    const applyFormularies = (e:any) => {
+
+        debugger;
+        let apiDetails= {};
+
+        if (effectiveDate==null){
+            showMessage('Effective Date is required','info');
+            return;
+        }
+
+        if (selectedFormularies.length==0){
+            showMessage('Please select formulary','info');
+            return;
+        }
+
+        apiDetails["lob_type"] = props.formulary_lob_id;
+        apiDetails['pathParams'] = '/'+props.saveGdm.current_group_des_id;
+
+        apiDetails['messageBody'] = {};
+        apiDetails['messageBody']['effective_date'] = effectiveDate;
+        apiDetails['messageBody']['formulary_ids'] = selectedFormularies;
+
+        apiDetails['messageBody']['id_pa_group_description'] = props.saveGdm.current_group_des_id;
+        apiDetails['messageBody']['is_select_all'] = false;
+        apiDetails['messageBody']['pa_group_description_formulary_ids'] = [];
+
+        props.postApplySTGroupDescriptionFormularies(apiDetails).then((json => {
+            console.log("Save response is:" + JSON.stringify(json));
+            if (json.payload && json.payload.code === '200') {
+              showMessage('Success', 'success');
+            }else{
+              showMessage('Failure', 'error');
+            }
+          }))
+       
+    };
     const deleteGroup = (e: any,param:any) => {
         let lob_type = props.formulary_lob_id;
         let pathParams = props.saveGdm.current_group_des_id+'/CV?entity_id='+props.formulary_id;
@@ -180,7 +273,7 @@ function GroupHeader(props: any) {
                     : <option value={e.value}>{e.value}</option>
                 ))}
             </select>
-            <div className="item">
+            <div className="item" onClick={toggleShowViewAll}>
                 <svg
                     width="11"
                     height="11"
@@ -274,6 +367,53 @@ function GroupHeader(props: any) {
                     />
                 </STAlertDialog>
             ) : <ToastContainer/>}
+            <DialogPopup
+        showCloseIcon={true}
+        positiveActionText='Save'
+        negativeActionText=''
+        title='APPLY NEW VERSION TO FORMULARY'
+        handleClose={toggleShowViewAll}
+        handleAction={applyFormularies}
+        showActions={true}
+        height='80%'
+        width='80%'
+        open={showViewAll}
+      >
+          <div className='inner-container pa-new-group-form'>
+           <Grid container spacing={2}>
+                                <Grid xs={6}>
+                                    <div className="label">Effective Date<span className="astrict">*</span></div>
+                                    <div className="calender">
+                                        <DatePicker onChange={handleEffectiveDate} value={effectiveDate} 
+                                        placeholder="Effective Date" name="effective_date" />
+                                    </div>
+                                </Grid>
+            </Grid>
+        
+            <FrxDrugGridContainer
+                  isPinningEnabled={false}
+                  enableSearch={false}
+                  enableColumnDrag
+                  onSearch={() => { }}
+                  fixedColumnKeys={[]}
+                  pagintionPosition="topRight"
+                  gridName="DRUG GRID"
+                  enableSettings={false}
+                  columns={getCompareFormularyVersionHistoryColumn()}
+                  scroll={{ x: 2000, y: 377 }}
+                  isFetchingData={false}
+                  enableResizingOfColumns
+                  data={fomulariesList}
+                  rowSelection={{
+                    columnWidth: 50,
+                    fixed: true,
+                    type: "checkbox",
+                  onChange: onSelectedTableRowChanged,
+                  }}
+                />
+
+            </div>
+      </DialogPopup>
         </div>
     )
 }
