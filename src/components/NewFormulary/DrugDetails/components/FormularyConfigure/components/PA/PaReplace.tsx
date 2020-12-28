@@ -71,6 +71,7 @@ const mapStateToProps = (state) => {
     formulary_lob_id: state?.application?.formulary_lob_id,
     formulary_type_id: state?.application?.formulary_type_id,
     advancedSearchBody: state?.advancedSearch?.advancedSearchBody,
+    additionalCriteriaBody: state?.additionalCriteria?.additionalCriteriaBody,
     populateGrid: state?.advancedSearch?.populateGrid,
     closeDialog: state?.advancedSearch?.closeDialog,
   };
@@ -95,6 +96,7 @@ class PaReplace extends React.Component<any, any> {
     selectedLobFormulary: {},
     groupDescriptionProp: "",
     isAdditionalCriteriaOpen: false,
+    additionalCriteriaState: null,
   };
 
   onSelectedTableRowChanged = (selectedRowKeys) => {
@@ -151,8 +153,11 @@ class PaReplace extends React.Component<any, any> {
       }
       this.props.setAdvancedSearch(payload);
     }
-
     if (nextProps.additionalCriteriaBody) {
+      const additionalCriteriaState = nextProps.additionalCriteriaBody[1];
+      this.setState({ additionalCriteriaState }, () =>
+        console.log(this.state.additionalCriteriaState)
+      );
     }
   }
 
