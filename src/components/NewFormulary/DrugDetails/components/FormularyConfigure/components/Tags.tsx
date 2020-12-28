@@ -14,14 +14,17 @@ export default function CheckboxesTags(props:any) {
   const onchangeHandler = (e,val) => {
     props.getAutoCompleteChange(val)
   }
+  // let tt = props.autoSelected.length>0?props.autoSelected[0]:[{
+  //   value:'ff'
+  // }];
   return (
     <Autocomplete
       multiple
       id="checkboxes-tags-demo"
       options={props.options}
       disableCloseOnSelect
-      defaultValue = {props.seleted}
-      getOptionLabel={(option:any) => option.name}
+      defaultValue={[top100Films[0]]} 
+      getOptionLabel={(option:any) => option.value}
       onChange={onchangeHandler}
       renderOption={(option, { selected }) => (
         <React.Fragment>
@@ -31,7 +34,7 @@ export default function CheckboxesTags(props:any) {
             style={{ marginRight: 8 }}
             checked={selected}
           />
-          {option.name}
+          {option.value}
         </React.Fragment>
       )}
       style={{ width: 500 }}
@@ -41,3 +44,21 @@ export default function CheckboxesTags(props:any) {
     />
   );
 }
+
+const top100Films = [
+  {
+    "key":1,
+    "text":"my dl1",
+    "value":"my dl1"
+    },
+    {
+    "key":1,
+    "text":"my dl1",
+    "value":"my dl1"
+    },
+    {
+    "key":2,
+    "text":"my dl2",
+    "value":"my dl2"
+    }
+];
