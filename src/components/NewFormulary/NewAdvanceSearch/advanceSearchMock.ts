@@ -34,3 +34,40 @@ export const getCategoryList = () => {
   ];
   return categories;
 };
+
+export const getAdditionalCriteriaSectionList = () => {
+  return [
+    {
+      id: 1,
+      criteria: "Age",
+    },
+    {
+      id: 2,
+      criteria: "Gender",
+    },
+    {
+      id: 3,
+      criteria: "ICD",
+    },
+    {
+      id: 4,
+      criteria: "Pharmacy Network",
+    },
+    {
+      id: 5,
+      criteria: "Prescriber Taxonomy",
+    },
+    {
+      id: 6,
+      criteria: "Place of Service",
+    },
+    {
+      id: 7,
+      criteria: "Patient Residence",
+    },
+    {
+      id: 8,
+      criteria: "Prerequisite Claims History & Lookback",
+    },
+  ];
+};

@@ -90,6 +90,9 @@ interface FrxDrugGridProps<T> extends Grid<T> {
   selectedCurrentPage?: any;
   applyFilter?:any;
   getColumnSettings?:any;
+  customSettingIcon?:any;
+  onRowExpandHandler?:any;
+  onSettingsCellClick?:any;
 }
 interface FrxDrugGridState<T> {
   filteredInfo: null;
@@ -390,6 +393,7 @@ class FrxDrugGrid extends Component<FrxDrugGridProps<any>, FrxDrugGridState<any>
 										handleCheck={this.props.handleCheck}
 										rowSelectionChange={this.rowSelectionChange}
                     isRowSelectorCheckbox={this.props.isRowSelectorCheckbox}
+                    customSettingIcon={this.props.customSettingIcon}
                     // isSeparateCheckboxColumn={this.props.isSeparateCheckboxColumn}
                     handleSettingsComponentMenuClose={
                       settingsComponentEnabled
@@ -848,7 +852,9 @@ class FrxDrugGrid extends Component<FrxDrugGridProps<any>, FrxDrugGridState<any>
     const settingsAnchor = eventTarget;
     const settingsMenuItems = data.items ? data.items : [];
     const keys = this.state.expandedKeys;
-
+    if(this.props.onSettingsCellClick){
+      this.props.onSettingsCellClick(data,eventTarget);
+    }
     const expandedKeys = expanded
       ? keys.concat(data.key)
       : keys.filter((k) => k !== data.key);
@@ -2149,6 +2155,9 @@ class FrxDrugGrid extends Component<FrxDrugGridProps<any>, FrxDrugGridState<any>
     const expandedKeys = expanded
       ? keys.concat(record.key)
       : keys.filter((k) => k !== record.key);
+    if(this.props.onRowExpandHandler){
+      this.props.onRowExpandHandler(expandedKeys);
+    }
     this.setState({ expandedKeys });
   };
 
@@ -2196,12 +2205,12 @@ class FrxDrugGrid extends Component<FrxDrugGridProps<any>, FrxDrugGridState<any>
 * @author Deepak_T
 */
   withDataExpandedRow = (WrappedComponent: any, data: any) => {
+    //console.log('expand row render:'+JSON.stringify(data));
     if (!WrappedComponent) return;
-
     return (
       <WrappedComponent
 
-        data={data}
+        data={Object.assign({},data)}
       />
     );
   };

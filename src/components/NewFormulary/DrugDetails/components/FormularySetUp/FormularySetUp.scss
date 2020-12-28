@@ -1,7 +1,7 @@
 .general-information-container,
 .formulary-design-container,
 .supplemental-models-container,
-.tiers-information-container, 
+.tiers-information-container,
 .medicare-information-container {
   background: #ffffff;
   border: 1px solid #e5e5e5;
@@ -34,41 +34,56 @@
     cursor: pointer;
   }
 }
-.formulary-design-container,.general-information-container,.medicare-information-container{
+
+.custom-input-wrapper {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+  input {
+    margin-left: 26px;
+    margin-top: 0 !important;
+  }
+  svg {
+    margin-left: 10px;
+    cursor: pointer;
+  }
+}
+.formulary-design-container,
+.general-information-container,
+.medicare-information-container {
   .radio-group {
-    .radio-group-custom{
+    .radio-group-custom {
       display: flex;
       width: 100%;
       flex-direction: row;
-      label{
-        > span.MuiButtonBase-root{
+      label {
+        > span.MuiButtonBase-root {
           padding-right: 12px;
         }
-        input[type="radio"] + div{
+        input[type="radio"] + div {
           height: 16px;
           width: 16px;
           border-radius: 50%;
           background: white;
           border: 2px solid #ddd;
-          svg{
+          svg {
             display: none;
           }
         }
-        input[type="radio"]:checked + div{
-          background: #2055B5;
+        input[type="radio"]:checked + div {
+          background: #2055b5;
           height: 16px;
           width: 16px;
           border-radius: 50%;
-          border: none
-          
+          border: none;
         }
-        span.MuiFormControlLabel-label{
+        span.MuiFormControlLabel-label {
           font-size: 12px;
           text-transform: none;
         }
       }
-      &.mr-80{
-        label{
+      &.mr-80 {
+        label {
           margin-right: 77px;
         }
       }
@@ -101,12 +116,11 @@
 .setup-input-fields {
   border: 1px solid #c4c4c4 !important;
   position: initial;
-  &.other-input{
+  &.other-input {
     width: 175px !important;
     margin-left: 26px;
   }
 }
-
 
 ::placeholder {
   font-weight: 500;
@@ -119,16 +133,26 @@
 .tiers-information-fields-wrapper {
   padding: 15px;
 }
-.tiers-information-fields-wrapper{
-  .tiers-dropdown-wrapper{
-    label{
+.tiers-information-fields-wrapper {
+  .tiers-dropdown-wrapper {
+    label {
       text-transform: none;
       margin-bottom: 0;
       line-height: 12px;
     }
-    .tier{
+    .tier {
       display: flex;
       align-items: center;
+    }
+    .custom-tier-wrapper {
+      // border: 1px solid green;
+      .custom-tier {
+        border: 1px solid #e5e5e5;
+        outline: none;
+      }
+      .delete-icon {
+        margin-left: 5px;
+      }
     }
   }
 }
@@ -187,7 +211,7 @@
   right: 12px;
   top: 10px;
 }
-.add-tag-input-wrapper{
+.add-tag-input-wrapper {
   position: relative;
   display: inline-block;
 }
@@ -206,7 +230,8 @@
   color: #1d54b4 !important;
 }
 
-.reporting-tag-group, .state-group {
+.reporting-tag-group,
+.state-group {
   margin-top: 20px;
   position: relative;
 }
@@ -219,7 +244,7 @@
 
 .checkbox-wrapper {
   display: flex;
-  &.other-checkbox-wrapper{
+  &.other-checkbox-wrapper {
     display: block;
   }
 }
@@ -270,10 +295,12 @@
 .add-new-cbx-btn-wrapper {
   display: flex;
   margin-top: 10px;
-  margin-left: 7px;
+  margin-left: 26px;
+  width: 75px;
+  cursor: pointer;
 }
 
-.add-new-text a {
+.add-new-text span {
   font-size: 12px;
   text-decoration: underline dashed;
   color: #707683;
@@ -299,6 +326,13 @@
   width: 200px !important;
 }
 
+.custom-tier-wrapper {
+  justify-content: space-between;
+  width: 200px;
+}
+.custom-tier {
+  width: 180px;
+}
 .border-bottom {
   border-bottom: 1px solid #c4c4c4;
 }
@@ -343,24 +377,24 @@
 }
 
 .medicare-information-container {
-  .mb-16{
+  .mb-16 {
     margin-bottom: 16px;
   }
   &__wrapper {
     padding: 20px;
   }
-  
+
   &__checkbox-ul {
     list-style: none;
     padding-top: 0px !important;
     padding-left: 0px;
   }
-  
+
   .group {
     // padding-top: 20px;
     // padding-left: 20px;
   }
-  
+
   .field-group {
     margin-bottom: 8px;
     &__label-container {
@@ -369,19 +403,18 @@
       height: 100%;
       margin-bottom: 6px;
     }
-    
+
     &__tooltip-container {
-      
     }
-    
+
     &__radio-group {
       display: flex;
     }
-    
+
     &__text-field {
       margin-bottom: 10px !important;
     }
-    
+
     &__post-fix-text {
       font-family: Roboto;
       font-style: normal;
@@ -394,25 +427,25 @@
   }
 }
 
-.input-link.clone-formulary-link{
+.input-link.clone-formulary-link {
   margin-top: 15px !important;
   pointer-events: none;
 }
-.input-link.select-formulary-link{
+.input-link.select-formulary-link {
   margin-top: 10px !important;
   pointer-events: none;
 }
-.text-tran-none{
+.text-tran-none {
   text-transform: none !important;
 }
-.radio-group{
-  label{
-    span.label{
+.radio-group {
+  label {
+    span.label {
       text-transform: none;
       color: #707683;
       font-size: 12px;
     }
-    span.checkmark{
+    span.checkmark {
       height: 16px;
       width: 16px;
       border: 2px solid #ddd;
@@ -420,9 +453,9 @@
     }
   }
 }
-.no-transform{
-  label{
-    span.label{
+.no-transform {
+  label {
+    span.label {
       text-transform: none;
       color: #707683;
     }

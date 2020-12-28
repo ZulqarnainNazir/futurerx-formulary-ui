@@ -1,14 +1,17 @@
 import {createSlice} from "@reduxjs/toolkit";
 
-import { getPaSummary,getPaGrouptDescriptionVersions,getPaGrouptDescription } from "./paActionCreation";
+import { getPaSummary,getPaGrouptDescriptionVersions,getPaGrouptDescription,getPaGrouptDescriptions } from "./paActionCreation";
 
-import { getPaFulfilled,getPaRejected,getVersionFulfilled,getVersionRejected,getPaDescriptionFulfilled,getPaDescriptionRejected } from "./paReducers";
+import { getPaFulfilled,getPaRejected,getVersionFulfilled,getVersionRejected,
+  getPaDescriptionFulfilled,getPaDescriptionRejected,
+  getPaDescriptionsFulfilled,getPaDescriptionsRejected } from "./paReducers";
 
 const paState: any = {
   data: {},
   isLoading: false,
   paVersion:{},
-  description:{}
+  description:{},
+  descriptions:{}
 }
   
 
@@ -36,6 +39,15 @@ export const paSlice = createSlice({
     }),
     builder.addCase(getPaGrouptDescription.rejected, (state, action) => {
       getPaDescriptionRejected(state, action);
+    }),
+    builder.addCase(getPaGrouptDescriptions.pending, (state, action) => {
+      state.isLoading = true;
+    }),
+    builder.addCase(getPaGrouptDescriptions.fulfilled, (state, action) => {
+      getPaDescriptionsFulfilled(state, action);
+    }),
+    builder.addCase(getPaGrouptDescriptions.rejected, (state, action) => {
+      getPaDescriptionsRejected(state, action);
     })
   )
 });

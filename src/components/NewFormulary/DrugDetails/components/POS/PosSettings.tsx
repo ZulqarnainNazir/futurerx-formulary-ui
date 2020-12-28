@@ -21,6 +21,8 @@ const PosLimitSettings = (props) => {
     selectAllHandler,
     showGridHandler,
     handleStatus,
+    isAdditionalCriteria,
+    deleteIconHandler,
   } = props;
 
   // id_place_of_service_type: 1,
@@ -29,17 +31,20 @@ const PosLimitSettings = (props) => {
   // checked: false
   return (
     <div className="pos-limit-settings bordered mb-10">
-      <PanelHeader
-        title="place of service settings"
-        tooltip="place of service settings"
-      />
-
+      {showGridHandler ? (
+        <PanelHeader
+          title="place of service settings"
+          tooltip="place of service settings"
+        />
+      ) : null}
       <div className="inner-container">
         <StatusContentFormPanel
           title="Place of Service"
           type={posSettingsStatus.type}
           handleStatus={handleStatus}
           showDelete={false}
+          isAdditionalCriteria={isAdditionalCriteria}
+          deleteIconHandler={deleteIconHandler}
         >
           <div className="input-field-group">
             <div className="input-field-group__header">
@@ -148,7 +153,9 @@ const PosLimitSettings = (props) => {
           </span>
         </div> */}
       </div>
-      <Button label="Apply" onClick={showGridHandler} />
+      {showGridHandler ? (
+        <Button label="Apply" onClick={showGridHandler} />
+      ) : null}
     </div>
   );
 };

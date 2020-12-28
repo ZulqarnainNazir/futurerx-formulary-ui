@@ -66,8 +66,15 @@ const DropdownArrowIcon = () => (
   </svg>
 );
 
-// const StatusContentFormPanel = (props) => {
-//   const { title = "", type, children, handleStatus } = props;
+const StatusContentFormPanel = (props) => {
+  const {
+    title = "",
+    type,
+    children,
+    handleStatus,
+    isAdditionalCriteria,
+    deleteIconHandler,
+  } = props;
   // const [statusType, setStatusType] = useState(type ? type : "covered");
 
   // const handleDropdown = (value) => {
@@ -88,10 +95,10 @@ const StatusContentFormPanel = (props) => {
     <Menu>
       {/* <Menu.Item key="covered" onClick={(e) => handleDropdown(e.key)}> */}
       <Menu.Item key="covered" onClick={(e) => handleStatus(e.key)}>
-        Covered
+        {isAdditionalCriteria ? "include" : "Covered"}
       </Menu.Item>
       <Menu.Item key="not-covered" onClick={(e) => handleStatus(e.key)}>
-        Not Covered
+        {isAdditionalCriteria ? "exclude" : "Not Covered"}
       </Menu.Item>
     </Menu>
   );
@@ -102,7 +109,7 @@ const StatusContentFormPanel = (props) => {
         return (
           <>
             <CorrectIcon />
-            <span>covered</span>
+            {isAdditionalCriteria ? <span>include</span> : <span>covered</span>}
             <DropdownArrowIcon />
           </>
         );
@@ -110,7 +117,11 @@ const StatusContentFormPanel = (props) => {
         return (
           <>
             <InCorrectIcon />
-            <span>not covered</span>
+            {isAdditionalCriteria ? (
+              <span>exclude</span>
+            ) : (
+              <span>not covered</span>
+            )}
             <DropdownArrowIcon />
           </>
         );
@@ -173,7 +184,7 @@ const StatusContentFormPanel = (props) => {
 
         {showDelete ? (
           <div className="status-content-form-panel__delete-wrapper">
-            <Box component="span" display="block">
+            <Box component="span" display="block" onClick={deleteIconHandler}>
               <svg
                 width="13"
                 height="15"
@@ -187,11 +198,12 @@ const StatusContentFormPanel = (props) => {
                 />
               </svg>
             </Box>
-          </div>
-        ) : null }
+          </div> 
+        ) : null}
       </div>
     </div>
   );
+};
 };
 
 export default StatusContentFormPanel;

@@ -525,10 +525,13 @@ class DrugDetailPOS extends React.Component<any, any> {
         showGrid: false,
       },
       () => console.log("ROW CHANGE UPDATED STATE: ", this.state.posCheckedList)
-    );
+    )
   };
 
   showGridHandler = () => {
+    this.setState({
+      showGrid: !this.state.showGrid,
+    });
     this.getPOSDrugsList();
     console.log("The State of the POS Tab = ", this.state);
   };

@@ -82,8 +82,15 @@ export default class Groups extends React.Component<Props, any> {
 
 
     getStatus = () => {
-        if (this.props.isSelected){
-            return   'orange-fill';
+        if (this.props.isSelected  ){
+            if (this.props.statusType== 'warning'){
+                return   'orange-fill';
+            }else if (this.props.statusType== 'completed'){
+                return 'orange-fill';
+            }else{
+                return '';
+            }
+            
         }
         switch (this.props.statusType) {
             case 'selected':

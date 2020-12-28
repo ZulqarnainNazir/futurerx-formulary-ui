@@ -1,18 +1,16 @@
 import axios from "axios";
 import { Formulary } from "./formulary";
 import { BASE_URL1 } from "../../../../api/http-helper";
+import { REQUEST_HEADER } from "../../../../api/http-commons";
+
 import {
   DesignOptions,
   GeneralOptions,
   MedicareOptions,
   SupplementalOptions,
+  TierOptions,
 } from "./setupOptionsSlice";
 
-const headers = {
-  Authorization: "Bearer 5d123376-9888-4a4f-a167-9494485fe10d",
-  Accept: "application/json",
-  "Content-Type": "application/json;charset=UTF-8",
-};
 
 export async function getGeneralOptions(
   type: number,
@@ -25,25 +23,31 @@ export async function getGeneralOptions(
   if (id > 0) {
     url2 += `/${id}`;
   }
+  let url3 = `${BASE_URL1}api/1/formularies/${type}`;
 
   const request0 = axios.get(url0, {
-    headers: headers,
+    headers: REQUEST_HEADER,
   });
   const request1 = axios.get(url1, {
-    headers: headers,
+    headers: REQUEST_HEADER,
   });
   const request2 = axios.get(url2, {
-    headers: headers,
+    headers: REQUEST_HEADER,
+  });
+  const request3 = axios.get(url3, {
+    headers: REQUEST_HEADER,
   });
 
   return await axios
-    .all([request0, request1, request2])
+    .all([request0, request1, request2, request3])
     .then(
       axios.spread((...responses) => {
         const response0 = responses[0];
         const response1 = responses[1];
         const response2 = responses[2];
+        const response3 = responses[3];
         //console.log(response0, response1, response2);
+        //console.log(response3);
         let list0 = [];
         if (response0?.data?.code === "200") {
           list0 = response0?.data?.data;
@@ -56,17 +60,22 @@ export async function getGeneralOptions(
         if (response2?.data?.code === "200") {
           list2 = response2?.data?.data;
         }
+        let list3 = [];
+        if (response3?.data?.code === "200") {
+          list3 = response3?.data?.data;
+        }
 
         //console.log(list0, list1, list2);
         return {
           formularyType: list0,
           contractYear: list1,
           classification_systems: list2,
+          clone_source_formularies: list3
         };
       })
     )
     .catch((errors) => {
-      console.error(errors);
+      //console.error(errors);
     });
 }
 
@@ -76,7 +85,7 @@ export async function getSubMthsOptions(
   let url = `${BASE_URL1}api/1/formulary-submission-months/${year}`;
   try {
     const response = await axios.get(url, {
-      headers: headers,
+      headers: REQUEST_HEADER,
     });
     // console.log("***** getSubMthsOptions  - Success");
     // console.log(response);
@@ -100,7 +109,7 @@ export async function getStatesOptions(
   }
   try {
     const response = await axios.get(url, {
-      headers: headers,
+      headers: REQUEST_HEADER,
     });
     //  console.log("***** getStatesOptions  - Success");
     //  console.log(response);
@@ -131,7 +140,7 @@ export async function getMedicareOptions(
   }
   try {
     const response = await axios.get(url, {
-      headers: headers,
+      headers: REQUEST_HEADER,
     });
     //console.log("***** SETUP getMedicareOptions  - Success");
     //console.log(response);
@@ -156,7 +165,7 @@ export async function getDesignOptions(
   }
   try {
     const response = await axios.get(url, {
-      headers: headers,
+      headers: REQUEST_HEADER,
     });
     //console.log("***** SETUP getDesignOptions  - API");
     //console.log(response);
@@ -181,7 +190,7 @@ export async function getSupplementalOptions(
   }
   try {
     const response = await axios.get(url, {
-      headers: headers,
+      headers: REQUEST_HEADER,
     });
     //console.log("***** SETUP getDesignOptions  - API");
     //console.log(response);
@@ -202,7 +211,7 @@ export async function getTierOptions(
   type: number,
   id: number,
   tier_level: number
-): Promise<SupplementalOptions | any> {
+): Promise<TierOptions | any> {
   //let url = `${this.apiBaseUrl}/1/tier-labels/1/0/${id_formulary_type}`;
   let url = `${BASE_URL1}api/1/tier-labels/${type}/${tier_level}`;
   if (id > 0) {
@@ -210,7 +219,7 @@ export async function getTierOptions(
   }
   try {
     const response = await axios.get(url, {
-      headers: headers,
+      headers: REQUEST_HEADER,
     });
     //console.log("***** SETUP getDesignOptions  - API");
     //console.log(response);

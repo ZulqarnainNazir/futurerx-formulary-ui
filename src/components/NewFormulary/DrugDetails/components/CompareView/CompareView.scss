@@ -1,0 +1,19 @@
+.compare-formularies-container {
+  .bordered,
+  .pointer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 6px 6px;
+  }
+}
+
+.compare-table-root {
+  .flex-container {
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .inner-container {
+  }
+}

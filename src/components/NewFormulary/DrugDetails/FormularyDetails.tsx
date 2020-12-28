@@ -8,6 +8,7 @@ import "./FormularyDetails.scss";
 import FormularySetUp from "./components/FormularySetUp/FormularySetUp";
 import Validation from "../../Validation/Validation";
 import {connect} from 'react-redux';
+import { setAdvancedSearch } from "../../../redux/slices/formulary/advancedSearch/advancedSearchSlice";
 
 const tabs = [
   { id: 1, text: "Setup" },
@@ -17,6 +18,12 @@ const tabs = [
   { id: 5, text: "Complete" },
   { id: 6, text: "Bazaar" },
 ];
+
+function mapDispatchToProps(dispatch) {
+  return {
+    setAdvancedSearch: (a) => dispatch(setAdvancedSearch(a))
+  };
+}
 
 const mapStateToProps = (state) => {
   //console.log(state)
@@ -40,6 +47,8 @@ class FormularyDetails extends React.Component<any, any> {
       }
       return tab;
     });
+    let payload = { advancedSearchBody: {}, populateGrid: false, closeDialog: false, listItemStatus: {} };
+    this.props.setAdvancedSearch(payload);
     this.setState({ tabs, activeTabIndex });
   };
 
@@ -53,7 +62,7 @@ class FormularyDetails extends React.Component<any, any> {
     const tabIndex = this.state.activeTabIndex;
     switch (tabIndex) {
       case 0:
-        return <FormularySetUp />;
+        return <FormularySetUp saveAndContinue={this.onClickTab}/>;
       case 1:
         return <FormularyConfigure />;
       case 2:
@@ -77,7 +86,6 @@ class FormularyDetails extends React.Component<any, any> {
 
   render() {
     // console.log("=============",this.props)
-    console.log('THe Active Tab Index = ', this.state.activeTabIndex)
     const fData = this.props.data;
     return (
       <>
@@ -95,4 +103,4 @@ class FormularyDetails extends React.Component<any, any> {
     );
   }
 }
-export default connect(mapStateToProps)(FormularyDetails);
+export default connect(mapStateToProps,mapDispatchToProps)(FormularyDetails);

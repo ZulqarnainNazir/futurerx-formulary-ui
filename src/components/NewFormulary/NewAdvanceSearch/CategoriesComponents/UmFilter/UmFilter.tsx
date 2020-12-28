@@ -17,39 +17,73 @@ const mapStateToProps = (state) => {
     advancedSearchBody: state?.advancedSearch?.advancedSearchBody,
     populateGrid: state?.advancedSearch?.populateGrid,
     closeDialog: state?.advancedSearch?.closeDialog,
+    formulary_id: state?.application?.formulary_id,
+    formulary: state?.application?.formulary,
+    formulary_lob_id: state?.application?.formulary_lob_id,
+    formulary_type_id: state?.application?.formulary_type_id
   };
 };
 
 const umfilter = [
-  { id: 1, lable: "N/A" , key: 'NA1'},
-  { id: 2, lable: "Limited Access" , key: 'NA2'},
-  { id: 3, lable: "MO/NM Indicator" , key: 'NA3' },
-  { id: 4, lable: "Additional Demonstration Drugs", key: 'is_add' },
-  { id: 5, lable: "Indication Based Coverage" , key: 'NA5' },
-  { id: 6, lable: "Full Gap Coverage" , key: 'is_pgc' },
-  { id: 7, lable: "ST Type 1" , key: 'NA7' },
-  { id: 8, lable: "ST Type 2" , key: 'NA8' },
-  { id: 9, lable: "QL Type 1" , key: 'NA9' },
-  { id: 10, lable: "QL Type 2" , key: 'NA10' },
-  { id: 11, lable: "Partial Gap Coverage" , key: 'is_pa' },
-  { id: 12, lable: "Free First Fill" , key: 'is_fff' },
-  { id: 13, lable: "Home Infusion" , key: 'is_hi' },
-  { id: 14, lable: "Value-Based Insurance Design" , key: 'is_vbid' },
-  { id: 15, lable: "Capped Benefits" , key: 'NA15' },
-  { id: 16, lable: "PA Type 1" , key: 'NA16' },
-  { id: 17, lable: "PA Type 2" , key: 'NA17' },
-  { id: 18, lable: "PA Type 3" , key: 'NA18' },
-  { id: 19, lable: "UM Criteria" , key: 'NA19' },
-  { id: 20, lable: "LIS Cost-Sharing Reduction" , key: 'is_lis' },
-  { id: 21, lable: "Part B Step Therapy" , key: 'NA21' },
-  { id: 22, lable: "Senior Savings Model" , key: 'NA22' },
-  { id: 23, lable: "Abridged Formulary" , key: 'NA23' },
-  { id: 24, lable: "other" , key: 'NA24' },
+  { id: 1, lable: "N/A" , key: 'NA1', code:1, isDisabled: false},
+  { id: 2, lable: "Limited Access" , key: 'NA2', code:1, isDisabled: false},
+  { id: 3, lable: "MO/NM Indicator" , key: 'NA3', code:1, isDisabled: false},
+  { id: 4, lable: "Additional Demonstration Drugs", key: 'is_add', code:1, isDisabled: false },
+  { id: 5, lable: "Indication Based Coverage" , key: 'NA5' , code:1, isDisabled: false},
+  { id: 6, lable: "Full Gap Coverage" , key: 'is_pgc', code:1, isDisabled: false},
+  { id: 7, lable: "ST Type 1" , key: 'NA7' , code:1, isDisabled: false},
+  { id: 8, lable: "ST Type 2" , key: 'NA8' , code:1, isDisabled: false},
+  { id: 9, lable: "QL Type 1" , key: 'NA9' , code:1, isDisabled: false},
+  { id: 10, lable: "QL Type 2" , key: 'NA10' , code:1, isDisabled: false},
+  { id: 11, lable: "Partial Gap Coverage" , key: 'is_pa' , code:1, isDisabled: false },
+  { id: 12, lable: "Free First Fill" , key: 'is_fff' , code:1, isDisabled: false},
+  { id: 13, lable: "Home Infusion" , key: 'is_hi' , code:1, isDisabled: false},
+  { id: 14, lable: "Value-Based Insurance Design" , key: 'is_vbid' , code:1, isDisabled: false},
+  { id: 15, lable: "Capped Benefits" , key: 'NA15' , code:1, isDisabled: false},
+  { id: 16, lable: "PA Type 1" , key: 'NA16' , code:1, isDisabled: false},
+  { id: 17, lable: "PA Type 2" , key: 'NA17' , code:1, isDisabled: false},
+  { id: 18, lable: "PA Type 3" , key: 'NA18' , code:1, isDisabled: false},
+  { id: 19, lable: "UM Criteria" , key: 'NA19' , code:1, isDisabled: false},
+  { id: 20, lable: "LIS Cost-Sharing Reduction" , key: 'is_lis' , code:1, isDisabled: false},
+  { id: 21, lable: "Part B Step Therapy" , key: 'NA21' , code:1, isDisabled: false},
+  { id: 22, lable: "Senior Savings Model" , key: 'NA22' , code:1, isDisabled: false},
+  { id: 23, lable: "Abridged Formulary" , key: 'NA23' , code:1, isDisabled: false},
+  { id: 24, lable: "other" , key: 'NA24' , code:1, isDisabled: false},
+];
+
+const umfilterNonMcr = [
+  { id: 1, lable: "N/A" , key: 'is_na', code:68, isDisabled: false},
+  { id: 2, lable: "Prior Authorization" , key: 'is_pa', code:58, isDisabled: false},
+  { id: 3, lable: "Age Limits" , key: 'is_al' , code:61, isDisabled: false},
+  { id: 4, lable: "Patient Residence", key: 'is_pr' , code:64, isDisabled: false},
+  { id: 5, lable: "Place of Service" , key: 'is_ps' , code:67, isDisabled: false},
+  { id: 6, lable: "Free First Fill" , key: 'is_fff' , code:439, isDisabled: false},
+  { id: 7, lable: "ST Type 1" , key: 'NA7' , code:1, isDisabled: true},
+  { id: 8, lable: "ST Type 2" , key: 'NA8' , code:1, isDisabled: true},
+  { id: 9, lable: "Gender Limits" , key: 'is_gl' , code:62, isDisabled: false},
+  { id: 10, lable: "Pharmacy Networks" , key: 'is_pn' , code:65, isDisabled: false},
+  { id: 11, lable: "ICD Limits" , key: 'is_icdl' , code:63, isDisabled: false},
+  { id: 12, lable: "Presciber Taxonomy" , key: 'is_pt' , code:66, isDisabled: false},
+  { id: 13, lable: "PA Type 1" , key: 'NA9' , code:1, isDisabled: true},
+  { id: 14, lable: "PA Type 2" , key: 'NA10' , code:1, isDisabled: true},
+  { id: 15, lable: "UM Criteria" , key: 'NA11' , code:1, isDisabled: true},
+  { id: 16, lable: "QL Type 1" , key: 'NA17' , code:1, isDisabled: true},
+  { id: 17, lable: "QL Type 2" , key: 'NA18' , code:1, isDisabled: true},
+  { id: 18, lable: "QL Type 9" , key: 'NA19' , code:1, isDisabled: true},
+  { id: 19, lable: "Quantity Limits" , key: 'is_ql' , code:59, isDisabled: false},
+  { id: 20, lable: "Step Therapy" , key: 'is_st' , code:60, isDisabled: false},
+  { id: 21, lable: "Other 1" , key: 'is_other1' , code:1, isDisabled: true},
+  { id: 22, lable: "Other 2" , key: 'is_other2' , code:1, isDisabled: true},
+  { id: 23, lable: "Other 3" , key: 'is_other3' , code:1, isDisabled: true},
+  { id: 24, lable: "Other 4" , key: 'is_other4' , code:1, isDisabled: true},
+  { id: 25, lable: "Other 5" , key: 'is_other5' , code:1, isDisabled: true},
 ];
 
 interface Props {
   umFiltersChanged: (a) => void;
   advancedSearchBody: any;
+  formulary_lob_id: any;
+  formulary: any;
 }
 interface State {}
 
@@ -62,8 +96,40 @@ class UmFilter extends Component<Props, State> {
   };
 
   componentDidMount() {
+    if(this.props.formulary_lob_id === 1){
+      this.state.umFilterList = umfilter;
+    }else{
+      if(this.props.formulary && this.props.formulary.edit_info && this.props.formulary.edit_info.length > 0){
+        let checkedOptions = this.props.formulary.edit_info.filter(option => option.id_checked);
+        let checkedIds = checkedOptions.map(option => option.id_edit);
+        if(checkedIds.length > 0){
+          let normalIds = checkedIds.filter(id => [58,59,60,61,62,63,64,65,66,67,68,439].includes(id));
+          let otherIds = checkedIds.filter(id => ![58,59,60,61,62,63,64,65,66,67,68,439].includes(id));
+
+          if(normalIds.length > 0){
+            umfilterNonMcr.map(umFilter => {
+              if(normalIds.includes(umFilter.code)){
+                umFilter.isDisabled = false;
+              }else{
+                umFilter.isDisabled = true;
+              }
+            })
+          }
+
+          if(otherIds.length > 0){
+            for(let index = 20 ; index < (20+otherIds.length) ; index++){
+              if(index < umfilterNonMcr.length){
+                let umFilter = umfilterNonMcr[index];
+                umFilter.isDisabled = false;
+              }
+            }
+          }
+        }
+      }
+      this.state.umFilterList = umfilterNonMcr;
+    }
     if(this.props.advancedSearchBody && this.props.advancedSearchBody.additional_filter){
-      let keystoSet = Object.keys(this.props.advancedSearchBody.additional_filter).filter(key => this.props.advancedSearchBody.additional_filter[key]);
+      let keystoSet = Object.keys(this.props.advancedSearchBody.additional_filter).filter(key => this.props.advancedSearchBody.additional_filter[key] === true);
       if(keystoSet && keystoSet.length > 0){
         let umSelected = Array();
         this.state.umFilterList.map(um => {
@@ -91,7 +157,9 @@ class UmFilter extends Component<Props, State> {
     const newUmFilter = {
       id: curretUmFilteList.length,
       lable: this.state.newUmlable,
-      key: 'NA'+curretUmFilteList.length
+      key: 'NA'+curretUmFilteList.length,
+      code: 1,
+      isDisabled: false
     };
     curretUmFilteList.push(newUmFilter);
     this.setState({ umFilterList: curretUmFilteList, newUmlable: "" });
@@ -136,6 +204,38 @@ class UmFilter extends Component<Props, State> {
   };
 
   render() {
+    if(this.props.formulary && this.props.formulary.edit_info && this.props.formulary.edit_info.length > 0){
+      let checkedOptions = this.props.formulary.edit_info.filter(option => option.id_checked);
+      let checkedIds = checkedOptions.map(option => option.id_edit);
+      if(checkedIds.length > 0){
+        let normalIds = checkedIds.filter(id => [58,59,60,61,62,63,64,65,66,67,68,439].includes(id));
+        let otherIds = checkedIds.filter(id => ![58,59,60,61,62,63,64,65,66,67,68,439].includes(id));
+
+        if(normalIds.length > 0){
+          umfilterNonMcr.map(umFilter => {
+            if(normalIds.includes(umFilter.code)){
+              umFilter.isDisabled = false;
+            }else{
+              umFilter.isDisabled = true;
+            }
+          })
+        }
+
+        if(otherIds.length > 0){
+          for(let index = 20 ; index < (20+otherIds.length) ; index++){
+            if(index < umfilterNonMcr.length){
+              let umFilter = umfilterNonMcr[index];
+              umFilter.isDisabled = false;
+            }
+          }
+        }
+      }
+    }
+    if(this.props.formulary_lob_id === 1){
+      this.state.umFilterList = umfilter;
+    }else{
+      this.state.umFilterList = umfilterNonMcr;
+    }
     const { umFilterList } = this.state;
     return (
       <div className="__root-um-filter-container">
@@ -160,13 +260,14 @@ class UmFilter extends Component<Props, State> {
                   checked={this.state.selectedKeys.includes(filterList.key)}
                   style={{ borderRadius: "15px" }}
                   onClick={(e) => this.onSelect(e, filterList)}
+                  disabled={filterList.isDisabled}
                 />
                 <label htmlFor="" className="__list-lable">
                   {filterList.lable}
                 </label>
               </span>
             ))}
-            <div className="button-container">
+            {this.props.formulary_lob_id === 1 && (<div className="button-container">
               <div className="__add-input-delete-container">
                 <input
                   type="text"
@@ -217,7 +318,7 @@ class UmFilter extends Component<Props, State> {
                   </span>
                 </div>
               </div>
-            </div>
+            </div>)}
           </div>
         </div>
       </div>

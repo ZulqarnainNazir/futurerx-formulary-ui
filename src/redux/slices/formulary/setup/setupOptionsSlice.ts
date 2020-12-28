@@ -37,7 +37,7 @@ export interface GeneralOptions {
   submission_months: any[];
   classification_systems: any[];
   states: any[];
-  prior_year_resemble_formularies: any[];
+  clone_source_formularies: any[];
 }
 
 const generalOptionsInitialState: GeneralOptions = {
@@ -46,7 +46,7 @@ const generalOptionsInitialState: GeneralOptions = {
   submission_months: [],
   classification_systems: [],
   states: [],
-  prior_year_resemble_formularies: [],
+  clone_source_formularies: [],
 };
 
 export interface MedicareOptions {
@@ -100,6 +100,8 @@ const setup = createSlice({
       state.generalOptions.contractYear = payload?.contractYear;
       state.generalOptions.classification_systems =
         payload?.classification_systems;
+      state.generalOptions.clone_source_formularies =
+        payload?.clone_source_formularies;
 
       state.isLoading = false;
       state.error = null;
@@ -161,7 +163,17 @@ const setup = createSlice({
     getTierOptionsStart: startLoading,
     getTierOptionsSuccess(state, { payload }: PayloadAction<TierOptions>) {
       //console.log("***** getTierOptionsSuccess Reducer");
-      //console.log(payload);
+      // let AddNew: any = {
+      //   id_tier_label: -1,
+      //   tier_label: "Add New",
+      //   display_text: "",
+      //   code_value: "",
+      // };
+      // // TODO - Cleanup
+      // let base1: any;
+      // base1 = payload;
+      // let newList = [AddNew, ...base1];
+      // state.tierOptions = newList;
       state.tierOptions = payload;
       state.isLoading = false;
       state.error = null;
@@ -186,7 +198,7 @@ const setup = createSlice({
 export const fetchGeneralOptions = createAsyncThunk(
   "setupOptions",
   async (input: TypeAndId, { dispatch }) => {
-    console.log("***** fetchGeneralOptions : " + input);
+    //console.log("***** fetchGeneralOptions : " + input);
     try {
       dispatch(getGeneralOptionsStart());
       const genOptions: any = await getGeneralOptions(input.type, input.id);
@@ -234,7 +246,7 @@ export const fetchStatesOptions = createAsyncThunk(
 export const fetchMedicareOptions = createAsyncThunk(
   "setupOptions",
   async (input: TypeAndId, { dispatch }) => {
-    console.log("***** fetchMedicareOptions  " + input);
+    // console.log("***** fetchMedicareOptions  " + input);
     try {
       dispatch(getMedicareOptionsStart());
       const options: any = await getMedicareOptions(input.type, input.id);
@@ -250,7 +262,7 @@ export const fetchMedicareOptions = createAsyncThunk(
 export const fetchDesignOptions = createAsyncThunk(
   "setupOptions",
   async (input: TypeAndId, { dispatch }) => {
-    console.log("***** fetchDesignOptions AC ");
+    // console.log("***** fetchDesignOptions AC ");
     try {
       dispatch(getDesignOptionsStart());
       const options: any = await getDesignOptions(input.type, input.id);
@@ -271,7 +283,19 @@ export const fetchTierOptions = createAsyncThunk(
       dispatch(getTierOptionsStart());
       const options: any = await getTierOptions(input.type, input.id, 0);
       //console.log("*** options : ", options);
-      dispatch(getTierOptionsSuccess(options));
+      if (input.type === 6) {
+        let AddNew: any = {
+          id_tier_label: -1,
+          tier_label: "Add New",
+          display_text: "",
+          code_value: "",
+        };
+        let optionsWithAddNew: any = [AddNew, ...options];
+        //console.log(optionsWithAddNew);
+        dispatch(getTierOptionsSuccess(optionsWithAddNew));
+      } else {
+        dispatch(getTierOptionsSuccess(options));
+      }
     } catch (err) {
       //console.log("***** fetchTierOptions AC - ERROR ");
       dispatch(getTierOptionsFailure(err.toString()));
@@ -295,43 +319,43 @@ export const fetchSupplementalOptions = createAsyncThunk(
   }
 );
 
-export const manageFormularyType = createAsyncThunk(
-  "setupOptions",
-  async (input: TypeAndId, { dispatch }) => {
-    const type = input.type;
-    const id = input.id;
+// export const manageFormularyType = createAsyncThunk(
+//   "setupOptions",
+//   async (input: TypeAndId, { dispatch }) => {
+//     const type = input.type;
+//     const id = input.id;
 
-    console.log(" TYPE :: " + type + " - " + id);
+//     console.log(" TYPE :: " + type + " - " + id);
 
-    if (type === -1) {
-      dispatch(fetchGeneralOptions({ type: 1, id: -1 }));
-      return;
-    }
+//     if (type === -1) {
+//       dispatch(fetchGeneralOptions({ type: 1, id: -1 }));
+//       return;
+//     }
 
-    dispatch(fetchGeneralOptions({ type: type, id: id }));
-    dispatch(fetchDesignOptions({ type: type, id: id }));
-    dispatch(fetchTierOptions({ type: type, id: id }));
+//     dispatch(fetchGeneralOptions({ type: type, id: id }));
+//     dispatch(fetchDesignOptions({ type: type, id: id }));
+//     dispatch(fetchTierOptions({ type: type, id: id }));
 
-    if (type === 1) {
-      dispatch(fetchMedicareOptions({ type: type, id: id }));
-      dispatch(fetchSupplementalOptions({ type: type, id: id }));
-    } else if (type === 2) {
-      dispatch(fetchStatesOptions(type));
-      dispatch(fetchMedicareOptions({ type: type, id: id }));
-      dispatch(fetchSupplementalOptions({ type: type, id: id }));
-    } else if (type === 3) {
-      // TODO ... MEDICADE...
-      dispatch(fetchStatesOptions(0));
-    } else if (type === 4) {
-      // TODO ... MEDICADE...
-      dispatch(fetchStatesOptions(0));
-    } else if (type === 5) {
-    } else if (type === 6) {
-      // COMMERCIAL...
-    }
-    dispatch(fetchSubMthsOptions(2021));
-  }
-);
+//     if (type === 1) {
+//       dispatch(fetchMedicareOptions({ type: type, id: id }));
+//       dispatch(fetchSupplementalOptions({ type: type, id: id }));
+//     } else if (type === 2) {
+//       dispatch(fetchStatesOptions(type));
+//       dispatch(fetchMedicareOptions({ type: type, id: id }));
+//       dispatch(fetchSupplementalOptions({ type: type, id: id }));
+//     } else if (type === 3) {
+//       // TODO ... MEDICADE...
+//       dispatch(fetchStatesOptions(0));
+//     } else if (type === 4) {
+//       // TODO ... MEDICADE...
+//       dispatch(fetchStatesOptions(0));
+//     } else if (type === 5) {
+//     } else if (type === 6) {
+//       // COMMERCIAL...
+//     }
+//     dispatch(fetchSubMthsOptions(2021));
+//   }
+// );
 
 export const {
   getGeneralOptionsStart,

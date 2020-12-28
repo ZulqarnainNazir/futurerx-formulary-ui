@@ -14,10 +14,9 @@
   font-weight: normal;
   font-size: 12px;
   line-height: 14px;
-  color: #323C47;
+  color: #323c47;
   margin-bottom: 20px;
 }
-
 
 .input-group {
   margin-bottom: 20px;
@@ -29,5 +28,12 @@
   }
   .radio-group {
     margin-top: 15px;
+  }
+  .formulary-list-search {
+    width: 373px !important;
+    margin-top: 6px;
+    border: 1px solid #c4c4c4;
+    border-radius: 5px;
+    padding-left: 10px;
   }
 }
