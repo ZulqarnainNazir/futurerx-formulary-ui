@@ -4,6 +4,7 @@ import {
   getDrugDetailsALList,
   postReplaceALDrug,
   getALCriteriaList,
+  postRemoveALDrug,
 } from "./alActionCreation";
 import {
   getALSummaryFulfilled,
@@ -83,6 +84,23 @@ export const alCriteriaSlice = createSlice({
     }),
     builder.addCase(getALCriteriaList.rejected, (state, action) => {
       getALSummaryRejected(state, action);
+    })
+  ),
+});
+
+export const alRemoveDrugSlice = createSlice({
+  name: "alRemoveDrug",
+  initialState: alState,
+  reducers: {},
+  extraReducers: (builder) => (
+    builder.addCase(postRemoveALDrug.pending, (state, action) => {
+      state.isLoading = true;
+    }),
+    builder.addCase(postRemoveALDrug.fulfilled, (state, action) => {
+      postReplaceDrugFulfilled(state, action);
+    }),
+    builder.addCase(postRemoveALDrug.rejected, (state, action) => {
+      postReplaceDrugRejected(state, action);
     })
   ),
 });

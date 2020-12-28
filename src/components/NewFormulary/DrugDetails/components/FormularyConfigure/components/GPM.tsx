@@ -96,9 +96,9 @@ class GPM extends React.Component<any, any>{
         apiDetails['pathParams'] = param;
 
         this.props.getStGrouptDescriptionVersions(apiDetails).then((json) => {
-            let tmpData = json.payload.data;
-            let dataLength = tmpData.length
-            let latestVerion = tmpData.length > 0 ? tmpData[dataLength - 1].id_st_group_description : 0
+            let tmpData = json.payload?.data;
+            let dataLength = tmpData&&tmpData.length?tmpData.length:0
+            let latestVerion = dataLength>0 ? tmpData[dataLength - 1].id_st_group_description : 0
             
             let apiDetails= {};
             apiDetails["lob_type"] = this.props.formulary_lob_id;
@@ -174,7 +174,7 @@ class GPM extends React.Component<any, any>{
             if (this.props.formulary_lob_id==1){
                 groupProp= "id_mcr_base_st_group_description"
             }else if (this.props.formulary_lob_id==4){
-                groupProp = "id_base_st_group_description"; 
+                groupProp = "id_st_group_description"; 
             }
             var result = tmpData.map(function (el) {
                 var element = {};
@@ -240,7 +240,7 @@ class GPM extends React.Component<any, any>{
                                 </div>
                                 <div className="group-wrapper scrollbar scrollbar-primary  mt-5 mx-auto view-com-sec">
                                     {
-                                        this.state.groupsData.map((group, key) => (
+                                        this.state.groupsData.length>0 && this.state.groupsData.map((group, key) => (
                                             (this.state.searchInput == "" || (this.state.searchInput != "" && group.label.indexOf(this.state.searchInput) > -1)) ? (
                                                 (this.state.activeTabIndex == 0 && group.is_archived == false) ?
                                                     <Groups key={key} id={group.id} title={group.label} statusType={group.status} selectGroup={this.selectGroup} isSelected={this.state.selectedGroup==group.id}/>

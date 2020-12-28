@@ -5,6 +5,7 @@ import {
   getDrugDetailsPOSGridData,
   postPOSCriteriaList,
   postRemovePOSDrug,
+  postReplacePOSDrug,
 } from "./posActionCreation";
 import {
   getPOSSummaryFulfilled,
@@ -102,6 +103,23 @@ export const posRemoveDrugSlice = createSlice({
       postReplaceDrugFulfilled(state, action);
     }),
     builder.addCase(postRemovePOSDrug.rejected, (state, action) => {
+      postReplaceDrugRejected(state, action);
+    })
+  ),
+});
+
+export const posReplaceDrugSlice = createSlice({
+  name: "posReplaceDrug",
+  initialState: posState,
+  reducers: {},
+  extraReducers: (builder) => (
+    builder.addCase(postReplacePOSDrug.pending, (state, action) => {
+      state.isLoading = true;
+    }),
+    builder.addCase(postReplacePOSDrug.fulfilled, (state, action) => {
+      postReplaceDrugFulfilled(state, action);
+    }),
+    builder.addCase(postReplacePOSDrug.rejected, (state, action) => {
       postReplaceDrugRejected(state, action);
     })
   ),
