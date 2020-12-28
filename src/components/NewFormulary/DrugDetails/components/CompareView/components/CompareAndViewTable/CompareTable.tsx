@@ -799,12 +799,12 @@ class CompareTable extends Component<any, any> {
                         }}
                       />
                     ) : (
-                      <ShowIcon
-                        style={{
-                          margin: "2px 3px 0 0",
-                        }}
-                      />
-                    )}
+                        <ShowIcon
+                          style={{
+                            margin: "2px 3px 0 0",
+                          }}
+                        />
+                      )}
                     <p>{showCheckbox ? "Hide" : "Show"} Checkboxes</p>
                   </div>
                   <div
@@ -887,7 +887,7 @@ class CompareTable extends Component<any, any> {
             negativeActionText=""
             title="view all"
             handleClose={this.toggleShowViewAll}
-            handleAction={() => {}}
+            handleAction={() => { }}
             showActions={true}
             height="80%"
             width="80%"
@@ -896,7 +896,7 @@ class CompareTable extends Component<any, any> {
             <FrxGridContainer
               enableSearch={false}
               enableColumnDrag
-              onSearch={() => {}}
+              onSearch={() => { }}
               fixedColumnKeys={[]}
               pagintionPosition="topRight"
               gridName=""

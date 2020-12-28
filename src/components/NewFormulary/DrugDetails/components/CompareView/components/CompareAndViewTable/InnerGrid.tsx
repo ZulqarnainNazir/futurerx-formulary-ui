@@ -54,13 +54,17 @@ class InnerGrid extends Component<InnerGridProps, any>{
       let apiDetails = {};
       let isCategoricalRow = (rowData['attribute_name'] === 'PA Group Descriptions' || rowData['attribute_name'] === 'ST Group Descriptions' || rowData['attribute_type'] === 'Category/Class');
       apiDetails['apiPart'] = isCategoricalRow ? compareConstants.COMMERCIAL_ATTRIBUTE_VALUES : compareConstants.COMMERCIAL_FORMULARY_DRUGS;
-      apiDetails['pathParams'] = baseFormularyId + refFormularyId ? ("/" + refFormularyId) : '';
+      if (refFormularyId) {
+        apiDetails['pathParams'] = baseFormularyId + '/' + refFormularyId;
+      } else {
+        apiDetails['pathParams'] = baseFormularyId;
+      }
       apiDetails['keyVals'] = [];
-      apiDetails['keyVals'][commonConstants.KEY_LIMIT] = 10;
-      apiDetails['keyVals'][commonConstants.KEY_INDEX] = 0;
+      apiDetails['keyVals'].push({key:commonConstants.KEY_LIMIT, value: 10});
+      apiDetails['keyVals'].push({key:commonConstants.KEY_INDEX, value: 0});
       if (isCategoricalRow) {
-        apiDetails['keyVals']['source'] = rowData['source'];
-        apiDetails['keyVals']['file_type'] = rowData['file_type'];
+        apiDetails['keyVals'].push({key:'source', value: rowData['source']});
+        apiDetails['keyVals'].push({key:'file_type', value: rowData['file_type']});
       } else {
         apiDetails['messageBody'] = {};
         apiDetails['messageBody']['attribute_field_data_type'] = rowData['attribute_field_data_type'];
@@ -102,7 +106,7 @@ class InnerGrid extends Component<InnerGridProps, any>{
                   row['category'] = value['category'];
                   row['class'] = value['class'];
                   break;
-                case 'Tx Clas':
+                case 'Tx Class':
                   row['id'] = idCount;
                   row['key'] = idCount;
                   row['category'] = value['category'];
@@ -286,6 +290,7 @@ class InnerGrid extends Component<InnerGridProps, any>{
           this.state.checkbox = showCheckbox;
           this.state.actions = showCheckbox;
         }
+        //console.log('Base formulary ID:' + baseFormularyId + ' Ref formulary ID:' + refFormularyId + ' ' + JSON.stringify(this.props.baseformulary) + ' ' + JSON.stringify(this.props.referenceformulary));
         this.populateGridData(rowData, baseFormularyId, refFormularyId);
       }
     }
@@ -326,8 +331,8 @@ class InnerGrid extends Component<InnerGridProps, any>{
                         false,
                         data,
                         false,
-                        null,
                         this.props.referenceformulary['id_formulary'],
+                        null,
                         data.referenceFormulary
                       );
                     }}

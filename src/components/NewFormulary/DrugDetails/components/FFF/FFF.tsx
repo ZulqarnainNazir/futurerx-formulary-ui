@@ -6,19 +6,21 @@ import CustomizedSwitches from "../FormularyConfigure/components/CustomizedSwitc
 import { TabInfo } from "../../../../../models/tab.model";
 import FrxMiniTabs from "../../../../shared/FrxMiniTabs/FrxMiniTabs";
 import Button from "../../../../shared/Frx-components/button/Button";
-import { getDrugDetailsColumnFFF } from "../../../DrugDetails/components/FormularyConfigure/DrugGridColumn";
-import { getDrugDetailData } from "../../../../../mocks/DrugGridMock";
+import { getDrugDetailsColumnFFFCOMM } from "../../../DrugDetails/components/FormularyConfigure/DrugGridColumn";
 import FrxLoader from "../../../../shared/FrxLoader/FrxLoader";
-import DrugGrid from "../../../DrugDetails/components/DrugGrid";
 import AdvancedSearch from "../../../DrugDetails/components/FormularyConfigure/components/search/AdvancedSearch";
-import { getDrugDetailsFFFSummary } from "../../../../../redux/slices/formulary/drugDetails/fff/fffActionCreation";
+import { getDrugDetailsFFFSummary, getDrugDetailsFFFList, postRemoveFFFDrug, postReplaceFFFDrug } from "../../../../../redux/slices/formulary/drugDetails/fff/fffActionCreation";
 import * as fffConstants from "../../../../../api/http-drug-details";
-
-import AgeLimitSettings from "./AgeLimitSettings";
+import getLobCode from "../../../Utils/LobUtils";
+import FrxDrugGridContainer from "../../../../shared/FrxGrid/FrxDrugGridContainer";
+import showMessage from "../../../Utils/Toast";
 
 function mapDispatchToProps(dispatch) {
   return {
     getDrugDetailsFFFSummary: (a) => dispatch(getDrugDetailsFFFSummary(a)),
+    getDrugDetailsFFFList: (a) => dispatch(getDrugDetailsFFFList(a)),
+    postRemoveFFFDrug: (a) => dispatch(postRemoveFFFDrug(a)),
+    postReplaceFFFDrug: (a) => dispatch(postReplaceFFFDrug(a)),
   };
 }
 
@@ -29,6 +31,11 @@ const mapStateToProps = (state) => {
   };
 };
 
+const defaultListPayload = {
+  index: 0,
+  limit: 10,
+}
+
 class DrugDetailFFF extends React.Component<any, any> {
   state = {
     isSearchOpen: false,
@@ -38,13 +45,44 @@ class DrugDetailFFF extends React.Component<any, any> {
     isNotesOpen: false,
     activeTabIndex: 0,
     columns: null,
-    data: null,
+    data: [],
     tabs: [
       { id: 1, text: "Replace" },
       { id: 2, text: "Append" },
       { id: 3, text: "Remove" },
     ],
+    listCount: 0,
+    selectedDrugs: Array(),
+    drugData: Array(),
   };
+
+  listPayload: any = {
+    index: 0,
+    limit: 10,
+    selected_criteria_ids: [],
+  }
+
+  rpSavePayload: any = {
+    selected_drug_ids: [],
+    is_select_all: false,
+    covered: {},
+    not_covered: {},
+    selected_criteria_ids: [],
+    filter: [],
+    search_key: "",
+    free_first_fill: ""
+  }
+
+  rmSavePayload: any = {
+    is_covered: true,
+    selected_drug_ids: [],
+    is_select_all: false,
+    covered: {},
+    not_covered: {},
+    selected_criteria_ids: [],
+    filter: [],
+    search_key: ""
+  }
 
   advanceSearchClickHandler = (event) => {
     event.stopPropagation();
@@ -56,8 +94,88 @@ class DrugDetailFFF extends React.Component<any, any> {
   };
 
   saveClickHandler = () => {
-    console.log("Save data");
+    console.log("Save METHOD");
+    console.log("The Selected Drugs For Save = ", this.state.selectedDrugs);
+    if (this.state.selectedDrugs && this.state.selectedDrugs.length > 0) {
+      let apiDetails = {};
+      apiDetails["apiPart"] = fffConstants.APPLY_FFF_DRUG;
+      apiDetails["keyVals"] = [
+        { key: fffConstants.KEY_ENTITY_ID, value: this.props?.formulary_id },
+      ];
+      apiDetails["messageBody"] = {};
+
+      if (this.state.activeTabIndex === 0) {
+        this.rpSavePayload.selected_drug_ids = this.state.selectedDrugs
+        apiDetails["messageBody"] = this.rpSavePayload;
+        apiDetails["pathParams"] = this.props?.formulary_id + "/" +  getLobCode(this.props.formulary_lob_id) + "/" + fffConstants.TYPE_REPLACE;
+        console.log("The API Details - ", apiDetails);
+
+        // Replace Drug method call
+        this.props.postReplaceFFFDrug(apiDetails).then((json) => {
+          if (json.payload && json.payload.code && json.payload.code === "200") {
+            showMessage("Success", "success");
+            this.getFFFSummary();
+          } else {
+            showMessage("Failure", "error");
+          }
+        });
+
+      } else if(this.state.activeTabIndex === 2) {
+        this.rmSavePayload.selected_drug_ids = this.state.selectedDrugs
+        apiDetails["messageBody"] = this.rmSavePayload;
+        apiDetails["pathParams"] = this.props?.formulary_id + "/" +  getLobCode(this.props.formulary_lob_id) + "/" + fffConstants.TYPE_REMOVE;
+        console.log("The API Details - ", apiDetails);
+
+        // Remove Drug method call
+        this.props.postRemoveFFFDrug(apiDetails).then((json) => {
+          if (json.payload && json.payload.code && json.payload.code === "200") {
+            showMessage("Success", "success");
+            this.getFFFSummary();
+          } else {
+            showMessage("Failure", "error");
+          }
+        });
+      }
+    }
   };
+
+  onPageSize = (pageSize) => {
+    this.listPayload.limit = pageSize
+    this.getFFFDrugsList({ limit: this.listPayload.limit });
+  }
+
+  onGridPageChangeHandler = (pageNumber: any) => {
+    this.listPayload.index = (pageNumber - 1) * this.listPayload.limit;
+    this.getFFFDrugsList({ index: this.listPayload.index, limit: this.listPayload.limit });
+  }
+
+  onClearFilterHandler = () => {
+    this.listPayload.index = 0;
+    this.listPayload.limit = 10;
+    this.getFFFDrugsList({ index: defaultListPayload.index, limit: defaultListPayload.limit });
+  }
+
+  onSelectedTableRowChanged = (selectedRowKeys) => {
+    this.state.selectedDrugs = [];
+    if (selectedRowKeys && selectedRowKeys.length > 0) {
+      let selDrugs = selectedRowKeys.map(ele => {
+        return this.state.drugData[ele - 1]['md5_id'] ? this.state.drugData[ele - 1]['md5_id'] : ""
+      });
+
+      
+      if(this.state.activeTabIndex === 0) {
+        this.rpSavePayload.selected_drug_ids = selDrugs;
+        this.rmSavePayload.selected_drug_ids = [];
+      } else if(this.state.activeTabIndex === 2) {
+        this.rmSavePayload.selected_drug_ids = selDrugs;
+        this.rpSavePayload.selected_drug_ids = [];
+      }
+
+      this.setState({ selectedDrugs: selDrugs })
+    } else {
+      this.setState({ selectedDrugs: [] })
+    }
+  }
 
   getFFFSummary = () => {
     let apiDetails = {};
@@ -86,14 +204,59 @@ class DrugDetailFFF extends React.Component<any, any> {
     });
   }
 
-  componentDidMount() {
-    const data = getDrugDetailData();
-    const columns = getDrugDetailsColumnFFF();
-    this.setState({
-      columns: columns,
-      data: data,
+  getFFFDrugsList = ({index = 0, limit = 10, listPayload = {}} = {}) => {
+    let apiDetails = {};
+    apiDetails['apiPart'] = fffConstants.GET_FFF_FORMULARY_DRUGS;
+    apiDetails['pathParams'] = this.props?.formulary_id + "/" + getLobCode(this.props.formulary_lob_id);
+    apiDetails['keyVals'] = [{ key: fffConstants.KEY_ENTITY_ID, value: this.props?.formulary_id }, { key: fffConstants.KEY_INDEX, value: index }, { key: fffConstants.KEY_LIMIT, value: limit }];
+    apiDetails["messageBody"] = {};
+    apiDetails['messageBody'] = listPayload;
+    console.log("The FFF List Payload = ", listPayload);
+    console.log("The FFF List Api Details = ", apiDetails);
+
+    let listCount = 0;
+    this.props.getDrugDetailsFFFList(apiDetails).then((json) => {
+      let tmpData = json.payload.result;
+      listCount = json.payload.count;
+      var data: any[] = [];
+      let count = 1;
+      var gridData = tmpData.map((el) => {
+        var element = Object.assign({}, el);
+        data.push(element);
+        let gridItem = {};
+        gridItem["id"] = count;
+        gridItem["key"] = count;
+        gridItem["freeFirstFill"] = element.is_fff ? "" + element.is_fff : "";
+        gridItem["tier"] = element.tier_value ? "" + element.tier_value : "";
+        gridItem["labelNamae"] = element.drug_label_name ? "" + element.drug_label_name : "";
+        gridItem["ddid"] = element.drug_descriptor_identifier ? "" + element.drug_descriptor_identifier : "";
+        gridItem["gpi"] = element.generic_product_identifier ? "" + element.generic_product_identifier : "";
+        gridItem["trademark"] = element.trademark_code ? "" + element.trademark_code : "";
+        gridItem["databaseCategory"] = element.database_category ? "" + element.database_category : "";
+        gridItem["databaseClass"] = element.database_class ? "" + element.database_class : "";
+        gridItem["createdBy"] = element.created_by ? "" + element.created_by : "";
+        gridItem["createdOn"] = element.created_date ? "" + element.created_date : "";
+        gridItem["modifiedBy"] = element.modified_by ? "" + element.modified_by : "";
+        gridItem["modifiedOn"] = element.modified_date ? "" + element.modified_date : "";
+        gridItem["md5_id"] = element.md5_id ? "" + element.md5_id : "";
+        count++;
+        return gridItem;
+      });
+      this.setState({
+        drugData: data,
+        data: gridData,
+        listCount: listCount,
+      });
     });
+  }
+
+  componentDidMount() {
     this.getFFFSummary();
+
+    console.log("The Active Tab index MOUNT = ", this.state.activeTabIndex);
+    if(this.state.activeTabIndex === 0) {
+      this.getFFFDrugsList();
+    }
   }
 
   onClickTab = (selectedTabIndex: number) => {
@@ -105,6 +268,18 @@ class DrugDetailFFF extends React.Component<any, any> {
       }
       return tab;
     });
+
+    console.log("The Active tab index = ", activeTabIndex)
+
+    if(activeTabIndex === 0) {
+      this.listPayload.selected_criteria_ids = [];
+      this.getFFFDrugsList({ listPayload: this.listPayload });
+    } else if(activeTabIndex === 2) {
+      console.log("GET LISTTHe Active Tab Index ===== 2")
+      this.listPayload.selected_criteria_ids = ["Y"];
+      this.getFFFDrugsList({ listPayload: this.listPayload });
+    }
+
     this.setState({ tabs, activeTabIndex });
   };
 
@@ -125,7 +300,33 @@ class DrugDetailFFF extends React.Component<any, any> {
     let dataGrid = <FrxLoader />;
     if (this.state.data) {
       dataGrid = (
-        <DrugGrid columns={this.state.columns} data={this.state.data} />
+        <FrxDrugGridContainer
+          isPinningEnabled={false}
+          enableSearch={false}
+          enableColumnDrag
+          onSearch={() => {}}
+          fixedColumnKeys={[]}
+          pagintionPosition="topRight"
+          gridName="DRUGSDETAILS"
+          enableSettings={false}
+          columns={getDrugDetailsColumnFFFCOMM()}
+          scroll={{ x: 2500, y: 377 }}
+          isFetchingData={false}
+          enableResizingOfColumns
+          data={this.state.data}
+          getPerPageItemSize={this.onPageSize}
+          selectedCurrentPage={(this.listPayload.index/this.listPayload.limit + 1)}
+          pageSize={this.listPayload.limit}
+          onGridPageChangeHandler={this.onGridPageChangeHandler}
+          totalRowsCount={this.state.listCount}
+          clearFilterHandler={this.onClearFilterHandler}
+          rowSelection={{
+            columnWidth: 50,
+            fixed: true,
+            type: "checkbox",
+            onChange: this.onSelectedTableRowChanged,
+          }}
+        />
       );
     }
 
@@ -157,6 +358,8 @@ class DrugDetailFFF extends React.Component<any, any> {
                     tabList={this.state.tabs}
                     activeTabIndex={this.state.activeTabIndex}
                     onClickTab={this.onClickTab}
+                    disabledIndex={1}
+                    disabled
                   />
                 </div>
               </div>
@@ -173,7 +376,7 @@ class DrugDetailFFF extends React.Component<any, any> {
                 label="Advance Search"
                 onClick={this.advanceSearchClickHandler}
               />
-              <Button label="Save" onClick={this.saveClickHandler} disabled />
+              <Button label="Save" onClick={this.saveClickHandler} disabled={!(this.state.selectedDrugs.length > 0)} />
             </div>
           </div>
           {dataGrid}

@@ -45,3 +45,44 @@ export const getPOSSettingsRejected = (state, action) => {
   state.isLoading = false;
   state.data = {};
 };
+
+export const postPOSListFulfilled = (state, action) => {
+  console.log("Reducer::postPOSListFulfilled");
+  state.isLoading = false;
+  console.log(action);
+  if (
+    action.payload.result === undefined ||
+    !Array.isArray(action.payload.result) ||
+    action.payload.result.length === 0
+  ) {
+    console.log("postPOSListFulfilled: Payload invalid");
+    return;
+  }
+  const data = action.payload.result;
+  // Response stored in the redux store.
+  state.applyData = data;
+};
+
+export const postPOSListRejected = (state, action) => {
+  console.log("Reducer::postPOSListRejected");
+  state.isLoading = false;
+  state.applyData = {};
+};
+
+export const postReplaceDrugFulfilled = (state, action) => {
+  console.log("Reducer::postReplaceDrugFulfilled");
+  state.isLoading = false;
+  console.log(action);
+  if (action.payload) {
+    console.log("postReplaceDrugFulfilled: Payload invalid");
+    return;
+  }
+  const data = action.payload;
+  state.data = data;
+};
+
+export const postReplaceDrugRejected = (state, action) => {
+  console.log("Reducer::postReplaceDrugRejected");
+  state.isLoading = false;
+  state.data = {};
+};

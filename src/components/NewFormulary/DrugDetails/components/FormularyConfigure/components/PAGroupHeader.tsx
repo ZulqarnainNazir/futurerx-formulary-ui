@@ -291,6 +291,7 @@ function PAGroupHeader(props: any) {
             apiDetails['pathParams'] = '/'+props.saveGdm.current_group_id;
             props.getPaGrouptDescriptionVersions(apiDetails).then(json=>{
                 console.log(json);
+                setVersion(json.payload.data)
                 let v =props.version;
             });
     
