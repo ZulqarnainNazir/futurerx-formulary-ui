@@ -299,6 +299,7 @@ class Tier extends React.Component<any, tabsState> {
   render() {
     const tierDefinationColumns = this.state.tierDefinationColumns;
     const tierDefinationData = this.state.tierDefinationData;
+    console.log('Tier length is:'+tierDefinationData.length);
     return (
       <div className="drug-detail-LA-root">
         <div className="drug-detail-la-container">
@@ -330,11 +331,12 @@ class Tier extends React.Component<any, tabsState> {
                         enableResizingOfColumns
                         hideClearFilter
                         hideMultiSort
-                        hideItemsPerPage
                         hidePageJumper
-                        hidePagination
                         hideResults
                         data={tierDefinationData}
+                        pageSize={tierDefinationData.length}
+                        onGridPageChangeHandler={(page) => {}}
+                        getPerPageItemSize={(size) => {}}
                       />
                       <div className='tier-popup-btn'>
                         <svg
