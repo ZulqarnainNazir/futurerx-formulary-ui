@@ -233,8 +233,9 @@ function GroupHeader(props: any) {
             lob_type:lob_type,
             pathParams: pathParams,
             st_group_description_name: param.st_group_description_name // clone page input
+        }).then(json => {
+            props.getStGrouptDescriptions({lob_type:lob_type,pathParams:props.saveGdm.formulary_id})
         })
-        props.getStGrouptDescriptions({lob_type:lob_type,pathParams:props.saveGdm.formulary_id})
     }
     const archiveGroup = (e: any,param:any) => {
         let lob_type = props.formulary_lob_id;
