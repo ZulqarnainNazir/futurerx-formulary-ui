@@ -72,6 +72,7 @@ interface drugDetailALState {
   removeTabsData: any[],
   alRemoveCheckedList: any[],
   alRemoveSettingsStatus: any,
+  alSettings: initialFormData[],
 }
 
 const defaultListPayload = {
@@ -145,6 +146,16 @@ class DrugDetailAL extends React.Component<any, any> {
         covered: true,
       }
     ],
+    alSettings: [
+      {
+        minimumVal: "",
+        maximumVal: "",
+        minimumType: "IO",
+        maximumType: "IO",
+        index: 0,
+        covered: true,
+      }
+    ]
   };
 
   listPayload: any = {
@@ -158,6 +169,17 @@ class DrugDetailAL extends React.Component<any, any> {
     filter: [],
     search_key: "",
     is_covered: true,
+  }
+
+  rpSavePayload: any = {
+    is_covered:true,
+    selected_drug_ids:[],
+    is_select_all:false,
+    covered:{},
+    not_covered:{},
+    age_limits:[],//{"min_age_condition":"GT","min_age_limit":10,"max_age_condition":"","max_age_limit":null,"sequence_number":1}
+    filter:[],
+    search_key:""
   }
   
   formData1: initialFormData[] = [
@@ -183,6 +205,17 @@ class DrugDetailAL extends React.Component<any, any> {
       minimumType: "IO",
       maximumType: "IO",
       index: 2,
+      covered: true,
+    }
+  ]
+
+  formData2: initialFormData[] = [
+    {
+      minimumVal: "",
+      maximumVal: "",
+      minimumType: "IO",
+      maximumType: "IO",
+      index: 0,
       covered: true,
     }
   ]
@@ -217,30 +250,24 @@ class DrugDetailAL extends React.Component<any, any> {
       apiDetails["keyVals"] = [
         { key: alConstants.KEY_ENTITY_ID, value: this.props?.formulary_id },
       ];
-      apiDetails["messageBody"] = {};
-      apiDetails["messageBody"]["selected_drug_ids"] = this.state.selectedDrugs;
-      apiDetails["messageBody"]["is_select_all"] = false;
-      apiDetails["messageBody"]["covered"] = {};
-      apiDetails["messageBody"]["not_covered"] = {};
-      apiDetails["messageBody"]["selected_criteria_ids"] = [];
-      apiDetails["messageBody"]["filter"] = [];
-      apiDetails["messageBody"]["search_key"] = "";
-      apiDetails["messageBody"]["limited_access"] = "";
-      apiDetails["messageBody"]["is_covered"] = this.state.formData[0].covered;
 
       let ageLimits: any[] = [];
-      for(let i=0; i<this.state.formData.length; i++) {
+      for(let i=0; i<this.state.alSettings.length; i++) {
         let ageObj = {
-          min_age_condition: this.state.formData[i].minimumType,
-          min_age_limit: this.state.formData[i].minimumVal,
-          max_age_condition: this.state.formData[i].maximumType,
-          max_age_limit: this.state.formData[i].maximumVal,
-          sequence_number: this.state.formData[i].index,
+          min_age_condition: this.formData2[i].minimumType,
+          min_age_limit: this.formData2[i].minimumVal,
+          max_age_condition: this.formData2[i].maximumType,
+          max_age_limit: this.formData2[i].maximumVal,
+          sequence_number: this.formData2[i].index + 1,
         }
         ageLimits.push(ageObj);
       }
       console.log("***********The Age Limits = ", ageLimits);
-      apiDetails["messageBody"]["age_limits"] = ageLimits;
+      
+      this.rpSavePayload.selected_drug_ids = this.state.selectedDrugs
+      this.rpSavePayload.age_limits = ageLimits
+      this.rpSavePayload.is_covered = this.state.alSettings[0].covered
+      apiDetails["messageBody"] = this.rpSavePayload;
 
       if (this.state.activeTabIndex === 0) {
         apiDetails["pathParams"] =
@@ -252,19 +279,15 @@ class DrugDetailAL extends React.Component<any, any> {
           console.log("The API Details - ", apiDetails);
 
         // Replace Drug method call
-        // this.props.postReplaceAFDrug(apiDetails).then((json) => {
-        //   if (
-        //     json.payload &&
-        //     json.payload.code &&
-        //     json.payload.code === "200"
-        //   ) {
-        //     showMessage("Success", "success");
-        //     // this.getAFSummary();
-        //     // this.getAFDrugsList();
-        //   } else {
-        //     showMessage("Failure", "error");
-        //   }
-        // });
+        this.props.postReplaceALDrug(apiDetails).then((json) => {
+          if (json.payload && json.payload.code && json.payload.code === "200") {
+            showMessage("Success", "success");
+            this.getALSummary();
+            this.getALDrugsList();
+          } else {
+            showMessage("Failure", "error");
+          }
+        });
       } else if(this.state.activeTabIndex === 2) {
         let alCheckedList: any[] = [];
         if(this.state.alRemoveCheckedList.length > 0) {
@@ -312,6 +335,12 @@ class DrugDetailAL extends React.Component<any, any> {
     this.getALDrugsList({ index: this.listPayload.index, limit: this.listPayload.limit, listPayload: this.listPayload });
   }
 
+  // enableApplyButton = () => {
+  //   for(let i=0; i<this.state.alSettings.length; i++){
+  //     this.state.alsetting
+  //   }
+  // }
+
   onPageSize = (pageSize) => {
     this.listPayload.limit = pageSize
     this.getALDrugsList({ limit: this.listPayload.limit });
@@ -343,37 +372,70 @@ class DrugDetailAL extends React.Component<any, any> {
     }
   };
 
-  handleMinChange = (e, index) => {
-    console.log("The Min input Value = ", e);
-    console.log("THe Min input value = ", e.target?.value);
-    this.formData1[index].minimumVal = e.target?.value;
-    this.formData1[index].index = index;
-    this.setState({ formData: this.formData1, showApply: true });
+  handleMinChange = (e, args) => {
+    console.log("THe Handle Min change Arguments = ", args, " -- THe Event = ", e.target.value, " -THe formdata 2 = ", this.formData2);
+    // console.log("The FormData 2 = ", this.formData2);
+    // for(let i=0; this.state.alSettings.length; i++) {
+    //   if(this.state.alSettings[i]?.index === args){
+        this.formData2[args].minimumVal = e.target.value
+    //   }
+    // }
+    // console.log("The Min input Value = ", e);
+    // console.log("THe Min input value = ", e.target?.value);
+    // this.formData1[index].minimumVal = e.target?.value;
+    // this.formData1[index].index = index;
+    // this.setState({ formData: this.formData1, showApply: true });
   };
 
-  handleMaxChange = (e, index) => {
-    console.log("The Max input Value = ", e);
-    console.log("THe Max input value = ", e.target?.value);
-    this.formData1[index].maximumVal = e.target?.value;
-    this.formData1[index].index = index;
-    this.setState({ formData: this.formData1, showApply: true });
+  handleMaxChange = (e, args) => {
+    console.log("THe Handle Max change Arguments = ", args, " -- THe Event = ", e.target.value, " -THe formdata 2 = ", this.formData2);
+    this.formData2[args].maximumVal = e.target.value
+    // for(let i=0; this.formData2.length; i++) {
+    //   if(this.formData2[i].index === args){
+    //     this.formData2[i].maximumVal = e.target.value
+    //   }
+    // }
+    // console.log("The Max input Value = ", e);
+    // console.log("THe Max input value = ", e.target?.value);
+    // this.formData1[index].maximumVal = e.target?.value;
+    // this.formData1[index].index = index;
+    // this.setState({ formData: this.formData1, showApply: true });
   };
 
-  onMinChangeHandler = (e, index) => {
-    console.log("The ON MIN Change Handler data = ", e);
-    console.log("The on MIN Change Index data = ", index);
-    this.formData1[index].minimumType = (e === "Greater Than") ? "GT" : "IO" ;
-    this.formData1[index].index = index;
-    this.setState({ formData: this.formData1 });
+  onMinChangeHandler = (e, args) => {
+    console.log("THe ON Min change Arguments = ", args, " -- THe Event = ", e);
+    this.formData2[args].minimumType = (e === "Greater Than") ? "GT" : "IO" ;
+    // console.log("The ON MIN Change Handler data = ", e);
+    // console.log("The on MIN Change Index data = ", index);
+    // this.formData1[index].minimumType = (e === "Greater Than") ? "GT" : "IO" ;
+    // this.formData1[index].index = index;
+    // this.setState({ formData: this.formData1 });
   };
 
-  onMaxChangeHandler = (e, index) => {
-    console.log("The ON MAX Change Handler data = ", e);
-    console.log("The on MAX Change Index data = ", index);
-    this.formData1[index].maximumType = (e === "Less Than") ? "LT" : "IO" ;
-    this.formData1[index].index = index;
-    this.setState({ formData: this.formData1 });
+  onMaxChangeHandler = (e, args) => {
+    console.log("THe ON MAx change Arguments = ", args, " -- THe Event = ", e);
+    this.formData2[args].maximumType = (e === "Less Than") ? "LT" : "IO" ;
+    // console.log("The ON MAX Change Handler data = ", e);
+    // console.log("The on MAX Change Index data = ", index);
+    // this.formData1[index].maximumType = (e === "Less Than") ? "LT" : "IO" ;
+    // this.formData1[index].index = index;
+    // this.setState({ formData: this.formData1 });
   }
+
+  handleStatus = (key: string, args) => {
+    const COVERED = "covered";
+    const isCovered: boolean = key === COVERED ? true : false;
+    // let posSettingsStatus = {
+    //   type: key,
+    //   covered: isCovered,
+    // };
+    console.log("The HandleStatus Key = ", key)
+    console.log("The HandleStatus args = ", args);
+    this.formData2[args].covered = isCovered;
+    this.setState({ alSettings: this.formData2 });
+
+    // this.setState({ posSettingsStatus, showGrid: false });
+  };
 
   coveredHandler = (e, index) => {
     // this.formData1[index].covered = e.value === "covered" ? true : false;
@@ -510,14 +572,24 @@ class DrugDetailAL extends React.Component<any, any> {
   }
 
   componentDidMount() {
-    const data = getDrugDetailData();
-    const columns = getDrugDetailsColumnAL();
-    this.setState({
-      columns: columns,
-      data: data,
-    });
+    // const data = getDrugDetailData();
+    // const columns = getDrugDetailsColumnAL();
+    // this.setState({
+    //   columns: columns,
+    //   data: data,
+    // });
     this.getALSummary();
     this.getALCriteriaList(true);
+  
+    // let newAlSettings: initialFormData = {
+    //   minimumVal: "",
+    //   maximumVal: "",
+    //   minimumType: "IO",
+    //   maximumType: "IO",
+    //   index: 0,
+    //   covered: true,
+    // }
+    // this.setState({ alSettings: newAlSettings });
   }
 
   onClickTab = (selectedTabIndex: number) => {
@@ -576,6 +648,34 @@ class DrugDetailAL extends React.Component<any, any> {
       () => console.log("alRemoveCheckedList: ", this.state.alRemoveCheckedList)
     );
   };
+
+  addNewAgeLimit = () => {
+    if(this.state.alSettings.length < 3) {
+      console.log("----INside Add New Age Limit------")
+      let newAgeLimit = {
+        minimumVal: "",
+        maximumVal: "",
+        minimumType: "IO",
+        maximumType: "IO",
+        index: this.state.alSettings.length,
+        covered: true,
+      }
+
+      let alSettings = [...this.state.alSettings];
+      alSettings.push(newAgeLimit);
+      this.formData2.push(newAgeLimit);
+      this.setState({ alSettings }, () => {console.log("The AL Settings State = ", this.state.alSettings)});
+    }
+  }
+
+  deleteAlLimit = () => {
+    if(this.state.alSettings.length > 1) {
+      let alSettings = [...this.state.alSettings];
+      this.formData2.pop();
+      alSettings.pop();
+      this.setState({ alSettings });
+    }
+  }
 
   render() {
     let dataGrid = <FrxLoader />;
@@ -674,9 +774,13 @@ class DrugDetailAL extends React.Component<any, any> {
           onMinChangeHandler={this.onMinChangeHandler}
           onMaxChangeHandler={this.onMaxChangeHandler}
           formData={this.state.formData}
-          showApply={this.state.showApply}
+          showApply={true}
           showGrid={this.showGrid}
           coveredHandler={this.coveredHandler}
+          alSettings={this.state.alSettings}
+          addNewAgeLimit={this.addNewAgeLimit}
+          deleteAlLimit={this.deleteAlLimit}
+          handleStatus={this.handleStatus}
         />}
         
         {this.state.activeTabIndex==2 && <ALRemove 

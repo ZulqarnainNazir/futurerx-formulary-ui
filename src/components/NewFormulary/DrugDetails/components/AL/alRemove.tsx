@@ -15,7 +15,6 @@ class ALRemove extends React.Component<any, any> {
   };
 
   onSelectChange = (selectedRowKeys) => {
-    console.log("selectedRowKeys changed: ", selectedRowKeys);
     this.setState({ selectedRowKeys });
   };
 
@@ -26,16 +25,13 @@ class ALRemove extends React.Component<any, any> {
   static getDerivedStateFromProps(props, state) {
     const data: any = [];
     for (let i = 0; i < props.data.length; i++) {
-      console.log("-----The AL Remove Props Data = ", props.data);
-      console.log("THe Props data i = ", props.data[i]);
       data.push({
         key: props.data[i]["key"],
         minAgeLimit: props.data[i]["minAgeLimit"],
         maxAgeLimit: props.data[i]["maxAgeLimit"],
       });
     }
-
-    console.log("The Data to Remove Tab IN AL REMOVE FILE = ", data);
+    
     return { dataToRemove: data };
   }
 
