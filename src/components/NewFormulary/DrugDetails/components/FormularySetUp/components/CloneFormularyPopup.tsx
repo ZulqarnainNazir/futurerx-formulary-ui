@@ -9,6 +9,7 @@ import FormularyExpandedDetails from "../../../SelectFormularyPopUp/FormularyExp
 import { getformularies } from "../../../../../../redux/slices/formulary/dashboard/dashboardService";
 import getLobName from "../../../../Utils/LobNameUtils";
 import { connect } from 'react-redux'
+import { filter } from "lodash";
 
 function mapDispatchToProps(dispatch) {
   return {
@@ -36,6 +37,20 @@ const defaultListPayload = {
   sort_order: ["desc"],
 }
 
+const columnFilterMapping = {
+  serviceYear: 'contract_year',
+  fromularyName: 'formulary_name',
+  formularyId: 'id_formulary',
+  version: 'version_number',
+  tierCount: 'number_of_tiers',
+  drugCount: 'number_of_drugs',
+  step: 'step',
+  assign: 'assigned_to',
+  status: 'status',
+  effectiveDate: 'effective_date',
+  dueDate: 'due_date'
+};
+
 class CloneFormularyPopup extends React.Component<any, any> {
   state = {
     formularyData: Array(),
@@ -57,7 +72,7 @@ class CloneFormularyPopup extends React.Component<any, any> {
 
   onSettingsIconHandler = (hiddenColumn, visibleColumn) => {
     console.log('Settings icon handler: Hidden' + JSON.stringify(hiddenColumn) + ' Visible:' + JSON.stringify(visibleColumn));
-    if(hiddenColumn && hiddenColumn.length > 0){
+    if (hiddenColumn && hiddenColumn.length > 0) {
       let hiddenColumnKeys = hiddenColumn.map(column => column['key']);
       this.setState({
         hiddenColumns: hiddenColumnKeys
@@ -65,25 +80,33 @@ class CloneFormularyPopup extends React.Component<any, any> {
     }
   }
   onApplyFilterHandler = (filters) => {
-    const fetchedProps = Object.keys(filters)[0];
-    console.log('Fetched properties:' + JSON.stringify(fetchedProps) + " Filters:" + JSON.stringify(filters));
-    const fetchedOperator = filters[fetchedProps][0].condition === 'is like' ? 'is_like' :
-      filters[fetchedProps][0].condition === 'is not' ? 'is_not' :
-        filters[fetchedProps][0].condition === 'is not like' ? 'is_not_like' :
-          filters[fetchedProps][0].condition === 'does not exist' ? 'does_not_exist' :
-            filters[fetchedProps][0].condition;
-    const fetchedValues = filters[fetchedProps][0].value !== '' ? [filters[fetchedProps][0].value.toString()] : [];
-    const newFilters = [{ prop: fetchedProps, operator: fetchedOperator, values: fetchedValues }];
-    this.listPayload.filter = newFilters;
-    this.fetchFormularies(this.listPayload);
+    this.listPayload.filter = Array();
+    if (filters && filter.length > 0) {
+      const fetchedKeys = Object.keys(filters);
+      fetchedKeys.map(fetchedProps => {
+        if (filters[fetchedProps] && columnFilterMapping[fetchedProps]) {
+          const fetchedOperator = filters[fetchedProps][0].condition === 'is like' ? 'is_like' :
+            filters[fetchedProps][0].condition === 'is not' ? 'is_not' :
+              filters[fetchedProps][0].condition === 'is not like' ? 'is_not_like' :
+                filters[fetchedProps][0].condition === 'does not exist' ? 'does_not_exist' :
+                  filters[fetchedProps][0].condition;
+          const fetchedValues = filters[fetchedProps][0].value !== '' ? [filters[fetchedProps][0].value.toString()] : [];
+          this.listPayload.filter.push({ prop: columnFilterMapping[fetchedProps], operator: fetchedOperator, values: fetchedValues });
+        }
+      });
+      console.log('Filters:'+JSON.stringify(this.listPayload.filter));
+      this.fetchFormularies(this.listPayload);
+    }
   }
   onPageSize = (pageSize) => {
+    console.log('Page size load');
     this.listPayload = { ...defaultListPayload };
     this.listPayload.limit = pageSize
     this.listPayload.id_lob = this.props.formulary_lob_id;
     this.fetchFormularies(this.listPayload);
   }
   onGridPageChangeHandler = (pageNumber: any) => {
+    console.log('Page change load');
     this.listPayload.index = (pageNumber - 1) * this.listPayload.limit;
     this.fetchFormularies(this.listPayload);
   }
@@ -93,8 +116,8 @@ class CloneFormularyPopup extends React.Component<any, any> {
     this.fetchFormularies(this.listPayload);
   }
   fetchFormularies = async (payload) => {
-    this.state.formularyData = Array();
-    this.state.formularyGridData = Array();
+    let formularyData = Array();
+    let formularyGridData = Array();
     try {
       let formularies = await getformularies(payload);
       console.log(" LIST : ",formularies.list);
@@ -102,7 +125,7 @@ class CloneFormularyPopup extends React.Component<any, any> {
       if (formularies['list'] && formularies['list'].length > 0) {
         formularies['list'].map((row, index) => {
           let item = Object.assign({}, row);
-          this.state.formularyData.push(item);
+          formularyData.push(item);
 
           let gridItem = {};
           gridItem['id'] = index + 1;
@@ -120,19 +143,25 @@ class CloneFormularyPopup extends React.Component<any, any> {
           gridItem['effectiveDate'] = item['effective_date'] === null ? '' : item['effective_date'];
           gridItem['dueDate'] = item['due_date'] === null ? '' : item['due_date'];
 
-          this.state.formularyGridData.push(gridItem);
+          formularyGridData.push(gridItem);
         });
         this.setState({
-          dataCount: formularies['count']
+          dataCount: formularies['count'],
+          formularyData: formularyData,
+          formularyGridData: formularyGridData,
         });
       } else {
         this.setState({
-          dataCount: 0
+          dataCount: 0,
+          formularyData: formularyData,
+          formularyGridData: formularyGridData,
         });
       }
     } catch (err) {
       this.setState({
-        dataCount: 0
+        dataCount: 0,
+        formularyData: formularyData,
+        formularyGridData: formularyGridData,
       });
     }
   }
@@ -156,7 +185,7 @@ class CloneFormularyPopup extends React.Component<any, any> {
     }
   };
   render() {
-    let gridColumns: any[] = this.props.type === "medicare" ? selectFormularyGridMedicare({onFormularyNameClick: null,}) : selectFormularyGrid({onFormularyNameClick: null,});
+    let gridColumns: any[] = this.props.type === "medicare" ? selectFormularyGridMedicare({ onFormularyNameClick: null, }) : selectFormularyGrid({ onFormularyNameClick: null, });
     gridColumns = gridColumns.filter(column => !this.state.hiddenColumns.includes(column['key']));
     if (this.props.type === "medicare") {
       return (
