@@ -653,6 +653,7 @@ class CompareTable extends Component<any, any> {
               titleBG: this.getBackgroundColor(value["attribute_type"]),
               attribute_type: value["attribute_type"],
               file_type: value["file_type"],
+              gridColumns: ['Tier','Prior Authorization (PA)','Step Therpay (ST)','Quantity Limits (QL)'].includes(value["attribute_type"]) ? this.getGridColumns(value["attribute_type"]) : Array(),
               headDrugsCount: {
                 baseFormulary: null,
                 referenceFormulary: null,
@@ -846,6 +847,9 @@ class CompareTable extends Component<any, any> {
                   showCheckbox={showCheckbox}
                   baseformulary={this.props.baseformulary}
                   referenceformulary={this.props.referenceformulary}
+                  gridColumns={accordionHeader.gridColumns}
+                  fileType= {accordionHeader.file_type}
+                  formularyLobId= {this.props.formulary_lob_id}
                   content={() => {
                     return (
                       <InnerGrid
