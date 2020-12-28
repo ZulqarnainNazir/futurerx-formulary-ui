@@ -1,14 +1,17 @@
 import {createSlice} from "@reduxjs/toolkit";
 import { combineReducers } from 'redux'
 
-import { getStSummary,getStGrouptDescription,getStGrouptDescriptionVersions } from "./stepTherapyActionCreation";
-import { getStepTherapyFulfilled,getStepTherapyRejected,getVersionFulfilled,getVersionRejected,getStDescriptionFulfilled,getStDescriptionRejected } from "./stepTherapyReducers";
+import { getStSummary,getStGrouptDescription,getStGrouptDescriptionVersions,getStGrouptDescriptions } from "./stepTherapyActionCreation";
+import { getStepTherapyFulfilled,getStepTherapyRejected,getVersionFulfilled,getVersionRejected,
+  getStDescriptionFulfilled,getStDescriptionRejected,
+  getStDescriptionsFulfilled,getStDescriptionsRejected } from "./stepTherapyReducers";
 
 const tierState: any = {
   data: {},
   isLoading: false,
   stVersion:{},
-  description:{}
+  description:{},
+  descriptions:{}
 }
 
 export const stepTherapySlice = createSlice({
@@ -35,6 +38,15 @@ export const stepTherapySlice = createSlice({
     }),
     builder.addCase(getStGrouptDescription.rejected, (state, action) => {
       getStDescriptionRejected(state, action);
+    }),
+    builder.addCase(getStGrouptDescriptions.pending, (state, action) => {
+      state.isLoading = true;
+    }),
+    builder.addCase(getStGrouptDescriptions.fulfilled, (state, action) => {
+      getStDescriptionsFulfilled(state, action);
+    }),
+    builder.addCase(getStGrouptDescriptions.rejected, (state, action) => {
+      getStDescriptionsRejected(state, action);
     })
   )
 });

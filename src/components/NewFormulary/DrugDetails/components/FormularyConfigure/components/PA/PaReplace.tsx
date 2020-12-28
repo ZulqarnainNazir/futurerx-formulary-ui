@@ -151,6 +151,9 @@ class PaReplace extends React.Component<any, any> {
       }
       this.props.setAdvancedSearch(payload);
     }
+
+    if (nextProps.additionalCriteriaBody) {
+    }
   }
 
   advanceSearchClickHandler = (event) => {
