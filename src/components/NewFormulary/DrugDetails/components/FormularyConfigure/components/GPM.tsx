@@ -240,7 +240,7 @@ class GPM extends React.Component<any, any>{
                                 </div>
                                 <div className="group-wrapper scrollbar scrollbar-primary  mt-5 mx-auto view-com-sec">
                                     {
-                                        this.state.groupsData.map((group, key) => (
+                                        this.state.groupsData.length>0 && this.state.groupsData.map((group, key) => (
                                             (this.state.searchInput == "" || (this.state.searchInput != "" && group.label.indexOf(this.state.searchInput) > -1)) ? (
                                                 (this.state.activeTabIndex == 0 && group.is_archived == false) ?
                                                     <Groups key={key} id={group.id} title={group.label} statusType={group.status} selectGroup={this.selectGroup} isSelected={this.state.selectedGroup==group.id}/>
