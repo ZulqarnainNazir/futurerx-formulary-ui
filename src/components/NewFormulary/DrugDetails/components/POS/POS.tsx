@@ -554,8 +554,21 @@ class DrugDetailPOS extends React.Component<any, any> {
       this.getPOSDrugsList();
     }
 
+    // let payload = { advancedSearchBody: {}, populateGrid: false, closeDialog: false, listItemStatus: {} };
+    // this.props.setAdvancedSearch(payload);
+    this.clearSearch();
+
     this.setState({ tabs, activeTabIndex, showGrid: false });
   };
+
+  clearSearch = () => {
+    let payload = { advancedSearchBody: {}, populateGrid: false, closeDialog: false, listItemStatus: {} };
+    this.props.setAdvancedSearch(payload);
+  }
+
+  componentWillUnmount() {
+    this.clearSearch();
+  }
 
   handleNoteClick = (event: React.ChangeEvent<{}>) => {
     event.stopPropagation();
