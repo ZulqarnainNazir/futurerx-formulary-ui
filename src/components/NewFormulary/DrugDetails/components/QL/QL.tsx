@@ -601,7 +601,6 @@ class Tier extends React.Component<any, tabsState> {
   };
 
   UNSAFE_componentWillReceiveProps(nextProps) {
-    this.setState(nextProps);
     if (nextProps.switchState) {
       this.openTierGridContainer();
       this.setState({
@@ -610,6 +609,7 @@ class Tier extends React.Component<any, tabsState> {
           return tab;
         }),
       });
+      this.onClickTab(0);
     } else {
       this.setState({
         tabs: [
@@ -703,20 +703,21 @@ class Tier extends React.Component<any, tabsState> {
             {this.state.tierGridContainer && (
               <div className="select-drug-from-table">
                 <div className="bordered white-bg">
-                  <div
-                    className="header space-between pr-10"
-                    style={{ display: "flex", justifyContent: "flex-end" }}
-                  >
-                    <div className="button-wrapper">
-                      <Button
-                        className="Button normal"
-                        label="Advance Search"
-                        onClick={this.advanceSearchClickHandler}
-                      />
-                      <Button label="Save" onClick={this.handleSave} />
+                  {!this.props.switchState && (
+                    <div
+                      className="header space-between pr-10"
+                      style={{ display: "flex", justifyContent: "flex-end" }}
+                    >
+                      <div className="button-wrapper">
+                        <Button
+                          className="Button normal"
+                          label="Advance Search"
+                          onClick={this.advanceSearchClickHandler}
+                        />
+                        <Button label="Save" onClick={this.handleSave} />
+                      </div>
                     </div>
-                  </div>
-
+                  )}
                   <div className="tier-grid-container">
                     <FrxDrugGridContainer
                       isPinningEnabled={false}
