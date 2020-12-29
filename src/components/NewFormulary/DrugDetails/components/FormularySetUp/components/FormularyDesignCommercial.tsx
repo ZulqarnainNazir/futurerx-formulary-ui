@@ -87,6 +87,8 @@ class FormularyDesignCommercial extends React.Component<any, any> {
         if(des_opt.edits.length > 0 || des_opt.custom_edits.length > 0){
             des_opt.edits = [];
             des_opt.custom_edits = [];
+            const NAId = this.props.designOptions?.filter(e => e.is_custom !== true && e.edit_name === 'N/A').map(e=>e.id_edit)[0];
+            des_opt.edits.push(NAId);
         }else{
             const newEdits = this.props.designOptions?.filter(e => e.is_custom !== true && e.edit_name !== 'N/A').map(e=>e.id_edit);
             des_opt.edits = newEdits;
