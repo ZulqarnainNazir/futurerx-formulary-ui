@@ -8,6 +8,7 @@ import "./common.scss";
 
 const FillLimitSettings = (props) => {
   const [selectedCriteria, setSelectedCriteria] = useState("no");
+  const { fillsAllowed = "", fillLimitPeriodOfTime = "" } = props.values;
 
   return (
     <div className="fill-limit-settings-container">
@@ -21,7 +22,7 @@ const FillLimitSettings = (props) => {
               // placeholder="Search"
               type="number"
               name="fillsAllowed"
-              value={props.values.fillsAllowed}
+              value={fillsAllowed}
               onChange={props.handleOnChange}
               disableUnderline={true}
               disabled={props.isViweAll}
@@ -38,7 +39,7 @@ const FillLimitSettings = (props) => {
                 // placeholder="Search"
                 type="number"
                 name="fillLimitPeriodOfTime"
-                value={props.values.fillLimitPeriodOfTime}
+                value={fillLimitPeriodOfTime}
                 onChange={props.handleOnChange}
                 disableUnderline={true}
                 disabled={props.isViweAll}

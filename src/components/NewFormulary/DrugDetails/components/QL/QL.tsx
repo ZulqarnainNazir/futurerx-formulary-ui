@@ -29,6 +29,7 @@ import {
 import * as constants from "../../../../../api/http-commons";
 import { QlColumns } from "../../../../../utils/grid/columns";
 import showMessage from "../../../Utils/Toast"; //"../../../Utils/Toast";
+import { ToastContainer } from "react-toastify";
 import AdvanceSearchContainer from "../../../NewAdvanceSearch/AdvanceSearchContainer";
 import "./components/common.scss";
 
@@ -417,7 +418,7 @@ class Tier extends React.Component<any, tabsState> {
       drugGridData: gridData,
       tierGridContainer: true,
     });
-    showMessage("Failure", "error");
+    // showMessage("Failure", "error");
   }
 
   handleOnChange = (e) => {
@@ -563,6 +564,7 @@ class Tier extends React.Component<any, tabsState> {
           this.state.drugGridData = [];
           // this.populateGridData();
           // console.log("[]");
+          this.setState({ quantityAndFillLimitObject: {} });
           this.openTierGridContainer();
 
           this.props
@@ -593,10 +595,14 @@ class Tier extends React.Component<any, tabsState> {
       ) {
         this.openTierGridContainer();
       } else {
-        showMessage("please fill required field", "error");
+        showMessage("Please fill required field", "error");
       }
     } else {
-      this.openTierGridContainer();
+      if (this.state.selectedCriteria.length == 0) {
+        showMessage("Select Crieria to Remove Drugs", "error");
+      } else {
+        this.openTierGridContainer();
+      }
     }
   };
 
@@ -748,6 +754,7 @@ class Tier extends React.Component<any, tabsState> {
           </div>
           {/* {this.state.isAdvanceSearchOpen && <AdvanceSearchContainer />} */}
         </div>
+        <ToastContainer />
       </div>
     );
   }
