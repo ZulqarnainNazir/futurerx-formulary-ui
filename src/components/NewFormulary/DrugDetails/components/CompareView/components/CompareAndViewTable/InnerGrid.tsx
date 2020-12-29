@@ -48,6 +48,7 @@ class InnerGrid extends Component<InnerGridProps, any>{
     refFormularyId: '',
     hiddenColumns: Array(),
     dataCount: 0,
+    isLastColumn: false,
   }
 
   listPayload: any = {
@@ -80,24 +81,24 @@ class InnerGrid extends Component<InnerGridProps, any>{
   onPageSize = (pageSize) => {
     this.listPayload = { ...defaultListPayload };
     this.listPayload.limit = pageSize;
-    this.populateGridData(this.state.rowData,this.state.baseFormularyId, this.state.refFormularyId,this.listPayload);
+    this.populateGridData(this.state.rowData, this.state.baseFormularyId, this.state.refFormularyId, this.listPayload, this.state.isLastColumn);
   }
   onGridPageChangeHandler = (pageNumber: any) => {
     this.listPayload.index = (pageNumber - 1) * this.listPayload.limit;
-    this.populateGridData(this.state.rowData,this.state.baseFormularyId, this.state.refFormularyId, this.listPayload);
+    this.populateGridData(this.state.rowData, this.state.baseFormularyId, this.state.refFormularyId, this.listPayload, this.state.isLastColumn);
   }
   onClearFilterHandler = () => {
     this.listPayload = { ...defaultListPayload };
-    this.populateGridData(this.state.rowData,this.state.baseFormularyId, this.state.refFormularyId, this.listPayload);
+    this.populateGridData(this.state.rowData, this.state.baseFormularyId, this.state.refFormularyId, this.listPayload, this.state.isLastColumn);
   }
 
-  populateGridData = async (rowData, baseFormularyId, refFormularyId, payload) => {
+  populateGridData = async (rowData, baseFormularyId, refFormularyId, payload, isLastColumn) => {
     if (this.props.formularyLobId && this.props.formularyLobId === 4) {
       let drugGridData = Array();
       let drugData = Array();
       let apiDetails = {};
       let isCategoricalRow = (rowData['attribute_name'] === 'PA Group Descriptions' || rowData['attribute_name'] === 'ST Group Descriptions' || rowData['attribute_type'] === 'Category/Class');
-      apiDetails['apiPart'] = isCategoricalRow ? compareConstants.COMMERCIAL_ATTRIBUTE_VALUES : compareConstants.COMMERCIAL_FORMULARY_DRUGS;
+      apiDetails['apiPart'] = isCategoricalRow ? compareConstants.COMMERCIAL_ATTRIBUTE_VALUES : (isLastColumn ? compareConstants.COMMERCIAL_FORMULARY_DRUGS_NON_MATCH : compareConstants.COMMERCIAL_FORMULARY_DRUGS);
       if (refFormularyId) {
         apiDetails['pathParams'] = baseFormularyId + '/' + refFormularyId;
       } else {
@@ -163,24 +164,52 @@ class InnerGrid extends Component<InnerGridProps, any>{
               let row = {};
               row['id'] = idCount;
               row['key'] = idCount;
-              row['label'] = value['drug_label_name'];
-              row['fileType'] = value['file_type'];
-              row['dataSource'] = value['data_source'];
-              row['gpi'] = value['generic_product_identifier'];
+              if (isLastColumn) {
+                row['label'] = value['drug_label_name_base'];
+                row['fileType'] = value['file_type_base'];
+                row['dataSource'] = value['data_source_base'];
+                row['gpi'] = value['generic_product_identifier_base'];
+              } else {
+                row['label'] = value['drug_label_name'];
+                row['fileType'] = value['file_type'];
+                row['dataSource'] = value['data_source'];
+                row['gpi'] = value['generic_product_identifier'];
+              }
               switch (rowData['attribute_type']) {
                 case 'Tier':
-                  row['tier'] = value['tier_value'];
+                  if (isLastColumn) {
+                    row['tier'] = value['tier_value_base'];
+                    row['tierRef'] = value['tier_value_ref'];
+                  } else {
+                    row['tier'] = value['tier_value'];
+                  }
                   break;
 
                 case 'Prior Authorization (PA)':
-                  row['paType'] = value['pa_type'] === null ? '' : value['pa_type'];
-                  row['paGroupDescription'] = value['pa_group_description'] === null ? '' : value['pa_group_description'];
+                  if (isLastColumn) {
+                    row['paType'] = value['pa_type_base'] === null ? '' : value['pa_type_base'];
+                    row['paGroupDescription'] = value['pa_group_description_base'] === null ? '' : value['pa_group_description_base'];
+                    row['paTypeRef'] = value['pa_type_ref'] === null ? '' : value['pa_type_ref'];
+                    row['paGroupDescriptionRef'] = value['pa_group_description_ref'] === null ? '' : value['pa_group_description_ref'];
+                  } else {
+                    row['paType'] = value['pa_type'] === null ? '' : value['pa_type'];
+                    row['paGroupDescription'] = value['pa_group_description'] === null ? '' : value['pa_group_description'];
+                  }
                   break;
 
                 case 'Step Therpay (ST)':
-                  row['stType'] = value['st_type'] === null ? '' : value['st_type'];
-                  row['stGroupDescription'] = value['st_group_description'] === null ? '' : value['st_group_description'];
-                  row['stValue'] = value['st_value'] === null ? '' : value['st_value'];
+                  if (isLastColumn) {
+                    row['stType'] = value['st_type_base'] === null ? '' : value['st_type_base'];
+                    row['stGroupDescription'] = value['st_group_description_base'] === null ? '' : value['st_group_description_base'];
+                    row['stValue'] = value['st_value_base'] === null ? '' : value['st_value_base'];
+                    row['stTypeRef'] = value['st_type_ref'] === null ? '' : value['st_type_ref'];
+                    row['stGroupDescriptionRef'] = value['st_group_description_ref'] === null ? '' : value['st_group_description_ref'];
+                    row['stValueRef'] = value['st_value_ref'] === null ? '' : value['st_value_ref'];
+                  } else {
+                    row['stType'] = value['st_type'] === null ? '' : value['st_type'];
+                    row['stGroupDescription'] = value['st_group_description'] === null ? '' : value['st_group_description'];
+                    row['stValue'] = value['st_value'] === null ? '' : value['st_value'];
+                  }
                   break;
 
                 case 'Quantity Limits (QL)':
@@ -195,64 +224,138 @@ class InnerGrid extends Component<InnerGridProps, any>{
                 case 'Drug Details':
                   switch (rowData['attribute_name']) {
                     case 'Age Limits':
-                      row['minCovered'] = value['covered_min_ages'] === null ? '' : value['covered_min_ages'];
-                      row['maxCovered'] = value['covered_max_ages'] === null ? '' : value['covered_max_ages'];
-                      row['minCoveredCond'] = value['covered_min_operators'] === null ? '' : value['covered_min_operators'];
-                      row['maxCoveredCond'] = value['covered_max_operators'] === null ? '' : value['covered_max_operators'];
-                      row['minNotCovered'] = value['not_covered_min_ages'] === null ? '' : value['not_covered_min_ages'];
-                      row['maxNotCovered'] = value['not_covered_max_ages'] === null ? '' : value['not_covered_max_ages'];
-                      row['minNotCoveredCond'] = value['not_covered_min_operators'] === null ? '' : value['not_covered_min_operators'];
-                      row['maxNotCoveredCond'] = value['not_covered_max_operators'] === null ? '' : value['not_covered_max_operators'];
+                      if (isLastColumn) {
+                        row['minCovered'] = value['covered_min_ages_base'] === null ? '' : value['covered_min_ages_base'];
+                        row['maxCovered'] = value['covered_max_ages_base'] === null ? '' : value['covered_max_ages_base'];
+                        row['minCoveredCond'] = value['covered_min_operators_base'] === null ? '' : value['covered_min_operators_base'];
+                        row['maxCoveredCond'] = value['covered_max_operators_base'] === null ? '' : value['covered_max_operators_base'];
+                        row['minNotCovered'] = value['not_covered_min_ages_base'] === null ? '' : value['not_covered_min_ages_base'];
+                        row['maxNotCovered'] = value['not_covered_max_ages_base'] === null ? '' : value['not_covered_max_ages_base'];
+                        row['minNotCoveredCond'] = value['not_covered_min_operators_base'] === null ? '' : value['not_covered_min_operators_base'];
+                        row['maxNotCoveredCond'] = value['not_covered_max_operators_base'] === null ? '' : value['not_covered_max_operators_base'];
+
+                        row['minCoveredRef'] = value['covered_min_ages_ref'] === null ? '' : value['covered_min_ages_ref'];
+                        row['maxCoveredRef'] = value['covered_max_ages_ref'] === null ? '' : value['covered_max_ages_ref'];
+                        row['minCoveredCondRef'] = value['covered_min_operators_ref'] === null ? '' : value['covered_min_operators_ref'];
+                        row['maxCoveredCondRef'] = value['covered_max_operators_ref'] === null ? '' : value['covered_max_operators_ref'];
+                        row['minNotCoveredRef'] = value['not_covered_min_ages_ref'] === null ? '' : value['not_covered_min_ages_ref'];
+                        row['maxNotCoveredRef'] = value['not_covered_max_ages_ref'] === null ? '' : value['not_covered_max_ages_ref'];
+                        row['minNotCoveredCondRef'] = value['not_covered_min_operators_ref'] === null ? '' : value['not_covered_min_operators_ref'];
+                        row['maxNotCoveredCondRef'] = value['not_covered_max_operators_ref'] === null ? '' : value['not_covered_max_operators_ref'];
+                      } else {
+                        row['minCovered'] = value['covered_min_ages'] === null ? '' : value['covered_min_ages'];
+                        row['maxCovered'] = value['covered_max_ages'] === null ? '' : value['covered_max_ages'];
+                        row['minCoveredCond'] = value['covered_min_operators'] === null ? '' : value['covered_min_operators'];
+                        row['maxCoveredCond'] = value['covered_max_operators'] === null ? '' : value['covered_max_operators'];
+                        row['minNotCovered'] = value['not_covered_min_ages'] === null ? '' : value['not_covered_min_ages'];
+                        row['maxNotCovered'] = value['not_covered_max_ages'] === null ? '' : value['not_covered_max_ages'];
+                        row['minNotCoveredCond'] = value['not_covered_min_operators'] === null ? '' : value['not_covered_min_operators'];
+                        row['maxNotCoveredCond'] = value['not_covered_max_operators'] === null ? '' : value['not_covered_max_operators'];
+                      }
                       break;
 
                     case 'Gender Limits':
-                      row['covered'] = value['covered_genders'] === null ? '' : value['covered_genders'];
-                      row['notCovered'] = value['not_covered_genders'] === null ? '' : value['not_covered_genders'];
+                      if (isLastColumn) {
+                        row['covered'] = value['covered_genders_base'] === null ? '' : value['covered_genders_base'];
+                        row['notCovered'] = value['not_covered_genders_base'] === null ? '' : value['not_covered_genders_base'];
+
+                        row['coveredRef'] = value['covered_genders_ref'] === null ? '' : value['covered_genders_ref'];
+                        row['notCoveredRef'] = value['not_covered_genders_ref'] === null ? '' : value['not_covered_genders_ref'];
+                      } else {
+                        row['covered'] = value['covered_genders'] === null ? '' : value['covered_genders'];
+                        row['notCovered'] = value['not_covered_genders'] === null ? '' : value['not_covered_genders'];
+                      }
                       break;
 
                     case 'ICD Limits':
-                      row['covered'] = value['covered_icds'] === null ? '' : value['covered_icds'];
-                      row['notCovered'] = value['not_covered_icds'] === null ? '' : value['not_covered_icds'];
+                      if (isLastColumn) {
+                        row['covered'] = value['covered_icds_base'] === null ? '' : value['covered_icds_base'];
+                        row['notCovered'] = value['not_covered_icds_base'] === null ? '' : value['not_covered_icds_base'];
+
+                        row['coveredRef'] = value['covered_icds_ref'] === null ? '' : value['covered_icds_ref'];
+                        row['notCoveredRef'] = value['not_covered_icds_ref'] === null ? '' : value['not_covered_icds_ref'];
+                      } else {
+                        row['covered'] = value['covered_icds'] === null ? '' : value['covered_icds'];
+                        row['notCovered'] = value['not_covered_icds'] === null ? '' : value['not_covered_icds'];
+                      }
                       break;
 
                     case 'Patient Residence':
-                      row['covered'] = value['covered_patient_residences'] === null ? '' : value['covered_patient_residences'];
-                      row['notCovered'] = value['not_covered_patient_residences'] === null ? '' : value['not_covered_patient_residences'];
+                      if (isLastColumn) {
+                        row['covered'] = value['covered_patient_residences_base'] === null ? '' : value['covered_patient_residences_base'];
+                        row['notCovered'] = value['not_covered_patient_residences_base'] === null ? '' : value['not_covered_patient_residences_base'];
+
+                        row['coveredRef'] = value['covered_patient_residences_ref'] === null ? '' : value['covered_patient_residences_ref'];
+                        row['notCoveredRef'] = value['not_covered_patient_residences_ref'] === null ? '' : value['not_covered_patient_residences_ref'];
+                      } else {
+                        row['covered'] = value['covered_patient_residences'] === null ? '' : value['covered_patient_residences'];
+                        row['notCovered'] = value['not_covered_patient_residences'] === null ? '' : value['not_covered_patient_residences'];
+                      }
                       break;
 
                     case 'Pharmacy Network':
-                      row['covered'] = value['covered_pharmacy_networks'] === null ? '' : value['covered_pharmacy_networks'];
-                      row['notCovered'] = value['not_covered_pharmacy_networks'] === null ? '' : value['not_covered_pharmacy_networks'];
+                      if (isLastColumn) {
+                        row['covered'] = value['covered_pharmacy_networks_base'] === null ? '' : value['covered_pharmacy_networks_base'];
+                        row['notCovered'] = value['not_covered_pharmacy_networks_base'] === null ? '' : value['not_covered_pharmacy_networks_base'];
+
+                        row['coveredRef'] = value['covered_pharmacy_networks_ref'] === null ? '' : value['covered_pharmacy_networks_ref'];
+                        row['notCoveredRef'] = value['not_covered_pharmacy_networks_ref'] === null ? '' : value['not_covered_pharmacy_networks_ref'];
+                      } else {
+                        row['covered'] = value['covered_pharmacy_networks'] === null ? '' : value['covered_pharmacy_networks'];
+                        row['notCovered'] = value['not_covered_pharmacy_networks'] === null ? '' : value['not_covered_pharmacy_networks'];
+                      }
                       break;
 
                     case 'Prescriber Taxonomy':
-                      row['covered'] = value['covered_prescriber_taxonomies'] === null ? '' : value['covered_prescriber_taxonomies'];
-                      row['notCovered'] = value['not_covered_prescriber_taxonomies'] === null ? '' : value['not_covered_prescriber_taxonomies'];
+                      if (isLastColumn) {
+                        row['covered'] = value['covered_prescriber_taxonomies_base'] === null ? '' : value['covered_prescriber_taxonomies_base'];
+                        row['notCovered'] = value['not_covered_prescriber_taxonomies_base'] === null ? '' : value['not_covered_prescriber_taxonomies_base'];
+
+                        row['coveredRef'] = value['covered_prescriber_taxonomies_ref'] === null ? '' : value['covered_prescriber_taxonomies_ref'];
+                        row['notCoveredRef'] = value['not_covered_prescriber_taxonomies_ref'] === null ? '' : value['not_covered_prescriber_taxonomies_ref'];
+                      } else {
+                        row['covered'] = value['covered_prescriber_taxonomies'] === null ? '' : value['covered_prescriber_taxonomies'];
+                        row['notCovered'] = value['not_covered_prescriber_taxonomies'] === null ? '' : value['not_covered_prescriber_taxonomies'];
+                      }
                       break;
 
                     case 'Place of Service':
-                      row['covered'] = value['covered_place_of_services'] === null ? '' : value['covered_place_of_services'];
-                      row['notCovered'] = value['not_covered_place_of_services'] === null ? '' : value['not_covered_place_of_services'];
+                      if (isLastColumn) {
+                        row['covered'] = value['covered_place_of_services_base'] === null ? '' : value['covered_place_of_services_base'];
+                        row['notCovered'] = value['not_covered_place_of_services_base'] === null ? '' : value['not_covered_place_of_services_base'];
+
+                        row['coveredRef'] = value['covered_place_of_services_ref'] === null ? '' : value['covered_place_of_services_ref'];
+                        row['notCoveredRef'] = value['not_covered_place_of_services_ref'] === null ? '' : value['not_covered_place_of_services_ref'];
+                      } else {
+                        row['covered'] = value['covered_place_of_services'] === null ? '' : value['covered_place_of_services'];
+                        row['notCovered'] = value['not_covered_place_of_services'] === null ? '' : value['not_covered_place_of_services'];
+                      }
                       break;
                   }
 
                 case 'User Defined':
-                  row['userDefined'] = value['user_defined'] === null ? '' : value['user_defined'];
+                  if (isLastColumn) {
+                    row['userDefined'] = value['user_defined_base'] === null ? '' : value['user_defined_base'];
+                    row['userDefinedRef'] = value['user_defined_ref'] === null ? '' : value['user_defined_ref'];
+                  } else {
+                    row['userDefined'] = value['user_defined'] === null ? '' : value['user_defined'];
+                  }
                   break;
               }
               drugGridData.push(row);
             }
             idCount++;
           });
+          console.log('Row data is:'+JSON.stringify(rowData));
           this.setState({
             drugGridData: drugGridData,
             drugData: drugData,
-            gridColumns: rowData['gridColumns'],
+            gridColumns: isLastColumn ? rowData['gridColumnsNonMatch'] : rowData['gridColumns'],
             rowData: rowData,
             baseFormularyId: baseFormularyId,
             refFormularyId: refFormularyId,
-            hiddenColumns: Array(),
             dataCount: data['count'],
+            isLastColumn: isLastColumn,
           });
         } else {
           showMessage('Compare data is empty', 'error');
@@ -263,8 +366,8 @@ class InnerGrid extends Component<InnerGridProps, any>{
             rowData: {},
             baseFormularyId: '',
             refFormularyId: '',
-            hiddenColumns: Array(),
             dataCount: 0,
+            isLastColumn: isLastColumn,
           });
         }
       }
@@ -278,8 +381,8 @@ class InnerGrid extends Component<InnerGridProps, any>{
           rowData: {},
           baseFormularyId: '',
           refFormularyId: '',
-          hiddenColumns: Array(),
           dataCount: 0,
+          isLastColumn: isLastColumn,
         });
       }
     } else {
@@ -290,8 +393,8 @@ class InnerGrid extends Component<InnerGridProps, any>{
         rowData: {},
         baseFormularyId: '',
         refFormularyId: '',
-        hiddenColumns: Array(),
         dataCount: 0,
+        isLastColumn: isLastColumn,
       });
     }
   }
@@ -304,6 +407,7 @@ class InnerGrid extends Component<InnerGridProps, any>{
     baseFormularyId = null,
     refFormularyId = null,
     dataCount: number | any = 0,
+    isLastColumn: boolean | null = false
   ) => {
     if (isClose) {
       if (gridCellName !== null) this.state.drugGridHeaderName = gridCellName;
@@ -312,7 +416,15 @@ class InnerGrid extends Component<InnerGridProps, any>{
         this.state.actions = showCheckbox;
       }
       this.setState({
-        openDrugsList: !this.state.openDrugsList
+        openDrugsList: !this.state.openDrugsList,
+        drugGridData: Array(),
+        drugData: Array(),
+        gridColumns: Array(),
+        rowData: {},
+        baseFormularyId: '',
+        refFormularyId: '',
+        hiddenColumns: Array(),
+        dataCount: 0,
       });
     } else {
       if (dataCount > 0) {
@@ -321,10 +433,10 @@ class InnerGrid extends Component<InnerGridProps, any>{
           this.state.checkbox = showCheckbox;
           this.state.actions = showCheckbox;
         }
-        this.state.openDrugsList= !this.state.openDrugsList;
+        this.state.openDrugsList = !this.state.openDrugsList;
         this.listPayload = { ...defaultListPayload };
         //console.log('Base formulary ID:' + baseFormularyId + ' Ref formulary ID:' + refFormularyId + ' ' + JSON.stringify(this.props.baseformulary) + ' ' + JSON.stringify(this.props.referenceformulary));
-        this.populateGridData(rowData, baseFormularyId, refFormularyId, this.listPayload);
+        this.populateGridData(rowData, baseFormularyId, refFormularyId, this.listPayload, isLastColumn);
       }
     }
   };
@@ -352,7 +464,8 @@ class InnerGrid extends Component<InnerGridProps, any>{
                         false,
                         this.props.baseformulary['id_formulary'],
                         null,
-                        data.baseFormulary
+                        data.baseFormulary,
+                        false
                       );
                     }}
                   >
@@ -369,7 +482,8 @@ class InnerGrid extends Component<InnerGridProps, any>{
                         false,
                         this.props.referenceformulary['id_formulary'],
                         null,
-                        data.referenceFormulary
+                        data.referenceFormulary,
+                        false
                       );
                     }}
                   >
@@ -386,7 +500,8 @@ class InnerGrid extends Component<InnerGridProps, any>{
                         false,
                         this.props.baseformulary['id_formulary'],
                         this.props.referenceformulary['id_formulary'],
-                        data.baseOnly
+                        data.baseOnly,
+                        false
                       );
                     }}
                   >
@@ -403,7 +518,8 @@ class InnerGrid extends Component<InnerGridProps, any>{
                         false,
                         this.props.referenceformulary['id_formulary'],
                         this.props.baseformulary['id_formulary'],
-                        data.referenceOnly
+                        data.referenceOnly,
+                        false
                       );
                     }}
                   >
@@ -416,7 +532,11 @@ class InnerGrid extends Component<InnerGridProps, any>{
                       this.toggleDrugsListGrid(
                         `${this.props.formularyType} - ${data.name}: Non-Match Base & Reference`,
                         true,
-                        null,
+                        data,
+                        false,
+                        this.props.baseformulary['id_formulary'],
+                        this.props.referenceformulary['id_formulary'],
+                        data.nonMatch,
                         true
                       );
                     }}

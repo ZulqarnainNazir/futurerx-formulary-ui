@@ -387,7 +387,7 @@ class TierReplace extends React.Component<any, tabsState> {
         {this.state.tierGridContainer && !this.props.configureSwitch && (
           <div className="select-drug-from-table">
             <div className="bordered white-bg">
-              <div className="header space-between pr-10">
+              <div className="header pr-10">
                 {this.props.lobCode === "MCR" && (
                   <div
                     style={{
