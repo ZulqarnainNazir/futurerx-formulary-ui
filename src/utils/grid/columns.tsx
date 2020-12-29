@@ -11169,7 +11169,7 @@ export const getCompareFormularyVersionHistoryColumn: () => Column<any>[] = () =
       pixelWidth: 15,
       sorter: {},
       textCase: "upper",
-      key: "cms_formulary_id",
+      key: "formulary_id",
       displayTitle: "FORMULARY ID",
       isFilterable: true,
       dataType: "string",

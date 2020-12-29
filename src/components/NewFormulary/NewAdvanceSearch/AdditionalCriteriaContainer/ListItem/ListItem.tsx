@@ -71,7 +71,11 @@ class ListItem extends Component<any, any> {
       card: { cardName, cardCode, isIncluded },
     } = this.props;
     let currentNode = {};
-    if (nodeId) {
+
+    /////////////////////////////////////
+    console.log("object");
+    /////////////////////////////////////
+    if (initialGlobalState && nodeId) {
       // currentNode = initialGlobalState.filter(
       //   (criteria) => criteria.nodeId === nodeId
       // );
@@ -86,24 +90,34 @@ class ListItem extends Component<any, any> {
     }
   }
 
-  componentWillReceiveProps(nextProps) {}
-
-  loadSavedState = () => {
-    const { initialGlobalState } = this.props;
-    const { nodeId } = this.state;
-
-    if (
-      initialGlobalState.length !== 0 &&
-      initialGlobalState.nodeId === nodeId
-    ) {
-      console.log(initialGlobalState);
-
+  componentWillReceiveProps(nextProps) {
+    const { nodeId } = this.props;
+    if (nextProps.additionalCriteriaObject) {
+      const additionalCriteria = nextProps.additionalCriteriaObject[1];
+      const currentNode = additionalCriteria[nodeId];
       this.setState({
-        posSettings: initialGlobalState.posSettings,
-        posSettingsStatus: initialGlobalState.posStatus,
+        posSettings: currentNode.posSettings,
+        posSettingsStatus: currentNode.posStatus,
       });
     }
-  };
+  }
+
+  // loadSavedState = () => {
+  //   const { initialState } = this.props;
+
+  //   if (initialState && initialState.length > 0) {
+  //     console.log("intial state object: ", initialState);
+  //     console.log("intial state object: ", initialState.posSettings);
+  //     console.log("intial state object: ", initialState.posStatus);
+
+  //     // this.state.posSettings = initialState.posSettings;
+  //     // this.state.posSettingsStatus = initialState.posStatus;
+  //     // this.setState({
+  //     //   posSettings: initialState.posSettings,
+  //     //   posSettingsStatus: initialState.posStatus,
+  //     // });
+  //   }
+  // };
 
   initializeParentData = () => {
     // isIncluded
@@ -124,22 +138,29 @@ class ListItem extends Component<any, any> {
       this.setState({
         posSettingsStatus,
       });
-
-      console.log("saved::state: ", initialGlobalState);
     }
   };
 
   initializePOSSettingsListApi = () => {
+    const { initialState, nodeId } = this.props;
     let apiDetails = {};
     apiDetails["apiPart"] = POS_SETTINGS_LIST;
-
     this.props.getPOSSettings(apiDetails).then((json) => {
-      const posSettings =
+      let posSettings =
         json.payload && json.payload.data ? json.payload.data : [];
 
-      posSettings.forEach((s) => {
-        s["isChecked"] = false;
-      });
+      if (initialState !== null && initialState.nodeId === nodeId) {
+        // posSettings = initialState.posSettings;
+        // Object.assign(posSettings, initialState.posSettings);
+        posSettings = JSON.parse(JSON.stringify(initialState.posSettings));
+
+        // console.log("Starte here: ", posSettings);
+        // console.log(initialState.posSettings);
+      } else {
+        posSettings.forEach((s) => {
+          s["isChecked"] = false;
+        });
+      }
       this.setState({
         posSettings,
       });
@@ -164,9 +185,11 @@ class ListItem extends Component<any, any> {
   };
 
   serviceSettingsCheckedPOS = (e) => {
+    // const posSettings = [...this.state.posSettings];
     const { posSettings } = this.state;
     const { nodeId } = this.props;
 
+    // console.log("POS SERVICE UPDATE: ", posSettings);
     posSettings.forEach((s: any) => {
       if (s.id_place_of_service_type + "" + nodeId === e.target.id) {
         s.isChecked = e.target.checked;

@@ -13,7 +13,13 @@ import { getDrugDetailsColumnOTHER } from "../../../DrugDetails/components/Formu
 import { getDrugDetailData } from "../../../../../mocks/DrugGridMock";
 import FrxLoader from "../../../../shared/FrxLoader/FrxLoader";
 import AdvancedSearch from "../../../DrugDetails/components/FormularyConfigure/components/search/AdvancedSearch";
-import { getDrugDetailsOTHERSummary, getOTHERCriteriaList, getDrugDetailsOtherList, postRemoveOtherDrug, postReplaceOtherDrug } from "../../../../../redux/slices/formulary/drugDetails/other/otherActionCreation";
+import {
+  getDrugDetailsOTHERSummary,
+  getOTHERCriteriaList,
+  getDrugDetailsOtherList,
+  postRemoveOtherDrug,
+  postReplaceOtherDrug,
+} from "../../../../../redux/slices/formulary/drugDetails/other/otherActionCreation";
 import * as otConstants from "../../../../../api/http-drug-details";
 import getLobCode from "../../../Utils/LobUtils";
 import FrxDrugGridContainer from "../../../../shared/FrxGrid/FrxDrugGridContainer";
@@ -40,7 +46,7 @@ const defaultListPayload = {
   index: 0,
   limit: 10,
   filter: [],
-}
+};
 
 class DrugDetailOther extends React.Component<any, any> {
   state = {
@@ -73,7 +79,7 @@ class DrugDetailOther extends React.Component<any, any> {
       {
         key: "1",
         udf: "Some Value",
-        code_value: ""
+        code_value: "",
       },
     ],
   };
@@ -82,7 +88,7 @@ class DrugDetailOther extends React.Component<any, any> {
     index: 0,
     limit: 10,
     filter: [],
-  }
+  };
 
   rpSavePayload: any = {
     is_covered: true,
@@ -94,7 +100,7 @@ class DrugDetailOther extends React.Component<any, any> {
     breadcrumb_code_value: null,
     filter: [],
     search_key: "",
-  }
+  };
 
   rmSavePayload: any = {
     is_covered: true,
@@ -104,8 +110,8 @@ class DrugDetailOther extends React.Component<any, any> {
     not_covered: {},
     selected_criteria_ids: [],
     filter: [],
-    search_key: ""
-  }
+    search_key: "",
+  };
 
   advanceSearchClickHandler = (event) => {
     event.stopPropagation();
@@ -128,69 +134,105 @@ class DrugDetailOther extends React.Component<any, any> {
       apiDetails["messageBody"] = {};
 
       if (this.state.activeTabIndex === 0) {
-        this.rpSavePayload.selected_drug_ids = this.state.selectedDrugs
+        this.rpSavePayload.selected_drug_ids = this.state.selectedDrugs;
         apiDetails["messageBody"] = this.rpSavePayload;
-        apiDetails["pathParams"] = this.props?.formulary_id + "/" +  getLobCode(this.props.formulary_lob_id) + "/" + otConstants.TYPE_REPLACE;
+        apiDetails["pathParams"] =
+          this.props?.formulary_id +
+          "/" +
+          getLobCode(this.props.formulary_lob_id) +
+          "/" +
+          otConstants.TYPE_REPLACE;
         console.log("The API Details - ", apiDetails);
 
         // Replace Drug method call
         this.props.postReplaceOtherDrug(apiDetails).then((json) => {
-          if (json.payload && json.payload.code && json.payload.code === "200") {
+          if (
+            json.payload &&
+            json.payload.code &&
+            json.payload.code === "200"
+          ) {
             showMessage("Success", "success");
             this.getOTHERSummary();
           } else {
             showMessage("Failure", "error");
           }
         });
-
-      } else if(this.state.activeTabIndex === 2) {
-        this.rmSavePayload.selected_drug_ids = this.state.selectedDrugs
+      } else if (this.state.activeTabIndex === 2) {
+        this.rmSavePayload.selected_drug_ids = this.state.selectedDrugs;
         apiDetails["messageBody"] = this.rmSavePayload;
-        apiDetails["pathParams"] = this.props?.formulary_id + "/" +  getLobCode(this.props.formulary_lob_id) + "/" + otConstants.TYPE_REMOVE;
+        apiDetails["pathParams"] =
+          this.props?.formulary_id +
+          "/" +
+          getLobCode(this.props.formulary_lob_id) +
+          "/" +
+          otConstants.TYPE_REMOVE;
         console.log("The API Details - ", apiDetails);
 
         // Remove Drug method call
         this.props.postRemoveOtherDrug(apiDetails).then((json) => {
-          if (json.payload && json.payload.code && json.payload.code === "200") {
+          if (
+            json.payload &&
+            json.payload.code &&
+            json.payload.code === "200"
+          ) {
             showMessage("Success", "success");
             this.getOTHERSummary();
           } else {
             showMessage("Failure", "error");
           }
         });
-
       }
     }
   };
 
   onApplyFilterHandler = (filters) => {
     const fetchedProps = Object.keys(filters)[0];
-    const fetchedOperator = filters[fetchedProps][0].condition === 'is like' ? 'is_like' : 
-    filters[fetchedProps][0].condition === 'is not' ? 'is_not' : 
-    filters[fetchedProps][0].condition === 'is not like' ? 'is_not_like' : 
-    filters[fetchedProps][0].condition === 'does not exist' ? 'does_not_exist' : 
-    filters[fetchedProps][0].condition;
-    const fetchedValues = filters[fetchedProps][0].value !== '' ? [filters[fetchedProps][0].value.toString()] : [];
-    const newFilters = [{ prop: fetchedProps, operator: fetchedOperator,values: fetchedValues}];
+    const fetchedOperator =
+      filters[fetchedProps][0].condition === "is like"
+        ? "is_like"
+        : filters[fetchedProps][0].condition === "is not"
+        ? "is_not"
+        : filters[fetchedProps][0].condition === "is not like"
+        ? "is_not_like"
+        : filters[fetchedProps][0].condition === "does not exist"
+        ? "does_not_exist"
+        : filters[fetchedProps][0].condition;
+    const fetchedValues =
+      filters[fetchedProps][0].value !== ""
+        ? [filters[fetchedProps][0].value.toString()]
+        : [];
+    const newFilters = [
+      { prop: fetchedProps, operator: fetchedOperator, values: fetchedValues },
+    ];
     this.listPayload.filter = newFilters;
-    this.getOtherList({ index: this.listPayload.index, limit: this.listPayload.limit, listPayload: this.listPayload });
-  }
+    this.getOtherList({
+      index: this.listPayload.index,
+      limit: this.listPayload.limit,
+      listPayload: this.listPayload,
+    });
+  };
 
   onPageSize = (pageSize) => {
-    this.listPayload.limit = pageSize
+    this.listPayload.limit = pageSize;
     this.getOtherList({ limit: this.listPayload.limit });
-  }
+  };
 
   onGridPageChangeHandler = (pageNumber: any) => {
     this.listPayload.index = (pageNumber - 1) * this.listPayload.limit;
-    this.getOtherList({ index: this.listPayload.index, limit: this.listPayload.limit });
-  }
+    this.getOtherList({
+      index: this.listPayload.index,
+      limit: this.listPayload.limit,
+    });
+  };
 
   onClearFilterHandler = () => {
     this.listPayload.index = 0;
     this.listPayload.limit = 10;
-    this.getOtherList({ index: defaultListPayload.index, limit: defaultListPayload.limit });
-  }
+    this.getOtherList({
+      index: defaultListPayload.index,
+      limit: defaultListPayload.limit,
+    });
+  };
 
   onSelectedTableRowChanged = (selectedRowKeys) => {
     this.state.selectedDrugs = [];
@@ -231,9 +273,9 @@ class DrugDetailOther extends React.Component<any, any> {
 
       let settingsRows = tmpData.map((ele) => {
         let curRow = {
-          "key": ele["id_edit"],
-          "udf": ele["edit_name"],
-          "code_value": ele["code_value"]
+          key: ele["id_edit"],
+          udf: ele["edit_name"],
+          code_value: ele["code_value"],
         };
         return curRow;
       });
@@ -260,9 +302,9 @@ class DrugDetailOther extends React.Component<any, any> {
 
       let settingsRows = tmpData.map((ele) => {
         let curRow = {
-          "key": ele["id_edit"],
-          "udf": ele["edit_name"],
-          "code_value": ele["code_value"]
+          key: ele["id_edit"],
+          udf: ele["edit_name"],
+          code_value: ele["code_value"],
         };
         return curRow;
       });
@@ -271,17 +313,24 @@ class DrugDetailOther extends React.Component<any, any> {
         otherData: settingsRows,
       });
     });
-  }
+  };
 
-  getOtherList = ({index = 0, limit = 10, listPayload = {}} = {}) => {
+  getOtherList = ({ index = 0, limit = 10, listPayload = {} } = {}) => {
     let apiDetails = {};
-    apiDetails['apiPart'] = otConstants.GET_OTHER_DRUGS;
-    apiDetails['pathParams'] = this.props?.formulary_id + "/" + getLobCode(this.props.formulary_lob_id);
-    apiDetails['keyVals'] = [{ key: otConstants.KEY_ENTITY_ID, value: this.props?.formulary_id }, { key: otConstants.KEY_INDEX, value: index }, { key: otConstants.KEY_LIMIT, value: limit }];
-    apiDetails['messageBody'] = listPayload;
+    apiDetails["apiPart"] = otConstants.GET_OTHER_DRUGS;
+    apiDetails["pathParams"] =
+      this.props?.formulary_id + "/" + getLobCode(this.props.formulary_lob_id);
+    apiDetails["keyVals"] = [
+      { key: otConstants.KEY_ENTITY_ID, value: this.props?.formulary_id },
+      { key: otConstants.KEY_INDEX, value: index },
+      { key: otConstants.KEY_LIMIT, value: limit },
+    ];
+    apiDetails["messageBody"] = listPayload;
 
-    if(this.state.activeTabIndex === 2) {
-      apiDetails['messageBody']['selected_criteria_ids'] = this.rmSavePayload.selected_criteria_ids;
+    if (this.state.activeTabIndex === 2) {
+      apiDetails["messageBody"][
+        "selected_criteria_ids"
+      ] = this.rmSavePayload.selected_criteria_ids;
     }
 
     let listCount = 0;
@@ -296,19 +345,41 @@ class DrugDetailOther extends React.Component<any, any> {
         let gridItem = {};
         gridItem["id"] = count;
         gridItem["key"] = count;
-        gridItem["userDefined"] = element.user_defined ? "" + element.user_defined : "";
-        
+        gridItem["userDefined"] = element.user_defined
+          ? "" + element.user_defined
+          : "";
+
         gridItem["tier"] = element.tier_value ? "" + element.tier_value : "";
-        gridItem["labelName"] = element.drug_label_name ? "" + element.drug_label_name : "";
-        gridItem["ddid"] = element.drug_descriptor_identifier ? "" + element.drug_descriptor_identifier : "";
-        gridItem["gpi"] = element.generic_product_identifier ? "" + element.generic_product_identifier : "";
-        gridItem["trademark"] = element.trademark_code ? "" + element.trademark_code : "";
-        gridItem["databaseCategory"] = element.database_category ? "" + element.database_category : "";
-        gridItem["databaseClass"] = element.database_class ? "" + element.database_class : "";
-        gridItem["createdBy"] = element.created_by ? "" + element.created_by : "";
-        gridItem["createdOn"] = element.created_date ? "" + element.created_date : "";
-        gridItem["modifiedBy"] = element.modified_by ? "" + element.modified_by : "";
-        gridItem["modifiedOn"] = element.modified_date ? "" + element.modified_date : "";
+        gridItem["labelName"] = element.drug_label_name
+          ? "" + element.drug_label_name
+          : "";
+        gridItem["ddid"] = element.drug_descriptor_identifier
+          ? "" + element.drug_descriptor_identifier
+          : "";
+        gridItem["gpi"] = element.generic_product_identifier
+          ? "" + element.generic_product_identifier
+          : "";
+        gridItem["trademark"] = element.trademark_code
+          ? "" + element.trademark_code
+          : "";
+        gridItem["databaseCategory"] = element.database_category
+          ? "" + element.database_category
+          : "";
+        gridItem["databaseClass"] = element.database_class
+          ? "" + element.database_class
+          : "";
+        gridItem["createdBy"] = element.created_by
+          ? "" + element.created_by
+          : "";
+        gridItem["createdOn"] = element.created_date
+          ? "" + element.created_date
+          : "";
+        gridItem["modifiedBy"] = element.modified_by
+          ? "" + element.modified_by
+          : "";
+        gridItem["modifiedOn"] = element.modified_date
+          ? "" + element.modified_date
+          : "";
         gridItem["md5_id"] = element.md5_id ? "" + element.md5_id : "";
         count++;
         return gridItem;
@@ -320,7 +391,7 @@ class DrugDetailOther extends React.Component<any, any> {
         showGrid: true,
       });
     });
-  }
+  };
 
   componentDidMount() {
     const data = getDrugDetailData();
@@ -343,14 +414,16 @@ class DrugDetailOther extends React.Component<any, any> {
       return tab;
     });
 
-    if(activeTabIndex === 0 || activeTabIndex === 1) {
+    if (activeTabIndex === 0 || activeTabIndex === 1) {
       this.setState({ otherData: [] }, () => this.getOTHERSummary());
-      
-    } else if(activeTabIndex === 2) {
+    } else if (activeTabIndex === 2) {
       this.setState({ otherData: [] }, () => this.getOTHERCriteriaList());
     }
 
-    this.setState({ tabs, activeTabIndex, showGrid: false, selectedCriteria: [] }, () => console.log("THe Selected Criteria = ", this.state.selectedCriteria));
+    this.setState(
+      { tabs, activeTabIndex, showGrid: false, selectedCriteria: [] },
+      () => console.log("THe Selected Criteria = ", this.state.selectedCriteria)
+    );
   };
 
   handleNoteClick = (event: React.ChangeEvent<{}>) => {
@@ -371,13 +444,22 @@ class DrugDetailOther extends React.Component<any, any> {
     if (selectedRowKeys && selectedRowKeys.length > 0) {
       console.log("The Selectetd Rows = ", selectedRowKeys);
       console.log("The other data = ", this.state.otherData);
-      console.log("The Selected Row Keys Code value = ", selectedRowKeys[0], "   The Other data find = ", this.state.otherData.find(e => e.key === selectedRowKeys[0]))
+      console.log(
+        "The Selected Row Keys Code value = ",
+        selectedRowKeys[0],
+        "   The Other data find = ",
+        this.state.otherData.find((e) => e.key === selectedRowKeys[0])
+      );
 
-      if(this.state.activeTabIndex === 0) {
-        let codeValue = "", idEdit = "";
-        for(let i=0; i<this.state.otherData.length; i++) {
-          if(this.state.otherData[i].key === selectedRowKeys[0]) {
-            console.log("The State code value = ", this.state.otherData[i].code_value)
+      if (this.state.activeTabIndex === 0) {
+        let codeValue = "",
+          idEdit = "";
+        for (let i = 0; i < this.state.otherData.length; i++) {
+          if (this.state.otherData[i].key === selectedRowKeys[0]) {
+            console.log(
+              "The State code value = ",
+              this.state.otherData[i].code_value
+            );
             codeValue = this.state.otherData[i].code_value;
             idEdit = this.state.otherData[i].key;
           }
@@ -386,13 +468,20 @@ class DrugDetailOther extends React.Component<any, any> {
         this.rpSavePayload.breadcrumb_code_value = codeValue;
         this.rpSavePayload.id_edit = idEdit;
         this.rmSavePayload.selected_criteria_ids = [];
-        console.log("The Codevalue = ", codeValue, "---THe REPLACE Save Payload = ", this.rpSavePayload);
-
-      } else if(this.state.activeTabIndex === 2) {
+        console.log(
+          "The Codevalue = ",
+          codeValue,
+          "---THe REPLACE Save Payload = ",
+          this.rpSavePayload
+        );
+      } else if (this.state.activeTabIndex === 2) {
         let criteriaIds: any[] = [];
-        for(let i=0; i<this.state.otherData.length; i++) {
-          if(this.state.otherData[i].key === selectedRowKeys[i]) {
-            console.log("The State code value = ", this.state.otherData[i].code_value)
+        for (let i = 0; i < this.state.otherData.length; i++) {
+          if (this.state.otherData[i].key === selectedRowKeys[i]) {
+            console.log(
+              "The State code value = ",
+              this.state.otherData[i].code_value
+            );
             criteriaIds.push(this.state.otherData[i].code_value);
           }
         }
@@ -400,12 +489,17 @@ class DrugDetailOther extends React.Component<any, any> {
         this.rmSavePayload.selected_criteria_ids = criteriaIds;
         this.rpSavePayload.breadcrumb_code_value = "";
         this.rpSavePayload.id_edit = "";
-        console.log("The criteriaIds = ", criteriaIds, "---THe REMOVE Save Payload = ", this.rmSavePayload);
+        console.log(
+          "The criteriaIds = ",
+          criteriaIds,
+          "---THe REMOVE Save Payload = ",
+          this.rmSavePayload
+        );
       }
 
-      this.setState({selectedCriteria: selectedRowKeys.map(otId => otId)});
+      this.setState({ selectedCriteria: selectedRowKeys.map((otId) => otId) });
     }
-  }
+  };
 
   openOtherGridContainer = () => {
     this.getOtherList();
@@ -431,7 +525,9 @@ class DrugDetailOther extends React.Component<any, any> {
             enableResizingOfColumns
             data={this.state.data}
             getPerPageItemSize={this.onPageSize}
-            selectedCurrentPage={(this.listPayload.index/this.listPayload.limit + 1)}
+            selectedCurrentPage={
+              this.listPayload.index / this.listPayload.limit + 1
+            }
             pageSize={this.listPayload.limit}
             onGridPageChangeHandler={this.onGridPageChangeHandler}
             totalRowsCount={this.state.listCount}
@@ -484,7 +580,7 @@ class DrugDetailOther extends React.Component<any, any> {
             </div>
           </div>
         </div>
-        
+
         <div className="white-bg">
           <Grid item xs={5}>
             <div className="tier-grid-remove-container">
@@ -503,34 +599,42 @@ class DrugDetailOther extends React.Component<any, any> {
           </Grid>
           <Row justify="end">
             <Col>
-              <Button label="Apply" onClick={this.openOtherGridContainer} disabled={!(this.state.selectedCriteria.length > 0)}></Button>
+              <Button
+                label="Apply"
+                onClick={this.openOtherGridContainer}
+                disabled={!(this.state.selectedCriteria.length > 0)}
+              ></Button>
             </Col>
           </Row>
         </div>
 
-        { this.state.showGrid ? (
-        <div className="bordered">
-          <div className="header space-between pr-10">
-            Drug Grid
-            <div className="button-wrapper">
-              <Button
-                className="Button normal"
-                label="Advance Search"
-                onClick={this.advanceSearchClickHandler}
-              />
-              <Button label="Save" onClick={this.saveClickHandler} disabled={!(this.state.selectedDrugs.length > 0)} />
+        {this.state.showGrid ? (
+          <div className="bordered">
+            <div className="header space-between pr-10">
+              Drug Grid
+              <div className="button-wrapper">
+                <Button
+                  className="Button normal"
+                  label="Advance Search"
+                  onClick={this.advanceSearchClickHandler}
+                />
+                <Button
+                  label="Save"
+                  onClick={this.saveClickHandler}
+                  disabled={!(this.state.selectedDrugs.length > 0)}
+                />
+              </div>
             </div>
+            {dataGrid}
+            {this.state.isSearchOpen ? (
+              <AdvancedSearch
+                category="Grievances"
+                openPopup={this.state.isSearchOpen}
+                onClose={this.advanceSearchClosekHandler}
+              />
+            ) : null}
           </div>
-          {dataGrid}
-          {this.state.isSearchOpen ? (
-            <AdvancedSearch
-              category="Grievances"
-              openPopup={this.state.isSearchOpen}
-              onClose={this.advanceSearchClosekHandler}
-            />
-          ) : null}
-        </div>
-        ) : null }
+        ) : null}
       </>
     );
   }
