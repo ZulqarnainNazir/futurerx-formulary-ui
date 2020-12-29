@@ -1,5 +1,6 @@
 import React from "react";
 import { connect } from "react-redux";
+import { filter } from "lodash";
 import PanelHeader from "../../../../shared/Frx-components/panel-header/PanelHeader";
 import PanelGrid from "../../../../shared/Frx-components/panel-grid/PanelGrid";
 import CustomizedSwitches from "../FormularyConfigure/components/CustomizedSwitches";
@@ -42,6 +43,21 @@ const defaultListPayload = {
   index: 0,
   limit: 10,
 }
+
+const columnFilterMapping = {
+  freeFirstFill: "is_fff",
+  tier: "tier_value",
+  labelNamae: "drug_label_name",
+  ddid: "drug_descriptor_identifier",
+  gpi: "generic_product_identifier",
+  trademark: "trademark_code",
+  databaseCategory: "database_category",
+  databaseClass: "database_class",
+  createdBy: "created_by",
+  createdOn: "created_date",
+  modifiedBy: "modified_by",
+  modifiedOn: "modified_date",
+};
 
 class DrugDetailFFF extends React.Component<any, any> {
   state = {
@@ -145,6 +161,31 @@ class DrugDetailFFF extends React.Component<any, any> {
       }
     }
   };
+  
+  onApplyFilterHandler = (filters) => {
+    this.listPayload.filter = Array();
+    if (filters && filter.length > 0) {
+      const fetchedKeys = Object.keys(filters);
+      fetchedKeys.map(fetchedProps => {
+        if (filters[fetchedProps] && columnFilterMapping[fetchedProps]) {
+          const fetchedOperator = filters[fetchedProps][0].condition === 'is like' ? 'is_like' :
+            filters[fetchedProps][0].condition === 'is not' ? 'is_not' :
+              filters[fetchedProps][0].condition === 'is not like' ? 'is_not_like' :
+                filters[fetchedProps][0].condition === 'does not exist' ? 'does_not_exist' :
+                  filters[fetchedProps][0].condition;
+          
+          let fetchedPropsValue;
+          if(filters[fetchedProps][0].value !== '') {
+            const fetchedPropsValueNum = Number(filters[fetchedProps][0].value.toString());
+            fetchedPropsValue = isNaN(fetchedPropsValueNum) ? filters[fetchedProps][0].value.toString() : fetchedPropsValueNum
+          }
+          const fetchedValues = filters[fetchedProps][0].value !== '' ? [fetchedPropsValue] : [];
+          this.listPayload.filter.push({ prop: columnFilterMapping[fetchedProps], operator: fetchedOperator, values: fetchedValues });
+        }
+      });
+      this.getFFFDrugsList({ listPayload: this.listPayload });
+    }
+  }
 
   onPageSize = (pageSize) => {
     this.listPayload.limit = pageSize
@@ -159,6 +200,7 @@ class DrugDetailFFF extends React.Component<any, any> {
   onClearFilterHandler = () => {
     this.listPayload.index = 0;
     this.listPayload.limit = 10;
+    this.listPayload.filter = [];
     this.getFFFDrugsList({ index: defaultListPayload.index, limit: defaultListPayload.limit });
   }
 
@@ -378,6 +420,7 @@ class DrugDetailFFF extends React.Component<any, any> {
           onGridPageChangeHandler={this.onGridPageChangeHandler}
           totalRowsCount={this.state.listCount}
           clearFilterHandler={this.onClearFilterHandler}
+          applyFilter={this.onApplyFilterHandler}
           rowSelection={{
             columnWidth: 50,
             fixed: true,

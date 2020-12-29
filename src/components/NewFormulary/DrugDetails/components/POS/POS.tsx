@@ -1,5 +1,6 @@
 import React from "react";
 import { connect } from "react-redux";
+import { filter } from "lodash";
 import PanelHeader from "../../../../shared/Frx-components/panel-header/PanelHeader";
 import PanelGrid from "../../../../shared/Frx-components/panel-grid/PanelGrid";
 import CustomizedSwitches from "../FormularyConfigure/components/CustomizedSwitches";
@@ -82,6 +83,28 @@ interface posState {
   selectedList: any[],
   selectedDrugs: any[],
   drugData: any[],
+};
+
+const columnFilterMapping = {
+  placeOfService: "is_pos",
+  coveredPlaceOfService: "covered_place_of_services",
+  notCoveredPlaceOfService: "not_covered_place_of_services",
+  tier: "tier_value",
+  labelName: "drug_label_name",
+  ddid: "drug_descriptor_identifier",
+  gpi: "generic_product_identifier",
+  coverAgeMax: "covered_max_ages",
+  notCoverMin: "not_covered_min_operators",
+  notCoverAgeMin: "not_covered_min_ages",
+  notCoverMax: "not_covered_max_operators",
+  notCoverAgeMax: "not_covered_max_ages",
+  trademark: "trademark_code",
+  databaseCategory: "database_category",
+  databaseClass: "database_class",
+  createdBy: "created_by",
+  createdOn: "created_date",
+  modifiedBy: "modified_by",
+  modifiedOn: "modified_date",
 };
 
 class DrugDetailPOS extends React.Component<any, any> {
@@ -452,6 +475,31 @@ class DrugDetailPOS extends React.Component<any, any> {
       });
     });
   };
+  
+  onApplyFilterHandler = (filters) => {
+    this.listPayload.filter = Array();
+    if (filters && filter.length > 0) {
+      const fetchedKeys = Object.keys(filters);
+      fetchedKeys.map(fetchedProps => {
+        if (filters[fetchedProps] && columnFilterMapping[fetchedProps]) {
+          const fetchedOperator = filters[fetchedProps][0].condition === 'is like' ? 'is_like' :
+            filters[fetchedProps][0].condition === 'is not' ? 'is_not' :
+              filters[fetchedProps][0].condition === 'is not like' ? 'is_not_like' :
+                filters[fetchedProps][0].condition === 'does not exist' ? 'does_not_exist' :
+                  filters[fetchedProps][0].condition;
+          
+          let fetchedPropsValue;
+          if(filters[fetchedProps][0].value !== '') {
+            const fetchedPropsValueNum = Number(filters[fetchedProps][0].value.toString());
+            fetchedPropsValue = isNaN(fetchedPropsValueNum) ? filters[fetchedProps][0].value.toString() : fetchedPropsValueNum
+          }
+          const fetchedValues = filters[fetchedProps][0].value !== '' ? [fetchedPropsValue] : [];
+          this.listPayload.filter.push({ prop: columnFilterMapping[fetchedProps], operator: fetchedOperator, values: fetchedValues });
+        }
+      });
+      this.getPOSDrugsList({ listPayload: this.listPayload });
+    }
+  }
 
   onPageSize = (pageSize) => {
     this.listPayload.limit = pageSize;
@@ -473,6 +521,7 @@ class DrugDetailPOS extends React.Component<any, any> {
   onClearFilterHandler = () => {
     this.listPayload.index = 0;
     this.listPayload.limit = 10;
+    this.listPayload.filter = [];
     this.getPOSDrugsList({
       index: defaultListPayload.index,
       limit: defaultListPayload.limit,
@@ -668,6 +717,7 @@ class DrugDetailPOS extends React.Component<any, any> {
             onGridPageChangeHandler={this.onGridPageChangeHandler}
             totalRowsCount={this.state.listCount}
             clearFilterHandler={this.onClearFilterHandler}
+            applyFilter={this.onApplyFilterHandler}
             rowSelection={{
               columnWidth: 50,
               fixed: true,

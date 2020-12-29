@@ -417,6 +417,7 @@ class DrugDetailAL extends React.Component<any, any> {
   onClearFilterHandler = () => {
     this.listPayload.index = 0;
     this.listPayload.limit = 10;
+    this.listPayload.filter = [];
     this.getALDrugsList({ index: defaultListPayload.index, limit: defaultListPayload.limit });
   }
 

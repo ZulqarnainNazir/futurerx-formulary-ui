@@ -1,6 +1,7 @@
 import React from "react";
 import { connect } from "react-redux";
 import { Table } from "antd";
+import { filter } from "lodash";
 import Grid from "@material-ui/core/Grid";
 import { Row, Col } from "antd";
 import PanelHeader from "../../../../shared/Frx-components/panel-header/PanelHeader";
@@ -41,6 +42,21 @@ const defaultListPayload = {
   index: 0,
   limit: 10,
   filter: [],
+}
+
+const columnFilterMapping = {
+  userDefined: "user_defined",
+  tier: "tier_value",
+  labelName: "drug_label_name",
+  ddid: "drug_descriptor_identifier",
+  gpi: "generic_product_identifier",
+  trademark: "trademark_code",
+  databaseCategory: "database_category",
+  databaseClass: "database_class",
+  createdBy: "created_by",
+  createdOn: "created_date",
+  modifiedBy: "modified_by",
+  modifiedOn: "modified_date",
 }
 
 class DrugDetailOther extends React.Component<any, any> {
@@ -163,18 +179,30 @@ class DrugDetailOther extends React.Component<any, any> {
       }
     }
   };
-
+  
   onApplyFilterHandler = (filters) => {
-    const fetchedProps = Object.keys(filters)[0];
-    const fetchedOperator = filters[fetchedProps][0].condition === 'is like' ? 'is_like' : 
-    filters[fetchedProps][0].condition === 'is not' ? 'is_not' : 
-    filters[fetchedProps][0].condition === 'is not like' ? 'is_not_like' : 
-    filters[fetchedProps][0].condition === 'does not exist' ? 'does_not_exist' : 
-    filters[fetchedProps][0].condition;
-    const fetchedValues = filters[fetchedProps][0].value !== '' ? [filters[fetchedProps][0].value.toString()] : [];
-    const newFilters = [{ prop: fetchedProps, operator: fetchedOperator,values: fetchedValues}];
-    this.listPayload.filter = newFilters;
-    this.getOtherList({ index: this.listPayload.index, limit: this.listPayload.limit, listPayload: this.listPayload });
+    this.listPayload.filter = Array();
+    if (filters && filter.length > 0) {
+      const fetchedKeys = Object.keys(filters);
+      fetchedKeys.map(fetchedProps => {
+        if (filters[fetchedProps] && columnFilterMapping[fetchedProps]) {
+          const fetchedOperator = filters[fetchedProps][0].condition === 'is like' ? 'is_like' :
+            filters[fetchedProps][0].condition === 'is not' ? 'is_not' :
+              filters[fetchedProps][0].condition === 'is not like' ? 'is_not_like' :
+                filters[fetchedProps][0].condition === 'does not exist' ? 'does_not_exist' :
+                  filters[fetchedProps][0].condition;
+          
+          let fetchedPropsValue;
+          if(filters[fetchedProps][0].value !== '') {
+            const fetchedPropsValueNum = Number(filters[fetchedProps][0].value.toString());
+            fetchedPropsValue = isNaN(fetchedPropsValueNum) ? filters[fetchedProps][0].value.toString() : fetchedPropsValueNum
+          }
+          const fetchedValues = filters[fetchedProps][0].value !== '' ? [fetchedPropsValue] : [];
+          this.listPayload.filter.push({ prop: columnFilterMapping[fetchedProps], operator: fetchedOperator, values: fetchedValues });
+        }
+      });
+      this.getOtherList({ listPayload: this.listPayload });
+    }
   }
 
   onPageSize = (pageSize) => {
@@ -190,6 +218,7 @@ class DrugDetailOther extends React.Component<any, any> {
   onClearFilterHandler = () => {
     this.listPayload.index = 0;
     this.listPayload.limit = 10;
+    this.listPayload.filter = [];
     this.getOtherList({ index: defaultListPayload.index, limit: defaultListPayload.limit });
   }
 

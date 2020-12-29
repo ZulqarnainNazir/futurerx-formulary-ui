@@ -1,5 +1,6 @@
 import React from "react";
 import { connect } from "react-redux";
+import { filter } from "lodash";
 import PanelHeader from "../../../../shared/Frx-components/panel-header/PanelHeader";
 import PanelGrid from "../../../../shared/Frx-components/panel-grid/PanelGrid";
 import CustomizedSwitches from "../FormularyConfigure/components/CustomizedSwitches";
@@ -70,6 +71,24 @@ interface icdState {
   icdRemoveCheckedList: any[],
   icdRemoveSettingsStatus: any,
   showGrid: boolean,
+};
+
+const columnFilterMapping = {
+  icdLimit: "is_icdl",
+  coveredIcd: "covered_icds",
+  icdLookBack: "lookback_days",
+  not_covered_icds: "not_covered_icds",
+  tier_value: "tier_value",
+  labelName: "drug_label_name",
+  ddid: "drug_descriptor_identifier",
+  gpi: "generic_product_identifier",
+  trademark: "trademark_code",
+  databaseCategory: "database_category",
+  databaseClass: "database_class",
+  createdBy: "created_by",
+  createdOn: "created_date",
+  modifiedBy: "modified_by",
+  modifiedOn: "modified_date"
 };
 
 class DrugDetailICD extends React.Component<any, any> {
@@ -440,6 +459,7 @@ class DrugDetailICD extends React.Component<any, any> {
   onClearFilterHandler = () => {
     this.listPayload.index = 0;
     this.listPayload.limit = 10;
+    this.listPayload.filter = [];
     this.getICDDrugsList({ index: defaultListPayload.index, limit: defaultListPayload.limit, listPayload: this.listPayload });
   }
 
@@ -500,22 +520,47 @@ class DrugDetailICD extends React.Component<any, any> {
     })
   }
 
+  // onApplyFilterHandler = (filters) => {
+  //   console.log("------The FIlters = ", filters)
+  //   const fetchedProps = Object.keys(filters)[0];
+  //   console.log("The Fetched Props = ", fetchedProps);
+  //   const fetchedOperator = filters[fetchedProps][0].condition === 'is like' ? 'is_like' : 
+  //   filters[fetchedProps][0].condition === 'is not' ? 'is_not' : 
+  //   filters[fetchedProps][0].condition === 'is not like' ? 'is_not_like' : 
+  //   filters[fetchedProps][0].condition === 'does not exist' ? 'does_not_exist' : 
+  //   filters[fetchedProps][0].condition;
+  //   const fetchedValues = filters[fetchedProps][0].value !== '' ? [filters[fetchedProps][0].value.toString()] : [];
+  //   const newFilters = [{ prop: fetchedProps, operator: fetchedOperator,values: fetchedValues}];
+  //   console.log("------THe New Filters = ", newFilters);
+  //   this.listPayload.filter = newFilters;
+  //   // this.props.fetchFormularies(this.listPayload);
+  //   console.log("THe List Payload inside APPLy filter Handler = ", this.listPayload);
+  //   this.getICDDrugsList({ index: this.listPayload.index, limit: this.listPayload.limit, listPayload: this.listPayload });
+  // }
+  
   onApplyFilterHandler = (filters) => {
-    console.log("------The FIlters = ", filters)
-    const fetchedProps = Object.keys(filters)[0];
-    console.log("The Fetched Props = ", fetchedProps);
-    const fetchedOperator = filters[fetchedProps][0].condition === 'is like' ? 'is_like' : 
-    filters[fetchedProps][0].condition === 'is not' ? 'is_not' : 
-    filters[fetchedProps][0].condition === 'is not like' ? 'is_not_like' : 
-    filters[fetchedProps][0].condition === 'does not exist' ? 'does_not_exist' : 
-    filters[fetchedProps][0].condition;
-    const fetchedValues = filters[fetchedProps][0].value !== '' ? [filters[fetchedProps][0].value.toString()] : [];
-    const newFilters = [{ prop: fetchedProps, operator: fetchedOperator,values: fetchedValues}];
-    console.log("------THe New Filters = ", newFilters);
-    this.listPayload.filter = newFilters;
-    // this.props.fetchFormularies(this.listPayload);
-    console.log("THe List Payload inside APPLy filter Handler = ", this.listPayload);
-    this.getICDDrugsList({ index: this.listPayload.index, limit: this.listPayload.limit, listPayload: this.listPayload });
+    this.listPayload.filter = Array();
+    if (filters && filter.length > 0) {
+      const fetchedKeys = Object.keys(filters);
+      fetchedKeys.map(fetchedProps => {
+        if (filters[fetchedProps] && columnFilterMapping[fetchedProps]) {
+          const fetchedOperator = filters[fetchedProps][0].condition === 'is like' ? 'is_like' :
+            filters[fetchedProps][0].condition === 'is not' ? 'is_not' :
+              filters[fetchedProps][0].condition === 'is not like' ? 'is_not_like' :
+                filters[fetchedProps][0].condition === 'does not exist' ? 'does_not_exist' :
+                  filters[fetchedProps][0].condition;
+          
+          let fetchedPropsValue;
+          if(filters[fetchedProps][0].value !== '') {
+            const fetchedPropsValueNum = Number(filters[fetchedProps][0].value.toString());
+            fetchedPropsValue = isNaN(fetchedPropsValueNum) ? filters[fetchedProps][0].value.toString() : fetchedPropsValueNum
+          }
+          const fetchedValues = filters[fetchedProps][0].value !== '' ? [fetchedPropsValue] : [];
+          this.listPayload.filter.push({ prop: columnFilterMapping[fetchedProps], operator: fetchedOperator, values: fetchedValues });
+        }
+      });
+      this.getICDDrugsList({ listPayload: this.listPayload });
+    }
   }
 
   componentWillReceiveProps(nextProps) {
