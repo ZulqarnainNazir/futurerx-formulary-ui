@@ -430,7 +430,7 @@ class TierReplace extends React.Component<any, tabsState> {
                   fixedColumnKeys={[]}
                   pagintionPosition="topRight"
                   gridName="TIER"
-                  enableSettings={false}
+                  enableSettings
                   columns={tierColumns()}
                   scroll={{ x: 2000, y: 377 }}
                   isFetchingData={false}
