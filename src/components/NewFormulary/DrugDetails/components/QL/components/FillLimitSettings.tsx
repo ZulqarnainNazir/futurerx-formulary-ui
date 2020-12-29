@@ -30,14 +30,16 @@ const FillLimitSettings = (props) => {
           <div className="input-group">
             <Label required={true}>fill limit period of time in days</Label>
             {/* <DropDown options={[1, 2, 3]} /> */}
-            <Input
-              className="formulary-list-search"
-              // placeholder="Search"
-              type="number"
-              name="fillLimitPeriodOfTime"
-              onChange={props.handleOnChange}
-              disableUnderline={true}
-            />
+            <div>
+              <Input
+                className="formulary-list-search"
+                // placeholder="Search"
+                type="number"
+                name="fillLimitPeriodOfTime"
+                onChange={props.handleOnChange}
+                disableUnderline={true}
+              />
+            </div>
           </div>
         </Grid>
         <Grid item xs={4}></Grid>

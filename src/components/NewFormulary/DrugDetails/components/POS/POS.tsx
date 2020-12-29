@@ -18,6 +18,7 @@ import {
   getDrugDetailsRemoveTab,
   postPOSCriteriaList,
   postRemovePOSDrug,
+  postReplacePOSDrug,
 } from "../../../../../redux/slices/formulary/drugDetails/pos/posActionCreation";
 import * as posConstants from "../../../../../api/http-drug-details";
 import getLobCode from "../../../Utils/LobUtils";
@@ -36,6 +37,7 @@ function mapDispatchToProps(dispatch) {
     getDrugDetailsRemoveTab: (arg) => dispatch(getDrugDetailsRemoveTab(arg)),
     postPOSCriteriaList: (a) => dispatch(postPOSCriteriaList(a)),
     postRemovePOSDrug: (a) => dispatch(postRemovePOSDrug(a)),
+    postReplacePOSDrug: (a) => dispatch(postReplacePOSDrug(a)),
   };
 }
 
@@ -134,6 +136,18 @@ class DrugDetailPOS extends React.Component<any, any> {
     search_key: "",
   }
 
+  rpSavePayload: any = {
+    is_covered:true,
+    selected_drug_ids:[],
+    is_select_all:false,
+    covered:{},
+    not_covered:{},
+    place_of_services:[],//[1,2]
+    breadcrumb_code_value:"POS",
+    filter:[],
+    search_key:""
+  }
+
   componentDidMount() {
     this.getPOSSummary();
     this.getPOSSettings();
@@ -162,6 +176,29 @@ class DrugDetailPOS extends React.Component<any, any> {
       if (this.state.activeTabIndex === 0) {
         // Replace Drug method call
 
+        let posRows = this.state.posSettings.filter((f) => f.isChecked).map((e) => {
+          if (e.isChecked && e.isChecked !== undefined) {
+            return e.id_place_of_service_type;
+          }
+        });
+
+        this.rpSavePayload.selected_drug_ids = this.state.selectedDrugs
+        this.rpSavePayload.place_of_services = posRows
+        this.rpSavePayload.is_covered = this.state.posSettingsStatus.covered
+        apiDetails["messageBody"] = this.rpSavePayload;
+        apiDetails["pathParams"] = this.props?.formulary_id + "/" + getLobCode(this.props.formulary_lob_id) + "/" + posConstants.TYPE_REPLACE;
+        console.log("The API Details - ", apiDetails);
+        
+        this.props.postReplacePOSDrug(apiDetails).then((json) => {
+          if (json.payload && json.payload.code && json.payload.code === "200") {
+            showMessage("Success", "success");
+            this.getPOSSummary();
+            // this.getPOSDrugsList();
+          } else {
+            showMessage("Failure", "error");
+          }
+        });
+
       }else if(this.state.activeTabIndex === 2) {
         let posCheckedList: any[] = [];
         if(this.state.posCheckedList.length > 0) {
@@ -181,7 +218,7 @@ class DrugDetailPOS extends React.Component<any, any> {
           if (json.payload && json.payload.code && json.payload.code === "200") {
             showMessage("Success", "success");
             this.getPOSSummary();
-            this.getPOSDrugsList();
+            // this.getPOSDrugsList();
           } else {
             console.log("------REMOVE FAILED-------")
             showMessage("Failure", "error");
@@ -246,6 +283,7 @@ class DrugDetailPOS extends React.Component<any, any> {
 
       this.setState({
         panelGridValue1: rows,
+        showGrid: false,
       });
     });
   };
@@ -490,7 +528,12 @@ class DrugDetailPOS extends React.Component<any, any> {
       }
       return tab;
     });
-    this.setState({ tabs, activeTabIndex });
+
+    if (activeTabIndex === 2) {
+      this.getPOSCriteriaList(true);
+    }
+
+    this.setState({ tabs, activeTabIndex, showGrid: false });
   };
 
   handleNoteClick = (event: React.ChangeEvent<{}>) => {

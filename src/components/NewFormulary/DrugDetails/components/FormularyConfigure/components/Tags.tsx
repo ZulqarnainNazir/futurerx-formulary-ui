@@ -23,7 +23,7 @@ export default function CheckboxesTags(props:any) {
       id="checkboxes-tags-demo"
       options={props.options}
       disableCloseOnSelect
-      defaultValue={[top100Films[0]]} 
+      value={props.autoSelected} 
       getOptionLabel={(option:any) => option.value}
       onChange={onchangeHandler}
       renderOption={(option, { selected }) => (

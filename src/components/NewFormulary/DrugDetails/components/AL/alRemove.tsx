@@ -4,20 +4,17 @@ import PanelHeader from "../../../../shared/Frx-components/panel-header/PanelHea
 import Button from "../../../../shared/Frx-components/button/Button";
 
 const columns = [
-  {
-    title: "Name",
-    dataIndex: "name",
-  },
+  { title: "Min Age Limit", dataIndex: "minAgeLimit", key: "minAgeLimit" },
+  { title: "Maximum Age Limit", dataIndex: "maxAgeLimit", key: "maxAgeLimit" },
 ];
 
-class ICDRemove extends React.Component<any, any> {
+class ALRemove extends React.Component<any, any> {
   state = {
     selectedRowKeys: [],
     dataToRemove: [],
   };
 
   onSelectChange = (selectedRowKeys) => {
-    console.log("selectedRowKeys changed: ", selectedRowKeys);
     this.setState({ selectedRowKeys });
   };
 
@@ -29,10 +26,12 @@ class ICDRemove extends React.Component<any, any> {
     const data: any = [];
     for (let i = 0; i < props.data.length; i++) {
       data.push({
-        key: props.data[i][0],
-        name: props.data[i][2],
+        key: props.data[i]["key"],
+        minAgeLimit: props.data[i]["minAgeLimit"],
+        maxAgeLimit: props.data[i]["maxAgeLimit"],
       });
     }
+    
     return { dataToRemove: data };
   }
 
@@ -77,4 +76,4 @@ class ICDRemove extends React.Component<any, any> {
   }
 }
 
-export default ICDRemove;
+export default ALRemove;

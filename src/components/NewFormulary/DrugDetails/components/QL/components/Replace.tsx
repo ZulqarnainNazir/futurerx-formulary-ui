@@ -25,15 +25,17 @@ class Replace extends Component<any, any> {
             <div className="input-group">
               <Label required={true}>QUANTITY</Label>
               {/* <DropDown options={[1, 2, 3]} /> */}
-              <Input
-                className="formulary-list-search"
-                // placeholder="Search"
-                type="number"
-                name="quantity"
-                disableUnderline={true}
-                onChange={this.props.handleOnChange}
-                required={true}
-              />
+              <div>
+                <Input
+                  className="formulary-list-search"
+                  // placeholder="Search"
+                  type="number"
+                  name="quantity"
+                  disableUnderline={true}
+                  onChange={this.props.handleOnChange}
+                  required={true}
+                />
+              </div>
             </div>
           </Grid>
           <Grid item xs={4}>
@@ -56,14 +58,16 @@ class Replace extends Component<any, any> {
             <div className="input-group">
               <Label required={true}>PERIOD OF TIME IN DAYS</Label>
               {/* <DropDown options={[1, 2, 3]} /> */}
-              <Input
-                className="formulary-list-search"
-                // placeholder="Search"
-                type="number"
-                name="periodOfTime"
-                onChange={this.props.handleOnChange}
-                disableUnderline={true}
-              />
+              <div>
+                <Input
+                  className="formulary-list-search"
+                  // placeholder="Search"
+                  type="number"
+                  name="periodOfTime"
+                  onChange={this.props.handleOnChange}
+                  disableUnderline={true}
+                />
+              </div>
             </div>
           </Grid>
           {/* <Button

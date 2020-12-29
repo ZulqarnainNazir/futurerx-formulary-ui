@@ -62,7 +62,7 @@ function PAGroupHeader(props: any) {
     const [panelColor, setPanelColor] = React.useState('');
     const versionListLength = versionList.length - 1;
     const [showViewAll, setShowViewAll] = React.useState(false);
-    const [effectiveDate, setEffectiveDate] = React.useState(null);
+    const [effectiveDate, setEffectiveDate] = React.useState('');
     const [selectedFormularies, updateSelectedFormularies] = React.useState([]);
     const [idField,setIdField] = React.useState('');
     const [selectedVersion, setSelectedVersion] = useState('')
@@ -97,9 +97,9 @@ function PAGroupHeader(props: any) {
          apiDetails['pathParams'] = '/'+props.saveGdm.current_group_id;
 
          if (props.formulary_lob_id==1){
-            setIdField('id_mcr_pa_group_description_formulary');
+            setIdField('formulary_id');
          }else if (props.formulary_lob_id==4){
-            setIdField('id_pa_group_description_formulary');
+            setIdField('formulary_id');
         }
 
         props.postPAGroupDescriptionFormularies(apiDetails).then(json =>{
@@ -109,7 +109,9 @@ function PAGroupHeader(props: any) {
             json.payload.result.map(obj => {
                 obj['id'] = count;
                 obj['key'] = count;
-                tmp_array.push(obj);
+                if (obj['is_editable']==true){
+                    tmp_array.push(obj);
+                }
                 count++;
             });
             setFormularies(tmp_array);
@@ -118,8 +120,7 @@ function PAGroupHeader(props: any) {
       };
 
     const handleEffectiveDate = date => {
-        setEffectiveDate(date);
-        //this.setState({ alertFormData: { effective_date: date,...this.state.alertFormData } });
+        setEffectiveDate(date.format("yyyy-MM-D"));
     }
 
     useEffect(() => {
@@ -204,9 +205,11 @@ function PAGroupHeader(props: any) {
         }
 
         apiDetails["lob_type"] = props.formulary_lob_id;
-        apiDetails['pathParams'] = '/'+props.saveGdm.current_group_des_id;
+        apiDetails['pathParams'] = '/'+props.saveGdm.current_group_id;
 
         apiDetails['messageBody'] = {};
+        debugger;
+        //var str = effectiveDate.format("yyyy/MM/D");
         apiDetails['messageBody']['effective_date'] = effectiveDate;
         apiDetails['messageBody']['formulary_ids'] = selectedFormularies;
 
@@ -225,7 +228,15 @@ function PAGroupHeader(props: any) {
        
     };
     const deleteGroup = (e: any, param: any) => {
-        props.deleteGroupDescription({ current_group_des_id: selectedVersionId,
+        let pathParams;
+        if(param==='delete-version'){
+            pathParams = selectedVersionId+'/CV?entity_id='+props.formulary_id;
+        }else if(param==='delete-full'){
+            pathParams = props.saveGdm.current_group_id+'/GD?entity_id='+props.formulary_id;
+        }else{
+            pathParams = props.saveGdm.current_group_id+'/GD?entity_id='+props.formulary_id;
+        }
+        props.deleteGroupDescription({ pathParams:pathParams,
             lob_type:props.formulary_lob_id }).then(json => {
                 let apiDetails= {};
                 apiDetails["lob_type"] = props.formulary_lob_id;
@@ -233,10 +244,14 @@ function PAGroupHeader(props: any) {
                 props.getPaGrouptDescriptions(apiDetails)
         
                 apiDetails['pathParams'] = '/'+props.saveGdm.current_group_id;
-                props.getPaGrouptDescriptionVersions(apiDetails);
+                props.getPaGrouptDescriptionVersions(apiDetails).then(json=>{
+                    console.log(json);
+                    setVersion(json.payload.data)
+                    let v =props.version;
+                });
                 //current_group_des_id
                 apiDetails['pathParams'] = '/'+props.saveGdm.current_group_id;
-                props.getPaGrouptDescription(apiDetails);
+                //props.getPaGrouptDescription(apiDetails);
         
                 props.getPaTypes(props.saveGdm.formulary_id)
 
@@ -259,18 +274,30 @@ function PAGroupHeader(props: any) {
 
     }
     const archiveGroup = (e: any, param: any) => {
-        props.archiveGroupDescription({ current_group_des_id: selectedVersionId,
+        let pathParams;
+        if(param==='archive-version'){
+            pathParams = selectedVersionId+'/CV?entity_id='+props.formulary_id;
+        }else if(param==='archive-full'){
+            pathParams = props.saveGdm.current_group_id+'/GD?entity_id='+props.formulary_id;
+        }else{
+            pathParams = props.saveGdm.current_group_id+'/GD?entity_id='+props.formulary_id;
+        }
+        props.archiveGroupDescription({ pathParams:pathParams,
             lob_type:props.formulary_lob_id }).then(json =>{
                 let apiDetails= {};
                 apiDetails["lob_type"] = props.formulary_lob_id;
                 apiDetails['pathParams'] = '/'+props.client_id;
                 props.getPaGrouptDescriptions(apiDetails);
         
-                apiDetails['pathParams'] = '/'+props.saveGdm.current_group_des_id;
-                props.getPaGrouptDescriptionVersions(apiDetails)
+                apiDetails['pathParams'] = '/'+props.saveGdm.current_group_id;
+                props.getPaGrouptDescriptionVersions(apiDetails).then(json=>{
+                    console.log(json);
+                    setVersion(json.payload.data)
+                    let v =props.version;
+                });
         
                 apiDetails['pathParams'] = '/'+props.saveGdm.current_group_id;
-                props.getPaGrouptDescription(apiDetails);
+               // props.getPaGrouptDescription(apiDetails);
         
                 props.getPaTypes(props.saveGdm.formulary_id)
             });
@@ -425,8 +452,8 @@ function PAGroupHeader(props: any) {
                                 <Grid xs={6}>
                                     <div className="label">Effective Date<span className="astrict">*</span></div>
                                     <div className="calender">
-                                        <DatePicker onChange={handleEffectiveDate} value={effectiveDate} 
-                                        placeholder="Effective Date" name="effective_date" />
+                                        <DatePicker onChange={handleEffectiveDate}  
+                                        placeholder="MM/DD/YYYY" format="MM/DD/YYYY"  name="effective_date" />
                                     </div>
                                 </Grid>
             </Grid>

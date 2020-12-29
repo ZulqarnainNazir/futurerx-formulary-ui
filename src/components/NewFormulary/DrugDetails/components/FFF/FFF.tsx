@@ -280,7 +280,7 @@ class DrugDetailFFF extends React.Component<any, any> {
       this.getFFFDrugsList({ listPayload: this.listPayload });
     }
 
-    this.setState({ tabs, activeTabIndex });
+    this.setState({ tabs, activeTabIndex, showGrid: false });
   };
 
   handleNoteClick = (event: React.ChangeEvent<{}>) => {

@@ -283,6 +283,7 @@ class DrugDetailOther extends React.Component<any, any> {
       this.setState({
         panelGridValue1: rows,
         otherData: settingsRows,
+        showGrid: false,
       });
     });
   };
