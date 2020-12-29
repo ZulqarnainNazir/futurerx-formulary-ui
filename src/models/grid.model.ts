@@ -47,7 +47,7 @@ export interface Grid<RecordType = unknown> {
   rowSelectionChange?: (data: any, isMultiple?: boolean) => void;
   settingsTriDotClick?: (data: RecordType) => void;
   onColumnCellClick?: (record, key) => void;
-
+  onsettingsTriDotDropDownItemClick?: (dataRow: any, item: any) => void;
   hideResults?: boolean;
   hideItemsPerPage?: boolean;
   hidePageJumper?: boolean;

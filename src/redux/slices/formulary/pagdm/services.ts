@@ -52,9 +52,9 @@ export async function savePaGroup(payload: any): Promise<PAGDMSaveResponse> {
 export async function deletePaGroup(payload: any): Promise<PAGDMSaveResponse> {
   let url = ``;
   if (payload.lob_type==1){
-    url = `${BASE_URL1}api/1/mcr-pa-group-description/${payload.current_group_des_id}/CV?entity_id=0`;
+    url = `${BASE_URL1}api/1/mcr-pa-group-description/${payload.pathParams}`;
   }else{
-    url = `${BASE_URL1}api/1/pa-group-description/${payload.current_group_des_id}/CV?entity_id=0`;
+    url = `${BASE_URL1}api/1/pa-group-description/${payload.pathParams}`;
   }
   try {
     const response = await axios.delete(url,{
@@ -95,9 +95,9 @@ export async function archivePaGroup(payload: any): Promise<PAGDMSaveResponse> {
 
   let url = ``;
   if (payload.lob_type==1){
-    url = `${BASE_URL1}api/1/archive-mcr-pa-group-description/${payload.current_group_des_id}/CV?entity_id=0`;
+    url = `${BASE_URL1}api/1/archive-mcr-pa-group-description/${payload.pathParams}`;
   }else{
-    url = `${BASE_URL1}api/1/archive-pa-group-description/${payload.current_group_des_id}/CV??entity_id=0`;
+    url = `${BASE_URL1}api/1/archive-pa-group-description/${payload.pathParams}`;
   }
 
   try {

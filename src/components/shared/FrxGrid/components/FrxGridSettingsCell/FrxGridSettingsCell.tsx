@@ -4,7 +4,7 @@
  * @version 1.0.0
  */
 
-import { Radio, Checkbox } from "antd";
+import { Radio, Checkbox, Popover } from "antd";
 // import Checkbox from "antd/lib/checkbox/Checkbox";
 import { RadioChangeEvent } from "antd/lib/radio";
 import React from "react";
@@ -25,11 +25,12 @@ export interface FrxGridSettingsCellProps {
   isRowSelectorCheckbox?: boolean;
   customSettingIcon?: string;
   className?: string;
-
+  settingsTriDotDropDownItems?:any[];
   handleSettingsComponentMenuClose?: () => void;
   handleMenuClick?: (menuItem: GridMenu) => void;
   onSettingsTriDotClick: (dataRow: any) => void;
   rowSelectionChange: (dataRow: any) => void;
+  onsettingsTriDotDropDownItemClick?: (dataRow: any, item: any) => void;
   onSettingsCellClick: (
     expanded: boolean,
     data: any,
@@ -93,10 +94,17 @@ class FrxGridSettingsCell extends React.Component<FrxGridSettingsCellProps> {
    */
   onSettingsTriDotClcik = () => {
     if (this.props.isRowSelectionEnabled) return;
+    if(this.props.settingsTriDotDropDownItems && this.props.settingsTriDotDropDownItems.length > 0) return; 
     if (this.props.onSettingsTriDotClick) {
       this.props.onSettingsTriDotClick(this.props.dataRow);
     }
   };
+onTriDotDropDownItemClick = (selectedItem:any) => {
+  if(this.props.onsettingsTriDotDropDownItemClick)
+  {
+    this.props.onsettingsTriDotDropDownItemClick(this.props.dataRow, selectedItem);
+  }
+} 
   /**
    * @function renderExpandedCell
    * to render the content when ellipses is expanded
@@ -162,7 +170,7 @@ class FrxGridSettingsCell extends React.Component<FrxGridSettingsCellProps> {
                 savedTarget
               );
             }}
-          >
+          >            
             <svg
               className="frx-grid-settings-cell__icon--expanded"
               width="22"
@@ -245,6 +253,11 @@ class FrxGridSettingsCell extends React.Component<FrxGridSettingsCellProps> {
           return null;
       }
     }
+    const TriDotDropdownContent = <div className="tri-dot-drop-down-wrapper">
+       {this.props.settingsTriDotDropDownItems?.map((data,index) =>
+            <p onClick = {(e) => this.onTriDotDropDownItemClick(data)}>{data}</p>
+        )}      
+     </div>;
     return (
       <>
         {!isRowSelectionEnabled ? (
@@ -261,18 +274,37 @@ class FrxGridSettingsCell extends React.Component<FrxGridSettingsCellProps> {
               );
             }}
           >
-            <svg
-              className="frx-grid-settings-cell__icon--non-expanded"
-              width="22"
-              height="6"
-              viewBox="0 0 22 6"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <circle cx="19.1552" cy="2.58853" r="2.58853" fill="#A5A5A5" />
-              <circle cx="10.8717" cy="2.58853" r="2.58853" fill="#C1C2C4" />
-              <circle cx="2.58853" cy="2.58853" r="2.58853" fill="#E1E1E1" />
-            </svg>
+            {
+              (this.props.settingsTriDotDropDownItems && this.props.settingsTriDotDropDownItems.length > 0)?
+              <Popover content={TriDotDropdownContent} trigger="click" placement="bottom">
+              <svg
+                className="frx-grid-settings-cell__icon--non-expanded"
+                width="22"
+                height="6"
+                viewBox="0 0 22 6"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <circle cx="19.1552" cy="2.58853" r="2.58853" fill="#A5A5A5" />
+                <circle cx="10.8717" cy="2.58853" r="2.58853" fill="#C1C2C4" />
+                <circle cx="2.58853" cy="2.58853" r="2.58853" fill="#E1E1E1" />
+              </svg>
+              </Popover>
+              :
+              <svg
+                className="frx-grid-settings-cell__icon--non-expanded"
+                width="22"
+                height="6"
+                viewBox="0 0 22 6"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <circle cx="19.1552" cy="2.58853" r="2.58853" fill="#A5A5A5" />
+                <circle cx="10.8717" cy="2.58853" r="2.58853" fill="#C1C2C4" />
+                <circle cx="2.58853" cy="2.58853" r="2.58853" fill="#E1E1E1" />
+              </svg>
+            }
+            
           </span>
         ) : (
           <>

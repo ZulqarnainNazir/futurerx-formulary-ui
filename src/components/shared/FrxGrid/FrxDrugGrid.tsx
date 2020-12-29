@@ -657,14 +657,15 @@ class FrxDrugGrid extends Component<FrxDrugGridProps<any>, FrxDrugGridState<any>
    * @author Deepak_T
    */
   getGridData = () => {
-    const data =
+    /*const data =
       this.state.sortedInfo && !this.state.filteredInfo
         ? [...this.state.sortedTable]
         : this.state.filteredInfo && !this.state.sortedInfo
           ? this.state.filterTable
           : this.state.filteredInfo && this.state.sortedInfo
             ? this.state.sortedTable
-            : [...this.props.data];
+            : [...this.props.data];*/
+    const data = [...this.props.data];
     console.log(this.state.filteredInfo)
     // const from = (this.state.currentPage - 1) * +this.state.pageSize + 1;
     // Modify this in future
@@ -1281,6 +1282,7 @@ class FrxDrugGrid extends Component<FrxDrugGridProps<any>, FrxDrugGridState<any>
         sortedTable: [],
       },
       () => {
+        this.props.clearFilterHandler();
         this.updateFilters();
       }
     );
@@ -1309,7 +1311,7 @@ class FrxDrugGrid extends Component<FrxDrugGridProps<any>, FrxDrugGridState<any>
     });
 
     this.setState({ columns: columns },() => {
-      this.props.clearFilterHandler()
+      //this.props.clearFilterHandler()
     });
   };
 
