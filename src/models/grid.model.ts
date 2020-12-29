@@ -22,6 +22,7 @@ export interface ColumnFilterItem {
 }
 
 export interface Grid<RecordType = unknown> {
+  isDataLoaded?: boolean;
   gridName: string;
 
   className?: string;
@@ -47,7 +48,9 @@ export interface Grid<RecordType = unknown> {
   rowSelectionChange?: (data: any, isMultiple?: boolean) => void;
   settingsTriDotClick?: (data: RecordType) => void;
   onColumnCellClick?: (record, key) => void;
+  onColumnChange?: (columns: Column<any>[]) => void;
 
+  applySort?: (key: string, order: string) => void;
   hideResults?: boolean;
   hideItemsPerPage?: boolean;
   hidePageJumper?: boolean;

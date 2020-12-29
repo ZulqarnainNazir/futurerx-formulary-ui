@@ -2,26 +2,25 @@ import React from "react";
 import { selectFormularyGridMock } from "../../../../../../mocks/selectFormularyGrid-mock";
 import {
   selectFormularyGrid,
-  selectFormularyGridMedicare,
+  selectFormularyGridMedicare
 } from "../../../../../../utils/grid/columns";
 import FrxGridContainer from "../../../../../shared/FrxGrid/FrxDrugGridContainer";
 import FormularyExpandedDetails from "../../../SelectFormularyPopUp/FormularyExpandedDetails";
 import { getformularies } from "../../../../../../redux/slices/formulary/dashboard/dashboardService";
 import getLobName from "../../../../Utils/LobNameUtils";
-import { connect } from 'react-redux'
+import { connect } from "react-redux";
 import { filter } from "lodash";
 
 function mapDispatchToProps(dispatch) {
-  return {
-  };
+  return {};
 }
 
-const mapStateToProps = (state) => {
+const mapStateToProps = state => {
   return {
     formulary_id: state?.application?.formulary_id,
     formulary: state?.application?.formulary,
     formulary_lob_id: state?.application?.formulary_lob_id,
-    formulary_type_id: state?.application?.formulary_type_id,
+    formulary_type_id: state?.application?.formulary_type_id
   };
 };
 
@@ -34,21 +33,21 @@ const defaultListPayload = {
   search_key: "",
   search_value: [],
   sort_by: ["cms_formulary_id"],
-  sort_order: ["desc"],
-}
+  sort_order: ["desc"]
+};
 
 const columnFilterMapping = {
-  serviceYear: 'contract_year',
-  fromularyName: 'formulary_name',
-  formularyId: 'id_formulary',
-  version: 'version_number',
-  tierCount: 'number_of_tiers',
-  drugCount: 'number_of_drugs',
-  step: 'step',
-  assign: 'assigned_to',
-  status: 'status',
-  effectiveDate: 'effective_date',
-  dueDate: 'due_date'
+  serviceYear: "contract_year",
+  fromularyName: "formulary_name",
+  formularyId: "id_formulary",
+  version: "version_number",
+  tierCount: "number_of_tiers",
+  drugCount: "number_of_drugs",
+  step: "step",
+  assign: "assigned_to",
+  status: "status",
+  effectiveDate: "effective_date",
+  dueDate: "due_date"
 };
 
 class CloneFormularyPopup extends React.Component<any, any> {
@@ -56,7 +55,7 @@ class CloneFormularyPopup extends React.Component<any, any> {
     formularyData: Array(),
     formularyGridData: Array(),
     hiddenColumns: Array(),
-    dataCount: 0,
+    dataCount: 0
   };
   listPayload: any = {
     index: 0,
@@ -67,137 +66,187 @@ class CloneFormularyPopup extends React.Component<any, any> {
     search_key: "",
     search_value: [],
     sort_by: ["cms_formulary_id"],
-    sort_order: ["desc"],
-  }
+    sort_order: ["desc"]
+  };
 
   onSettingsIconHandler = (hiddenColumn, visibleColumn) => {
-    console.log('Settings icon handler: Hidden' + JSON.stringify(hiddenColumn) + ' Visible:' + JSON.stringify(visibleColumn));
+    console.log(
+      "Settings icon handler: Hidden" +
+        JSON.stringify(hiddenColumn) +
+        " Visible:" +
+        JSON.stringify(visibleColumn)
+    );
     if (hiddenColumn && hiddenColumn.length > 0) {
-      let hiddenColumnKeys = hiddenColumn.map(column => column['key']);
+      let hiddenColumnKeys = hiddenColumn.map(column => column["key"]);
       this.setState({
         hiddenColumns: hiddenColumnKeys
       });
     }
-  }
-  onApplyFilterHandler = (filters) => {
+  };
+  onApplyFilterHandler = filters => {
+    console.log("filtering from be");
     this.listPayload.filter = Array();
     if (filters && filter.length > 0) {
       const fetchedKeys = Object.keys(filters);
       fetchedKeys.map(fetchedProps => {
         if (filters[fetchedProps] && columnFilterMapping[fetchedProps]) {
-          const fetchedOperator = filters[fetchedProps][0].condition === 'is like' ? 'is_like' :
-            filters[fetchedProps][0].condition === 'is not' ? 'is_not' :
-              filters[fetchedProps][0].condition === 'is not like' ? 'is_not_like' :
-                filters[fetchedProps][0].condition === 'does not exist' ? 'does_not_exist' :
-                  filters[fetchedProps][0].condition;
-          const fetchedValues = filters[fetchedProps][0].value !== '' ? [filters[fetchedProps][0].value.toString()] : [];
-          this.listPayload.filter.push({ prop: columnFilterMapping[fetchedProps], operator: fetchedOperator, values: fetchedValues });
+          const fetchedOperator =
+            filters[fetchedProps][0].condition === "is like"
+              ? "is_like"
+              : filters[fetchedProps][0].condition === "is not"
+              ? "is_not"
+              : filters[fetchedProps][0].condition === "is not like"
+              ? "is_not_like"
+              : filters[fetchedProps][0].condition === "does not exist"
+              ? "does_not_exist"
+              : filters[fetchedProps][0].condition;
+          const fetchedValues =
+            filters[fetchedProps][0].value !== ""
+              ? [filters[fetchedProps][0].value.toString()]
+              : [];
+          this.listPayload.filter.push({
+            prop: columnFilterMapping[fetchedProps],
+            operator: fetchedOperator,
+            values: fetchedValues
+          });
         }
       });
-      console.log('Filters:'+JSON.stringify(this.listPayload.filter));
+      console.log("Filters:" + JSON.stringify(this.listPayload.filter));
       this.fetchFormularies(this.listPayload);
     }
-  }
-  onPageSize = (pageSize) => {
-    console.log('Page size load');
+  };
+
+  /**
+   * the selected sorter details will be availbale here to mak api call
+   */
+  onApplySortHandler = (key, order) => {
+    console.log("sort details ", key, order);
+  };
+  onPageSize = pageSize => {
+    console.log("Page size load");
     this.listPayload = { ...defaultListPayload };
-    this.listPayload.limit = pageSize
+    this.listPayload.limit = pageSize;
     this.listPayload.id_lob = this.props.formulary_lob_id;
     this.fetchFormularies(this.listPayload);
-  }
+  };
   onGridPageChangeHandler = (pageNumber: any) => {
-    console.log('Page change load');
+    console.log("Page change load");
     this.listPayload.index = (pageNumber - 1) * this.listPayload.limit;
     this.fetchFormularies(this.listPayload);
-  }
+  };
   onClearFilterHandler = () => {
     this.listPayload = { ...defaultListPayload };
     this.listPayload.id_lob = this.props.formulary_lob_id;
     this.fetchFormularies(this.listPayload);
-  }
-  fetchFormularies = async (payload) => {
+  };
+  fetchFormularies = async payload => {
     let formularyData = Array();
     let formularyGridData = Array();
     try {
       let formularies = await getformularies(payload);
-      console.log(" LIST : ",formularies.list);
-      console.log('Formularies:' + JSON.stringify(Object.keys(formularies)));
-      if (formularies['list'] && formularies['list'].length > 0) {
-        formularies['list'].map((row, index) => {
+      console.log(" LIST : ", formularies.list);
+      console.log("Formularies:" + JSON.stringify(Object.keys(formularies)));
+      if (formularies["list"] && formularies["list"].length > 0) {
+        formularies["list"].map((row, index) => {
           let item = Object.assign({}, row);
           formularyData.push(item);
 
           let gridItem = {};
-          gridItem['id'] = index + 1;
-          gridItem['key'] = index + 1;
-          gridItem['serviceYear'] = item['contract_year'] === null ? '' : item['contract_year'];
-          gridItem['lob'] = item['id_lob'] === null ? '' : getLobName(item['id_lob']);
-          gridItem['fromularyName'] = item['formulary_name'] === null ? '' : item['formulary_name'];
-          gridItem['formularyId'] = item['id_formulary'] === null ? '' : item['id_formulary'];
-          gridItem['version'] = item['version_number'] === null ? '' : item['version_number'];
-          gridItem['tierCount'] = item['number_of_tiers'] === null ? '' : item['number_of_tiers'];
-          gridItem['drugCount'] = item['number_of_drugs'] === null ? '' : item['number_of_drugs'];
-          gridItem['step'] = item['step'] === null ? '' : item['step'];
-          gridItem['assign'] = item['assigned_to'] === null ? '' : item['assigned_to'];
-          gridItem['status'] = item['status'] === null ? '' : item['status'];
-          gridItem['effectiveDate'] = item['effective_date'] === null ? '' : item['effective_date'];
-          gridItem['dueDate'] = item['due_date'] === null ? '' : item['due_date'];
+          gridItem["id"] = index + 1;
+          gridItem["key"] = index + 1;
+          gridItem["serviceYear"] =
+            item["contract_year"] === null ? "" : item["contract_year"];
+          gridItem["lob"] =
+            item["id_lob"] === null ? "" : getLobName(item["id_lob"]);
+          gridItem["fromularyName"] =
+            item["formulary_name"] === null ? "" : item["formulary_name"];
+          gridItem["formularyId"] =
+            item["id_formulary"] === null
+              ? ""
+              : item["id_formulary"].toString();
+          gridItem["version"] =
+            item["version_number"] === null
+              ? ""
+              : item["version_number"].toString();
+          gridItem["tierCount"] =
+            item["number_of_tiers"] === null
+              ? ""
+              : item["number_of_tiers"].toString();
+          gridItem["drugCount"] =
+            item["number_of_drugs"] === null
+              ? ""
+              : item["number_of_drugs"].toString();
+          gridItem["step"] = item["step"] === null ? "" : item["step"];
+          gridItem["assign"] =
+            item["assigned_to"] === null ? "" : item["assigned_to"];
+          gridItem["status"] = item["status"] === null ? "" : item["status"];
+          gridItem["effectiveDate"] =
+            item["effective_date"] === null ? "" : item["effective_date"];
+          gridItem["dueDate"] =
+            item["due_date"] === null ? "" : item["due_date"];
 
           formularyGridData.push(gridItem);
         });
         this.setState({
-          dataCount: formularies['count'],
+          dataCount: formularies["count"],
           formularyData: formularyData,
-          formularyGridData: formularyGridData,
+          formularyGridData: formularyGridData
         });
       } else {
         this.setState({
           dataCount: 0,
           formularyData: formularyData,
-          formularyGridData: formularyGridData,
+          formularyGridData: formularyGridData
         });
       }
     } catch (err) {
       this.setState({
         dataCount: 0,
         formularyData: formularyData,
-        formularyGridData: formularyGridData,
+        formularyGridData: formularyGridData
       });
     }
-  }
+  };
   componentDidMount() {
-    console.log(" CPP componentDidMount")
+    console.log(" CPP componentDidMount");
     let id_lob = this.props.formulary_lob_id;
     this.listPayload = { ...defaultListPayload };
     this.listPayload.id_lob = id_lob;
     console.log("lobID", this.props.lobID);
-    if(this.props.lobID > 0 ){
-      this.listPayload.id_lob =parseInt( this.props.lobID);
+    if (this.props.lobID > 0) {
+      this.listPayload.id_lob = parseInt(this.props.lobID);
     }
     this.fetchFormularies(this.listPayload);
   }
-  selectFormularyClick = (dataRow) => {
+  selectFormularyClick = dataRow => {
+    console.log("dta row ", dataRow);
     if (this.props.selectFormularyClick) {
-      let actualData = this.state.formularyData.filter(item => item.id_formulary === dataRow.formularyId);
+      let actualData = this.state.formularyData.filter(
+        item => item.id_formulary === parseInt(dataRow.formularyId)
+      );
       if (actualData && actualData.length > 0) {
         this.props.selectFormularyClick(actualData[0]);
       }
     }
   };
   render() {
-    let gridColumns: any[] = this.props.type === "medicare" ? selectFormularyGridMedicare({ onFormularyNameClick: null, }) : selectFormularyGrid({ onFormularyNameClick: null, });
-    gridColumns = gridColumns.filter(column => !this.state.hiddenColumns.includes(column['key']));
+    let gridColumns: any[] =
+      this.props.type === "medicare"
+        ? selectFormularyGridMedicare({ onFormularyNameClick: null })
+        : selectFormularyGrid({ onFormularyNameClick: null });
+    // gridColumns = gridColumns.filter(column => !this.state.hiddenColumns.includes(column['key']));
     if (this.props.type === "medicare") {
       return (
         <FrxGridContainer
           onSettingsClick="grid-menu"
           enableSearch={false}
           enableColumnDrag
-          onSearch={() => { }}
+          onSearch={() => {}}
           settingsWidth={50}
-          fixedColumnKeys={["claimId"]}
+          fixedColumnKeys={["serviceYear"]}
           pagintionPosition="topRight"
           gridName="Select Formulary"
+          // isDataLoaded
           enableSettings
           columns={gridColumns}
           customSettingIcon={"PLUS-BTN"}
@@ -211,13 +260,16 @@ class CloneFormularyPopup extends React.Component<any, any> {
           onGridPageChangeHandler={this.onGridPageChangeHandler}
           clearFilterHandler={this.onClearFilterHandler}
           applyFilter={this.onApplyFilterHandler}
+          applySort={this.onApplySortHandler}
           getColumnSettings={this.onSettingsIconHandler}
           pageSize={this.listPayload.limit}
-          selectedCurrentPage={(this.listPayload.index / this.listPayload.limit + 1)}
+          selectedCurrentPage={
+            this.listPayload.index / this.listPayload.limit + 1
+          }
           expandable={{
             isExpandable: true,
             expandIconColumnIndex: gridColumns.length + 1,
-            expandedRowRender: (props) => (
+            expandedRowRender: props => (
               <FormularyExpandedDetails
                 {...props}
                 formularyToggle={this.props.formularyToggle}
@@ -254,7 +306,7 @@ class CloneFormularyPopup extends React.Component<any, any> {
                   />
                 </svg>
               </span>
-            ),
+            )
           }}
         />
       );
@@ -264,9 +316,10 @@ class CloneFormularyPopup extends React.Component<any, any> {
           onSettingsClick="grid-menu"
           enableSearch={false}
           enableColumnDrag
-          onSearch={() => { }}
+          onSearch={() => {}}
+          // isDataLoaded
           settingsWidth={50}
-          fixedColumnKeys={["claimId"]}
+          fixedColumnKeys={["serviceYear"]}
           pagintionPosition="topRight"
           gridName="Select Formulary"
           enableSettings
@@ -282,13 +335,16 @@ class CloneFormularyPopup extends React.Component<any, any> {
           onGridPageChangeHandler={this.onGridPageChangeHandler}
           clearFilterHandler={this.onClearFilterHandler}
           applyFilter={this.onApplyFilterHandler}
+          applySort={this.onApplySortHandler}
           getColumnSettings={this.onSettingsIconHandler}
           pageSize={this.listPayload.limit}
-          selectedCurrentPage={(this.listPayload.index / this.listPayload.limit + 1)}
+          selectedCurrentPage={
+            this.listPayload.index / this.listPayload.limit + 1
+          }
           expandable={{
             isExpandable: true,
             expandIconColumnIndex: gridColumns.length + 1,
-            expandedRowRender: (props) => (
+            expandedRowRender: props => (
               <FormularyExpandedDetails
                 {...props}
                 formularyToggle={this.props.formularyToggle}
@@ -325,7 +381,7 @@ class CloneFormularyPopup extends React.Component<any, any> {
                   />
                 </svg>
               </span>
-            ),
+            )
           }}
         />
       );
