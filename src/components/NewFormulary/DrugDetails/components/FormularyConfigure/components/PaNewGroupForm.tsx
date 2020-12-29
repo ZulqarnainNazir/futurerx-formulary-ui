@@ -214,6 +214,8 @@ function mapStateToProps(state) {
     client_id: state.application.clientId,
     PaGDData: state.paReducer.description,
     version: state.paVersion.paVersion,
+    additionalCriteriaObject: state?.additionalCriteria?.additionalCriteriaObject,
+
   };
 }
 
@@ -232,6 +234,10 @@ function NewGroup(props: any) {
 
   const [isAdditionalCriteriaOpen, toggleAdditionalCriteriaOpen] = useState(
     false
+  );
+
+  const [additionalCriteria, setAdditionalCriteria] = useState(
+    null
   );
 
   const handleChange = (e) => {
@@ -316,6 +322,12 @@ function NewGroup(props: any) {
     formData["is_validation_required"] = is_validation;
     requestData["lob_type"] = props.formulary_lob_id;
     requestData["messageBody"] = {};
+
+    if (additionalCriteria!=null){
+      requestData["messageBody"]["um_criteria"] = additionalCriteria;
+    }
+    
+    
     if (props.formulary_lob_id == 1) {
       requestData["messageBody"]["is_validation_required"] =
         formData["is_validation_required"];
@@ -486,6 +498,12 @@ function NewGroup(props: any) {
   const openAdditionalCriteria = () => toggleAdditionalCriteriaOpen(true);
   const closeAddiionalCriteria = () => toggleAdditionalCriteriaOpen(false);
   useEffect(() => {
+    debugger;
+    console.log(props.additionalCriteriaObject);
+    setAdditionalCriteria(props.additionalCriteriaObject);
+  },[props.additionalCriteriaObject]);
+
+  useEffect(() => {
     //debugger;
     //setPanelColor(props.editable ? '-green' : '')
     //setLatestId(props.latestVerion)
@@ -503,6 +521,7 @@ function NewGroup(props: any) {
         ...formData,
         ...props.PaGDData,
       });
+      setDrug_list_ids(props.PaGDData.drug_list_ids)
     }
     if (!props.editMode) {
       setEditable(false);
@@ -903,8 +922,10 @@ function NewGroup(props: any) {
                       <Tags
                         options={props.drugList}
                         getAutoCompleteChange={getAutoCompleteChangeHandler}
-                        seleted={formData.drug_list_ids}
+                        autoSelected={drug_list_ids}
                       />
+                      {/* <Tags options={drug_list} getAutoCompleteChange={getAutoCompleteChangeHandler}
+                       autoSelected={formData.drug_list_ids}/> */}
                     </Grid>
                   </Fragment>
                 </div>
