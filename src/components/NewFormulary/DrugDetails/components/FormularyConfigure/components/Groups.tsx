@@ -86,7 +86,7 @@ export default class Groups extends React.Component<Props, any> {
             if (this.props.statusType== 'warning'){
                 return   'orange-fill';
             }else if (this.props.statusType== 'completed'){
-                return 'orange-fill';
+                return 'green-fill';
             }else{
                 return '';
             }
