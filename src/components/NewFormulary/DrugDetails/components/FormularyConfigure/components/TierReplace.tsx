@@ -20,6 +20,7 @@ import * as commonConstants from "../../../../../../api/http-commons";
 import pageTypes from "../../../../../../constants/PageTypes";
 import { setAdvancedSearch } from "../../../../../../redux/slices/formulary/advancedSearch/advancedSearchSlice";
 import showMessage from "../../../../Utils/Toast";
+import SearchBox from "../../../../../shared/Frx-components/search-box/SearchBox";
 
 interface tabsState {
   tierGridContainer: boolean;
@@ -388,6 +389,7 @@ class TierReplace extends React.Component<any, tabsState> {
           <div className="select-drug-from-table">
             <div className="bordered white-bg">
               <div className="header space-between pr-10">
+                Drug Grid
                 {this.props.lobCode === "MCR" && (
                   <div
                     style={{
@@ -406,7 +408,8 @@ class TierReplace extends React.Component<any, tabsState> {
                     />
                   </div>
                 )}
-                <div className="button-wrapper">
+                <div className="tier-drug-grid-header-actions">
+                  <SearchBox iconPosition="left" className="search-input"/>
                   <Button
                     className="Button normal"
                     label="Advance Search"
