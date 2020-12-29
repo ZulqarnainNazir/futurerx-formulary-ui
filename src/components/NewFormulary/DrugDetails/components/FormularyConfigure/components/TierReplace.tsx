@@ -409,7 +409,11 @@ class TierReplace extends React.Component<any, tabsState> {
                   </div>
                 )}
                 <div className="tier-drug-grid-header-actions">
-                  <SearchBox iconPosition="left" className="search-input"/>
+                  <SearchBox
+                    iconPosition="left"
+                    className="search-input"
+                    placeholder="Search"
+                  />
                   <Button
                     className="Button normal"
                     label="Advance Search"
