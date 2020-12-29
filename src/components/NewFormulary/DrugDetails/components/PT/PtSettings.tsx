@@ -33,7 +33,7 @@ class PrLimitSettings extends React.Component<any, any> {
     this.props.handleReplaceSrch(val);
   };
   render() {
-    const { showGridHandler, handleStatus, ptSettingsStatus } = this.props;
+    const { showGridHandler, handleStatus, ptSettingsStatus, isDisabled } = this.props;
     return (
       <div className="pt-limit-settings bordered mb-10">
         <PanelHeader
@@ -61,6 +61,7 @@ class PrLimitSettings extends React.Component<any, any> {
                         options={["inclusive of", "exclusive of"]}
                       /> */}
                   <Tags
+                    disabled={this.props.isDisabled}
                     options={this.props.options}
                     handleReplaceSrch={this.handleReplaceSrch}
                   />

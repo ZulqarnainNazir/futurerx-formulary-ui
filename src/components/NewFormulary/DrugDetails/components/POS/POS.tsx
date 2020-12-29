@@ -43,6 +43,7 @@ function mapDispatchToProps(dispatch) {
 
 const mapStateToProps = (state) => {
   return {
+    configureSwitch: state.switchReducer.configureSwitch,
     formulary_id: state?.application?.formulary_id,
     formulary_lob_id: state?.application?.formulary_lob_id,
   };
@@ -533,6 +534,10 @@ class DrugDetailPOS extends React.Component<any, any> {
       this.getPOSCriteriaList(true);
     }
 
+    if(this.props.configureSwitch) {
+      this.getPOSDrugsList();
+    }
+
     this.setState({ tabs, activeTabIndex, showGrid: false });
   };
 
@@ -579,6 +584,13 @@ class DrugDetailPOS extends React.Component<any, any> {
     console.log("The State of the POS Tab = ", this.state);
   };
 
+  componentWillReceiveProps(nextProps) {
+    console.log("-----Component Will Receive Props------", nextProps);
+    if(nextProps.configureSwitch) {
+      this.getPOSDrugsList();
+    }
+  }
+
   render() {
     let dataGrid = <FrxLoader />;
     if (this.state.data) {
@@ -594,7 +606,7 @@ class DrugDetailPOS extends React.Component<any, any> {
             gridName="DRUGSDETAILS"
             enableSettings={false}
             columns={getDrugDetailsColumnPOS()}
-            scroll={{ x: 3200, y: 377 }}
+            scroll={{ x: 3600, y: 377 }}
             isFetchingData={false}
             enableResizingOfColumns
             data={this.state.data}
@@ -669,6 +681,7 @@ class DrugDetailPOS extends React.Component<any, any> {
               handleSelectAll: this.handleSelectAll,
             }}
             showGridHandler={this.showGridHandler}
+            isDisabled={this.props.configureSwitch}
           />
         )}
 
@@ -691,7 +704,7 @@ class DrugDetailPOS extends React.Component<any, any> {
                   label="Advance Search"
                   onClick={this.advanceSearchClickHandler}
                 />
-                <Button label="Save" onClick={this.saveClickHandler} disabled={!(this.state.selectedDrugs.length > 0)} />
+                {!this.props.configureSwitch ? <Button label="Save" onClick={this.saveClickHandler} disabled={!(this.state.selectedDrugs.length > 0)} /> : null}
               </div>
             </div>
             {dataGrid}

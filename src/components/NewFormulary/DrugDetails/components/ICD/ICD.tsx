@@ -31,6 +31,7 @@ function mapDispatchToProps(dispatch) {
 
 const mapStateToProps = (state) => {
   return {
+    configureSwitch: state.switchReducer.configureSwitch,
     formulary_id: state?.application?.formulary_id,
     formulary_lob_id: state?.application?.formulary_lob_id,
   };
@@ -174,7 +175,7 @@ class DrugDetailICD extends React.Component<any, any> {
       if (this.state.activeTabIndex === 0) {
         // Replace Drug method call
         this.rpSavePayload.selected_drug_ids = this.state.selectedDrugs;
-        this.rpSavePayload.icd_limits.lookback_days = this.state.lookBackDays;
+        this.rpSavePayload.icd_limits.lookback_days = +this.state.lookBackDays;
         this.rpSavePayload.icd_limits.icds = this.state.selectedList;
         this.rpSavePayload.breadcrumb_code_value = "ICDL";
         this.rpSavePayload.is_covered = this.state.icdSettingsStatus.covered;
@@ -187,7 +188,7 @@ class DrugDetailICD extends React.Component<any, any> {
           if (json.payload && json.payload.code && json.payload.code === "200") {
             showMessage("Success", "success");
             this.getICDSummary();
-            this.getICDDrugsList();
+            // this.getICDDrugsList();
           } else {
             showMessage("Failure", "error");
           }
@@ -212,7 +213,7 @@ class DrugDetailICD extends React.Component<any, any> {
           if (json.payload && json.payload.code && json.payload.code === "200") {
             showMessage("Success", "success");
             this.getICDSummary();
-            this.getICDDrugsList();
+            // this.getICDDrugsList();
           } else {
             console.log("------REMOVE FAILED-------")
             showMessage("Failure", "error");
@@ -286,6 +287,7 @@ class DrugDetailICD extends React.Component<any, any> {
 
       this.setState({
         panelGridValue1: rows,
+        showGrid: false,
       });
     });
   }
@@ -389,6 +391,10 @@ class DrugDetailICD extends React.Component<any, any> {
       this.getICDCriteriaList(true);
     }
 
+    if(this.props.configureSwitch) {
+      this.getICDDrugsList();
+    }
+
     this.setState({ tabs, activeTabIndex, showGrid: false });
   };
 
@@ -483,6 +489,13 @@ class DrugDetailICD extends React.Component<any, any> {
     this.getICDDrugsList({ index: this.listPayload.index, limit: this.listPayload.limit, listPayload: this.listPayload });
   }
 
+  componentWillReceiveProps(nextProps) {
+    console.log("-----Component Will Receive Props------", nextProps);
+    if(nextProps.configureSwitch) {
+      this.getICDDrugsList();
+    }
+  }
+
   render() {
     let dataGrid = <FrxLoader />;
     if (this.state.data) {
@@ -564,6 +577,7 @@ class DrugDetailICD extends React.Component<any, any> {
           showGridHandler={this.showGridHandler}
           icdSettingsStatus={this.state.icdSettingsStatus}
           handleLookBackDays = {this.handleLookBackDays}
+          isDisabled={this.props.configureSwitch}
         />}
         
         {this.state.activeTabIndex==2 && <ICDRemove 
@@ -583,7 +597,7 @@ class DrugDetailICD extends React.Component<any, any> {
                   label="Advance Search"
                   onClick={this.advanceSearchClickHandler}
                 />
-                <Button label="Save" onClick={this.saveClickHandler} disabled={!(this.state.selectedDrugs.length > 0)} />
+                {!this.props.configureSwitch ? <Button label="Save" onClick={this.saveClickHandler} disabled={!(this.state.selectedDrugs.length > 0)} /> : null}
               </div>
             </div>
             {dataGrid}

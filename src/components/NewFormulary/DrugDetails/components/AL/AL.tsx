@@ -35,6 +35,7 @@ function mapDispatchToProps(dispatch) {
 
 const mapStateToProps = (state) => {
   return {
+    configureSwitch: state.switchReducer.configureSwitch,
     formulary_id: state?.application?.formulary_id,
     formulary_lob_id: state?.application?.formulary_lob_id,
   };
@@ -283,7 +284,7 @@ class DrugDetailAL extends React.Component<any, any> {
           if (json.payload && json.payload.code && json.payload.code === "200") {
             showMessage("Success", "success");
             this.getALSummary();
-            this.getALDrugsList();
+            // this.getALDrugsList();
           } else {
             showMessage("Failure", "error");
           }
@@ -307,7 +308,7 @@ class DrugDetailAL extends React.Component<any, any> {
           if (json.payload && json.payload.code && json.payload.code === "200") {
             showMessage("Success", "success");
             this.getALSummary();
-            this.getALDrugsList();
+            // this.getALDrugsList();
           } else {
             console.log("------REMOVE FAILED-------")
             showMessage("Failure", "error");
@@ -473,6 +474,7 @@ class DrugDetailAL extends React.Component<any, any> {
 
       this.setState({
         panelGridValue1: rows,
+        showGrid: false,
       });
     });
   }
@@ -606,6 +608,10 @@ class DrugDetailAL extends React.Component<any, any> {
       this.getALCriteriaList(true);
     }
 
+    if(this.props.configureSwitch) {
+      this.getALDrugsList();
+    }
+
     this.setState({ tabs, activeTabIndex, showGrid: false });
   };
 
@@ -674,6 +680,13 @@ class DrugDetailAL extends React.Component<any, any> {
       this.formData2.pop();
       alSettings.pop();
       this.setState({ alSettings });
+    }
+  }
+
+  componentWillReceiveProps(nextProps) {
+    console.log("-----Component Will Receive Props------", nextProps);
+    if(nextProps.configureSwitch) {
+      this.getALDrugsList();
     }
   }
 
@@ -781,6 +794,7 @@ class DrugDetailAL extends React.Component<any, any> {
           addNewAgeLimit={this.addNewAgeLimit}
           deleteAlLimit={this.deleteAlLimit}
           handleStatus={this.handleStatus}
+          isDisabled={this.props.configureSwitch}
         />}
         
         {this.state.activeTabIndex==2 && <ALRemove 
@@ -789,31 +803,6 @@ class DrugDetailAL extends React.Component<any, any> {
           handleChangeEvent={this.handleChangeEvent}
           handleRemoveChecked={this.handleRemoveChecked}
         />}
-
-        {/* {this.state.activeTabIndex === 2 ? (
-          <div className="white-bg">
-            <Grid item xs={5}>
-              <div className="tier-grid-remove-container">
-                <Table
-                  columns={removeColumns}
-                  dataSource={this.state.removeData}
-                  pagination={false}
-                  rowSelection={{
-                    columnWidth: 20,
-                    fixed: true,
-                    type: "checkbox",
-                    onChange: () => {},
-                  }}
-                />
-              </div>
-            </Grid>
-            <Row justify="end">
-              <Col>
-                <Button label="Apply" onClick={() => {}}></Button>
-              </Col>
-            </Row>
-          </div>
-        ) : null} */}
 
         {this.state.showGrid ? (
           <div className="bordered">
@@ -825,7 +814,7 @@ class DrugDetailAL extends React.Component<any, any> {
                   label="Advance Search"
                   onClick={this.advanceSearchClickHandler}
                 />
-                <Button label="Save" onClick={this.saveClickHandler} disabled={!(this.state.selectedDrugs.length > 0)} />
+                {!this.props.configureSwitch ? <Button label="Save" onClick={this.saveClickHandler} disabled={!(this.state.selectedDrugs.length > 0)} /> : null}
               </div>
             </div>
             {dataGrid}

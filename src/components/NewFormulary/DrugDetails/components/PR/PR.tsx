@@ -31,6 +31,7 @@ function mapDispatchToProps(dispatch) {
 
 const mapStateToProps = (state) => {
   return {
+    configureSwitch: state.switchReducer.configureSwitch,
     formulary_id: state?.application?.formulary_id,
     formulary_lob_id: state?.application?.formulary_lob_id,
   };
@@ -410,6 +411,10 @@ class DrugDetailPR extends React.Component<any, any> {
       this.getPRRemoveSettings(true);
     }
 
+    if(this.props.configureSwitch) {
+      this.getPRDrugsList();
+    }
+
     this.setState({ tabs, activeTabIndex, showGrid: false });
   };
 
@@ -470,6 +475,13 @@ class DrugDetailPR extends React.Component<any, any> {
     // this.setState({ showGrid: true });
     this.getPRDrugsList();
   };
+
+  componentWillReceiveProps(nextProps) {
+    console.log("-----Component Will Receive Props------", nextProps);
+    if(nextProps.configureSwitch) {
+      this.getPRDrugsList();
+    }
+  }
 
   render() {
     let dataGrid = <FrxLoader />;
@@ -558,6 +570,7 @@ class DrugDetailPR extends React.Component<any, any> {
             handleSelectAll: this.handleSelectAll,
           }}
           showGridHandler={this.showGridHandler}
+          isDisabled={this.props.configureSwitch}
         />}
 
         {this.state.activeTabIndex==2&&<PrRemove 
@@ -577,7 +590,7 @@ class DrugDetailPR extends React.Component<any, any> {
                   label="Advance Search"
                   onClick={this.advanceSearchClickHandler}
                 />
-                <Button label="Save" onClick={this.saveClickHandler} disabled={!(this.state.selectedDrugs.length > 0)} />
+                {!this.props.configureSwitch ? <Button label="Save" onClick={this.saveClickHandler} disabled={!(this.state.selectedDrugs.length > 0)} /> : null}
               </div>
             </div>
             {dataGrid}

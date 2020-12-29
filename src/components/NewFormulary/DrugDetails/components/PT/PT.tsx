@@ -38,6 +38,7 @@ function mapDispatchToProps(dispatch) {
 
 const mapStateToProps = (state) => {
   return {
+    configureSwitch: state.switchReducer.configureSwitch,
     formulary_id: state?.application?.formulary_id,
     formulary_lob_id: state?.application?.formulary_lob_id,
   };
@@ -499,6 +500,10 @@ class DrugDetailPT extends React.Component<any, any> {
       this.getPTCriteriaList(true);
     }
 
+    if(this.props.configureSwitch) {
+      this.getPTDrugsList();
+    }
+
     this.setState({ tabs, activeTabIndex, showGrid: false });
   };
 
@@ -521,6 +526,13 @@ class DrugDetailPT extends React.Component<any, any> {
     });
     this.getPTReplaceSrch(selectedItem);
   };
+
+  componentWillReceiveProps(nextProps) {
+    console.log("-----Component Will Receive Props------", nextProps);
+    if(nextProps.configureSwitch) {
+      this.getPTDrugsList();
+    }
+  }
 
   render() {
     let dataGrid = <FrxLoader />;
@@ -607,6 +619,7 @@ class DrugDetailPT extends React.Component<any, any> {
             handleStatus={this.handleStatus}
             showGridHandler={this.showGridHandler}
             ptSettingsStatus={this.state.ptSettingsStatus}
+            isDisabled={this.props.configureSwitch}
           />
         )}
 
@@ -629,11 +642,11 @@ class DrugDetailPT extends React.Component<any, any> {
                   label="Advance Search"
                   onClick={this.advanceSearchClickHandler}
                 />
-                <Button
+                {!this.props.configureSwitch ? <Button
                   label="Save"
                   onClick={this.saveClickHandler}
                   disabled={!(this.state.selectedDrugs.length > 0)}
-                />
+                /> : null}
               </div>
             </div>
             {dataGrid}

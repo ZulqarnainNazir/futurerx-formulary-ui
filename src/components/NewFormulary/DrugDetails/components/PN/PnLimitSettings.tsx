@@ -37,7 +37,7 @@ class PnLimitSettings extends React.Component<any, any>{
                     placeholder="Select"
                     options={["inclusive of", "exclusive of"]}
                   /> */}
-                  <Tags options={this.props.options} handleReplaceSrch={this.handleReplaceSrch} />
+                  <Tags options={this.props.options} disabled={this.props.isDisabled} handleReplaceSrch={this.handleReplaceSrch} />
                 </div>
               </div>
             </div>

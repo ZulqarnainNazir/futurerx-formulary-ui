@@ -35,6 +35,7 @@ const PrLimitSettings = (props) => {
     selectAllHandler,
     showGridHandler,
     handleStatus,
+    isDisabled,
   } = props;
 
   return (
@@ -54,12 +55,12 @@ const PrLimitSettings = (props) => {
           <div className="input-field-group">
             <div className="input-field-group__header">
               <div className="input-field-group__label">Select services:</div>
-              <div
+              {!isDisabled ? <div
                 className="input-field-group__select-all-action"
                 onClick={selectAllHandler.handleSelectAll}
               >
                 {selectAllHandler.isSelectAll ? "Unselect all" : "Select all"}
-              </div>
+              </div> : null}
             </div>
 
             <div className="input-field-group__radio-field-group">
@@ -73,6 +74,7 @@ const PrLimitSettings = (props) => {
                     name={s.id_patient_residence_type}
                     onChange={serviceSettingsChecked}
                     checked={s.isChecked}
+                    disabled={isDisabled}
                   ></Checkbox>
                   <label
                     htmlFor={s.id_patient_residence_type}

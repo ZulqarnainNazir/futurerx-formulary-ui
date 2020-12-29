@@ -31,6 +31,7 @@ function mapDispatchToProps(dispatch) {
 
 const mapStateToProps = (state) => {
   return {
+    configureSwitch: state.switchReducer.configureSwitch,
     formulary_id: state?.application?.formulary_id,
     formulary_lob_id: state?.application?.formulary_lob_id,
   };
@@ -241,7 +242,7 @@ class DrugDetailOther extends React.Component<any, any> {
       this.setState({
         panelGridValue1: rows,
         otherData: settingsRows,
-        showGrid: false,
+        showGrid: this.props.configureSwitch,
       });
     });
   };
@@ -350,6 +351,10 @@ class DrugDetailOther extends React.Component<any, any> {
       this.setState({ otherData: [] }, () => this.getOTHERCriteriaList());
     }
 
+    if(this.props.configureSwitch) {
+      this.getOtherList();
+    }
+
     this.setState({ tabs, activeTabIndex, showGrid: false, selectedCriteria: [] }, () => console.log("THe Selected Criteria = ", this.state.selectedCriteria));
   };
 
@@ -410,6 +415,13 @@ class DrugDetailOther extends React.Component<any, any> {
   openOtherGridContainer = () => {
     this.getOtherList();
   };
+
+  componentWillReceiveProps(nextProps) {
+    console.log("-----Component Will Receive Props------", nextProps);
+    if(nextProps.configureSwitch) {
+      this.getOtherList();
+    }
+  }
 
   render() {
     let dataGrid = <FrxLoader />;
@@ -518,7 +530,7 @@ class DrugDetailOther extends React.Component<any, any> {
                 label="Advance Search"
                 onClick={this.advanceSearchClickHandler}
               />
-              <Button label="Save" onClick={this.saveClickHandler} disabled={!(this.state.selectedDrugs.length > 0)} />
+              {!this.props.configureSwitch ? <Button label="Save" onClick={this.saveClickHandler} disabled={!(this.state.selectedDrugs.length > 0)} /> : null}
             </div>
           </div>
           {dataGrid}

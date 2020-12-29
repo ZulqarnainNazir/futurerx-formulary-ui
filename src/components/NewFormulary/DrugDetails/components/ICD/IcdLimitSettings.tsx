@@ -61,6 +61,7 @@ class IcdLimitSettings extends React.Component<any, any> {
                   <Tags
                     options={this.props.options}
                     handleReplaceSrch={this.handleReplaceSrch}
+                    disabled={this.props.isDisabled}
                   />
                 </div>
               </div>
@@ -72,6 +73,7 @@ class IcdLimitSettings extends React.Component<any, any> {
                     type="number"
                     className="setup-input-fields"
                     onChange={this.handleInput}
+                    disabled={this.props.isDisabled}
                   />
                 </div>
               </div>
