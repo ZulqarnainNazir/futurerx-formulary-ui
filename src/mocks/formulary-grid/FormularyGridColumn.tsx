@@ -658,6 +658,7 @@ export const getCompareNonMcrFormularyViewAllGridColumns: () => Column<any>[] = 
       filters: textFilters,
       sortDirections: ["ascend", "descend"],
     },
+  ]
 };
 
 export const getCompareFormularyVersionHistoryColumn: () => Column<any>[] = () => {

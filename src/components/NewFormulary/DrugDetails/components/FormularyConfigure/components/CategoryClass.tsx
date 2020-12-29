@@ -592,7 +592,7 @@ class CategoryClass extends React.Component<any, any> {
                   </div>
                 </div>
                 <div className="bordered">
-                  <div className="header space-between pr-10">
+                  <div className="header pr-10 category-class-header">
                     <div
                       className="add-file-button"
                       onClick={(e) =>
@@ -604,13 +604,13 @@ class CategoryClass extends React.Component<any, any> {
                     >
                       Override
                     </div>
-                    <div
-                      style={{
-                        display: "flex",
-                        flexDirection: "row",
-                        alignItems: "center",
-                        justifyContent: "space-between",
-                      }}
+                    <div className="header-dropdown"
+                      // style={{
+                      //   display: "flex",
+                      //   flexDirection: "row",
+                      //   alignItems: "center",
+                      //   justifyContent: "space-between",
+                      // }}
                     >
                       <DropDown
                         value={this.state.searchValue}
@@ -630,12 +630,11 @@ class CategoryClass extends React.Component<any, any> {
                       )}
                     </div>
                     <div
-                      className="advance-search-button"
+                      className="advance-search-button advance-search-btn"
                       onClick={(e) => this.advanceSearchClickHandler(e)}
                     >
                       Advanced Search
                     </div>
-                    <Button label="Save" className="Button" disabled />
                   </div>
                   <FrxDrugGridContainer
                     enableSearch={false}
