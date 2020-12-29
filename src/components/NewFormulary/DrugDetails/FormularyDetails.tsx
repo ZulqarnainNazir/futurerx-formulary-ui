@@ -9,6 +9,9 @@ import FormularySetUp from "./components/FormularySetUp/FormularySetUp";
 import Validation from "../../Validation/Validation";
 import {connect} from 'react-redux';
 import { setAdvancedSearch } from "../../../redux/slices/formulary/advancedSearch/advancedSearchSlice";
+import {
+  setLocation
+} from "../../../redux/slices/formulary/application/applicationSlice";
 
 const tabs = [
   { id: 1, text: "Setup" },
@@ -21,14 +24,16 @@ const tabs = [
 
 function mapDispatchToProps(dispatch) {
   return {
-    setAdvancedSearch: (a) => dispatch(setAdvancedSearch(a))
+    setAdvancedSearch: (a) => dispatch(setAdvancedSearch(a)),
+    setLocation: (a) => dispatch(setLocation(a))
   };
 }
 
 const mapStateToProps = (state) => {
   //console.log(state)
   return{
-    current_formulary: state.application.formulary
+    current_formulary: state.application.formulary,
+    location: state.application.location
   }
 }
 
@@ -50,6 +55,7 @@ class FormularyDetails extends React.Component<any, any> {
     let payload = { advancedSearchBody: {}, populateGrid: false, closeDialog: false, listItemStatus: {} };
     this.props.setAdvancedSearch(payload);
     this.setState({ tabs, activeTabIndex });
+    this.props.setLocation(activeTabIndex);
   };
 
   componentDidMount(){
@@ -59,7 +65,7 @@ class FormularyDetails extends React.Component<any, any> {
   }
 
   renderActiveTabContent = () => {
-    const tabIndex = this.state.activeTabIndex;
+    const tabIndex = this.props.location;
     switch (tabIndex) {
       case 0:
         return <FormularySetUp saveAndContinue={this.onClickTab}/>;
@@ -89,12 +95,12 @@ class FormularyDetails extends React.Component<any, any> {
     const fData = this.props.data;
     return (
       <>
-        <FormularyDetailsTop activeTabIndex={this.state.activeTabIndex} />
+        <FormularyDetailsTop activeTabIndex={this.props.location} />
         <div className="drug-details-bottom">
           <FrxTabs
             tabList={this.state.tabs}
             typeCard={"line"}
-            activeTabIndex={this.state.activeTabIndex}
+            activeTabIndex={this.props.location}
             onClickTab={this.onClickTab}
           />
           <div className="inner-container">{this.renderActiveTabContent()}</div>
