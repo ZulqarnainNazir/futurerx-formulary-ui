@@ -55,8 +55,12 @@ class FormularyDesignCommercial extends React.Component<any, any> {
         this.props.formularyDesignCommercialCheck(des_opt);
     }
     onCustomeInputChangeHandler = (e,index) => {
-        const des_opt = {...this.props.edit_info};
-        des_opt.custom_edits[index].edit_name = e.target.value;
+        console.log(this.props)
+        let des_opt:any = {...this.props.edit_info};
+        let new_obj = {...des_opt.custom_edits[index]}
+        new_obj.edit_name = e.target.value;
+        des_opt.custom_edits.splice(index,1);
+        des_opt.custom_edits.splice(index,0,new_obj);
         this.props.formularyDesignCommercialCheck(des_opt);
     }
     getChecked = (id) => {
