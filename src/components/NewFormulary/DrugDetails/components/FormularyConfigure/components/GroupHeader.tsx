@@ -4,7 +4,7 @@ import Alerts from './PopupAlerts/Alerts'
 import DialogPopup from "../../../../../shared/FrxDialogPopup/FrxDialogPopup";
 import { Grid } from '@material-ui/core';
 import { DatePicker } from 'antd';
-import { getCompareFormularyVersionHistoryColumn } from "../../../../../../utils/grid/columns";
+import { getStVersionHistoryColumn } from "../../../../../../utils/grid/columns";
 import FrxDrugGridContainer from "../../../../../shared/FrxGrid/FrxDrugGridContainer";
 import {
     deleteGroupDescription,
@@ -429,7 +429,7 @@ function GroupHeader(props: any) {
                   pagintionPosition="topRight"
                   gridName="DRUG GRID"
                   enableSettings={false}
-                  columns={getCompareFormularyVersionHistoryColumn()}
+                  columns={getStVersionHistoryColumn()}
                   scroll={{ x: 2000, y: 377 }}
                   isFetchingData={false}
                   enableResizingOfColumns
