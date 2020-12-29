@@ -521,6 +521,7 @@ function NewGroup(props: any) {
         ...formData,
         ...props.PaGDData,
       });
+      setDrug_list_ids(props.PaGDData.drug_list_ids)
     }
     if (!props.editMode) {
       setEditable(false);
@@ -921,7 +922,7 @@ function NewGroup(props: any) {
                       <Tags
                         options={props.drugList}
                         getAutoCompleteChange={getAutoCompleteChangeHandler}
-                        autoSelected={formData.drug_list_ids}
+                        autoSelected={drug_list_ids}
                       />
                       {/* <Tags options={drug_list} getAutoCompleteChange={getAutoCompleteChangeHandler}
                        autoSelected={formData.drug_list_ids}/> */}
