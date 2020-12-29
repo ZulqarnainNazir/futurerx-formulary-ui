@@ -6,14 +6,15 @@ import "./CompareTable.scss";
 import InnerGrid from "./InnerGrid";
 import Button from "../../../../../../shared/Frx-components/button/Button";
 import DialogPopup from "../../../../../../shared/FrxDialogPopup/FrxDialogPopup";
-import FrxGridContainer from "../../../../../../shared/FrxGrid/FrxGridContainer";
-import { getCompareFormularyViewAllGridColumns } from "../../../../../../../mocks/formulary-grid/FormularyGridColumn";
+import FrxGridContainer from "../../../../../../shared/FrxGrid/FrxDrugGridContainer";
+import { getCompareFormularyViewAllGridColumns, getCompareNonMcrFormularyViewAllGridColumns } from "../../../../../../../mocks/formulary-grid/FormularyGridColumn";
 import { getCompareFormularyViewAllGridData } from "../../../../../../../mocks/formulary-grid/FormularyGridData";
-import { getMainComparison } from "../../../../../../../redux/slices/formulary/compareView/compareViewService";
+import { getMainComparison, getViewAllDrugs, getViewAllDrugsReject } from "../../../../../../../redux/slices/formulary/compareView/compareViewService";
 import * as commonConstants from "../../../../../../../api/http-commons";
 import * as compareConstants from "../../../../../../../api/http-compare-view";
 import { connect } from "react-redux";
 import showMessage from "../../../../../Utils/Toast";
+import getLobCode from "../../../../../Utils/LobUtils";
 import {
   dateFilters,
   textFilters,
@@ -33,25 +34,95 @@ const mapStateToProps = (state) => {
   };
 };
 
+const TYPE_SINGLE = 0;
+const TYPE_IN_BASE_NOT_REF = 1;
+const TYPE_IN_REF_NOT_BASE = 2;
+
+const defaultListPayload = {
+  index: 0,
+  limit: 10,
+  filter: [],
+}
+
 class CompareTable extends Component<any, any> {
   state = {
     showCheckbox: false,
     toggleAllAccordion: true,
     showViewAll: false,
     showViewAllNonMatch: false,
-    columns: [],
-    data: [],
+    columns: Array(),
+    data: Array(),
+    gridData: Array(),
     scroll: {
       x: 4600,
       y: 500,
     },
     formularyTypesGridData: Array(),
+    baseFormularyId: '',
+    reformularyId: '',
+    viewAllType: TYPE_SINGLE,
+    dataCount: 0,
+    isRowSelectionEnabled: false,
+    hiddenColumns: Array(),
   };
 
-  toggleShowViewAll = () => {
-    this.setState({
-      showViewAll: !this.state.showViewAll,
-    });
+  listPayload: any = {
+    index: 0,
+    limit: 10,
+    filter: [],
+  }
+
+  onSettingsIconHandler = (hiddenColumn, visibleColumn) => {
+    if (hiddenColumn && hiddenColumn.length > 0) {
+      let hiddenColumnKeys = hiddenColumn.map(column => column['key']);
+      this.setState({
+        hiddenColumns: hiddenColumnKeys
+      });
+    }
+  }
+  onApplyFilterHandler = (filters) => {
+
+  }
+  onPageSize = (pageSize) => {
+    if (this.state.viewAllType === TYPE_SINGLE) {
+      this.listPayload = { ...defaultListPayload };
+      this.listPayload.limit = pageSize;
+      this.populateViewAllData(this.listPayload, this.state.baseFormularyId, this.state.reformularyId, this.state.viewAllType);
+    }
+  }
+  onGridPageChangeHandler = (pageNumber: any) => {
+    if (this.state.viewAllType === TYPE_SINGLE) {
+      this.listPayload.index = (pageNumber - 1) * this.listPayload.limit;
+      this.populateViewAllData(this.listPayload, this.state.baseFormularyId, this.state.reformularyId, this.state.viewAllType);
+    }
+  }
+  onClearFilterHandler = () => {
+    if (this.state.viewAllType === TYPE_SINGLE) {
+      this.listPayload = { ...defaultListPayload };
+      this.populateViewAllData(this.listPayload, this.state.baseFormularyId, this.state.reformularyId, this.state.viewAllType);
+    }
+  }
+
+  toggleShowViewAll = (baseFormularyId = null, reformularyId = null, type = TYPE_SINGLE, isClose = false, checkBoxEnabled = false) => {
+    if (isClose) {
+      this.setState({
+        showViewAll: !this.state.showViewAll,
+        columns: Array(),
+        data: Array(),
+        gridData: Array(),
+        dataCount: 0,
+        isRowSelectionEnabled: false,
+        viewAllType: TYPE_SINGLE,
+        baseFormularyId: '',
+        reformularyId: '',
+        hiddenColumns: Array(),
+      });
+    } else {
+      this.state.showViewAll = !this.state.showViewAll;
+      this.state.isRowSelectionEnabled = checkBoxEnabled;
+      this.listPayload = { ...defaultListPayload };
+      this.populateViewAllData(this.listPayload, baseFormularyId, reformularyId, type);
+    }
   };
 
   getBackgroundColor = (type) => {
@@ -86,7 +157,7 @@ class CompareTable extends Component<any, any> {
         position: 1,
         sorter: {},
         textCase: "upper",
-        pixelWidth: 100,
+        pixelWidth: 300,
         key: "label",
         displayTitle: "Label Name",
         dataType: "string",
@@ -101,7 +172,7 @@ class CompareTable extends Component<any, any> {
         position: 2,
         sorter: {},
         textCase: "upper",
-        pixelWidth: 100,
+        pixelWidth: 300,
         key: "fileType",
         displayTitle: "File Type",
         dataType: "string",
@@ -116,7 +187,7 @@ class CompareTable extends Component<any, any> {
         position: 3,
         sorter: {},
         textCase: "upper",
-        pixelWidth: 100,
+        pixelWidth: 300,
         key: "dataSource",
         displayTitle: "Data Source",
         dataType: "string",
@@ -131,7 +202,7 @@ class CompareTable extends Component<any, any> {
         position: 4,
         sorter: {},
         textCase: "upper",
-        pixelWidth: 100,
+        pixelWidth: 300,
         key: "gpi",
         displayTitle: "GPI",
         dataType: "string",
@@ -141,6 +212,8 @@ class CompareTable extends Component<any, any> {
         sortDirections: ["ascend", "descend"],
       },
     ];
+
+    let lastSectionColumns = [...columns];
     switch (type) {
       case "Tier":
         columns = [
@@ -151,7 +224,7 @@ class CompareTable extends Component<any, any> {
               position: 5,
               sorter: {},
               textCase: "upper",
-              pixelWidth: 100,
+              pixelWidth: 300,
               key: "tier",
               displayTitle: "Tier",
               dataType: "string",
@@ -162,6 +235,7 @@ class CompareTable extends Component<any, any> {
             },
           ],
         ];
+
         return columns;
 
       case "Category/Class":
@@ -171,7 +245,7 @@ class CompareTable extends Component<any, any> {
             position: 1,
             sorter: {},
             textCase: "upper",
-            pixelWidth: 100,
+            pixelWidth: 300,
             key: "category",
             displayTitle: "Category",
             dataType: "string",
@@ -185,7 +259,7 @@ class CompareTable extends Component<any, any> {
             position: 2,
             sorter: {},
             textCase: "upper",
-            pixelWidth: 100,
+            pixelWidth: 300,
             key: "class",
             displayTitle: "Class",
             dataType: "string",
@@ -204,7 +278,7 @@ class CompareTable extends Component<any, any> {
             position: 1,
             sorter: {},
             textCase: "upper",
-            pixelWidth: 100,
+            pixelWidth: 300,
             key: "groupDescription",
             displayTitle: "Group Description",
             dataType: "string",
@@ -214,6 +288,7 @@ class CompareTable extends Component<any, any> {
             sortDirections: ["ascend", "descend"],
           },
         ];
+
         return columns;
 
       case "Prior Authorization (PA)":
@@ -225,7 +300,7 @@ class CompareTable extends Component<any, any> {
               position: 5,
               sorter: {},
               textCase: "upper",
-              pixelWidth: 100,
+              pixelWidth: 300,
               key: "paType",
               displayTitle: "PA Type",
               dataType: "string",
@@ -239,7 +314,7 @@ class CompareTable extends Component<any, any> {
               position: 6,
               sorter: {},
               textCase: "upper",
-              pixelWidth: 100,
+              pixelWidth: 300,
               key: "paGroupDescription",
               displayTitle: "PA Group Description",
               dataType: "string",
@@ -250,7 +325,9 @@ class CompareTable extends Component<any, any> {
             },
           ],
         ];
+
         return columns;
+
 
       case "Step Therpay (ST)":
         columns = [
@@ -261,7 +338,7 @@ class CompareTable extends Component<any, any> {
               position: 5,
               sorter: {},
               textCase: "upper",
-              pixelWidth: 100,
+              pixelWidth: 300,
               key: "stType",
               displayTitle: "ST Type",
               dataType: "string",
@@ -275,7 +352,7 @@ class CompareTable extends Component<any, any> {
               position: 6,
               sorter: {},
               textCase: "upper",
-              pixelWidth: 100,
+              pixelWidth: 300,
               key: "stGroupDescription",
               displayTitle: "ST Group Description",
               dataType: "string",
@@ -289,7 +366,7 @@ class CompareTable extends Component<any, any> {
               position: 7,
               sorter: {},
               textCase: "upper",
-              pixelWidth: 100,
+              pixelWidth: 300,
               key: "stValue",
               displayTitle: "ST Value",
               dataType: "string",
@@ -309,7 +386,7 @@ class CompareTable extends Component<any, any> {
             position: 1,
             sorter: {},
             textCase: "upper",
-            pixelWidth: 100,
+            pixelWidth: 300,
             key: "groupDescription",
             displayTitle: "Group Description",
             dataType: "string",
@@ -319,6 +396,7 @@ class CompareTable extends Component<any, any> {
             sortDirections: ["ascend", "descend"],
           },
         ];
+
         return columns;
 
       case "Quantity Limits (QL)":
@@ -330,7 +408,7 @@ class CompareTable extends Component<any, any> {
               position: 5,
               sorter: {},
               textCase: "upper",
-              pixelWidth: 100,
+              pixelWidth: 300,
               key: "qlType",
               displayTitle: "QL Type",
               dataType: "string",
@@ -344,7 +422,7 @@ class CompareTable extends Component<any, any> {
               position: 6,
               sorter: {},
               textCase: "upper",
-              pixelWidth: 100,
+              pixelWidth: 300,
               key: "qlDays",
               displayTitle: "QL Days",
               dataType: "string",
@@ -358,7 +436,7 @@ class CompareTable extends Component<any, any> {
               position: 7,
               sorter: {},
               textCase: "upper",
-              pixelWidth: 100,
+              pixelWidth: 300,
               key: "qlPeriodofTime",
               displayTitle: "QL Period of Time",
               dataType: "string",
@@ -372,7 +450,7 @@ class CompareTable extends Component<any, any> {
               position: 8,
               sorter: {},
               textCase: "upper",
-              pixelWidth: 100,
+              pixelWidth: 300,
               key: "qlQuantity",
               displayTitle: "QL Quantity",
               dataType: "string",
@@ -386,7 +464,7 @@ class CompareTable extends Component<any, any> {
               position: 9,
               sorter: {},
               textCase: "upper",
-              pixelWidth: 100,
+              pixelWidth: 300,
               key: "fillsAllowed",
               displayTitle: "Fills Allowed",
               dataType: "string",
@@ -400,7 +478,7 @@ class CompareTable extends Component<any, any> {
               position: 10,
               sorter: {},
               textCase: "upper",
-              pixelWidth: 100,
+              pixelWidth: 300,
               key: "fullLimitPeriod",
               displayTitle: "Full Limit Period of Time",
               dataType: "string",
@@ -424,7 +502,7 @@ class CompareTable extends Component<any, any> {
                   position: 5,
                   sorter: {},
                   textCase: "upper",
-                  pixelWidth: 100,
+                  pixelWidth: 300,
                   key: "minCovered",
                   displayTitle: "Minimum Age [Covered]",
                   dataType: "string",
@@ -438,7 +516,7 @@ class CompareTable extends Component<any, any> {
                   position: 6,
                   sorter: {},
                   textCase: "upper",
-                  pixelWidth: 100,
+                  pixelWidth: 300,
                   key: "maxCovered",
                   displayTitle: "Maximum Age [Covered]",
                   dataType: "string",
@@ -452,7 +530,7 @@ class CompareTable extends Component<any, any> {
                   position: 7,
                   sorter: {},
                   textCase: "upper",
-                  pixelWidth: 100,
+                  pixelWidth: 300,
                   key: "minCoveredCond",
                   displayTitle: "Minimum Condition [Covered]",
                   dataType: "string",
@@ -466,7 +544,7 @@ class CompareTable extends Component<any, any> {
                   position: 8,
                   sorter: {},
                   textCase: "upper",
-                  pixelWidth: 100,
+                  pixelWidth: 300,
                   key: "maxCoveredCond",
                   displayTitle: "Maximum Condition [Covered]",
                   dataType: "string",
@@ -480,7 +558,7 @@ class CompareTable extends Component<any, any> {
                   position: 9,
                   sorter: {},
                   textCase: "upper",
-                  pixelWidth: 100,
+                  pixelWidth: 300,
                   key: "minNotCovered",
                   displayTitle: "Minimum Age [Not Covered]",
                   dataType: "string",
@@ -494,7 +572,7 @@ class CompareTable extends Component<any, any> {
                   position: 10,
                   sorter: {},
                   textCase: "upper",
-                  pixelWidth: 100,
+                  pixelWidth: 300,
                   key: "maxNotCovered",
                   displayTitle: "Maximum Age [Not Covered]",
                   dataType: "string",
@@ -508,7 +586,7 @@ class CompareTable extends Component<any, any> {
                   position: 11,
                   sorter: {},
                   textCase: "upper",
-                  pixelWidth: 100,
+                  pixelWidth: 300,
                   key: "minNotCoveredCond",
                   displayTitle: "Minimum Condition [Not Covered]",
                   dataType: "string",
@@ -522,7 +600,7 @@ class CompareTable extends Component<any, any> {
                   position: 12,
                   sorter: {},
                   textCase: "upper",
-                  pixelWidth: 100,
+                  pixelWidth: 300,
                   key: "maxNotCoveredCond",
                   displayTitle: "Maximum Condition [Not Covered]",
                   dataType: "string",
@@ -544,7 +622,7 @@ class CompareTable extends Component<any, any> {
                   position: 5,
                   sorter: {},
                   textCase: "upper",
-                  pixelWidth: 100,
+                  pixelWidth: 300,
                   key: "covered",
                   displayTitle: "Covered",
                   dataType: "string",
@@ -558,7 +636,7 @@ class CompareTable extends Component<any, any> {
                   position: 6,
                   sorter: {},
                   textCase: "upper",
-                  pixelWidth: 100,
+                  pixelWidth: 300,
                   key: "notCovered",
                   displayTitle: "Not Covered",
                   dataType: "string",
@@ -593,6 +671,915 @@ class CompareTable extends Component<any, any> {
           ],
         ];
         return columns;
+    }
+    return Array();
+  };
+
+  getGridColumnsNonMatch = (type, subType: any = null) => {
+    let columns = [
+      {
+        id: 1,
+        position: 1,
+        sorter: {},
+        textCase: "upper",
+        pixelWidth: 300,
+        key: "label",
+        displayTitle: "Label Name",
+        dataType: "string",
+        isFilterable: true,
+        filters: textFilters,
+        hidden: false,
+        sortDirections: ["ascend", "descend"],
+      },
+
+      {
+        id: 2,
+        position: 2,
+        sorter: {},
+        textCase: "upper",
+        pixelWidth: 300,
+        key: "fileType",
+        displayTitle: "File Type",
+        dataType: "string",
+        isFilterable: true,
+        filters: textFilters,
+        hidden: false,
+        sortDirections: ["ascend", "descend"],
+      },
+
+      {
+        id: 3,
+        position: 3,
+        sorter: {},
+        textCase: "upper",
+        pixelWidth: 300,
+        key: "dataSource",
+        displayTitle: "Data Source",
+        dataType: "string",
+        isFilterable: true,
+        filters: textFilters,
+        hidden: false,
+        sortDirections: ["ascend", "descend"],
+      },
+
+      {
+        id: 4,
+        position: 4,
+        sorter: {},
+        textCase: "upper",
+        pixelWidth: 300,
+        key: "gpi",
+        displayTitle: "GPI",
+        dataType: "string",
+        isFilterable: true,
+        filters: textFilters,
+        hidden: false,
+        sortDirections: ["ascend", "descend"],
+      },
+    ];
+
+    let lastSectionColumns = [...columns];
+    switch (type) {
+      case "Tier":
+        columns = [
+          ...columns,
+          ...[
+            {
+              id: 5,
+              position: 5,
+              sorter: {},
+              textCase: "upper",
+              pixelWidth: 300,
+              key: "tier",
+              displayTitle: "Tier Base",
+              dataType: "string",
+              isFilterable: true,
+              filters: textFilters,
+              hidden: false,
+              sortDirections: ["ascend", "descend"],
+            },
+            {
+              id: 6,
+              position: 6,
+              sorter: {},
+              textCase: "upper",
+              pixelWidth: 300,
+              key: "tierRef",
+              displayTitle: "Tier Ref",
+              dataType: "string",
+              isFilterable: true,
+              filters: textFilters,
+              hidden: false,
+              sortDirections: ["ascend", "descend"],
+            },
+          ],
+        ];
+
+        return columns;
+
+      case "Category/Class":
+        columns = [
+          {
+            id: 1,
+            position: 1,
+            sorter: {},
+            textCase: "upper",
+            pixelWidth: 300,
+            key: "category",
+            displayTitle: "Category Base",
+            dataType: "string",
+            isFilterable: true,
+            filters: textFilters,
+            hidden: false,
+            sortDirections: ["ascend", "descend"],
+          },
+          {
+            id: 2,
+            position: 2,
+            sorter: {},
+            textCase: "upper",
+            pixelWidth: 300,
+            key: "class",
+            displayTitle: "Class Base",
+            dataType: "string",
+            isFilterable: true,
+            filters: textFilters,
+            hidden: false,
+            sortDirections: ["ascend", "descend"],
+          },
+          {
+            id: 3,
+            position: 3,
+            sorter: {},
+            textCase: "upper",
+            pixelWidth: 300,
+            key: "categoryRef",
+            displayTitle: "Category Ref",
+            dataType: "string",
+            isFilterable: true,
+            filters: textFilters,
+            hidden: false,
+            sortDirections: ["ascend", "descend"],
+          },
+          {
+            id: 4,
+            position: 4,
+            sorter: {},
+            textCase: "upper",
+            pixelWidth: 300,
+            key: "classRef",
+            displayTitle: "Class Ref",
+            dataType: "string",
+            isFilterable: true,
+            filters: textFilters,
+            hidden: false,
+            sortDirections: ["ascend", "descend"],
+          },
+        ];
+
+        return columns;
+
+      case "PA Group Descriptions":
+        columns = [
+          {
+            id: 1,
+            position: 1,
+            sorter: {},
+            textCase: "upper",
+            pixelWidth: 300,
+            key: "groupDescription",
+            displayTitle: "Group Description Base",
+            dataType: "string",
+            isFilterable: true,
+            filters: textFilters,
+            hidden: false,
+            sortDirections: ["ascend", "descend"],
+          },
+          {
+            id: 2,
+            position: 2,
+            sorter: {},
+            textCase: "upper",
+            pixelWidth: 300,
+            key: "groupDescriptionRef",
+            displayTitle: "Group Description Ref",
+            dataType: "string",
+            isFilterable: true,
+            filters: textFilters,
+            hidden: false,
+            sortDirections: ["ascend", "descend"],
+          },
+        ];
+
+        return columns;
+
+      case "Prior Authorization (PA)":
+        columns = [
+          ...columns,
+          ...[
+            {
+              id: 5,
+              position: 5,
+              sorter: {},
+              textCase: "upper",
+              pixelWidth: 300,
+              key: "paType",
+              displayTitle: "PA Type Base",
+              dataType: "string",
+              isFilterable: true,
+              filters: textFilters,
+              hidden: false,
+              sortDirections: ["ascend", "descend"],
+            },
+            {
+              id: 6,
+              position: 6,
+              sorter: {},
+              textCase: "upper",
+              pixelWidth: 300,
+              key: "paGroupDescription",
+              displayTitle: "PA Group Description Base",
+              dataType: "string",
+              isFilterable: true,
+              filters: textFilters,
+              hidden: false,
+              sortDirections: ["ascend", "descend"],
+            },
+            {
+              id: 7,
+              position: 7,
+              sorter: {},
+              textCase: "upper",
+              pixelWidth: 300,
+              key: "paTypeRef",
+              displayTitle: "PA Type Ref",
+              dataType: "string",
+              isFilterable: true,
+              filters: textFilters,
+              hidden: false,
+              sortDirections: ["ascend", "descend"],
+            },
+            {
+              id: 8,
+              position: 8,
+              sorter: {},
+              textCase: "upper",
+              pixelWidth: 300,
+              key: "paGroupDescriptionRef",
+              displayTitle: "PA Group Description Ref",
+              dataType: "string",
+              isFilterable: true,
+              filters: textFilters,
+              hidden: false,
+              sortDirections: ["ascend", "descend"],
+            },
+          ],
+        ];
+
+        return columns;
+
+
+      case "Step Therpay (ST)":
+        columns = [
+          ...columns,
+          ...[
+            {
+              id: 5,
+              position: 5,
+              sorter: {},
+              textCase: "upper",
+              pixelWidth: 300,
+              key: "stType",
+              displayTitle: "ST Type Base",
+              dataType: "string",
+              isFilterable: true,
+              filters: textFilters,
+              hidden: false,
+              sortDirections: ["ascend", "descend"],
+            },
+            {
+              id: 6,
+              position: 6,
+              sorter: {},
+              textCase: "upper",
+              pixelWidth: 300,
+              key: "stGroupDescription",
+              displayTitle: "ST Group Description Base",
+              dataType: "string",
+              isFilterable: true,
+              filters: textFilters,
+              hidden: false,
+              sortDirections: ["ascend", "descend"],
+            },
+            {
+              id: 7,
+              position: 7,
+              sorter: {},
+              textCase: "upper",
+              pixelWidth: 300,
+              key: "stValue",
+              displayTitle: "ST Value Base",
+              dataType: "string",
+              isFilterable: true,
+              filters: textFilters,
+              hidden: false,
+              sortDirections: ["ascend", "descend"],
+            },
+            {
+              id: 8,
+              position: 8,
+              sorter: {},
+              textCase: "upper",
+              pixelWidth: 100,
+              key: "stTypeRef",
+              displayTitle: "ST Type Ref",
+              dataType: "string",
+              isFilterable: true,
+              filters: textFilters,
+              hidden: false,
+              sortDirections: ["ascend", "descend"],
+            },
+            {
+              id: 9,
+              position: 9,
+              sorter: {},
+              textCase: "upper",
+              pixelWidth: 300,
+              key: "stGroupDescriptionRef",
+              displayTitle: "ST Group Description Ref",
+              dataType: "string",
+              isFilterable: true,
+              filters: textFilters,
+              hidden: false,
+              sortDirections: ["ascend", "descend"],
+            },
+            {
+              id: 10,
+              position: 10,
+              sorter: {},
+              textCase: "upper",
+              pixelWidth: 100,
+              key: "stValueRef",
+              displayTitle: "ST Value Ref",
+              dataType: "string",
+              isFilterable: true,
+              filters: textFilters,
+              hidden: false,
+              sortDirections: ["ascend", "descend"],
+            },
+          ],
+        ];
+        return columns;
+
+      case "ST Group Descriptions":
+        columns = [
+          {
+            id: 1,
+            position: 1,
+            sorter: {},
+            textCase: "upper",
+            pixelWidth: 300,
+            key: "groupDescription",
+            displayTitle: "Group Description Base",
+            dataType: "string",
+            isFilterable: true,
+            filters: textFilters,
+            hidden: false,
+            sortDirections: ["ascend", "descend"],
+          },
+          {
+            id: 2,
+            position: 2,
+            sorter: {},
+            textCase: "upper",
+            pixelWidth: 300,
+            key: "groupDescriptionRef",
+            displayTitle: "Group Description Ref",
+            dataType: "string",
+            isFilterable: true,
+            filters: textFilters,
+            hidden: false,
+            sortDirections: ["ascend", "descend"],
+          },
+        ];
+
+        return columns;
+
+      case "Quantity Limits (QL)":
+        columns = [
+          ...columns,
+          ...[
+            {
+              id: 5,
+              position: 5,
+              sorter: {},
+              textCase: "upper",
+              pixelWidth: 300,
+              key: "qlType",
+              displayTitle: "QL Type Base",
+              dataType: "string",
+              isFilterable: true,
+              filters: textFilters,
+              hidden: false,
+              sortDirections: ["ascend", "descend"],
+            },
+            {
+              id: 6,
+              position: 6,
+              sorter: {},
+              textCase: "upper",
+              pixelWidth: 300,
+              key: "qlDays",
+              displayTitle: "QL Days Base",
+              dataType: "string",
+              isFilterable: true,
+              filters: textFilters,
+              hidden: false,
+              sortDirections: ["ascend", "descend"],
+            },
+            {
+              id: 7,
+              position: 7,
+              sorter: {},
+              textCase: "upper",
+              pixelWidth: 300,
+              key: "qlPeriodofTime",
+              displayTitle: "QL Period of Time Base",
+              dataType: "string",
+              isFilterable: true,
+              filters: textFilters,
+              hidden: false,
+              sortDirections: ["ascend", "descend"],
+            },
+            {
+              id: 8,
+              position: 8,
+              sorter: {},
+              textCase: "upper",
+              pixelWidth: 300,
+              key: "qlQuantity",
+              displayTitle: "QL Quantity Base",
+              dataType: "string",
+              isFilterable: true,
+              filters: textFilters,
+              hidden: false,
+              sortDirections: ["ascend", "descend"],
+            },
+            {
+              id: 9,
+              position: 9,
+              sorter: {},
+              textCase: "upper",
+              pixelWidth: 300,
+              key: "fillsAllowed",
+              displayTitle: "Fills Allowed Base",
+              dataType: "string",
+              isFilterable: true,
+              filters: textFilters,
+              hidden: false,
+              sortDirections: ["ascend", "descend"],
+            },
+            {
+              id: 10,
+              position: 10,
+              sorter: {},
+              textCase: "upper",
+              pixelWidth: 300,
+              key: "fullLimitPeriod",
+              displayTitle: "Full Limit Period of Time Base",
+              dataType: "string",
+              isFilterable: true,
+              filters: textFilters,
+              hidden: false,
+              sortDirections: ["ascend", "descend"],
+            },
+            {
+              id: 11,
+              position: 11,
+              sorter: {},
+              textCase: "upper",
+              pixelWidth: 300,
+              key: "qlTypeRef",
+              displayTitle: "QL Type Ref",
+              dataType: "string",
+              isFilterable: true,
+              filters: textFilters,
+              hidden: false,
+              sortDirections: ["ascend", "descend"],
+            },
+            {
+              id: 12,
+              position: 12,
+              sorter: {},
+              textCase: "upper",
+              pixelWidth: 300,
+              key: "qlDaysRef",
+              displayTitle: "QL Days Ref",
+              dataType: "string",
+              isFilterable: true,
+              filters: textFilters,
+              hidden: false,
+              sortDirections: ["ascend", "descend"],
+            },
+            {
+              id: 13,
+              position: 13,
+              sorter: {},
+              textCase: "upper",
+              pixelWidth: 300,
+              key: "qlPeriodofTimeRef",
+              displayTitle: "QL Period of Time Ref",
+              dataType: "string",
+              isFilterable: true,
+              filters: textFilters,
+              hidden: false,
+              sortDirections: ["ascend", "descend"],
+            },
+            {
+              id: 14,
+              position: 14,
+              sorter: {},
+              textCase: "upper",
+              pixelWidth: 300,
+              key: "qlQuantityRef",
+              displayTitle: "QL Quantity Ref",
+              dataType: "string",
+              isFilterable: true,
+              filters: textFilters,
+              hidden: false,
+              sortDirections: ["ascend", "descend"],
+            },
+            {
+              id: 15,
+              position: 15,
+              sorter: {},
+              textCase: "upper",
+              pixelWidth: 300,
+              key: "fillsAllowedRef",
+              displayTitle: "Fills Allowed Ref",
+              dataType: "string",
+              isFilterable: true,
+              filters: textFilters,
+              hidden: false,
+              sortDirections: ["ascend", "descend"],
+            },
+            {
+              id: 16,
+              position: 16,
+              sorter: {},
+              textCase: "upper",
+              pixelWidth: 300,
+              key: "fullLimitPeriodRef",
+              displayTitle: "Full Limit Period of Time Ref",
+              dataType: "string",
+              isFilterable: true,
+              filters: textFilters,
+              hidden: false,
+              sortDirections: ["ascend", "descend"],
+            },
+          ],
+        ];
+
+        return columns;
+
+      case "Drug Details":
+        switch (subType) {
+          case "Age Limits":
+            columns = [
+              ...columns,
+              ...[
+                {
+                  id: 5,
+                  position: 5,
+                  sorter: {},
+                  textCase: "upper",
+                  pixelWidth: 300,
+                  key: "minCovered",
+                  displayTitle: "Minimum Age [Covered] Base",
+                  dataType: "string",
+                  isFilterable: true,
+                  filters: textFilters,
+                  hidden: false,
+                  sortDirections: ["ascend", "descend"],
+                },
+                {
+                  id: 6,
+                  position: 6,
+                  sorter: {},
+                  textCase: "upper",
+                  pixelWidth: 300,
+                  key: "maxCovered",
+                  displayTitle: "Maximum Age [Covered] Base",
+                  dataType: "string",
+                  isFilterable: true,
+                  filters: textFilters,
+                  hidden: false,
+                  sortDirections: ["ascend", "descend"],
+                },
+                {
+                  id: 7,
+                  position: 7,
+                  sorter: {},
+                  textCase: "upper",
+                  pixelWidth: 300,
+                  key: "minCoveredCond",
+                  displayTitle: "Minimum Condition [Covered] Base",
+                  dataType: "string",
+                  isFilterable: true,
+                  filters: textFilters,
+                  hidden: false,
+                  sortDirections: ["ascend", "descend"],
+                },
+                {
+                  id: 8,
+                  position: 8,
+                  sorter: {},
+                  textCase: "upper",
+                  pixelWidth: 300,
+                  key: "maxCoveredCond",
+                  displayTitle: "Maximum Condition [Covered] Base",
+                  dataType: "string",
+                  isFilterable: true,
+                  filters: textFilters,
+                  hidden: false,
+                  sortDirections: ["ascend", "descend"],
+                },
+                {
+                  id: 9,
+                  position: 9,
+                  sorter: {},
+                  textCase: "upper",
+                  pixelWidth: 300,
+                  key: "minNotCovered",
+                  displayTitle: "Minimum Age [Not Covered] Base",
+                  dataType: "string",
+                  isFilterable: true,
+                  filters: textFilters,
+                  hidden: false,
+                  sortDirections: ["ascend", "descend"],
+                },
+                {
+                  id: 10,
+                  position: 10,
+                  sorter: {},
+                  textCase: "upper",
+                  pixelWidth: 300,
+                  key: "maxNotCovered",
+                  displayTitle: "Maximum Age [Not Covered] Base",
+                  dataType: "string",
+                  isFilterable: true,
+                  filters: textFilters,
+                  hidden: false,
+                  sortDirections: ["ascend", "descend"],
+                },
+                {
+                  id: 11,
+                  position: 11,
+                  sorter: {},
+                  textCase: "upper",
+                  pixelWidth: 300,
+                  key: "minNotCoveredCond",
+                  displayTitle: "Minimum Condition [Not Covered] Base",
+                  dataType: "string",
+                  isFilterable: true,
+                  filters: textFilters,
+                  hidden: false,
+                  sortDirections: ["ascend", "descend"],
+                },
+                {
+                  id: 12,
+                  position: 12,
+                  sorter: {},
+                  textCase: "upper",
+                  pixelWidth: 300,
+                  key: "maxNotCoveredCond",
+                  displayTitle: "Maximum Condition [Not Covered] Base",
+                  dataType: "string",
+                  isFilterable: true,
+                  filters: textFilters,
+                  hidden: false,
+                  sortDirections: ["ascend", "descend"],
+                },
+                {
+                  id: 13,
+                  position: 13,
+                  sorter: {},
+                  textCase: "upper",
+                  pixelWidth: 300,
+                  key: "minCoveredRef",
+                  displayTitle: "Minimum Age [Covered] Ref",
+                  dataType: "string",
+                  isFilterable: true,
+                  filters: textFilters,
+                  hidden: false,
+                  sortDirections: ["ascend", "descend"],
+                },
+                {
+                  id: 14,
+                  position: 14,
+                  sorter: {},
+                  textCase: "upper",
+                  pixelWidth: 300,
+                  key: "maxCoveredRef",
+                  displayTitle: "Maximum Age [Covered] Ref",
+                  dataType: "string",
+                  isFilterable: true,
+                  filters: textFilters,
+                  hidden: false,
+                  sortDirections: ["ascend", "descend"],
+                },
+                {
+                  id: 15,
+                  position: 15,
+                  sorter: {},
+                  textCase: "upper",
+                  pixelWidth: 300,
+                  key: "minCoveredCondRef",
+                  displayTitle: "Minimum Condition [Covered] Ref",
+                  dataType: "string",
+                  isFilterable: true,
+                  filters: textFilters,
+                  hidden: false,
+                  sortDirections: ["ascend", "descend"],
+                },
+                {
+                  id: 16,
+                  position: 16,
+                  sorter: {},
+                  textCase: "upper",
+                  pixelWidth: 300,
+                  key: "maxCoveredCondRef",
+                  displayTitle: "Maximum Condition [Covered] Ref",
+                  dataType: "string",
+                  isFilterable: true,
+                  filters: textFilters,
+                  hidden: false,
+                  sortDirections: ["ascend", "descend"],
+                },
+                {
+                  id: 17,
+                  position: 17,
+                  sorter: {},
+                  textCase: "upper",
+                  pixelWidth: 300,
+                  key: "minNotCoveredRef",
+                  displayTitle: "Minimum Age [Not Covered] Ref",
+                  dataType: "string",
+                  isFilterable: true,
+                  filters: textFilters,
+                  hidden: false,
+                  sortDirections: ["ascend", "descend"],
+                },
+                {
+                  id: 18,
+                  position: 18,
+                  sorter: {},
+                  textCase: "upper",
+                  pixelWidth: 300,
+                  key: "maxNotCoveredRef",
+                  displayTitle: "Maximum Age [Not Covered] Ref",
+                  dataType: "string",
+                  isFilterable: true,
+                  filters: textFilters,
+                  hidden: false,
+                  sortDirections: ["ascend", "descend"],
+                },
+                {
+                  id: 19,
+                  position: 19,
+                  sorter: {},
+                  textCase: "upper",
+                  pixelWidth: 300,
+                  key: "minNotCoveredCondRef",
+                  displayTitle: "Minimum Condition [Not Covered] Ref",
+                  dataType: "string",
+                  isFilterable: true,
+                  filters: textFilters,
+                  hidden: false,
+                  sortDirections: ["ascend", "descend"],
+                },
+                {
+                  id: 20,
+                  position: 20,
+                  sorter: {},
+                  textCase: "upper",
+                  pixelWidth: 300,
+                  key: "maxNotCoveredCondRef",
+                  displayTitle: "Maximum Condition [Not Covered] Ref",
+                  dataType: "string",
+                  isFilterable: true,
+                  filters: textFilters,
+                  hidden: false,
+                  sortDirections: ["ascend", "descend"],
+                },
+              ],
+            ];
+
+            return columns;
+
+          default:
+            columns = [
+              ...columns,
+              ...[
+                {
+                  id: 5,
+                  position: 5,
+                  sorter: {},
+                  textCase: "upper",
+                  pixelWidth: 300,
+                  key: "covered",
+                  displayTitle: "Covered Base",
+                  dataType: "string",
+                  isFilterable: true,
+                  filters: textFilters,
+                  hidden: false,
+                  sortDirections: ["ascend", "descend"],
+                },
+                {
+                  id: 6,
+                  position: 6,
+                  sorter: {},
+                  textCase: "upper",
+                  pixelWidth: 300,
+                  key: "notCovered",
+                  displayTitle: "Not Covered Base",
+                  dataType: "string",
+                  isFilterable: true,
+                  filters: textFilters,
+                  hidden: false,
+                  sortDirections: ["ascend", "descend"],
+                },
+                {
+                  id: 7,
+                  position: 7,
+                  sorter: {},
+                  textCase: "upper",
+                  pixelWidth: 300,
+                  key: "coveredRef",
+                  displayTitle: "Covered Ref",
+                  dataType: "string",
+                  isFilterable: true,
+                  filters: textFilters,
+                  hidden: false,
+                  sortDirections: ["ascend", "descend"],
+                },
+                {
+                  id: 8,
+                  position: 8,
+                  sorter: {},
+                  textCase: "upper",
+                  pixelWidth: 300,
+                  key: "notCoveredRef",
+                  displayTitle: "Not Covered Ref",
+                  dataType: "string",
+                  isFilterable: true,
+                  filters: textFilters,
+                  hidden: false,
+                  sortDirections: ["ascend", "descend"],
+                },
+              ],
+            ];
+
+            return columns;
+        }
+
+      case "User Defined":
+        columns = [
+          ...columns,
+          ...[
+            {
+              id: 5,
+              position: 5,
+              sorter: {},
+              textCase: "upper",
+              pixelWidth: 100,
+              key: "userDefined",
+              displayTitle: "User Defined Base",
+              dataType: "string",
+              isFilterable: true,
+              filters: textFilters,
+              hidden: false,
+              sortDirections: ["ascend", "descend"],
+            },
+            {
+              id: 6,
+              position: 6,
+              sorter: {},
+              textCase: "upper",
+              pixelWidth: 100,
+              key: "userDefinedRef",
+              displayTitle: "User Defined Ref",
+              dataType: "string",
+              isFilterable: true,
+              filters: textFilters,
+              hidden: false,
+              sortDirections: ["ascend", "descend"],
+            },
+          ],
+        ];
+
+        return columns;
+
     }
     return Array();
   };
@@ -653,7 +1640,7 @@ class CompareTable extends Component<any, any> {
               titleBG: this.getBackgroundColor(value["attribute_type"]),
               attribute_type: value["attribute_type"],
               file_type: value["file_type"],
-              gridColumns: ['Tier','Prior Authorization (PA)','Step Therpay (ST)','Quantity Limits (QL)'].includes(value["attribute_type"]) ? this.getGridColumns(value["attribute_type"]) : Array(),
+              gridColumns: ['Tier', 'Prior Authorization (PA)', 'Step Therpay (ST)', 'Quantity Limits (QL)'].includes(value["attribute_type"]) ? this.getGridColumns(value["attribute_type"]) : Array(),
               headDrugsCount: {
                 baseFormulary: null,
                 referenceFormulary: null,
@@ -686,18 +1673,25 @@ class CompareTable extends Component<any, any> {
             if (value["values"] && value["values"].length > 0) {
               value["values"].map((subValue) => {
                 let gridColumns: any[] = Array();
+                let gridColumnsNonMatch: any[] = Array();
                 if (
                   subValue["attribute_name"] === "PA Group Descriptions" ||
                   subValue["attribute_name"] === "ST Group Descriptions"
                 ) {
                   gridColumns = this.getGridColumns(subValue["attribute_name"]);
+                  gridColumnsNonMatch = this.getGridColumnsNonMatch(subValue["attribute_name"]);
                 } else if (value["attribute_type"] === "Drug Details") {
                   gridColumns = this.getGridColumns(
                     value["attribute_type"],
                     subValue["attribute_name"]
                   );
+                  gridColumnsNonMatch = this.getGridColumnsNonMatch(
+                    value["attribute_type"],
+                    subValue["attribute_name"]
+                  );
                 } else {
                   gridColumns = this.getGridColumns(value["attribute_type"]);
+                  gridColumnsNonMatch = this.getGridColumnsNonMatch(value["attribute_type"]);
                 }
                 let subItem = {
                   name: subValue["attribute_name"],
@@ -716,6 +1710,7 @@ class CompareTable extends Component<any, any> {
                   attribute_name: subValue["attribute_name"],
                   source: subValue["source"],
                   gridColumns: gridColumns,
+                  gridColumnsNonMatch: gridColumnsNonMatch,
                 };
                 header.formularies.push(subItem);
                 valueId++;
@@ -726,15 +1721,17 @@ class CompareTable extends Component<any, any> {
           });
           this.setState({
             formularyTypesGridData: formularyTypesGridData,
-            columns: getCompareFormularyViewAllGridColumns(),
-            data: getCompareFormularyViewAllGridData(),
+            columns: Array(),
+            data: Array(),
+            gridData: Array(),
           });
         } else {
           showMessage("Compare data is empty", "error");
           this.setState({
             formularyTypesGridData: formularyTypesGridData,
-            columns: getCompareFormularyViewAllGridColumns(),
-            data: getCompareFormularyViewAllGridData(),
+            columns: Array(),
+            data: Array(),
+            gridData: Array(),
           });
         }
       } catch (err) {
@@ -742,15 +1739,122 @@ class CompareTable extends Component<any, any> {
         showMessage("Error while fetching data", "error");
         this.setState({
           formularyTypesGridData: formularyTypesGridData,
-          columns: getCompareFormularyViewAllGridColumns(),
-          data: getCompareFormularyViewAllGridData(),
+          columns: Array(),
+          data: Array(),
+          gridData: Array(),
         });
       }
     } else {
       this.setState({
         formularyTypesGridData: formularyTypesGridData,
-        columns: getCompareFormularyViewAllGridColumns(),
-        data: getCompareFormularyViewAllGridData(),
+        columns: Array(),
+        data: Array(),
+        gridData: Array(),
+      });
+    }
+  };
+
+  populateViewAllData = async (payload, baseFormularyId: any, reformularyId: any = null, type = TYPE_SINGLE) => {
+    if (this.props.formulary_lob_id && this.props.formulary_lob_id === 4) {
+      let lobCode = getLobCode(this.props.formulary_lob_id);
+      let gridData = Array();
+      let mainData = Array();
+      let columns = getCompareNonMcrFormularyViewAllGridColumns();
+      let apiDetails = {};
+      if (type === TYPE_SINGLE) {
+        apiDetails["apiPart"] = compareConstants.COMMERCIAL_FORMULARY_ALL_DRUGS;
+      } else {
+        apiDetails["apiPart"] = type === TYPE_IN_BASE_NOT_REF ? compareConstants.COMMERCIAL_FORMULARY_IN_BASE_NOT_REF : compareConstants.COMMERCIAL_FORMULARY_IN_REF_NOT_BASE;
+      }
+      if (type === TYPE_SINGLE) {
+        apiDetails["pathParams"] = baseFormularyId + '/' + lobCode;
+      } else {
+        apiDetails["pathParams"] = baseFormularyId + '/' + reformularyId;
+      }
+
+      if (type === TYPE_SINGLE) {
+        apiDetails['keyVals'] = [];
+        apiDetails['keyVals'].push({ key: commonConstants.KEY_LIMIT, value: payload['limit'] });
+        apiDetails['keyVals'].push({ key: commonConstants.KEY_INDEX, value: payload['index'] });
+
+        apiDetails['messageBody'] = {};
+        apiDetails['messageBody']['attribute_field_data_type'] = '';
+        apiDetails['messageBody']['attribute_field_name'] = '';
+        apiDetails['messageBody']['attribute_field_value'] = '';
+        apiDetails['messageBody']['attribute_name'] = '';
+        apiDetails['messageBody']['file_type'] = '';
+        apiDetails['messageBody']['filter'] = payload['filter'];
+      }
+
+      apiDetails['type'] = type;
+
+      try {
+        let data: any = null;
+
+        if (type === TYPE_SINGLE) {
+          data = await getViewAllDrugs(apiDetails);
+        } else {
+          data = await getViewAllDrugsReject(apiDetails);
+        }
+        if (data && data.list && data.list.length > 0) {
+          data.list.map((value, index) => {
+            let dataValue = Object.assign({}, value);
+            mainData.push(dataValue);
+
+            let gridItem = {};
+            gridItem['id'] = index + 1;
+            gridItem['key'] = index + 1;
+
+            columns.map(columnData => {
+              if (Object.keys(dataValue).includes(columnData['key'])) {
+                gridItem[columnData['key']] = dataValue[columnData['key']] === null ? '' : dataValue[columnData['key']];
+              }
+            });
+            gridData.push(gridItem);
+          });
+          this.setState({
+            columns: columns,
+            data: mainData,
+            gridData: gridData,
+            viewAllType: type,
+            baseFormularyId: baseFormularyId,
+            reformularyId: reformularyId,
+            dataCount: data['count'],
+          });
+        } else {
+          showMessage("Compare data is empty", "error");
+          this.setState({
+            columns: Array(),
+            data: Array(),
+            gridData: Array(),
+            viewAllType: type,
+            baseFormularyId: baseFormularyId,
+            reformularyId: reformularyId,
+            dataCount: 0,
+          });
+        }
+      } catch (err) {
+        console.log(err);
+        showMessage("Error while fetching data", "error");
+        this.setState({
+          columns: Array(),
+          data: Array(),
+          gridData: Array(),
+          viewAllType: type,
+          baseFormularyId: baseFormularyId,
+          reformularyId: reformularyId,
+          dataCount: 0,
+        });
+      }
+    } else {
+      this.setState({
+        columns: Array(),
+        data: Array(),
+        gridData: Array(),
+        viewAllType: type,
+        baseFormularyId: baseFormularyId,
+        reformularyId: reformularyId,
+        dataCount: 0,
       });
     }
   };
@@ -767,6 +1871,9 @@ class CompareTable extends Component<any, any> {
   }
 
   render() {
+    let gridColumns = [...this.state.columns];
+    if (this.state.columns.length > 0 && this.state.hiddenColumns.length > 0)
+      gridColumns = this.state.columns.filter(column => !this.state.hiddenColumns.includes(column['key']));
     const {
       showCheckbox,
       toggleAllAccordion,
@@ -848,8 +1955,8 @@ class CompareTable extends Component<any, any> {
                   baseformulary={this.props.baseformulary}
                   referenceformulary={this.props.referenceformulary}
                   gridColumns={accordionHeader.gridColumns}
-                  fileType= {accordionHeader.file_type}
-                  formularyLobId= {this.props.formulary_lob_id}
+                  fileType={accordionHeader.file_type}
+                  formularyLobId={this.props.formulary_lob_id}
                   content={() => {
                     return (
                       <InnerGrid
@@ -871,16 +1978,16 @@ class CompareTable extends Component<any, any> {
           <div className="__root_compare-grid-footer-container">
             <div className="border-none"></div>
             <div className="border-cells-t-l view-all-btn">
-              <Button label={"View All"} />
+              <Button label={"View All"} onClick={() => { this.toggleShowViewAll(this.props.baseformulary["id_formulary"], null, TYPE_SINGLE, false, false) }} />
             </div>
             <div className="border-cells-t-l view-all-btn">
-              <Button label={"View All"} />
+              <Button label={"View All"} onClick={() => { this.toggleShowViewAll(this.props.referenceformulary["id_formulary"], null, TYPE_SINGLE, false, false) }} />
             </div>
             <div className="border-cells-t-l view-all-btn">
-              <Button label={"View All"} onClick={this.toggleShowViewAll} />
+              <Button label={"View All"} onClick={() => { this.toggleShowViewAll(this.props.baseformulary["id_formulary"], this.props.referenceformulary["id_formulary"], TYPE_IN_BASE_NOT_REF, false, true) }} />
             </div>
             <div className="border-cells-t-l view-all-btn">
-              <Button label={"View All"} onClick={this.toggleShowViewAll} />
+              <Button label={"View All"} onClick={() => { this.toggleShowViewAll(this.props.baseformulary["id_formulary"], this.props.referenceformulary["id_formulary"], TYPE_IN_REF_NOT_BASE, false, true) }} />
             </div>
           </div>
         </div>
@@ -890,7 +1997,7 @@ class CompareTable extends Component<any, any> {
             positiveActionText="Reject"
             negativeActionText=""
             title="view all"
-            handleClose={this.toggleShowViewAll}
+            handleClose={() => { this.toggleShowViewAll(null, null, TYPE_SINGLE, true) }}
             handleAction={() => { }}
             showActions={true}
             height="80%"
@@ -905,7 +2012,7 @@ class CompareTable extends Component<any, any> {
               pagintionPosition="topRight"
               gridName=""
               isFetchingData={false}
-              columns={columns}
+              columns={gridColumns}
               scroll={scroll}
               enableResizingOfColumns={false}
               data={data}
@@ -914,17 +2021,19 @@ class CompareTable extends Component<any, any> {
               // setting gear 1st column
               enableSettings={true}
               // checkbox 2nd column
-              isCustomCheckboxEnabled={true}
-              // event reference for checkbox (mandotory if checkbox is true)
-              handleCustomRowSelectionChange={(r) => {
-                console.log(r);
-              }}
+              customSettingIcon={this.state.isRowSelectionEnabled ? null : "NONE"}
+              isRowSelectionEnabled={this.state.isRowSelectionEnabled}
               // settingsWidth
               settingsWidth={15}
-              // checkBoxWidth
-              checkBoxWidth={15}
-              // settings icon prop
-              customSettingIcon={"NONE"}
+              isRowSelectorCheckbox
+              getPerPageItemSize={this.onPageSize}
+              onGridPageChangeHandler={this.onGridPageChangeHandler}
+              clearFilterHandler={this.onClearFilterHandler}
+              applyFilter={this.onApplyFilterHandler}
+              getColumnSettings={this.onSettingsIconHandler}
+              pageSize={this.listPayload.limit}
+              selectedCurrentPage={(this.listPayload.index / this.listPayload.limit + 1)}
+              totalRowsCount={this.state.dataCount}
             />
           </DialogPopup>
         ) : null}
