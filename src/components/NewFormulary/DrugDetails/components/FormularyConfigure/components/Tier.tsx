@@ -34,6 +34,7 @@ import { ToastContainer } from 'react-toastify';
 import * as tierConstants from "../../../../../../api/http-tier";
 import * as commonConstants from "../../../../../../api/http-commons";
 import { setAdvancedSearch } from "../../../../../../redux/slices/formulary/advancedSearch/advancedSearchSlice";
+import { AnyMxRecord, AnyNaptrRecord } from "dns";
 
 function mapDispatchToProps(dispatch) {
   return {
@@ -72,6 +73,11 @@ interface tabsState {
   tierLabels: any[];
   tierLabelNames: any[];
   addNewTierPopup: boolean;
+  settingsTriDotDropDownItems:any[];
+  deleteTierPupup:boolean;
+  pupupTitle:any;
+  popupPositiveButtonText:any;
+  selectedTierToDelete:any;
 }
 
 class Tier extends React.Component<any, tabsState> {
@@ -88,13 +94,18 @@ class Tier extends React.Component<any, tabsState> {
     lobCode: "",
     tierOption: [],
     tierLabels: [],
+    settingsTriDotDropDownItems:[],
     tierLabelNames: [],
     tierData: [],
     tierDefinationColumns: [],
     tierDefinationData: [],
     openPopup: false,
     addNewTierPopup: false,
-    tabs: [
+    deleteTierPupup:false,
+    pupupTitle:"",
+    selectedTierToDelete:"",
+    popupPositiveButtonText:"",
+      tabs: [
       { id: 1, text: "Replace", disabled: false},
       { id: 2, text: "Append", disabled: true },
       { id: 3, text: "Remove" , disabled: false },
@@ -189,6 +200,7 @@ class Tier extends React.Component<any, tabsState> {
   }
 
   componentDidMount() {
+    this.setState({settingsTriDotDropDownItems: [...this.state.settingsTriDotDropDownItems, ...["Replace Tier","Delete Tier"] ]});
     const TierColumns = tierDefinationColumns();
     console.log('Formulary ID in tier:'+this.props.formulary_id);
     if (this.props.formulary_id) {
@@ -238,8 +250,20 @@ class Tier extends React.Component<any, tabsState> {
     console.log("work")
   }
   settingsTriDotClick = (data: any) => {
+    debugger;
     console.log("tri dot clicked ", data);
   };
+
+  settingsTriDotDropDownItemClick = (data: any, item:any) => {
+    debugger;
+    if(item === "Replace Tier"){
+      this.onAddNewTierHandler();
+    }
+    else if(item === "Delete Tier"){
+      this.setState({selectedTierToDelete: data.tier_name});     
+      this.onDeleteTierHandler();
+    }
+  }
   settingsTriDotMenuClick = (menuItem: GridMenu) => {
     if (menuItem.title === "Modify Auth or Override") {
       this.setState({
@@ -251,6 +275,7 @@ class Tier extends React.Component<any, tabsState> {
     }
   };
   onAddNewTierHandler = () => {
+    this.setState({pupupTitle:"TIER DEFINITION", popupPositiveButtonText:"Save",deleteTierPupup:false,});
     let maxTierCount = getMaxTierCount(this.props.formulary_lob_id, this.props.formulary_type_id);
     if (this.state.newTierId > maxTierCount) {
       showMessage('Error: Max tier limit reached', 'error');
@@ -259,6 +284,9 @@ class Tier extends React.Component<any, tabsState> {
         addNewTierPopup: true
       })
     }
+  }
+  onDeleteTierHandler = () => {
+    this.setState({pupupTitle:"DELETE TIER", popupPositiveButtonText:"Yes, Delete",deleteTierPupup:true,addNewTierPopup: true});    
   }
   onNewTierPopupClose = () => {
     showMessage('Popup closed', 'success');
@@ -302,6 +330,15 @@ class Tier extends React.Component<any, tabsState> {
     })
   }
 
+  onDeleteTierAction = (action) => {
+    if (action === 'positive') {      
+    }
+    this.setState({
+      addNewTierPopup: false
+    })
+  }
+
+
   render() {
     const tierDefinationColumns = this.state.tierDefinationColumns;
     const tierDefinationData = this.state.tierDefinationData;
@@ -330,6 +367,8 @@ class Tier extends React.Component<any, tabsState> {
                         isFetchingData={false}
                         columns={tierDefinationColumns}
                         settingsTriDotClick={this.settingsTriDotClick}
+                        settingsTriDotDropDownItems = {this.state.settingsTriDotDropDownItems}
+                        onsettingsTriDotDropDownItemClick = {this.settingsTriDotDropDownItemClick}
                         settingsTriDotMenuClick={this.settingsTriDotMenuClick}
                         isPinningEnabled={false}
                         onSettingsClick="grid-menu"
@@ -380,14 +419,25 @@ class Tier extends React.Component<any, tabsState> {
                       <DialogPopup
                         className='tier-dialog-popup'
                         showCloseIcon={true}
-                        positiveActionText='Save'
+                        positiveActionText={this.state.popupPositiveButtonText}
                         negativeActionText='Cancel'
-                        title='TIER DEFINITION'
+                        title={this.state.pupupTitle}
                         handleClose={() => this.onNewTierPopupClose()}
-                        handleAction={(e) => this.onNewTierAction(e)}
+                        handleAction={(e) => (this.state.deleteTierPupup)? this.onDeleteTierAction(e) : this.onNewTierAction(e)}
                         showActions={true}
                         open={this.state.addNewTierPopup}
                       >
+                        {(this.state.deleteTierPupup)? 
+                        <div className='tier-definition-container'>
+                          <Grid item xs={12}>
+                           <div className="delete-tier-wrapper">
+                              <p>Are you sure that you want to delete <b>{this.state.selectedTierToDelete}</b> from your formulary?</p>
+                              <br/>
+                              <span className="red-bold">Doing so is a permanent action.</span>
+                           </div>
+                          </Grid>
+                        </div>
+                        :
                         <div className='tier-definition-container'>
                           <Grid item xs={12}>
                             <div className='tier-definition-popup-wrapper'>
@@ -409,6 +459,7 @@ class Tier extends React.Component<any, tabsState> {
                             </div>
                           </Grid>
                         </div>
+                        }
                       </DialogPopup>
                     </div>
 

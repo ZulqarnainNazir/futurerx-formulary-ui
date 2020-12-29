@@ -49,8 +49,8 @@ interface FrxGridContainerProps<T> extends Grid<T> {
   selectedCurrentPage?: any;
   applyFilter?: any;
   getColumnSettings?: any;
-
-  customSettingIcon?: string;
+  settingsTriDotDropDownItems?:any[]; 
+ customSettingIcon?: string;
   checkBoxWidth?: number;
 }
 class FrxGridContainer extends Component<FrxGridContainerProps<any>> {
@@ -143,6 +143,8 @@ class FrxGridContainer extends Component<FrxGridContainerProps<any>> {
           onSettingsClick={this.props.onSettingsClick}
           settingsTriDotMenuClick={this.props.settingsTriDotMenuClick}
           settingsTriDotClick={this.props.settingsTriDotClick}
+          settingsTriDotDropDownItems = {this.props.settingsTriDotDropDownItems}
+          onsettingsTriDotDropDownItemClick = {this.props.onsettingsTriDotDropDownItemClick}          
           customSettingIcon={this.props.customSettingIcon}
           enableResizingOfColumns
           onColumnCellClick={this.props.onColumnCellClick}
