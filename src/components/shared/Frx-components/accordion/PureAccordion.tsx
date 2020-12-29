@@ -176,7 +176,6 @@ class PureAccordion extends Component<PureAccordionProps, any> {
             drugData: drugData,
             gridColumns: this.props.gridColumns,
             baseFormularyId: baseFormularyId,
-            hiddenColumns: Array(),
             dataCount: data['count'],
           });
         } else {
@@ -187,7 +186,6 @@ class PureAccordion extends Component<PureAccordionProps, any> {
             gridColumns: Array(),
             baseFormularyId: '',
             refFormularyId: '',
-            hiddenColumns: Array(),
             dataCount: 0,
           });
         }
@@ -201,7 +199,6 @@ class PureAccordion extends Component<PureAccordionProps, any> {
           gridColumns: Array(),
           baseFormularyId: '',
           refFormularyId: '',
-          hiddenColumns: Array(),
           dataCount: 0,
         });
       }
@@ -212,7 +209,6 @@ class PureAccordion extends Component<PureAccordionProps, any> {
         gridColumns: Array(),
         baseFormularyId: '',
         refFormularyId: '',
-        hiddenColumns: Array(),
         dataCount: 0,
       });
     }
@@ -231,6 +227,14 @@ class PureAccordion extends Component<PureAccordionProps, any> {
       this.setState({
         drugGridHeaderName,
         openDrugsList: !this.state.openDrugsList,
+        drugGridData: Array(),
+        drugData: Array(),
+        gridColumns: Array(),
+        baseFormularyId: '',
+        refFormularyId: '',
+        hiddenColumns: Array(),
+        dataCount: 0,
+        isRowSelectionEnabled: false,
       });
     } else {
       if (baseFormularyId && count > 0) {

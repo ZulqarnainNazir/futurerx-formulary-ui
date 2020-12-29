@@ -596,54 +596,48 @@ class CategoryClass extends React.Component<any, any> {
                   </div>
                 </div>
                 <div className="bordered">
-                  <div className="header space-between pr-10">
-                    <div className="category-class-title">
-                      <PanelHeader title="Select Drugs From" />
+                  <div className="header pr-10 category-class-header">
+                    <div
+                      className="add-file-button"
+                      onClick={(e) =>
+                        this.handlePopupButtonClick(
+                          "override",
+                          "CATEGORY AND CLASS ASSIGNMENT"
+                        )
+                      }
+                    >
+                      Override
                     </div>
-                    <div className="category-class-button-wrapper">
-                      <div
-                        className="add-file-button"
-                        onClick={(e) =>
-                          this.handlePopupButtonClick(
-                            "override",
-                            "CATEGORY AND CLASS ASSIGNMENT"
-                          )
-                        }
-                      >
-                        Override
-                      </div>
-                      <div
-                        style={{
-                          display: "flex",
-                          flexDirection: "row",
-                          alignItems: "center",
-                          justifyContent: "space-between",
-                        }}
-                      >
-                        <DropDown
-                          value={this.state.searchValue}
-                          options={this.state.searchNames}
-                          placeholder={this.state.filterPlaceholder}
-                          showSearch={true}
-                          onSearch={this.onInputValueChanged}
-                          onSelect={this.onSearchValueChanges}
-                        />
-                        {this.state.filter.length > 0 && (
-                          <span
-                            style={{ marginLeft: 10 }}
-                            onClick={this.clearSearchFilter}
-                          >
-                            Clear
-                          </span>
-                        )}
-                      </div>
-                      <div
-                        className="advance-search-button"
-                        onClick={(e) => this.advanceSearchClickHandler(e)}
-                      >
-                        Advanced Search
-                      </div>
-                      <Button label="Save" className="Button" disabled />
+                    <div className="header-dropdown"
+                      // style={{
+                      //   display: "flex",
+                      //   flexDirection: "row",
+                      //   alignItems: "center",
+                      //   justifyContent: "space-between",
+                      // }}
+                    >
+                      <DropDown
+                        value={this.state.searchValue}
+                        options={this.state.searchNames}
+                        placeholder={this.state.filterPlaceholder}
+                        showSearch={true}
+                        onSearch={this.onInputValueChanged}
+                        onSelect={this.onSearchValueChanges}
+                      />
+                      {this.state.filter.length > 0 && (
+                        <span
+                          style={{ marginLeft: 10 }}
+                          onClick={this.clearSearchFilter}
+                        >
+                          Clear
+                        </span>
+                      )}
+                    </div>
+                    <div
+                      className="advance-search-button advance-search-btn"
+                      onClick={(e) => this.advanceSearchClickHandler(e)}
+                    >
+                      Advanced Search
                     </div>
                   </div>
                   <FrxDrugGridContainer
