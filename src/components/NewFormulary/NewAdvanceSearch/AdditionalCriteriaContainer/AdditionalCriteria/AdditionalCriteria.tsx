@@ -215,20 +215,18 @@ class AdditionalCriteria extends Component<any, any> {
     //   (criteria: any) => criteria.nodeId !== nodeId
     // );
     // const additionalCriteriaState = this.state.additionalCriteriaState[nodeId];
-
+    const isInclude = updatedNode.card.isIncluded;
     let covered: any = {};
     let not_covered: any = {};
     console.log("object-updated node  ", updatedNode);
-    if (updatedNode.card.isIncluded) {
+    if (isInclude) {
       const place_of_services: any[] = [];
       updatedNode.posSettings.forEach((s) => {
         if (s.isChecked) {
           place_of_services.push(s.id_place_of_service_type);
         }
       });
-      Object.assign(covered, {
-        place_of_services: [place_of_services],
-      });
+      covered = { place_of_services: [place_of_services] };
     } else {
       const place_of_services: any[] = [];
       updatedNode.posSettings.forEach((s) => {
@@ -236,7 +234,7 @@ class AdditionalCriteria extends Component<any, any> {
           place_of_services.push(s.id_place_of_service_type);
         }
       });
-      Object.assign(not_covered, { place_of_services: [, place_of_services] });
+      not_covered = { place_of_services: [place_of_services] };
     }
     this.setState({
       additionalCriteriaObject: {
@@ -245,8 +243,12 @@ class AdditionalCriteria extends Component<any, any> {
       },
       apiAdditionalCriteriaState: {
         sequence: additionalCriteriaNodeId,
-        covered: covered,
-        not_covered: not_covered,
+        covered: isInclude
+          ? covered
+          : this.state.apiAdditionalCriteriaState.covered,
+        not_covered: isInclude
+          ? this.state.apiAdditionalCriteriaState.not_covered
+          : not_covered,
       },
     });
   };

@@ -90,17 +90,17 @@ class ListItem extends Component<any, any> {
     }
   }
 
-  componentWillReceiveProps(nextProps) {
-    const { nodeId } = this.props;
-    if (nextProps.additionalCriteriaObject) {
-      const additionalCriteria = nextProps.additionalCriteriaObject[1];
-      const currentNode = additionalCriteria[nodeId];
-      this.setState({
-        posSettings: currentNode.posSettings,
-        posSettingsStatus: currentNode.posStatus,
-      });
-    }
-  }
+  // componentWillReceiveProps(nextProps) {
+  //   const { nodeId } = this.props;
+  //   if (nextProps.additionalCriteriaObject) {
+  //     const additionalCriteria = nextProps.additionalCriteriaObject[1];
+  //     const currentNode = additionalCriteria[nodeId];
+  //     this.setState({
+  //       posSettings: JSON.parse(JSON.stringify(currentNode.posSettings)),
+  //       posSettingsStatus: JSON.parse(JSON.stringify(currentNode.posStatus)),
+  //     });
+  //   }
+  // }
 
   // loadSavedState = () => {
   //   const { initialState } = this.props;
