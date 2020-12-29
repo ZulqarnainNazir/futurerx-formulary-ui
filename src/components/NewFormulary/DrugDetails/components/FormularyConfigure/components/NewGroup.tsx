@@ -422,16 +422,17 @@ function NewGroup(props: any) {
                             </div>
                         </Grid>
                     </Grid>
-                    {props.formType>0 && (<Grid container className="mb-20">
+                  
+                    <Grid container className="mb-20">
                         <Grid item xs={6}>
                             <div className="group">
-                                <label>EXCLUDED DRUG FILE</label>
-                                <input type="text" name="excluded_drug_file" onChange={handleChange} defaultValue={formData.excluded_drug_file} disabled={editable} />
+                                <label>ST Criteria</label>
+                                <input type="text" name="st_criteria" onChange={handleChange} value={formData.st_criteria} disabled={editable} />
                             </div>
                         </Grid>
-                    </Grid>)}
-                </div>
-                {props.formType===0 && (<div className="setting-1 mb-20">
+                    </Grid>
+                    </div>
+                {/* {props.formType===0 && (<div className="setting-1 mb-20">
                     <Grid container>
                         <Grid item xs={6}>
                             <div className="group">
@@ -440,7 +441,7 @@ function NewGroup(props: any) {
                             </div>
                         </Grid>
                     </Grid>
-                </div>)}
+                </div>)} */}
                 <Fragment>
                       <Grid item xs={6}>
                       <label className="st-label">List <span className="astrict">*</span></label>
@@ -459,7 +460,7 @@ function NewGroup(props: any) {
                 </div>
                 <div className="button-wrapper st-button-wrapper">
                   <Button label="Save Version Progress" className="Button" onClick={(event)=>handleSubmit(event,false)}/>
-                  <Button label="Save Final Version And Continue" className="Button" onClick={(event)=>handleSubmit(event,false)}/>
+                  <Button label="Save Final Version And Continue" className="Button" onClick={(event)=>handleSubmit(event,true)}/>
                 </div>
       </div>}
       <ToastContainer/>
