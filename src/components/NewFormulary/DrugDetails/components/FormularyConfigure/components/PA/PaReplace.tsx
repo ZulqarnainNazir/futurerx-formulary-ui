@@ -495,23 +495,20 @@ class PaReplace extends React.Component<any, any> {
               </label>
               <Space size="large">
                 <div className="marketing-material radio-group">
-                  <RadioGroup
-                    aria-label="marketing-material-radio1"
-                    className="gdp-radio"
+                  <RadioButton
+                    label="Yes"
+                    value="true"
                     name="pa_configuration"
                     onChange={this.pa_configurationChange}
-                  >
-                    <FormControlLabel
-                      value="true"
-                      control={<Radio disabled={this.props.configureSwitch} />}
-                      label="Yes"
-                    />
-                    <FormControlLabel
-                      value="false"
-                      control={<Radio disabled={this.props.configureSwitch} />}
-                      label="No"
-                    />
-                  </RadioGroup>
+                    disabled={this.props.configureSwitch}
+                  />
+                  <RadioButton
+                    label="No"
+                    value="false"
+                    name="pa_configuration"
+                    onChange={this.pa_configurationChange}
+                    disabled={this.props.configureSwitch}
+                  />
                 </div>
               </Space>
             </Col>
@@ -551,20 +548,22 @@ class PaReplace extends React.Component<any, any> {
                 <span className="astrict">*</span>
               </label>
               <Space size="large">
-                <RadioButton
-                  label="Yes"
-                  name="add-filter"
-                  checked={isAdditionalCriteriaOpen}
-                  onClick={this.openAdditionalCriteria}
-                  disabled={this.props.configureSwitch}
-                />
-                <RadioButton
-                  label="No"
-                  name="add-filter"
-                  checked={!isAdditionalCriteriaOpen}
-                  onClick={this.closeAdditionalCriteria}
-                  disabled={this.props.configureSwitch}
-                />
+                <div className="marketing-material radio-group">   
+                  <RadioButton
+                    label="Yes"
+                    name="add-filter"
+                    checked={isAdditionalCriteriaOpen}
+                    onClick={this.openAdditionalCriteria}
+                    disabled={this.props.configureSwitch}
+                  />
+                  <RadioButton
+                    label="No"
+                    name="add-filter"
+                    checked={!isAdditionalCriteriaOpen}
+                    onClick={this.closeAdditionalCriteria}
+                    disabled={this.props.configureSwitch}
+                  />
+                </div>
               </Space>
             </Col>
           </Row>

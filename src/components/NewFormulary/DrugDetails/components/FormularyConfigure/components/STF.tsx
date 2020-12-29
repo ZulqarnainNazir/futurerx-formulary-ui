@@ -401,8 +401,8 @@ class STF extends React.Component<any, any> {
 
     this.populateGridData();
   };
+  
   componentDidMount() {
-    debugger;
     switch (this.props.formulary_lob_id) {
       case 1:
         this.setState({
@@ -477,27 +477,20 @@ class STF extends React.Component<any, any> {
                   </label>
                   <Space size="large">
                     <div className="marketing-material radio-group">
-                      <RadioGroup
-                        aria-label="marketing-material-radio1"
-                        className="gdp-radio"
+                      <RadioButton
+                        label="Yes"
+                        value="true"
                         name="st_configuration"
                         onChange={this.st_configurationChange}
-                      >
-                        <FormControlLabel
-                          value="true"
-                          control={
-                            <Radio disabled={this.props.configureSwitch} />
-                          }
-                          label="Yes"
-                        />
-                        <FormControlLabel
-                          value="false"
-                          control={
-                            <Radio disabled={this.props.configureSwitch} />
-                          }
-                          label="No"
-                        />
-                      </RadioGroup>
+                        disabled={this.props.configureSwitch}
+                      />
+                      <RadioButton
+                        label="No"
+                        value="false"
+                        name="st_configuration"
+                        onChange={this.st_configurationChange}
+                        disabled={this.props.configureSwitch}
+                      />
                     </div>
                   </Space>
                 </div>
@@ -508,8 +501,19 @@ class STF extends React.Component<any, any> {
                     <span className="astrict">*</span>
                   </label>
                   <Space size="large">
-                    <RadioButton label="Yes" />
-                    <RadioButton label="No" />
+                    <div className="marketing-material radio-group">
+                        <RadioButton
+                          label="Yes"
+                          value="true"
+                          name="additional-criteria"
+                        />
+                        <RadioButton
+                          label="No"
+                          value="false"
+                          name="additional-criteria"
+                        />
+                    </div>
+
                   </Space>
                 </div>
               </Grid>
