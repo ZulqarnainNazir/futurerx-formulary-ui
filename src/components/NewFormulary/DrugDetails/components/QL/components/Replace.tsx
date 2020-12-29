@@ -13,6 +13,8 @@ class Replace extends Component<any, any> {
   }
 
   render() {
+    console.log("{values}:", this.props.values);
+    const { quantity = "", days = "", periodOfTime = "" } = this.props.values;
     return (
       <div className="ql-replace-container">
         <div className="panel-note">
@@ -27,13 +29,18 @@ class Replace extends Component<any, any> {
               {/* <DropDown options={[1, 2, 3]} /> */}
               <div>
                 <Input
-                  className="formulary-list-search"
+                  className={`formulary-list-search ${
+                    this.props.errors?.quantity ? "error_class" : null
+                  }`}
                   // placeholder="Search"
+
                   type="number"
                   name="quantity"
                   disableUnderline={true}
                   onChange={this.props.handleOnChange}
+                  value={quantity}
                   required={true}
+                  disabled={this.props.isViweAll}
                 />
               </div>
             </div>
@@ -44,19 +51,23 @@ class Replace extends Component<any, any> {
               {/* <DropDown options={[1, 2, 3]} /> */}
               <div>
                 <Input
-                  className="formulary-list-search"
+                  className={`formulary-list-search ${
+                    this.props.errors?.days ? "error_class" : null
+                  }`}
                   // placeholder="Search"
                   type="number"
                   name="days"
+                  value={days}
                   onChange={this.props.handleOnChange}
                   disableUnderline={true}
+                  disabled={this.props.isViweAll}
                 />
               </div>
             </div>
           </Grid>
           <Grid item xs={4}>
             <div className="input-group">
-              <Label required={true}>PERIOD OF TIME IN DAYS</Label>
+              <Label required={false}>PERIOD OF TIME IN DAYS</Label>
               {/* <DropDown options={[1, 2, 3]} /> */}
               <div>
                 <Input
@@ -64,8 +75,10 @@ class Replace extends Component<any, any> {
                   // placeholder="Search"
                   type="number"
                   name="periodOfTime"
+                  value={periodOfTime}
                   onChange={this.props.handleOnChange}
                   disableUnderline={true}
+                  disabled={this.props.isViweAll}
                 />
               </div>
             </div>

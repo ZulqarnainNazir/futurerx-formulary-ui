@@ -5,23 +5,25 @@ import { createAsyncThunk } from "@reduxjs/toolkit";
 import { Formulary } from "../setup/formulary";
 
 interface ApplicationState {
+  mode: string;
   formulary_id: number;
   formulary: any;
   formulary_lob_id: number;
   formulary_type_id: number;
+  clientId: number;
+  location: number;
   isLoading: boolean;
   error: string | null;
-  mode: string;
-  clientId: number;
 }
 
 const applicationInitialState: ApplicationState = {
+  mode: "",
   formulary_id: 0,
   formulary: null,
   formulary_lob_id: NaN,
   formulary_type_id: NaN,
-  mode: "",
   clientId: 1,
+  location: 0,
   isLoading: false,
   error: null,
 };
@@ -67,10 +69,14 @@ const application = createSlice({
       //state.clientId = sessionStorage.getItem('client_id') ? parseInt(sessionStorage.getItem('client_id')) : 0;
       state.clientId = 1;
     },
+    setLocation(state, { payload }: PayloadAction<number>) {
+      console.log(" SET LOCATION : " + payload);
+      state.location = payload;
+    },
   },
 });
 
-export const { setFormularyDetails } = application.actions;
+export const { setFormularyDetails, setLocation } = application.actions;
 
 export default application.reducer;
 

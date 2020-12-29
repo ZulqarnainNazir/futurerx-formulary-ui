@@ -5,6 +5,7 @@ import { Grid } from "@material-ui/core";
 import FrxMiniTabs from "../../../../shared/FrxMiniTabs/FrxMiniTabs";
 import Button from "../../../../shared/Frx-components/button/Button";
 import FrxDrugGridContainer from "../../../../shared/FrxGrid/FrxDrugGridContainer";
+import FrxDrugGrid from "../../../../shared/FrxGrid/FrxDrugGrid";
 import {
   getTapList,
   getMiniTabs,
@@ -27,13 +28,14 @@ import {
 } from "../../../../../redux/slices/formulary/ql/qlActionCreation";
 import * as constants from "../../../../../api/http-commons";
 import { QlColumns } from "../../../../../utils/grid/columns";
-import showMessage from "../../../Utils/Toast";
+import showMessage from "../../../Utils/Toast"; //"../../../Utils/Toast";
+import { ToastContainer } from "react-toastify";
 import AdvanceSearchContainer from "../../../NewAdvanceSearch/AdvanceSearchContainer";
 import "./components/common.scss";
 
 function mapDispatchToProps(dispatch) {
   return {
-    getTier: (a) => dispatch(getTier(a)),
+    // getTier: (a) => dispatch(getTier(a)),
     getQlSummary: (a) => dispatch(getQlSummary(a)),
     postFormularyDrugQl: (a) => dispatch(postFormularyDrugQl(a)),
     postApplyFormularyDrugQl: (a) => dispatch(postApplyFormularyDrugQl(a)),
@@ -45,6 +47,7 @@ function mapStateToProps(state) {
     current_formulary: state.application.formulary,
     // formulary_lob_id: state.application.formulary_lob_id,
     qlData: state.qlReducer.data,
+    switchState: state.switchReducer.configureSwitch,
     // inState: state,
   };
 }
@@ -64,10 +67,11 @@ interface tabsState {
   activeTabIndex: any;
   panelGridValue: any;
   drugGridData: any;
-  newParameter: any; //newParamterType;
+  quantityAndFillLimitObject: any; //newParamterType;
   selectedDrugs: any;
   drugData: any;
   selectedCriteria: any;
+  errorObject: any;
   selectedTab: string;
   isAdvanceSearchOpen: boolean;
   isLoading: boolean;
@@ -88,13 +92,14 @@ class Tier extends React.Component<any, tabsState> {
     panelGridTitle: ["", "NUMBER OF DRUGS", "ADDED DRUGS", "REMOVED DRUGS"],
     panelGridValue: [],
     drugGridData: [],
-    newParameter: {},
+    quantityAndFillLimitObject: {},
     selectedDrugs: [],
     drugData: [],
     selectedCriteria: [],
     selectedTab: constants.TYPE_REPLACE,
     isAdvanceSearchOpen: false,
     isLoading: false,
+    errorObject: {},
   };
 
   onClickTab = (selectedTabIndex: number) => {
@@ -106,7 +111,13 @@ class Tier extends React.Component<any, tabsState> {
       }
       return tab;
     });
-    this.setState({ tabs, activeTabIndex });
+    this.setState({
+      tabs,
+      activeTabIndex,
+      tierGridContainer: false,
+      quantityAndFillLimitObject: {},
+      errorObject: {},
+    });
   };
 
   renderTabContent = () => {
@@ -118,6 +129,9 @@ class Tier extends React.Component<any, tabsState> {
           <Replace
             handleOnChange={this.handleOnChange}
             onUpdateSelectedCriteria={this.onUpdateSelectedCriteria}
+            values={this.state.quantityAndFillLimitObject}
+            errors={this.state.errorObject}
+            isViweAll={this.props.switchState}
           />
         );
       case 1:
@@ -126,6 +140,9 @@ class Tier extends React.Component<any, tabsState> {
           <Replace
             handleOnChange={this.handleOnChange}
             onUpdateSelectedCriteria={this.onUpdateSelectedCriteria}
+            values={this.state.quantityAndFillLimitObject}
+            errors={this.state.errorObject}
+            isViweAll={this.props.switchState}
           />
         );
       case 2:
@@ -139,45 +156,64 @@ class Tier extends React.Component<any, tabsState> {
     }
   };
 
-  onClickMiniTab = (num: number) => {
-    this.setState({
-      activeMiniTabIndex: num,
-    });
+  // onClickMiniTab = (num: number) => {
+  //   this.setState({
+  //     activeMiniTabIndex: num,
+  //   });
+  // };
+
+  checkForRequiredFields = (quantityAndFillLimitObject) => {
+    let tempErr = {};
+    console.log(quantityAndFillLimitObject);
+
+    if (Object.keys(quantityAndFillLimitObject).length > 0) {
+      if (
+        quantityAndFillLimitObject.quantity == "" ||
+        quantityAndFillLimitObject.quantity == undefined
+      ) {
+        tempErr = {
+          quantity: true,
+        };
+        this.setState({ errorObject: tempErr });
+        return false;
+      } else if (
+        quantityAndFillLimitObject.days == "" ||
+        quantityAndFillLimitObject.days == undefined
+      ) {
+        tempErr = {
+          days: true,
+        };
+        this.setState({ errorObject: tempErr });
+        return false;
+      } else {
+        tempErr = {
+          quantity: false,
+          days: false,
+        };
+        this.setState({ errorObject: tempErr });
+        return true;
+      }
+    } else {
+      tempErr = {
+        quantity: true,
+        days: true,
+      };
+      this.setState({ errorObject: tempErr });
+      return false;
+    }
   };
 
   openTierGridContainer = () => {
     this.setState({ tierGridContainer: true });
 
-    // apiDetails["lob_type"] = this.props.formulary_lob_id;
-    // apiDetails["pathParams"] =
-    //   this.props?.formulary_id +
-    //   "/" +
-    //   this.state.fileType +
-    //   "/" +
-    //   constants.TYPE_REPLACE;
-    // apiDetails["keyVals"] = [
-    //   { key: constants.KEY_ENTITY_ID, value: this.props?.formulary_id },
-    // ];
-    // apiDetails["messageBody"] = {};
-    // apiDetails["messageBody"]["selected_drug_ids"] = this.state.selectedDrugs;
-    // apiDetails["messageBody"][
-    //   "base_pa_group_description_id"
-    // ] = this.state.selectedGroupDescription;
-    // apiDetails["messageBody"][
-    //   "id_pa_group_description"
-    // ] = this.state.selectedLastestedVersion;
-    // apiDetails["messageBody"]["id_pa_type"] = Number(this.state.selectedPaType);
-    // apiDetails["messageBody"]["search_key"] = "";
     let apiDetails = {
-      // lob_type: "Comm",
       formulary_id: this.props.current_formulary.id_formulary,
       pathParams:
         this.props.current_formulary.id_formulary +
         "/" +
         this.props.current_formulary.formulary_type_info.formulary_type_code,
-      // this.props.formulary_lob_id,
+
       keyVals: [
-        // { key: constants.KEY_ENTITY_ID, value: this.props?.formulary_id },
         { key: constants.KEY_INDEX, value: 0 },
         { key: constants.KEY_LIMIT, value: 10 },
       ],
@@ -187,222 +223,218 @@ class Tier extends React.Component<any, tabsState> {
       console.log("[QlDetail]:", json.payload);
       this.loadGridData(json);
     });
+    // }
   };
 
   loadGridData(json: any) {
-    {
-      const { isLoading } = this.state;
-      this.setState({ isLoading: !isLoading });
-      let tmpData = json.payload.result;
-      var data: any[] = [];
-      let count = 1;
-      var gridData: any = tmpData.map(function (el) {
-        var element = Object.assign({}, el);
-        data.push(element);
-        let gridItem = {};
-        gridItem["id"] = count;
-        gridItem["key"] = count;
-        gridItem["covered_genders"] = element.covered_genders;
-        gridItem["covered_icds"] = element.covered_icds;
-        gridItem["covered_max_ages"] = element.covered_max_ages;
-        gridItem["covered_max_operators"] = element.covered_max_operators
-          ? "" + element.covered_max_operators
-          : "";
-        gridItem["covered_min_ages"] = element.covered_min_ages
-          ? "" + element.covered_min_ages
-          : "";
-        gridItem["drug_label_name"] = element.drug_label_name
-          ? "" + element.drug_label_name
-          : "";
-        gridItem["covered_min_operators"] = "";
-        gridItem[
-          "covered_patient_residences"
-        ] = element.covered_patient_residences
-          ? "" + element.covered_patient_residences
-          : "";
-        gridItem[
-          "covered_pharmacy_networks"
-        ] = element.covered_pharmacy_networks
-          ? "" + element.covered_pharmacy_networks
-          : "";
-        gridItem["trademark_code"] = element.trademark_code
-          ? "" + element.trademark_code
-          : "";
-        gridItem["database_category"] = element.database_category
-          ? "" + element.database_category
-          : "";
-        gridItem[
-          "covered_place_of_services"
-        ] = element.covered_place_of_services
-          ? "" + element.covered_place_of_services
-          : "";
-        gridItem[
-          "covered_prescriber_taxonomies"
-        ] = element.covered_prescriber_taxonomies
-          ? "" + element.covered_prescriber_taxonomies
-          : "";
-        gridItem["created_by"] = element.created_by
-          ? "" + element.created_by
-          : "";
+    const { isLoading } = this.state;
+    this.setState({ isLoading: !isLoading });
+    let tmpData = json.payload.result;
+    var data: any[] = [];
+    let count = 1;
+    var gridData: any = tmpData.map(function (el) {
+      var element = Object.assign({}, el);
+      data.push(element);
+      let gridItem = {};
+      gridItem["id"] = count;
+      gridItem["key"] = count;
+      gridItem["covered_genders"] = element.covered_genders;
+      gridItem["covered_icds"] = element.covered_icds;
+      gridItem["covered_max_ages"] = element.covered_max_ages;
+      gridItem["covered_max_operators"] = element.covered_max_operators
+        ? "" + element.covered_max_operators
+        : "";
+      gridItem["covered_min_ages"] = element.covered_min_ages
+        ? "" + element.covered_min_ages
+        : "";
+      gridItem["drug_label_name"] = element.drug_label_name
+        ? "" + element.drug_label_name
+        : "";
+      gridItem["covered_min_operators"] = "";
+      gridItem[
+        "covered_patient_residences"
+      ] = element.covered_patient_residences
+        ? "" + element.covered_patient_residences
+        : "";
+      gridItem["covered_pharmacy_networks"] = element.covered_pharmacy_networks
+        ? "" + element.covered_pharmacy_networks
+        : "";
+      gridItem["trademark_code"] = element.trademark_code
+        ? "" + element.trademark_code
+        : "";
+      gridItem["database_category"] = element.database_category
+        ? "" + element.database_category
+        : "";
+      gridItem["covered_place_of_services"] = element.covered_place_of_services
+        ? "" + element.covered_place_of_services
+        : "";
+      gridItem[
+        "covered_prescriber_taxonomies"
+      ] = element.covered_prescriber_taxonomies
+        ? "" + element.covered_prescriber_taxonomies
+        : "";
+      gridItem["created_by"] = element.created_by
+        ? "" + element.created_by
+        : "";
 
-        gridItem["created_date"] = element.created_date
-          ? "" + element.created_date
-          : "";
-        gridItem["data_source"] = element.data_source
-          ? "" + element.data_source
-          : "";
-        gridItem[
-          "drug_descriptor_identifier"
-        ] = element.drug_descriptor_identifier
-          ? "" + element.drug_descriptor_identifier
-          : "";
-        gridItem["file_type"] = element.file_type ? "" + element.file_type : "";
-        gridItem["fills_allowed"] = element.fills_allowed
-          ? "" + element.fills_allowed
-          : "";
-        gridItem["formulary_drug_id"] = element.formulary_drug_id
-          ? "" + element.formulary_drug_id
-          : "";
-        gridItem[
-          "full_limit_period_of_time"
-        ] = element.full_limit_period_of_time
-          ? "" + element.full_limit_period_of_time
-          : "";
-        gridItem[
-          "generic_product_identifier"
-        ] = element.generic_product_identifier
-          ? "" + element.generic_product_identifier
-          : "";
-        gridItem["is_al"] = element.is_al ? "" + element.is_al : "";
-        gridItem["is_fff"] = element.is_fff ? "" + element.is_fff : "";
-        gridItem["is_gl"] = element.is_gl ? "" + element.is_gl : "";
-        gridItem["is_patrs"] = element.is_patrs ? "" + element.is_patrs : "";
-        gridItem["is_phnw"] = element.is_phnw ? "" + element.is_phnw : "";
-        gridItem["is_pos"] = element.is_pos ? "" + element.is_pos : "";
-        gridItem["is_prtx"] = element.is_prtx ? "" + element.is_prtx : "";
-        gridItem["is_user_defined_1"] = element.is_user_defined_1
-          ? "" + element.is_user_defined_1
-          : "";
-        gridItem["is_user_defined_2"] = element.is_user_defined_2
-          ? "" + element.is_user_defined_2
-          : "";
-        gridItem["is_user_defined_2"] = element.is_user_defined_2
-          ? "" + element.is_user_defined_2
-          : "";
-        gridItem["is_user_defined_3"] = element.is_user_defined_3
-          ? "" + element.is_user_defined_3
-          : "";
-        gridItem["is_user_defined_4"] = element.is_user_defined_4
-          ? "" + element.is_user_defined_4
-          : "";
-        gridItem["is_user_defined_5"] = element.is_user_defined_5
-          ? "" + element.is_user_defined_5
-          : "";
-        gridItem["lookback_days"] = element.lookback_days
-          ? "" + element.lookback_days
-          : "";
-        gridItem["md5_id"] = element.md5_id ? "" + element.md5_id : "";
-        gridItem["modified_by"] = element.modified_by
-          ? "" + element.modified_by
-          : "";
-        gridItem["modified_date"] = element.modified_date
-          ? "" + element.modified_date
-          : "";
-        gridItem["not_covered_genders"] = element.not_covered_genders
-          ? "" + element.not_covered_genders
-          : "";
-        gridItem["not_covered_icds"] = element.not_covered_icds
-          ? "" + element.not_covered_icds
-          : "";
-        gridItem["not_covered_max_ages"] = element.not_covered_max_ages
-          ? "" + element.not_covered_max_ages
-          : "";
-        gridItem[
-          "not_covered_max_operators"
-        ] = element.not_covered_max_operators
-          ? "" + element.not_covered_max_operators
-          : "";
-        gridItem[
-          "not_covered_max_operators"
-        ] = element.not_covered_max_operators
-          ? "" + element.not_covered_max_operators
-          : "";
-        gridItem["not_covered_min_ages"] = element.not_covered_min_ages
-          ? "" + element.not_covered_min_ages
-          : "";
-        gridItem[
-          "not_covered_min_operators"
-        ] = element.not_covered_min_operators
-          ? "" + element.not_covered_min_operators
-          : "";
-        gridItem[
-          "not_covered_patient_residences"
-        ] = element.not_covered_patient_residences
-          ? "" + element.not_covered_patient_residences
-          : "";
-        gridItem[
-          "not_covered_pharmacy_networks"
-        ] = element.not_covered_pharmacy_networks
-          ? "" + element.not_covered_pharmacy_networks
-          : "";
-        gridItem[
-          "not_covered_place_of_services"
-        ] = element.not_covered_place_of_services
-          ? "" + element.not_covered_place_of_services
-          : "";
-        gridItem[
-          "not_covered_prescriber_taxonomies"
-        ] = element.not_covered_prescriber_taxonomies
-          ? "" + element.not_covered_prescriber_taxonomies
-          : "";
-        gridItem["override_category"] = element.override_category
-          ? "" + element.override_category
-          : "";
-        gridItem["override_class"] = element.override_class
-          ? "" + element.override_class
-          : "";
-        gridItem["pa_group_description"] = element.pa_group_description
-          ? "" + element.pa_group_description
-          : "";
-        gridItem["pa_type"] = element.pa_type ? "" + element.pa_type : "";
-        gridItem["ql_days"] = element.ql_days ? "" + element.ql_days : "";
-        gridItem["ql_period_of_time"] = element.ql_period_of_time
-          ? "" + element.ql_period_of_time
-          : "";
-        gridItem["ql_quantity"] = element.ql_quantity
-          ? "" + element.ql_quantity
-          : "";
-        gridItem["ql_type"] = element.ql_type ? "" + element.ql_type : "";
-        gridItem["st_group_description"] = element.st_group_description
-          ? "" + element.st_group_description
-          : "";
-        gridItem["st_type"] = element.st_type ? "" + element.st_type : "";
-        gridItem["st_value"] = element.st_value ? "" + element.st_value : "";
-        gridItem["tier_value"] = element.tier_value
-          ? "" + element.tier_value
-          : "";
-        gridItem["user_defined"] = element.user_defined
-          ? "" + element.user_defined
-          : "";
+      gridItem["created_date"] = element.created_date
+        ? "" + element.created_date
+        : "";
+      gridItem["data_source"] = element.data_source
+        ? "" + element.data_source
+        : "";
+      gridItem[
+        "drug_descriptor_identifier"
+      ] = element.drug_descriptor_identifier
+        ? "" + element.drug_descriptor_identifier
+        : "";
+      gridItem["file_type"] = element.file_type ? "" + element.file_type : "";
+      gridItem["fills_allowed"] = element.fills_allowed
+        ? "" + element.fills_allowed
+        : "";
+      gridItem["formulary_drug_id"] = element.formulary_drug_id
+        ? "" + element.formulary_drug_id
+        : "";
+      gridItem["full_limit_period_of_time"] = element.full_limit_period_of_time
+        ? "" + element.full_limit_period_of_time
+        : "";
+      gridItem[
+        "generic_product_identifier"
+      ] = element.generic_product_identifier
+        ? "" + element.generic_product_identifier
+        : "";
+      gridItem["is_al"] = element.is_al ? "" + element.is_al : "";
+      gridItem["is_fff"] = element.is_fff ? "" + element.is_fff : "";
+      gridItem["is_gl"] = element.is_gl ? "" + element.is_gl : "";
+      gridItem["is_patrs"] = element.is_patrs ? "" + element.is_patrs : "";
+      gridItem["is_phnw"] = element.is_phnw ? "" + element.is_phnw : "";
+      gridItem["is_pos"] = element.is_pos ? "" + element.is_pos : "";
+      gridItem["is_prtx"] = element.is_prtx ? "" + element.is_prtx : "";
+      gridItem["is_user_defined_1"] = element.is_user_defined_1
+        ? "" + element.is_user_defined_1
+        : "";
+      gridItem["is_user_defined_2"] = element.is_user_defined_2
+        ? "" + element.is_user_defined_2
+        : "";
+      gridItem["is_user_defined_2"] = element.is_user_defined_2
+        ? "" + element.is_user_defined_2
+        : "";
+      gridItem["is_user_defined_3"] = element.is_user_defined_3
+        ? "" + element.is_user_defined_3
+        : "";
+      gridItem["is_user_defined_4"] = element.is_user_defined_4
+        ? "" + element.is_user_defined_4
+        : "";
+      gridItem["is_user_defined_5"] = element.is_user_defined_5
+        ? "" + element.is_user_defined_5
+        : "";
+      gridItem["lookback_days"] = element.lookback_days
+        ? "" + element.lookback_days
+        : "";
+      gridItem["md5_id"] = element.md5_id ? "" + element.md5_id : "";
+      gridItem["modified_by"] = element.modified_by
+        ? "" + element.modified_by
+        : "";
+      gridItem["modified_date"] = element.modified_date
+        ? "" + element.modified_date
+        : "";
+      gridItem["not_covered_genders"] = element.not_covered_genders
+        ? "" + element.not_covered_genders
+        : "";
+      gridItem["not_covered_icds"] = element.not_covered_icds
+        ? "" + element.not_covered_icds
+        : "";
+      gridItem["not_covered_max_ages"] = element.not_covered_max_ages
+        ? "" + element.not_covered_max_ages
+        : "";
+      gridItem["not_covered_max_operators"] = element.not_covered_max_operators
+        ? "" + element.not_covered_max_operators
+        : "";
+      gridItem["not_covered_max_operators"] = element.not_covered_max_operators
+        ? "" + element.not_covered_max_operators
+        : "";
+      gridItem["not_covered_min_ages"] = element.not_covered_min_ages
+        ? "" + element.not_covered_min_ages
+        : "";
+      gridItem["not_covered_min_operators"] = element.not_covered_min_operators
+        ? "" + element.not_covered_min_operators
+        : "";
+      gridItem[
+        "not_covered_patient_residences"
+      ] = element.not_covered_patient_residences
+        ? "" + element.not_covered_patient_residences
+        : "";
+      gridItem[
+        "not_covered_pharmacy_networks"
+      ] = element.not_covered_pharmacy_networks
+        ? "" + element.not_covered_pharmacy_networks
+        : "";
+      gridItem[
+        "not_covered_place_of_services"
+      ] = element.not_covered_place_of_services
+        ? "" + element.not_covered_place_of_services
+        : "";
+      gridItem[
+        "not_covered_prescriber_taxonomies"
+      ] = element.not_covered_prescriber_taxonomies
+        ? "" + element.not_covered_prescriber_taxonomies
+        : "";
+      gridItem["override_category"] = element.override_category
+        ? "" + element.override_category
+        : "";
+      gridItem["override_class"] = element.override_class
+        ? "" + element.override_class
+        : "";
+      gridItem["pa_group_description"] = element.pa_group_description
+        ? "" + element.pa_group_description
+        : "";
+      gridItem["pa_type"] = element.pa_type ? "" + element.pa_type : "";
+      gridItem["ql_days"] = element.ql_days ? "" + element.ql_days : "";
+      gridItem["ql_period_of_time"] = element.ql_period_of_time
+        ? "" + element.ql_period_of_time
+        : "";
+      gridItem["ql_quantity"] = element.ql_quantity
+        ? "" + element.ql_quantity
+        : "";
+      gridItem["ql_type"] = element.ql_type ? "" + element.ql_type : "";
+      gridItem["st_group_description"] = element.st_group_description
+        ? "" + element.st_group_description
+        : "";
+      gridItem["st_type"] = element.st_type ? "" + element.st_type : "";
+      gridItem["st_value"] = element.st_value ? "" + element.st_value : "";
+      gridItem["tier_value"] = element.tier_value
+        ? "" + element.tier_value
+        : "";
+      gridItem["user_defined"] = element.user_defined
+        ? "" + element.user_defined
+        : "";
 
-        count++;
-        return gridItem;
-      });
-      this.setState({
-        isLoading: !isLoading,
-        drugData: data,
-        drugGridData: gridData,
-      });
-    }
+      count++;
+      return gridItem;
+    });
+    this.setState({
+      isLoading: !isLoading,
+      drugData: data,
+      drugGridData: gridData,
+      tierGridContainer: true,
+    });
+    // showMessage("Failure", "error");
   }
 
   handleOnChange = (e) => {
     let tempObject = {
-      ...this.state.newParameter,
+      ...this.state.quantityAndFillLimitObject,
       [e.target.name]: Number(e.target.value),
     };
+    let temError = {
+      ...this.state.errorObject,
+      [e.target.name]: false,
+    };
 
-    this.setState({ newParameter: tempObject });
+    this.setState({
+      quantityAndFillLimitObject: tempObject,
+      errorObject: temError,
+    });
   };
   onSelectedTableRowChanged = (selectedRowKeys) => {
     this.state.selectedDrugs = [];
@@ -420,35 +452,11 @@ class Tier extends React.Component<any, tabsState> {
   };
 
   componentDidMount() {
-    // this.props.getTier("1").then((json) => {
-    //   console.log("*******************************" + json);
-    //   console.log(json.payload.data);
-    //   //this.setState({panelGridValue: json.payload.data});
-
-    // });
     this.props
       .getQlSummary(this.props.current_formulary.id_formulary)
       .then((json) => {
         console.log("[json.payload]", json.payload);
         this.initailizeQlSummary(json);
-        // let tmpData =
-        //   json.payload && json.payload.result ? json.payload.result : [];
-
-        // var rows = tmpData.map(function (el) {
-        //   var curRow = [
-        //     el["ql_type_name"],
-        //     el["total_group_description_count"],
-        //     el["added_group_description_count"],
-        //     el["removed_group_description_count"],
-        //   ];
-        //   return curRow;
-        // });
-
-        // console.log(rows);
-        // this.setState({
-        //   panelGridValue: rows,
-        // });
-        // this.setState({ panelGridValue: json.payload.result });
       });
     console.log("in ql, [curenformulary]:", this.props.current_formulary);
   }
@@ -486,15 +494,17 @@ class Tier extends React.Component<any, tabsState> {
   };
 
   handleSave = () => {
-    const { newParameter } = this.state;
+    const { quantityAndFillLimitObject } = this.state;
     let currentAction = this.getCurrentAction();
-    console.log("[newParameter]:", this.state.newParameter);
+    console.log(
+      "[quantityAndFillLimitObject]:",
+      this.state.quantityAndFillLimitObject
+    );
     console.log("[selectedDrug]", this.state.selectedDrugs);
     console.log("[drugData]:", this.state.drugData);
     console.log("[action]:", currentAction);
 
     let apiDetails = {};
-    // apiDetails['apiPart'] = constants.APPLY_TIER;
 
     apiDetails["pathParams"] =
       this.props.current_formulary.id_formulary +
@@ -510,21 +520,27 @@ class Tier extends React.Component<any, tabsState> {
       drug_ids: [],
     };
 
-    apiDetails["messageBody"]["quantity"] = newParameter["quantity"]
-      ? newParameter["quantity"]
+    apiDetails["messageBody"]["quantity"] = quantityAndFillLimitObject[
+      "quantity"
+    ]
+      ? quantityAndFillLimitObject["quantity"]
       : null;
-    apiDetails["messageBody"]["quantity_limit_days"] = newParameter["days"]
-      ? newParameter["days"]
+    apiDetails["messageBody"][
+      "quantity_limit_days"
+    ] = quantityAndFillLimitObject["days"]
+      ? quantityAndFillLimitObject["days"]
       : null;
     apiDetails["messageBody"]["quantity_limit_period_of_time"] =
-      newParameter["periodOfTime"];
-    apiDetails["messageBody"]["fills_allowed"] = newParameter["fillsAllowed"]
-      ? newParameter["fillsAllowed"]
-      : null;
-    apiDetails["messageBody"]["full_limit_period_of_time"] = newParameter[
-      "fillLimitPeriodOfTime"
+      quantityAndFillLimitObject["periodOfTime"];
+    apiDetails["messageBody"]["fills_allowed"] = quantityAndFillLimitObject[
+      "fillsAllowed"
     ]
-      ? newParameter["fillLimitPeriodOfTime"]
+      ? quantityAndFillLimitObject["fillsAllowed"]
+      : null;
+    apiDetails["messageBody"][
+      "full_limit_period_of_time"
+    ] = quantityAndFillLimitObject["fillLimitPeriodOfTime"]
+      ? quantityAndFillLimitObject["fillLimitPeriodOfTime"]
       : null;
     apiDetails["messageBody"]["is_select_all"] = false;
     apiDetails["messageBody"]["search_key"] = "";
@@ -532,15 +548,10 @@ class Tier extends React.Component<any, tabsState> {
       "selected_criteria_ids"
     ] = this.state.selectedCriteria;
 
-    //  apiDetails["messageBody"]["selected_"]
-    // apiDetails["messageBody"]["sort_by"] = ["not_coverd_min_ages"];
-    // apiDetails["messageBody"]["sort_order"] = ["asc"];
-
     apiDetails["messageBody"]["filter"] = [];
     console.log("[path]:", apiDetails["pathParams"]);
     console.log("{apiDetails}", apiDetails);
 
-    // postApplyFormularyDrugQl;
     const saveData = this.props
       .postApplyFormularyDrugQl(apiDetails)
       .then((json) => {
@@ -548,13 +559,12 @@ class Tier extends React.Component<any, tabsState> {
         console.log("[json]", json);
 
         if (json.payload && json.payload.code === "200") {
-          // alert("in if");
-          // alert("{json.payload.code}:" + json.payload.code);
           showMessage("Success", "success");
           this.state.drugData = [];
           this.state.drugGridData = [];
           // this.populateGridData();
           // console.log("[]");
+          this.setState({ quantityAndFillLimitObject: {} });
           this.openTierGridContainer();
 
           this.props
@@ -575,6 +585,48 @@ class Tier extends React.Component<any, tabsState> {
   advanceSearchClickHandler = () => {
     this.setState({ isAdvanceSearchOpen: !this.state.isAdvanceSearchOpen });
   };
+
+  onApply = () => {
+    if (this.getCurrentAction() !== constants.TYPE_REMOVE) {
+      if (
+        this.checkForRequiredFields({
+          ...this.state.quantityAndFillLimitObject,
+        })
+      ) {
+        this.openTierGridContainer();
+      } else {
+        showMessage("Please fill required field", "error");
+      }
+    } else {
+      if (this.state.selectedCriteria.length == 0) {
+        showMessage("Select Crieria to Remove Drugs", "error");
+      } else {
+        this.openTierGridContainer();
+      }
+    }
+  };
+
+  UNSAFE_componentWillReceiveProps(nextProps) {
+    if (nextProps.switchState) {
+      this.openTierGridContainer();
+      this.setState({
+        tabs: this.state.tabs.map((tab) => {
+          tab["disabled"] = true;
+          return tab;
+        }),
+      });
+      this.onClickTab(0);
+    } else {
+      this.setState({
+        tabs: [
+          { id: 1, text: "Replace" },
+          { id: 2, text: "Append" },
+          { id: 3, text: "Remove" },
+        ],
+        tierGridContainer: false,
+      });
+    }
+  }
 
   render() {
     console.log("in ql [data]", this.props.qlData);
@@ -618,6 +670,7 @@ class Tier extends React.Component<any, tabsState> {
                             tabList={this.state.tabs}
                             activeTabIndex={this.state.activeTabIndex}
                             onClickTab={this.onClickTab}
+                            disabled={this.props.switchState}
                           />
                         </div>
                       </div>
@@ -626,10 +679,16 @@ class Tier extends React.Component<any, tabsState> {
                   </div>
                 </div>
                 <div className="mb-10">
-                  <div className="limited-access">
-                    <PanelHeader title="FILL LIMIT SETTINGS" />
-                    <FillLimitSettings handleOnChange={this.handleOnChange} />
-                  </div>
+                  {this.state.activeTabIndex !== 2 && (
+                    <div className="limited-access">
+                      <PanelHeader title="FILL LIMIT SETTINGS" />
+                      <FillLimitSettings
+                        handleOnChange={this.handleOnChange}
+                        values={this.state.quantityAndFillLimitObject}
+                        isViweAll={this.props.switchState}
+                      />
+                    </div>
+                  )}
                 </div>
               </Grid>
               <div
@@ -642,28 +701,29 @@ class Tier extends React.Component<any, tabsState> {
               >
                 <Button
                   label="Apply"
-                  onClick={this.openTierGridContainer}
-                  // disabled={this.props.configureSwitch}
+                  onClick={this.onApply}
+                  disabled={this.props.switchState}
                 ></Button>
               </div>
             </Grid>
             {this.state.tierGridContainer && (
               <div className="select-drug-from-table">
                 <div className="bordered white-bg">
-                  <div
-                    className="header space-between pr-10"
-                    style={{ display: "flex", justifyContent: "flex-end" }}
-                  >
-                    <div className="button-wrapper">
-                      <Button
-                        className="Button normal"
-                        label="Advance Search"
-                        onClick={this.advanceSearchClickHandler}
-                      />
-                      <Button label="Save" onClick={this.handleSave} />
+                  {!this.props.switchState && (
+                    <div
+                      className="header space-between pr-10"
+                      style={{ display: "flex", justifyContent: "flex-end" }}
+                    >
+                      <div className="button-wrapper">
+                        <Button
+                          className="Button normal"
+                          label="Advance Search"
+                          onClick={this.advanceSearchClickHandler}
+                        />
+                        <Button label="Save" onClick={this.handleSave} />
+                      </div>
                     </div>
-                  </div>
-
+                  )}
                   <div className="tier-grid-container">
                     <FrxDrugGridContainer
                       isPinningEnabled={false}
@@ -694,6 +754,7 @@ class Tier extends React.Component<any, tabsState> {
           </div>
           {/* {this.state.isAdvanceSearchOpen && <AdvanceSearchContainer />} */}
         </div>
+        <ToastContainer />
       </div>
     );
   }

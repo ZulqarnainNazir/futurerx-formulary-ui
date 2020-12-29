@@ -85,17 +85,13 @@ class PaGroupDescriptionManagement extends React.Component<any, any>{
         this.props.getPaGrouptDescriptionVersions(apiDetails).then((json) => {
             let tmpData = json.payload.data;
             let dataLength = tmpData.length
-            var result = tmpData.map(function (el) {
-                var element = {};
-                element["value"] = el.value;
-                return element;
-            })
+            // var result = tmpData.map(function (el) {
+            //     var element = {};
+            //     element["value"] = el.value;
+            //     return element;
+            // })
             let latestVerion = tmpData.length>0?tmpData[dataLength-1].id_pa_group_description:0
-            this.setState({
-                versionList:result,
-                versionTitle:`Group Description ${tmpData[dataLength-1].value}`,
-                latestVerion:latestVerion
-            })
+           
             let apiDetails= {};
             apiDetails["lob_type"] = this.props.formulary_lob_id;
             apiDetails['pathParams'] = '/'+latestVerion;
