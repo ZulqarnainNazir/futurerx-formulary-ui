@@ -445,7 +445,7 @@ function NewGroup(props: any) {
                       <Grid item xs={6}>
                       <label className="st-label">List <span className="astrict">*</span></label>
                       <Tags options={drug_list} getAutoCompleteChange={getAutoCompleteChangeHandler}
-                       autoSelected={props.StGDData.drug_list_ids}/>
+                       autoSelected={formData.drug_list_ids}/>
                       </Grid>
                     </Fragment>
                 <div className="setting-1 mb-20">
