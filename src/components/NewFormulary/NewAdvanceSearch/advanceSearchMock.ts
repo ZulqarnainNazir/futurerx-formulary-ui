@@ -71,3 +71,41 @@ export const getAdditionalCriteriaSectionList = () => {
     },
   ];
 };
+
+export const getAdditionalCriteria = () => {
+  const categories: any[] = [
+    {
+      id: 1,
+      category: "Age",
+    },
+    {
+      id: 2,
+      category: "Gender",
+    },
+    {
+      id: 3,
+      category: "ICD",
+    },
+    {
+      id: 4,
+      category: "Pharmacy Network",
+    },
+    {
+      id: 5,
+      category: "Prescriber Taxonomy",
+    },
+    {
+      id: 6,
+      category: "Place of Service",
+    },
+    {
+      id: 7,
+      category: "Patient Residence",
+    },
+    {
+      id: 8,
+      category: "Prerequisite Claims History & Lookback",
+    },
+  ];
+  return categories;
+};

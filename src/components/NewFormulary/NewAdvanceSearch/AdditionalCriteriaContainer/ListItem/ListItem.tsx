@@ -71,7 +71,11 @@ class ListItem extends Component<any, any> {
       card: { cardName, cardCode, isIncluded },
     } = this.props;
     let currentNode = {};
-    if (nodeId) {
+
+    /////////////////////////////////////
+    console.log("object");
+    /////////////////////////////////////
+    if (initialGlobalState && nodeId) {
       // currentNode = initialGlobalState.filter(
       //   (criteria) => criteria.nodeId === nodeId
       // );
