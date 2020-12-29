@@ -8,20 +8,21 @@ import "./common.scss";
 
 const FillLimitSettings = (props) => {
   const [selectedCriteria, setSelectedCriteria] = useState("no");
+  const { fillsAllowed = "", fillLimitPeriodOfTime = "" } = props.values;
 
   return (
     <div className="fill-limit-settings-container">
       <Grid container>
         <Grid item xs={4}>
           <div className="input-group">
-            <Label required={true}>fills allowed</Label>
+            <Label required={false}>fills allowed</Label>
             {/* <DropDown options={[1, 2, 3]} /> */}
             <Input
               className="formulary-list-search"
               // placeholder="Search"
               type="number"
               name="fillsAllowed"
-              value={props.values.fillsAllowed}
+              value={fillsAllowed}
               onChange={props.handleOnChange}
               disableUnderline={true}
               disabled={props.isViweAll}
@@ -38,7 +39,7 @@ const FillLimitSettings = (props) => {
                 // placeholder="Search"
                 type="number"
                 name="fillLimitPeriodOfTime"
-                value={props.values.fillLimitPeriodOfTime}
+                value={fillLimitPeriodOfTime}
                 onChange={props.handleOnChange}
                 disableUnderline={true}
                 disabled={props.isViweAll}
