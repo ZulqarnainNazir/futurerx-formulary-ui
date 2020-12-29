@@ -55,8 +55,12 @@ class FormularyDesignCommercial extends React.Component<any, any> {
         this.props.formularyDesignCommercialCheck(des_opt);
     }
     onCustomeInputChangeHandler = (e,index) => {
-        const des_opt = {...this.props.edit_info};
-        des_opt.custom_edits[index].edit_name = e.target.value;
+        console.log(this.props)
+        let des_opt:any = {...this.props.edit_info};
+        let new_obj = {...des_opt.custom_edits[index]}
+        new_obj.edit_name = e.target.value;
+        des_opt.custom_edits.splice(index,1);
+        des_opt.custom_edits.splice(index,0,new_obj);
         this.props.formularyDesignCommercialCheck(des_opt);
     }
     getChecked = (id) => {
@@ -83,6 +87,8 @@ class FormularyDesignCommercial extends React.Component<any, any> {
         if(des_opt.edits.length > 0 || des_opt.custom_edits.length > 0){
             des_opt.edits = [];
             des_opt.custom_edits = [];
+            const NAId = this.props.designOptions?.filter(e => e.is_custom !== true && e.edit_name === 'N/A').map(e=>e.id_edit)[0];
+            des_opt.edits.push(NAId);
         }else{
             const newEdits = this.props.designOptions?.filter(e => e.is_custom !== true && e.edit_name !== 'N/A').map(e=>e.id_edit);
             des_opt.edits = newEdits;
