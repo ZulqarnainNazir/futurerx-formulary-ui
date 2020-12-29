@@ -197,7 +197,7 @@ class DrugDetailPT extends React.Component<any, any> {
           ) {
             showMessage("Success", "success");
             this.getPTSummary();
-            this.getPTDrugsList();
+            // this.getPTDrugsList();
           } else {
             showMessage("Failure", "error");
           }
@@ -230,7 +230,7 @@ class DrugDetailPT extends React.Component<any, any> {
           ) {
             showMessage("Success", "success");
             this.getPTSummary();
-            this.getPTDrugsList();
+            // this.getPTDrugsList();
           } else {
             console.log("------REMOVE FAILED-------");
             showMessage("Failure", "error");
@@ -361,6 +361,7 @@ class DrugDetailPT extends React.Component<any, any> {
 
       this.setState({
         panelGridValue1: rows,
+        showGrid: false,
       });
     });
   };
@@ -493,7 +494,12 @@ class DrugDetailPT extends React.Component<any, any> {
       }
       return tab;
     });
-    this.setState({ tabs, activeTabIndex });
+
+    if (activeTabIndex === 2) {
+      this.getPTCriteriaList(true);
+    }
+
+    this.setState({ tabs, activeTabIndex, showGrid: false });
   };
 
   handleNoteClick = (event: React.ChangeEvent<{}>) => {

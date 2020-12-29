@@ -29,6 +29,7 @@ import * as constants from "../../../../../api/http-commons";
 import { QlColumns } from "../../../../../utils/grid/columns";
 import showMessage from "../../../Utils/Toast";
 import AdvanceSearchContainer from "../../../NewAdvanceSearch/AdvanceSearchContainer";
+import "./components/common.scss";
 
 function mapDispatchToProps(dispatch) {
   return {
@@ -678,9 +679,9 @@ class Tier extends React.Component<any, tabsState> {
                       isFetchingData={false}
                       enableResizingOfColumns
                       data={this.state.drugGridData}
-                      settingsWidth={10}
+                      // settingsWidth={10}
                       rowSelection={{
-                        // columnWidth: 50,
+                        columnWidth: 10,
                         // fixed: true,
                         type: "checkbox",
                         onChange: this.onSelectedTableRowChanged,
