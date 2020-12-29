@@ -269,7 +269,7 @@ class AdditionalCriteria extends Component<any, any> {
             },
       };
     }
-
+    payload.additionalCriteriaBody = apiAdditionalCriteriaState;
     // id_place_of_service_type: 1
     // isChecked: true
     // place_of_service_type_code: "01"
