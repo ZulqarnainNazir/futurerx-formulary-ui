@@ -3,6 +3,7 @@ import { connect } from "react-redux";
 import Box from "@material-ui/core/Box";
 import { Row, Col } from "antd";
 import { Table } from "antd";
+import { filter } from "lodash";
 import Grid from "@material-ui/core/Grid";
 import PanelHeader from "../../../../shared/Frx-components/panel-header/PanelHeader";
 import PanelGrid from "../../../../shared/Frx-components/panel-grid/PanelGrid";
@@ -96,6 +97,42 @@ const initialFormData: initialFormData = {
   index: "",
   covered: true,
 }
+
+// const columnFilterMapping = {
+//   // serviceYear: 'contract_year',
+//   // fromularyName: 'formulary_name',
+//   // formularyId: 'id_formulary',
+//   // version: 'version_number',
+//   // tierCount: 'number_of_tiers',
+//   // drugCount: 'number_of_drugs',
+//   // step: 'step',
+//   // assign: 'assigned_to',
+//   // status: 'status',
+//   // effectiveDate: 'effective_date',
+//   // dueDate: 'due_date'
+// }
+const columnFilterMapping = {
+  is_al: 'is_al',
+  covered_min_operators: 'covered_min_operators',
+  covered_min_ages: 'covered_min_ages',
+  covered_max_operators: 'covered_max_operators',
+  covered_max_ages: 'covered_max_ages',
+  not_covered_min_operators: 'not_covered_min_operators',
+  not_covered_min_ages: 'not_covered_min_ages',
+  not_covered_max_operators: 'not_covered_max_operators',
+  not_covered_max_ages: 'not_covered_max_ages',
+  tier_value: 'tier_value',
+  drug_label_name: 'drug_label_name',
+  drug_descriptor_identifier: 'drug_descriptor_identifier',
+  generic_product_identifier: 'generic_product_identifier',
+  trademark_code: 'trademark_code',
+  database_category: 'database_category',
+  database_class: 'database_class',
+  created_by: 'created_by',
+  created_date: 'created_date',
+  modified_by: 'modified_by',
+  modified_date: 'modified_date',
+};
 
 class DrugDetailAL extends React.Component<any, any> {
   state: drugDetailALState = {
@@ -323,30 +360,49 @@ class DrugDetailAL extends React.Component<any, any> {
       }
     }
   };
-
-  onApplyFilterHandler = (filters) => {
-    console.log("------The FIlters = ", filters)
-    const fetchedProps = Object.keys(filters)[0];
-    console.log("The Fetched Props = ", fetchedProps);
-    const fetchedOperator = filters[fetchedProps][0].condition === 'is like' ? 'is_like' : 
-    filters[fetchedProps][0].condition === 'is not' ? 'is_not' : 
-    filters[fetchedProps][0].condition === 'is not like' ? 'is_not_like' : 
-    filters[fetchedProps][0].condition === 'does not exist' ? 'does_not_exist' : 
-    filters[fetchedProps][0].condition;
-    const fetchedValues = filters[fetchedProps][0].value !== '' ? [filters[fetchedProps][0].value.toString()] : [];
-    const newFilters = [{ prop: fetchedProps, operator: fetchedOperator,values: fetchedValues}];
-    console.log("------THe New Filters = ", newFilters);
-    this.listPayload.filter = newFilters;
-    // this.props.fetchFormularies(this.listPayload);
-    console.log("THe List Payload inside APPLy filter Handler = ", this.listPayload);
-    this.getALDrugsList({ index: this.listPayload.index, limit: this.listPayload.limit, listPayload: this.listPayload });
-  }
-
-  // enableApplyButton = () => {
-  //   for(let i=0; i<this.state.alSettings.length; i++){
-  //     this.state.alsetting
-  //   }
+  
+  // onApplyFilterHandler = (filters) => {
+  //   console.log("------The FIlters = ", filters);
+  //   const fetchedProps = Object.keys(filters)[0];
+  //   console.log("THe Fetched Props = ", fetchedProps)
+  //   const fetchedOperator = filters[fetchedProps][0].condition === 'is like' ? 'is_like' : 
+  //   filters[fetchedProps][0].condition === 'is not' ? 'is_not' : 
+  //   filters[fetchedProps][0].condition === 'is not like' ? 'is_not_like' : 
+  //   filters[fetchedProps][0].condition === 'does not exist' ? 'does_not_exist' : 
+  //   filters[fetchedProps][0].condition;
+  //   const fetchedValues = filters[fetchedProps][0].value !== '' ? [filters[fetchedProps][0].value.toString()] : [];
+  //   const newFilters = [{ prop: fetchedProps, operator: fetchedOperator,values: fetchedValues}];
+  //   console.log("The New Filters ====== ", newFilters);
+  //   console.log("The Fetched OPerator = ", fetchedOperator);
+  //   this.listPayload.filter = newFilters;
+  //   this.getALDrugsList({ listPayload: this.listPayload });
   // }
+  
+  onApplyFilterHandler = (filters) => {
+    this.listPayload.filter = Array();
+    if (filters && filter.length > 0) {
+      const fetchedKeys = Object.keys(filters);
+      fetchedKeys.map(fetchedProps => {
+        if (filters[fetchedProps] && columnFilterMapping[fetchedProps]) {
+          const fetchedOperator = filters[fetchedProps][0].condition === 'is like' ? 'is_like' :
+            filters[fetchedProps][0].condition === 'is not' ? 'is_not' :
+              filters[fetchedProps][0].condition === 'is not like' ? 'is_not_like' :
+                filters[fetchedProps][0].condition === 'does not exist' ? 'does_not_exist' :
+                  filters[fetchedProps][0].condition;
+          
+          let fetchedPropsValue;
+          if(filters[fetchedProps][0].value !== '') {
+            const fetchedPropsValueNum = Number(filters[fetchedProps][0].value.toString());
+            fetchedPropsValue = isNaN(fetchedPropsValueNum) ? filters[fetchedProps][0].value.toString() : fetchedPropsValueNum
+          }
+          const fetchedValues = filters[fetchedProps][0].value !== '' ? [fetchedPropsValue] : [];
+          this.listPayload.filter.push({ prop: columnFilterMapping[fetchedProps], operator: fetchedOperator, values: fetchedValues });
+        }
+      });
+      console.log('Filters:'+JSON.stringify(this.listPayload.filter));
+      this.getALDrugsList({ listPayload: this.listPayload });
+    }
+  }
 
   onPageSize = (pageSize) => {
     this.listPayload.limit = pageSize
@@ -547,8 +603,9 @@ class DrugDetailAL extends React.Component<any, any> {
 
     let listCount = 0;
     this.props.getDrugDetailsALList(apiDetails).then((json) => {
-      let tmpData = json.payload.result;
-      listCount = json.payload.count;
+      // let tmpData = json.payload.result;
+      let tmpData = json.payload && json.payload.result ? json.payload.result : [];
+      listCount = json.payload?.count;
       var data: any[] = [];
       let count = 1;
       var gridData = tmpData.map((el) => {
@@ -557,22 +614,22 @@ class DrugDetailAL extends React.Component<any, any> {
         let gridItem = {};
         gridItem["id"] = count;
         gridItem["key"] = count;
-        gridItem["ageLimit"] = element.is_al ? "" + element.is_al : "";
-        gridItem["coverMin"] = element.covered_min_operators ? "" + element.covered_min_operators : "";
-        gridItem["coverAgeMin"] = element.covered_min_ages ? "" + element.covered_min_ages : "";
-        gridItem["coverMax"] = element.covered_max_operators ? "" + element.covered_max_operators : "";
-        gridItem["coverAgeMax"] = element.covered_max_ages ? "" + element.covered_max_ages : "";
-        gridItem["notCoverMin"] = element.not_covered_min_operators ? "" + element.not_covered_min_operators : "";
-        gridItem["notCoverAgeMin"] = element.not_covered_min_ages ? "" + element.not_covered_min_ages : "";
-        gridItem["notCoverMax"] = element.not_covered_max_operators ? "" + element.not_covered_max_operators : "";
-        gridItem["notCoverAgeMax"] = element.not_covered_max_ages ? "" + element.not_covered_max_ages : "";
-        gridItem["tier"] = element.tier_value ? "" + element.tier_value : "";
-        gridItem["labelNamae"] = element.drug_label_name ? "" + element.drug_label_name : "";
-        gridItem["ddid"] = element.drug_descriptor_identifier ? "" + element.drug_descriptor_identifier : "";
-        gridItem["gpi"] = element.generic_product_identifier ? "" + element.generic_product_identifier : "";
-        gridItem["trademark"] = element.trademark_code ? "" + element.trademark_code : "";
-        gridItem["databaseCategory"] = element.database_category ? "" + element.database_category : "";
-        gridItem["databaseClass"] = element.database_class ? "" + element.database_class : "";
+        gridItem["is_al"] = element.is_al ? "" + element.is_al : "";
+        gridItem["covered_min_operators"] = element.covered_min_operators ? "" + element.covered_min_operators : "";
+        gridItem["covered_min_ages"] = element.covered_min_ages ? "" + element.covered_min_ages : "";
+        gridItem["covered_max_operators"] = element.covered_max_operators ? "" + element.covered_max_operators : "";
+        gridItem["covered_max_ages"] = element.covered_max_ages ? "" + element.covered_max_ages : "";
+        gridItem["not_covered_min_operators"] = element.not_covered_min_operators ? "" + element.not_covered_min_operators : "";
+        gridItem["not_covered_min_ages"] = element.not_covered_min_ages ? "" + element.not_covered_min_ages : "";
+        gridItem["not_covered_max_operators"] = element.not_covered_max_operators ? "" + element.not_covered_max_operators : "";
+        gridItem["not_covered_max_ages"] = element.not_covered_max_ages ? "" + element.not_covered_max_ages : "";
+        gridItem["tier_value"] = element.tier_value ? "" + element.tier_value : "";
+        gridItem["drug_label_name"] = element.drug_label_name ? "" + element.drug_label_name : "";
+        gridItem["drug_descriptor_identifier"] = element.drug_descriptor_identifier ? "" + element.drug_descriptor_identifier : "";
+        gridItem["generic_product_identifier"] = element.generic_product_identifier ? "" + element.generic_product_identifier : "";
+        gridItem["trademark_code"] = element.trademark_code ? "" + element.trademark_code : "";
+        gridItem["database_category"] = element.database_category ? "" + element.database_category : "";
+        gridItem["database_class"] = element.database_class ? "" + element.database_class : "";
         gridItem["created_by"] = element.created_by ? "" + element.created_by : "";
         gridItem["created_date"] = element.created_date ? "" + element.created_date : "";
         gridItem["modified_by"] = element.modified_by ? "" + element.modified_by : "";
