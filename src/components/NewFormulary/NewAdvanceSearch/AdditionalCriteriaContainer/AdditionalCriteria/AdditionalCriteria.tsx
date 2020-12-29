@@ -224,7 +224,9 @@ class AdditionalCriteria extends Component<any, any> {
   };
 
   setCurrentCriteriaState = () => {
-    const { additionalCriteriaNodeId, additionalCriteriaObject } = this.state;
+    const { additionalCriteriaNodeId } = this.state;
+    const additionalCriteriaObject: any = this.state.additionalCriteriaObject;
+
     let payload = {
       additionalCriteriaObject: this.props.additionalCriteriaObject,
       additionalCriteriaBody: this.props.additionalCriteriaBody,
@@ -238,17 +240,40 @@ class AdditionalCriteria extends Component<any, any> {
     payload.additionalCriteriaObject = {
       [additionalCriteriaNodeId]: additionalCriteriaObject,
     };
+    console.log("API MAPPING METHOD: ", additionalCriteriaObject);
 
-    const apiAdditionalCriteriaState = {
-      sequence: 0,
-      covered: {},
-      not_covered: {},
-    };
+    const place_of_services: any[] = [];
+    let apiAdditionalCriteriaState: any = {};
+    for (const prop in additionalCriteriaObject) {
+      // additionalCriteriaObject.nodeId;
+      // additionalCriteriaObject.card.isIncluded;
+      // additionalCriteriaObject.posSettings;
+      // place_of_services.push();
 
-    // payload.additionalCriteriaBody = {};
-    // [
-    // { 1: this.state.additionalCriteriaState },
-    // ];
+      additionalCriteriaObject[prop].posSettings.forEach((s) => {
+        if (s.isChecked) {
+          place_of_services.push(s.id_place_of_service_type);
+        }
+      });
+      apiAdditionalCriteriaState = {
+        sequence: additionalCriteriaNodeId,
+        covered: additionalCriteriaObject[prop].card.isIncluded
+          ? {
+              place_of_services: place_of_services,
+            }
+          : {},
+        not_covered: additionalCriteriaObject[prop].card.isIncluded
+          ? {}
+          : {
+              place_of_services: place_of_services,
+            },
+      };
+    }
+
+    // id_place_of_service_type: 1
+    // isChecked: true
+    // place_of_service_type_code: "01"
+    // place_of_service_type_name: "Community/Retail Pharmacy services"
     this.props.setAdditionalCriteria(payload);
   };
 
