@@ -18,6 +18,8 @@ import * as otConstants from "../../../../../api/http-drug-details";
 import getLobCode from "../../../Utils/LobUtils";
 import FrxDrugGridContainer from "../../../../shared/FrxGrid/FrxDrugGridContainer";
 import showMessage from "../../../Utils/Toast";
+import AdvanceSearchContainer from "../../../NewAdvanceSearch/AdvanceSearchContainer";
+import { setAdvancedSearch } from "../../../../../redux/slices/formulary/advancedSearch/advancedSearchSlice";
 
 function mapDispatchToProps(dispatch) {
   return {
@@ -26,6 +28,7 @@ function mapDispatchToProps(dispatch) {
     getDrugDetailsOtherList: (a) => dispatch(getDrugDetailsOtherList(a)),
     postRemoveOtherDrug: (a) => dispatch(postRemoveOtherDrug(a)),
     postReplaceOtherDrug: (a) => dispatch(postReplaceOtherDrug(a)),
+    setAdvancedSearch: (a) => dispatch(setAdvancedSearch(a)),
   };
 }
 
@@ -34,6 +37,9 @@ const mapStateToProps = (state) => {
     configureSwitch: state.switchReducer.configureSwitch,
     formulary_id: state?.application?.formulary_id,
     formulary_lob_id: state?.application?.formulary_lob_id,
+    advancedSearchBody: state?.advancedSearch?.advancedSearchBody,
+    populateGrid: state?.advancedSearch?.populateGrid,
+    closeDialog: state?.advancedSearch?.closeDialog,
   };
 };
 
@@ -274,7 +280,7 @@ class DrugDetailOther extends React.Component<any, any> {
     });
   }
 
-  getOtherList = ({index = 0, limit = 10, listPayload = {}} = {}) => {
+  getOtherList = ({index = 0, limit = 10, listPayload = {}, searchBody = {}} = {}) => {
     let apiDetails = {};
     apiDetails['apiPart'] = otConstants.GET_OTHER_DRUGS;
     apiDetails['pathParams'] = this.props?.formulary_id + "/" + getLobCode(this.props.formulary_lob_id);
@@ -283,6 +289,13 @@ class DrugDetailOther extends React.Component<any, any> {
 
     if(this.state.activeTabIndex === 2) {
       apiDetails['messageBody']['selected_criteria_ids'] = this.rmSavePayload.selected_criteria_ids;
+    }
+    
+    if (searchBody) {
+      apiDetails["messageBody"] = Object.assign(
+        apiDetails["messageBody"],
+        searchBody
+      );
     }
 
     let listCount = 0;
@@ -418,12 +431,35 @@ class DrugDetailOther extends React.Component<any, any> {
 
   componentWillReceiveProps(nextProps) {
     console.log("-----Component Will Receive Props------", nextProps);
-    if(nextProps.configureSwitch) {
+    if(nextProps.configureSwitch && !(nextProps.advancedSearchBody)) {
       this.getOtherList();
+    }
+
+    if (nextProps.advancedSearchBody && nextProps.populateGrid) {
+      console.log("-----Inside Advance search Body if Condition-----advancedSearchBody ", nextProps.advancedSearchBody);
+      console.log("-----Inside Advance search Body if Condition-----populateGrid ", nextProps.advancedSearchBody);
+      this.getOtherList({ searchBody: nextProps.advancedSearchBody});
+      let payload = {
+        advancedSearchBody: nextProps.advancedSearchBody,
+        populateGrid: false,
+        closeDialog: nextProps.closeDialog,
+        listItemStatus: nextProps.listItemStatus,
+      };
+      if (nextProps.closeDialog) {
+        this.state.isSearchOpen = false;
+        payload["closeDialog"] = false;
+      }
+
+      console.log("---_Set Advanced Search payload = ", payload);
+      this.props.setAdvancedSearch(payload);
     }
   }
 
   render() {
+    const searchProps = {
+      lobCode: this.props.lobCode,
+      pageType: 0,
+    };
     let dataGrid = <FrxLoader />;
     if (this.state.data) {
       dataGrid = (
@@ -535,10 +571,16 @@ class DrugDetailOther extends React.Component<any, any> {
           </div>
           {dataGrid}
           {this.state.isSearchOpen ? (
-            <AdvancedSearch
-              category="Grievances"
+            // <AdvancedSearch
+            //   category="Grievances"
+            //   openPopup={this.state.isSearchOpen}
+            //   onClose={this.advanceSearchClosekHandler}
+            // />
+            <AdvanceSearchContainer
+              {...searchProps}
               openPopup={this.state.isSearchOpen}
               onClose={this.advanceSearchClosekHandler}
+              isAdvanceSearch={true}
             />
           ) : null}
         </div>

@@ -14,6 +14,8 @@ import * as fffConstants from "../../../../../api/http-drug-details";
 import getLobCode from "../../../Utils/LobUtils";
 import FrxDrugGridContainer from "../../../../shared/FrxGrid/FrxDrugGridContainer";
 import showMessage from "../../../Utils/Toast";
+import AdvanceSearchContainer from "../../../NewAdvanceSearch/AdvanceSearchContainer";
+import { setAdvancedSearch } from "../../../../../redux/slices/formulary/advancedSearch/advancedSearchSlice";
 
 function mapDispatchToProps(dispatch) {
   return {
@@ -21,6 +23,7 @@ function mapDispatchToProps(dispatch) {
     getDrugDetailsFFFList: (a) => dispatch(getDrugDetailsFFFList(a)),
     postRemoveFFFDrug: (a) => dispatch(postRemoveFFFDrug(a)),
     postReplaceFFFDrug: (a) => dispatch(postReplaceFFFDrug(a)),
+    setAdvancedSearch: (a) => dispatch(setAdvancedSearch(a)),
   };
 }
 
@@ -29,6 +32,9 @@ const mapStateToProps = (state) => {
     configureSwitch: state.switchReducer.configureSwitch,
     formulary_id: state?.application?.formulary_id,
     formulary_lob_id: state?.application?.formulary_lob_id,
+    advancedSearchBody: state?.advancedSearch?.advancedSearchBody,
+    populateGrid: state?.advancedSearch?.populateGrid,
+    closeDialog: state?.advancedSearch?.closeDialog,
   };
 };
 
@@ -205,13 +211,24 @@ class DrugDetailFFF extends React.Component<any, any> {
     });
   }
 
-  getFFFDrugsList = ({index = 0, limit = 10, listPayload = {}} = {}) => {
+  getFFFDrugsList = ({index = 0, limit = 10, listPayload = {}, searchBody = {}} = {}) => {
     let apiDetails = {};
     apiDetails['apiPart'] = fffConstants.GET_FFF_FORMULARY_DRUGS;
     apiDetails['pathParams'] = this.props?.formulary_id + "/" + getLobCode(this.props.formulary_lob_id);
     apiDetails['keyVals'] = [{ key: fffConstants.KEY_ENTITY_ID, value: this.props?.formulary_id }, { key: fffConstants.KEY_INDEX, value: index }, { key: fffConstants.KEY_LIMIT, value: limit }];
     apiDetails["messageBody"] = {};
     apiDetails['messageBody'] = listPayload;
+    
+    if (searchBody) {
+      console.log("THe Search Body = ", searchBody, " and List Payload = ", listPayload);
+      let merged = {...listPayload, ...searchBody};
+      console.log("Merged Body = ", merged);
+      apiDetails["messageBody"] = Object.assign(
+        apiDetails["messageBody"],
+        merged
+      );
+    }
+
     console.log("The FFF List Payload = ", listPayload);
     console.log("The FFF List Api Details = ", apiDetails);
 
@@ -299,9 +316,32 @@ class DrugDetailFFF extends React.Component<any, any> {
 
   componentWillReceiveProps(nextProps) {
     console.log("-----Component Will Receive Props------", nextProps);
+
+    if (nextProps.advancedSearchBody && nextProps.populateGrid) {
+      console.log("-----Inside Advance search Body if Condition-----advancedSearchBody ", nextProps.advancedSearchBody);
+      console.log("-----Inside Advance search Body if Condition-----populateGrid ", nextProps.advancedSearchBody);
+      this.getFFFDrugsList({ listPayload: this.listPayload, searchBody: nextProps.advancedSearchBody});
+      let payload = {
+        advancedSearchBody: nextProps.advancedSearchBody,
+        populateGrid: false,
+        closeDialog: nextProps.closeDialog,
+        listItemStatus: nextProps.listItemStatus,
+      };
+      if (nextProps.closeDialog) {
+        this.state.isSearchOpen = false;
+        payload["closeDialog"] = false;
+      }
+
+      console.log("---_Set Advanced Search payload = ", payload);
+      this.props.setAdvancedSearch(payload);
+    }
   }
 
   render() {
+    const searchProps = {
+      lobCode: this.props.lobCode,
+      pageType: 0,
+    };
     let dataGrid = <FrxLoader />;
     if (this.state.data) {
       dataGrid = (
@@ -386,10 +426,16 @@ class DrugDetailFFF extends React.Component<any, any> {
           </div>
           {dataGrid}
           {this.state.isSearchOpen ? (
-            <AdvancedSearch
-              category="Grievances"
+            // <AdvancedSearch
+            //   category="Grievances"
+            //   openPopup={this.state.isSearchOpen}
+            //   onClose={this.advanceSearchClosekHandler}
+            // />
+            <AdvanceSearchContainer
+              {...searchProps}
               openPopup={this.state.isSearchOpen}
               onClose={this.advanceSearchClosekHandler}
+              isAdvanceSearch={true}
             />
           ) : null}
         </div>

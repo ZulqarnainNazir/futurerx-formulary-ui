@@ -17,6 +17,8 @@ import IcdLimitSettings from "./IcdLimitSettings";
 import FrxDrugGridContainer from "../../../../shared/FrxGrid/FrxDrugGridContainer";
 import ICDRemove from "./ICDRemove";
 import showMessage from "../../../Utils/Toast";
+import AdvanceSearchContainer from "../../../NewAdvanceSearch/AdvanceSearchContainer";
+import { setAdvancedSearch } from "../../../../../redux/slices/formulary/advancedSearch/advancedSearchSlice";
 
 function mapDispatchToProps(dispatch) {
   return {
@@ -26,6 +28,7 @@ function mapDispatchToProps(dispatch) {
     postICDCriteriaList: (a) => dispatch(postICDCriteriaList(a)),
     postRemoveICDDrug: (a) => dispatch(postRemoveICDDrug(a)),
     postReplaceICDDrug: (a) => dispatch(postReplaceICDDrug(a)),
+    setAdvancedSearch: (a) => dispatch(setAdvancedSearch(a)),
   };
 }
 
@@ -34,6 +37,9 @@ const mapStateToProps = (state) => {
     configureSwitch: state.switchReducer.configureSwitch,
     formulary_id: state?.application?.formulary_id,
     formulary_lob_id: state?.application?.formulary_lob_id,
+    advancedSearchBody: state?.advancedSearch?.advancedSearchBody,
+    populateGrid: state?.advancedSearch?.populateGrid,
+    closeDialog: state?.advancedSearch?.closeDialog,
   };
 };
 
@@ -292,7 +298,7 @@ class DrugDetailICD extends React.Component<any, any> {
     });
   }
 
-  getICDDrugsList = ({index = 0, limit = 10, listPayload = {}} = {}) => {
+  getICDDrugsList = ({index = 0, limit = 10, listPayload = {}, searchBody = {}} = {}) => {
     let apiDetails = {};
     apiDetails['apiPart'] = icdConstants.GET_ICD_DRUGS;
     apiDetails['pathParams'] = this.props?.formulary_id + "/" + getLobCode(this.props.formulary_lob_id);
@@ -306,6 +312,16 @@ class DrugDetailICD extends React.Component<any, any> {
     }
     
     apiDetails['messageBody'] = listPayload;
+    
+    if (searchBody) {
+      console.log("THe Search Body = ", searchBody, " and List Payload = ", listPayload);
+      let merged = {...listPayload, ...searchBody};
+      console.log("Merged Body = ", merged);
+      apiDetails["messageBody"] = Object.assign(
+        apiDetails["messageBody"],
+        merged
+      );
+    }
 
     let listCount = 0;
     this.props.getDrugDetailsICDList(apiDetails).then((json) => {
@@ -491,12 +507,35 @@ class DrugDetailICD extends React.Component<any, any> {
 
   componentWillReceiveProps(nextProps) {
     console.log("-----Component Will Receive Props------", nextProps);
-    if(nextProps.configureSwitch) {
-      this.getICDDrugsList();
+    // if(nextProps.configureSwitch) {
+    //   this.getICDDrugsList();
+    // }
+
+    if (nextProps.advancedSearchBody && nextProps.populateGrid) {
+      console.log("-----Inside Advance search Body if Condition-----advancedSearchBody ", nextProps.advancedSearchBody);
+      console.log("-----Inside Advance search Body if Condition-----populateGrid ", nextProps.advancedSearchBody);
+      this.getICDDrugsList({ listPayload: this.listPayload, searchBody: nextProps.advancedSearchBody});
+      let payload = {
+        advancedSearchBody: nextProps.advancedSearchBody,
+        populateGrid: false,
+        closeDialog: nextProps.closeDialog,
+        listItemStatus: nextProps.listItemStatus,
+      };
+      if (nextProps.closeDialog) {
+        this.state.isSearchOpen = false;
+        payload["closeDialog"] = false;
+      }
+
+      console.log("---_Set Advanced Search payload = ", payload);
+      this.props.setAdvancedSearch(payload);
     }
   }
 
   render() {
+    const searchProps = {
+      lobCode: this.props.lobCode,
+      pageType: 0,
+    };
     let dataGrid = <FrxLoader />;
     if (this.state.data) {
       dataGrid = (
@@ -602,10 +641,16 @@ class DrugDetailICD extends React.Component<any, any> {
             </div>
             {dataGrid}
             {this.state.isSearchOpen ? (
-              <AdvancedSearch
-                category="Grievances"
+              // <AdvancedSearch
+              //   category="Grievances"
+              //   openPopup={this.state.isSearchOpen}
+              //   onClose={this.advanceSearchClosekHandler}
+              // />
+              <AdvanceSearchContainer
+                {...searchProps}
                 openPopup={this.state.isSearchOpen}
                 onClose={this.advanceSearchClosekHandler}
+                isAdvanceSearch={true}
               />
             ) : null}
           </div>
