@@ -464,7 +464,7 @@ class DrugDetailGL extends React.Component<any, any> {
       data: data,
     });
     this.getGLSummary();
-    this.getGLCriteriaList(true)
+    this.getGLCriteriaList(true);
     // this.getGLDrugsList();
   }
 
@@ -477,7 +477,12 @@ class DrugDetailGL extends React.Component<any, any> {
       }
       return tab;
     });
-    this.setState({ tabs, activeTabIndex });
+
+    if (activeTabIndex === 2) {
+      this.getGLCriteriaList(true);
+    }
+
+    this.setState({ tabs, activeTabIndex, showGrid: false });
   };
 
   handleNoteClick = (event: React.ChangeEvent<{}>) => {

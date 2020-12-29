@@ -67,14 +67,14 @@ function mapStateToProps(state) {
   // if(state?.saveGdm?.success!=="" && state?.saveGdm?.success!==null){
   //   showMessage('Saved Successfully', 'success');
   // }
-  if(state?.saveGdm?.error){
-    if(state.saveGdm.error.length>0){
-      state.saveGdm.error.map(err => {
-        showMessage(err.message, 'error');
-      })}else{
-      showMessage(state?.saveGdm?.error?.data?.message, 'error');
-    }
-  }
+  // if(state?.saveGdm?.error){
+  //   if(state.saveGdm.error.length>0){
+  //     state.saveGdm.error.map(err => {
+  //       showMessage(err.message, 'error');
+  //     })}else{
+  //     showMessage(state?.saveGdm?.error?.data?.message, 'error');
+  //   }
+  // }
   return {
     formulary_id: state.application.formulary_id,
     StGDData: state.stepTherapyReducer.description, // earlier it data
@@ -445,7 +445,7 @@ function NewGroup(props: any) {
                       <Grid item xs={6}>
                       <label className="st-label">List <span className="astrict">*</span></label>
                       <Tags options={drug_list} getAutoCompleteChange={getAutoCompleteChangeHandler}
-                       autoSelected={props.StGDData.drug_list_ids}/>
+                       autoSelected={formData.drug_list_ids}/>
                       </Grid>
                     </Fragment>
                 <div className="setting-1 mb-20">

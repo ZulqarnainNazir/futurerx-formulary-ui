@@ -193,7 +193,7 @@ class DrugDetailPOS extends React.Component<any, any> {
           if (json.payload && json.payload.code && json.payload.code === "200") {
             showMessage("Success", "success");
             this.getPOSSummary();
-            this.getPOSDrugsList();
+            // this.getPOSDrugsList();
           } else {
             showMessage("Failure", "error");
           }
@@ -218,7 +218,7 @@ class DrugDetailPOS extends React.Component<any, any> {
           if (json.payload && json.payload.code && json.payload.code === "200") {
             showMessage("Success", "success");
             this.getPOSSummary();
-            this.getPOSDrugsList();
+            // this.getPOSDrugsList();
           } else {
             console.log("------REMOVE FAILED-------")
             showMessage("Failure", "error");
@@ -283,6 +283,7 @@ class DrugDetailPOS extends React.Component<any, any> {
 
       this.setState({
         panelGridValue1: rows,
+        showGrid: false,
       });
     });
   };
@@ -527,7 +528,12 @@ class DrugDetailPOS extends React.Component<any, any> {
       }
       return tab;
     });
-    this.setState({ tabs, activeTabIndex });
+
+    if (activeTabIndex === 2) {
+      this.getPOSCriteriaList(true);
+    }
+
+    this.setState({ tabs, activeTabIndex, showGrid: false });
   };
 
   handleNoteClick = (event: React.ChangeEvent<{}>) => {

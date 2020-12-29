@@ -237,7 +237,8 @@ class GeneralInformation extends React.Component<any, GeneralInformationState> {
   };
   disabledDate = (current) => {
     // Can not select days before today and today
-    return current && current < moment().endOf("day");
+    // return current && current < moment().endOf("day");
+    return current.isBefore(moment(), "day");
   };
 
   // selectFormularyClick = (dataRow) => {
@@ -369,7 +370,7 @@ class GeneralInformation extends React.Component<any, GeneralInformationState> {
                 }
               />
             </Grid>
-            <Grid item xs={this.props.generalInfo.method === "clone" ? 4 : 8}>
+            <Grid item xs={this.props.generalInfo.method === "C" ? 4 : 8}>
               <div className="group">
                 <label>
                   Method of Formulary Build <span className="astrict">*</span>
@@ -386,7 +387,7 @@ class GeneralInformation extends React.Component<any, GeneralInformationState> {
                   >
                     <FormControlLabel
                       disabled={disabled}
-                      value="clone"
+                      value="C"
                       control={<Radio />}
                       label="Clone"
                     />
@@ -417,7 +418,7 @@ class GeneralInformation extends React.Component<any, GeneralInformationState> {
               </div>
             </Grid>
 
-            {this.props.generalInfo.method === "clone" && (
+            {this.props.generalInfo.method === "C" && (
               <Grid item xs={4}>
                 <div className="group">
                   <label>
