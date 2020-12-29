@@ -27,34 +27,44 @@ class AdditionalCriteria extends Component<any, any> {
     nodeList: Array(),
     globalCardCount: 0,
 
-    additionalCriteriaState: [],
+    additionalCriteriaObject: [],
+    apiAdditionalCriteriaState: {
+      sequence: 0,
+      covered: {},
+      not_covered: {},
+    },
   };
 
   componentDidMount() {
-    console.log("ADDITIONAL CRITERIA: ", this.props.additionalCriteriaBody);
+    console.log("ADDITIONAL CRITERIA: ", this.props.additionalCriteriaObject);
 
-    if (this.props.additionalCriteriaBody) {
-      const additionalCriteriaState = this.props.additionalCriteriaBody[
+    if (this.props.additionalCriteriaObject) {
+      const additionalCriteriaObject = this.props.additionalCriteriaObject[
         this.state.additionalCriteriaNodeId
       ];
 
-      this.loadSavedSettings(additionalCriteriaState);
+      this.loadSavedSettings(additionalCriteriaObject);
 
       this.setState({
-        additionalCriteriaState,
+        additionalCriteriaObject,
       });
     }
   }
 
+  componentWillReceiveProps(nextProps) {}
+
   // handleStatusChange = (nodeId, card) => {};
   loadSavedSettings = (additionalCriteriaState) => {
     // let updatedAdditionalCriteriaState;
+    let savedCriteriaList: any[] = [];
+    let currentNode: any;
+    let globalCardCount = 0;
     for (const prop in additionalCriteriaState) {
       // console.log(`obj.${prop} = ${additionalCriteriaState[prop]}`);
       console.log(`obj.${prop} =`, additionalCriteriaState[prop]);
 
       // let globalCardCount = this.state.globalCardCount;
-      let globalCardCount = additionalCriteriaState[prop].nodeId;
+      let nodeId = additionalCriteriaState[prop].nodeId;
       let isIncluded = additionalCriteriaState[prop].card.isIncluded;
       // globalCardCount++;
       // if (filteredList.length === 1) {
@@ -64,7 +74,7 @@ class AdditionalCriteria extends Component<any, any> {
       // if (filteredList.length <= 1) {
       // payload.listItemStatus[globalCardCount] = isIncluded;
       this.state.nodeList.push({
-        id: globalCardCount,
+        id: nodeId,
         // cardCode: cardCode,
         // cardName: cardName,
         cardCode: additionalCriteriaState[prop].card.cardCode,
@@ -72,34 +82,40 @@ class AdditionalCriteria extends Component<any, any> {
         isIncluded: isIncluded,
         childData: {},
       });
+
+      currentNode = {
+        id: nodeId,
+        cardCode: additionalCriteriaState[prop].card.cardCode,
+        cardName: additionalCriteriaState[prop].card.cardName,
+        isIncluded: isIncluded,
+        render: (
+          <ListItem
+            nodeId={nodeId}
+            deleteIconHandler={this.deleteIconHandler}
+            card={{
+              cardCode: additionalCriteriaState[prop].card.cardCode,
+              cardName: additionalCriteriaState[prop].card.cardName,
+              isIncluded: isIncluded,
+            }}
+            initialGlobalState={additionalCriteriaState}
+            initialState={additionalCriteriaState[prop]}
+            handleGlobalState={this.handleAllNodesState}
+          />
+        ),
+      };
+      savedCriteriaList.push(currentNode);
+      globalCardCount++;
       // this.props.setAdditionalCriteria(payload);
       // }
-      this.setState({
-        globalCardCount: globalCardCount,
-        selectedCriteriaList: [
-          ...this.state.selectedCriteriaList,
-          {
-            id: globalCardCount,
-            cardCode: additionalCriteriaState[prop].card.cardCode,
-            cardName: additionalCriteriaState[prop].card.cardName,
-            isIncluded: isIncluded,
-            render: (
-              <ListItem
-                nodeId={globalCardCount}
-                deleteIconHandler={this.deleteIconHandler}
-                card={{
-                  cardCode: additionalCriteriaState[prop].card.cardCode,
-                  cardName: additionalCriteriaState[prop].card.cardName,
-                  isIncluded: isIncluded,
-                }}
-                initialGlobalState={additionalCriteriaState}
-                handleGlobalState={this.handleAllNodesState}
-              />
-            ),
-          },
-        ],
-      });
     }
+    this.setState({
+      globalCardCount: globalCardCount,
+      selectedCriteriaList: savedCriteriaList,
+      // [
+      //   // ...this.state.selectedCriteriaList,
+      //   savedCriteriaList,
+      // ],
+    });
   };
 
   setNodes = (cardName, cardCode, payload, filteredList) => {
@@ -138,7 +154,8 @@ class AdditionalCriteria extends Component<any, any> {
                   cardCode: cardCode,
                   isIncluded: isIncluded,
                 }}
-                initialGlobalState={this.state.additionalCriteriaState}
+                initialGlobalState={this.state.additionalCriteriaObject}
+                initialState={null}
                 handleGlobalState={this.handleAllNodesState}
               />
             ),
@@ -153,7 +170,41 @@ class AdditionalCriteria extends Component<any, any> {
       (item) => item.id !== nodeId
     );
     const nodeList = this.state.nodeList.filter((item) => item.id !== nodeId);
-    this.setState({ selectedCriteriaList, nodeList });
+
+    delete this.state.additionalCriteriaObject[nodeId];
+
+    this.setState(
+      {
+        selectedCriteriaList,
+        nodeList,
+        additionalCriteriaObject: this.state.additionalCriteriaObject,
+      },
+      () => this.setCurrentCriteriaState()
+    );
+  };
+
+  clearCurrentCriteriaState = () => {
+    let payload = {
+      additionalCriteriaObject: null,
+      additionalCriteriaBody: null,
+      populateGrid: this.props.populateGrid,
+      closeDialog: this.props.closeDialog,
+      listItemStatus: null,
+    };
+
+    const apiAdditionalCriteriaState = {
+      sequence: 0,
+      covered: {},
+      not_covered: {},
+    };
+
+    this.setState({
+      globalCardCount: 0,
+      additionalCriteriaObject: null,
+      selectedCriteriaList: [],
+      nodeList: [],
+    });
+    this.props.setAdditionalCriteria(payload);
   };
 
   handleAllNodesState = (updatedNode) => {
@@ -161,11 +212,12 @@ class AdditionalCriteria extends Component<any, any> {
     // const additionalCriteriaState = this.state.additionalCriteriaState.filter(
     //   (criteria: any) => criteria.nodeId !== nodeId
     // );
+
     // const additionalCriteriaState = this.state.additionalCriteriaState[nodeId];
 
     this.setState({
-      additionalCriteriaState: {
-        ...this.state.additionalCriteriaState,
+      additionalCriteriaObject: {
+        ...this.state.additionalCriteriaObject,
         [nodeId]: updatedNode,
       },
     });
@@ -173,7 +225,10 @@ class AdditionalCriteria extends Component<any, any> {
 
   setCurrentCriteriaState = () => {
     const { additionalCriteriaNodeId } = this.state;
+    const additionalCriteriaObject: any = this.state.additionalCriteriaObject;
+
     let payload = {
+      additionalCriteriaObject: this.props.additionalCriteriaObject,
       additionalCriteriaBody: this.props.additionalCriteriaBody,
       populateGrid: this.props.populateGrid,
       closeDialog: this.props.closeDialog,
@@ -182,13 +237,43 @@ class AdditionalCriteria extends Component<any, any> {
 
     // payload.listItemStatus[this.state.globalCardCount] = isIncluded;
 
-    payload.additionalCriteriaBody = {
-      [additionalCriteriaNodeId]: this.state.additionalCriteriaState,
+    payload.additionalCriteriaObject = {
+      [additionalCriteriaNodeId]: additionalCriteriaObject,
     };
+    console.log("API MAPPING METHOD: ", additionalCriteriaObject);
 
-    // [
-    // { 1: this.state.additionalCriteriaState },
-    // ];
+    const place_of_services: any[] = [];
+    let apiAdditionalCriteriaState: any = {};
+    for (const prop in additionalCriteriaObject) {
+      // additionalCriteriaObject.nodeId;
+      // additionalCriteriaObject.card.isIncluded;
+      // additionalCriteriaObject.posSettings;
+      // place_of_services.push();
+
+      additionalCriteriaObject[prop].posSettings.forEach((s) => {
+        if (s.isChecked) {
+          place_of_services.push(s.id_place_of_service_type);
+        }
+      });
+      apiAdditionalCriteriaState = {
+        sequence: additionalCriteriaNodeId,
+        covered: additionalCriteriaObject[prop].card.isIncluded
+          ? {
+              place_of_services: place_of_services,
+            }
+          : {},
+        not_covered: additionalCriteriaObject[prop].card.isIncluded
+          ? {}
+          : {
+              place_of_services: place_of_services,
+            },
+      };
+    }
+    payload.additionalCriteriaBody = apiAdditionalCriteriaState;
+    // id_place_of_service_type: 1
+    // isChecked: true
+    // place_of_service_type_code: "01"
+    // place_of_service_type_name: "Community/Retail Pharmacy services"
     this.props.setAdditionalCriteria(payload);
   };
 
@@ -200,6 +285,7 @@ class AdditionalCriteria extends Component<any, any> {
     let isFound = false;
     let filteredList = Array();
     let payload = {
+      additionalCriteriaObject: this.props.additionalCriteriaObject,
       additionalCriteriaBody: this.props.additionalCriteriaBody,
       populateGrid: this.props.populateGrid,
       closeDialog: this.props.closeDialog,
@@ -226,6 +312,7 @@ class AdditionalCriteria extends Component<any, any> {
                     // isIncluded: isIncluded,
                   }}
                   deleteIconHandler={this.deleteIconHandler}
+                  initialState={null}
                 />
               ),
             },
@@ -249,6 +336,7 @@ class AdditionalCriteria extends Component<any, any> {
                     // isIncluded: isIncluded,
                   }}
                   deleteIconHandler={this.deleteIconHandler}
+                  initialState={null}
                 />
               ),
             },
@@ -272,6 +360,7 @@ class AdditionalCriteria extends Component<any, any> {
                     // isIncluded: isIncluded,
                   }}
                   deleteIconHandler={this.deleteIconHandler}
+                  initialState={null}
                 />
               ),
             },
@@ -295,6 +384,7 @@ class AdditionalCriteria extends Component<any, any> {
                     // isIncluded: isIncluded,
                   }}
                   deleteIconHandler={this.deleteIconHandler}
+                  initialState={null}
                 />
               ),
             },
@@ -318,6 +408,7 @@ class AdditionalCriteria extends Component<any, any> {
                     // isIncluded: isIncluded,
                   }}
                   deleteIconHandler={this.deleteIconHandler}
+                  initialState={null}
                 />
               ),
             },
@@ -350,6 +441,7 @@ class AdditionalCriteria extends Component<any, any> {
                     cardCode: cardCode,
                     // isIncluded: isIncluded,
                   }}
+                  initialState={null}
                 />
               ),
             },
@@ -373,6 +465,7 @@ class AdditionalCriteria extends Component<any, any> {
                     // isIncluded: isIncluded,
                   }}
                   deleteIconHandler={this.deleteIconHandler}
+                  initialState={null}
                 />
               ),
             },
@@ -431,7 +524,10 @@ class AdditionalCriteria extends Component<any, any> {
                 )}
               </div>
               <div className="__root-additional-criteria-child-accordion-section-content-right-bottom">
-                <Button label="Clear" />
+                <Button
+                  label="Clear"
+                  onClick={this.clearCurrentCriteriaState}
+                />
                 <Button label="Save" onClick={this.setCurrentCriteriaState} />
               </div>
             </div>
@@ -455,6 +551,8 @@ const mapStateToProps = (state) => {
   return {
     // additional criteria state
 
+    additionalCriteriaObject:
+      state?.additionalCriteria?.additionalCriteriaObject,
     additionalCriteriaBody: state?.additionalCriteria?.additionalCriteriaBody,
     populateGrid: state?.additionalCriteria?.populateGrid,
     closeDialog: state?.additionalCriteria?.closeDialog,
