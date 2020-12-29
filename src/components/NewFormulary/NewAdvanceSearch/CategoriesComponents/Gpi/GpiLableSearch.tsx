@@ -372,6 +372,9 @@ class GpiLableSearch extends Component<Props, State> {
         }
       }))
     }
+    else{
+      this.setState({searchValue: ""});
+    }
 
   };
 
