@@ -149,6 +149,7 @@ function NewGroup(props: any) {
         ...formData,
         ...props.StGDData
       });
+      setDrug_list_ids(props.StGDData.drug_list_ids)
     }
     if(!props.editMode){
       setEditable(false)
@@ -446,7 +447,7 @@ function NewGroup(props: any) {
                       <Grid item xs={6}>
                       <label className="st-label">List <span className="astrict">*</span></label>
                       <Tags options={drug_list} getAutoCompleteChange={getAutoCompleteChangeHandler}
-                       autoSelected={formData.drug_list_ids}/>
+                       autoSelected={drug_list_ids}/>
                       </Grid>
                     </Fragment>
                 <div className="setting-1 mb-20">

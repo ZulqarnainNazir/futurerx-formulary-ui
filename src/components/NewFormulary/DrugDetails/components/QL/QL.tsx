@@ -29,6 +29,7 @@ import {
 import * as constants from "../../../../../api/http-commons";
 import { QlColumns } from "../../../../../utils/grid/columns";
 import showMessage from "../../../Utils/Toast"; //"../../../Utils/Toast";
+import { ToastContainer } from "react-toastify";
 import AdvanceSearchContainer from "../../../NewAdvanceSearch/AdvanceSearchContainer";
 import "./components/common.scss";
 
@@ -417,7 +418,7 @@ class Tier extends React.Component<any, tabsState> {
       drugGridData: gridData,
       tierGridContainer: true,
     });
-    showMessage("Failure", "error");
+    // showMessage("Failure", "error");
   }
 
   handleOnChange = (e) => {
@@ -563,6 +564,7 @@ class Tier extends React.Component<any, tabsState> {
           this.state.drugGridData = [];
           // this.populateGridData();
           // console.log("[]");
+          this.setState({ quantityAndFillLimitObject: {} });
           this.openTierGridContainer();
 
           this.props
@@ -593,15 +595,18 @@ class Tier extends React.Component<any, tabsState> {
       ) {
         this.openTierGridContainer();
       } else {
-        showMessage("please fill required field", "error");
+        showMessage("Please fill required field", "error");
       }
     } else {
-      this.openTierGridContainer();
+      if (this.state.selectedCriteria.length == 0) {
+        showMessage("Select Crieria to Remove Drugs", "error");
+      } else {
+        this.openTierGridContainer();
+      }
     }
   };
 
   UNSAFE_componentWillReceiveProps(nextProps) {
-    this.setState(nextProps);
     if (nextProps.switchState) {
       this.openTierGridContainer();
       this.setState({
@@ -610,6 +615,7 @@ class Tier extends React.Component<any, tabsState> {
           return tab;
         }),
       });
+      this.onClickTab(0);
     } else {
       this.setState({
         tabs: [
@@ -703,20 +709,21 @@ class Tier extends React.Component<any, tabsState> {
             {this.state.tierGridContainer && (
               <div className="select-drug-from-table">
                 <div className="bordered white-bg">
-                  <div
-                    className="header space-between pr-10"
-                    style={{ display: "flex", justifyContent: "flex-end" }}
-                  >
-                    <div className="button-wrapper">
-                      <Button
-                        className="Button normal"
-                        label="Advance Search"
-                        onClick={this.advanceSearchClickHandler}
-                      />
-                      <Button label="Save" onClick={this.handleSave} />
+                  {!this.props.switchState && (
+                    <div
+                      className="header space-between pr-10"
+                      style={{ display: "flex", justifyContent: "flex-end" }}
+                    >
+                      <div className="button-wrapper">
+                        <Button
+                          className="Button normal"
+                          label="Advance Search"
+                          onClick={this.advanceSearchClickHandler}
+                        />
+                        <Button label="Save" onClick={this.handleSave} />
+                      </div>
                     </div>
-                  </div>
-
+                  )}
                   <div className="tier-grid-container">
                     <FrxDrugGridContainer
                       isPinningEnabled={false}
@@ -747,6 +754,7 @@ class Tier extends React.Component<any, tabsState> {
           </div>
           {/* {this.state.isAdvanceSearchOpen && <AdvanceSearchContainer />} */}
         </div>
+        <ToastContainer />
       </div>
     );
   }
