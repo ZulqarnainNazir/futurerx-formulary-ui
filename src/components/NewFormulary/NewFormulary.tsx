@@ -86,7 +86,7 @@ const defaultListPayload = {
 
 class Formulary extends React.Component<any, any> {
   //TODO Remove
-  snow:boolean = true;
+  snow:boolean = false;
 
   state = {
     activeTabIndex: 0,
