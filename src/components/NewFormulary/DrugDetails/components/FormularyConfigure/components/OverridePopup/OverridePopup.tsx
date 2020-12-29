@@ -97,6 +97,18 @@ class OverridePopup extends React.Component<any, any> {
                     break;
             }
         }
+        else{
+            switch (type) {
+                case 'category':
+                    this.props.onOverrideCategory(event.target.value,true);
+                    this.setState({categoryText: ""});
+                    break;
+                case 'class':
+                    this.props.onOverrideClass(event.target.value);
+                    this.setState({classText: ""});
+                    break;
+            }
+        }
     }
 
     onDropdownSearchValueChanged = (value) => {

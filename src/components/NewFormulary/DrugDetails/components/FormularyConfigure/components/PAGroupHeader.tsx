@@ -62,7 +62,7 @@ function PAGroupHeader(props: any) {
     const [panelColor, setPanelColor] = React.useState('');
     const versionListLength = versionList.length - 1;
     const [showViewAll, setShowViewAll] = React.useState(false);
-    const [effectiveDate, setEffectiveDate] = React.useState(null);
+    const [effectiveDate, setEffectiveDate] = React.useState('');
     const [selectedFormularies, updateSelectedFormularies] = React.useState([]);
     const [idField,setIdField] = React.useState('');
     const [selectedVersion, setSelectedVersion] = useState('')
@@ -120,8 +120,7 @@ function PAGroupHeader(props: any) {
       };
 
     const handleEffectiveDate = date => {
-        setEffectiveDate(date);
-        //this.setState({ alertFormData: { effective_date: date,...this.state.alertFormData } });
+        setEffectiveDate(date.format("yyyy-MM-D"));
     }
 
     useEffect(() => {
@@ -209,6 +208,8 @@ function PAGroupHeader(props: any) {
         apiDetails['pathParams'] = '/'+props.saveGdm.current_group_id;
 
         apiDetails['messageBody'] = {};
+        debugger;
+        //var str = effectiveDate.format("yyyy/MM/D");
         apiDetails['messageBody']['effective_date'] = effectiveDate;
         apiDetails['messageBody']['formulary_ids'] = selectedFormularies;
 
@@ -251,9 +252,8 @@ function PAGroupHeader(props: any) {
                 //current_group_des_id
                 apiDetails['pathParams'] = '/'+props.saveGdm.current_group_id;
                 //props.getPaGrouptDescription(apiDetails);
-        
                 props.getPaTypes(props.saveGdm.formulary_id)
-
+                setOpen(false);
             });
         
     }
@@ -266,8 +266,8 @@ function PAGroupHeader(props: any) {
             let apiDetails= {};
             apiDetails["lob_type"] = props.formulary_lob_id;
             apiDetails['pathParams'] = '/'+props.client_id;
-
             props.getPaGrouptDescriptions(apiDetails);
+            setOpen(false);
         });
         
 
@@ -299,6 +299,7 @@ function PAGroupHeader(props: any) {
                // props.getPaGrouptDescription(apiDetails);
         
                 props.getPaTypes(props.saveGdm.formulary_id)
+                setOpen(false);
             });
         
         
@@ -316,15 +317,25 @@ function PAGroupHeader(props: any) {
     
             apiDetails['pathParams'] = '/'+props.saveGdm.current_group_id;
             props.getPaGrouptDescriptionVersions(apiDetails).then(json=>{
-                console.log(json);
-                setVersion(json.payload.data)
-                let v =props.version;
+                const response = json.payload.data
+                const verLength = Object.keys(response).length;
+                const isEditable = response[verLength - 1].is_setup_complete;
+                const latestVerion = response[verLength - 1].id_pa_group_description;
+                const value = response[verLength - 1].value;
+                setPanelColor(isEditable ? '-green' : '')
+                setVersion(response)
+                setPlaceHolder(value)
+
+                let apiDetails= {};
+                apiDetails["lob_type"] = props.formulary_lob_id;
+                apiDetails['pathParams'] = '/'+latestVerion;
+                props.getPaGrouptDescription(apiDetails);
+                props.getPaTypes(props.saveGdm.formulary_id)
+                setOpen(false);
             });
-    
-            apiDetails['pathParams'] = '/'+props.saveGdm.current_group_id;
-            props.getPaGrouptDescription(apiDetails);
-    
-            props.getPaTypes(props.saveGdm.formulary_id)
+            // apiDetails['pathParams'] = '/'+props.saveGdm.current_group_id;
+            // props.getPaGrouptDescription(apiDetails);
+            //props.getPaTypes(props.saveGdm.formulary_id)
 
         });
         
@@ -451,8 +462,8 @@ function PAGroupHeader(props: any) {
                                 <Grid xs={6}>
                                     <div className="label">Effective Date<span className="astrict">*</span></div>
                                     <div className="calender">
-                                        <DatePicker onChange={handleEffectiveDate} value={effectiveDate} 
-                                        placeholder="Effective Date" name="effective_date" />
+                                        <DatePicker onChange={handleEffectiveDate}  
+                                        placeholder="MM/DD/YYYY" format="MM/DD/YYYY"  name="effective_date" />
                                     </div>
                                 </Grid>
             </Grid>
