@@ -156,6 +156,7 @@ function NewGroup(props: any) {
 
   useEffect(() => {
     updateFormData(initialFormData)
+    setDrug_list_ids([])
     if (Object.keys(props.StGDData).length > 0) {
       if (!changeEvent) {
         const verLength = Object.keys(props.version).length;
@@ -178,7 +179,7 @@ function NewGroup(props: any) {
     props.getDrugLists(props.client_id).then((json) => {
       //debugger;
       let tmp_list:any = [];
-      json.payload.data.map(obj => {
+      json?.payload?.data.map(obj => {
           let tmp_obj ={
               key: obj.key, value: obj.value, text: obj.text,
               name: obj.text,
