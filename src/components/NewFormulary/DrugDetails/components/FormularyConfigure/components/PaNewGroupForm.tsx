@@ -215,7 +215,6 @@ function mapStateToProps(state) {
     PaGDData: state.paReducer.description,
     version: state.paVersion.paVersion,
     additionalCriteriaObject: state?.additionalCriteria?.additionalCriteriaBody,
-
   };
 }
 
@@ -236,12 +235,10 @@ function NewGroup(props: any) {
     false
   );
 
-  const [additionalCriteria, setAdditionalCriteria] = useState(
-    null
-  );
+  const [additionalCriteria, setAdditionalCriteria] = useState(null);
 
   const handleChange = (e) => {
-    debugger;
+    // debugger;
     let tmp_value = e.target.value;
     if (e.target.value == "true") {
       tmp_value = true;
@@ -317,17 +314,16 @@ function NewGroup(props: any) {
         return;
       }
     }
-    debugger;
+    // debugger;
     //requestData['keyVals'] = [{ key: 'index', value: 0 }, { key: 'limit', value: 10 }, { key: 'entity_id', value: 1262 }];
     formData["is_validation_required"] = is_validation;
     requestData["lob_type"] = props.formulary_lob_id;
     requestData["messageBody"] = {};
 
-    if (additionalCriteria!=null){
+    if (additionalCriteria != null) {
       requestData["messageBody"]["um_criteria"] = additionalCriteria;
     }
-    
-    
+
     if (props.formulary_lob_id == 1) {
       requestData["messageBody"]["is_validation_required"] =
         formData["is_validation_required"];
@@ -440,8 +436,10 @@ function NewGroup(props: any) {
               "/" + props?.client_id + "?entity_id=" + props?.formulary_id;
 
             props.getPaGrouptDescriptions(apiDetails);
-          } else {
-            showMessage("Failure", "error");
+          }else if(json?.payload?.status && json?.payload?.status!=200){
+            showMessage(json.payload.data.message,'error')
+          }else{
+            showMessage('Failure', 'error');
           }
         });
       } else {
@@ -455,8 +453,10 @@ function NewGroup(props: any) {
               "/" + props?.client_id + "?entity_id=" + props?.formulary_id;
 
             props.getPaGrouptDescriptions(apiDetails);
-          } else {
-            showMessage("Failure", "error");
+          }else if(json?.payload?.status && json?.payload?.status!=200){
+            showMessage(json.payload.data.message,'error')
+          }else{
+            showMessage('Failure', 'error');
           }
         });
       }
@@ -498,16 +498,17 @@ function NewGroup(props: any) {
   const openAdditionalCriteria = () => toggleAdditionalCriteriaOpen(true);
   const closeAddiionalCriteria = () => toggleAdditionalCriteriaOpen(false);
   useEffect(() => {
-    debugger;
+    // debugger;
     console.log(props.additionalCriteriaObject);
     setAdditionalCriteria(props.additionalCriteriaObject);
-  },[props.additionalCriteriaObject]);
+  }, [props.additionalCriteriaObject]);
 
   useEffect(() => {
     //debugger;
     //setPanelColor(props.editable ? '-green' : '')
     //setLatestId(props.latestVerion)
     updateFormData(initialFormData);
+    setDrug_list_ids([])
     //setPlaceHolder(props.versionTitle)
     if (Object.keys(props.PaGDData).length > 0) {
       if (!changeEvent) {
@@ -521,7 +522,7 @@ function NewGroup(props: any) {
         ...formData,
         ...props.PaGDData,
       });
-      setDrug_list_ids(props.PaGDData.drug_list_ids)
+      setDrug_list_ids(props.PaGDData.drug_list_ids);
     }
     if (!props.editMode) {
       setEditable(false);
@@ -937,26 +938,26 @@ function NewGroup(props: any) {
                 </span>
                 <div className="marketing-material radio-group">
                   <RadioGroup
-                aria-label="marketing-material-radio1"
-                className="gdp-radio"
-                name="is_additional_criteria_defined"
-                onChange={handleChange}
-                value={formData.is_additional_criteria_defined}
-              >
-                <FormControlLabel
-                  value={true}
-                  control={<Radio />}
-                  label="Yes"
-                  disabled={props.editable}
-                  onClick={openAdditionalCriteria}
-                />
-                <FormControlLabel
-                  value={false}
-                  control={<Radio />}
-                  label="No"
-                  disabled={props.editable}
-                />
-              </RadioGroup>
+                    aria-label="marketing-material-radio1"
+                    className="gdp-radio"
+                    name="is_additional_criteria_defined"
+                    onChange={handleChange}
+                    value={formData.is_additional_criteria_defined}
+                  >
+                    <FormControlLabel
+                      value={true}
+                      control={<Radio />}
+                      label="Yes"
+                      disabled={props.editable}
+                      onClick={openAdditionalCriteria}
+                    />
+                    <FormControlLabel
+                      value={false}
+                      control={<Radio />}
+                      label="No"
+                      disabled={props.editable}
+                    />
+                  </RadioGroup>
                 </div>
                 {isAdditionalCriteriaOpen && props.formulary_lob_id == 4 ? (
                   <AdvanceSearchContainer
