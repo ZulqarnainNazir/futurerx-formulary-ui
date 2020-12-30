@@ -267,12 +267,14 @@ function NewGroup(props: any) {
       let id_st_group_description = formData["id_st_group_description"]?formData["id_st_group_description"]:0;
       requestData['pathParams'] = '/'+id_st_group_description+'/'+props?.formulary_id + '?entity_id=0';
       props.editGDM(requestData).then(json=>{
-        if (json.payload && json.payload.success.data.code === '200') {
+        if (json?.payload && json?.payload?.success?.data?.code === '200') {
           showMessage('Saved Successfully', 'success');
           let apiDetails= {};
           apiDetails["lob_type"] = props.formulary_lob_id;
           apiDetails['pathParams'] = '/'+props?.client_id + '?entity_id='+props?.formulary_id;
           props.getStGrouptDescriptions(apiDetails);
+        }else if(json?.payload?.status && json?.payload?.status!=200){
+          showMessage(json.payload.data.message,'error')
         }else{
           showMessage('Failure', 'error');
         }
@@ -287,12 +289,14 @@ function NewGroup(props: any) {
       requestData['apiPart'] = 'api/1/mcr-st-group-description/'+props.client_id;
       requestData['pathParams'] = '/'+props?.formulary_id + '?entity_id=0';
       props.saveGDM(requestData).then(json=>{
-        if (json.payload && json.payload.success.data.code === '200') {
+        if (json?.payload && json?.payload?.success?.data?.code === '200') {
           showMessage('Saved Successfully', 'success');
           let apiDetails= {};
           apiDetails["lob_type"] = props.formulary_lob_id;
           apiDetails['pathParams'] = '/'+props?.client_id + '?entity_id='+props?.formulary_id;
           props.getStGrouptDescriptions(apiDetails);
+        }else if(json?.payload?.status && json?.payload?.status!=200){
+          showMessage(json.payload.data.message,'error')
         }else{
           showMessage('Failure', 'error');
         }

@@ -142,7 +142,12 @@ function GroupHeader(props: any) {
             const latestVerion = verLength > 0 ? props.version[Number(selectedVersion.split(" ")[1]) - 1]?.id_st_group_description : 0;
             setPanelColor(isEditable ? '-green' : '')
             setPlaceHolder(selectedVersion)
-            props.getStGrouptDescription(latestVerion)
+            
+            let apiDetails= {};
+            apiDetails["lob_type"] = props.formulary_lob_id;
+            apiDetails['pathParams'] = '/'+latestVerion;
+            props.getStGrouptDescription(apiDetails);
+            //props.getStGrouptDescription(latestVerion)
             const latestVerionNo = verLength > 0 ? selectedVersion.split(" ")[1] : '';
             setSelectedVersion(latestVerionNo);
             setSelectedVersionId(latestVerion);

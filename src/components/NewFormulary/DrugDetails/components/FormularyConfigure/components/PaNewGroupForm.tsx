@@ -440,8 +440,10 @@ function NewGroup(props: any) {
               "/" + props?.client_id + "?entity_id=" + props?.formulary_id;
 
             props.getPaGrouptDescriptions(apiDetails);
-          } else {
-            showMessage("Failure", "error");
+          }else if(json?.payload?.status && json?.payload?.status!=200){
+            showMessage(json.payload.data.message,'error')
+          }else{
+            showMessage('Failure', 'error');
           }
         });
       } else {
@@ -455,8 +457,10 @@ function NewGroup(props: any) {
               "/" + props?.client_id + "?entity_id=" + props?.formulary_id;
 
             props.getPaGrouptDescriptions(apiDetails);
-          } else {
-            showMessage("Failure", "error");
+          }else if(json?.payload?.status && json?.payload?.status!=200){
+            showMessage(json.payload.data.message,'error')
+          }else{
+            showMessage('Failure', 'error');
           }
         });
       }
