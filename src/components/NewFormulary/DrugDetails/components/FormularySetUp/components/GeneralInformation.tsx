@@ -492,21 +492,6 @@ class GeneralInformation extends React.Component<any, GeneralInformationState> {
                 />
                 <div className="marketing-material radio-group">
                   {this.getClassificationRadio()}
-                  {/* <RadioGroup 
-                  className="radio-group-custom" 
-                  aria-label={'classification_system'} 
-                  name="classification_system"
-                  value={parseInt(this.props.generalInfo.classification_system)} 
-                  onChange={(e) => this.props.onRadioChange(e,'generalInformation')}>
-                    {this.props.general_options.classification_systems.map(el => {
-                      return (
-                        <FormControlLabel 
-                          value={el.id_classification_system} 
-                          control={<Radio />} 
-                          label={el.classification_system} />
-                      )
-                    })}
-                  </RadioGroup> */}
                 </div>
               </div>
             </Grid>

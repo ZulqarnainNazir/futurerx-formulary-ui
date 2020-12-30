@@ -163,7 +163,7 @@ class ConnctedVersionHistoryPopup extends React.Component<
         formularyBaseId: this.props.id_base_formulary,
         // formularyBaseId: 2581, (this id has some data to display)
         index: 0,
-        limit: 0
+        limit: 100
       };
       this.props.fetchFormularyVersionHistory(data);
     }

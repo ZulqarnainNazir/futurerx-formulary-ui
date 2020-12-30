@@ -18,6 +18,7 @@ export async function getformularyVersionHistory({
   index: number;
   limit: number;
 }): Promise<FormularyVersionHistoryResult> {
+  // NOTE: In dev config the end point is ${BASE_URL1}api/1/formulary-versions. But the version dropdown uses versions-list?
   let url = `${BASE_URL1}api/1/formulary-versions/${formularyBaseId}?index=${index}&limit=${limit}`;
 
   try {
