@@ -141,8 +141,10 @@ export const deleteGroupDescription = createAsyncThunk(
       dispatch(getPending());
       const response = await deleteStGroup(arg);
       dispatch(getSuccess(response));
+      return response;
     } catch (err) {
       dispatch(getFailed(err));
+      return err;
     }
   }
 );
@@ -154,8 +156,10 @@ export const cloneGroupDescription = createAsyncThunk(
       dispatch(getPending());
       const response = await cloneStGroup(arg);
       dispatch(getSuccess(response));
+      return response;
     } catch (err) {
       dispatch(getFailed(err));
+      return err;
     }
   }
 );
@@ -167,8 +171,10 @@ export const archiveGroupDescription = createAsyncThunk(
       dispatch(getPending());
       const response = await archiveStGroup(arg);
       dispatch(getSuccess(response));
+      return response;
     } catch (err) {
       dispatch(getFailed(err));
+      return err;
     }
   }
 );
@@ -180,8 +186,10 @@ export const newVersionGroupDescription = createAsyncThunk(
       dispatch(getPending());
       const response = await newVersionStGroup(arg);
       dispatch(getSuccess(response));
+      return response;
     } catch (err) {
       dispatch(getFailed(err));
+      return err;
     }
   }
 );

@@ -508,6 +508,7 @@ function NewGroup(props: any) {
     //setPanelColor(props.editable ? '-green' : '')
     //setLatestId(props.latestVerion)
     updateFormData(initialFormData);
+    setDrug_list_ids([])
     //setPlaceHolder(props.versionTitle)
     if (Object.keys(props.PaGDData).length > 0) {
       if (!changeEvent) {
