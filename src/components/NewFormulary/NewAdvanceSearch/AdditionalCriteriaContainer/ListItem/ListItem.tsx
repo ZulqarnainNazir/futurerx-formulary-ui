@@ -155,6 +155,14 @@ class ListItem extends Component<any, any> {
           type: isIncluded ? COVERED : NOT_COVERED,
           covered: isIncluded,
         };
+
+        // if (
+        //   initialState !== null &&
+        //   payload !== null &&
+        //   initialState.nodeId === nodeId &&
+        //   cardCode === 6
+        // ) {
+        // }
         this.setState({
           glSettingsStatus,
         });
@@ -210,28 +218,15 @@ class ListItem extends Component<any, any> {
           payload["covered"]["place_of_services"] &&
           payload["covered"]["place_of_services"].length > 0
         ) {
-          // const place_of_services: number[] = [1, 2, 3, 5, 8];
-          const place_of_services: number[] = [
-            ...payload["covered"]["place_of_services"],
-          ];
-          console.log("array: ", place_of_services);
+          const place_of_services: number[] =
+            payload["covered"]["place_of_services"];
           posSettings.forEach((s) => {
-            console.log(
-              `payload => ${s.id_place_of_service_type}: ${place_of_services}`,
-              place_of_services.includes(s.id_place_of_service_type),
-              typeof s.id_place_of_service_type,
-              typeof place_of_services[0]
-            );
-            if (
-              place_of_services.includes(Number(s.id_place_of_service_type))
-            ) {
+            if (place_of_services.includes(s.id_place_of_service_type)) {
               s["isChecked"] = true;
             } else {
               s["isChecked"] = false;
             }
           });
-          console.log("payload: ", payload);
-          console.log("payload: ", posSettings);
         }
         if (
           payload &&
@@ -239,13 +234,10 @@ class ListItem extends Component<any, any> {
           payload["not_covered"]["place_of_services"] &&
           payload["not_covered"]["place_of_services"].length > 0
         ) {
-          const place_of_services: number[] = [
-            ...payload["not_covered"]["place_of_services"],
-          ];
+          const place_of_services: number[] =
+            payload["not_covered"]["place_of_services"];
           posSettings.forEach((s) => {
-            if (
-              place_of_services.includes(Number(s.id_place_of_service_type))
-            ) {
+            if (place_of_services.includes(s.id_place_of_service_type)) {
               s["isChecked"] = true;
             } else {
               s["isChecked"] = false;
@@ -282,7 +274,40 @@ class ListItem extends Component<any, any> {
         initialState.nodeId === nodeId &&
         cardCode === 7
       ) {
-        prSettings = JSON.parse(JSON.stringify(initialState.prSettings));
+        // prSettings = JSON.parse(JSON.stringify(initialState.prSettings));
+
+        if (
+          payload &&
+          payload["covered"] &&
+          payload["covered"]["patient_residences"] &&
+          payload["covered"]["patient_residences"].length > 0
+        ) {
+          const patient_residences: number[] =
+            payload["covered"]["patient_residences"];
+          prSettings.forEach((s) => {
+            if (patient_residences.includes(s.id_patient_residence_type)) {
+              s["isChecked"] = true;
+            } else {
+              s["isChecked"] = false;
+            }
+          });
+        }
+        if (
+          payload &&
+          payload["not_covered"] &&
+          payload["not_covered"]["patient_residences"] &&
+          payload["not_covered"]["patient_residences"].length > 0
+        ) {
+          const patient_residences: number[] =
+            payload["not_covered"]["patient_residences"];
+          prSettings.forEach((s) => {
+            if (patient_residences.includes(s.id_patient_residence_type)) {
+              s["isChecked"] = true;
+            } else {
+              s["isChecked"] = false;
+            }
+          });
+        }
       } else {
         prSettings.forEach((s) => {
           s["isChecked"] = false;

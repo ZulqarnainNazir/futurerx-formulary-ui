@@ -124,6 +124,7 @@ class AgeLimitSettings extends React.Component<any, any> {
                       placeholder="inclusive of"
                       options={["inclusive of", "Greater Than"]}
                       onChange={(e) => this.props.onMinChangeHandler(e, s.index)}
+                      disabled={this.props.isDisabled}
                     />
                   </div>
 
@@ -132,6 +133,7 @@ class AgeLimitSettings extends React.Component<any, any> {
                       type="text"
                       className="setup-input-fields"
                       onChange={(e) => this.props.handleMinChange(e, s.index)}
+                      disabled={this.props.isDisabled}
                     />
                   </div>
                 </div>
@@ -145,6 +147,7 @@ class AgeLimitSettings extends React.Component<any, any> {
                       placeholder="inclusive of"
                       options={["inclusive of", "Less Than"]}
                       onChange={(e) => this.props.onMaxChangeHandler(e, s.index)}
+                      disabled={this.props.isDisabled}
                     />
                   </div>
 
@@ -153,6 +156,7 @@ class AgeLimitSettings extends React.Component<any, any> {
                       type="text"
                       className="setup-input-fields"
                       onChange={(e) => this.props.handleMaxChange(e, s.index)}
+                      disabled={this.props.isDisabled}
                     />
                   </div>
                 </div>
@@ -175,7 +179,7 @@ class AgeLimitSettings extends React.Component<any, any> {
               <Button
                 label="Apply"
                 onClick={() => this.props.showGrid()}
-                disabled={!this.props.showApply}
+                disabled={this.props.isDisabled}
               />
             </Box>
           </div>

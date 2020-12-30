@@ -1,5 +1,6 @@
 import React from "react";
 import { connect } from "react-redux";
+import { filter } from "lodash";
 import PanelHeader from "../../../../shared/Frx-components/panel-header/PanelHeader";
 import PanelGrid from "../../../../shared/Frx-components/panel-grid/PanelGrid";
 import CustomizedSwitches from "../FormularyConfigure/components/CustomizedSwitches";
@@ -17,6 +18,8 @@ import IcdLimitSettings from "./IcdLimitSettings";
 import FrxDrugGridContainer from "../../../../shared/FrxGrid/FrxDrugGridContainer";
 import ICDRemove from "./ICDRemove";
 import showMessage from "../../../Utils/Toast";
+import AdvanceSearchContainer from "../../../NewAdvanceSearch/AdvanceSearchContainer";
+import { setAdvancedSearch } from "../../../../../redux/slices/formulary/advancedSearch/advancedSearchSlice";
 
 function mapDispatchToProps(dispatch) {
   return {
@@ -26,13 +29,18 @@ function mapDispatchToProps(dispatch) {
     postICDCriteriaList: (a) => dispatch(postICDCriteriaList(a)),
     postRemoveICDDrug: (a) => dispatch(postRemoveICDDrug(a)),
     postReplaceICDDrug: (a) => dispatch(postReplaceICDDrug(a)),
+    setAdvancedSearch: (a) => dispatch(setAdvancedSearch(a)),
   };
 }
 
 const mapStateToProps = (state) => {
   return {
+    configureSwitch: state.switchReducer.configureSwitch,
     formulary_id: state?.application?.formulary_id,
     formulary_lob_id: state?.application?.formulary_lob_id,
+    advancedSearchBody: state?.advancedSearch?.advancedSearchBody,
+    populateGrid: state?.advancedSearch?.populateGrid,
+    closeDialog: state?.advancedSearch?.closeDialog,
   };
 };
 
@@ -63,6 +71,24 @@ interface icdState {
   icdRemoveCheckedList: any[],
   icdRemoveSettingsStatus: any,
   showGrid: boolean,
+};
+
+const columnFilterMapping = {
+  icdLimit: "is_icdl",
+  coveredIcd: "covered_icds",
+  icdLookBack: "lookback_days",
+  not_covered_icds: "not_covered_icds",
+  tier_value: "tier_value",
+  labelName: "drug_label_name",
+  ddid: "drug_descriptor_identifier",
+  gpi: "generic_product_identifier",
+  trademark: "trademark_code",
+  databaseCategory: "database_category",
+  databaseClass: "database_class",
+  createdBy: "created_by",
+  createdOn: "created_date",
+  modifiedBy: "modified_by",
+  modifiedOn: "modified_date"
 };
 
 class DrugDetailICD extends React.Component<any, any> {
@@ -174,7 +200,7 @@ class DrugDetailICD extends React.Component<any, any> {
       if (this.state.activeTabIndex === 0) {
         // Replace Drug method call
         this.rpSavePayload.selected_drug_ids = this.state.selectedDrugs;
-        this.rpSavePayload.icd_limits.lookback_days = this.state.lookBackDays;
+        this.rpSavePayload.icd_limits.lookback_days = +this.state.lookBackDays;
         this.rpSavePayload.icd_limits.icds = this.state.selectedList;
         this.rpSavePayload.breadcrumb_code_value = "ICDL";
         this.rpSavePayload.is_covered = this.state.icdSettingsStatus.covered;
@@ -187,7 +213,7 @@ class DrugDetailICD extends React.Component<any, any> {
           if (json.payload && json.payload.code && json.payload.code === "200") {
             showMessage("Success", "success");
             this.getICDSummary();
-            this.getICDDrugsList();
+            // this.getICDDrugsList();
           } else {
             showMessage("Failure", "error");
           }
@@ -212,7 +238,7 @@ class DrugDetailICD extends React.Component<any, any> {
           if (json.payload && json.payload.code && json.payload.code === "200") {
             showMessage("Success", "success");
             this.getICDSummary();
-            this.getICDDrugsList();
+            // this.getICDDrugsList();
           } else {
             console.log("------REMOVE FAILED-------")
             showMessage("Failure", "error");
@@ -286,11 +312,12 @@ class DrugDetailICD extends React.Component<any, any> {
 
       this.setState({
         panelGridValue1: rows,
+        showGrid: false,
       });
     });
   }
 
-  getICDDrugsList = ({index = 0, limit = 10, listPayload = {}} = {}) => {
+  getICDDrugsList = ({index = 0, limit = 10, listPayload = {}, searchBody = {}} = {}) => {
     let apiDetails = {};
     apiDetails['apiPart'] = icdConstants.GET_ICD_DRUGS;
     apiDetails['pathParams'] = this.props?.formulary_id + "/" + getLobCode(this.props.formulary_lob_id);
@@ -304,6 +331,16 @@ class DrugDetailICD extends React.Component<any, any> {
     }
     
     apiDetails['messageBody'] = listPayload;
+    
+    if (searchBody) {
+      console.log("THe Search Body = ", searchBody, " and List Payload = ", listPayload);
+      let merged = {...listPayload, ...searchBody};
+      console.log("Merged Body = ", merged);
+      apiDetails["messageBody"] = Object.assign(
+        apiDetails["messageBody"],
+        merged
+      );
+    }
 
     let listCount = 0;
     this.props.getDrugDetailsICDList(apiDetails).then((json) => {
@@ -389,8 +426,25 @@ class DrugDetailICD extends React.Component<any, any> {
       this.getICDCriteriaList(true);
     }
 
+    if(this.props.configureSwitch) {
+      this.getICDDrugsList();
+    }
+
+    // let payload = { advancedSearchBody: {}, populateGrid: false, closeDialog: false, listItemStatus: {} };
+    // this.props.setAdvancedSearch(payload);
+    this.clearSearch();
+
     this.setState({ tabs, activeTabIndex, showGrid: false });
   };
+
+  clearSearch = () => {
+    let payload = { advancedSearchBody: {}, populateGrid: false, closeDialog: false, listItemStatus: {} };
+    this.props.setAdvancedSearch(payload);
+  }
+
+  componentWillUnmount() {
+    this.clearSearch();
+  }
 
   onPageSize = (pageSize) => {
     this.listPayload.limit = pageSize
@@ -405,6 +459,7 @@ class DrugDetailICD extends React.Component<any, any> {
   onClearFilterHandler = () => {
     this.listPayload.index = 0;
     this.listPayload.limit = 10;
+    this.listPayload.filter = [];
     this.getICDDrugsList({ index: defaultListPayload.index, limit: defaultListPayload.limit, listPayload: this.listPayload });
   }
 
@@ -465,25 +520,96 @@ class DrugDetailICD extends React.Component<any, any> {
     })
   }
 
+  // onApplyFilterHandler = (filters) => {
+  //   console.log("------The FIlters = ", filters)
+  //   const fetchedProps = Object.keys(filters)[0];
+  //   console.log("The Fetched Props = ", fetchedProps);
+  //   const fetchedOperator = filters[fetchedProps][0].condition === 'is like' ? 'is_like' : 
+  //   filters[fetchedProps][0].condition === 'is not' ? 'is_not' : 
+  //   filters[fetchedProps][0].condition === 'is not like' ? 'is_not_like' : 
+  //   filters[fetchedProps][0].condition === 'does not exist' ? 'does_not_exist' : 
+  //   filters[fetchedProps][0].condition;
+  //   const fetchedValues = filters[fetchedProps][0].value !== '' ? [filters[fetchedProps][0].value.toString()] : [];
+  //   const newFilters = [{ prop: fetchedProps, operator: fetchedOperator,values: fetchedValues}];
+  //   console.log("------THe New Filters = ", newFilters);
+  //   this.listPayload.filter = newFilters;
+  //   // this.props.fetchFormularies(this.listPayload);
+  //   console.log("THe List Payload inside APPLy filter Handler = ", this.listPayload);
+  //   this.getICDDrugsList({ index: this.listPayload.index, limit: this.listPayload.limit, listPayload: this.listPayload });
+  // }
+  
   onApplyFilterHandler = (filters) => {
-    console.log("------The FIlters = ", filters)
-    const fetchedProps = Object.keys(filters)[0];
-    console.log("The Fetched Props = ", fetchedProps);
-    const fetchedOperator = filters[fetchedProps][0].condition === 'is like' ? 'is_like' : 
-    filters[fetchedProps][0].condition === 'is not' ? 'is_not' : 
-    filters[fetchedProps][0].condition === 'is not like' ? 'is_not_like' : 
-    filters[fetchedProps][0].condition === 'does not exist' ? 'does_not_exist' : 
-    filters[fetchedProps][0].condition;
-    const fetchedValues = filters[fetchedProps][0].value !== '' ? [filters[fetchedProps][0].value.toString()] : [];
-    const newFilters = [{ prop: fetchedProps, operator: fetchedOperator,values: fetchedValues}];
-    console.log("------THe New Filters = ", newFilters);
-    this.listPayload.filter = newFilters;
-    // this.props.fetchFormularies(this.listPayload);
-    console.log("THe List Payload inside APPLy filter Handler = ", this.listPayload);
-    this.getICDDrugsList({ index: this.listPayload.index, limit: this.listPayload.limit, listPayload: this.listPayload });
+    this.listPayload.filter = Array();
+    if (filters && filter.length > 0) {
+      const fetchedKeys = Object.keys(filters);
+      fetchedKeys.map(fetchedProps => {
+        if (filters[fetchedProps] && columnFilterMapping[fetchedProps]) {
+          const fetchedOperator = filters[fetchedProps][0].condition === 'is like' ? 'is_like' :
+            filters[fetchedProps][0].condition === 'is not' ? 'is_not' :
+              filters[fetchedProps][0].condition === 'is not like' ? 'is_not_like' :
+                filters[fetchedProps][0].condition === 'does not exist' ? 'does_not_exist' :
+                  filters[fetchedProps][0].condition;
+          
+          let fetchedPropsValue;
+          if(filters[fetchedProps][0].value !== '') {
+            const fetchedPropsValueNum = Number(filters[fetchedProps][0].value.toString());
+            fetchedPropsValue = isNaN(fetchedPropsValueNum) ? filters[fetchedProps][0].value.toString() : fetchedPropsValueNum
+          }
+          const fetchedValues = filters[fetchedProps][0].value !== '' ? [fetchedPropsValue] : [];
+          this.listPayload.filter.push({ prop: columnFilterMapping[fetchedProps], operator: fetchedOperator, values: fetchedValues });
+        }
+      });
+      this.getICDDrugsList({ listPayload: this.listPayload });
+    }
+  }
+
+  componentWillReceiveProps(nextProps) {
+    console.log("-----Component Will Receive Props------", nextProps);
+    // if(nextProps.configureSwitch) {
+    //   this.getICDDrugsList();
+    // }
+
+    if (nextProps.configureSwitch){
+      this.setState({tabs:[
+        { id: 1, text: "Replace", disabled: true },
+        { id: 2, text: "Append", disabled: true },
+        { id: 3, text: "Remove", disabled: true },
+      ], activeTabIndex:0});
+
+      this.getICDDrugsList();
+    } else {
+      this.setState({tabs:[
+        { id: 1, text: "Replace", disabled:false },
+        { id: 2, text: "Append", disabled:true },
+        { id: 3, text: "Remove", disabled:false },
+      ]});
+    }
+
+    if (nextProps.advancedSearchBody && nextProps.populateGrid) {
+      console.log("-----Inside Advance search Body if Condition-----advancedSearchBody ", nextProps.advancedSearchBody);
+      console.log("-----Inside Advance search Body if Condition-----populateGrid ", nextProps.advancedSearchBody);
+      this.getICDDrugsList({ listPayload: this.listPayload, searchBody: nextProps.advancedSearchBody});
+      let payload = {
+        advancedSearchBody: nextProps.advancedSearchBody,
+        populateGrid: false,
+        closeDialog: nextProps.closeDialog,
+        listItemStatus: nextProps.listItemStatus,
+      };
+      if (nextProps.closeDialog) {
+        this.state.isSearchOpen = false;
+        payload["closeDialog"] = false;
+      }
+
+      console.log("---_Set Advanced Search payload = ", payload);
+      this.props.setAdvancedSearch(payload);
+    }
   }
 
   render() {
+    const searchProps = {
+      lobCode: this.props.lobCode,
+      pageType: 0,
+    };
     let dataGrid = <FrxLoader />;
     if (this.state.data) {
       dataGrid = (
@@ -548,8 +674,7 @@ class DrugDetailICD extends React.Component<any, any> {
                     tabList={this.state.tabs}
                     activeTabIndex={this.state.activeTabIndex}
                     onClickTab={this.onClickTab}
-                    disabledIndex={1}
-                    disabled
+                    disabled={this.props.configureSwitch}
                   />
                 </div>
               </div>
@@ -564,6 +689,7 @@ class DrugDetailICD extends React.Component<any, any> {
           showGridHandler={this.showGridHandler}
           icdSettingsStatus={this.state.icdSettingsStatus}
           handleLookBackDays = {this.handleLookBackDays}
+          isDisabled={this.props.configureSwitch}
         />}
         
         {this.state.activeTabIndex==2 && <ICDRemove 
@@ -583,15 +709,21 @@ class DrugDetailICD extends React.Component<any, any> {
                   label="Advance Search"
                   onClick={this.advanceSearchClickHandler}
                 />
-                <Button label="Save" onClick={this.saveClickHandler} disabled={!(this.state.selectedDrugs.length > 0)} />
+                {!this.props.configureSwitch ? <Button label="Save" onClick={this.saveClickHandler} disabled={!(this.state.selectedDrugs.length > 0)} /> : null}
               </div>
             </div>
             {dataGrid}
             {this.state.isSearchOpen ? (
-              <AdvancedSearch
-                category="Grievances"
+              // <AdvancedSearch
+              //   category="Grievances"
+              //   openPopup={this.state.isSearchOpen}
+              //   onClose={this.advanceSearchClosekHandler}
+              // />
+              <AdvanceSearchContainer
+                {...searchProps}
                 openPopup={this.state.isSearchOpen}
                 onClose={this.advanceSearchClosekHandler}
+                isAdvanceSearch={true}
               />
             ) : null}
           </div>

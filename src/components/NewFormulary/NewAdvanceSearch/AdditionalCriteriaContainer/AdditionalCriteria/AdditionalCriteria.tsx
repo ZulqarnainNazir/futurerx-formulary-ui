@@ -28,6 +28,7 @@ class AdditionalCriteria extends Component<any, any> {
     globalCardCount: 0,
 
     additionalCriteriaObject: [],
+    apiAdditionalCriteriaIndex: 0,
     apiAdditionalCriteriaState: {
       sequence: 0,
       covered: {},
@@ -43,7 +44,9 @@ class AdditionalCriteria extends Component<any, any> {
       const additionalCriteriaObject = this.props.additionalCriteriaObject[
         this.state.additionalCriteriaNodeId
       ];
-      const additionalCriteriaBody = this.props.additionalCriteriaBody;
+      const additionalCriteriaBody = this.props.additionalCriteriaBody[
+        this.state.apiAdditionalCriteriaIndex
+      ];
       this.loadSavedSettings(additionalCriteriaObject, additionalCriteriaBody);
 
       this.setState({
@@ -325,7 +328,7 @@ class AdditionalCriteria extends Component<any, any> {
             ),
             JSON.parse(
               JSON.stringify({
-                place_of_services: [place_of_services],
+                place_of_services: place_of_services,
               })
             )
           );
@@ -348,7 +351,7 @@ class AdditionalCriteria extends Component<any, any> {
             ),
             JSON.parse(
               JSON.stringify({
-                place_of_services: [place_of_services],
+                place_of_services: place_of_services,
               })
             )
           );
@@ -373,7 +376,7 @@ class AdditionalCriteria extends Component<any, any> {
               JSON.stringify(this.state.apiAdditionalCriteriaState.covered)
             ),
             JSON.parse(
-              JSON.stringify({ patient_residences: [patient_residences] })
+              JSON.stringify({ patient_residences: patient_residences })
             )
           );
           not_covered = Object.assign(
@@ -394,7 +397,7 @@ class AdditionalCriteria extends Component<any, any> {
               JSON.stringify(this.state.apiAdditionalCriteriaState.not_covered)
             ),
             JSON.parse(
-              JSON.stringify({ patient_residences: [patient_residences] })
+              JSON.stringify({ patient_residences: patient_residences })
             )
           );
           covered = Object.assign(
@@ -429,9 +432,11 @@ class AdditionalCriteria extends Component<any, any> {
   setCurrentCriteriaState = () => {
     const { additionalCriteriaNodeId } = this.state;
     const additionalCriteriaObject: any = this.state.additionalCriteriaObject;
-    let apiAdditionalCriteriaState: any = {
-      ...this.state.apiAdditionalCriteriaState,
-    };
+    let apiAdditionalCriteriaState: any = [
+      {
+        ...this.state.apiAdditionalCriteriaState,
+      },
+    ];
 
     let payload = {
       additionalCriteriaObject: this.props.additionalCriteriaObject,
