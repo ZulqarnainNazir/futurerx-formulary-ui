@@ -382,7 +382,7 @@ function GroupHeader(props: any) {
       >
         <div className="inner-container pa-new-group-form">
           <Grid container spacing={2}>
-            <Grid xs={6}>
+            <Grid xs={6} style={{ paddingLeft: "5px" }}>
               <div className="label">
                 Effective Date<span className="astrict">*</span>
               </div>
