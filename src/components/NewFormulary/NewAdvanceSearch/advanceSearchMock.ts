@@ -39,34 +39,42 @@ export const getAdditionalCriteriaSectionList = () => {
   return [
     {
       id: 1,
+      name: "age",
       criteria: "Age",
     },
     {
       id: 2,
+      name: "gender",
       criteria: "Gender",
     },
     {
       id: 3,
+      name: "icd",
       criteria: "ICD",
     },
     {
       id: 4,
+      name: "pharmacy_networks",
       criteria: "Pharmacy Network",
     },
     {
       id: 5,
+      name: "prescriber_taxonomies",
       criteria: "Prescriber Taxonomy",
     },
     {
       id: 6,
+      name: "place_of_services",
       criteria: "Place of Service",
     },
     {
       id: 7,
+      name: "patient_residences",
       criteria: "Patient Residence",
     },
     {
       id: 8,
+      name: "prerequisite_claims_history_lookbacks",
       criteria: "Prerequisite Claims History & Lookback",
     },
   ];
