@@ -62,9 +62,7 @@ class AdditionalCriteriaContainer extends Component<any, any> {
     idCount: 0,
   };
 
-  componentDidMount() {
-    console.log("ADDITIONAL CRITERIA CONTAINER: ", this.props.formulary);
-  }
+  componentDidMount() {}
 
   render() {
     // const {

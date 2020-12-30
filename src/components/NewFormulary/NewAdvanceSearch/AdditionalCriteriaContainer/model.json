@@ -1,4 +1,43 @@
 {
+  "code": "200",
+  "message": "ok",
+  "data": [
+    {
+      "id_patient_residence_type": 1,
+      "patient_residence_type_code": "00",
+      "patient_residence_type_name": "Not Specified"
+    },
+    {
+      "id_patient_residence_type": 2,
+      "patient_residence_type_code": "01",
+      "patient_residence_type_name": "Home"
+    },
+    {
+      "id_patient_residence_type": 3,
+      "patient_residence_type_code": "03",
+      "patient_residence_type_name": "Nursing Facility/Long Term Care"
+    },
+    {
+      "id_patient_residence_type": 4,
+      "patient_residence_type_code": "04",
+      "patient_residence_type_name": "Assisted Living Facility"
+    },
+    {
+      "id_patient_residence_type": 5,
+      "patient_residence_type_code": "06",
+      "patient_residence_type_name": "Group Home"
+    },
+    {
+      "id_patient_residence_type": 6,
+      "patient_residence_type_code": "09",
+      "patient_residence_type_name": "Intermediate Care/Mentally Retarded"
+    },
+    {
+      "id_patient_residence_type": 7,
+      "patient_residence_type_code": "11",
+      "patient_residence_type_name": "Hospice"
+    }
+  ],
   "um_criteria": [
     {
       "sequence": 1,
