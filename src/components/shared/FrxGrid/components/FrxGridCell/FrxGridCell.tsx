@@ -14,7 +14,8 @@ export interface FrxGridCellProps {
   className?: string;
   showToolTip?: boolean;
   formatter?: JSX.Element;
-  dataType: "string" | "date" | "number" | undefined;
+	dataType: "string" | "date" | "number" | undefined;
+	showDecimals?:boolean;
   customToolTip?: JSX.Element;
   customContent?: JSX.Element;
   componentToOpenOnClickingCell?: (props) => JSX.Element;
@@ -35,7 +36,8 @@ class FrxGridCell extends React.Component<FrxGridCellProps> {
       showToolTip,
       customToolTip,
       customContent,
-      formatter,
+			formatter,
+			showDecimals,
       dataType,
       componentToOpenOnClickingCell
     } = this.props;
@@ -58,7 +60,7 @@ class FrxGridCell extends React.Component<FrxGridCellProps> {
                 <span className="frx-grid-cell__cell-formatter">
                   {formatter}
                 </span>{" "}
-                {dataType === "number"
+                {dataType === "number" && showDecimals
                   ? parseInt(dataRow[dataKey]).toFixed(2)
                   : dataRow[dataKey]}
               </>
@@ -66,7 +68,7 @@ class FrxGridCell extends React.Component<FrxGridCellProps> {
               <>
                 {customContent
                   ? customContent
-                  : dataType === "number"
+                  : dataType === "number" && showDecimals
                   ? parseInt(dataRow[dataKey]).toFixed(3)
                   : dataRow[dataKey]}
               </>
@@ -114,7 +116,7 @@ class FrxGridCell extends React.Component<FrxGridCellProps> {
                 <>
                   {customContent
                     ? customContent
-                    : dataType === "number"
+                    : dataType === "number" && showDecimals
                     ? parseInt(dataRow[dataKey]).toFixed(2)
                     : dataRow[dataKey]}
                 </>

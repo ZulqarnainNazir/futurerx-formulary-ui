@@ -145,9 +145,9 @@ class FrxDrugGrid extends Component<FrxDrugGridProps<any>, FrxDrugGridState<any>
     showSecondaryColumns: false,
     placement: "left",
     expandedKeys: [],
-    currentPage: this.props.selectedCurrentPage ? this.props.selectedCurrentPage : 1,
+    currentPage: this.props.selectedCurrentPage && !this.props.isDataLoaded ? this.props.selectedCurrentPage : 1,
 
-    goToPageValue: this.props.selectedCurrentPage ? this.props.selectedCurrentPage : 1,
+    goToPageValue: this.props.selectedCurrentPage && !this.props.isDataLoaded ? this.props.selectedCurrentPage : 1,
     settingsAnchor: null,
     settingsMenuItems: [],
     selectedRowKeys: [],
@@ -2737,7 +2737,7 @@ class FrxDrugGrid extends Component<FrxDrugGridProps<any>, FrxDrugGridState<any>
                   sortedInfo={this.state.sortedInfo}
                   filteredInfo={this.state.filteredInfo}
                   pageSize={this.state.pageSize}
-                  currentPage={this.props.selectedCurrentPage ? this.props.selectedCurrentPage : this.state.currentPage}
+                  currentPage={this.props.selectedCurrentPage && !this.props.isDataLoaded ? this.props.selectedCurrentPage : this.state.currentPage}
                   showTotal={this.getShowTotal()}
                   pages={this.getTotalPages()}
                   lastPage={this.getLastPage()}

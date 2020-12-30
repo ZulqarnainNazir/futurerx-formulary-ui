@@ -1,27 +1,36 @@
 import React, { useContext } from "react";
 import { connect } from "react-redux";
 import DropDown from "../../../../shared/Frx-components/dropdown/DropDown";
+import DialogPopup from "../../../../shared/FrxDialogPopup/FrxDialogPopup";
 import FormularyDetailsContext from "../../../FormularyDetailsContext";
 import "./FormularyDetailsTop.scss";
 import { fetchFormularyHeader } from "../../../../../redux/slices/formulary/header/headerSlice";
 import { fetchSelectedFormulary } from "../../../../.././redux/slices/formulary/setup/setupSlice";
+import VersionHistoryPopup from "../FormularySetUp/components/VersionHistoryPopup/VersionHistoryPopup";
+import { VersionHistoryData } from "../FormularySetUp/components/VersionHistoryPopup/version-hisory.model";
 
-const mapStateToProps = (state) => {
+const mapStateToProps = state => {
   return {
     mode: state?.setup?.mode,
     currentFormulary: state.application.formulary,
-    formularyVersionList: state.header.formulary_version_list,
+    formularyVersionList: state.header.formulary_version_list
   };
 };
 
 function mapDispatchToProps(dispatch) {
   return {
-    fetchFormularyVersions: (a) => dispatch(fetchFormularyHeader(a)),
-    fetchSelectedFormulary: (a) => dispatch(fetchSelectedFormulary(a)),
+    fetchFormularyVersions: a => dispatch(fetchFormularyHeader(a)),
+    fetchSelectedFormulary: a => dispatch(fetchSelectedFormulary(a))
   };
 }
 
 class FormularyDetailsTop extends React.Component<any, any> {
+  state = {
+    // to detect if any popup is open
+    isAnyPopupOpen: false,
+    //toggle flag to show and hide version history popup
+    isVersionHistoryPopupOpen: false
+  };
   componentDidMount() {
     this.props.fetchFormularyVersions(
       this.props.currentFormulary?.id_base_formulary
@@ -30,10 +39,60 @@ class FormularyDetailsTop extends React.Component<any, any> {
 
   onVersionChangeHandler = (e: any) => {
     const formulary_id = this.props.formularyVersionList.find(
-      (el) => el.value === e
+      el => el.value === e
     ).id_formulary;
     // console.log(formulary_id)
     this.props.fetchSelectedFormulary(formulary_id);
+  };
+
+  /**
+   * @function onVersionHistoryClick
+   * handler for version history button
+   * opens the popup with grid showing version historie of the
+   * formulary with base id (id_base_formulary in app state)
+   *
+   * @author Deepak_T
+   */
+  onVersionHistoryClick = () => {
+    console.log("Version history clicked");
+    this.setState({ isAnyPopupOpen: true, isVersionHistoryPopupOpen: true });
+  };
+
+  /**
+   * @function onClosePopup
+   * handler for closing popup
+   * @author Deepak_T
+   */
+  onClosePopup = () => {
+    this.setState({
+      isAnyPopupOpen: false,
+      isVersionHistoryPopupOpen: false
+      //add other popup toggles too if this is reused
+    });
+  };
+
+  /**
+   * @function onActionFromPopup
+   * handler for action from popup
+   * @param action the action string passed from dialog popup
+   * @author Deepak_T
+   */
+  onActionFromPopup = (action: string) => {
+    console.log("Action from popup: ", action);
+    //do any action if requiredbased ona ction type and close popup
+    this.onClosePopup();
+  };
+
+  /**
+   * @function onFormularyVersionSelection
+   * call back for version selection
+   * @param the data item selected
+   *
+   */
+  onFormularyVersionSelection = (data: VersionHistoryData) => {
+    console.log("the selected version ", data);
+    // do anything with the data
+    this.onClosePopup();
   };
 
   render() {
@@ -43,14 +102,38 @@ class FormularyDetailsTop extends React.Component<any, any> {
         <DropDown
           className="formulary-type-dropdown formulary-versions"
           placeholder="Formulary Version"
-          options={this.props.formularyVersionList.map((e) => e.value)}
+          options={this.props.formularyVersionList.map(e => e.value)}
           onChange={this.onVersionChangeHandler}
           dropdownClassName="version-dd"
         />
       );
     }
+
     return (
       <div className="drug-detail-top">
+        {/* The popup for version history . Maybe this can be extended for other action buttons too */}
+        {this.state.isAnyPopupOpen ? (
+          <DialogPopup
+            positiveActionText="save"
+            negativeActionText="cancel"
+            title="VERSION HISTORY"
+            handleClose={this.onClosePopup}
+            handleAction={this.onActionFromPopup}
+            open={this.state.isAnyPopupOpen}
+            showActions={false}
+            showCloseIcon={false}
+            className="formularydetailstop-root__grid-dialog-popup"
+          >
+            {this.state.isVersionHistoryPopupOpen && (
+              <VersionHistoryPopup
+                onFormularyVersionSelection={this.onFormularyVersionSelection}
+              />
+            )}
+          </DialogPopup>
+        ) : null}
+
+        {/* End of dialog popup */}
+
         <div className="breadcrum-sec">
           <div className="breadcrum">
             <span
@@ -75,7 +158,10 @@ class FormularyDetailsTop extends React.Component<any, any> {
             </div> */}
               {dropDown}
               <div>
-                <div className="item">
+                <div
+                  className="item item--version-history"
+                  onClick={this.onVersionHistoryClick}
+                >
                   <svg
                     width="11"
                     height="11"
@@ -156,33 +242,36 @@ class FormularyDetailsTop extends React.Component<any, any> {
             </div>
           ) : null}
         </div>
-        {(this.props?.mode==="EXISTING") &&
-        <div className="durationInfo d-flex">
-          <div className="item">
-            <span className="tag purple">
-              {this.props.currentFormulary?.formulary_type_info?.formulary_type}
-            </span>
-          </div>
-          <div className="item">
-            <span className="label">Formulary ID:</span>{" "}
-            {this.props.currentFormulary?.id_formulary}
-          </div>
-          {this.props.activeTabIndex !== 0 ? (
+        {this.props?.mode === "EXISTING" && (
+          <div className="durationInfo d-flex">
             <div className="item">
-              <span className="label">Version:</span>{" "}
-              {this.props.currentFormulary?.formulary_info?.version_number}
+              <span className="tag purple">
+                {
+                  this.props.currentFormulary?.formulary_type_info
+                    ?.formulary_type
+                }
+              </span>
             </div>
-          ) : null}
-          <div className="item">
-            <span className="label">Effective Date:</span>{" "}
-            {this.props.currentFormulary?.formulary_info?.effective_date}
+            <div className="item">
+              <span className="label">Formulary ID:</span>{" "}
+              {this.props.currentFormulary?.id_formulary}
+            </div>
+            {this.props.activeTabIndex !== 0 ? (
+              <div className="item">
+                <span className="label">Version:</span>{" "}
+                {this.props.currentFormulary?.formulary_info?.version_number}
+              </div>
+            ) : null}
+            <div className="item">
+              <span className="label">Effective Date:</span>{" "}
+              {this.props.currentFormulary?.formulary_info?.effective_date}
+            </div>
+            <div className="item">
+              <span className="label">Termination Date:</span>{" "}
+              {this.props.currentFormulary?.terminationDate}
+            </div>
           </div>
-          <div className="item">
-            <span className="label">Termination Date:</span>{" "}
-            {this.props.currentFormulary?.terminationDate}
-          </div>
-        </div>
-        }
+        )}
       </div>
     );
   }

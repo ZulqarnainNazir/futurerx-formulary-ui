@@ -1,6 +1,7 @@
 import { JSXElement } from "@babel/types";
 
 export declare type SortOrder = "descend" | "ascend" | null;
+export declare type textcasetype = "upper" | "lower" | "sentence";
 export declare type PagintionPosition =
   | "topRight"
   // | "topCenter"
@@ -101,10 +102,11 @@ export interface FilterDropdownProps {
 }
 export interface Column<RecordType> {
   displayTitle: string;
-  textCase?: "upper" | "lower" | "sentence";
+  textCase?: textcasetype;
   className?: string;
   showToolTip?: boolean;
   formatter?: JSX.Element;
+  showDecimals?: boolean;
   cellWrapper?: (props: any) => JSX.Element;
   toolTip?: (props) => JSX.Element;
   customContent?: (props) => JSX.Element;
