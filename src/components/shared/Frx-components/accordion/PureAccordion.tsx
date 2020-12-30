@@ -37,6 +37,7 @@ interface PureAccordionProps {
   gridColumns?: any;
   formularyLobId?: any;
   fileType?: any;
+  sectionSelected?: (selection,checked) => void;
 }
 
 const defaultListPayload = {
@@ -324,10 +325,14 @@ class PureAccordion extends Component<PureAccordionProps, any> {
               >
                 {this.props.showCheckbox ? (
                   <Checkbox
-                    onChange={() => console.log(this.props.title)}
+                    onChange={(e) => {
+                      if(this.props.sectionSelected){
+                        this.props.sectionSelected(this.props.title,e.target.checked);
+                      }
+                    }}
                     disabled={false}
                     onClick={(e) => {
-                      e.stopPropagation();
+                     
                     }}
                   />
                 ) : null}
@@ -507,7 +512,10 @@ class PureAccordion extends Component<PureAccordionProps, any> {
                     this.toggleDrugsListGrid(
                       // `${props.formularyType} - ${data.name}: Base Formulary`,
                       "Base Formulary",
-                      false
+                      false,
+                      false,
+                      this.props.baseformulary['id_formulary'],
+                      this.props.headerData.baseFormulary
                     );
                   }}
                 >
@@ -525,7 +533,7 @@ class PureAccordion extends Component<PureAccordionProps, any> {
             {this.state.openDrugsList ? (
               <DialogPopup
                 showCloseIcon={true}
-                positiveActionText="Reject"
+                positiveActionText=""
                 negativeActionText=""
                 title={this.state.drugGridHeaderName}
                 handleClose={() => { this.toggleDrugsListGrid(null, false, true, null, null) }}
@@ -559,7 +567,6 @@ class PureAccordion extends Component<PureAccordionProps, any> {
                   // }}
                   customSettingIcon={this.state.isRowSelectionEnabled ? null : "NONE"}
                   isRowSelectionEnabled={this.state.isRowSelectionEnabled}
-                  rowSelectionChange={this.rowSelectionChange}
                   isRowSelectorCheckbox
                   getPerPageItemSize={this.onPageSize}
                   onGridPageChangeHandler={this.onGridPageChangeHandler}
