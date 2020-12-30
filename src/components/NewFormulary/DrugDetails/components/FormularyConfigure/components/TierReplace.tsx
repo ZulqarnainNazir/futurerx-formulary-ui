@@ -160,12 +160,14 @@ class TierReplace extends React.Component<any, tabsState> {
         let gridItem = {};
         gridItem["id"] = count;
         gridItem["key"] = count;
-        //for default selection . Remove count > 2 condition. Added for checking different scenarios
-        if (selectedTier === parseInt(element.tier_value) && count > 2) {
+        //for preseelct items with selected tier value
+        if (selectedTier === parseInt(element.tier_value)) {
+          console.log("element value tier ", selectedTier, element.tier_value);
           gridItem["isChecked"] = true;
           gridItem["isDisabled"] = true;
-
-          gridItem["rowStyle"] = "table-row--red-font"; // decide on class names based on data properties conditionally
+          // decide on class names based on data properties conditionally
+          // the required styles are added under each classNames in FrxGrid.scss (towards the end)
+          gridItem["rowStyle"] = "table-row--red-font";
         }
         //end
         gridItem["tier"] = element.tier_value;
@@ -201,6 +203,7 @@ class TierReplace extends React.Component<any, tabsState> {
   };
 
   handleSave = () => {
+    console.log(" selected drugs ", this.state.selectedDrugs);
     if (
       this.state.selectedDrugs &&
       this.state.selectedDrugs.length > 0 &&
@@ -226,6 +229,7 @@ class TierReplace extends React.Component<any, tabsState> {
           this.state.drugData = [];
           this.state.drugGridData = [];
           this.populateGridData();
+
           apiDetails = {};
           apiDetails["apiPart"] = tierConstants.FORMULARY_TIERS;
           apiDetails["pathParams"] = this.props?.formulary_id;
@@ -239,7 +243,9 @@ class TierReplace extends React.Component<any, tabsState> {
           const TierDefinationData = this.props
             .getTier(apiDetails)
             .then(json => {
-              this.setState({ tierGridContainer: true });
+              this.setState({
+                tierGridContainer: true
+              });
             });
         } else {
           showMessage("Failure", "error");
@@ -381,6 +387,7 @@ class TierReplace extends React.Component<any, tabsState> {
                 TIER <span className="astrict">*</span>
               </label>
               <DropDown
+                // value={this.state.selectedTier !== -1 ? this.state.selectedTier:undefined}
                 options={this.state.tierValues}
                 disabled={this.props.configureSwitch}
                 onSelect={this.tierDropDownSelectHandler}

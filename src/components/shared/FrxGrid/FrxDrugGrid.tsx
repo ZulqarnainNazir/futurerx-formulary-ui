@@ -2686,13 +2686,13 @@ class FrxDrugGrid extends Component<FrxDrugGridProps<any>, FrxDrugGridState<any>
                   <Table
                     className="frx-grid__grid-block__table-block"
 										rowClassName={(record, index) =>{
-											console.log("row class ", record)
+									
 											if(!record.isDisabled){
 												return index % 2 === 0
 												? "table-row-white"
 												: "table-row-lightskyblue"
 											}else{
-												console.log("row class else", record, record["rowStyle"])
+												
 												return `table-row-disabled ${record["rowStyle"]}`
 											}
 										 

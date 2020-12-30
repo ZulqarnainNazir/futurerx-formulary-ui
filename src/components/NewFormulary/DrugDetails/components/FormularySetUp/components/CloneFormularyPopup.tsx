@@ -118,9 +118,12 @@ class CloneFormularyPopup extends React.Component<any, any> {
 
   /**
    * the selected sorter details will be availbale here to mak api call
+   * @param key the column key
+   * @param order the sorting order : 'ascend' | 'descend'
    */
   onApplySortHandler = (key, order) => {
     console.log("sort details ", key, order);
+    //call api
   };
   onPageSize = pageSize => {
     console.log("Page size load");
@@ -160,6 +163,10 @@ class CloneFormularyPopup extends React.Component<any, any> {
             item["id_lob"] === null ? "" : getLobName(item["id_lob"]);
           gridItem["fromularyName"] =
             item["formulary_name"] === null ? "" : item["formulary_name"];
+
+          // the data type of the value and the dataType mentioned in column definition for grid should match
+          // it is important for sorting and filtering to work if data iss preloaded on front end
+          //NOTE: if dataType of column is defined as "number" , grid will append 3 decimals as per the requirement when grid was built .
           gridItem["formularyId"] =
             item["id_formulary"] === null
               ? ""
@@ -243,9 +250,11 @@ class CloneFormularyPopup extends React.Component<any, any> {
           enableColumnDrag
           onSearch={() => {}}
           settingsWidth={50}
+          //give the keys of columns that should be fixed . At least the key of first column
           fixedColumnKeys={["serviceYear"]}
           pagintionPosition="topRight"
           gridName="Select Formulary"
+          // pass the prop isDataLoaded if data is preloaded on front end
           // isDataLoaded
           enableSettings
           columns={gridColumns}
@@ -260,6 +269,7 @@ class CloneFormularyPopup extends React.Component<any, any> {
           onGridPageChangeHandler={this.onGridPageChangeHandler}
           clearFilterHandler={this.onClearFilterHandler}
           applyFilter={this.onApplyFilterHandler}
+          //the call back for sorting to fetch data from server if data is not preloaded on front end
           applySort={this.onApplySortHandler}
           getColumnSettings={this.onSettingsIconHandler}
           pageSize={this.listPayload.limit}
@@ -317,6 +327,7 @@ class CloneFormularyPopup extends React.Component<any, any> {
           enableSearch={false}
           enableColumnDrag
           onSearch={() => {}}
+          // pass the prop isDataLoaded if data is preloaded on front end
           // isDataLoaded
           settingsWidth={50}
           fixedColumnKeys={["serviceYear"]}
