@@ -95,13 +95,13 @@ class FormularyDetails extends React.Component<any, any> {
   };
 
   getTabs(list: TabInfo[]): TabInfo[] {
-    console.log(" #$% : " + this.props?.setupComplete)
+    // console.log(" ^^^^^^^^^^^^^^: " + this.props?.setupComplete)
     list.forEach((t) => {
       if (t && t?.text === "Configure") {
         if (this.props?.setupComplete === true) {
-          t.disable = true;
-        } else {
           t.disable = false;
+        } else {
+          t.disable = true;
         }
       }
     });
