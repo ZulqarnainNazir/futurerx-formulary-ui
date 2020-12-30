@@ -58,9 +58,7 @@ class AdditionalCriteria extends Component<any, any> {
 
   componentWillReceiveProps(nextProps) {}
 
-  // handleStatusChange = (nodeId, card) => {};
   loadSavedSettings = (additionalCriteriaState, additionalCriteriaBody) => {
-    // let updatedAdditionalCriteriaState;
     let savedCriteriaList: any[] = [];
     let currentNode: any;
     let globalCardCount = 0;
@@ -314,6 +312,55 @@ class AdditionalCriteria extends Component<any, any> {
     Object.preventExtensions(covered);
     Object.preventExtensions(not_covered);
     switch (cardCode) {
+      case 2:
+        if (updatedNode.posStatus.covered) {
+          const place_of_services: number[] = [];
+          updatedNode.posSettings.forEach((s) => {
+            if (s.isChecked) {
+              place_of_services.push(s.id_place_of_service_type);
+            }
+          });
+          covered = Object.assign(
+            JSON.parse(
+              JSON.stringify(this.state.apiAdditionalCriteriaState.covered)
+            ),
+            JSON.parse(
+              JSON.stringify({
+                place_of_services: place_of_services,
+              })
+            )
+          );
+          not_covered = Object.assign(
+            JSON.parse(
+              JSON.stringify(this.state.apiAdditionalCriteriaState.not_covered)
+            ),
+            JSON.parse(JSON.stringify({ place_of_services: [] }))
+          );
+        } else {
+          const place_of_services: number[] = [];
+          updatedNode.posSettings.forEach((s) => {
+            if (s.isChecked) {
+              place_of_services.push(s.id_place_of_service_type);
+            }
+          });
+          not_covered = Object.assign(
+            JSON.parse(
+              JSON.stringify(this.state.apiAdditionalCriteriaState.not_covered)
+            ),
+            JSON.parse(
+              JSON.stringify({
+                place_of_services: place_of_services,
+              })
+            )
+          );
+          covered = Object.assign(
+            JSON.parse(
+              JSON.stringify(this.state.apiAdditionalCriteriaState.covered)
+            ),
+            JSON.parse(JSON.stringify({ place_of_services: [] }))
+          );
+        }
+        break;
       case 6:
         if (updatedNode.posStatus.covered) {
           const place_of_services: number[] = [];

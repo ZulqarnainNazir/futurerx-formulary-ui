@@ -71,10 +71,10 @@ class ListItem extends Component<any, any> {
       nodeId: this.props.nodeId,
     });
 
-    this.initializePOSSettingsListApi();
-    this.initializePRSettingsListApi();
+    // this.initializePOSSettingsListApi();
+    // this.initializePRSettingsListApi();
 
-    this.initializeParentData();
+    this.initializePreData();
     // this.loadSavedState();
   }
 
@@ -143,31 +143,68 @@ class ListItem extends Component<any, any> {
   //   }
   // };
 
-  initializeParentData = () => {
+  initializePreData = () => {
     const COVERED = "covered";
     const NOT_COVERED = "not-covered";
     const {
+      initialState,
+      payload,
       card: { cardCode, isIncluded },
+      nodeId,
     } = this.props;
     switch (cardCode) {
       case 2:
+        let { glSettings } = this.state;
+
+        if (
+          initialState !== null &&
+          payload !== null &&
+          initialState.nodeId === nodeId &&
+          cardCode === 2
+        ) {
+          if (
+            payload &&
+            payload["covered"] &&
+            payload["covered"]["gender"] &&
+            payload["covered"]["gender"].length > 0
+          ) {
+            const gender: string[] = payload["covered"]["gender"];
+            glSettings.forEach((s) => {
+              if (gender.includes(s.gl_code)) {
+                s["isChecked"] = true;
+              } else {
+                s["isChecked"] = false;
+              }
+            });
+          }
+          if (
+            payload &&
+            payload["not_covered"] &&
+            payload["not_covered"]["gender"] &&
+            payload["not_covered"]["gender"].length > 0
+          ) {
+            const gender: string[] = payload["not_covered"]["gender"];
+            glSettings.forEach((s) => {
+              if (gender.includes(s.gl_code)) {
+                s["isChecked"] = true;
+              } else {
+                s["isChecked"] = false;
+              }
+            });
+          }
+        }
         const glSettingsStatus = {
           type: isIncluded ? COVERED : NOT_COVERED,
           covered: isIncluded,
         };
 
-        // if (
-        //   initialState !== null &&
-        //   payload !== null &&
-        //   initialState.nodeId === nodeId &&
-        //   cardCode === 6
-        // ) {
-        // }
         this.setState({
+          glSettings,
           glSettingsStatus,
         });
         break;
       case 6:
+        this.initializePOSSettingsListApi();
         const posSettingsStatus = {
           type: isIncluded ? COVERED : NOT_COVERED,
           covered: isIncluded,
@@ -177,6 +214,7 @@ class ListItem extends Component<any, any> {
         });
         break;
       case 7:
+        this.initializePRSettingsListApi();
         const prSettingsStatus = {
           type: isIncluded ? COVERED : NOT_COVERED,
           covered: isIncluded,
