@@ -26,9 +26,8 @@ interface FormularyAssemblyComponentListItemProps {
 }
 
 interface FormularyAssemblyComponentListItemState {
+
 }
-
-
 
 class FormularyAssemblyComponentListItem extends Component<FormularyAssemblyComponentListItemProps, FormularyAssemblyComponentListItemState> {
   render() { 

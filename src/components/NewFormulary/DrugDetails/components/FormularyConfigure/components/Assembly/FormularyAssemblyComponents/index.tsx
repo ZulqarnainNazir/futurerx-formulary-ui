@@ -1,12 +1,17 @@
 import React, { Component } from "react";
+import { getAssemblyComponentList } from "../../../../../../../../mocks/FormularyAssemblyComponentMock";
 
 import FormularyAssembly from './components/FormularyAssembly';
 import FormularyComponents from './components/FormularyComponents';
+
 
 import './FormularyAssemblyComponents.scss';
 
 
 class FormularyAssemblyComponents extends Component {
+  state = {
+    data: [...getAssemblyComponentList()]
+  }
   render() {
     return (
       <div className="formulary-assembly-components">
@@ -19,8 +24,8 @@ class FormularyAssemblyComponents extends Component {
           </div>
           
           <div className="formulary-assembly-components__container-body">
-            <FormularyComponents/>
-            <FormularyAssembly/>
+            <FormularyComponents data={this.state.data}/>
+            <FormularyAssembly data={this.state.data}/>
           </div>
         </div>
       </div>

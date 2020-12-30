@@ -1,12 +1,20 @@
 import React, { Component } from "react";
-import { getAssemblyComponentList } from "../../../../../../../../../../mocks/FormularyAssemblyComponentMock";
 
 import SearchBox from "../../../../../../../../../shared/Frx-components/search-box/SearchBox";
 import FrxMiniTabs from "../../../../../../../../../shared/FrxMiniTabs/FrxMiniTabs";
 
 import FormularyAssemblyComponentListItem from './../FormularyAssemblyComponentListItem';
 
-class FormularyComponents extends Component {
+
+interface FormularyComponentsListItemProps {
+  data?: any
+}
+
+interface FormularyComponentsListItemState {
+
+}
+
+class FormularyComponents extends Component<FormularyComponentsListItemProps,FormularyComponentsListItemState> {
   state = {
     tabs: [
       { id: 1, text: "All" },
@@ -17,7 +25,7 @@ class FormularyComponents extends Component {
       { id: 6, text: "Drug Details" },
     ],
     activeTabIndex: 0,
-    componentList: [...getAssemblyComponentList()]
+    componentList: [...this.props.data]
   }
   
   onClickTab = (selectedTabIndex: number) => {

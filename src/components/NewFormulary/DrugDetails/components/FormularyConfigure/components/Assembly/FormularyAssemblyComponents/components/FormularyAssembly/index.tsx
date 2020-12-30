@@ -1,6 +1,15 @@
 import React, { Component } from "react";
+import FormularyAssemblyComponentListItem from "../FormularyAssemblyComponentListItem";
+import FormularyAssemblyComponentExpandableListitem from './../FormularyAssemblyComponentExpandableListitem';
 
-class FormularyAssembly extends Component {
+interface FormularyAssemblyProps {
+  data?: any
+}
+
+interface FormularyAssemblyState {
+
+}
+class FormularyAssembly extends Component<FormularyAssemblyProps, FormularyAssemblyState> {
   render() {
     return (
       <div className="formulary-assembly">
@@ -10,7 +19,18 @@ class FormularyAssembly extends Component {
           </div>
           
           <div className="formulary-assembly__container-body">
-            <div>Hello World</div>
+            <FormularyAssemblyComponentExpandableListitem>
+              {this.props.data.map((currentComponent, key) => <FormularyAssemblyComponentListItem key={key} {...currentComponent} />)}
+            </FormularyAssemblyComponentExpandableListitem>
+            <FormularyAssemblyComponentExpandableListitem>
+              {this.props.data.map((currentComponent, key) => <FormularyAssemblyComponentListItem key={key} {...currentComponent} />)}
+            </FormularyAssemblyComponentExpandableListitem>
+            <FormularyAssemblyComponentExpandableListitem>
+              {this.props.data.map((currentComponent, key) => <FormularyAssemblyComponentListItem key={key} {...currentComponent} />)}
+            </FormularyAssemblyComponentExpandableListitem>
+            <FormularyAssemblyComponentExpandableListitem>
+              {this.props.data.map((currentComponent, key) => <FormularyAssemblyComponentListItem key={key} {...currentComponent} />)}
+            </FormularyAssemblyComponentExpandableListitem>
           </div>
         </div>
       </div>
