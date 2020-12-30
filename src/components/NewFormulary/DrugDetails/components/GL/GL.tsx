@@ -1,5 +1,6 @@
 import React from "react";
 import { connect } from "react-redux";
+import { ToastContainer } from "react-toastify";
 import PanelHeader from "../../../../shared/Frx-components/panel-header/PanelHeader";
 import PanelGrid from "../../../../shared/Frx-components/panel-grid/PanelGrid";
 import CustomizedSwitches from "../FormularyConfigure/components/CustomizedSwitches";
@@ -423,8 +424,8 @@ class DrugDetailGL extends React.Component<any, any> {
 
     let listCount = 0;
     this.props.getDrugDetailsGLList(apiDetails).then((json) => {
-      let tmpData = json.payload.result;
-      listCount = json.payload.count;
+      let tmpData = json.payload && json.payload.result ? json.payload.result : [];
+      listCount = json.payload?.count;
       var data: any[] = [];
       let count = 1;
       var gridData = tmpData.map((el) => {
@@ -581,8 +582,10 @@ class DrugDetailGL extends React.Component<any, any> {
   };
 
   showGridHandler = () => {
-    this.getGLDrugsList();
+    // this.getGLDrugsList();
     console.log("The State of the Tab = ", this.state);
+
+    showMessage("Formulary Description Name is required.", "error");
   };
 
   componentWillReceiveProps(nextProps) {
@@ -756,6 +759,7 @@ class DrugDetailGL extends React.Component<any, any> {
             ) : null}
           </div>
         ) : null}
+        <ToastContainer />
       </>
     );
   }

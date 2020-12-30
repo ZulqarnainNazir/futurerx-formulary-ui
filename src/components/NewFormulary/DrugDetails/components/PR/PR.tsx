@@ -414,8 +414,8 @@ class DrugDetailPR extends React.Component<any, any> {
 
     let listCount = 0;
     this.props.getDrugDetailsPRList(apiDetails).then((json) => {
-      let tmpData = json.payload.result;
-      listCount = json.payload.count;
+      let tmpData = json.payload && json.payload.result ? json.payload.result : [];
+      listCount = json.payload?.count;
       var data: any[] = [];
       let count = 1;
       var gridData = tmpData.map((el) => {

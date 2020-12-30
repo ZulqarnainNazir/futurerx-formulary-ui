@@ -344,9 +344,9 @@ class DrugDetailICD extends React.Component<any, any> {
 
     let listCount = 0;
     this.props.getDrugDetailsICDList(apiDetails).then((json) => {
-      let tmpData = json.payload.result;
+      let tmpData = json.payload && json.payload.result ? json.payload.result : [];
       console.log("The GEt ICd LIst Resp = ", tmpData);
-      listCount = json.payload.count;
+      listCount = json.payload?.count;
       var data: any[] = [];
       let count = 1;
       var gridData = tmpData.map((el) => {
