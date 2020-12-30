@@ -87,6 +87,53 @@ export async function getDrugs(apiDetails: any): Promise<any> {
     }
 }
 
+export async function postDrugRejection(apiDetails: any): Promise<any> {
+    let apiPart = apiDetails.apiPart;
+    let pathParams = apiDetails.pathParams;
+    let keyVals = apiDetails.keyVals;
+    let messageBody = apiDetails.messageBody;
+    let POST_URL = URL + apiPart + pathParams;
+    if (keyVals) {
+        keyVals = keyVals.map(pair => pair.key + '=' + pair.value);
+        POST_URL = POST_URL + "?" + keyVals.join('&');
+    }
+    try {
+        const response = await axios.post(POST_URL, messageBody, {
+            headers: commonConstants.REQUEST_HEADER,
+        });
+        if (response?.data) {
+            return response?.data;
+        }
+        return null;
+    } catch (error) {
+        throw error;
+    }
+}
+
+export async function exportReport(apiDetails: any): Promise<any> {
+    let apiPart = apiDetails.apiPart;
+    let pathParams = apiDetails.pathParams;
+    let keyVals = apiDetails.keyVals;
+    let messageBody = apiDetails.messageBody;
+    let POST_URL = URL + apiPart + pathParams;
+    if (keyVals) {
+        keyVals = keyVals.map(pair => pair.key + '=' + pair.value);
+        POST_URL = POST_URL + "?" + keyVals.join('&');
+    }
+    try {
+        const response = await axios.post(POST_URL, messageBody, {
+            headers: commonConstants.REQUEST_HEADER,
+            responseType: 'arraybuffer',
+        });
+        if (response.data) {
+            return response.data;
+        }
+        return null;
+    } catch (error) {
+        throw error;
+    }
+}
+
 export async function getViewAllDrugs(apiDetails: any): Promise<any> {
     let apiPart = apiDetails.apiPart;
     let pathParams = apiDetails.pathParams;
