@@ -112,17 +112,17 @@ class PaReplace extends React.Component<any, any> {
     this.state.drugData = [];
     this.state.drugGridData = [];
 
-    if (this.state.selectedGroupDescription === null ) {
+    if (this.state.selectedGroupDescription === null) {
       showMessage("Group Description is required", "info");
       return;
     }
 
-    if (this.state.selectedPaType === null ) {
+    if (this.state.selectedPaType === null) {
       showMessage("PA Type is required", "info");
       return;
     }
 
-    if ( 
+    if (
       this.state.showPaConfiguration &&
       this.state.selectedLobFormulary["id_formulary"] === undefined
     ) {
@@ -172,14 +172,13 @@ class PaReplace extends React.Component<any, any> {
       this.props.setAdvancedSearch(payload);
     }
     if (nextProps.additionalCriteriaBody) {
-      const additionalCriteriaState = nextProps.additionalCriteriaBody[1];
-      this.setState({ additionalCriteriaState }, () =>
-        console.log(this.state.additionalCriteriaState)
-      );
+      this.setState({
+        additionalCriteriaState: nextProps.additionalCriteriaBody,
+      });
     }
-    if (nextProps.configureSwitch){
+    if (nextProps.configureSwitch) {
       this.populateGridData();
-    }else{
+    } else {
       this.setState({ tierGridContainer: false });
     }
   }
@@ -337,28 +336,28 @@ class PaReplace extends React.Component<any, any> {
       );
     }
     debugger;
-    
 
-    let tmp_fileType:any='';
-    
-    if ( this.props.configureSwitch){
-      apiDetails["messageBody"]["base_pa_group_description_id" ] = this.state.selectedGroupDescription;
+    let tmp_fileType: any = "";
+
+    if (this.props.configureSwitch) {
+      apiDetails["messageBody"][
+        "base_pa_group_description_id"
+      ] = this.state.selectedGroupDescription;
       apiDetails["messageBody"]["id_pa_type"] = this.state.selectedPaType;
-      tmp_fileType=this.state.fileType;
-    }else{
+      tmp_fileType = this.state.fileType;
+    } else {
       switch (this.props.formulary_lob_id) {
         case 1:
-          tmp_fileType='MCR';
+          tmp_fileType = "MCR";
           break;
         case 4:
-            tmp_fileType='COMM';
-            break;
+          tmp_fileType = "COMM";
+          break;
         default:
           break;
       }
-
     }
-    
+
     if (this.state.showPaConfiguration) {
       apiDetails["pathParams"] =
         this.props?.formulary_id +
@@ -466,7 +465,7 @@ class PaReplace extends React.Component<any, any> {
       });
     });
 
-    if (this.props.configureSwitch){
+    if (this.props.configureSwitch) {
       this.populateGridData();
     }
   }
@@ -617,20 +616,19 @@ class PaReplace extends React.Component<any, any> {
         {this.state.tierGridContainer && (
           <div className="select-drug-from-table">
             <div className="bordered white-bg">
-              
-                {!this.props.configureSwitch && (
-                  <div className="header space-between pr-10">
-                <div className="button-wrapper">
-                  <Button
-                    className="Button normal"
-                    label="Advance Search"
-                    onClick={this.advanceSearchClickHandler}
-                    disabled={this.props.configureSwitch}
-                  />
-                  <Button label="Save" onClick={this.handleSave} />
+              {!this.props.configureSwitch && (
+                <div className="header space-between pr-10">
+                  <div className="button-wrapper">
+                    <Button
+                      className="Button normal"
+                      label="Advance Search"
+                      onClick={this.advanceSearchClickHandler}
+                      disabled={this.props.configureSwitch}
+                    />
+                    <Button label="Save" onClick={this.handleSave} />
+                  </div>
                 </div>
-               
-              </div> )}
+              )}
 
               <div className="tier-grid-container">
                 <FrxDrugGridContainer

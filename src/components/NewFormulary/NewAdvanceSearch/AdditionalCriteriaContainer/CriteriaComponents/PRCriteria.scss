@@ -1,5 +1,4 @@
-.pr-limit-settings {
-  padding-bottom: 80px;
+.root-pr-limit-settings {
   &__add-new-form-action {
     display: flex;
     align-items: center;
@@ -36,7 +35,7 @@
     &__select-all-action {
       flex-direction: row;
       padding: 3px 10px;
-      width: 71px;
+      width: auto;
       height: 20px;
       background: #1d54b4;
       border-radius: 5px;
