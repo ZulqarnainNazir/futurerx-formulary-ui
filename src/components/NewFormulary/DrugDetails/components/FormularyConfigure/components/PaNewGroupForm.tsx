@@ -214,7 +214,7 @@ function mapStateToProps(state) {
     client_id: state.application.clientId,
     PaGDData: state.paReducer.description,
     version: state.paVersion.paVersion,
-    additionalCriteriaObject: state?.additionalCriteria?.additionalCriteriaObject,
+    additionalCriteriaObject: state?.additionalCriteria?.additionalCriteriaBody,
 
   };
 }
