@@ -37,7 +37,7 @@ class PnLimitSettings extends React.Component<any, any>{
                     placeholder="Select"
                     options={["inclusive of", "exclusive of"]}
                   /> */}
-                  <Tags options={this.props.options} handleReplaceSrch={this.handleReplaceSrch} />
+                  <Tags options={this.props.options} disabled={this.props.isDisabled} handleReplaceSrch={this.handleReplaceSrch} />
                 </div>
               </div>
             </div>
@@ -64,7 +64,7 @@ class PnLimitSettings extends React.Component<any, any>{
           <span className="pn-limit-settings__add-new-form-action-text">Add Pharmacy Network Criteria</span>
         </div> */}
         </div>
-        <Button label="Apply" onClick={showGridHandler} />
+        <Button label="Apply" onClick={showGridHandler} disabled={this.props.isDisabled} />
       </div>
     )
   }

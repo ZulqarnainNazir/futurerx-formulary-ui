@@ -33,6 +33,7 @@ const GenderLimitSettings = (props) => {
     glSettingsServies: { glSettings, glSettingsStatus },
     handleStatus,
     showGridHandler,
+    isDisabled,
   } = props;
 
   return (
@@ -60,6 +61,7 @@ const GenderLimitSettings = (props) => {
                     name={gl.index}
                     onChange={serviceSettingsChecked}
                     checked={gl.isChecked}
+                    disabled={isDisabled}
                   ></Checkbox>
                   <label htmlFor={gl.gl_type_name} className="checkbox-label">
                     {`${gl.gl_type_name}`}
@@ -86,7 +88,7 @@ const GenderLimitSettings = (props) => {
           <AddIcon/>
           <span className="gender-limit-settings__add-new-form-action-text">Add Gender Age Limit Criteria</span>
         </div> */}
-        <Button label="Apply" onClick={showGridHandler} />
+        <Button label="Apply" onClick={showGridHandler} disabled={isDisabled} />
       </div>
     </div>
   );
