@@ -39,6 +39,8 @@ interface drugDetailsState {
 const mapStateToProps = (state) => {
   return {
     formulary_lob_id: state?.application?.formulary_lob_id,
+    edit_info: state?.application?.formulary?.edit_info,
+    designOptions: state?.setupOptions?.designOptions,
   };
 };
 
@@ -51,46 +53,165 @@ class DrugDetails extends React.Component<any, drugDetailsState> {
   onClickTab = (selectedTabIndex: number) => {
     let activeTabIndex = 0;
 
+    console.log("The Tabs = ", this.state.tabs)
+    // debugger;
     const tabs = this.state.tabs.map((tab: TabInfo, index: number) => {
+      // debugger;
+      console.log("The Tab index = ", index, " The Selected index = ", selectedTabIndex);
       if (index === selectedTabIndex) {
         activeTabIndex = index;
+        // debugger;
       }
       return tab;
     });
-    this.setState({ tabs, activeTabIndex });
+    this.setState({ tabs, activeTabIndex }, () => console.log("The tabs = ", tabs, " and Active tab Index = ", activeTabIndex));
   };
 
   componentDidMount() {
     let tabs: any[] = [];
     if (this.props.formulary_lob_id === 4) {
-      tabs = getCommercialTabList();
+      tabs = this.getCommTabData();
     } else {
       tabs = getMedicareTabList();
     }
     this.setState({ tabs });
+
+    this.getCommTabData();
+  }
+
+  getCommTabData = () => {
+    console.log("------The Application edit_info = ", this.props.edit_info);
+    console.log("------THe Application designOptions = ", this.props.designOptions);
+
+    let ddtabdata = [
+      {key: 61, code: "AL", text: "AL"},
+      {key: 62, code: "GL", text: "GL"},
+      {key: 63, code: "ICD", text: "ICDL"},
+      {key: 65, code: "PN", text: "PHNW"},
+      {key: 66, code: "PT", text: "PRTX"},
+      {key: 67, code: "POS", text: "POS"},
+      {key: 64, code: "PR", text: "PATRS"},
+      {key: 439, code: "FFF", text: "FFF"},
+    ];
+
+    let newDDtableData:any[] = [];
+    if(this.props.edit_info){
+      for(let j=0; j<this.props.edit_info.length; j++) {
+        
+        for(let i=0; i<ddtabdata.length; i++) {
+          if((this.props.edit_info[j]['id_edit'] === ddtabdata[i]['key']) && this.props.edit_info[j]['id_checked']) {
+            let ddObj = {};
+            ddObj['id'] = newDDtableData.length + 1;
+            ddObj['text'] = ddtabdata[i]['code'];
+            newDDtableData.push(ddObj);
+          }
+        }
+      }
+
+      for(let i=0; i<this.props.designOptions.length; i++) {
+        if(this.props.designOptions[i]['is_custom']) {
+          let ddObj = {};
+          ddObj['id'] = newDDtableData.length + 1;
+          ddObj['text'] = 'Other';
+          newDDtableData.push(ddObj);
+          break;
+        }
+      }
+    }
+    console.log("--THe New DD Table Data = ", newDDtableData);
+    return newDDtableData;
+
+    // if(this.props.designOptions) {
+    //   let commercialTabList: any[] = [];
+    //   for(let i=0; i<this.props.designOptions.length; i++) {
+        
+    //     for(let j=0; j<this.props.edit_info.length; j++) {
+    //       if((this.props.designOptions[i]['id_edit'] === this.props.edit_info[j]['id_edit']) && this.props.edit_info[j]['id_checked']) {
+    //         let commObj = {};
+    //         commObj['id'] = i;
+    //         commObj['text'] = this.props.designOptions[i]['code_value'];
+    //         commercialTabList.push(commObj);
+    //       }
+    //     }
+    //   }
+    //   console.log("THe COmmercial Tab List = ", commercialTabList);
+    // }
+  }
+
+  getCommercialTabList = () => {
+    return [
+      {
+          id: 1,
+          text: "AL"
+      },
+      {
+          id: 2,
+          text: "GL"
+      },
+      {
+          id: 3,
+          text: "ICD"
+      },
+      {
+          id: 4,
+          text: "PN"
+      },
+      {
+          id: 5,
+          text: "PT"
+      },
+      {
+          id: 6,
+          text: "POS"
+      },
+      {
+          id: 7,
+          text: "PR"
+      },
+      {
+          id: 8,
+          text: "FFF"
+      },
+      {
+          id: 9,
+          text: "Other"
+      },
+    ]
   }
 
   renderActiveTabContent = () => {
+    // debugger;
     const tabIndex = this.state.activeTabIndex;
+    console.log("The Active Tab Index ==== ", tabIndex);
     if (this.props.formulary_lob_id === 4) {
+      // debugger;
       switch (tabIndex) {
         case 0:
+          // debugger;
           return <DrugDetailAL />;
         case 1:
+          // debugger;
           return <DrugDetailGL />;
         case 2:
+          // debugger;
           return <DrugDetailICD />;
         case 3:
-          return <DrugDetailPN />;
-        case 4:
-          return <DrugDetailPT />;
-        case 5:
-          return <DrugDetailPOS />;
-        case 6:
+          // debugger;
           return <DrugDetailPR />;
+        case 4:
+          // debugger;
+          return <DrugDetailPN />;
+        case 5:
+          // debugger;
+          return <DrugDetailPT />;
+        case 6:
+          // debugger;
+          return <DrugDetailPOS />;
         case 7:
+          // debugger;
           return <DrugDetailFFF />;
         case 8:
+          // debugger;
           return <DrugDetailOther />;
       }
     } else {

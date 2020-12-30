@@ -253,6 +253,9 @@ function PAGroupHeader(props: any) {
                 apiDetails['pathParams'] = '/'+props.saveGdm.current_group_id;
                 //props.getPaGrouptDescription(apiDetails);
                 props.getPaTypes(props.saveGdm.formulary_id)
+                if(json?.payload?.status && json?.payload?.status!=200){
+                    showMessage(json.payload.data.message,'error')
+                }
                 setOpen(false);
             });
         
@@ -267,6 +270,9 @@ function PAGroupHeader(props: any) {
             apiDetails["lob_type"] = props.formulary_lob_id;
             apiDetails['pathParams'] = '/'+props.client_id;
             props.getPaGrouptDescriptions(apiDetails);
+            if(json?.payload?.status && json?.payload?.status!=200){
+                showMessage(json.payload.data.message,'error')
+            }
             setOpen(false);
         });
         
@@ -299,6 +305,9 @@ function PAGroupHeader(props: any) {
                // props.getPaGrouptDescription(apiDetails);
         
                 props.getPaTypes(props.saveGdm.formulary_id)
+                if(json?.payload?.status && json?.payload?.status!=200){
+                    showMessage(json.payload.data.message,'error')
+                }
                 setOpen(false);
             });
         
@@ -333,9 +342,10 @@ function PAGroupHeader(props: any) {
                 props.getPaTypes(props.saveGdm.formulary_id)
                 setOpen(false);
             });
-            // apiDetails['pathParams'] = '/'+props.saveGdm.current_group_id;
-            // props.getPaGrouptDescription(apiDetails);
-            //props.getPaTypes(props.saveGdm.formulary_id)
+            if(json?.payload?.status && json?.payload?.status!=200){
+                showMessage(json.payload.data.message,'error')
+            }
+            setOpen(false);
 
         });
         

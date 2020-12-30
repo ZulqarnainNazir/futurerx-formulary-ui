@@ -23,6 +23,7 @@ const PosLimitSettings = (props) => {
     handleStatus,
     isAdditionalCriteria,
     deleteIconHandler,
+    isDisabled,
   } = props;
 
   // id_place_of_service_type: 1,
@@ -49,12 +50,12 @@ const PosLimitSettings = (props) => {
           <div className="input-field-group">
             <div className="input-field-group__header">
               <div className="input-field-group__label">Select services:</div>
-              <div
+              {!isDisabled ? <div
                 className="input-field-group__select-all-action"
                 onClick={selectAllHandler.handleSelectAll}
               >
                 {selectAllHandler.isSelectAll ? "Unselect all" : "Select all"}
-              </div>
+              </div> : null}
             </div>
 
             <div className="input-field-group__radio-field-group">
@@ -68,6 +69,7 @@ const PosLimitSettings = (props) => {
                     name={s.id_place_of_service_type}
                     onChange={serviceSettingsChecked}
                     checked={s.isChecked}
+                    disabled={isDisabled}
                   ></Checkbox>
                   {/* <input
                     type="checkbox"
@@ -85,63 +87,6 @@ const PosLimitSettings = (props) => {
                   </label>
                 </div>
               ))}
-
-              {/* 
-              <div className="input-field-group__radio-field">
-                <input type="checkbox" id="vehicle1" name="N/A" value="N/A" />
-                <label htmlFor="N/A" className="checkbox-label">
-                  02 - Compounding Pharmacy
-                </label>
-              </div>
-
-              <div className="input-field-group__radio-field">
-                <input type="checkbox" id="vehicle1" name="N/A" value="N/A" />
-                <label htmlFor="N/A" className="checkbox-label">
-                  03 - Home Infusion Therapy
-                </label>
-              </div>
-
-              <div className="input-field-group__radio-field">
-                <input type="checkbox" id="vehicle1" name="N/A" value="N/A" />
-                <label htmlFor="N/A" className="checkbox-label">
-                  04 - Institutional Pharmacy
-                </label>
-              </div>
-
-              <div className="input-field-group__radio-field">
-                <input type="checkbox" id="vehicle1" name="N/A" value="N/A" />
-                <label htmlFor="N/A" className="checkbox-label">
-                  05 - LTC Pharmacy
-                </label>
-              </div>
-
-              <div className="input-field-group__radio-field">
-                <input type="checkbox" id="vehicle1" name="N/A" value="N/A" />
-                <label htmlFor="N/A" className="checkbox-label">
-                  06 - Mail Order Pharmacy
-                </label>
-              </div>
-
-              <div className="input-field-group__radio-field">
-                <input type="checkbox" id="vehicle1" name="N/A" value="N/A" />
-                <label htmlFor="N/A" className="checkbox-label">
-                  07 - Managed Care Organization Pharmacy
-                </label>
-              </div>
-
-              <div className="input-field-group__radio-field">
-                <input type="checkbox" id="vehicle1" name="N/A" value="N/A" />
-                <label htmlFor="N/A" className="checkbox-label">
-                  08 - Specialty Care Pharmacy
-                </label>
-              </div>
-
-              <div className="input-field-group__radio-field">
-                <input type="checkbox" id="vehicle1" name="N/A" value="N/A" />
-                <label htmlFor="N/A" className="checkbox-label">
-                  99 - Other
-                </label>
-              </div> */}
             </div>
           </div>
         </StatusContentFormPanel>
@@ -154,7 +99,7 @@ const PosLimitSettings = (props) => {
         </div> */}
       </div>
       {showGridHandler ? (
-        <Button label="Apply" onClick={showGridHandler} />
+        <Button label="Apply" onClick={showGridHandler} disabled={isDisabled} />
       ) : null}
     </div>
   );
