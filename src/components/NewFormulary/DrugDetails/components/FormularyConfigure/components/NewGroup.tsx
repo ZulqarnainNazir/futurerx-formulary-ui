@@ -18,6 +18,7 @@ import Tags from './Tags'
 import { ReactComponent as CrossCircleWhiteBGIcon } from "../../../../../../assets/icons/crosscirclewhitebg.svg";
 import { saveGDM,editGDM } from "../../../../../../redux/slices/formulary/gdm/gdmSlice";
 import { getStGrouptDescription,getDrugLists,getStGrouptDescriptions } from "../../../../../../redux/slices/formulary/stepTherapy/stepTherapyActionCreation";
+import AdvanceSearchContainer from "../../../../NewAdvanceSearch/AdvanceSearchContainer";
 
 interface Props {
   tooltip?: string;
@@ -85,6 +86,7 @@ function mapStateToProps(state) {
     formulary: state?.application?.formulary,
     formulary_lob_id: state?.application?.formulary_lob_id, //comme- 4, medicare-1 , medicate-2, exchnage -3 
     formulary_type_id: state?.application?.formulary_type_id,
+    additionalCriteriaObject: state?.additionalCriteria?.additionalCriteriaBody,
   }
 }
 
@@ -106,7 +108,13 @@ function NewGroup(props: any) {
   const [errorClass, setErrorClass] = React.useState('');
   const [drug_list_ids, setDrug_list_ids] = React.useState([]);
   const [drug_list, setDrug_list] = React.useState([]);
+  const [isAdditionalCriteriaOpen, toggleAdditionalCriteriaOpen] = useState(
+    false
+  );
 
+  const [additionalCriteria, setAdditionalCriteria] = useState(
+    null
+  );
   const handleChange = (e) => {
     const formVal = (e.target.value === 'yes' || e.target.value === 'true') ? true : (e.target.value === 'no' || e.target.value === 'false') ? false : e.target.value;
     updateFormData({
@@ -114,6 +122,9 @@ function NewGroup(props: any) {
       [e.target.name]: formVal
     });
   };
+
+  const openAdditionalCriteria = () => toggleAdditionalCriteriaOpen(true);
+  const closeAddiionalCriteria = () => toggleAdditionalCriteriaOpen(false);
 
   const handleCheckBox = (event: React.ChangeEvent<HTMLInputElement>) => {
     updateFormData({
@@ -136,6 +147,12 @@ function NewGroup(props: any) {
       setChangeEvent(false)
     }
   }
+
+  useEffect(() => {
+    debugger;
+    console.log(props.additionalCriteriaObject);
+    setAdditionalCriteria(props.additionalCriteriaObject);
+  },[props.additionalCriteriaObject]);
 
   useEffect(() => {
     updateFormData(initialFormData)
@@ -241,6 +258,9 @@ function NewGroup(props: any) {
     let requestData = {};
     if (props.formType==1){
       requestData['messageBody'] = {...formData}
+      if (additionalCriteria!=null){
+        requestData["messageBody"]["um_criteria"] = additionalCriteria;
+      }
       requestData["lob_type"] = props.formulary_lob_id;
       requestData['apiPart'] = 'api/1/mcr-st-group-description';
       let id_st_group_description = formData["id_st_group_description"]?formData["id_st_group_description"]:0;
@@ -259,6 +279,9 @@ function NewGroup(props: any) {
     }else{
       formData.change_indicator = parseInt(formData.change_indicator)
       requestData['messageBody'] = {...formData}
+      if (additionalCriteria!=null){
+        requestData["messageBody"]["um_criteria"] = additionalCriteria;
+      }
       requestData["lob_type"] = props.formulary_lob_id;
       requestData['apiPart'] = 'api/1/mcr-st-group-description/'+props.client_id;
       requestData['pathParams'] = '/'+props?.formulary_id + '?entity_id=0';
@@ -393,9 +416,16 @@ function NewGroup(props: any) {
           <span>do you want to add additional criteria?<span className="astrict">*</span></span>
           <div className="marketing-material radio-group">
             <RadioGroup aria-label="marketing-material-radio1" name="is_additional_criteria_defined" onChange={handleChange} className="gdp-radio" value={formData.is_additional_criteria_defined}>
-              <FormControlLabel value={true} control={<Radio />} label='Yes' disabled={editable} />
+              <FormControlLabel value={true} control={<Radio />} label='Yes' disabled={editable} onClick={openAdditionalCriteria}/>
               <FormControlLabel value={false} control={<Radio />} label='No' disabled={editable} />
             </RadioGroup>
+            {isAdditionalCriteriaOpen && props.formulary_lob_id == 1 ? (
+              <AdvanceSearchContainer
+                openPopup={isAdditionalCriteriaOpen}
+                onClose={closeAddiionalCriteria}
+                isAdvanceSearch={false}
+              />
+            ) : null}
           </div>
         </div>
         <div className="button-wrapper">
@@ -454,10 +484,17 @@ function NewGroup(props: any) {
                   <span>do you want to add additional criteria? <span className="astrict">*</span></span>
                   <div className="marketing-material radio-group">
                       <RadioGroup aria-label="marketing-material-radio1" name="is_additional_criteria_defined" onChange={handleChange} className="gdp-radio" value={formData.is_additional_criteria_defined}>
-                        <FormControlLabel value={true} control={<Radio />} label='Yes' disabled={editable} />
+                        <FormControlLabel value={true} control={<Radio />} label='Yes' disabled={editable}  onClick={openAdditionalCriteria}/>
                         <FormControlLabel value={false} control={<Radio />} label='No' disabled={editable} />
                       </RadioGroup>
                   </div>
+                  {isAdditionalCriteriaOpen && props.formulary_lob_id == 4 ? (
+              <AdvanceSearchContainer
+                openPopup={isAdditionalCriteriaOpen}
+                onClose={closeAddiionalCriteria}
+                isAdvanceSearch={false}
+              />
+            ) : null}
                 </div>
                 <div className="button-wrapper st-button-wrapper">
                   <Button label="Save Version Progress" className="Button" onClick={(event)=>handleSubmit(event,false)}/>

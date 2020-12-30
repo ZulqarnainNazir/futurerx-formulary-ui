@@ -420,28 +420,19 @@ class GeneralInformation extends React.Component<any, GeneralInformationState> {
 
             {this.props.generalInfo.method === "C" && (
               <Grid item xs={4}>
+                 {this.props.formulary_mode === "NEW" && (
                 <div className="group">
                   <label>
                     CLONE FORMULARY <span className="astrict">*</span>
                   </label>
                   <span
-                    onClick={(e) => {
-                      console.log("M: " + this.props.generalInfo.method);
-                      console.log("N: " + this.props.name);
-                      console.log("D: " + this.props.effective_date);
-                      this.setState({ showClonePopup: true });
-                    }}
+                    onClick={(e) => this.setState({ showClonePopup: true })}
                     className="input-link"
                   >
                     Clone Formulary
                   </span>
-                  {/* <span
-                    onClick={(e) => this.props.createUsingClone(e)}
-                    className="input-link"
-                  >
-                    T-C
-                  </span> */}
                 </div>
+                 )}
               </Grid>
             )}
             <Grid item xs={4}>
