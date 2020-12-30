@@ -98,19 +98,6 @@ const initialFormData: initialFormData = {
   covered: true,
 }
 
-// const columnFilterMapping = {
-//   // serviceYear: 'contract_year',
-//   // fromularyName: 'formulary_name',
-//   // formularyId: 'id_formulary',
-//   // version: 'version_number',
-//   // tierCount: 'number_of_tiers',
-//   // drugCount: 'number_of_drugs',
-//   // step: 'step',
-//   // assign: 'assigned_to',
-//   // status: 'status',
-//   // effectiveDate: 'effective_date',
-//   // dueDate: 'due_date'
-// }
 const columnFilterMapping = {
   is_al: 'is_al',
   covered_min_operators: 'covered_min_operators',
@@ -361,23 +348,6 @@ class DrugDetailAL extends React.Component<any, any> {
     }
   };
   
-  // onApplyFilterHandler = (filters) => {
-  //   console.log("------The FIlters = ", filters);
-  //   const fetchedProps = Object.keys(filters)[0];
-  //   console.log("THe Fetched Props = ", fetchedProps)
-  //   const fetchedOperator = filters[fetchedProps][0].condition === 'is like' ? 'is_like' : 
-  //   filters[fetchedProps][0].condition === 'is not' ? 'is_not' : 
-  //   filters[fetchedProps][0].condition === 'is not like' ? 'is_not_like' : 
-  //   filters[fetchedProps][0].condition === 'does not exist' ? 'does_not_exist' : 
-  //   filters[fetchedProps][0].condition;
-  //   const fetchedValues = filters[fetchedProps][0].value !== '' ? [filters[fetchedProps][0].value.toString()] : [];
-  //   const newFilters = [{ prop: fetchedProps, operator: fetchedOperator,values: fetchedValues}];
-  //   console.log("The New Filters ====== ", newFilters);
-  //   console.log("The Fetched OPerator = ", fetchedOperator);
-  //   this.listPayload.filter = newFilters;
-  //   this.getALDrugsList({ listPayload: this.listPayload });
-  // }
-  
   onApplyFilterHandler = (filters) => {
     this.listPayload.filter = Array();
     if (filters && filter.length > 0) {
@@ -511,10 +481,10 @@ class DrugDetailAL extends React.Component<any, any> {
     this.setState({ formData: this.formData1 });
   }
 
-  showGrid = () => {
-    this.getALDrugsList();
-    console.log("The State of the Tab = ", this.state);
-  }
+  // showGrid = () => {
+  //   this.getALDrugsList();
+  //   console.log("The State of the Tab = ", this.state);
+  // }
 
   getALSummary = () => {
     let apiDetails = {};
@@ -726,9 +696,27 @@ class DrugDetailAL extends React.Component<any, any> {
     alert(1);
   };
 
+  validateGLForm = () => {
+    // if(this.state.activeTabIndex === 0) {
+    //   let rpSelected = this.state.glSettings.filter(e => e.isChecked);
+    //   return !(rpSelected.length === 0);
+
+    // } else if(this.state.activeTabIndex === 2) {
+    //   return !(this.state.glRemoveCheckedList.length === 0);
+    // }
+
+    return true;
+  }
+
   showGridHandler = () => {
-    this.getALDrugsList();
+    // this.getALDrugsList();
     console.log("The State of the Tab = ", this.state);
+
+    if(this.validateGLForm()) {
+      this.getALDrugsList();
+    } else {
+      showMessage("Please add atleast one age limit", "info");
+    }
   };
 
   handleRemoveChecked = (selectedRows) => {
@@ -912,7 +900,7 @@ class DrugDetailAL extends React.Component<any, any> {
           onMaxChangeHandler={this.onMaxChangeHandler}
           formData={this.state.formData}
           // showApply={true}
-          showGrid={this.showGrid}
+          showGrid={this.showGridHandler}
           coveredHandler={this.coveredHandler}
           alSettings={this.state.alSettings}
           addNewAgeLimit={this.addNewAgeLimit}

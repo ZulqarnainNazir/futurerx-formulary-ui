@@ -1,6 +1,7 @@
 import React from "react";
 import { connect } from "react-redux";
 import { filter } from "lodash";
+import { ToastContainer } from "react-toastify";
 import PanelHeader from "../../../../shared/Frx-components/panel-header/PanelHeader";
 import PanelGrid from "../../../../shared/Frx-components/panel-grid/PanelGrid";
 import CustomizedSwitches from "../FormularyConfigure/components/CustomizedSwitches";
@@ -265,9 +266,26 @@ class DrugDetailPT extends React.Component<any, any> {
     }
   };
 
+  validateGLForm = () => {
+    if(this.state.activeTabIndex === 0) {
+      return !(this.state.selectedList.length === 0);
+
+    } else if(this.state.activeTabIndex === 2) {
+      return !(this.state.ptRemoveCheckedList.length === 0);
+    }
+
+    return true;
+  }
+
   showGridHandler = () => {
-    this.getPTDrugsList();
+    // this.getPTDrugsList();
     console.log("The State of the PT Tab = ", this.state);
+
+    if(this.validateGLForm()) {
+      this.getPTDrugsList();
+    } else {
+      showMessage("Please Select atleast one PT", "info");
+    }
   };
 
   handleStatus = (key: string) => {
@@ -777,6 +795,7 @@ class DrugDetailPT extends React.Component<any, any> {
             ) : null}
           </div>
         ) : null}
+        <ToastContainer />
       </>
     );
   }

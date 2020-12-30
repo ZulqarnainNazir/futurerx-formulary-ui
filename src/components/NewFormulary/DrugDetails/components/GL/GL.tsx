@@ -581,11 +581,43 @@ class DrugDetailGL extends React.Component<any, any> {
     });
   };
 
+  validateGLForm = () => {
+    if(this.state.activeTabIndex === 0) {
+      let rpSelected = this.state.glSettings.filter(e => e.isChecked);
+      return !(rpSelected.length === 0);
+
+    } else if(this.state.activeTabIndex === 2) {
+      return !(this.state.glRemoveCheckedList.length === 0);
+    }
+
+    return true;
+  }
+
   showGridHandler = () => {
-    // this.getGLDrugsList();
     console.log("The State of the Tab = ", this.state);
 
-    showMessage("Formulary Description Name is required.", "error");
+    if(this.validateGLForm()) {
+      this.getGLDrugsList();
+    } else {
+      showMessage("Please Select atleast one gender limit", "info");
+    }
+
+    // if(this.state.activeTabIndex === 0) {
+    //   let rpSelected = this.state.glSettings.filter(e => e.isChecked);
+    //   if(rpSelected.length === 0) {
+    //     showMessage("Please Select atleast one gender limit", "error");
+    //   } else {
+    //     this.getGLDrugsList();
+    //   }
+
+    // } else if(this.state.activeTabIndex === 2) {
+    //   // let rmSelected = this.state.glRemoveCheckedList.filter(e => e.isChecked);
+    //   if(this.state.glRemoveCheckedList.length === 0) {
+    //     showMessage("Please Select atleast one gender limit", "error");
+    //   } else {
+    //     this.getGLDrugsList();
+    //   }
+    // }
   };
 
   componentWillReceiveProps(nextProps) {
