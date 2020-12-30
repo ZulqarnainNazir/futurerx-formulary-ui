@@ -82,6 +82,8 @@ interface tabsState {
   errorObject: any;
   selectedTab: string;
   isAdvanceSearchOpen: boolean;
+  isAdditionalCriteriaOpen: boolean;
+  additionalCriteriaState: null;
   isLoading: boolean;
 }
 
@@ -106,6 +108,8 @@ class Tier extends React.Component<any, tabsState> {
     selectedCriteria: [],
     selectedTab: constants.TYPE_REPLACE,
     isAdvanceSearchOpen: false,
+    isAdditionalCriteriaOpen: false,
+    additionalCriteriaState: null,
     isLoading: false,
     errorObject: {},
   };
@@ -235,7 +239,11 @@ class Tier extends React.Component<any, tabsState> {
     console.log("[apiDetails]:", apiDetails);
     this.props.postFormularyDrugQl(apiDetails).then((json) => {
       console.log("[QlDetail]:", json.payload);
-      this.loadGridData(json);
+      if (json.payload) {
+        this.loadGridData(json);
+      } else {
+        showMessage("something went wrong", "error");
+      }
     });
     // }
   };
@@ -596,6 +604,12 @@ class Tier extends React.Component<any, tabsState> {
     this.setState({ isAdvanceSearchOpen: !this.state.isAdvanceSearchOpen });
   };
 
+  openAdditionalCriteria = () => {
+    this.setState({
+      isAdditionalCriteriaOpen: !this.state.isAdditionalCriteriaOpen,
+    });
+  };
+
   onApply = () => {
     if (this.getCurrentAction() !== constants.TYPE_REMOVE) {
       if (
@@ -720,7 +734,17 @@ class Tier extends React.Component<any, tabsState> {
                         handleOnChange={this.handleOnChange}
                         values={this.state.quantityAndFillLimitObject}
                         isViweAll={this.props.switchState}
+                        isChecked={this.state.isAdditionalCriteriaOpen}
+                        onRadioButtonClick={this.openAdditionalCriteria}
                       />
+                      {this.state.isAdditionalCriteriaOpen && (
+                        <AdvanceSearchContainer
+                          {...searchProps}
+                          openPopup={this.state.isAdditionalCriteriaOpen}
+                          onClose={this.openAdditionalCriteria}
+                          isAdvanceSearch={false}
+                        />
+                      )}
                     </div>
                   )}
                 </div>
