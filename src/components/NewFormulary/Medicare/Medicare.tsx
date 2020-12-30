@@ -154,9 +154,9 @@ class Medicare extends React.Component<any, any> {
                     value={this.state.searchType}
                   />
               </div>
-              <div className="field-container">
+              {/* <div className="field-container">
                 <SearchBox iconPosition="left"/>
-              </div>
+              </div> */}
               <div className="field-container">
                   <DropDownMap
                     className="formulary-type-dropdown"
