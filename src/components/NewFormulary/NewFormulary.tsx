@@ -166,7 +166,6 @@ class Formulary extends React.Component<any, any> {
   };
 
   drugDetailsClickHandler = (id: any) => {
-    console.log("*********************************");
     let selectedRow: any = null;
     if (id !== undefined) {
       selectedRow = this.props.formulary_list[id - 1];

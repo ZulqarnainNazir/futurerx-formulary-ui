@@ -177,7 +177,8 @@ class Medicare extends React.Component<any, any> {
                 isExpandable: true,
                 expandIconColumnIndex:
                   formularyDetailsGridColumns({}).length + 1,
-                expandedRowRender: (props) => <FormularyExpandedDetails />,
+                // expandedRowRender: (props) => <FormularyExpandedDetails />,
+                expandedRowRender: (record:any) => <FormularyExpandedDetails rowData={record} drugDetailClick={this.props.drugDetailClick}/>,
                 expandCloseIcon: (
                   <span>
                     <svg
