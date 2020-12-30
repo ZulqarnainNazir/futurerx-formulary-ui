@@ -9,7 +9,7 @@ import { fetchSelectedFormulary } from "../../../../.././redux/slices/formulary/
 const mapStateToProps = (state) => {
   return {
     mode: state?.setup?.mode,
-    currentFormulary: state.application.formulary,
+    currentFormulary: state.setup.formulary,
     formularyVersionList: state.header.formulary_version_list,
   };
 };
@@ -22,10 +22,45 @@ function mapDispatchToProps(dispatch) {
 }
 
 class FormularyDetailsTop extends React.Component<any, any> {
-  componentDidMount() {
-    this.props.fetchFormularyVersions(
-      this.props.currentFormulary?.id_base_formulary
-    );
+  // componentDidMount() {
+  //   this.props.fetchFormularyVersions(
+  //     this.props.currentFormulary?.id_base_formulary
+  //   );
+  // }
+
+  state = {
+    lastID: 0,
+    lastVersion: 0,
+  };
+
+  componentDidUpdate() {
+    console.log(this.props.mode);
+    console.log(this.props.currentFormulary);
+    if (this.props.mode === "EXISTING" && this.props.currentFormulary) {
+      // console.log(
+      //   this.state.lastID + " / " + this.props?.currentFormulary?.id_formulary
+      // );
+      // console.log(
+      //   this.state.lastVersion +
+      //     " / " +
+      //     this.props?.currentFormulary?.formulary_info?.version_number
+      // );
+
+      if (
+        this.state.lastID !== this.props?.currentFormulary?.id_formulary &&
+        this.state !==
+          this.props?.currentFormulary?.formulary_info?.version_number
+      ) {
+        this.props.fetchFormularyVersions(
+          this.props.currentFormulary?.id_base_formulary
+        );
+        this.setState({
+          lastID: this.props?.currentFormulary?.id_formulary,
+          lastVersion: this.props?.currentFormulary?.formulary_info
+            ?.version_number,
+        });
+      }
+    }
   }
 
   onVersionChangeHandler = (e: any) => {
@@ -156,33 +191,34 @@ class FormularyDetailsTop extends React.Component<any, any> {
             </div>
           ) : null}
         </div>
-        {(this.props?.mode==="EXISTING") &&
-        <div className="durationInfo d-flex">
-          <div className="item">
-            <span className="tag purple">
-              {this.props.currentFormulary?.formulary_type_info?.formulary_type}
-            </span>
-          </div>
-          <div className="item">
-            <span className="label">Formulary ID:</span>{" "}
-            {this.props.currentFormulary?.id_formulary}
-          </div>
-          {this.props.activeTabIndex !== 0 ? (
+        {this.props?.mode === "EXISTING" && (
+          <div className="durationInfo d-flex">
+            <div className="item">
+              <span className="tag purple">
+                {
+                  this.props.currentFormulary?.formulary_type_info
+                    ?.formulary_type
+                }
+              </span>
+            </div>
+            <div className="item">
+              <span className="label">Formulary ID:</span>{" "}
+              {this.props.currentFormulary?.id_formulary}
+            </div>
             <div className="item">
               <span className="label">Version:</span>{" "}
               {this.props.currentFormulary?.formulary_info?.version_number}
             </div>
-          ) : null}
-          <div className="item">
-            <span className="label">Effective Date:</span>{" "}
-            {this.props.currentFormulary?.formulary_info?.effective_date}
+            <div className="item">
+              <span className="label">Effective Date:</span>{" "}
+              {this.props.currentFormulary?.formulary_info?.effective_date}
+            </div>
+            <div className="item">
+              <span className="label">Termination Date:</span>{" "}
+              {this.props.currentFormulary?.terminationDate}
+            </div>
           </div>
-          <div className="item">
-            <span className="label">Termination Date:</span>{" "}
-            {this.props.currentFormulary?.terminationDate}
-          </div>
-        </div>
-        }
+        )}
       </div>
     );
   }

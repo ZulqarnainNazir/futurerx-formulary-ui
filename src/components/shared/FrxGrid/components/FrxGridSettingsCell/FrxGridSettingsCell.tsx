@@ -29,8 +29,8 @@ export interface FrxGridSettingsCellProps {
   handleSettingsComponentMenuClose?: () => void;
   handleMenuClick?: (menuItem: GridMenu) => void;
   onSettingsTriDotClick: (dataRow: any) => void;
-  rowSelectionChange: (dataRow: any) => void;
   onsettingsTriDotDropDownItemClick?: (dataRow: any, item: any) => void;
+  rowSelectionChange: (dataRow: any, event: any) => void;
   onSettingsCellClick: (
     expanded: boolean,
     data: any,
@@ -84,7 +84,7 @@ class FrxGridSettingsCell extends React.Component<FrxGridSettingsCellProps> {
    */
   rowSelectionChange = (e: RadioChangeEvent | CheckboxChangeEvent) => {
     if (this.props.handleCheck) this.props.handleCheck(e.target);
-    this.props.rowSelectionChange(this.props.dataRow);
+    this.props.rowSelectionChange(this.props.dataRow, e);
   };
 
   /**
