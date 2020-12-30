@@ -158,14 +158,14 @@ class FrxGridSettings extends Component<FrxGridSettingsProps<any>> {
         </div>
         <div className="frx-grid-settings__actions">
           <button
-            onClick={e => this.onCancelSettings()}
+            onClick={(e) => this.onCancelSettings()}
             className="frx-grid-settings__actions__btn frx-grid-settings__actions__btn--cancel"
           >
             Cancel
           </button>
           <button
             className="frx-grid-settings__actions__btn frx-grid-settings__actions__btn--apply"
-            onClick={e => this.onApplySettings()}
+            onClick={(e) => this.onApplySettings()}
           >
             Apply
           </button>
