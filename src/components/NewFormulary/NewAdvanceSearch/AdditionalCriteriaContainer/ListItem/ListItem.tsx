@@ -41,6 +41,12 @@ class ListItem extends Component<any, any> {
   state = {
     nodeId: null,
 
+    cardCode: null,
+    cardName: null,
+    isIncluded: null,
+
+    payload: null,
+
     // POS
     posSettings: [],
     posSettingsStatus: {
@@ -69,105 +75,78 @@ class ListItem extends Component<any, any> {
   componentDidMount() {
     this.setState({
       nodeId: this.props.nodeId,
+      cardCode: this.props.card.cardCode,
+      cardName: this.props.card.cardName,
+      isIncluded: this.props.card.isIncluded,
+      payload: this.props.payload,
     });
 
-    this.initializePOSSettingsListApi();
-    this.initializePRSettingsListApi();
-
-    this.initializeParentData();
-    // this.loadSavedState();
+    this.initializePreData();
   }
 
   componentDidUpdate(prevProps, prevState) {
-    const {
-      nodeId,
-      initialGlobalState,
-      card: { cardName, cardCode, isIncluded },
-    } = this.props;
-    let currentNode = {};
+    const { nodeId, payload } = this.props;
 
-    if (initialGlobalState && nodeId) {
-      // currentNode = initialGlobalState.filter(
-      //   (criteria) => criteria.nodeId === nodeId
-      // );
-      currentNode = initialGlobalState[nodeId];
-      currentNode = {
-        nodeId: nodeId,
-        card: { cardName, cardCode, isIncluded },
+    const updatedPayload = this.state.payload;
+    const { cardCode, cardName, isIncluded } = this.state;
 
-        posSettings: this.state.posSettings,
-        posStatus: this.state.posSettingsStatus,
-
-        prSettings: this.state.prSettings,
-        prStatus: this.state.prSettingsStatus,
-
-        glSettings: this.state.glSettings,
-        glStatus: this.state.glSettingsStatus,
-      };
-      this.props.handleGlobalState(currentNode);
+    if (payload && nodeId) {
+      this.props.handleGlobalState(
+        nodeId,
+        cardCode,
+        cardName,
+        isIncluded,
+        updatedPayload
+      );
     }
   }
 
-  // componentWillReceiveProps(nextProps) {
-  //   const { nodeId } = this.props;
-  //   console.log("calling child props update:::::");
-  //   console.log(nextProps.additionalCriteriaBody);
-  //   if (nextProps.additionalCriteriaBody) {
-  //     const additionalCriteria = nextProps.additionalCriteriaObject[1];
-  //     const currentNode = additionalCriteria[nodeId];
-  //     console.log(this.state);
-  //     this.setState(
-  //       {
-  //         posSettings: JSON.parse(JSON.stringify(currentNode.posSettings)),
-  //         posSettingsStatus: JSON.parse(JSON.stringify(currentNode.posStatus)),
-  //       },
-  //       () => console.log(this.state)
-  //     );
-  //   }
-  // }
-
-  // loadSavedState = () => {
-  //   const { initialState } = this.props;
-
-  //   if (initialState && initialState.length > 0) {
-  //     console.log("intial state object: ", initialState);
-  //     console.log("intial state object: ", initialState.posSettings);
-  //     console.log("intial state object: ", initialState.posStatus);
-
-  //     // this.state.posSettings = initialState.posSettings;
-  //     // this.state.posSettingsStatus = initialState.posStatus;
-  //     // this.setState({
-  //     //   posSettings: initialState.posSettings,
-  //     //   posSettingsStatus: initialState.posStatus,
-  //     // });
-  //   }
-  // };
-
-  initializeParentData = () => {
+  initializePreData = () => {
     const COVERED = "covered";
     const NOT_COVERED = "not-covered";
     const {
+      // initialState,
+      payload,
       card: { cardCode, isIncluded },
     } = this.props;
     switch (cardCode) {
       case 2:
+        let { glSettings } = this.state;
+
+        if (payload !== null) {
+          if (payload.length > 0) {
+            const gender: string[] = payload;
+            glSettings.forEach((s) => {
+              if (gender.includes(s.gl_code)) {
+                s["isChecked"] = true;
+              } else {
+                s["isChecked"] = false;
+              }
+            });
+          }
+          if (payload.length > 0) {
+            const gender: string[] = payload;
+            glSettings.forEach((s) => {
+              if (gender.includes(s.gl_code)) {
+                s["isChecked"] = true;
+              } else {
+                s["isChecked"] = false;
+              }
+            });
+          }
+        }
         const glSettingsStatus = {
           type: isIncluded ? COVERED : NOT_COVERED,
           covered: isIncluded,
         };
 
-        // if (
-        //   initialState !== null &&
-        //   payload !== null &&
-        //   initialState.nodeId === nodeId &&
-        //   cardCode === 6
-        // ) {
-        // }
         this.setState({
+          glSettings,
           glSettingsStatus,
         });
         break;
       case 6:
+        this.initializePOSSettingsListApi();
         const posSettingsStatus = {
           type: isIncluded ? COVERED : NOT_COVERED,
           covered: isIncluded,
@@ -177,6 +156,7 @@ class ListItem extends Component<any, any> {
         });
         break;
       case 7:
+        this.initializePRSettingsListApi();
         const prSettingsStatus = {
           type: isIncluded ? COVERED : NOT_COVERED,
           covered: isIncluded,
@@ -191,35 +171,15 @@ class ListItem extends Component<any, any> {
   };
 
   initializePOSSettingsListApi = () => {
-    const {
-      initialState,
-      nodeId,
-      card: { cardCode },
-      payload,
-    } = this.props;
+    const { payload } = this.props;
     let apiDetails = {};
     apiDetails["apiPart"] = POS_SETTINGS_LIST;
     this.props.getPOSSettings(apiDetails).then((json) => {
       let posSettings =
         json.payload && json.payload.data ? json.payload.data : [];
-
-      if (
-        initialState !== null &&
-        payload !== null &&
-        initialState.nodeId === nodeId &&
-        cardCode === 6
-      ) {
-        // posSettings = initialState.posSettings;
-        // Object.assign(posSettings, initialState.posSettings);
-        // posSettings = JSON.parse(JSON.stringify(initialState.posSettings));
-        if (
-          payload &&
-          payload["covered"] &&
-          payload["covered"]["place_of_services"] &&
-          payload["covered"]["place_of_services"].length > 0
-        ) {
-          const place_of_services: number[] =
-            payload["covered"]["place_of_services"];
+      if (payload !== null) {
+        if (payload.length > 0) {
+          const place_of_services: number[] = payload;
           posSettings.forEach((s) => {
             if (place_of_services.includes(s.id_place_of_service_type)) {
               s["isChecked"] = true;
@@ -228,14 +188,8 @@ class ListItem extends Component<any, any> {
             }
           });
         }
-        if (
-          payload &&
-          payload["not_covered"] &&
-          payload["not_covered"]["place_of_services"] &&
-          payload["not_covered"]["place_of_services"].length > 0
-        ) {
-          const place_of_services: number[] =
-            payload["not_covered"]["place_of_services"];
+        if (payload.length > 0) {
+          const place_of_services: number[] = payload;
           posSettings.forEach((s) => {
             if (place_of_services.includes(s.id_place_of_service_type)) {
               s["isChecked"] = true;
@@ -256,34 +210,16 @@ class ListItem extends Component<any, any> {
   };
 
   initializePRSettingsListApi = () => {
-    const {
-      initialState,
-      nodeId,
-      card: { cardCode },
-      payload,
-    } = this.props;
+    const { payload } = this.props;
     let apiDetails = {};
     apiDetails["apiPart"] = PR_SETTINGS_LIST;
 
     this.props.getPRSettings(apiDetails).then((json) => {
       let prSettings =
         json.payload && json.payload.data ? json.payload.data : [];
-      if (
-        initialState !== null &&
-        payload !== null &&
-        initialState.nodeId === nodeId &&
-        cardCode === 7
-      ) {
-        // prSettings = JSON.parse(JSON.stringify(initialState.prSettings));
-
-        if (
-          payload &&
-          payload["covered"] &&
-          payload["covered"]["patient_residences"] &&
-          payload["covered"]["patient_residences"].length > 0
-        ) {
-          const patient_residences: number[] =
-            payload["covered"]["patient_residences"];
+      if (payload !== null) {
+        if (payload.length > 0) {
+          const patient_residences: number[] = payload;
           prSettings.forEach((s) => {
             if (patient_residences.includes(s.id_patient_residence_type)) {
               s["isChecked"] = true;
@@ -292,14 +228,8 @@ class ListItem extends Component<any, any> {
             }
           });
         }
-        if (
-          payload &&
-          payload["not_covered"] &&
-          payload["not_covered"]["patient_residences"] &&
-          payload["not_covered"]["patient_residences"].length > 0
-        ) {
-          const patient_residences: number[] =
-            payload["not_covered"]["patient_residences"];
+        if (payload.length > 0) {
+          const patient_residences: number[] = payload;
           prSettings.forEach((s) => {
             if (patient_residences.includes(s.id_patient_residence_type)) {
               s["isChecked"] = true;
@@ -321,24 +251,31 @@ class ListItem extends Component<any, any> {
 
   serviceSettingsCheckedPOS = (e) => {
     const posSettings = JSON.parse(JSON.stringify(this.state.posSettings));
-    // const { posSettings } = this.state;
     const { nodeId } = this.props;
+    const payload: string[] = [];
 
-    // console.log("POS SERVICE UPDATE: ", posSettings);
     posSettings.forEach((s: any) => {
       if (s.id_place_of_service_type + "" + nodeId === e.target.id) {
         s.isChecked = e.target.checked;
       }
     });
 
+    posSettings.forEach((s: any) => {
+      if (s.isChecked === true) {
+        payload.push(s.id_place_of_service_type);
+      }
+    });
+
     this.setState({
       posSettings,
+      payload,
     });
   };
 
   serviceSettingsCheckedPR = (e) => {
     const prSettings = JSON.parse(JSON.stringify(this.state.prSettings));
     const { nodeId } = this.props;
+    const payload: string[] = [];
 
     prSettings.forEach((s: any) => {
       if (s.id_patient_residence_type + "" + nodeId === e.target.id) {
@@ -346,14 +283,22 @@ class ListItem extends Component<any, any> {
       }
     });
 
+    prSettings.forEach((s: any) => {
+      if (s.isChecked === true) {
+        payload.push(s.id_patient_residence_type);
+      }
+    });
+
     this.setState({
       prSettings,
+      payload,
     });
   };
 
   serviceSettingsCheckedGL = (e) => {
     const glSettings = JSON.parse(JSON.stringify(this.state.glSettings));
     const { nodeId } = this.props;
+    const payload: string[] = [];
 
     glSettings.forEach((s: any) => {
       if (s.id + "" + nodeId === e.target.id) {
@@ -361,32 +306,57 @@ class ListItem extends Component<any, any> {
       }
     });
 
+    glSettings.forEach((s: any) => {
+      if (s.isChecked === true) {
+        payload.push(s.gl_code);
+      }
+    });
+
     this.setState({
       glSettings,
+      payload,
     });
   };
 
   handlePOSSelectAll = () => {
     const { posSettings, isSelectAllPOS } = this.state;
+    const payload: string[] = [];
+
     posSettings.forEach((s: any) => {
       s.isChecked = !isSelectAllPOS;
+    });
+
+    posSettings.forEach((s: any) => {
+      if (s.isChecked === true) {
+        payload.push(s.id_place_of_service_type);
+      }
     });
 
     this.setState({
       posSettings,
       isSelectAllPOS: !isSelectAllPOS,
+      payload,
     });
   };
 
   handlePRSelectAll = () => {
     const { prSettings, isSelectAllPR } = this.state;
+    const payload: string[] = [];
+
     prSettings.forEach((s: any) => {
       s.isChecked = !isSelectAllPR;
+    });
+
+    prSettings.forEach((s: any) => {
+      if (s.isChecked === true) {
+        payload.push(s.id_patient_residence_type);
+      }
     });
 
     this.setState({
       prSettings,
       isSelectAllPR: !isSelectAllPR,
+      payload,
     });
   };
 
@@ -397,11 +367,8 @@ class ListItem extends Component<any, any> {
       type: key,
       covered: isCovered,
     };
-
-    this.setState({ posSettingsStatus }, () => {
-      const { nodeId, card } = this.props;
-      // this.props.handleStatusChange(nodeId, card);
-    });
+    let isIncluded = posSettingsStatus.covered;
+    this.setState({ posSettingsStatus, isIncluded });
   };
 
   handlePRStatus = (key: string) => {
@@ -411,23 +378,32 @@ class ListItem extends Component<any, any> {
       type: key,
       covered: isCovered,
     };
-
-    this.setState({ prSettingsStatus });
+    let isIncluded = prSettingsStatus.covered;
+    this.setState({ prSettingsStatus, isIncluded });
   };
 
   handleGLStatus = (key: string) => {
     const COVERED = "covered";
     const isCovered: boolean = key === COVERED ? true : false;
+
     let glSettingsStatus = {
       type: key,
       covered: isCovered,
     };
 
-    this.setState({ glSettingsStatus });
+    let isIncluded = glSettingsStatus.covered;
+    this.setState({ glSettingsStatus, isIncluded });
   };
 
   render() {
     const {
+      // Current Criteria
+      nodeId,
+      // cardCode,
+      cardName,
+      isIncluded,
+      payload,
+
       // POS
       posSettings,
       prSettings,
@@ -443,8 +419,7 @@ class ListItem extends Component<any, any> {
       glSettingsStatus,
     } = this.state;
     const {
-      nodeId,
-      card: { cardName, cardCode, isIncluded },
+      card: { cardCode },
       deleteIconHandler,
     } = this.props;
     switch (cardCode) {
@@ -459,7 +434,9 @@ class ListItem extends Component<any, any> {
             }}
             handleStatus={this.handleGLStatus}
             serviceSettingsChecked={this.serviceSettingsCheckedGL}
-            deleteIconHandler={() => deleteIconHandler(nodeId)}
+            deleteIconHandler={() =>
+              deleteIconHandler(nodeId, cardCode, cardName, isIncluded, payload)
+            }
             isAdditionalCriteria={true}
             nodeId={nodeId}
           />
@@ -483,7 +460,9 @@ class ListItem extends Component<any, any> {
               isSelectAll: isSelectAllPOS,
               handleSelectAll: this.handlePOSSelectAll,
             }}
-            deleteIconHandler={() => deleteIconHandler(nodeId)}
+            deleteIconHandler={() =>
+              deleteIconHandler(nodeId, cardCode, cardName, isIncluded, payload)
+            }
             isAdditionalCriteria={true}
             nodeId={nodeId}
           />
@@ -501,7 +480,9 @@ class ListItem extends Component<any, any> {
               isSelectAll: isSelectAllPR,
               handleSelectAll: this.handlePRSelectAll,
             }}
-            deleteIconHandler={() => deleteIconHandler(nodeId)}
+            deleteIconHandler={() =>
+              deleteIconHandler(nodeId, cardCode, cardName, isIncluded, payload)
+            }
             isAdditionalCriteria={true}
             nodeId={nodeId}
           />
