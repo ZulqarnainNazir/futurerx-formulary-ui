@@ -494,13 +494,25 @@ class STF extends React.Component<any, any> {
                   <label>
                     ST Value <span className="astrict">*</span>
                   </label>
+                  <DropDown
+                    options={this.state.stTypes}
+                    valueProp="id_st_type"
+                    dispProp="st_type_name"
+                    onSelect={this.dropDownSelectHandlerStType}
+                    disabled={this.props.configureSwitch}
+                  />
+                </div>
+                {/* <div className="group">
+                  <label>
+                    ST Value <span className="astrict">*</span>
+                  </label>
                   <input
                     type="text"
                     name="stValue"
                     onChange={this.handleChange}
                     disabled={this.props.configureSwitch}
                   />
-                </div>
+                </div> */}
               </Grid>
             </Grid>
             <Box display="flex" justifyContent="flex-end">
