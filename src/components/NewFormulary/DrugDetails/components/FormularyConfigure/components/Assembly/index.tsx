@@ -1,8 +1,9 @@
 import React, { Component } from "react";
+import FormularyAssemblyComponents from './FormularyAssemblyComponents';
 
 class Assembly extends Component {
   render() {
-    return <h1>Assembly Component</h1>;
+    return <FormularyAssemblyComponents/>
   }
 }
 
