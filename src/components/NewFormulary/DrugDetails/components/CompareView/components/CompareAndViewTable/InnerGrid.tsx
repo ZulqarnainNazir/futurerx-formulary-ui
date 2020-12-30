@@ -9,6 +9,7 @@ import * as compareConstants from "../../../../../../../api/http-compare-view";
 import showMessage from "../../../../../Utils/Toast";
 
 import "./CompareTable.scss";
+import getLobCode from "../../../../../Utils/LobUtils";
 
 interface InnerGridType {
   name: string;
@@ -26,6 +27,8 @@ interface InnerGridProps {
   baseformulary?: any;
   referenceformulary?: any;
   formularyLobId?: any;
+  clientId?: any;
+  onRejectClicked?: (a) => void;
 }
 
 const defaultListPayload = {
@@ -49,6 +52,8 @@ class InnerGrid extends Component<InnerGridProps, any>{
     hiddenColumns: Array(),
     dataCount: 0,
     isLastColumn: false,
+    rejectedKeys: Array(),
+    rejectedDrugIds: Array(),
   }
 
   listPayload: any = {
@@ -63,6 +68,74 @@ class InnerGrid extends Component<InnerGridProps, any>{
       this.setState({
         hiddenColumns: hiddenColumnKeys
       });
+    }
+  }
+  getRejectMessageBody = () => {
+    let messageBody = {
+      attribute_field_name: '',
+      drug_key: '',
+      attribute_current_value: '',
+      is_single_update: true,
+      file_type: getLobCode(this.props.formularyLobId),
+      multi_update_type: ''
+    };
+    if (this.state.rowData['attribute_field_name'] === 'tierValue') {
+      messageBody.attribute_field_name = 'tier_value';
+    } else if (this.state.rowData['attribute_name'] === 'Tx Category') {
+      messageBody.attribute_field_name = 'category';
+    } else if (this.state.rowData['attribute_name'] === 'Tx Class') {
+      messageBody.attribute_field_name = 'class';
+    } else if (this.state.rowData['attribute_field_name'] === 'paType') {
+      messageBody.attribute_field_name = 'pa_type';
+    } else if (this.state.rowData['attribute_field_name'] === 'paGroupDescription') {
+      messageBody.attribute_field_name = 'pa_group_description';
+    } else if (this.state.rowData['attribute_field_name'] === 'stType') {
+      messageBody.attribute_field_name = 'st_type';
+    } else if (this.state.rowData['attribute_field_name'] === 'stGroupDescription') {
+      messageBody.attribute_field_name = 'st_group_description';
+    } else if (this.state.rowData['attribute_field_name'] === 'qlType') {
+      messageBody.attribute_field_name = 'ql_type';
+    } else if (this.state.rowData['attribute_field_name'] === 'isAL') {
+      messageBody.attribute_field_name = 'age_limit';
+    } else if (this.state.rowData['attribute_field_name'] === 'isGL') {
+      messageBody.attribute_field_name = 'gender_limit';
+    } else if (this.state.rowData['attribute_field_name'] === 'isICDL') {
+      messageBody.attribute_field_name = 'icd_limit';
+    } else if (this.state.rowData['attribute_field_name'] === 'isPATRS') {
+      messageBody.attribute_field_name = 'patient_residence';
+    } else if (this.state.rowData['attribute_field_name'] === 'isPHNW') {
+      messageBody.attribute_field_name = 'pharamcy_network';
+    } else if (this.state.rowData['attribute_field_name'] === 'isPRTX') {
+      messageBody.attribute_field_name = 'prescriber_taxonomy';
+    } else if (this.state.rowData['attribute_field_name'] === 'isPOS') {
+      messageBody.attribute_field_name = 'place_of_service';
+    } else if (this.state.rowData['attribute_type'] === 'User Defined') {
+      messageBody.attribute_field_name = 'user_defined';
+    }
+    return messageBody;
+  }
+  onDialogAction = (type) => {
+    console.log('Rejected drugs:' + JSON.stringify(this.state.rejectedDrugIds));
+    if (type === 'positive' && this.state.rejectedDrugIds.length > 0) {
+      console.log('Rejected drugs:' + JSON.stringify(this.state.rejectedDrugIds));
+      if (this.state.rowData) {
+        let messageTemplate = this.getRejectMessageBody();
+        let apiBody = {
+          user_id: this.props.clientId,
+          attributes: Array()
+        };
+        this.state.rejectedDrugIds.map(attributeData => {
+          let newTemplate = Object.assign({}, messageTemplate);
+          newTemplate.attribute_current_value = attributeData.value;
+          newTemplate.drug_key = attributeData.drugId;
+          apiBody.attributes.push(newTemplate);
+        });
+
+        if (this.props.onRejectClicked) {
+          this.props.onRejectClicked(apiBody);
+        }
+      }
+      this.toggleDrugsListGrid(null, null, null, true);
     }
   }
   onApplyFilterHandler = (filters) => {
@@ -213,12 +286,28 @@ class InnerGrid extends Component<InnerGridProps, any>{
                   break;
 
                 case 'Quantity Limits (QL)':
-                  row['qlType'] = value['ql_type'] === null ? '' : value['ql_type'];
-                  row['qlDays'] = value['ql_days'] === null ? '' : value['ql_days'];
-                  row['qlPeriodofTime'] = value['ql_period_of_time'] === null ? '' : value['ql_period_of_time'];
-                  row['qlQuantity'] = value['ql_quantity'] === null ? '' : value['ql_quantity'];
-                  row['fillsAllowed'] = value['fills_allowed'] === null ? '' : value['fills_allowed'];
-                  row['fullLimitPeriod'] = value['full_limit_period_of_time'] === null ? '' : value['full_limit_period_of_time'];
+                  if (isLastColumn) {
+                    row['qlType'] = value['ql_type_base'] === null ? '' : value['ql_type_base'];
+                    row['qlDays'] = value['ql_days_base'] === null ? '' : value['ql_days_base'];
+                    row['qlPeriodofTime'] = value['ql_period_of_time_base'] === null ? '' : value['ql_period_of_time_base'];
+                    row['qlQuantity'] = value['ql_quantity_base'] === null ? '' : value['ql_quantity_base'];
+                    row['fillsAllowed'] = value['fills_allowed_base'] === null ? '' : value['fills_allowed_base'];
+                    row['fullLimitPeriod'] = value['full_limit_period_of_time_base'] === null ? '' : value['full_limit_period_of_time_base'];
+
+                    row['qlTypeRef'] = value['ql_type_ref'] === null ? '' : value['ql_type_ref'];
+                    row['qlDaysRef'] = value['ql_days_ref'] === null ? '' : value['ql_days_ref'];
+                    row['qlPeriodofTimeRef'] = value['ql_period_of_time_ref'] === null ? '' : value['ql_period_of_time_ref'];
+                    row['qlQuantityRef'] = value['ql_quantity_ref'] === null ? '' : value['ql_quantity_ref'];
+                    row['fillsAllowedRef'] = value['fills_allowed_ref'] === null ? '' : value['fills_allowed_ref'];
+                    row['fullLimitPeriodRef'] = value['full_limit_period_of_time_ref'] === null ? '' : value['full_limit_period_of_time_ref'];
+                  } else {
+                    row['qlType'] = value['ql_type'] === null ? '' : value['ql_type'];
+                    row['qlDays'] = value['ql_days'] === null ? '' : value['ql_days'];
+                    row['qlPeriodofTime'] = value['ql_period_of_time'] === null ? '' : value['ql_period_of_time'];
+                    row['qlQuantity'] = value['ql_quantity'] === null ? '' : value['ql_quantity'];
+                    row['fillsAllowed'] = value['fills_allowed'] === null ? '' : value['fills_allowed'];
+                    row['fullLimitPeriod'] = value['full_limit_period_of_time'] === null ? '' : value['full_limit_period_of_time'];
+                  }
                   break;
 
                 case 'Drug Details':
@@ -346,7 +435,7 @@ class InnerGrid extends Component<InnerGridProps, any>{
             }
             idCount++;
           });
-          console.log('Row data is:'+JSON.stringify(rowData));
+          console.log('Row data is:' + JSON.stringify(rowData));
           this.setState({
             drugGridData: drugGridData,
             drugData: drugData,
@@ -425,6 +514,8 @@ class InnerGrid extends Component<InnerGridProps, any>{
         refFormularyId: '',
         hiddenColumns: Array(),
         dataCount: 0,
+        rejectedKeys: Array(),
+        rejectedDrugIds: Array(),
       });
     } else {
       if (dataCount > 0) {
@@ -437,6 +528,142 @@ class InnerGrid extends Component<InnerGridProps, any>{
         this.listPayload = { ...defaultListPayload };
         //console.log('Base formulary ID:' + baseFormularyId + ' Ref formulary ID:' + refFormularyId + ' ' + JSON.stringify(this.props.baseformulary) + ' ' + JSON.stringify(this.props.referenceformulary));
         this.populateGridData(rowData, baseFormularyId, refFormularyId, this.listPayload, isLastColumn);
+      }
+    }
+  };
+
+  getAttributeValue = (row) => {
+    if (this.state.rowData['attribute_field_name'] === 'tierValue') {
+      return row['tier'];
+    } else if (this.state.rowData['attribute_name'] === 'Tx Category') {
+      return row['category'];
+    } else if (this.state.rowData['attribute_name'] === 'Tx Class') {
+      return row['class'];
+    } else if (this.state.rowData['attribute_field_name'] === 'paType') {
+      return row['paType'];
+    } else if (this.state.rowData['attribute_field_name'] === 'paGroupDescription') {
+      return row['groupDescription'];
+    } else if (this.state.rowData['attribute_field_name'] === 'stType') {
+      return row['stType'];
+    } else if (this.state.rowData['attribute_field_name'] === 'stGroupDescription') {
+      return row['groupDescription'];
+    } else if (this.state.rowData['attribute_field_name'] === 'qlType') {
+      return row['qlType'];
+    } else if (this.state.rowData['attribute_field_name'] === 'isAL') {
+      return '';
+    } else if (this.state.rowData['attribute_field_name'] === 'isGL') {
+      return '';
+    } else if (this.state.rowData['attribute_field_name'] === 'isICDL') {
+      return '';
+    } else if (this.state.rowData['attribute_field_name'] === 'isPATRS') {
+      return '';
+    } else if (this.state.rowData['attribute_field_name'] === 'isPHNW') {
+      return '';
+    } else if (this.state.rowData['attribute_field_name'] === 'isPRTX') {
+      return '';
+    } else if (this.state.rowData['attribute_field_name'] === 'isPOS') {
+      return '';
+    } else if (this.state.rowData['attribute_type'] === 'User Defined') {
+      return '';
+    }
+  }
+
+  rowSelectionChange = async (data: any, event) => {
+    console.log('Row:' + JSON.stringify(data));
+    let isCategoricalRow = (this.state.rowData['attribute_name'] === 'PA Group Descriptions' || this.state.rowData['attribute_name'] === 'ST Group Descriptions' || this.state.rowData['attribute_type'] === 'Category/Class');
+    if (event.target.checked) {
+      if (!this.state.rejectedKeys.includes(data['key'])) {
+        this.state.rejectedKeys.push(data['key']);
+        if (isCategoricalRow) {
+          let apiDetails = {};
+          let attributeValue = this.getAttributeValue(data);
+          apiDetails['apiPart'] = (this.state.isLastColumn ? compareConstants.COMMERCIAL_FORMULARY_DRUGS_NON_MATCH : compareConstants.COMMERCIAL_FORMULARY_DRUGS);
+          apiDetails['pathParams'] = this.state.baseFormularyId + '/' + this.state.refFormularyId;
+          apiDetails['keyVals'] = [];
+          apiDetails['keyVals'].push({ key: commonConstants.KEY_LIMIT, value: 10000 });
+          apiDetails['keyVals'].push({ key: commonConstants.KEY_INDEX, value: 0 });
+
+          apiDetails['messageBody'] = {};
+
+          switch (this.state.rowData['attribute_name']) {
+            case 'PA Group Descriptions':
+              apiDetails['messageBody']['attribute_field_data_type'] = 'STR';
+              apiDetails['messageBody']['attribute_field_name'] = this.state.rowData['attribute_field_name'];
+              apiDetails['messageBody']['attribute_field_value'] = attributeValue;
+              apiDetails['messageBody']['attribute_name'] = this.state.rowData['attribute_name'];
+              apiDetails['messageBody']['file_type'] = this.state.rowData['file_type'];
+              apiDetails['messageBody']['filter'] = [];
+              break;
+            case 'ST Group Descriptions':
+              apiDetails['messageBody']['attribute_field_data_type'] = 'STR';
+              apiDetails['messageBody']['attribute_field_name'] = this.state.rowData['attribute_field_name'];
+              apiDetails['messageBody']['attribute_field_value'] = attributeValue;
+              apiDetails['messageBody']['attribute_name'] = this.state.rowData['attribute_name'];
+              apiDetails['messageBody']['file_type'] = this.state.rowData['file_type'];
+              apiDetails['messageBody']['filter'] = [];
+              break;
+            case 'Tx Category':
+              apiDetails['messageBody']['attribute_field_data_type'] = 'STR';
+              apiDetails['messageBody']['attribute_field_name'] = 'drugCategory';
+              apiDetails['messageBody']['attribute_field_value'] = attributeValue.replace(/[*]/g,"");
+              apiDetails['messageBody']['attribute_name'] = this.state.rowData['attribute_name'];
+              apiDetails['messageBody']['file_type'] = this.state.rowData['file_type'];
+              apiDetails['messageBody']['filter'] = [];
+              break;
+            case 'Tx Class':
+              apiDetails['messageBody']['attribute_field_data_type'] = 'STR';
+              apiDetails['messageBody']['attribute_field_name'] = 'drugClass';
+              apiDetails['messageBody']['attribute_field_value'] = attributeValue.replace(/[*]/g,"");
+              apiDetails['messageBody']['attribute_name'] = this.state.rowData['attribute_name'];
+              apiDetails['messageBody']['file_type'] = this.state.rowData['file_type'];
+              apiDetails['messageBody']['filter'] = [];
+              break;
+          }
+
+
+          let drugs = await getDrugs(apiDetails);
+          if (drugs && drugs['list'] && drugs['list'].length > 0) {
+            drugs['list'].map(drugValue => {
+              let drugId = null;
+              if (this.state.isLastColumn) {
+                drugId = drugValue['md5_id_base'];
+              } else {
+                drugId = drugValue['md5_id'];
+              }
+              if (drugId)
+                this.state.rejectedDrugIds.push({ drugId: drugId, value: attributeValue });
+            })
+          }
+        } else {
+          if (this.state.drugData.length > 0 && (data['key'] - 1) < this.state.drugData.length) {
+            let drugId = null;
+            if (this.state.isLastColumn) {
+              drugId = this.state.drugData[data['key'] - 1]['md5_id_base'];
+            } else {
+              drugId = this.state.drugData[data['key'] - 1]['md5_id'];
+            }
+            if (drugId)
+              this.state.rejectedDrugIds.push({ drugId: drugId, value: this.getAttributeValue(data) });
+          }
+        }
+      }
+    } else {
+      this.state.rejectedKeys = this.state.rejectedKeys.filter(item => item !== data['key']);
+
+      if (isCategoricalRow) {
+        let attributeValue = this.getAttributeValue(data);
+        this.state.rejectedDrugIds = this.state.rejectedDrugIds.filter(item => item['value'] !== attributeValue);
+      } else {
+        if (this.state.drugData.length > 0 && (data['key'] - 1) < this.state.drugData.length) {
+          let drugId = null;
+          if (this.state.isLastColumn) {
+            drugId = this.state.drugData[data['key'] - 1]['md5_id_base'];
+          } else {
+            drugId = this.state.drugData[data['key'] - 1]['md5_id'];
+          }
+          if (drugId)
+            this.state.rejectedDrugIds = this.state.rejectedDrugIds.filter(item => item['drugId'] !== drugId);
+        }
       }
     }
   };
@@ -512,7 +739,7 @@ class InnerGrid extends Component<InnerGridProps, any>{
                   <span
                     onClick={() => {
                       this.toggleDrugsListGrid(
-                        `${this.props.formularyType} - ${data.name}: Reference Formulary`,
+                        `${this.props.formularyType} - ${data.name}: Reference Only`,
                         true,
                         data,
                         false,
@@ -553,7 +780,7 @@ class InnerGrid extends Component<InnerGridProps, any>{
                 negativeActionText=""
                 title={this.state.drugGridHeaderName}
                 handleClose={() => this.toggleDrugsListGrid(null, null, null, true)}
-                handleAction={() => { }}
+                handleAction={(type) => { this.onDialogAction(type) }}
                 showActions={this.state.actions}
                 height="80%"
                 width="80%"
@@ -584,6 +811,7 @@ class InnerGrid extends Component<InnerGridProps, any>{
                   clearFilterHandler={this.onClearFilterHandler}
                   applyFilter={this.onApplyFilterHandler}
                   getColumnSettings={this.onSettingsIconHandler}
+                  rowSelectionChange={this.rowSelectionChange}
                   pageSize={this.listPayload.limit}
                   selectedCurrentPage={(this.listPayload.index / this.listPayload.limit + 1)}
                   totalRowsCount={this.state.dataCount}
@@ -606,6 +834,12 @@ class InnerGrid extends Component<InnerGridProps, any>{
                     onClick={() => {
                       this.toggleDrugsListGrid(
                         `${this.props.formularyType} - ${data.name}: Base Formulary`,
+                        false,
+                        data,
+                        false,
+                        this.props.baseformulary['id_formulary'],
+                        null,
+                        data.baseFormulary,
                         false
                       );
                     }}
@@ -618,11 +852,11 @@ class InnerGrid extends Component<InnerGridProps, any>{
             {this.state.openDrugsList ? (
               <DialogPopup
                 showCloseIcon={this.state.actions}
-                positiveActionText="Reject"
+                positiveActionText=""
                 negativeActionText=""
                 title={this.state.drugGridHeaderName}
                 handleClose={() => this.toggleDrugsListGrid(null, null, null, true)}
-                handleAction={() => { }}
+                handleAction={(type) => { }}
                 showActions={this.state.actions}
                 height="80%"
                 width="80%"
