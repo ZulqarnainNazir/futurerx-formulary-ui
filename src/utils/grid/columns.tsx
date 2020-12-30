@@ -11086,12 +11086,106 @@ export const claimsPopupErrorMsgGrid = [
   },
 ];
 
+export const getStVersionHistoryColumn: () => Column<any>[] = () => {
+  return [
+    {
+      id: 1,
+      position: 1,
+      pixelWidth: 20,
+      sorter: {},
+      textCase: "upper",
+      key: "st_group_description_name",
+      displayTitle: "GROUP DESCRIPTION NAME",
+      isFilterable: true,
+      dataType: "string",
+      filters: textFilters,
+      hidden: false,
+      sortDirections: ["ascend", "descend"],
+    },
+
+    {
+      id: 2,
+      position: 2,
+      pixelWidth: 10,
+      sorter: {},
+      textCase: "upper",
+      key: "applied_version",
+      displayTitle: "APPLIED VERSION",
+      isFilterable: true,
+      dataType: "string",
+      filters: textFilters,
+      hidden: false,
+      sortDirections: ["ascend", "descend"],
+    },
+
+    {
+      id: 3,
+      position: 3,
+      pixelWidth: 10,
+      sorter: {},
+      textCase: "upper",
+      key: "version_number",
+      displayTitle: "CURRENT VERSION",
+      isFilterable: true,
+      dataType: "string",
+      filters: textFilters,
+      hidden: false,
+      sortDirections: ["ascend", "descend"],
+    },
+
+    {
+      id: 4,
+      position: 4,
+      pixelWidth: 10,
+      sorter: {},
+      textCase: "upper",
+      key: "effective_date",
+      displayTitle: "EFFECTIVE DATE",
+      isFilterable: true,
+      dataType: "string",
+      filters: textFilters,
+      hidden: false,
+      sortDirections: ["ascend", "descend"],
+    },
+
+    {
+      id: 5,
+      position: 5,
+      pixelWidth: 10,
+      sorter: {},
+      textCase: "upper",
+      key: "contract_year",
+      displayTitle: "FORMULARY SERVICE YEAR",
+      isFilterable: true,
+      dataType: "string",
+      filters: textFilters,
+      hidden: false,
+      sortDirections: ["ascend", "descend"],
+    },
+
+    {
+      id: 6,
+      position: 7,
+      pixelWidth: 10,
+      sorter: {},
+      textCase: "upper",
+      key: "formulary_id",
+      displayTitle: "FORMULARY ID",
+      isFilterable: true,
+      dataType: "string",
+      filters: textFilters,
+      hidden: false,
+      sortDirections: ["ascend", "descend"],
+    },
+  ];
+};
+
 export const getCompareFormularyVersionHistoryColumn: () => Column<any>[] = () => {
   return [
     {
       id: 1,
       position: 1,
-      pixelWidth: 30,
+      pixelWidth: 20,
       sorter: {},
       textCase: "upper",
       key: "pa_group_description_name",
@@ -11136,7 +11230,7 @@ export const getCompareFormularyVersionHistoryColumn: () => Column<any>[] = () =
     {
       id: 4,
       position: 4,
-      pixelWidth: 20,
+      pixelWidth: 15,
       sorter: {},
       textCase: "upper",
       key: "effective_date",
@@ -11151,7 +11245,7 @@ export const getCompareFormularyVersionHistoryColumn: () => Column<any>[] = () =
     {
       id: 5,
       position: 5,
-      pixelWidth: 15,
+      pixelWidth: 10,
       sorter: {},
       textCase: "upper",
       key: "contract_year",
@@ -11166,7 +11260,7 @@ export const getCompareFormularyVersionHistoryColumn: () => Column<any>[] = () =
     {
       id: 6,
       position: 7,
-      pixelWidth: 15,
+      pixelWidth: 10,
       sorter: {},
       textCase: "upper",
       key: "formulary_id",
