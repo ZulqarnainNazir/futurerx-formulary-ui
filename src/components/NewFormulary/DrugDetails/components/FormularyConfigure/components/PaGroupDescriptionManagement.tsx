@@ -10,7 +10,7 @@ import Groups from './Groups'
 import PaNewGroupForm from './PaNewGroupForm';
 import { getPAGroupDetails } from "../../../../../../redux/slices/formulary/pagdm/pagdmSlice";
 import { getPaSummary, getPaGrouptDescriptions,getPaGrouptDescriptionDetail, getPaTypes, getDrugLists,getPaGrouptDescriptionVersions,getPaGrouptDescription } from "../../../../../../redux/slices/formulary/pa/paActionCreation";
-
+import { setAdditionalCriteria } from "../../../../../../redux/slices/formulary/advancedSearch/additionalCriteriaSlice";
 
 function mapStateToProps(state) {
     return {
@@ -34,6 +34,7 @@ function mapDispatchToProps(dispatch) {
         getPaGrouptDescriptionVersions: (a) => dispatch(getPaGrouptDescriptionVersions(a)),
         getPaGrouptDescription: (a) => dispatch(getPaGrouptDescription(a)),
         getPAGroupDetails:(arg)=>dispatch(getPAGroupDetails(arg)),
+        setAdditionalCriteria:(a) => dispatch(setAdditionalCriteria(a)),
     };
 }
 
@@ -96,7 +97,11 @@ class PaGroupDescriptionManagement extends React.Component<any, any>{
             apiDetails["lob_type"] = this.props.formulary_lob_id;
             apiDetails['pathParams'] = '/'+latestVerion;
 
-            this.props.getPaGrouptDescription(apiDetails)
+            this.props.getPaGrouptDescription(apiDetails).then(json =>{
+                let payload:any ={};
+                payload.additionalCriteriaBody=json.payload.data['um_criteria'];
+                this.props.setAdditionalCriteria(payload);
+            });
 
             this.props.getPAGroupDetails({
                 formulary_id: this.props.formulary_id,

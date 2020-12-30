@@ -112,6 +112,24 @@ class PaReplace extends React.Component<any, any> {
     this.state.drugData = [];
     this.state.drugGridData = [];
 
+    if (this.state.selectedGroupDescription === null) {
+      showMessage("Group Description is required", "info");
+      return;
+    }
+
+    if (this.state.selectedPaType === null) {
+      showMessage("PA Type is required", "info");
+      return;
+    }
+
+    if (
+      this.state.showPaConfiguration &&
+      this.state.selectedLobFormulary["id_formulary"] === undefined
+    ) {
+      showMessage("Related Formulary is required", "info");
+      return;
+    }
+
     this.populateGridData();
   };
 
@@ -154,10 +172,14 @@ class PaReplace extends React.Component<any, any> {
       this.props.setAdvancedSearch(payload);
     }
     if (nextProps.additionalCriteriaBody) {
-      const additionalCriteriaState = nextProps.additionalCriteriaBody[1];
-      this.setState({ additionalCriteriaState }, () =>
-        console.log(this.state.additionalCriteriaState)
-      );
+      this.setState({
+        additionalCriteriaState: nextProps.additionalCriteriaBody,
+      });
+    }
+    if (nextProps.configureSwitch) {
+      this.populateGridData();
+    } else {
+      this.setState({ tierGridContainer: false });
     }
   }
 
@@ -314,28 +336,27 @@ class PaReplace extends React.Component<any, any> {
       );
     }
     debugger;
-    if (this.state.selectedGroupDescription === null) {
-      showMessage("Group Description is required", "info");
-      return;
-    }
 
-    if (this.state.selectedPaType === null) {
-      showMessage("PA Type is required", "info");
-      return;
-    }
+    let tmp_fileType: any = "";
 
-    if (
-      this.state.showPaConfiguration &&
-      this.state.selectedLobFormulary["id_formulary"] === undefined
-    ) {
-      showMessage("Related Formulary is required", "info");
-      return;
+    if (this.props.configureSwitch) {
+      apiDetails["messageBody"][
+        "base_pa_group_description_id"
+      ] = this.state.selectedGroupDescription;
+      apiDetails["messageBody"]["id_pa_type"] = this.state.selectedPaType;
+      tmp_fileType = this.state.fileType;
+    } else {
+      switch (this.props.formulary_lob_id) {
+        case 1:
+          tmp_fileType = "MCR";
+          break;
+        case 4:
+          tmp_fileType = "COMM";
+          break;
+        default:
+          break;
+      }
     }
-
-    apiDetails["messageBody"][
-      "base_pa_group_description_id"
-    ] = this.state.selectedGroupDescription;
-    apiDetails["messageBody"]["id_pa_type"] = this.state.selectedPaType;
 
     if (this.state.showPaConfiguration) {
       apiDetails["pathParams"] =
@@ -343,14 +364,14 @@ class PaReplace extends React.Component<any, any> {
         "/" +
         this.state.selectedLobFormulary["id_formulary"] +
         "/" +
-        this.state.fileType +
+        tmp_fileType +
         "/PA/";
       this.props
         .postRelatedFormularyDrugPA(apiDetails)
         .then((json) => this.loadGridData(json));
     } else {
       apiDetails["pathParams"] =
-        this.props?.formulary_id + "/" + this.state.fileType + "/";
+        this.props?.formulary_id + "/" + tmp_fileType + "/";
       this.props
         .postFormularyDrugPA(apiDetails)
         .then((json) => this.loadGridData(json));
@@ -443,6 +464,10 @@ class PaReplace extends React.Component<any, any> {
         lobFormularies: json.payload.result,
       });
     });
+
+    if (this.props.configureSwitch) {
+      this.populateGridData();
+    }
   }
 
   // additional criteria toggle
@@ -590,17 +615,19 @@ class PaReplace extends React.Component<any, any> {
         {this.state.tierGridContainer && (
           <div className="select-drug-from-table">
             <div className="bordered white-bg">
-              <div className="header space-between pr-10">
-                <div className="button-wrapper">
-                  <Button
-                    className="Button normal"
-                    label="Advance Search"
-                    onClick={this.advanceSearchClickHandler}
-                    disabled={this.props.configureSwitch}
-                  />
-                  <Button label="Save" onClick={this.handleSave} />
+              {!this.props.configureSwitch && (
+                <div className="header space-between pr-10">
+                  <div className="button-wrapper">
+                    <Button
+                      className="Button normal"
+                      label="Advance Search"
+                      onClick={this.advanceSearchClickHandler}
+                      disabled={this.props.configureSwitch}
+                    />
+                    <Button label="Save" onClick={this.handleSave} />
+                  </div>
                 </div>
-              </div>
+              )}
 
               <div className="tier-grid-container">
                 <FrxDrugGridContainer

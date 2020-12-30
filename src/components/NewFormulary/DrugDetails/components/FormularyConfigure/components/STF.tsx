@@ -111,6 +111,28 @@ class STF extends React.Component<any, any> {
     this.state.drugData = [];
     this.state.drugGridData = [];
 
+    if (this.state.selectedGroupDescription === null) {
+      showMessage("Group Description is required", "info");
+      return;
+    }
+
+    if (this.state.selectedStType === null) {
+      showMessage("ST Type is required", "info");
+      return;
+    }
+
+    if (this.state.stValue === null) {
+      showMessage("ST Value is required", "info");
+      return;
+    }
+
+    if (
+      this.state.showStConfiguration &&
+      this.state.selectedLobFormulary["id_formulary"] === undefined
+    ) {
+      showMessage("Related Formulary is required", "info");
+      return;
+    }
     this.populateGridData();
   };
 
@@ -210,6 +232,11 @@ class STF extends React.Component<any, any> {
       }
       this.props.setAdvancedSearch(payload);
     }
+    if (nextProps.configureSwitch){
+      this.populateGridData();
+    }else{
+      this.setState({ tierGridContainer: false });
+    }
   }
   dropDownSelectHandlerGroupDescription = (value, event) => {
     let tmp_index = event.key;
@@ -285,8 +312,26 @@ class STF extends React.Component<any, any> {
     let apiDetails = {};
     apiDetails["lob_type"] = this.props.formulary_lob_id;
     // let tmpGroup :any = this.state.paGroupDescriptions.filter(obj  => obj.id_mcr_base_pa_group_description === this.state.selectedGroupDescription);
-    apiDetails["pathParams"] =
-      this.props?.formulary_id + "/" + this.state.fileType + "/";
+    let tmp_fileType:any='';
+    if ( this.props.configureSwitch){
+      apiDetails["messageBody"]["base_st_group_description_id"] = this.state.selectedGroupDescription;
+      apiDetails["messageBody"]["id_st_type"] = this.state.selectedStType;
+      apiDetails["messageBody"]["st_value"] = this.state.stValue;
+      tmp_fileType=this.state.fileType;
+    }else{
+      switch (this.props.formulary_lob_id) {
+        case 1:
+          tmp_fileType='MCR';
+          break;
+        case 4:
+            tmp_fileType='COMM';
+            break;
+        default:
+          break;
+      }
+
+    }
+    apiDetails["pathParams"] = this.props?.formulary_id + "/" + tmp_fileType + "/";
     apiDetails["keyVals"] = [
       { key: constants.KEY_ENTITY_ID, value: this.props?.formulary_id },
       { key: constants.KEY_INDEX, value: 0 },
@@ -301,33 +346,8 @@ class STF extends React.Component<any, any> {
       );
     }
 
-    if (this.state.selectedGroupDescription === null) {
-      showMessage("Group Description is required", "info");
-      return;
-    }
-
-    if (this.state.selectedStType === null) {
-      showMessage("ST Type is required", "info");
-      return;
-    }
-
-    if (this.state.stValue === null) {
-      showMessage("ST Value is required", "info");
-      return;
-    }
-
-    if (
-      this.state.showStConfiguration &&
-      this.state.selectedLobFormulary["id_formulary"] === undefined
-    ) {
-      showMessage("Related Formulary is required", "info");
-      return;
-    }
-    apiDetails["messageBody"][
-      "base_st_group_description_id"
-    ] = this.state.selectedGroupDescription;
-    apiDetails["messageBody"]["id_st_type"] = this.state.selectedStType;
-    apiDetails["messageBody"]["st_value"] = this.state.stValue;
+    
+    
 
     const drugGridDate = this.props
       .postFormularyDrugST(apiDetails)
@@ -501,19 +521,8 @@ class STF extends React.Component<any, any> {
                     <span className="astrict">*</span>
                   </label>
                   <Space size="large">
-                    <div className="marketing-material radio-group">
-                        <RadioButton
-                          label="Yes"
-                          value="true"
-                          name="additional-criteria"
-                        />
-                        <RadioButton
-                          label="No"
-                          value="false"
-                          name="additional-criteria"
-                        />
-                    </div>
-
+                    <RadioButton label="Yes" disabled={this.props.configureSwitch} />
+                    <RadioButton label="No" disabled={this.props.configureSwitch}/>
                   </Space>
                 </div>
               </Grid>
@@ -585,6 +594,7 @@ class STF extends React.Component<any, any> {
           {this.state.tierGridContainer && (
             <div className="select-drug-from-table">
               <div className="bordered white-bg">
+                { !this.props.configureSwitch && (
                 <div className="header space-between pr-10">
                   <div className="button-wrapper">
                     <Button
@@ -596,6 +606,7 @@ class STF extends React.Component<any, any> {
                     <Button label="Save" onClick={this.handleSave} />
                   </div>
                 </div>
+                )}
 
                 <div className="tier-grid-container">
                   <FrxDrugGridContainer

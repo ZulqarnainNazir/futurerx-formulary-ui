@@ -214,7 +214,7 @@ function mapStateToProps(state) {
     client_id: state.application.clientId,
     PaGDData: state.paReducer.description,
     version: state.paVersion.paVersion,
-    additionalCriteriaObject: state?.additionalCriteria?.additionalCriteriaObject,
+    additionalCriteriaObject: state?.additionalCriteria?.additionalCriteriaBody,
 
   };
 }
@@ -936,22 +936,27 @@ function NewGroup(props: any) {
                   do you want to add additional criteria?
                 </span>
                 <div className="marketing-material radio-group">
-                  <RadioButton
-                    // defaultChecked={true}
-                    // onClick={
-                    //   !props.isReadOnly
-                    //     ? () => additionalCriteriaHandler()
-                    //     : () => {}
-                    // }
-
-                    onClick={openAdditionalCriteria}
-                    label="Yes"
-                    name="additional-criteria-material-radio"
-                  />
-                  <RadioButton
-                    label="No"
-                    name="additional-criteria-material-radio"
-                  />
+                  <RadioGroup
+                aria-label="marketing-material-radio1"
+                className="gdp-radio"
+                name="is_additional_criteria_defined"
+                onChange={handleChange}
+                value={formData.is_additional_criteria_defined}
+              >
+                <FormControlLabel
+                  value={true}
+                  control={<Radio />}
+                  label="Yes"
+                  disabled={props.editable}
+                  onClick={openAdditionalCriteria}
+                />
+                <FormControlLabel
+                  value={false}
+                  control={<Radio />}
+                  label="No"
+                  disabled={props.editable}
+                />
+              </RadioGroup>
                 </div>
                 {isAdditionalCriteriaOpen && props.formulary_lob_id == 4 ? (
                   <AdvanceSearchContainer
