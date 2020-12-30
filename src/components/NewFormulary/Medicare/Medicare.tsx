@@ -154,9 +154,9 @@ class Medicare extends React.Component<any, any> {
                     value={this.state.searchType}
                   />
               </div>
-              <div className="field-container">
+              {/* <div className="field-container">
                 <SearchBox iconPosition="left"/>
-              </div>
+              </div> */}
               <div className="field-container">
                   <DropDownMap
                     className="formulary-type-dropdown"
@@ -206,7 +206,8 @@ class Medicare extends React.Component<any, any> {
                 isExpandable: true,
                 expandIconColumnIndex:
                   formularyDetailsGridColumns({}).length + 1,
-                expandedRowRender: (props) => <FormularyExpandedDetails />,
+                // expandedRowRender: (props) => <FormularyExpandedDetails />,
+                expandedRowRender: (record:any) => <FormularyExpandedDetails rowData={record} drugDetailClick={this.props.drugDetailClick}/>,
                 expandCloseIcon: (
                   <span>
                     <svg

@@ -7,4 +7,5 @@ export interface TabModel {
 export interface TabInfo {
   id: number;
   text: string;
+  disable?: boolean;
 }
