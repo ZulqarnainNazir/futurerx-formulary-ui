@@ -93,6 +93,7 @@ export const saveGDM = createAsyncThunk(
       return response;
     } catch (err) {
       dispatch(getFailed(err));
+      return err;
     }
   }
 );
@@ -107,6 +108,7 @@ export const editGDM = createAsyncThunk(
       return response;
     } catch (err) {
       dispatch(getFailed(err));
+      return err;
     }
   }
 );
