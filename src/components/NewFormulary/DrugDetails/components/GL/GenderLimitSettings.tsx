@@ -88,7 +88,7 @@ const GenderLimitSettings = (props) => {
           <AddIcon/>
           <span className="gender-limit-settings__add-new-form-action-text">Add Gender Age Limit Criteria</span>
         </div> */}
-        <Button label="Apply" onClick={showGridHandler} />
+        <Button label="Apply" onClick={showGridHandler} disabled={isDisabled} />
       </div>
     </div>
   );

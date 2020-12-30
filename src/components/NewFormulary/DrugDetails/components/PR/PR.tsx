@@ -555,6 +555,22 @@ class DrugDetailPR extends React.Component<any, any> {
     //   this.getPRDrugsList();
     // }
 
+    if (nextProps.configureSwitch){
+      this.setState({tabs:[
+        { id: 1, text: "Replace", disabled: true },
+        { id: 2, text: "Append", disabled: true },
+        { id: 3, text: "Remove", disabled: true },
+      ], activeTabIndex:0});
+
+      this.getPRDrugsList();
+    } else {
+      this.setState({tabs:[
+        { id: 1, text: "Replace", disabled:false },
+        { id: 2, text: "Append", disabled:true },
+        { id: 3, text: "Remove", disabled:false },
+      ]});
+    }
+
     if (nextProps.advancedSearchBody && nextProps.populateGrid) {
       console.log("-----Inside Advance search Body if Condition-----advancedSearchBody ", nextProps.advancedSearchBody);
       console.log("-----Inside Advance search Body if Condition-----populateGrid ", nextProps.advancedSearchBody);
@@ -650,8 +666,7 @@ class DrugDetailPR extends React.Component<any, any> {
                     tabList={this.state.tabs}
                     activeTabIndex={this.state.activeTabIndex}
                     onClickTab={this.onClickTab}
-                    disabledIndex={1}
-                    disabled
+                    disabled={this.props.configureSwitch}
                   />
                 </div>
               </div>

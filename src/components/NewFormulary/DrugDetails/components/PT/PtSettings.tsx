@@ -70,7 +70,7 @@ class PrLimitSettings extends React.Component<any, any> {
             </div>
           </StatusContentFormPanel>
         </div>
-        <Button label="Apply" onClick={showGridHandler} />
+        <Button label="Apply" onClick={showGridHandler} disabled={this.props.isDisabled} />
       </div>
     );
   }

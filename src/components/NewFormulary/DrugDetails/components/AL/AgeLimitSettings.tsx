@@ -179,7 +179,7 @@ class AgeLimitSettings extends React.Component<any, any> {
               <Button
                 label="Apply"
                 onClick={() => this.props.showGrid()}
-                disabled={!this.props.showApply}
+                disabled={this.props.isDisabled}
               />
             </Box>
           </div>

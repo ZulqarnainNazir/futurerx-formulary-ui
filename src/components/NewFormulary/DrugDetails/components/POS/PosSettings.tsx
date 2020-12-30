@@ -99,7 +99,7 @@ const PosLimitSettings = (props) => {
         </div> */}
       </div>
       {showGridHandler ? (
-        <Button label="Apply" onClick={showGridHandler} />
+        <Button label="Apply" onClick={showGridHandler} disabled={isDisabled} />
       ) : null}
     </div>
   );

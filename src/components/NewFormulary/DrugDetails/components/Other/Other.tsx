@@ -478,6 +478,22 @@ class DrugDetailOther extends React.Component<any, any> {
     //   this.getOtherList();
     // }
 
+    if (nextProps.configureSwitch){
+      this.setState({tabs:[
+        { id: 1, text: "Replace", disabled: true },
+        { id: 2, text: "Append", disabled: true },
+        { id: 3, text: "Remove", disabled: true },
+      ], activeTabIndex:0});
+
+      this.getOtherList();
+    } else {
+      this.setState({tabs:[
+        { id: 1, text: "Replace", disabled:false },
+        { id: 2, text: "Append", disabled:true },
+        { id: 3, text: "Remove", disabled:false },
+      ]});
+    }
+
     if (nextProps.advancedSearchBody && nextProps.populateGrid) {
       console.log("-----Inside Advance search Body if Condition-----advancedSearchBody ", nextProps.advancedSearchBody);
       console.log("-----Inside Advance search Body if Condition-----populateGrid ", nextProps.advancedSearchBody);
@@ -567,8 +583,7 @@ class DrugDetailOther extends React.Component<any, any> {
                     tabList={this.state.tabs}
                     activeTabIndex={this.state.activeTabIndex}
                     onClickTab={this.onClickTab}
-                    disabledIndex={1}
-                    disabled
+                    disabled={this.props.configureSwitch}
                   />
                 </div>
               </div>
@@ -592,11 +607,13 @@ class DrugDetailOther extends React.Component<any, any> {
               />
             </div>
           </Grid>
-          <Row justify="end">
-            <Col>
-              <Button label="Apply" onClick={this.openOtherGridContainer} disabled={!(this.state.selectedCriteria.length > 0)}></Button>
-            </Col>
-          </Row>
+          {!this.props.configureSwitch ? (
+            <Row justify="end">
+              <Col>
+                <Button label="Apply" onClick={this.openOtherGridContainer} disabled={!(this.state.selectedCriteria.length > 0)}></Button>
+              </Col>
+            </Row>
+          ) : null}
         </div>
 
         { this.state.showGrid ? (

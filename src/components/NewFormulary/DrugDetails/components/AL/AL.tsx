@@ -775,6 +775,22 @@ class DrugDetailAL extends React.Component<any, any> {
     //   this.getALDrugsList();
     // }
 
+    if (nextProps.configureSwitch){
+      this.setState({tabs:[
+        { id: 1, text: "Replace", disabled: true },
+        { id: 2, text: "Append", disabled: true },
+        { id: 3, text: "Remove", disabled: true },
+      ], activeTabIndex:0});
+
+      this.getALDrugsList();
+    } else {
+      this.setState({tabs:[
+        { id: 1, text: "Replace", disabled:false },
+        { id: 2, text: "Append", disabled:true },
+        { id: 3, text: "Remove", disabled:false },
+      ]});
+    }
+
     if (nextProps.advancedSearchBody && nextProps.populateGrid) {
       console.log("-----Inside Advance search Body if Condition-----advancedSearchBody ", nextProps.advancedSearchBody);
       console.log("-----Inside Advance search Body if Condition-----populateGrid ", nextProps.advancedSearchBody);
@@ -881,8 +897,7 @@ class DrugDetailAL extends React.Component<any, any> {
                     tabList={this.state.tabs}
                     activeTabIndex={this.state.activeTabIndex}
                     onClickTab={this.onClickTab}
-                    disabledIndex={1}
-                    disabled
+                    disabled={this.props.configureSwitch}
                   />
                 </div>
               </div>
@@ -896,7 +911,7 @@ class DrugDetailAL extends React.Component<any, any> {
           onMinChangeHandler={this.onMinChangeHandler}
           onMaxChangeHandler={this.onMaxChangeHandler}
           formData={this.state.formData}
-          showApply={true}
+          // showApply={true}
           showGrid={this.showGrid}
           coveredHandler={this.coveredHandler}
           alSettings={this.state.alSettings}

@@ -89,7 +89,7 @@ const PrLimitSettings = (props) => {
           </div>
         </StatusContentFormPanel>
       </div>
-      <Button label="Apply" onClick={showGridHandler} />
+      <Button label="Apply" onClick={showGridHandler} disabled={isDisabled} />
     </div>
   );
 };
