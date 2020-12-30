@@ -233,6 +233,14 @@ class Formulary extends React.Component<any, any> {
     this.listPayload.id_lob = id_lob;
     this.props.fetchFormularies(this.listPayload);
   };
+  formularyListSearch = (categoryObj,subCat) => {
+    let id_lob = this.listPayload.id_lob;
+    this.listPayload = { ...defaultListPayload };
+    this.listPayload.id_lob = id_lob;
+    this.listPayload.search_by = categoryObj;
+    this.listPayload.search_value = subCat!=''?[subCat]:[];
+    this.props.fetchFormularies(this.listPayload);
+  };
   onGridPageChangeHandler = (pageNumber: any) => {
     this.listPayload.index = (pageNumber - 1) * this.listPayload.limit;
     this.props.fetchFormularies(this.listPayload);
@@ -285,6 +293,7 @@ class Formulary extends React.Component<any, any> {
                 applyFilter={this.onApplyFilterHandler}
                 getColumnSettings={this.onSettingsIconHandler}
                 addNewFormulary={this.addNewFormulary}
+                formularyListSearch={this.formularyListSearch}
               />
             </div>
           </>

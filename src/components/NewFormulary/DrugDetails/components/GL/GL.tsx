@@ -24,6 +24,8 @@ import GenderLimitSettings from "./GenderLimitSettings";
 import FrxDrugGridContainer from "../../../../shared/FrxGrid/FrxDrugGridContainer";
 import showMessage from "../../../Utils/Toast";
 import GLRemove from "./GLRemove";
+import AdvanceSearchContainer from "../../../NewAdvanceSearch/AdvanceSearchContainer";
+import { setAdvancedSearch } from "../../../../../redux/slices/formulary/advancedSearch/advancedSearchSlice";
 
 function mapDispatchToProps(dispatch) {
   return {
@@ -32,13 +34,18 @@ function mapDispatchToProps(dispatch) {
     postReplaceGLDrug: (a) => dispatch(postReplaceGLDrug(a)),
     postGLCriteriaList: (a) => dispatch(postGLCriteriaList(a)),
     postRemoveGLDrug: (a) => dispatch(postRemoveGLDrug(a)),
+    setAdvancedSearch: (a) => dispatch(setAdvancedSearch(a)),
   };
 }
 
 const mapStateToProps = (state) => {
   return {
+    configureSwitch: state.switchReducer.configureSwitch,
     formulary_id: state?.application?.formulary_id,
     formulary_lob_id: state?.application?.formulary_lob_id,
+    advancedSearchBody: state?.advancedSearch?.advancedSearchBody,
+    populateGrid: state?.advancedSearch?.populateGrid,
+    closeDialog: state?.advancedSearch?.closeDialog,
   };
 };
 
@@ -376,7 +383,7 @@ class DrugDetailGL extends React.Component<any, any> {
     });
   };
 
-  getGLDrugsList = ({ index = 0, limit = 10, listPayload = {} } = {}) => {
+  getGLDrugsList = ({ index = 0, limit = 10, listPayload = {}, searchBody = {}} = {}) => {
     let apiDetails = {};
     apiDetails["apiPart"] = glConstants.GET_GL_DRUGS;
     apiDetails["pathParams"] =
@@ -401,7 +408,18 @@ class DrugDetailGL extends React.Component<any, any> {
         (e) => e?.key
       );
     }
+
     apiDetails["messageBody"] = listPayload;
+    
+    if (searchBody) {
+      console.log("THe Search Body = ", searchBody, " and List Payload = ", listPayload);
+      let merged = {...listPayload, ...searchBody};
+      console.log("Merged Body = ", merged);
+      apiDetails["messageBody"] = Object.assign(
+        apiDetails["messageBody"],
+        merged
+      );
+    }
 
     let listCount = 0;
     this.props.getDrugDetailsGLList(apiDetails).then((json) => {
@@ -510,8 +528,25 @@ class DrugDetailGL extends React.Component<any, any> {
       this.getGLCriteriaList(true);
     }
 
+    if(this.props.configureSwitch) {
+      this.getGLDrugsList();
+    }
+
+    // let payload = { advancedSearchBody: {}, populateGrid: false, closeDialog: false, listItemStatus: {} };
+    // this.props.setAdvancedSearch(payload);
+    this.clearSearch();
+
     this.setState({ tabs, activeTabIndex, showGrid: false });
   };
+
+  clearSearch = () => {
+    let payload = { advancedSearchBody: {}, populateGrid: false, closeDialog: false, listItemStatus: {} };
+    this.props.setAdvancedSearch(payload);
+  }
+
+  componentWillUnmount() {
+    this.clearSearch();
+  }
 
   handleNoteClick = (event: React.ChangeEvent<{}>) => {
     event.stopPropagation();
@@ -539,10 +574,6 @@ class DrugDetailGL extends React.Component<any, any> {
       showApply = s.isChecked && e.target.checked ? true : false;
     });
 
-    // glSettings.forEach(s: any) => {
-
-    // });
-
     this.setState({
       glSettings,
       showApply,
@@ -554,7 +585,53 @@ class DrugDetailGL extends React.Component<any, any> {
     console.log("The State of the Tab = ", this.state);
   };
 
+  componentWillReceiveProps(nextProps) {
+    console.log("-----Component Will Receive Props------", nextProps);
+    // if(nextProps.configureSwitch) {
+    //   this.getGLDrugsList();
+    // }
+
+    if (nextProps.configureSwitch){
+      this.setState({tabs:[
+        { id: 1, text: "Replace", disabled: true },
+        { id: 2, text: "Append", disabled: true },
+        { id: 3, text: "Remove", disabled: true },
+      ], activeTabIndex:0});
+
+      this.getGLDrugsList();
+    } else {
+      this.setState({tabs:[
+        { id: 1, text: "Replace", disabled:false },
+        { id: 2, text: "Append", disabled:true },
+        { id: 3, text: "Remove", disabled:false },
+      ]});
+    }
+
+    if (nextProps.advancedSearchBody && nextProps.populateGrid) {
+      console.log("-----Inside Advance search Body if Condition-----advancedSearchBody ", nextProps.advancedSearchBody);
+      console.log("-----Inside Advance search Body if Condition-----populateGrid ", nextProps.advancedSearchBody);
+      this.getGLDrugsList({ listPayload: this.listPayload, searchBody: nextProps.advancedSearchBody});
+      let payload = {
+        advancedSearchBody: nextProps.advancedSearchBody,
+        populateGrid: false,
+        closeDialog: nextProps.closeDialog,
+        listItemStatus: nextProps.listItemStatus,
+      };
+      if (nextProps.closeDialog) {
+        this.state.isSearchOpen = false;
+        payload["closeDialog"] = false;
+      }
+
+      console.log("---_Set Advanced Search payload = ", payload);
+      this.props.setAdvancedSearch(payload);
+    }
+  }
+
   render() {
+    const searchProps = {
+      lobCode: this.props.lobCode,
+      pageType: 0,
+    };
     let dataGrid = <FrxLoader />;
     if (this.state.data) {
       dataGrid = (
@@ -622,8 +699,7 @@ class DrugDetailGL extends React.Component<any, any> {
                     tabList={this.state.tabs}
                     activeTabIndex={this.state.activeTabIndex}
                     onClickTab={this.onClickTab}
-                    disabledIndex={1}
-                    disabled
+                    disabled={this.props.configureSwitch}
                   />
                 </div>
               </div>
@@ -631,24 +707,21 @@ class DrugDetailGL extends React.Component<any, any> {
           </div>
         </div>
 
-        {(this.state.activeTabIndex == 0 || this.state.activeTabIndex == 1) && (
-          <GenderLimitSettings
-            glSettingsServies={{ glSettings, glSettingsStatus }}
-            handleStatus={this.handleStatus}
-            serviceSettingsChecked={this.serviceSettingsChecked}
-            showGridHandler={this.showGridHandler}
-            showApply={this.state.showApply}
-          />
-        )}
-
-        {this.state.activeTabIndex == 2 && (
-          <GLRemove
-            data={this.state.removeTabsData}
-            showGridHandler={this.showGridHandler}
-            handleChangeEvent={this.handleChangeEvent}
-            handleRemoveChecked={this.handleRemoveChecked}
-          />
-        )}
+        {(this.state.activeTabIndex==0 || this.state.activeTabIndex==1) && <GenderLimitSettings
+          glSettingsServies={{ glSettings, glSettingsStatus }}
+          handleStatus={this.handleStatus}
+          serviceSettingsChecked={this.serviceSettingsChecked}
+          showGridHandler={this.showGridHandler}
+          showApply={this.state.showApply}
+          isDisabled={this.props.configureSwitch}
+        />}
+        
+        {this.state.activeTabIndex==2 && <GLRemove 
+          data={this.state.removeTabsData} 
+          showGridHandler={this.showGridHandler} 
+          handleChangeEvent={this.handleChangeEvent}
+          handleRemoveChecked={this.handleRemoveChecked}
+        />}
 
         {showGrid ? (
           <div className="bordered">
@@ -660,19 +733,25 @@ class DrugDetailGL extends React.Component<any, any> {
                   label="Advance Search"
                   onClick={this.advanceSearchClickHandler}
                 />
-                <Button
+                {!this.props.configureSwitch ? <Button
                   label="Save"
                   onClick={this.saveClickHandler}
                   disabled={!(this.state.selectedDrugs.length > 0)}
-                />
+                /> : null}
               </div>
             </div>
             {dataGrid}
             {this.state.isSearchOpen ? (
-              <AdvancedSearch
-                category="Grievances"
+              // <AdvancedSearch
+              //   category="Grievances"
+              //   openPopup={this.state.isSearchOpen}
+              //   onClose={this.advanceSearchClosekHandler}
+              // />
+              <AdvanceSearchContainer
+                {...searchProps}
                 openPopup={this.state.isSearchOpen}
                 onClose={this.advanceSearchClosekHandler}
+                isAdvanceSearch={true}
               />
             ) : null}
           </div>

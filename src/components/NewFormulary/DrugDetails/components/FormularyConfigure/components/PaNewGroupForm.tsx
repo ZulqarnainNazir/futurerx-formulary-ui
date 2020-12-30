@@ -436,8 +436,10 @@ function NewGroup(props: any) {
               "/" + props?.client_id + "?entity_id=" + props?.formulary_id;
 
             props.getPaGrouptDescriptions(apiDetails);
-          } else {
-            showMessage("Failure", "error");
+          }else if(json?.payload?.status && json?.payload?.status!=200){
+            showMessage(json.payload.data.message,'error')
+          }else{
+            showMessage('Failure', 'error');
           }
         });
       } else {
@@ -451,8 +453,10 @@ function NewGroup(props: any) {
               "/" + props?.client_id + "?entity_id=" + props?.formulary_id;
 
             props.getPaGrouptDescriptions(apiDetails);
-          } else {
-            showMessage("Failure", "error");
+          }else if(json?.payload?.status && json?.payload?.status!=200){
+            showMessage(json.payload.data.message,'error')
+          }else{
+            showMessage('Failure', 'error');
           }
         });
       }
@@ -504,6 +508,7 @@ function NewGroup(props: any) {
     //setPanelColor(props.editable ? '-green' : '')
     //setLatestId(props.latestVerion)
     updateFormData(initialFormData);
+    setDrug_list_ids([])
     //setPlaceHolder(props.versionTitle)
     if (Object.keys(props.PaGDData).length > 0) {
       if (!changeEvent) {
