@@ -7,11 +7,9 @@ import CompareView from "./components/CompareView/CompareView";
 import "./FormularyDetails.scss";
 import FormularySetUp from "./components/FormularySetUp/FormularySetUp";
 import Validation from "../../Validation/Validation";
-import {connect} from 'react-redux';
+import { connect } from "react-redux";
 import { setAdvancedSearch } from "../../../redux/slices/formulary/advancedSearch/advancedSearchSlice";
-import {
-  setLocation
-} from "../../../redux/slices/formulary/application/applicationSlice";
+import { setLocation } from "../../../redux/slices/formulary/application/applicationSlice";
 
 const tabs = [
   { id: 1, text: "Setup" },
@@ -25,17 +23,18 @@ const tabs = [
 function mapDispatchToProps(dispatch) {
   return {
     setAdvancedSearch: (a) => dispatch(setAdvancedSearch(a)),
-    setLocation: (a) => dispatch(setLocation(a))
+    setLocation: (a) => dispatch(setLocation(a)),
   };
 }
 
 const mapStateToProps = (state) => {
   //console.log(state)
-  return{
+  return {
     current_formulary: state.application.formulary,
-    location: state.application.location
-  }
-}
+    setupComplete: state.application.setupComplete,
+    location: state.application.location,
+  };
+};
 
 class FormularyDetails extends React.Component<any, any> {
   state = {
@@ -52,13 +51,18 @@ class FormularyDetails extends React.Component<any, any> {
       }
       return tab;
     });
-    let payload = { advancedSearchBody: {}, populateGrid: false, closeDialog: false, listItemStatus: {} };
+    let payload = {
+      advancedSearchBody: {},
+      populateGrid: false,
+      closeDialog: false,
+      listItemStatus: {},
+    };
     this.props.setAdvancedSearch(payload);
     this.setState({ tabs, activeTabIndex });
     this.props.setLocation(activeTabIndex);
   };
 
-  componentDidMount(){
+  componentDidMount() {
     // console.log("====== Reeta's code ========")
     // console.log(this.props)
     // console.log("====== Reeta's code ========")
@@ -68,7 +72,7 @@ class FormularyDetails extends React.Component<any, any> {
     const tabIndex = this.props.location;
     switch (tabIndex) {
       case 0:
-        return <FormularySetUp saveAndContinue={this.onClickTab}/>;
+        return <FormularySetUp saveAndContinue={this.onClickTab} />;
       case 1:
         return <FormularyConfigure />;
       case 2:
@@ -90,6 +94,21 @@ class FormularyDetails extends React.Component<any, any> {
     }
   };
 
+  getTabs(list: TabInfo[]): TabInfo[] {
+    console.log(" #$% : " + this.props?.setupComplete)
+    list.forEach((t) => {
+      if (t && t?.text === "Configure") {
+        if (this.props?.setupComplete === true) {
+          t.disable = true;
+        } else {
+          t.disable = false;
+        }
+      }
+    });
+
+    return list;
+  }
+
   render() {
     // console.log("=============",this.props)
     const fData = this.props.data;
@@ -98,7 +117,7 @@ class FormularyDetails extends React.Component<any, any> {
         <FormularyDetailsTop activeTabIndex={this.props.location} />
         <div className="drug-details-bottom">
           <FrxTabs
-            tabList={this.state.tabs}
+            tabList={this.getTabs(this.state.tabs)}
             typeCard={"line"}
             activeTabIndex={this.props.location}
             onClickTab={this.onClickTab}
@@ -109,4 +128,4 @@ class FormularyDetails extends React.Component<any, any> {
     );
   }
 }
-export default connect(mapStateToProps,mapDispatchToProps)(FormularyDetails);
+export default connect(mapStateToProps, mapDispatchToProps)(FormularyDetails);
