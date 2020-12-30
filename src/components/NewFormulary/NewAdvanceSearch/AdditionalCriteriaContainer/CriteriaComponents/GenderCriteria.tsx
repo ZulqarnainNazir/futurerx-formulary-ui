@@ -1,10 +1,10 @@
 import React from "react";
 import PanelHeader from "../../../../shared/Frx-components/panel-header/PanelHeader";
-import StatusContentFormPanel from "../common/StatusContentFormPanel/StatusContentFormPanel";
+import StatusContentFormPanel from "../../../DrugDetails/components/common/StatusContentFormPanel/StatusContentFormPanel";
 import { Checkbox } from "antd";
 import Button from "../../../../shared/Frx-components/button/Button";
 
-import "./GL.scss";
+import "./GenderCriteria.scss";
 
 const AddIcon = () => (
   <svg
@@ -27,69 +27,64 @@ const AddIcon = () => (
   </svg>
 );
 
-const GenderLimitSettings = (props) => {
+const GenderCriteria = (props) => {
   const {
     serviceSettingsChecked,
     glSettingsServies: { glSettings, glSettingsStatus },
     handleStatus,
     showGridHandler,
+
+    isAdditionalCriteria,
+    deleteIconHandler,
+    nodeId,
   } = props;
 
   return (
-    <div className="gender-limit-settings bordered mb-10">
-      <PanelHeader
-        title="Gender Limit Settings"
-        tooltip="Gender Limit Settings"
-      />
-
+    <div className="root-gender-limit-settings bordered mb-10">
+      {showGridHandler ? (
+        <PanelHeader
+          title="Gender Limit Settings"
+          tooltip="Gender Limit Settings"
+        />
+      ) : null}
       <div className="inner-container">
         <StatusContentFormPanel
           title="Gender"
           type={glSettingsStatus.type}
           handleStatus={handleStatus}
-          showDelete={false}
+          isAdditionalCriteria={isAdditionalCriteria}
+          deleteIconHandler={deleteIconHandler}
         >
           <div className="input-field-group">
             <div className="input-field-group__label">Select Gender:</div>
 
             <div className="input-field-group__radio-field-group">
               {glSettings.map((gl) => (
-                <div className="input-field-group__radio-field" key={gl.index}>
+                <div className="input-field-group__radio-field" key={gl.id}>
                   <Checkbox
-                    id={gl.index}
-                    name={gl.index}
+                    id={gl.id + "" + nodeId}
+                    name={gl.id}
                     onChange={serviceSettingsChecked}
                     checked={gl.isChecked}
                   ></Checkbox>
-                  <label htmlFor={gl.gl_type_name} className="checkbox-label">
+                  <label
+                    htmlFor={gl.id + "" + nodeId}
+                    className="checkbox-label"
+                  >
                     {`${gl.gl_type_name}`}
                   </label>
                 </div>
               ))}
-              {/* <div className="input-field-group__radio-field">      
-                  <input type="checkbox" id="vehicle1" name="N/A" value="female" />
-                  <label htmlFor="N/A" className="checkbox-label"> Female</label>
-                </div>
-                <div className="input-field-group__radio-field">      
-                  <input type="checkbox" id="vehicle1" name="N/A" value="male" />
-                  <label htmlFor="N/A" className="checkbox-label"> Male</label>
-                </div>
-                <div className="input-field-group__radio-field">      
-                  <input type="checkbox" id="vehicle1" name="N/A" value="male" />
-                  <label htmlFor="N/A" className="checkbox-label"> Unknown</label>
-                </div> */}
             </div>
           </div>
         </StatusContentFormPanel>
 
-        {/* <div className="gender-limit-settings__add-new-form-action">
-          <AddIcon/>
-          <span className="gender-limit-settings__add-new-form-action-text">Add Gender Age Limit Criteria</span>
-        </div> */}
-        <Button label="Apply" onClick={showGridHandler} />
+        {showGridHandler ? (
+          <Button label="Apply" onClick={showGridHandler} />
+        ) : null}
       </div>
     </div>
   );
 };
 
-export default GenderLimitSettings;
+export default GenderCriteria;

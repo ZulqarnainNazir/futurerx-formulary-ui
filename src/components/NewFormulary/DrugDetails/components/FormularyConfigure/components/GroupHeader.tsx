@@ -4,7 +4,7 @@ import Alerts from './PopupAlerts/Alerts'
 import DialogPopup from "../../../../../shared/FrxDialogPopup/FrxDialogPopup";
 import { Grid } from '@material-ui/core';
 import { DatePicker } from 'antd';
-import { getCompareFormularyVersionHistoryColumn } from "../../../../../../utils/grid/columns";
+import { getStVersionHistoryColumn } from "../../../../../../utils/grid/columns";
 import FrxDrugGridContainer from "../../../../../shared/FrxGrid/FrxDrugGridContainer";
 import {
     deleteGroupDescription,
@@ -57,7 +57,7 @@ function GroupHeader(props: any) {
     const [showViewAll, setShowViewAll] = React.useState(false);
     const [idField,setIdField] = React.useState('');
     const [fomulariesList, setFormularies] = useState([{ }])
-    const [effectiveDate, setEffectiveDate] = React.useState(null);
+    const [effectiveDate, setEffectiveDate] = React.useState('');
     const [selectedFormularies, updateSelectedFormularies] = React.useState([]);
     const [selectedVersion, setSelectedVersion] = useState('')
     const versionListLength = versionList.length-1;
@@ -70,9 +70,9 @@ function GroupHeader(props: any) {
          apiDetails['pathParams'] = '/'+props.saveGdm.current_group_id;
 
          if (props.formulary_lob_id==1){
-            setIdField('id_mcr_pa_group_description_formulary');
+            setIdField('formulary_id');
          }else if (props.formulary_lob_id==4){
-            setIdField('id_pa_group_description_formulary');
+            setIdField('formulary_id');
         }
 
         props.postSTGroupDescriptionFormularies(apiDetails).then(json =>{
@@ -167,8 +167,7 @@ function GroupHeader(props: any) {
     }
 
     const handleEffectiveDate = date => {
-        setEffectiveDate(date);
-        //this.setState({ alertFormData: { effective_date: date,...this.state.alertFormData } });
+        setEffectiveDate(date.format("yyyy-MM-D"));
     }
 
     const applyFormularies = (e:any) => {
@@ -193,9 +192,9 @@ function GroupHeader(props: any) {
         apiDetails['messageBody']['effective_date'] = effectiveDate;
         apiDetails['messageBody']['formulary_ids'] = selectedFormularies;
 
-        apiDetails['messageBody']['id_pa_group_description'] = props.saveGdm.current_group_des_id;
+        apiDetails['messageBody']['id_st_group_description'] = props.saveGdm.current_group_des_id;
         apiDetails['messageBody']['is_select_all'] = false;
-        apiDetails['messageBody']['pa_group_description_formulary_ids'] = [];
+        apiDetails['messageBody']['st_group_description_formulary_ids'] = [];
 
         props.postApplySTGroupDescriptionFormularies(apiDetails).then((json => {
             console.log("Save response is:" + JSON.stringify(json));
@@ -414,8 +413,8 @@ function GroupHeader(props: any) {
                                 <Grid xs={6}>
                                     <div className="label">Effective Date<span className="astrict">*</span></div>
                                     <div className="calender">
-                                        <DatePicker onChange={handleEffectiveDate} value={effectiveDate} 
-                                        placeholder="Effective Date" name="effective_date" />
+                                        <DatePicker onChange={handleEffectiveDate}  
+                                       placeholder="MM/DD/YYYY" format="MM/DD/YYYY"   name="effective_date" />
                                     </div>
                                 </Grid>
             </Grid>
@@ -429,7 +428,7 @@ function GroupHeader(props: any) {
                   pagintionPosition="topRight"
                   gridName="DRUG GRID"
                   enableSettings={false}
-                  columns={getCompareFormularyVersionHistoryColumn()}
+                  columns={getStVersionHistoryColumn()}
                   scroll={{ x: 2000, y: 377 }}
                   isFetchingData={false}
                   enableResizingOfColumns
