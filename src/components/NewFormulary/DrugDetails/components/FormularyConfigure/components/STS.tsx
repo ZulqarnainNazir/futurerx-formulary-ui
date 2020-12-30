@@ -31,6 +31,7 @@ function mapStateToProps(state){
     return {
       current_formulary: state.application.formulary,
       formulary_lob_id: state?.application?.formulary_lob_id,
+      configureSwitch: state.switchReducer.configureSwitch,
     }
   }
 
@@ -70,6 +71,25 @@ function mapStateToProps(state){
         this.setState({ tabs, activeTabIndex });
     };
 
+    componentWillReceiveProps(nextProps) {
+        debugger;
+        console.log('TIER: componentWillReceiveProps', nextProps);
+        
+        if (nextProps.configureSwitch){
+    
+          this.setState({tabs:[
+            { id: 1, text: "Replace", disabled:true },
+            { id: 2, text: "Append", disabled:true },
+            { id: 3, text: "Remove", disabled:true },
+          ],activeTabIndex:0});
+        }else{
+          this.setState({tabs:[
+            { id: 1, text: "Replace", disabled:false },
+            { id: 2, text: "Append", disabled:( this.props.formulary_lob_id==1?true:false) },
+            { id: 3, text: "Remove", disabled:false },
+          ]});
+        }
+    }
     renderActiveTabContent = () => {
         const tabIndex = this.state.activeTabIndex;
         const columns = getAuditMockColumns();
@@ -136,7 +156,7 @@ function mapStateToProps(state){
                                         tabList={this.state.tabs}
                                         activeTabIndex={this.state.activeTabIndex}
                                         onClickTab={this.onClickTab}
-                                        
+                                        disabled={this.props.configureSwitch}
                                     />
                                 </div>
                                

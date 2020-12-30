@@ -4,7 +4,7 @@ import Alerts from './PopupAlerts/Alerts'
 import DialogPopup from "../../../../../shared/FrxDialogPopup/FrxDialogPopup";
 import { Grid } from '@material-ui/core';
 import { DatePicker } from 'antd';
-import { getCompareFormularyVersionHistoryColumn } from "../../../../../../utils/grid/columns";
+import { getStVersionHistoryColumn } from "../../../../../../utils/grid/columns";
 import FrxDrugGridContainer from "../../../../../shared/FrxGrid/FrxDrugGridContainer";
 import {
     deleteGroupDescription,
@@ -57,7 +57,7 @@ function GroupHeader(props: any) {
     const [showViewAll, setShowViewAll] = React.useState(false);
     const [idField,setIdField] = React.useState('');
     const [fomulariesList, setFormularies] = useState([{ }])
-    const [effectiveDate, setEffectiveDate] = React.useState(null);
+    const [effectiveDate, setEffectiveDate] = React.useState('');
     const [selectedFormularies, updateSelectedFormularies] = React.useState([]);
     const [selectedVersion, setSelectedVersion] = useState('')
     const versionListLength = versionList.length-1;
@@ -70,9 +70,9 @@ function GroupHeader(props: any) {
          apiDetails['pathParams'] = '/'+props.saveGdm.current_group_id;
 
          if (props.formulary_lob_id==1){
-            setIdField('id_mcr_pa_group_description_formulary');
+            setIdField('formulary_id');
          }else if (props.formulary_lob_id==4){
-            setIdField('id_pa_group_description_formulary');
+            setIdField('formulary_id');
         }
 
         props.postSTGroupDescriptionFormularies(apiDetails).then(json =>{
@@ -142,7 +142,12 @@ function GroupHeader(props: any) {
             const latestVerion = verLength > 0 ? props.version[Number(selectedVersion.split(" ")[1]) - 1]?.id_st_group_description : 0;
             setPanelColor(isEditable ? '-green' : '')
             setPlaceHolder(selectedVersion)
-            props.getStGrouptDescription(latestVerion)
+            
+            let apiDetails= {};
+            apiDetails["lob_type"] = props.formulary_lob_id;
+            apiDetails['pathParams'] = '/'+latestVerion;
+            props.getStGrouptDescription(apiDetails);
+            //props.getStGrouptDescription(latestVerion)
             const latestVerionNo = verLength > 0 ? selectedVersion.split(" ")[1] : '';
             setSelectedVersion(latestVerionNo);
             setSelectedVersionId(latestVerion);
@@ -167,8 +172,7 @@ function GroupHeader(props: any) {
     }
 
     const handleEffectiveDate = date => {
-        setEffectiveDate(date);
-        //this.setState({ alertFormData: { effective_date: date,...this.state.alertFormData } });
+        setEffectiveDate(date.format("yyyy-MM-D"));
     }
 
     const applyFormularies = (e:any) => {
@@ -193,9 +197,9 @@ function GroupHeader(props: any) {
         apiDetails['messageBody']['effective_date'] = effectiveDate;
         apiDetails['messageBody']['formulary_ids'] = selectedFormularies;
 
-        apiDetails['messageBody']['id_pa_group_description'] = props.saveGdm.current_group_des_id;
+        apiDetails['messageBody']['id_st_group_description'] = props.saveGdm.current_group_des_id;
         apiDetails['messageBody']['is_select_all'] = false;
-        apiDetails['messageBody']['pa_group_description_formulary_ids'] = [];
+        apiDetails['messageBody']['st_group_description_formulary_ids'] = [];
 
         props.postApplySTGroupDescriptionFormularies(apiDetails).then((json => {
             console.log("Save response is:" + JSON.stringify(json));
@@ -220,9 +224,29 @@ function GroupHeader(props: any) {
         props.cleanMessages({error:'',success:''})
         props.deleteGroupDescription({ lob_type:lob_type,pathParams:pathParams  }).then(json => {
             props.getStGrouptDescriptions({lob_type:lob_type,pathParams:props.saveGdm.formulary_id})
-            props.getStGrouptDescriptionVersions({lob_type:lob_type,pathParams: props.saveGdm.current_group_id})
-            props.getStGrouptDescription({lob_type:lob_type,pathParams:props.saveGdm.current_group_des_id})
-            props.getStTypes(props.saveGdm.formulary_id)
+            props.getStGrouptDescriptionVersions({lob_type:lob_type,pathParams: props.saveGdm.current_group_id}).then(json=>{
+                const response = json.payload.data
+                const verLength = Object.keys(response).length;
+                const isEditable = response[verLength - 1].is_setup_complete;
+                const latestVerion = response[verLength - 1].id_st_group_description;
+                const value = response[verLength - 1].value;
+                setPanelColor(isEditable ? '-green' : '')
+                setVersion(response)
+                setPlaceHolder(value)
+
+                let apiDetails= {};
+                apiDetails["lob_type"] = lob_type;
+                apiDetails['pathParams'] = '/'+latestVerion;
+                props.getStGrouptDescription(apiDetails);
+                props.getStTypes(props.saveGdm.formulary_id)
+
+                // props.getStGrouptDescription({lob_type:lob_type,pathParams:props.saveGdm.current_group_des_id})
+                // props.getStTypes(props.saveGdm.formulary_id)
+            })
+            if(json?.payload?.status && json?.payload?.status!=200){
+                showMessage(json.payload.data.message,'error')
+            }
+            setOpen(false);
         })
     }
     const cloneGroup = (e: any,param:any) => {
@@ -235,6 +259,10 @@ function GroupHeader(props: any) {
             st_group_description_name: param.st_group_description_name // clone page input
         }).then(json => {
             props.getStGrouptDescriptions({lob_type:lob_type,pathParams:props.saveGdm.formulary_id})
+            if(json?.payload?.status && json?.payload?.status!=200){
+                showMessage(json.payload.data.message,'error')
+            }
+            setOpen(false);
         })
     }
     const archiveGroup = (e: any,param:any) => {
@@ -251,9 +279,28 @@ function GroupHeader(props: any) {
         props.cleanMessages({error:'',success:''})
         props.archiveGroupDescription({lob_type:lob_type,pathParams:pathParams  }).then(json => {
             props.getStGrouptDescriptions({lob_type:lob_type,pathParams:props.saveGdm.formulary_id})
-            props.getStGrouptDescriptionVersions({lob_type:lob_type,pathParams:props.saveGdm.current_group_id})
-            props.getStGrouptDescription({lob_type:lob_type,pathParams:props.saveGdm.current_group_des_id})
-            props.getStTypes(props.saveGdm.formulary_id)
+            props.getStGrouptDescriptionVersions({lob_type:lob_type,pathParams:props.saveGdm.current_group_id}).then(json=>{
+                const response = json.payload.data
+                const verLength = Object.keys(response).length;
+                const isEditable = response[verLength - 1].is_setup_complete;
+                const latestVerion = response[verLength - 1].id_st_group_description;
+                const value = response[verLength - 1].value;
+                setPanelColor(isEditable ? '-green' : '')
+                setVersion(response)
+                setPlaceHolder(value)
+
+                let apiDetails= {};
+                apiDetails["lob_type"] = lob_type;
+                apiDetails['pathParams'] = '/'+latestVerion;
+                props.getStGrouptDescription(apiDetails);
+                props.getStTypes(props.saveGdm.formulary_id)
+            })
+            // props.getStGrouptDescription({lob_type:lob_type,pathParams:props.saveGdm.current_group_des_id})
+            // props.getStTypes(props.saveGdm.formulary_id)
+            if(json?.payload?.status && json?.payload?.status!=200){
+                showMessage(json.payload.data.message,'error')
+            }
+            setOpen(false);
         })
     }
 
@@ -269,14 +316,25 @@ function GroupHeader(props: any) {
     
             apiDetails['pathParams'] = '/'+props.saveGdm.current_group_id;
             props.getStGrouptDescriptionVersions({lob_type:lob_type,pathParams:props.saveGdm.current_group_id}).then(json=>{
-                console.log(json);
-                setVersion(json.payload.data)
-                let v =props.version;
+                const response = json.payload.data
+                const verLength = Object.keys(response).length;
+                const isEditable = response[verLength - 1].is_setup_complete;
+                const latestVerion = response[verLength - 1].id_st_group_description;
+                const value = response[verLength - 1].value;
+                setPanelColor(isEditable ? '-green' : '')
+                setVersion(response)
+                setPlaceHolder(value)
+
+                let apiDetails= {};
+                apiDetails["lob_type"] = lob_type;
+                apiDetails['pathParams'] = '/'+latestVerion;
+                props.getStGrouptDescription(apiDetails);
+                props.getStTypes(props.saveGdm.formulary_id)
             });
-    
-            apiDetails['pathParams'] = '/'+props.saveGdm.current_group_id;
-            props.getStGrouptDescription({lob_type:lob_type,pathParams:props.saveGdm.current_group_des_id})
-            props.getStTypes(props.saveGdm.formulary_id)
+            if(json?.payload?.status && json?.payload?.status!=200){
+                showMessage(json.payload.data.message,'error')
+            }
+            setOpen(false);
         });
     }
     return (
@@ -400,8 +458,8 @@ function GroupHeader(props: any) {
                                 <Grid xs={6}>
                                     <div className="label">Effective Date<span className="astrict">*</span></div>
                                     <div className="calender">
-                                        <DatePicker onChange={handleEffectiveDate} value={effectiveDate} 
-                                        placeholder="Effective Date" name="effective_date" />
+                                        <DatePicker onChange={handleEffectiveDate}  
+                                       placeholder="MM/DD/YYYY" format="MM/DD/YYYY"   name="effective_date" />
                                     </div>
                                 </Grid>
             </Grid>
@@ -415,7 +473,7 @@ function GroupHeader(props: any) {
                   pagintionPosition="topRight"
                   gridName="DRUG GRID"
                   enableSettings={false}
-                  columns={getCompareFormularyVersionHistoryColumn()}
+                  columns={getStVersionHistoryColumn()}
                   scroll={{ x: 2000, y: 377 }}
                   isFetchingData={false}
                   enableResizingOfColumns
