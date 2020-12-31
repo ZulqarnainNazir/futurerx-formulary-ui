@@ -86,6 +86,7 @@ interface tabsState {
   isAdvanceSearchOpen: boolean;
   isAdditionalCriteriaOpen: boolean;
   additionalCriteriaState: null;
+  is_additional_criteria_defined: boolean;
   isLoading: boolean;
 }
 
@@ -112,6 +113,7 @@ class Tier extends React.Component<any, tabsState> {
     isAdvanceSearchOpen: false,
     isAdditionalCriteriaOpen: false,
     additionalCriteriaState: null,
+    is_additional_criteria_defined: false,
     isLoading: false,
     errorObject: {},
   };
@@ -218,7 +220,7 @@ class Tier extends React.Component<any, tabsState> {
   };
 
   showDrugGrid = (searchBody = null) => {
-    // debugger;
+    debugger;
     this.setState({ drugGridContainer: true });
     console.log("{searchBody}", this.props.advancedSearchBody);
 
@@ -253,8 +255,8 @@ class Tier extends React.Component<any, tabsState> {
   };
 
   loadGridData(json: any) {
-    const { isLoading } = this.state;
-    this.setState({ isLoading: !isLoading });
+    // const { isLoading } = this.state;
+    // this.setState({ isLoading: !isLoading });
     let tmpData = json.payload.result;
     var data: any[] = [];
     let count = 1;
@@ -440,7 +442,7 @@ class Tier extends React.Component<any, tabsState> {
       return gridItem;
     });
     this.setState({
-      isLoading: !isLoading,
+      // isLoading: !isLoading,
       drugData: data,
       drugGridData: gridData,
       drugGridContainer: true,
@@ -521,6 +523,7 @@ class Tier extends React.Component<any, tabsState> {
   };
 
   handleSave = () => {
+    debugger;
     const { quantityAndFillLimitObject } = this.state;
     let currentAction = this.getCurrentAction();
     console.log(
@@ -574,7 +577,10 @@ class Tier extends React.Component<any, tabsState> {
     apiDetails["messageBody"][
       "selected_criteria_ids"
     ] = this.state.selectedCriteria;
-    if (this.state.additionalCriteriaState != null) {
+    if (
+      this.state.additionalCriteriaState != null &&
+      this.state.is_additional_criteria_defined
+    ) {
       apiDetails["messageBody"]["is_custom_additional_criteria"] = true;
       apiDetails["messageBody"][
         "um_criteria"
@@ -603,7 +609,7 @@ class Tier extends React.Component<any, tabsState> {
           payload.additionalCriteriaBody = [];
 
           this.props.setAdditionalCriteria(payload);
-          this.setState({ quantityAndFillLimitObject: {} });
+          // this.setState({ quantityAndFillLimitObject: {} });
           this.showDrugGrid();
 
           this.props
@@ -623,9 +629,36 @@ class Tier extends React.Component<any, tabsState> {
   };
 
   openAdditionalCriteria = () => {
+    // alert("update");
+    if (this.state.is_additional_criteria_defined) {
+      this.setState({
+        is_additional_criteria_defined: false,
+        isAdditionalCriteriaOpen: false,
+      });
+    } else {
+      this.setState({
+        // isAdditionalCriteriaOpen: !this.state.isAdditionalCriteriaOpen,
+        is_additional_criteria_defined: true,
+        isAdditionalCriteriaOpen: true,
+      });
+    }
+  };
+  closeAdditonalCriteria = () => {
     this.setState({
-      isAdditionalCriteriaOpen: !this.state.isAdditionalCriteriaOpen,
+      isAdditionalCriteriaOpen: false,
     });
+  };
+
+  onRadioButtohandleChange = (e) => {
+    // debugger;
+    let tmp_value = e.target.value;
+    let tmp_key = e.target.name;
+    if (e.target.value == "true") {
+      tmp_value = true;
+    } else if (e.target.value == "false") {
+      tmp_value = false;
+    }
+    this.setState({ is_additional_criteria_defined: tmp_value });
   };
 
   onApply = () => {
@@ -649,7 +682,7 @@ class Tier extends React.Component<any, tabsState> {
   };
 
   UNSAFE_componentWillReceiveProps(nextProps) {
-    // debugger;
+    debugger;
     if (nextProps.switchState) {
       this.showDrugGrid({ ...nextProps.advancedSearchBody });
       this.setState({
@@ -657,6 +690,7 @@ class Tier extends React.Component<any, tabsState> {
           tab["disabled"] = true;
           return tab;
         }),
+        is_additional_criteria_defined: false,
       });
       this.onClickTab(0);
     } else {
@@ -701,6 +735,7 @@ class Tier extends React.Component<any, tabsState> {
     const searchProps = {
       lobCode: this.props.formulary_lob_id,
     };
+    const dataLength = this.state.drugGridData.length > 0 ? true : false;
     return (
       <div className="drug-detail-LA-root">
         <div className="drug-detail-la-container">
@@ -758,12 +793,15 @@ class Tier extends React.Component<any, tabsState> {
                         isViweAll={this.props.switchState}
                         isChecked={this.state.isAdditionalCriteriaOpen}
                         onRadioButtonClick={this.openAdditionalCriteria}
+                        is_additional_criteria_defined={
+                          this.state.is_additional_criteria_defined
+                        }
                       />
                       {this.state.isAdditionalCriteriaOpen && (
                         <AdvanceSearchContainer
                           {...searchProps}
                           openPopup={this.state.isAdditionalCriteriaOpen}
-                          onClose={this.openAdditionalCriteria}
+                          onClose={this.closeAdditonalCriteria}
                           isAdvanceSearch={false}
                         />
                       )}
@@ -786,7 +824,7 @@ class Tier extends React.Component<any, tabsState> {
                 ></Button>
               </div>
             </Grid>
-            {this.state.drugGridContainer && (
+            {this.state.drugGridContainer && dataLength && (
               <div className="select-drug-from-table">
                 <div className="bordered white-bg">
                   {/* {!this.props.switchState && ( */}
