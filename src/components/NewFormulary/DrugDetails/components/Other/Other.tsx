@@ -80,9 +80,9 @@ class DrugDetailOther extends React.Component<any, any> {
     selectedDrugs: [],
     drugData: [],
     tabs: [
-      { id: 1, text: "Replace" },
-      { id: 2, text: "Append" },
-      { id: 3, text: "Remove" },
+      { id: 1, text: "Replace", disabled: false },
+      { id: 2, text: "Append", disabled: false },
+      { id: 3, text: "Remove", disabled: false },
     ],
     listCount: 0,
     showGrid: false,
@@ -151,10 +151,11 @@ class DrugDetailOther extends React.Component<any, any> {
       ];
       apiDetails["messageBody"] = {};
 
-      if (this.state.activeTabIndex === 0) {
+      if (this.state.activeTabIndex === 0 || this.state.activeTabIndex === 1) {
         this.rpSavePayload.selected_drug_ids = this.state.selectedDrugs
         apiDetails["messageBody"] = this.rpSavePayload;
-        apiDetails["pathParams"] = this.props?.formulary_id + "/" +  getLobCode(this.props.formulary_lob_id) + "/" + otConstants.TYPE_REPLACE;
+        let triggerType = (this.state.activeTabIndex === 0) ? otConstants.TYPE_REPLACE : otConstants.TYPE_APPEND
+        apiDetails["pathParams"] = this.props?.formulary_id + "/" +  getLobCode(this.props.formulary_lob_id) + "/" + triggerType;
         console.log("The API Details - ", apiDetails);
 
         // Replace Drug method call
@@ -437,7 +438,7 @@ class DrugDetailOther extends React.Component<any, any> {
       console.log("The other data = ", this.state.otherData);
       console.log("The Selected Row Keys Code value = ", selectedRowKeys[0], "   The Other data find = ", this.state.otherData.find(e => e.key === selectedRowKeys[0]))
 
-      if(this.state.activeTabIndex === 0) {
+      if(this.state.activeTabIndex === 0 || this.state.activeTabIndex === 1) {
         let codeValue = "", idEdit = "";
         for(let i=0; i<this.state.otherData.length; i++) {
           if(this.state.otherData[i].key === selectedRowKeys[0]) {
@@ -471,17 +472,6 @@ class DrugDetailOther extends React.Component<any, any> {
     }
   }
 
-  validateGLForm = () => {
-    if(this.state.activeTabIndex === 0) {
-      return !(this.state.selectedCriteria.length === 0);
-
-    } else if(this.state.activeTabIndex === 2) {
-      return !(this.state.selectedCriteria.length === 0);
-    }
-
-    return true;
-  }
-
   openOtherGridContainer = () => {
     console.log("The State of the tab = ", this.state);
     if(this.validateGLForm()) {
@@ -492,11 +482,12 @@ class DrugDetailOther extends React.Component<any, any> {
     // this.getOtherList();
   };
 
+  validateGLForm = () => {
+    return this.state.selectedCriteria.length > 0;
+  }
+
   componentWillReceiveProps(nextProps) {
     console.log("-----Component Will Receive Props------", nextProps);
-    // if(nextProps.configureSwitch) {
-    //   this.getOtherList();
-    // }
 
     if (nextProps.configureSwitch){
       this.setState({tabs:[
@@ -509,7 +500,7 @@ class DrugDetailOther extends React.Component<any, any> {
     } else {
       this.setState({tabs:[
         { id: 1, text: "Replace", disabled:false },
-        { id: 2, text: "Append", disabled:true },
+        { id: 2, text: "Append", disabled:false },
         { id: 3, text: "Remove", disabled:false },
       ]});
     }
