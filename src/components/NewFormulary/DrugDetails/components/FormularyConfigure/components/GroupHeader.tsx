@@ -139,8 +139,17 @@ function GroupHeader(props: any) {
         const verLength = Object.keys(props.version).length;
         const selectedVersion = e.target.value
         if (verLength > 0 && selectedVersion!='') {
-            const isEditable = props.version[Number(selectedVersion.split(" ")[1]) - 1].is_setup_complete;
-            const latestVerion = verLength > 0 ? props.version[Number(selectedVersion.split(" ")[1]) - 1]?.id_st_group_description : 0;
+            const is_setup = props.version[Number(selectedVersion.split(" ")[1]) - 1];
+            let isEditable = true;
+            var latestVerion:any = 0;
+            if(is_setup){
+                isEditable = is_setup.is_setup_complete;
+                latestVerion = verLength > 0 ? is_setup.id_st_group_description : 0;
+            }else{
+                isEditable = props.version.find(val=>val.version_number==Number(selectedVersion.split(" ")[1])).is_setup_complete;
+                latestVerion = verLength > 0 ? props.version.find(val=>val.version_number==Number(selectedVersion.split(" ")[1])).id_st_group_description : 0;
+            }
+            
             setPanelColor(isEditable ? '-green' : '')
             setPlaceHolder(selectedVersion)
             
@@ -227,7 +236,7 @@ function GroupHeader(props: any) {
             props.getStGrouptDescriptions({lob_type:lob_type,pathParams:props.saveGdm.formulary_id}).then((json)=>{
                 const groupList = json?.payload?.data;
                 const groupListLength = Object.keys(groupList).length;
-                const id_st_group_description = groupListLength>0?groupList[groupListLength-1].id_st_group_description:0;
+                const id_st_group_description = groupListLength>0?groupList.filter(val=>val.is_archived===false)[0].id_st_group_description:0;
                 props.getStGrouptDescriptionVersions({lob_type:lob_type,pathParams: id_st_group_description}).then(json=>{
                     const response = json.payload.data
                     const verLength = Object.keys(response).length;

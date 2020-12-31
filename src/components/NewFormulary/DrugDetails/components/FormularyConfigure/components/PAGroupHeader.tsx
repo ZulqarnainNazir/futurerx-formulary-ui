@@ -166,14 +166,26 @@ function PAGroupHeader(props: any) {
     const verLength = Object.keys(props.version).length;
     const selectedVersion = e.target.value;
     if (verLength > 0 && selectedVersion != "") {
-      const isEditable =
-        props.version[Number(selectedVersion.split(" ")[1]) - 1]
-          .is_setup_complete;
-      const latestVerion =
-        verLength > 0
-          ? props.version[Number(selectedVersion.split(" ")[1]) - 1]
-              ?.id_pa_group_description
-          : 0;
+      // const isEditable =
+      //   props.version[Number(selectedVersion.split(" ")[1]) - 1]
+      //     .is_setup_complete;
+      // const latestVerion =
+      //   verLength > 0
+      //     ? props.version[Number(selectedVersion.split(" ")[1]) - 1]
+      //         ?.id_pa_group_description
+      //     : 0;
+
+        const is_setup = props.version[Number(selectedVersion.split(" ")[1]) - 1];
+        let isEditable = true;
+        var latestVerion:any = 0;
+        if(is_setup){
+            isEditable = is_setup.is_setup_complete;
+            latestVerion = verLength > 0 ? is_setup.id_pa_group_description : 0;
+        }else{
+            isEditable = props.version.find(val=>val.version_number==Number(selectedVersion.split(" ")[1])).is_setup_complete;
+            latestVerion = verLength > 0 ? props.version.find(val=>val.version_number==Number(selectedVersion.split(" ")[1])).id_pa_group_description : 0;
+        }
+
       setPanelColor(isEditable ? "-green" : "");
       setPlaceHolder(selectedVersion);
       let apiDetails = {};
@@ -267,7 +279,8 @@ function PAGroupHeader(props: any) {
         props.getPaGrouptDescriptions(apiDetails).then((json) => {
           const groupList = json?.payload?.data;
           const groupListLength = Object.keys(groupList).length;
-          const id_pa_group_description = groupListLength>0?groupList[0].id_base_pa_group_description:0;
+          //const id_pa_group_description = groupListLength>0?groupList[0].id_base_pa_group_description:0;
+          const id_pa_group_description = groupListLength>0?groupList.filter(val=>val.is_archived===false)[0].id_base_pa_group_description:0;
           apiDetails["pathParams"] = "/" + id_pa_group_description;
           props.getPaGrouptDescriptionVersions(apiDetails).then((json) => {
             const response = json.payload.data
