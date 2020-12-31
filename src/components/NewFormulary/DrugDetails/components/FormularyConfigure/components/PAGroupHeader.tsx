@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import STAlertDialog from "./STAlertDialog";
+import { SUCCESS_MSG, ERROR_MSG } from './PopupAlerts/Constents'
 import Alerts from "./PopupAlerts/Alerts";
 import {
   deleteGroupDescription,
@@ -274,7 +275,17 @@ function PAGroupHeader(props: any) {
         //props.getPaGrouptDescription(apiDetails);
         props.getPaTypes(props.saveGdm.formulary_id);
         if (json?.payload?.status && json?.payload?.status != 200) {
+          if(json?.payload?.data?.formularies && json?.payload?.data?.formularies?.length>0){
+            let errs = ''
+            json.payload.data.formularies.map(val=>{
+                errs += "\n\n"+val.formuary_name+ "\n\n";
+            })
+            showMessage("Following Formularies are linked to current Group Description:\n"+errs,'error')
+          }
           showMessage(json.payload.data.message, "error");
+        }
+        if(json?.payload?.success?.status && json?.payload?.success?.status==200){
+          showMessage(SUCCESS_MSG['delete'],'success')
         }
         setOpen(false);
       });
@@ -293,6 +304,9 @@ function PAGroupHeader(props: any) {
         props.getPaGrouptDescriptions(apiDetails);
         if (json?.payload?.status && json?.payload?.status != 200) {
           showMessage(json.payload.data.message, "error");
+        }
+        if(json?.payload?.success?.status && json?.payload?.success?.status==200){
+          showMessage(SUCCESS_MSG['clone'],'success')
         }
         setOpen(false);
       });
@@ -333,6 +347,9 @@ function PAGroupHeader(props: any) {
         if (json?.payload?.status && json?.payload?.status != 200) {
           showMessage(json.payload.data.message, "error");
         }
+        if(json?.payload?.success?.status && json?.payload?.success?.status==200){
+          showMessage(SUCCESS_MSG['newVersion'],'success')
+        }
         setOpen(false);
       });
   };
@@ -370,7 +387,17 @@ function PAGroupHeader(props: any) {
           setOpen(false);
         });
         if (json?.payload?.status && json?.payload?.status != 200) {
+          if(json?.payload?.data?.formularies && json?.payload?.data?.formularies?.length>0){
+            let errs = ''
+            json.payload.data.formularies.map(val=>{
+                errs += "\n\n"+val.formuary_name+ "\n\n";
+            })
+            showMessage("Following Formularies are linked to current Group Description:\n"+errs,'error')
+          }
           showMessage(json.payload.data.message, "error");
+        }
+        if(json?.payload?.success?.status && json?.payload?.success?.status==200){
+          showMessage(SUCCESS_MSG['archive'],'success')
         }
         setOpen(false);
       });

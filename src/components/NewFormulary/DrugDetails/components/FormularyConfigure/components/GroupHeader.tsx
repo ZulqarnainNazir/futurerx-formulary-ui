@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import { SUCCESS_MSG, ERROR_MSG } from './PopupAlerts/Constents'
 import STAlertDialog from './STAlertDialog';
 import Alerts from './PopupAlerts/Alerts'
 import DialogPopup from "../../../../../shared/FrxDialogPopup/FrxDialogPopup";
@@ -223,28 +224,39 @@ function GroupHeader(props: any) {
         }
         props.cleanMessages({error:'',success:''})
         props.deleteGroupDescription({ lob_type:lob_type,pathParams:pathParams  }).then(json => {
-            props.getStGrouptDescriptions({lob_type:lob_type,pathParams:props.saveGdm.formulary_id})
-            props.getStGrouptDescriptionVersions({lob_type:lob_type,pathParams: props.saveGdm.current_group_id}).then(json=>{
-                const response = json.payload.data
-                const verLength = Object.keys(response).length;
-                const isEditable = response[verLength - 1].is_setup_complete;
-                const latestVerion = response[verLength - 1].id_st_group_description;
-                const value = response[verLength - 1].value;
-                setPanelColor(isEditable ? '-green' : '')
-                setVersion(response)
-                setPlaceHolder(value)
-
-                let apiDetails= {};
-                apiDetails["lob_type"] = lob_type;
-                apiDetails['pathParams'] = '/'+latestVerion;
-                props.getStGrouptDescription(apiDetails);
-                props.getStTypes(props.saveGdm.formulary_id)
-
-                // props.getStGrouptDescription({lob_type:lob_type,pathParams:props.saveGdm.current_group_des_id})
-                // props.getStTypes(props.saveGdm.formulary_id)
+            props.getStGrouptDescriptions({lob_type:lob_type,pathParams:props.saveGdm.formulary_id}).then((json)=>{
+                const groupList = json?.payload?.data;
+                const groupListLength = Object.keys(groupList).length;
+                const id_st_group_description = groupListLength>0?groupList[groupListLength-1].id_st_group_description:0;
+                props.getStGrouptDescriptionVersions({lob_type:lob_type,pathParams: id_st_group_description}).then(json=>{
+                    const response = json.payload.data
+                    const verLength = Object.keys(response).length;
+                    const isEditable = response[verLength - 1].is_setup_complete;
+                    const latestVerion = response[verLength - 1].id_st_group_description;
+                    const value = response[verLength - 1].value;
+                    setPanelColor(isEditable ? '-green' : '')
+                    setVersion(response)
+                    setPlaceHolder(value)
+    
+                    let apiDetails= {};
+                    apiDetails["lob_type"] = lob_type;
+                    apiDetails['pathParams'] = '/'+latestVerion;
+                    props.getStGrouptDescription(apiDetails);
+                    props.getStTypes(props.saveGdm.formulary_id)
+                })
             })
             if(json?.payload?.status && json?.payload?.status!=200){
+                if(json?.payload?.data?.formularies && json?.payload?.data?.formularies?.length>0){
+                    let errs = ''
+                    json.payload.data.formularies.map(val=>{
+                        errs += "\n\n"+val.formuary_name+ "\n\n";
+                    })
+                    showMessage("Following Formularies are linked to current Group Description:\n"+errs,'error')
+                }
                 showMessage(json.payload.data.message,'error')
+            }
+            if(json?.payload?.success?.status && json?.payload?.success?.status==200){
+                showMessage(SUCCESS_MSG['delete'],'success')
             }
             setOpen(false);
         })
@@ -261,6 +273,9 @@ function GroupHeader(props: any) {
             props.getStGrouptDescriptions({lob_type:lob_type,pathParams:props.saveGdm.formulary_id})
             if(json?.payload?.status && json?.payload?.status!=200){
                 showMessage(json.payload.data.message,'error')
+            }
+            if(json?.payload?.success?.status && json?.payload?.success?.status==200){
+                showMessage(SUCCESS_MSG['clone'],'success')
             }
             setOpen(false);
         })
@@ -300,6 +315,9 @@ function GroupHeader(props: any) {
             if(json?.payload?.status && json?.payload?.status!=200){
                 showMessage(json.payload.data.message,'error')
             }
+            if(json?.payload?.success?.status && json?.payload?.success?.status==200){
+                showMessage(SUCCESS_MSG['newVersion'],'success')
+            }
             setOpen(false);
         })
     }
@@ -332,7 +350,17 @@ function GroupHeader(props: any) {
                 props.getStTypes(props.saveGdm.formulary_id)
             });
             if(json?.payload?.status && json?.payload?.status!=200){
+                if(json?.payload?.data?.formularies && json?.payload?.data?.formularies?.length>0){
+                    let errs = ''
+                    json.payload.data.formularies.map(val=>{
+                        errs += "\n\n"+val.formuary_name+ "\n\n";
+                    })
+                    showMessage("Following Formularies are linked to current Group Description:\n"+errs,'error')
+                }
                 showMessage(json.payload.data.message,'error')
+            }
+            if(json?.payload?.success?.status && json?.payload?.success?.status==200){
+                showMessage(SUCCESS_MSG['archive'],'success')
             }
             setOpen(false);
         });
