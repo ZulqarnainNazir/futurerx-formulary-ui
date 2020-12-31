@@ -22,9 +22,13 @@ export async function getformularyVersionHistory({
   let url = `${BASE_URL1}api/1/formulary-versions/${formularyBaseId}?index=${index}&limit=${limit}`;
 
   try {
-    const response = await axios.get(url, {
-      headers: headers
-    });
+    const response = await axios.post(
+      url,
+      { filters: [], search_key: "" },
+      {
+        headers: headers
+      }
+    );
     // console.log("***** getformulary Versions - Success");
     // console.log(response);
     return {
