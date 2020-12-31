@@ -5,6 +5,7 @@ import Button from "../../../../../../shared/Frx-components/button/Button";
 import "../CommercialPopup.scss";
 import { checkNameExist } from "../../../../../../../redux/slices/formulary/setup/setupService";
 import showMessage from "../../../../../Utils/Toast";
+import moment from "moment";
 
 export default class ClonePopup extends React.Component<any, any> {
     state = {
@@ -48,6 +49,12 @@ export default class ClonePopup extends React.Component<any, any> {
         }
     }
 
+    disabledDate = (current) => {
+        // Can not select days before today and today
+        // return current && current < moment().endOf("day");
+        return current.isBefore(moment(), "day");
+    };
+
     render() {
         return (
             <div className="version-grid-container">
@@ -66,6 +73,7 @@ export default class ClonePopup extends React.Component<any, any> {
                                     <DatePicker
                                         className="version-grid-date"
                                         placeholder="Effective Date"
+                                        disabledDate={this.disabledDate}
                                         suffixIcon={
                                             <svg
                                                 width="18"

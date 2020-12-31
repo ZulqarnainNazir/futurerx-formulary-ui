@@ -773,13 +773,13 @@ class FormularySetUp extends React.Component<any, any> {
                 />
               </Box>
 
-              <Box
+              {/* <Box
                 display="flex"
                 justifyContent="flex-end"
                 className="save-and-continue-btn"
               >
                 <Button className="tempBtn" label=">" onClick={() => this.overrideNave()} />
-              </Box>
+              </Box> */}
             </div>
           </>
         ) : (
