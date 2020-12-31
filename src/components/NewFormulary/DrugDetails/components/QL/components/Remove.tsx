@@ -74,6 +74,7 @@ class Remove extends Component<any, State> {
 
   loadGridData(json: any) {
     {
+      // this.props.onUpdateSelectedCriteria([]);
       //   const { isLoading } = this.state;
       //   this.setState({ isLoading: !isLoading });
       let tmpData = json.payload.result;

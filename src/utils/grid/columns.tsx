@@ -1173,7 +1173,7 @@ export const QlColumns: () => Column<any>[] = () => {
       sorter: {},
       textCase: "upper",
       pixelWidth: 100,
-      key: "um_criteria",
+      key: "is_um_criteria",
       displayTitle: "UM Criteria",
       isFilterable: true,
       dataType: "string",

@@ -32,6 +32,7 @@ import showMessage from "../../../Utils/Toast"; //"../../../Utils/Toast";
 import { ToastContainer } from "react-toastify";
 import AdvanceSearchContainer from "../../../NewAdvanceSearch/AdvanceSearchContainer";
 import { setAdvancedSearch } from "../../../../../redux/slices/formulary/advancedSearch/advancedSearchSlice";
+import { setAdditionalCriteria } from "../../../../../redux/slices/formulary/advancedSearch/additionalCriteriaSlice";
 import "./components/common.scss";
 
 function mapDispatchToProps(dispatch) {
@@ -41,6 +42,7 @@ function mapDispatchToProps(dispatch) {
     postFormularyDrugQl: (a) => dispatch(postFormularyDrugQl(a)),
     postApplyFormularyDrugQl: (a) => dispatch(postApplyFormularyDrugQl(a)),
     setAdvancedSearch: (a) => dispatch(setAdvancedSearch(a)),
+    setAdditionalCriteria: (a) => dispatch(setAdditionalCriteria(a)),
   };
 }
 
@@ -216,7 +218,7 @@ class Tier extends React.Component<any, tabsState> {
   };
 
   showDrugGrid = (searchBody = null) => {
-    debugger;
+    // debugger;
     this.setState({ drugGridContainer: true });
     console.log("{searchBody}", this.props.advancedSearchBody);
 
@@ -262,6 +264,7 @@ class Tier extends React.Component<any, tabsState> {
       let gridItem = {};
       gridItem["id"] = count;
       gridItem["key"] = count;
+      gridItem["is_um_criteria"] = element.is_um_criteria;
       gridItem["covered_genders"] = element.covered_genders;
       gridItem["covered_icds"] = element.covered_icds;
       gridItem["covered_max_ages"] = element.covered_max_ages;
@@ -538,11 +541,11 @@ class Tier extends React.Component<any, tabsState> {
       currentAction;
     apiDetails["messageBody"] = {};
     apiDetails["messageBody"]["selected_drug_ids"] = this.state.selectedDrugs;
-    apiDetails["messageBody"]["covered"] = { drug_list_ids: [] };
-    apiDetails["messageBody"]["not_covered"] = {
-      formulary_drug_ids: [],
-      drug_ids: [],
-    };
+    // apiDetails["messageBody"]["covered"] = { drug_list_ids: [] };
+    // apiDetails["messageBody"]["not_covered"] = {
+    //   formulary_drug_ids: [],
+    //   drug_ids: [],
+    // };
 
     apiDetails["messageBody"]["quantity"] = quantityAndFillLimitObject[
       "quantity"
@@ -571,8 +574,15 @@ class Tier extends React.Component<any, tabsState> {
     apiDetails["messageBody"][
       "selected_criteria_ids"
     ] = this.state.selectedCriteria;
+    if (this.state.additionalCriteriaState != null) {
+      apiDetails["messageBody"]["is_custom_additional_criteria"] = true;
+      apiDetails["messageBody"][
+        "um_criteria"
+      ] = this.state.additionalCriteriaState;
+    }
 
     apiDetails["messageBody"]["filter"] = [];
+
     console.log("[path]:", apiDetails["pathParams"]);
     console.log("{apiDetails}", apiDetails);
 
@@ -586,7 +596,13 @@ class Tier extends React.Component<any, tabsState> {
           showMessage("Success", "success");
           this.state.drugData = [];
           this.state.drugGridData = [];
+          let payload = {
+            additionalCriteriaBody: this.props.additionalCriteriaBody,
+          };
 
+          payload.additionalCriteriaBody = [];
+
+          this.props.setAdditionalCriteria(payload);
           this.setState({ quantityAndFillLimitObject: {} });
           this.showDrugGrid();
 
@@ -633,7 +649,7 @@ class Tier extends React.Component<any, tabsState> {
   };
 
   UNSAFE_componentWillReceiveProps(nextProps) {
-    debugger;
+    // debugger;
     if (nextProps.switchState) {
       this.showDrugGrid({ ...nextProps.advancedSearchBody });
       this.setState({
@@ -670,12 +686,13 @@ class Tier extends React.Component<any, tabsState> {
       }
       this.props.setAdvancedSearch(payload);
     }
-    // if (nextProps.additionalCriteriaBody) {
-    //   const additionalCriteriaState = nextProps.additionalCriteriaBody[1];
-    //   this.setState({ additionalCriteriaState }, () =>
-    //     console.log(this.state.additionalCriteriaState)
-    //   );
-    // }
+    // debugger;
+    if (nextProps.additionalCriteriaBody) {
+      const additionalCriteriaState = nextProps.additionalCriteriaBody;
+      this.setState({ additionalCriteriaState }, () =>
+        console.log(this.state.additionalCriteriaState)
+      );
+    }
   }
 
   render() {
