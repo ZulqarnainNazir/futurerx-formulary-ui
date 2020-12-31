@@ -26,11 +26,13 @@ import * as constants from "../../../../../../../api/http-commons";
 import { ToastContainer } from "react-toastify";
 import "../Tier.scss";
 import "./PA.scss";
+import { setAdditionalCriteria } from "../../../../../../../redux/slices/formulary/advancedSearch/additionalCriteriaSlice";
 
 // import AdvanceSearchContainer from "../../../../../NewAdvanceSearch/AdvanceSearchContainer";
 import {
   getPaSummary,
   getPaGrouptDescriptions,
+  getPaGrouptDescription,
   getPaTypes,
   getDrugLists,
   postFormularyDrugPA,
@@ -48,6 +50,7 @@ function mapDispatchToProps(dispatch) {
   return {
     getPaSummary: (a) => dispatch(getPaSummary(a)),
     getPaGrouptDescriptions: (a) => dispatch(getPaGrouptDescriptions(a)),
+    getPaGrouptDescription: (a) => dispatch(getPaGrouptDescription(a)),
     getPaTypes: (a) => dispatch(getPaTypes(a)),
     getDrugLists: (a) => dispatch(getDrugLists(a)),
     postFormularyDrugPA: (a) => dispatch(postFormularyDrugPA(a)),
@@ -57,6 +60,7 @@ function mapDispatchToProps(dispatch) {
     getLobFormularies: (a) => dispatch(getLobFormularies(a)),
     postRelatedFormularyDrugPA: (a) => dispatch(postRelatedFormularyDrugPA(a)),
     setAdvancedSearch: (a) => dispatch(setAdvancedSearch(a)),
+    setAdditionalCriteria: (a) => dispatch(setAdditionalCriteria(a)),
   };
 }
 
@@ -97,6 +101,7 @@ class PaReplace extends React.Component<any, any> {
     groupDescriptionProp: "",
     isAdditionalCriteriaOpen: false,
     additionalCriteriaState: null,
+    is_additional_criteria_defined: false,
   };
 
   onSelectedTableRowChanged = (selectedRowKeys) => {
@@ -177,6 +182,12 @@ class PaReplace extends React.Component<any, any> {
       });
     }
     if (nextProps.configureSwitch) {
+      this.setState({
+        showPaConfiguration: false,
+        selectedGroupDescription: null,
+        selectedPaType: null,
+        is_additional_criteria_defined: false,
+      });
       this.populateGridData();
     } else {
       this.setState({ tierGridContainer: false });
@@ -217,6 +228,19 @@ class PaReplace extends React.Component<any, any> {
         this.state.selectedPaType
       );
       apiDetails["messageBody"]["search_key"] = "";
+
+      if (
+        this.state.additionalCriteriaState != null &&
+        this.state.is_additional_criteria_defined
+      ) {
+        apiDetails["messageBody"]["is_custom_additional_criteria"] = true;
+        apiDetails["messageBody"][
+          "um_criteria"
+        ] = this.state.additionalCriteriaState;
+      } else {
+        apiDetails["messageBody"]["is_custom_additional_criteria"] = false;
+        apiDetails["messageBody"]["um_criteria"] = [];
+      }
 
       //apiDetails['messageBody']['id_tier'] = this.state.selectedTier;
 
@@ -265,8 +289,38 @@ class PaReplace extends React.Component<any, any> {
         default:
           break;
       }
+      let latestVersionId = -1;
+      data.forEach((element) => {
+        if (element.id_pa_group_description > latestVersionId) {
+          latestVersionId = element.id_pa_group_description;
+        }
+      });
+      let tmp_additionalCriteria = false;
+      this.props
+        .getPaGrouptDescription({
+          lob_type: this.props.formulary_lob_id,
+          pathParams: "/" + latestVersionId,
+        })
+        .then((json) => {
+          debugger;
+          this.props.setAdditionalCriteria([]);
+          if (json.payload && json.payload.code === "200") {
+            if (
+              json.payload.data["um_criteria"] != null &&
+              json.payload.data["um_criteria"].length > 0
+            ) {
+              let payload: any = {};
+              payload.additionalCriteriaBody = json.payload.data["um_criteria"];
+              this.props.setAdditionalCriteria(payload);
+              tmp_additionalCriteria = true;
+            }
+          }
+          this.setState({
+            is_additional_criteria_defined: tmp_additionalCriteria,
+          });
+        });
       this.setState({
-        selectedLastestedVersion: data[0].id_pa_group_description,
+        selectedLastestedVersion: latestVersionId,
         fileType: ftype,
       });
     });
@@ -306,6 +360,7 @@ class PaReplace extends React.Component<any, any> {
   };
 
   handleChange = (e: any) => {
+    debugger;
     let tmp_value = e.target.value;
     let tmp_key = e.target.name;
     if (e.target.value == "true") {
@@ -313,7 +368,7 @@ class PaReplace extends React.Component<any, any> {
     } else if (e.target.value == "false") {
       tmp_value = false;
     }
-    this.setState({ tmp_key: e.target.value.trim() });
+    this.setState({ [tmp_key]: tmp_value });
   };
 
   populateGridData = (searchBody = null) => {
@@ -382,43 +437,48 @@ class PaReplace extends React.Component<any, any> {
 
   loadGridData(json: any) {
     {
-      let tmpData = json.payload.result;
-      var data: any[] = [];
-      let count = 1;
-      var gridData = tmpData.map(function (el) {
-        var element = Object.assign({}, el);
-        data.push(element);
-        let gridItem = {};
-        gridItem["id"] = count;
-        gridItem["key"] = count;
-        gridItem["tier"] = element.tier_value;
-        gridItem["paGroupDescription"] = element.pa_group_description;
-        gridItem["paType"] = element.pa_type;
-        gridItem["fileType"] = element.file_type ? "" + element.file_type : "";
-        gridItem["dataSource"] = element.data_source
-          ? "" + element.data_source
-          : "";
-        gridItem["labelName"] = element.drug_label_name
-          ? "" + element.drug_label_name
-          : "";
-        gridItem["ndc"] = "";
-        gridItem["rxcui"] = element.rxcui ? "" + element.rxcui : "";
-        gridItem["gpi"] = element.generic_product_identifier
-          ? "" + element.generic_product_identifier
-          : "";
-        gridItem["trademark"] = element.trademark_code
-          ? "" + element.trademark_code
-          : "";
-        gridItem["databaseCategory"] = element.database_category
-          ? "" + element.database_category
-          : "";
-        count++;
-        return gridItem;
-      });
-      this.setState({
-        drugData: data,
-        drugGridData: gridData,
-      });
+      if (json.payload != null && json.payload.code === "200") {
+        let tmpData = json.payload.result;
+        var data: any[] = [];
+        let count = 1;
+        var gridData = tmpData.map(function (el) {
+          var element = Object.assign({}, el);
+          data.push(element);
+          let gridItem = {};
+          gridItem["id"] = count;
+          gridItem["key"] = count;
+          gridItem["tier"] = element.tier_value;
+          gridItem["isUmCriteria"] = element.is_um_criteria;
+          gridItem["paGroupDescription"] = element.pa_group_description;
+          gridItem["paType"] = element.pa_type;
+          gridItem["fileType"] = element.file_type
+            ? "" + element.file_type
+            : "";
+          gridItem["dataSource"] = element.data_source
+            ? "" + element.data_source
+            : "";
+          gridItem["labelName"] = element.drug_label_name
+            ? "" + element.drug_label_name
+            : "";
+          gridItem["ndc"] = "";
+          gridItem["rxcui"] = element.rxcui ? "" + element.rxcui : "";
+          gridItem["gpi"] = element.generic_product_identifier
+            ? "" + element.generic_product_identifier
+            : "";
+          gridItem["trademark"] = element.trademark_code
+            ? "" + element.trademark_code
+            : "";
+          gridItem["databaseCategory"] = element.database_category
+            ? "" + element.database_category
+            : "";
+          count++;
+          return gridItem;
+        });
+        this.setState({
+          drugData: data,
+          drugGridData: gridData,
+        });
+      }
     }
   }
   componentDidMount() {
@@ -475,6 +535,7 @@ class PaReplace extends React.Component<any, any> {
     this.setState({ isAdditionalCriteriaOpen: false });
   };
   openAdditionalCriteria = () => {
+    debugger;
     this.setState({ isAdditionalCriteriaOpen: true });
   };
   // additional criteria toggle
@@ -498,6 +559,7 @@ class PaReplace extends React.Component<any, any> {
                 dispProp="text"
                 onSelect={this.dropDownSelectHandlerGroupDescription}
                 disabled={this.props.configureSwitch}
+                value={this.state.selectedGroupDescription}
               />
             </Col>
             <Col lg={4}></Col>
@@ -507,10 +569,11 @@ class PaReplace extends React.Component<any, any> {
               </label>
               <DropDownMap
                 options={this.state.paTypes}
-                valueProp="id_pa_type"
+                valueProp="id_paz_type"
                 dispProp="pa_type_name"
                 onSelect={this.dropDownSelectHandlerPaType}
                 disabled={this.props.configureSwitch}
+                value={this.state.selectedPaType}
               />
             </Col>
             <Col lg={8}>
@@ -520,20 +583,23 @@ class PaReplace extends React.Component<any, any> {
               </label>
               <Space size="large">
                 <div className="marketing-material radio-group">
-                  <RadioButton
-                    label="Yes"
-                    value="true"
+                  <RadioGroup
+                    aria-label="marketing-material-radio1"
+                    className="gdp-radio"
                     name="pa_configuration"
                     onChange={this.pa_configurationChange}
-                    disabled={this.props.configureSwitch}
-                  />
-                  <RadioButton
-                    label="No"
-                    value="false"
-                    name="pa_configuration"
-                    onChange={this.pa_configurationChange}
-                    disabled={this.props.configureSwitch}
-                  />
+                  >
+                    <FormControlLabel
+                      value="true"
+                      control={<Radio disabled={this.props.configureSwitch} />}
+                      label="Yes"
+                    />
+                    <FormControlLabel
+                      value="false"
+                      control={<Radio disabled={this.props.configureSwitch} />}
+                      label="No"
+                    />
+                  </RadioGroup>
                 </div>
               </Space>
             </Col>
@@ -573,28 +639,46 @@ class PaReplace extends React.Component<any, any> {
                 <span className="astrict">*</span>
               </label>
               <Space size="large">
-                <div className="marketing-material radio-group">   
-                  <RadioButton
+                {/* <RadioButton
+                  label="Yes"
+                  name="add-filter"
+                  checked={isAdditionalCriteriaOpen}
+                  onClick={this.openAdditionalCriteria}
+                  disabled={this.props.configureSwitch}
+                />
+                <RadioButton
+                  label="No"
+                  name="add-filter"
+                  checked={!isAdditionalCriteriaOpen}
+                  onClick={this.closeAdditionalCriteria}
+                  disabled={this.props.configureSwitch}
+                /> */}
+                <RadioGroup
+                  aria-label="marketing-material-radio1"
+                  className="gdp-radio"
+                  name="is_additional_criteria_defined"
+                  onChange={this.handleChange}
+                  value={this.state.is_additional_criteria_defined}
+                >
+                  <FormControlLabel
+                    value={true}
+                    control={<Radio disabled={this.props.configureSwitch} />}
                     label="Yes"
-                    name="add-filter"
-                    checked={isAdditionalCriteriaOpen}
+                    disabled={this.props.configureSwitch}
                     onClick={this.openAdditionalCriteria}
-                    disabled={this.props.configureSwitch}
                   />
-                  <RadioButton
+                  <FormControlLabel
+                    value={false}
+                    control={<Radio disabled={this.props.configureSwitch} />}
                     label="No"
-                    name="add-filter"
-                    checked={!isAdditionalCriteriaOpen}
-                    onClick={this.closeAdditionalCriteria}
-                    disabled={this.props.configureSwitch}
+                    disabled={this.props.editable}
                   />
-                </div>
+                </RadioGroup>
               </Space>
             </Col>
           </Row>
           {isAdditionalCriteriaOpen ? (
             <AdvanceSearchContainer
-              {...searchProps}
               openPopup={isAdditionalCriteriaOpen}
               onClose={this.closeAdditionalCriteria}
               isAdvanceSearch={false}
@@ -615,19 +699,19 @@ class PaReplace extends React.Component<any, any> {
         {this.state.tierGridContainer && (
           <div className="select-drug-from-table">
             <div className="bordered white-bg">
-              {!this.props.configureSwitch && (
-                <div className="header space-between pr-10">
-                  <div className="button-wrapper">
-                    <Button
-                      className="Button normal"
-                      label="Advance Search"
-                      onClick={this.advanceSearchClickHandler}
-                      disabled={this.props.configureSwitch}
-                    />
+              <div className="header space-between pr-10">
+                <div className="button-wrapper">
+                  <Button
+                    className="Button normal"
+                    label="Advance Search"
+                    onClick={this.advanceSearchClickHandler}
+                    disabled={this.props.configureSwitch}
+                  />
+                  {!this.props.configureSwitch && (
                     <Button label="Save" onClick={this.handleSave} />
-                  </div>
+                  )}
                 </div>
-              )}
+              </div>
 
               <div className="tier-grid-container">
                 <FrxDrugGridContainer

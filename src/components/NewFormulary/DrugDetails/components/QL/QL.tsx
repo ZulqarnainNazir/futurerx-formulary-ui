@@ -31,6 +31,8 @@ import { QlColumns } from "../../../../../utils/grid/columns";
 import showMessage from "../../../Utils/Toast"; //"../../../Utils/Toast";
 import { ToastContainer } from "react-toastify";
 import AdvanceSearchContainer from "../../../NewAdvanceSearch/AdvanceSearchContainer";
+import { setAdvancedSearch } from "../../../../../redux/slices/formulary/advancedSearch/advancedSearchSlice";
+import { setAdditionalCriteria } from "../../../../../redux/slices/formulary/advancedSearch/additionalCriteriaSlice";
 import "./components/common.scss";
 
 function mapDispatchToProps(dispatch) {
@@ -39,6 +41,8 @@ function mapDispatchToProps(dispatch) {
     getQlSummary: (a) => dispatch(getQlSummary(a)),
     postFormularyDrugQl: (a) => dispatch(postFormularyDrugQl(a)),
     postApplyFormularyDrugQl: (a) => dispatch(postApplyFormularyDrugQl(a)),
+    setAdvancedSearch: (a) => dispatch(setAdvancedSearch(a)),
+    setAdditionalCriteria: (a) => dispatch(setAdditionalCriteria(a)),
   };
 }
 
@@ -49,6 +53,12 @@ function mapStateToProps(state) {
     qlData: state.qlReducer.data,
     switchState: state.switchReducer.configureSwitch,
     // inState: state,
+    formulary_lob_id: state?.application?.formulary_lob_id,
+
+    advancedSearchBody: state?.advancedSearch?.advancedSearchBody,
+    additionalCriteriaBody: state?.additionalCriteria?.additionalCriteriaBody,
+    populateGrid: state?.advancedSearch?.populateGrid,
+    closeDialog: state?.advancedSearch?.closeDialog,
   };
 }
 
@@ -63,7 +73,7 @@ interface tabsState {
   activeMiniTabIndex: number;
   miniTabs: any;
   tabs: any;
-  tierGridContainer: boolean;
+  drugGridContainer: boolean;
   activeTabIndex: any;
   panelGridValue: any;
   drugGridData: any;
@@ -74,12 +84,14 @@ interface tabsState {
   errorObject: any;
   selectedTab: string;
   isAdvanceSearchOpen: boolean;
+  isAdditionalCriteriaOpen: boolean;
+  additionalCriteriaState: null;
   isLoading: boolean;
 }
 
 class Tier extends React.Component<any, tabsState> {
   state = {
-    tierGridContainer: false,
+    drugGridContainer: false,
     miniTabs: getMiniTabs(),
     isFetchingData: false,
     activeMiniTabIndex: 0,
@@ -98,6 +110,8 @@ class Tier extends React.Component<any, tabsState> {
     selectedCriteria: [],
     selectedTab: constants.TYPE_REPLACE,
     isAdvanceSearchOpen: false,
+    isAdditionalCriteriaOpen: false,
+    additionalCriteriaState: null,
     isLoading: false,
     errorObject: {},
   };
@@ -114,7 +128,7 @@ class Tier extends React.Component<any, tabsState> {
     this.setState({
       tabs,
       activeTabIndex,
-      tierGridContainer: false,
+      drugGridContainer: false,
       quantityAndFillLimitObject: {},
       errorObject: {},
     });
@@ -203,8 +217,10 @@ class Tier extends React.Component<any, tabsState> {
     }
   };
 
-  openTierGridContainer = () => {
-    this.setState({ tierGridContainer: true });
+  showDrugGrid = (searchBody = null) => {
+    // debugger;
+    this.setState({ drugGridContainer: true });
+    console.log("{searchBody}", this.props.advancedSearchBody);
 
     let apiDetails = {
       formulary_id: this.props.current_formulary.id_formulary,
@@ -218,10 +234,20 @@ class Tier extends React.Component<any, tabsState> {
         { key: constants.KEY_LIMIT, value: 10 },
       ],
     };
+    if (searchBody) {
+      apiDetails["messageBody"] = Object.assign({}, searchBody);
+      // apiDetails["messageBody"] = { ...{ searchBody } };
+
+      // alert("in advanceSearchBody");
+    }
     console.log("[apiDetails]:", apiDetails);
     this.props.postFormularyDrugQl(apiDetails).then((json) => {
       console.log("[QlDetail]:", json.payload);
+      // if (json.payload) {
       this.loadGridData(json);
+      // } else {
+      // showMessage("something went wrong", "error");
+      // }
     });
     // }
   };
@@ -238,6 +264,7 @@ class Tier extends React.Component<any, tabsState> {
       let gridItem = {};
       gridItem["id"] = count;
       gridItem["key"] = count;
+      gridItem["is_um_criteria"] = element.is_um_criteria;
       gridItem["covered_genders"] = element.covered_genders;
       gridItem["covered_icds"] = element.covered_icds;
       gridItem["covered_max_ages"] = element.covered_max_ages;
@@ -416,7 +443,7 @@ class Tier extends React.Component<any, tabsState> {
       isLoading: !isLoading,
       drugData: data,
       drugGridData: gridData,
-      tierGridContainer: true,
+      drugGridContainer: true,
     });
     // showMessage("Failure", "error");
   }
@@ -514,11 +541,11 @@ class Tier extends React.Component<any, tabsState> {
       currentAction;
     apiDetails["messageBody"] = {};
     apiDetails["messageBody"]["selected_drug_ids"] = this.state.selectedDrugs;
-    apiDetails["messageBody"]["covered"] = { drug_list_ids: [] };
-    apiDetails["messageBody"]["not_covered"] = {
-      formulary_drug_ids: [],
-      drug_ids: [],
-    };
+    // apiDetails["messageBody"]["covered"] = { drug_list_ids: [] };
+    // apiDetails["messageBody"]["not_covered"] = {
+    //   formulary_drug_ids: [],
+    //   drug_ids: [],
+    // };
 
     apiDetails["messageBody"]["quantity"] = quantityAndFillLimitObject[
       "quantity"
@@ -547,8 +574,15 @@ class Tier extends React.Component<any, tabsState> {
     apiDetails["messageBody"][
       "selected_criteria_ids"
     ] = this.state.selectedCriteria;
+    if (this.state.additionalCriteriaState != null) {
+      apiDetails["messageBody"]["is_custom_additional_criteria"] = true;
+      apiDetails["messageBody"][
+        "um_criteria"
+      ] = this.state.additionalCriteriaState;
+    }
 
     apiDetails["messageBody"]["filter"] = [];
+
     console.log("[path]:", apiDetails["pathParams"]);
     console.log("{apiDetails}", apiDetails);
 
@@ -562,21 +596,23 @@ class Tier extends React.Component<any, tabsState> {
           showMessage("Success", "success");
           this.state.drugData = [];
           this.state.drugGridData = [];
-          // this.populateGridData();
-          // console.log("[]");
+          let payload = {
+            additionalCriteriaBody: this.props.additionalCriteriaBody,
+          };
+
+          payload.additionalCriteriaBody = [];
+
+          this.props.setAdditionalCriteria(payload);
           this.setState({ quantityAndFillLimitObject: {} });
-          this.openTierGridContainer();
+          this.showDrugGrid();
 
           this.props
             .getQlSummary(this.props.current_formulary.id_formulary)
             .then((json) => {
-              // debugger;
-              // this.setState({ tierGridContainer: true });
               console.log("[new ql summary]", json);
               this.initailizeQlSummary(json);
             });
         } else {
-          // alert("in failure");
           showMessage("Failure", "error");
         }
       });
@@ -586,6 +622,12 @@ class Tier extends React.Component<any, tabsState> {
     this.setState({ isAdvanceSearchOpen: !this.state.isAdvanceSearchOpen });
   };
 
+  openAdditionalCriteria = () => {
+    this.setState({
+      isAdditionalCriteriaOpen: !this.state.isAdditionalCriteriaOpen,
+    });
+  };
+
   onApply = () => {
     if (this.getCurrentAction() !== constants.TYPE_REMOVE) {
       if (
@@ -593,7 +635,7 @@ class Tier extends React.Component<any, tabsState> {
           ...this.state.quantityAndFillLimitObject,
         })
       ) {
-        this.openTierGridContainer();
+        this.showDrugGrid();
       } else {
         showMessage("Please fill required field", "error");
       }
@@ -601,14 +643,15 @@ class Tier extends React.Component<any, tabsState> {
       if (this.state.selectedCriteria.length == 0) {
         showMessage("Select Crieria to Remove Drugs", "error");
       } else {
-        this.openTierGridContainer();
+        this.showDrugGrid();
       }
     }
   };
 
   UNSAFE_componentWillReceiveProps(nextProps) {
+    // debugger;
     if (nextProps.switchState) {
-      this.openTierGridContainer();
+      this.showDrugGrid({ ...nextProps.advancedSearchBody });
       this.setState({
         tabs: this.state.tabs.map((tab) => {
           tab["disabled"] = true;
@@ -623,14 +666,41 @@ class Tier extends React.Component<any, tabsState> {
           { id: 2, text: "Append" },
           { id: 3, text: "Remove" },
         ],
-        tierGridContainer: false,
+        drugGridContainer: false,
       });
+    }
+
+    if (nextProps.advancedSearchBody && nextProps.populateGrid) {
+      // debugger;
+      // alert("nexProps");
+      this.showDrugGrid({ ...nextProps.advancedSearchBody });
+      let payload = {
+        advancedSearchBody: nextProps.advancedSearchBody,
+        populateGrid: false,
+        closeDialog: nextProps.closeDialog,
+        listItemStatus: nextProps.listItemStatus,
+      };
+      if (nextProps.closeDialog) {
+        this.state.isAdvanceSearchOpen = false;
+        payload["closeDialog"] = false;
+      }
+      this.props.setAdvancedSearch(payload);
+    }
+    // debugger;
+    if (nextProps.additionalCriteriaBody) {
+      const additionalCriteriaState = nextProps.additionalCriteriaBody;
+      this.setState({ additionalCriteriaState }, () =>
+        console.log(this.state.additionalCriteriaState)
+      );
     }
   }
 
   render() {
     console.log("in ql [data]", this.props.qlData);
     console.log("[drugGridData]", this.state.drugGridData);
+    const searchProps = {
+      lobCode: this.props.formulary_lob_id,
+    };
     return (
       <div className="drug-detail-LA-root">
         <div className="drug-detail-la-container">
@@ -686,7 +756,17 @@ class Tier extends React.Component<any, tabsState> {
                         handleOnChange={this.handleOnChange}
                         values={this.state.quantityAndFillLimitObject}
                         isViweAll={this.props.switchState}
+                        isChecked={this.state.isAdditionalCriteriaOpen}
+                        onRadioButtonClick={this.openAdditionalCriteria}
                       />
+                      {this.state.isAdditionalCriteriaOpen && (
+                        <AdvanceSearchContainer
+                          {...searchProps}
+                          openPopup={this.state.isAdditionalCriteriaOpen}
+                          onClose={this.openAdditionalCriteria}
+                          isAdvanceSearch={false}
+                        />
+                      )}
                     </div>
                   )}
                 </div>
@@ -706,24 +786,26 @@ class Tier extends React.Component<any, tabsState> {
                 ></Button>
               </div>
             </Grid>
-            {this.state.tierGridContainer && (
+            {this.state.drugGridContainer && (
               <div className="select-drug-from-table">
                 <div className="bordered white-bg">
-                  {!this.props.switchState && (
-                    <div
-                      className="header space-between pr-10"
-                      style={{ display: "flex", justifyContent: "flex-end" }}
-                    >
-                      <div className="button-wrapper">
-                        <Button
-                          className="Button normal"
-                          label="Advance Search"
-                          onClick={this.advanceSearchClickHandler}
-                        />
+                  {/* {!this.props.switchState && ( */}
+                  <div
+                    className="header space-between pr-10"
+                    style={{ display: "flex", justifyContent: "flex-end" }}
+                  >
+                    <div className="button-wrapper">
+                      <Button
+                        className="Button normal"
+                        label="Advance Search"
+                        onClick={this.advanceSearchClickHandler}
+                      />
+                      {!this.props.switchState && (
                         <Button label="Save" onClick={this.handleSave} />
-                      </div>
+                      )}
                     </div>
-                  )}
+                  </div>
+                  {/* )} */}
                   <div className="tier-grid-container">
                     <FrxDrugGridContainer
                       isPinningEnabled={false}
@@ -752,7 +834,14 @@ class Tier extends React.Component<any, tabsState> {
               </div>
             )}
           </div>
-          {/* {this.state.isAdvanceSearchOpen && <AdvanceSearchContainer />} */}
+          {this.state.isAdvanceSearchOpen && (
+            <AdvanceSearchContainer
+              {...searchProps}
+              openPopup={this.state.isAdvanceSearchOpen}
+              onClose={this.advanceSearchClickHandler}
+              isAdvanceSearch={true}
+            />
+          )}
         </div>
         <ToastContainer />
       </div>
