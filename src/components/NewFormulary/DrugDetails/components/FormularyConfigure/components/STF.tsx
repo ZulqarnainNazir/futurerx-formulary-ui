@@ -10,6 +10,7 @@ import RadioButton from "../../../../../shared/Frx-components/radio-button/Radio
 import {
   getStSummary,
   getStGrouptDescriptions,
+  getStGrouptDescription,
   getStTypes,
   getDrugLists,
   postFormularyDrugST,
@@ -38,6 +39,7 @@ function mapDispatchToProps(dispatch) {
   return {
     getStSummary: (a) => dispatch(getStSummary(a)),
     getStGrouptDescriptions: (a) => dispatch(getStGrouptDescriptions(a)),
+    getStGrouptDescription: (a) => dispatch(getStGrouptDescription(a)),
     getStTypes: (a) => dispatch(getStTypes(a)),
     getDrugLists: (a) => dispatch(getDrugLists(a)),
     postFormularyDrugST: (a) => dispatch(postFormularyDrugST(a)),
@@ -45,7 +47,9 @@ function mapDispatchToProps(dispatch) {
       dispatch(getStGrouptDescriptionVersions(a)),
     postApplyFormularyDrugST: (a) => dispatch(postApplyFormularyDrugST(a)),
     setAdvancedSearch: (a) => dispatch(setAdvancedSearch(a)),
+    setAdditionalCriteria: (a) => dispatch(setAdditionalCriteria(a)),
     getLobFormularies: (a) => dispatch(getLobFormularies(a)),
+
   };
 }
 
@@ -198,10 +202,14 @@ class STF extends React.Component<any, any> {
       apiDetails["messageBody"]["search_key"] = "";
       apiDetails["messageBody"]["st_value"] = Number(this.state.stValue);
 
-      if (this.state.additionalCriteriaState!=null){
+      if (this.state.additionalCriteriaState!=null && this.state.is_additional_criteria_defined){
         apiDetails["messageBody"]["is_custom_additional_criteria"] = true;
         apiDetails["messageBody"]["um_criteria"] = this.state.additionalCriteriaState;
+      }else{
+        apiDetails["messageBody"]["is_custom_additional_criteria"] = false;
+        apiDetails["messageBody"]["um_criteria"] = [];
       }
+
 
       const saveData = this.props
         .postApplyFormularyDrugST(apiDetails)
@@ -243,11 +251,18 @@ class STF extends React.Component<any, any> {
       this.props.setAdvancedSearch(payload);
     }
     if (nextProps.additionalCriteriaBody) {
+      
       this.setState({
         additionalCriteriaState: nextProps.additionalCriteriaBody,
       });
     }
     if (nextProps.configureSwitch){
+      this.setState({
+        showStConfiguration:false,
+        selectedGroupDescription:null,
+        selectedStType:null,
+        is_additional_criteria_defined:false
+      });
       this.populateGridData();
     }else{
       this.setState({ tierGridContainer: false });
@@ -277,8 +292,31 @@ class STF extends React.Component<any, any> {
           break;
       }
       debugger;
+      let latestVersionId=-1;
+      data.forEach(element => {
+        if (element.id_st_group_description > latestVersionId){
+          latestVersionId=element.id_st_group_description;
+        }
+      });
+      let tmp_additionalCriteria=false;
+      this.props.getStGrouptDescription({lob_type:this.props.formulary_lob_id, 
+        pathParams: "/"+latestVersionId}).then((json) => {
+          debugger;
+          this.props.setAdditionalCriteria([]);
+          if (json.payload && json.payload.code === "200") {
+            if (json.payload.data["um_criteria"]!=null && json.payload.data["um_criteria"].length >0 ){
+              let payload: any = {};
+              payload.additionalCriteriaBody = json.payload.data["um_criteria"];
+              this.props.setAdditionalCriteria(payload);
+              tmp_additionalCriteria=true;
+            }
+          }
+          this.setState({
+            is_additional_criteria_defined: tmp_additionalCriteria,
+          });
+        });
       this.setState({
-        selectedLastestedVersion: data[0].id_st_group_description,
+        selectedLastestedVersion: latestVersionId,
         fileType: ftype,
       });
       this.setState({
@@ -319,7 +357,7 @@ class STF extends React.Component<any, any> {
     } else if (e.target.value == "false") {
       tmp_value = false;
     }
-    this.setState({ [tmp_key]: e.target.value.trim() });
+    this.setState({ [tmp_key]: tmp_value });
   };
 
   populateGridData = (searchBody = null) => {
@@ -514,6 +552,7 @@ class STF extends React.Component<any, any> {
                     dispProp="text"
                     onSelect={this.dropDownSelectHandlerGroupDescription}
                     disabled={this.props.configureSwitch}
+                    value={this.state.selectedGroupDescription}
                   />
                 </div>
 
@@ -597,6 +636,7 @@ class STF extends React.Component<any, any> {
                     dispProp="st_type_name"
                     onSelect={this.dropDownSelectHandlerStType}
                     disabled={this.props.configureSwitch}
+                    value={this.state.selectedStType}
                   />
                 </div>
                 {this.state.showStConfiguration ? (
