@@ -108,9 +108,9 @@ class DrugDetailGL extends React.Component<any, any> {
     columns: null,
     data: [],
     tabs: [
-      { id: 1, text: "Replace" },
-      { id: 2, text: "Append" },
-      { id: 3, text: "Remove" },
+      { id: 1, text: "Replace", disabled: false },
+      { id: 2, text: "Append", disabled: false },
+      { id: 3, text: "Remove", disabled: false },
     ],
     selectedDrugs: Array(),
     drugData: Array(),
@@ -222,7 +222,7 @@ class DrugDetailGL extends React.Component<any, any> {
       covered: isCovered,
     };
 
-    this.setState({ glRemoveSettingsStatus, showGrid: false });
+    this.setState({ glRemoveSettingsStatus, showGrid: false, glRemoveCheckedList: [] });
     this.getGLCriteriaList(isCovered);
   };
 
@@ -247,7 +247,7 @@ class DrugDetailGL extends React.Component<any, any> {
         { key: glConstants.KEY_ENTITY_ID, value: this.props?.formulary_id },
       ];
 
-      if (this.state.activeTabIndex === 0) {
+      if (this.state.activeTabIndex === 0 || this.state.activeTabIndex === 1) {
         this.rpSavePayload.selected_drug_ids = this.state.selectedDrugs;
         this.rpSavePayload.gender_limits = glRows;
         this.rpSavePayload.breadcrumb_code_value = "GL";
@@ -261,7 +261,7 @@ class DrugDetailGL extends React.Component<any, any> {
           glConstants.TYPE_REPLACE;
         console.log("The API Details - ", apiDetails);
 
-        // Replace Drug method call
+        // Replace and Append Drug method call
         this.props.postReplaceGLDrug(apiDetails).then((json) => {
           if (
             json.payload &&
@@ -388,6 +388,35 @@ class DrugDetailGL extends React.Component<any, any> {
 
     this.setState({ glSettingsStatus, showGrid: false });
   };
+
+  refreshSelections = () => {
+    if(this.state.activeTabIndex === 0 || this.state.activeTabIndex === 1) {
+
+      let glCleanList: any[] = [];
+      for(let i=0; i<this.state.glSettings.length; i++ ) {
+        let glObj = {};
+        glObj['gl_code'] = this.state.glSettings[i]['gl_code'];
+        glObj['gl_type_name'] = this.state.glSettings[i]['gl_type_name'];
+        glObj['index'] = this.state.glSettings[i]['index'];
+        glObj['isChecked'] = false;
+        glCleanList.push(glObj);
+      }
+      this.setState({ glSettings: glCleanList });
+
+      // let rows = this.state.glSettings.map((ele) => {
+      //   let curRow = {
+      //     ele["id_gender_type"],
+      //     ele["gender_type_code"],
+      //     ele["gender_type_name"],
+      //     ele["is_covered"],
+      //   };
+      //   return curRow;
+      // });
+
+    } else if (this.state.activeTabIndex === 2) {
+      this.getGLCriteriaList(true);
+    }
+  }
 
   handleRemoveChecked = (selectedRows) => {
     this.setState(
@@ -527,9 +556,11 @@ class DrugDetailGL extends React.Component<any, any> {
       return tab;
     });
 
-    if (activeTabIndex === 2) {
-      this.getGLCriteriaList(true);
-    }
+    this.refreshSelections();
+
+    // if (activeTabIndex === 2) {
+    //   this.getGLCriteriaList(true);
+    // }
 
     if(this.props.configureSwitch) {
       this.getGLDrugsList();
@@ -584,7 +615,7 @@ class DrugDetailGL extends React.Component<any, any> {
   };
 
   validateGLForm = () => {
-    if(this.state.activeTabIndex === 0) {
+    if(this.state.activeTabIndex === 0 || this.state.activeTabIndex === 1) {
       let rpSelected = this.state.glSettings.filter(e => e.isChecked);
       return !(rpSelected.length === 0);
 
@@ -638,9 +669,9 @@ class DrugDetailGL extends React.Component<any, any> {
       this.getGLDrugsList();
     } else {
       this.setState({tabs:[
-        { id: 1, text: "Replace", disabled:false },
-        { id: 2, text: "Append", disabled:true },
-        { id: 3, text: "Remove", disabled:false },
+        { id: 1, text: "Replace", disabled: false },
+        { id: 2, text: "Append", disabled: false },
+        { id: 3, text: "Remove", disabled: false },
       ]});
     }
 

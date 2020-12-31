@@ -117,9 +117,9 @@ class DrugDetailPN extends React.Component<any, any> {
     data: [],
     listCount: 0,
     tabs: [
-      { id: 1, text: "Replace" },
-      { id: 2, text: "Append" },
-      { id: 3, text: "Remove" },
+      { id: 1, text: "Replace", disabled: false },
+      { id: 2, text: "Append", disabled: false },
+      { id: 3, text: "Remove", disabled: false },
     ],
     selectedDrugs: Array(),
     drugData: Array(),
@@ -199,8 +199,8 @@ class DrugDetailPN extends React.Component<any, any> {
         { key: pnConstants.KEY_ENTITY_ID, value: this.props?.formulary_id },
       ];
 
-      if (this.state.activeTabIndex === 0) {
-        // Replace Drug method call
+      if (this.state.activeTabIndex === 0 || this.state.activeTabIndex === 1) {
+        // Replace and append Drug method call
         this.rpSavePayload.selected_drug_ids = this.state.selectedDrugs;
         this.rpSavePayload.pharmacy_networks = this.state.selectedList;
         this.rpSavePayload.breadcrumb_code_value = "PHNW";
@@ -541,9 +541,11 @@ class DrugDetailPN extends React.Component<any, any> {
       return tab;
     });
 
-    if (activeTabIndex === 2) {
-      this.getPNCriteriaList(true);
-    }
+    this.refreshSelections();
+
+    // if (activeTabIndex === 2) {
+    //   this.getPNCriteriaList(true);
+    // }
 
     if(this.props.configureSwitch) {
       this.getPNDrugsList();
@@ -618,6 +620,14 @@ class DrugDetailPN extends React.Component<any, any> {
     this.setState({ pnSettingsStatus, showGrid: false });
   };
 
+  refreshSelections = () => {
+    if(this.state.activeTabIndex === 0 || this.state.activeTabIndex === 1) {
+      // this.getPOSSettings();
+    } else if (this.state.activeTabIndex === 2) {
+      this.getPNCriteriaList(true);
+    }
+  }
+
   componentWillReceiveProps(nextProps) {
     console.log("-----Component Will Receive Props------", nextProps);
     // if(nextProps.configureSwitch) {
@@ -635,7 +645,7 @@ class DrugDetailPN extends React.Component<any, any> {
     } else {
       this.setState({tabs:[
         { id: 1, text: "Replace", disabled:false },
-        { id: 2, text: "Append", disabled:true },
+        { id: 2, text: "Append", disabled:false },
         { id: 3, text: "Remove", disabled:false },
       ]});
     }

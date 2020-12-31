@@ -172,6 +172,34 @@ class AdditionalCriteria extends Component<any, any> {
           prop === "covered"
         ) {
           covered = additionalCriteriaBody[prop];
+          if (Object.prototype.hasOwnProperty.call(covered, "age")) {
+            if (
+              covered["age"]["min_age_condition"] !== "" &&
+              covered["age"]["max_age_condition"] !== ""
+            ) {
+              globalCardCount++;
+              let currentNode = {
+                id: globalCardCount,
+                cardCode: criteriaMock[0].cardCode,
+                cardName: criteriaMock[0].cardName,
+                isIncluded: criteriaMock[0].isIncluded,
+                render: (
+                  <ListItem
+                    nodeId={globalCardCount}
+                    deleteIconHandler={this.deleteIconHandler}
+                    card={{
+                      cardCode: criteriaMock[0].cardCode,
+                      cardName: criteriaMock[0].cardName,
+                      isIncluded: criteriaMock[0].isIncluded,
+                    }}
+                    payload={covered["age"]}
+                    handleGlobalState={this.handleAllNodesState}
+                  />
+                ),
+              };
+              savedCriteriaList.push(currentNode);
+            }
+          }
           if (Object.prototype.hasOwnProperty.call(covered, "gender")) {
             if (covered["gender"].length > 0) {
               globalCardCount++;
@@ -190,6 +218,35 @@ class AdditionalCriteria extends Component<any, any> {
                       isIncluded: criteriaMock[1].isIncluded,
                     }}
                     payload={covered["gender"]}
+                    handleGlobalState={this.handleAllNodesState}
+                  />
+                ),
+              };
+              savedCriteriaList.push(currentNode);
+            }
+          }
+          if (Object.prototype.hasOwnProperty.call(covered, "icd")) {
+            if (
+              covered["icd"]["look_back_days"] !== ""
+              // (covered["icd"]["icds"] !== "" ||
+              //   covered["icd"]["icds"].length > 0)
+            ) {
+              globalCardCount++;
+              let currentNode = {
+                id: globalCardCount,
+                cardCode: criteriaMock[2].cardCode,
+                cardName: criteriaMock[2].cardName,
+                isIncluded: criteriaMock[2].isIncluded,
+                render: (
+                  <ListItem
+                    nodeId={globalCardCount}
+                    deleteIconHandler={this.deleteIconHandler}
+                    card={{
+                      cardCode: criteriaMock[2].cardCode,
+                      cardName: criteriaMock[2].cardName,
+                      isIncluded: criteriaMock[2].isIncluded,
+                    }}
+                    payload={covered["icd"]}
                     handleGlobalState={this.handleAllNodesState}
                   />
                 ),
@@ -261,6 +318,34 @@ class AdditionalCriteria extends Component<any, any> {
           prop === "not_covered"
         ) {
           not_covered = additionalCriteriaBody[prop];
+          if (Object.prototype.hasOwnProperty.call(not_covered, "age")) {
+            if (
+              not_covered["age"]["min_age_condition"] !== "" &&
+              not_covered["age"]["max_age_condition"] !== ""
+            ) {
+              globalCardCount++;
+              let currentNode = {
+                id: globalCardCount,
+                cardCode: criteriaMock[0].cardCode,
+                cardName: criteriaMock[0].cardName,
+                isIncluded: !criteriaMock[0].isIncluded,
+                render: (
+                  <ListItem
+                    nodeId={globalCardCount}
+                    deleteIconHandler={this.deleteIconHandler}
+                    card={{
+                      cardCode: criteriaMock[0].cardCode,
+                      cardName: criteriaMock[0].cardName,
+                      isIncluded: !criteriaMock[0].isIncluded,
+                    }}
+                    payload={not_covered["age"]}
+                    handleGlobalState={this.handleAllNodesState}
+                  />
+                ),
+              };
+              savedCriteriaList.push(currentNode);
+            }
+          }
           if (Object.prototype.hasOwnProperty.call(not_covered, "gender")) {
             if (not_covered["gender"].length > 0) {
               globalCardCount++;
@@ -279,6 +364,35 @@ class AdditionalCriteria extends Component<any, any> {
                       isIncluded: !criteriaMock[1].isIncluded,
                     }}
                     payload={not_covered["gender"]}
+                    handleGlobalState={this.handleAllNodesState}
+                  />
+                ),
+              };
+              savedCriteriaList.push(currentNode);
+            }
+          }
+          if (Object.prototype.hasOwnProperty.call(not_covered, "icd")) {
+            if (
+              not_covered["icd"]["look_back_days"] !== ""
+              // (not_covered["icd"]["icds"] !== "" ||
+              //   not_covered["icd"]["icds"].length > 0)
+            ) {
+              globalCardCount++;
+              let currentNode = {
+                id: globalCardCount,
+                cardCode: criteriaMock[2].cardCode,
+                cardName: criteriaMock[2].cardName,
+                isIncluded: !criteriaMock[2].isIncluded,
+                render: (
+                  <ListItem
+                    nodeId={globalCardCount}
+                    deleteIconHandler={this.deleteIconHandler}
+                    card={{
+                      cardCode: criteriaMock[2].cardCode,
+                      cardName: criteriaMock[2].cardName,
+                      isIncluded: !criteriaMock[2].isIncluded,
+                    }}
+                    payload={not_covered["icd"]}
                     handleGlobalState={this.handleAllNodesState}
                   />
                 ),
@@ -360,7 +474,7 @@ class AdditionalCriteria extends Component<any, any> {
     }
   };
 
-  setNodes = (cardName, cardCode, payload, filteredList) => {
+  setNodes = (cardName, cardCode, filteredList) => {
     let globalCardCount = this.state.globalCardCount;
     let isIncluded = true;
     globalCardCount++;
@@ -369,8 +483,6 @@ class AdditionalCriteria extends Component<any, any> {
       isIncluded = !currentCard.isIncluded;
     }
     if (filteredList.length <= 1) {
-      // payload.listItemStatus[globalCardCount] = isIncluded;
-      // this.props.setAdditionalCriteria(payload);
       this.setState({
         globalCardCount: globalCardCount,
         selectedCriteriaList: [
@@ -432,6 +544,8 @@ class AdditionalCriteria extends Component<any, any> {
     isIncluded,
     updatedPayload
   ) => {
+    console.log(nodeId, cardCode, cardName, isIncluded, updatedPayload);
+
     let sequence = this.state.apiAdditionalCriteriaState.sequence;
     let covered = { ...this.state.apiAdditionalCriteriaState.covered };
     let not_covered = { ...this.state.apiAdditionalCriteriaState.not_covered };
@@ -509,64 +623,29 @@ class AdditionalCriteria extends Component<any, any> {
 
     switch (cardCode) {
       case 1:
+        filteredList = this.state.selectedCriteriaList.filter(
+          (card) => card.cardCode === cardCode
+        );
         cardName = criteriaMock[cardCode - 1].cardName;
-        this.setState({
-          selectedCriteriaList: [
-            ...this.state.selectedCriteriaList,
-            {
-              id: null,
-              cardCode: cardCode,
-              name: cardName,
-              render: (
-                <ListItem
-                  card={{
-                    cardName: cardName,
-                    cardCode: cardCode,
-                    // isIncluded: isIncluded,
-                  }}
-                  deleteIconHandler={this.deleteIconHandler}
-                  initialState={null}
-                  payload={null}
-                  handleGlobalState={this.handleAllNodesState}
-                />
-              ),
-            },
-          ],
-        });
+        this.setNodes(cardName, cardCode, filteredList);
+
         break;
       case 2:
         filteredList = this.state.selectedCriteriaList.filter(
           (card) => card.cardCode === cardCode
         );
         cardName = criteriaMock[cardCode - 1].cardName;
-        this.setNodes(cardName, cardCode, payload, filteredList);
+        this.setNodes(cardName, cardCode, filteredList);
 
         break;
       case 3:
+        filteredList = this.state.selectedCriteriaList.filter(
+          (card) => card.cardCode === cardCode
+        );
+
         cardName = criteriaMock[cardCode - 1].cardName;
-        this.setState({
-          selectedCriteriaList: [
-            ...this.state.selectedCriteriaList,
-            {
-              id: null,
-              cardCode: cardCode,
-              name: cardName,
-              render: (
-                <ListItem
-                  card={{
-                    cardName: cardName,
-                    cardCode: cardCode,
-                    // isIncluded: isIncluded,
-                  }}
-                  deleteIconHandler={this.deleteIconHandler}
-                  initialState={null}
-                  payload={null}
-                  handleGlobalState={this.handleAllNodesState}
-                />
-              ),
-            },
-          ],
-        });
+        this.setNodes(cardName, cardCode, filteredList);
+
         break;
       case 4:
         cardName = criteriaMock[cardCode - 1].cardName;
@@ -625,7 +704,7 @@ class AdditionalCriteria extends Component<any, any> {
           (card) => card.cardCode === cardCode
         );
         cardName = criteriaMock[cardCode - 1].cardName;
-        this.setNodes(cardName, cardCode, payload, filteredList);
+        this.setNodes(cardName, cardCode, filteredList);
 
         break;
       case 7:
@@ -633,7 +712,7 @@ class AdditionalCriteria extends Component<any, any> {
           (card) => card.cardCode === cardCode
         );
         cardName = criteriaMock[cardCode - 1].cardName;
-        this.setNodes(cardName, cardCode, payload, filteredList);
+        this.setNodes(cardName, cardCode, filteredList);
 
         break;
       case 8:

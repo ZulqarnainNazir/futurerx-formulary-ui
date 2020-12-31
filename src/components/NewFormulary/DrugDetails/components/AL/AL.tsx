@@ -132,9 +132,9 @@ class DrugDetailAL extends React.Component<any, any> {
     columns: null,
     data: [],
     tabs: [
-      { id: 1, text: "Replace" },
-      { id: 2, text: "Append" },
-      { id: 3, text: "Remove" },
+      { id: 1, text: "Replace", disabled: false },
+      { id: 2, text: "Append", disabled: false },
+      { id: 3, text: "Remove", disabled: false },
     ],
     selectedDrugs: Array(),
     drugData: Array(),
@@ -300,7 +300,7 @@ class DrugDetailAL extends React.Component<any, any> {
       this.rpSavePayload.is_covered = this.state.alSettings[0].covered
       apiDetails["messageBody"] = this.rpSavePayload;
 
-      if (this.state.activeTabIndex === 0) {
+      if (this.state.activeTabIndex === 0 || this.state.activeTabIndex === 1) {
         apiDetails["pathParams"] =
           this.props?.formulary_id +
           "/" + 
@@ -309,8 +309,9 @@ class DrugDetailAL extends React.Component<any, any> {
           alConstants.TYPE_REPLACE;
           console.log("The API Details - ", apiDetails);
 
-        // Replace Drug method call
+        // Replace and Append Drug method call
         this.props.postReplaceALDrug(apiDetails).then((json) => {
+          console.log("The Replace AL Json Response = ", json);
           if (json.payload && json.payload.code && json.payload.code === "200") {
             showMessage("Success", "success");
             this.getALSummary();
@@ -405,6 +406,14 @@ class DrugDetailAL extends React.Component<any, any> {
       this.setState({ selectedDrugs: [] });
     }
   };
+
+  refreshSelections = () => {
+    if(this.state.activeTabIndex === 0 || this.state.activeTabIndex === 1) {
+      // this.getPOSSettings();
+    } else if (this.state.activeTabIndex === 2) {
+      this.getALCriteriaList(true);
+    }
+  }
 
   handleMinChange = (e, args) => {
     console.log("THe Handle Min change Arguments = ", args, " -- THe Event = ", e.target.value, " -THe formdata 2 = ", this.formData2);
@@ -649,9 +658,11 @@ class DrugDetailAL extends React.Component<any, any> {
       return tab;
     });
 
-    if (activeTabIndex === 2) {
-      this.getALCriteriaList(true);
-    }
+    this.refreshSelections();
+
+    // if (activeTabIndex === 2) {
+    //   this.getALCriteriaList(true);
+    // }
 
     if(this.props.configureSwitch) {
       this.getALDrugsList();
@@ -774,7 +785,7 @@ class DrugDetailAL extends React.Component<any, any> {
     } else {
       this.setState({tabs:[
         { id: 1, text: "Replace", disabled:false },
-        { id: 2, text: "Append", disabled:true },
+        { id: 2, text: "Append", disabled:false },
         { id: 3, text: "Remove", disabled:false },
       ]});
     }

@@ -10,6 +10,9 @@ import {
   POS_SETTINGS_LIST,
   PR_SETTINGS_LIST,
 } from "../../../../../api/http-commons";
+
+import { getICDReplaceSrch } from "../../../../../redux/slices/formulary/drugDetails/icd/icdActionCreation";
+import * as icdConstants from "../../../../../api/http-drug-details";
 import POSCriteria from "../CriteriaComponents/POSCriteria";
 import PRCriteria from "../CriteriaComponents/PRCriteria";
 import GenderCriteria from "../CriteriaComponents/GenderCriteria";
@@ -23,6 +26,7 @@ function mapDispatchToProps(dispatch) {
     getPOSSettings: (a) => dispatch(getDrugDetailsPOSSettings(a)),
     getPRSettings: (a) => dispatch(getDrugDetailsPRSettings(a)),
     setAdditionalCriteria: (a) => dispatch(setAdditionalCriteria(a)),
+    getICDReplaceSrch: (a) => dispatch(getICDReplaceSrch(a)),
   };
 }
 
@@ -69,8 +73,12 @@ class ListItem extends Component<any, any> {
     glSettingsStatus: { type: "covered", covered: true },
 
     // ICD
-    icdSettings: { look_back_days: "", icds: "" },
+    icdSettings: { look_back_days: "", icds: [] },
     icdSettingsStatus: { type: "covered", covered: true },
+    icdResults: {
+      data: [],
+      value: undefined,
+    },
 
     // PN
     pnSettings: [
@@ -137,7 +145,7 @@ class ListItem extends Component<any, any> {
   }
 
   componentDidUpdate(prevProps, prevState) {
-    const { nodeId, payload } = this.props;
+    const { nodeId } = this.props;
 
     const updatedPayload = this.state.payload;
     const { cardCode, cardName, isIncluded } = this.state;
@@ -157,25 +165,29 @@ class ListItem extends Component<any, any> {
     const COVERED = "covered";
     const NOT_COVERED = "not-covered";
     const {
-      // initialState,
       payload,
       card: { cardCode, isIncluded },
     } = this.props;
     switch (cardCode) {
+      case 1:
+        let { alSettings } = this.state;
+        if (payload !== null) {
+          alSettings = { ...payload };
+        }
+        const alSettingsStatus = {
+          type: isIncluded ? COVERED : NOT_COVERED,
+          covered: isIncluded,
+        };
+
+        this.setState({
+          alSettings,
+          alSettingsStatus,
+        });
+        break;
       case 2:
         let { glSettings } = this.state;
 
         if (payload !== null) {
-          if (payload.length > 0) {
-            const gender: string[] = payload;
-            glSettings.forEach((s) => {
-              if (gender.includes(s.gl_code)) {
-                s["isChecked"] = true;
-              } else {
-                s["isChecked"] = false;
-              }
-            });
-          }
           if (payload.length > 0) {
             const gender: string[] = payload;
             glSettings.forEach((s) => {
@@ -195,6 +207,26 @@ class ListItem extends Component<any, any> {
         this.setState({
           glSettings,
           glSettingsStatus,
+        });
+        break;
+      case 3:
+        console.log(payload);
+        let { icdSettings } = this.state;
+        // let icdResults = this.state.icdResults;
+
+        if (payload !== null) {
+          icdSettings = { ...payload };
+          // icdResults.value = payload.icds;
+        }
+        const icdSettingsStatus = {
+          type: isIncluded ? COVERED : NOT_COVERED,
+          covered: isIncluded,
+        };
+
+        this.setState({
+          icdSettings,
+          icdSettingsStatus,
+          // icdResults,
         });
         break;
       case 6:
@@ -240,16 +272,6 @@ class ListItem extends Component<any, any> {
             }
           });
         }
-        if (payload.length > 0) {
-          const place_of_services: number[] = payload;
-          posSettings.forEach((s) => {
-            if (place_of_services.includes(s.id_place_of_service_type)) {
-              s["isChecked"] = true;
-            } else {
-              s["isChecked"] = false;
-            }
-          });
-        }
       } else {
         posSettings.forEach((s) => {
           s["isChecked"] = false;
@@ -280,16 +302,6 @@ class ListItem extends Component<any, any> {
             }
           });
         }
-        if (payload.length > 0) {
-          const patient_residences: number[] = payload;
-          prSettings.forEach((s) => {
-            if (patient_residences.includes(s.id_patient_residence_type)) {
-              s["isChecked"] = true;
-            } else {
-              s["isChecked"] = false;
-            }
-          });
-        }
       } else {
         prSettings.forEach((s) => {
           s["isChecked"] = false;
@@ -297,6 +309,160 @@ class ListItem extends Component<any, any> {
       }
       this.setState({
         prSettings,
+      });
+    });
+  };
+
+  handleAgeCriteriaMinConChange = (value) => {
+    let alSettings = { ...this.state.alSettings };
+    alSettings.min_age_condition = value;
+    let payload = { ...alSettings };
+    this.setState({
+      alSettings,
+      payload,
+    });
+  };
+  handleAgeCriteriaMaxConChange = (value) => {
+    let alSettings = { ...this.state.alSettings };
+    alSettings.max_age_condition = value;
+    let payload = { ...alSettings };
+    this.setState({
+      alSettings,
+      payload,
+    });
+  };
+  handleAgeCriteriaChange = (event) => {
+    let alSettings = { ...this.state.alSettings };
+
+    if (event.target.name === "min-val")
+      alSettings.min_age_limit = event.target.value.toString();
+    if (event.target.name === "max-val")
+      alSettings.max_age_limit = event.target.value.toString();
+
+    let payload = { ...alSettings };
+    this.setState({
+      alSettings,
+      payload,
+    });
+  };
+
+  handleALStatus = (key: string) => {
+    const COVERED = "covered";
+    const isCovered: boolean = key === COVERED ? true : false;
+
+    let alSettingsStatus = {
+      type: key,
+      covered: isCovered,
+    };
+
+    let isIncluded = alSettingsStatus.covered;
+    this.setState({ alSettingsStatus, isIncluded });
+  };
+
+  serviceSettingsCheckedGL = (e) => {
+    const glSettings = [...this.state.glSettings];
+    const { nodeId } = this.props;
+    const payload: string[] = [];
+
+    glSettings.forEach((s: any) => {
+      if (s.id + "" + nodeId === e.target.id) {
+        s.isChecked = e.target.checked;
+      }
+    });
+
+    glSettings.forEach((s: any) => {
+      if (s.isChecked === true) {
+        payload.push(s.gl_code);
+      }
+    });
+
+    this.setState({
+      glSettings,
+      payload,
+    });
+  };
+
+  handleGLStatus = (key: string) => {
+    const COVERED = "covered";
+    const isCovered: boolean = key === COVERED ? true : false;
+
+    let glSettingsStatus = {
+      type: key,
+      covered: isCovered,
+    };
+
+    let isIncluded = glSettingsStatus.covered;
+    this.setState({ glSettingsStatus, isIncluded });
+  };
+
+  // https://api-dev-config-formulary.futurerx.com/api/1/icds?search_value=t
+  // Request Method: GET
+
+  handleICDStatus = (key: string) => {
+    const COVERED = "covered";
+    const isCovered: boolean = key === COVERED ? true : false;
+
+    let icdSettingsStatus = {
+      type: key,
+      covered: isCovered,
+    };
+
+    let isIncluded = icdSettingsStatus.covered;
+    this.setState({ icdSettingsStatus, isIncluded });
+  };
+
+  handleICDOnChange = (event) => {
+    let icdSettings = { ...this.state.icdSettings };
+
+    if (event.target.name === "look_back_days")
+      icdSettings.look_back_days = event.target.value.toString();
+    let payload = { ...icdSettings };
+    this.setState({
+      icdSettings,
+      payload,
+    });
+  };
+
+  handleICDChange = (value: any[]) => {
+    let icdSettings: any = { ...this.state.icdSettings };
+
+    let icds: any[] = [];
+    this.state.icdResults.data.forEach((icd: any) => {
+      value.forEach((v) => {
+        if (icd["key"] === v) {
+          icds.push(icd);
+        }
+      });
+    });
+
+    icdSettings.icds = icds;
+    const payload: any = { ...icdSettings };
+    this.setState({
+      icdSettings,
+      payload,
+    });
+  };
+
+  // is_list: false
+  // key: 68677
+  // text: "T07-Unspecified multiple injuries"
+  // value: "T07-Unspecified multiple injuries"
+
+  handleICDSearch = (input) => {
+    let apiDetails = {};
+    apiDetails["apiPart"] = icdConstants.GET_ICD_DRUGS_REPLACE;
+    apiDetails["pathParams"] = this.props?.formulary_id;
+    apiDetails["keyVals"] = [
+      { key: icdConstants.KEY_ENTITY_ID, value: this.props?.formulary_id },
+      { key: icdConstants.SEARCHKEY, value: input },
+    ];
+    this.props.getICDReplaceSrch(apiDetails).then((json) => {
+      let response = json.payload && json.payload.data ? json.payload.data : [];
+      const data = [...response].slice(0, 8);
+      this.setState({
+        icdResults: {
+          data,
+        },
       });
     });
   };
@@ -323,6 +489,37 @@ class ListItem extends Component<any, any> {
       payload,
     });
   };
+  handlePOSSelectAll = () => {
+    const { posSettings, isSelectAllPOS } = this.state;
+    const payload: string[] = [];
+
+    posSettings.forEach((s: any) => {
+      s.isChecked = !isSelectAllPOS;
+    });
+
+    posSettings.forEach((s: any) => {
+      if (s.isChecked === true) {
+        payload.push(s.id_place_of_service_type);
+      }
+    });
+
+    this.setState({
+      posSettings,
+      isSelectAllPOS: !isSelectAllPOS,
+      payload,
+    });
+  };
+
+  handlePOSStatus = (key: string) => {
+    const COVERED = "covered";
+    const isCovered: boolean = key === COVERED ? true : false;
+    let posSettingsStatus = {
+      type: key,
+      covered: isCovered,
+    };
+    let isIncluded = posSettingsStatus.covered;
+    this.setState({ posSettingsStatus, isIncluded });
+  };
 
   serviceSettingsCheckedPR = (e) => {
     const prSettings = [...this.state.prSettings];
@@ -343,50 +540,6 @@ class ListItem extends Component<any, any> {
 
     this.setState({
       prSettings,
-      payload,
-    });
-  };
-
-  serviceSettingsCheckedGL = (e) => {
-    const glSettings = [...this.state.glSettings];
-    const { nodeId } = this.props;
-    const payload: string[] = [];
-
-    glSettings.forEach((s: any) => {
-      if (s.id + "" + nodeId === e.target.id) {
-        s.isChecked = e.target.checked;
-      }
-    });
-
-    glSettings.forEach((s: any) => {
-      if (s.isChecked === true) {
-        payload.push(s.gl_code);
-      }
-    });
-
-    this.setState({
-      glSettings,
-      payload,
-    });
-  };
-
-  handlePOSSelectAll = () => {
-    const { posSettings, isSelectAllPOS } = this.state;
-    const payload: string[] = [];
-
-    posSettings.forEach((s: any) => {
-      s.isChecked = !isSelectAllPOS;
-    });
-
-    posSettings.forEach((s: any) => {
-      if (s.isChecked === true) {
-        payload.push(s.id_place_of_service_type);
-      }
-    });
-
-    this.setState({
-      posSettings,
-      isSelectAllPOS: !isSelectAllPOS,
       payload,
     });
   };
@@ -412,17 +565,6 @@ class ListItem extends Component<any, any> {
     });
   };
 
-  handlePOSStatus = (key: string) => {
-    const COVERED = "covered";
-    const isCovered: boolean = key === COVERED ? true : false;
-    let posSettingsStatus = {
-      type: key,
-      covered: isCovered,
-    };
-    let isIncluded = posSettingsStatus.covered;
-    this.setState({ posSettingsStatus, isIncluded });
-  };
-
   handlePRStatus = (key: string) => {
     const COVERED = "covered";
     const isCovered: boolean = key === COVERED ? true : false;
@@ -432,37 +574,6 @@ class ListItem extends Component<any, any> {
     };
     let isIncluded = prSettingsStatus.covered;
     this.setState({ prSettingsStatus, isIncluded });
-  };
-
-  handleGLStatus = (key: string) => {
-    const COVERED = "covered";
-    const isCovered: boolean = key === COVERED ? true : false;
-
-    let glSettingsStatus = {
-      type: key,
-      covered: isCovered,
-    };
-
-    let isIncluded = glSettingsStatus.covered;
-    this.setState({ glSettingsStatus, isIncluded });
-  };
-
-  handleAgeCriteriaChange = (event) => {
-    console.log(event.target.value);
-    console.log(event.target.name);
-  };
-
-  handleALStatus = (key: string) => {
-    const COVERED = "covered";
-    const isCovered: boolean = key === COVERED ? true : false;
-
-    let glSettingsStatus = {
-      type: key,
-      covered: isCovered,
-    };
-
-    let isIncluded = glSettingsStatus.covered;
-    this.setState({ glSettingsStatus, isIncluded });
   };
 
   render() {
@@ -485,6 +596,7 @@ class ListItem extends Component<any, any> {
       // ICD
       icdSettings,
       icdSettingsStatus,
+      icdResults,
 
       // PN
       pnSettings,
@@ -514,22 +626,23 @@ class ListItem extends Component<any, any> {
     } = this.props;
     switch (cardCode) {
       case 1:
-        return null;
-      // return (
-      //   <AgeCriteria
-      //     alSettingsServies={{
-      //       alSettings,
-      //       alSettingsStatus,
-      //     }}
-      //     handleStatus={this.handleGLStatus}
-      //     handleAgeCriteriaChange={this.handleAgeCriteriaChange}
-      //     deleteIconHandler={() =>
-      //       deleteIconHandler(nodeId, cardCode, cardName, isIncluded, payload)
-      //     }
-      //     isAdditionalCriteria={true}
-      //     nodeId={nodeId}
-      //   />
-      // );
+        return (
+          <AgeCriteria
+            alSettingsServies={{
+              alSettings,
+              alSettingsStatus,
+            }}
+            handleStatus={this.handleALStatus}
+            handleAgeCriteriaMinConChange={this.handleAgeCriteriaMinConChange}
+            handleAgeCriteriaMaxConChange={this.handleAgeCriteriaMaxConChange}
+            handleAgeCriteriaChange={this.handleAgeCriteriaChange}
+            deleteIconHandler={() =>
+              deleteIconHandler(nodeId, cardCode, cardName, isIncluded, payload)
+            }
+            isAdditionalCriteria={true}
+            nodeId={nodeId}
+          />
+        );
       case 2:
         return (
           <GenderCriteria
@@ -547,22 +660,24 @@ class ListItem extends Component<any, any> {
           />
         );
       case 3:
-        return null;
-      // return (
-      //   <ICDCriteria
-      //     icdSettingsServies={{
-      //       icdSettings,
-      //       icdSettingsStatus,
-      //     }}
-      //     handleStatus={this.handleGLStatus}
-      //     serviceSettingsChecked={this.serviceSettingsCheckedGL}
-      //     deleteIconHandler={() =>
-      //       deleteIconHandler(nodeId, cardCode, cardName, isIncluded, payload)
-      //     }
-      //     isAdditionalCriteria={true}
-      //     nodeId={nodeId}
-      //   />
-      // );
+        return (
+          <ICDCriteria
+            icdSettingsServies={{
+              icdSettings,
+              icdSettingsStatus,
+              icdResults,
+            }}
+            handleStatus={this.handleICDStatus}
+            handleICDChange={this.handleICDChange}
+            handleICDSearch={this.handleICDSearch}
+            handleICDOnChange={this.handleICDOnChange}
+            deleteIconHandler={() =>
+              deleteIconHandler(nodeId, cardCode, cardName, isIncluded, payload)
+            }
+            isAdditionalCriteria={true}
+            nodeId={nodeId}
+          />
+        );
       case 4:
         return null;
       // return (

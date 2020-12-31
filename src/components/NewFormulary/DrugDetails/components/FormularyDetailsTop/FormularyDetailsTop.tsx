@@ -6,21 +6,32 @@ import FormularyDetailsContext from "../../../FormularyDetailsContext";
 import "./FormularyDetailsTop.scss";
 import { fetchFormularyHeader } from "../../../../../redux/slices/formulary/header/headerSlice";
 import { fetchSelectedFormulary } from "../../../../.././redux/slices/formulary/setup/setupSlice";
+import { createFormularyUsingClone } from "../../../../.././redux/slices/formulary/setup/setupService";
 import VersionHistoryPopup from "../FormularySetUp/components/VersionHistoryPopup/VersionHistoryPopup";
+import ClonePopup from "../FormularySetUp/components/ClonePopup/ClonePopup";
 import { VersionHistoryData } from "../FormularySetUp/components/VersionHistoryPopup/version-hisory.model";
+import { ToastContainer } from 'react-toastify';
+import showMessage from "../../../Utils/Toast";
+import {
+  fetchDesignOptions,
+  fetchTierOptions,
+} from "../../../../.././redux/slices/formulary/setup/setupOptionsSlice";
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
   return {
     mode: state?.setup?.mode,
     currentFormulary: state.setup.formulary,
-    formularyVersionList: state.header.formulary_version_list
+    formularyVersionList: state.header.formulary_version_list,
+    formularyLobId: state?.application?.formulary_lob_id,
   };
 };
 
 function mapDispatchToProps(dispatch) {
   return {
-    fetchFormularyVersions: a => dispatch(fetchFormularyHeader(a)),
-    fetchSelectedFormulary: a => dispatch(fetchSelectedFormulary(a))
+    fetchFormularyVersions: (a) => dispatch(fetchFormularyHeader(a)),
+    fetchSelectedFormulary: (a) => dispatch(fetchSelectedFormulary(a)),
+    fetchDesignOptions: (a) => dispatch(fetchDesignOptions(a)),
+    fetchTierOptions: (a) => dispatch(fetchTierOptions(a)),
   };
 }
 
@@ -36,14 +47,16 @@ class FormularyDetailsTop extends React.Component<any, any> {
     isAnyPopupOpen: false,
     //toggle flag to show and hide version history popup
     isVersionHistoryPopupOpen: false,
+    isClonePopupOpen: false,
+    dialogTitle: '',
 
     lastID: 0,
-    lastVersion: 0
+    lastVersion: 0,
   };
 
   componentDidUpdate() {
-    console.log(this.props.mode);
-    console.log(this.props.currentFormulary);
+    // console.log(this.props.mode);
+    // console.log(this.props.currentFormulary);
     if (this.props.mode === "EXISTING" && this.props.currentFormulary) {
       // console.log(
       //   this.state.lastID + " / " + this.props?.currentFormulary?.id_formulary
@@ -57,7 +70,7 @@ class FormularyDetailsTop extends React.Component<any, any> {
       if (
         this.state.lastID !== this.props?.currentFormulary?.id_formulary &&
         this.state !==
-          this.props?.currentFormulary?.formulary_info?.version_number
+        this.props?.currentFormulary?.formulary_info?.version_number
       ) {
         this.props.fetchFormularyVersions(
           this.props.currentFormulary?.id_base_formulary
@@ -65,7 +78,7 @@ class FormularyDetailsTop extends React.Component<any, any> {
         this.setState({
           lastID: this.props?.currentFormulary?.id_formulary,
           lastVersion: this.props?.currentFormulary?.formulary_info
-            ?.version_number
+            ?.version_number,
         });
       }
     }
@@ -73,87 +86,13 @@ class FormularyDetailsTop extends React.Component<any, any> {
 
   onVersionChangeHandler = (e: any) => {
     const formulary_id = this.props.formularyVersionList.find(
-      el => el.value === e
+      (el) => el.value === e
     ).id_formulary;
     // console.log(formulary_id)
-    this.props.fetchSelectedFormulary(formulary_id);
+    // this.props.fetchSelectedFormulary(formulary_id);
+    // TODO
+    this.externalInferfaceLoadFormulary(6, formulary_id);
   };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-//  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
-// TODO 
-// Do not modify this...
-// Add new code abov this...
-//  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
-
-// externalInferfaceLoadFormulary(type: number, id: number){
-// console.log(" externalInferfaceLoadFormulary : " + type + " ID : " + id);
-
-//   this.manageFormularyType(type, id);
-//   this.props.fetchSelectedFormulary(id);
-// }
-
-// manageFormularyType(type: number, id: number) {
-//   console.log(" Manage - TYPE : " + type + " ID : " + id);
-//   let defaultType = 4;
-//   if (type === -1) {
-//     this.props.fetchGeneralOptions({ type: defaultType, id: -1 });
-//     return;
-//   }
-
-//   this.props.fetchGeneralOptions({ type: type, id: id });
-//   this.props.fetchDesignOptions({ type: type, id: id });
-//   this.props.fetchTierOptions({ type: type, id: id });
-
-//   if (type === 1) {
-//     // MRC...
-//     this.props.fetchMedicareOptions({ type: type, id: id });
-//     this.props.fetchSupplementalOptions({ type: type, id: id });
-//   } else if (type === 2) {
-//     // MMP...
-//     this.props.fetchStatesOptions(type);
-//     this.props.fetchMedicareOptions({ type: type, id: id });
-//     this.props.fetchSupplementalOptions({ type: type, id: id });
-//   } else if (type === 3) {
-//     // TODO ... MEDICADE...
-//     this.props.fetchStatesOptions(0);
-//   } else if (type === 4) {
-//     // TODO ... MEDICADE...
-//     this.props.fetchStatesOptions(0);
-//   } else if (type === 5) {
-//     // EXC...
-//   } else if (type === 6) {
-//     // COMMERCIAL...
-//   }
-//   this.props.fetchSubMthsOptions(2021);
-// }
-
-
-
-
-
-
-
-
-
-
-
 
   /**
    * @function onVersionHistoryClick
@@ -165,7 +104,12 @@ class FormularyDetailsTop extends React.Component<any, any> {
    */
   onVersionHistoryClick = () => {
     console.log("Version history clicked");
-    this.setState({ isAnyPopupOpen: true, isVersionHistoryPopupOpen: true });
+    this.setState({ isAnyPopupOpen: true, isVersionHistoryPopupOpen: true, dialogTitle: 'VERSION HISTORY' });
+  };
+
+  onCloneClick = () => {
+    console.log("Clone button clicked");
+    this.setState({ isAnyPopupOpen: true, isClonePopupOpen: true, dialogTitle: 'CLONE' });
   };
 
   /**
@@ -176,7 +120,9 @@ class FormularyDetailsTop extends React.Component<any, any> {
   onClosePopup = () => {
     this.setState({
       isAnyPopupOpen: false,
-      isVersionHistoryPopupOpen: false
+      isVersionHistoryPopupOpen: false,
+      isClonePopupOpen: false,
+      dialogTitle: ''
       //add other popup toggles too if this is reused
     });
   };
@@ -200,10 +146,110 @@ class FormularyDetailsTop extends React.Component<any, any> {
    *
    */
   onFormularyVersionSelection = (data: VersionHistoryData) => {
-    console.log("the selected version ", data);
+    // console.log("the selected version ", data);
     // do anything with the data
     this.onClosePopup();
+    if (data && data.id_formulary && data.id_formulary > 0) {
+      this.externalInferfaceLoadFormulary(6, data.id_formulary);
+    }
+
   };
+
+  // CLONE
+
+  // SetupService - createFormularyUsingClone
+  // createFormularyUsingClone(     baseId: number,     payload: any   ): Promise<number | null>
+  // base id --- FL base ID
+  // number -- new FL no.
+  // payload
+  // const payload: any = {};
+  // payload.formulary_info = {};
+  // payload.formulary_info.formulary_name = new_name;
+  // payload.formulary_info.effective_date = inew_effective_date;
+  // payload.formulary_info.id_lob =  <GET from Store>
+
+  //  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
+  // TODO
+  // Do not modify this...
+  // Add new code above this...
+  //  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
+
+  externalInferfaceLoadFormulary(type: number, id: number) {
+    console.log(" EXTERNAL INTERFACE LOAD FL : " + type + " ID : " + id);
+
+    // this.manageFormularyType(type, id);
+    this.props.fetchSelectedFormulary(id);
+    this.props.fetchDesignOptions({ type: type, id: id });
+    this.props.fetchTierOptions({ type: type, id: id });
+  }
+
+  // manageFormularyType(type: number, id: number) {
+  //   console.log(" Manage - TYPE : " + type + " ID : " + id);
+  //   let defaultType = 4;
+  //   if (type === -1) {
+  //     this.props.fetchGeneralOptions({ type: defaultType, id: -1 });
+  //     return;
+  //   }
+
+  //   this.props.fetchGeneralOptions({ type: type, id: id });
+  //   this.props.fetchDesignOptions({ type: type, id: id });
+  //   this.props.fetchTierOptions({ type: type, id: id });
+
+  //   if (type === 1) {
+  //     // MRC...
+  //     this.props.fetchMedicareOptions({ type: type, id: id });
+  //     this.props.fetchSupplementalOptions({ type: type, id: id });
+  //   } else if (type === 2) {
+  //     // MMP...
+  //     this.props.fetchStatesOptions(type);
+  //     this.props.fetchMedicareOptions({ type: type, id: id });
+  //     this.props.fetchSupplementalOptions({ type: type, id: id });
+  //   } else if (type === 3) {
+  //     // TODO ... MEDICADE...
+  //     this.props.fetchStatesOptions(0);
+  //   } else if (type === 4) {
+  //     // TODO ... MEDICADE...
+  //     this.props.fetchStatesOptions(0);
+  //   } else if (type === 5) {
+  //     // EXC...
+  //   } else if (type === 6) {
+  //     // COMMERCIAL...
+  //   }
+  //   this.props.fetchSubMthsOptions(2021);
+  // }
+  onFormularyCloneInfo = (cloneName, effectiveDate) => {
+    console.log("Formulary name:" + cloneName + " Date:" + effectiveDate);
+    this.onClosePopup();
+    this.handleCloneFormulary(cloneName, effectiveDate);
+  }
+
+  onFormularyCloneCancel = () => {
+    this.onClosePopup();
+  }
+
+  handleCloneFormulary = async (cloneName, effectiveDate) => {
+    try {
+      if (this.props.currentFormulary) {
+        const payload: any = {};
+        payload.formulary_info = {};
+        payload.formulary_info.formulary_name = cloneName;
+        payload.formulary_info.effective_date = effectiveDate;
+        payload.formulary_info.id_lob = this.props.formularyLobId;
+
+        let newFormularyId = await createFormularyUsingClone(this.props.currentFormulary.id_base_formulary, payload);
+        if (newFormularyId) {
+          showMessage('Cloned formulary Id:' + newFormularyId, 'success');
+          this.externalInferfaceLoadFormulary(6, newFormularyId);
+        } else {
+          showMessage('Error: No response for formulary clone', 'error')
+        }
+      }
+    } catch (error) {
+      console.log("***** clone - Error");
+      console.log(error);
+      showMessage('Error while cloning formulary', 'error')
+    }
+  }
 
   render() {
     let dropDown: any;
@@ -212,7 +258,7 @@ class FormularyDetailsTop extends React.Component<any, any> {
         <DropDown
           className="formulary-type-dropdown formulary-versions"
           placeholder="Formulary Version"
-          options={this.props.formularyVersionList.map(e => e.value)}
+          options={this.props.formularyVersionList.map((e) => e.value)}
           onChange={this.onVersionChangeHandler}
           dropdownClassName="version-dd"
         />
@@ -226,7 +272,7 @@ class FormularyDetailsTop extends React.Component<any, any> {
           <DialogPopup
             positiveActionText="save"
             negativeActionText="cancel"
-            title="VERSION HISTORY"
+            title={this.state.dialogTitle}
             handleClose={this.onClosePopup}
             handleAction={this.onActionFromPopup}
             open={this.state.isAnyPopupOpen}
@@ -238,6 +284,9 @@ class FormularyDetailsTop extends React.Component<any, any> {
               <VersionHistoryPopup
                 onFormularyVersionSelection={this.onFormularyVersionSelection}
               />
+            )}
+            {this.state.isClonePopupOpen && (
+              <ClonePopup onFormularyCloneInfo={this.onFormularyCloneInfo} onFormularyCloneCancel={this.onFormularyCloneCancel} />
             )}
           </DialogPopup>
         ) : null}
@@ -286,7 +335,8 @@ class FormularyDetailsTop extends React.Component<any, any> {
                   </svg>
                   Version History
                 </div>
-                <div className="item">
+                <div className="item item--version-history"
+                  onClick={this.onCloneClick}>
                   <svg
                     width="13"
                     height="13"
@@ -378,12 +428,10 @@ class FormularyDetailsTop extends React.Component<any, any> {
               <span className="label">Formulary ID:</span>{" "}
               {this.props.currentFormulary?.id_formulary}
             </div> */}
-            {this.props.activeTabIndex !== 0 ? (
-              <div className="item">
-                <span className="label">Version:</span>{" "}
-                {this.props.currentFormulary?.formulary_info?.version_number}
-              </div>
-            ) : null}
+            <div className="item">
+              <span className="label">Version:</span>{" "}
+              {this.props.currentFormulary?.formulary_info?.version_number}
+            </div>
             {/* <div className="item">
               <span className="label">Effective Date:</span>{" "}
               {this.props.currentFormulary?.formulary_info?.effective_date}
@@ -396,7 +444,7 @@ class FormularyDetailsTop extends React.Component<any, any> {
               <span className="label">Effective Date:</span>{" "}
               {this.props.currentFormulary?.formulary_info?.effective_date}
             </div>
-						<div className="item">
+            <div className="item">
               <span className="label">Termination Date:</span>{" "}
               {this.props.currentFormulary?.terminationDate}
             </div>
@@ -406,6 +454,7 @@ class FormularyDetailsTop extends React.Component<any, any> {
             </div> */}
           </div>
         )}
+        <ToastContainer />
       </div>
     );
   }
