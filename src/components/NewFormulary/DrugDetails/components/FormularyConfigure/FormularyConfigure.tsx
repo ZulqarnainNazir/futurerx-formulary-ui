@@ -28,8 +28,7 @@ function mapDispatchToProps(dispatch) {
 const mapStateToProps = (state) => {
   //console.log(state)
   return{
-    current_formulary: state?.application?.formulary,
-    edit_info: state?.application?.formulary?.edit_info,
+    current_formulary: state?.application?.formulary
   }
 }
 
@@ -39,32 +38,16 @@ interface configureState {
 }
 interface configureProps {
   setAdvancedSearch : (a) => void;
-  edit_info: any[],
-  showDrugDetails: boolean,
 }
 
 class FormularyConfigure extends React.Component<
-  any,
-  any
+  configureProps,
+  configureState
 > {
   state = {
     tabs: tabs,
     activeTabIndex: 0,
-    showDrugDetails: true,
   };
-  componentDidMount() {
-    if(this.props.edit_info) {
-      for(let i=0; i<this.props.edit_info.length; i++) {
-        if(this.props.edit_info[i]['id_edit'] === 68 && this.props.edit_info[i]['id_checked']) {
-          // let ddtabs = tabs.filter(e => e.id === 6);
-          // if(ddtabs.length > 0) {
-          //   tabs.pop();
-          // }
-          this.setState({ showDrugDetails: false });
-        }
-      }
-    }
-  }
   onClickTab = (selectedTabIndex: number) => {
     let activeTabIndex = 0;
 
@@ -104,7 +87,7 @@ class FormularyConfigure extends React.Component<
       case 4:
         return <QL />
       case 5:
-        return this.state.showDrugDetails ? <DrugDetails /> : null;
+        return <DrugDetails />;
     }
   };
   render() {

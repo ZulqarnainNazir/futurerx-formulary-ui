@@ -196,7 +196,7 @@ export const selectFormularyGrid: (data) => Column<any>[] = (data) => {
       pixelWidth: 100,
       key: "lob",
       displayTitle: "LOB",
-      isFilterable: false,
+      isFilterable: true,
       dataType: "string",
       filters: textFilters,
       hidden: false,
