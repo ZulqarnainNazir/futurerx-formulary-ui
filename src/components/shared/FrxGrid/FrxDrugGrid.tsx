@@ -1504,7 +1504,10 @@ class FrxDrugGrid extends Component<FrxDrugGridProps<any>, FrxDrugGridState<any>
    * @author Deepak _T
    */
   onGotToFirstPage: () => void = () => {
-    this.setState({ currentPage: 1, goToPageValue: 1 });
+    this.setState({ currentPage: 1, goToPageValue: 1 }, () => {
+			if(!this.props.isDataLoaded)
+			this.props.onGridPageChangeHandler(this.state.goToPageValue)
+		});
   };
 
   /**
@@ -1524,7 +1527,10 @@ class FrxDrugGrid extends Component<FrxDrugGridProps<any>, FrxDrugGridState<any>
 
     const lastPage = Math.ceil(data.length / this.state.pageSize);
 
-    this.setState({ currentPage: lastPage, goToPageValue: lastPage });
+    this.setState({ currentPage: lastPage, goToPageValue: lastPage }, () => {
+			if(!this.props.isDataLoaded)
+			this.props.onGridPageChangeHandler(this.state.goToPageValue)
+		});
   };
 
   /*
