@@ -1,23 +1,17 @@
 import React, { Component } from "react";
-import CustomAccordion from "../../../shared/Frx-components/accordion/CustomAccordion";
 
-import {
-  POS_SETTINGS_LIST,
-  PR_SETTINGS_LIST,
-} from "../../../../api/http-commons";
-
-import { ReactComponent as TiltCrossIcon } from "../../../../assets/icons/TiltCrossIcon.svg";
 import { ReactComponent as SwapIcon } from "../../../../assets/icons/SwapIcon.svg";
-import PosSettings from "../../DrugDetails/components/POS/PosSettings";
 import "./AdditionalCriteriaContainer.scss";
 import { connect } from "react-redux";
 import { getDrugDetailsPOSSettings } from "../../../../redux/slices/formulary/drugDetails/pos/posActionCreation";
 import { getDrugDetailsPRSettings } from "../../../../redux/slices/formulary/drugDetails/pr/prActionCreation";
-import Button from "../../../shared/Frx-components/button/Button";
-import { render } from "@testing-library/react";
-import ListItem from "./ListItem/ListItem";
+import { Button } from "@material-ui/core";
 import { setAdditionalCriteria } from "../../../../redux/slices/formulary/advancedSearch/additionalCriteriaSlice";
 import AdditionalCriteria from "../AdditionalCriteriaContainer/AdditionalCriteria/AdditionalCriteria";
+
+import { ReactComponent as DeleteIcon } from "../../../../assets/icons/delete.svg";
+import { ReactComponent as AddCircleIcon } from "../../../../assets/icons/addcircle.svg";
+import { debug } from "console";
 
 function mapDispatchToProps(dispatch) {
   return {
@@ -31,8 +25,8 @@ function mapDispatchToProps(dispatch) {
 const mapStateToProps = (state) => {
   return {
     // additional criteria state
-
     additionalCriteriaBody: state?.additionalCriteria?.additionalCriteriaBody,
+    isNewAdditionalCriteria: state?.additionalCriteria?.isNewAdditionalCriteria,
     populateGrid: state?.additionalCriteria?.populateGrid,
     closeDialog: state?.additionalCriteria?.closeDialog,
     listItemStatus: state?.additionalCriteria?.listItemStatus,
@@ -43,43 +37,105 @@ const mapStateToProps = (state) => {
     formulary_type_id: state?.application?.formulary_type_id,
   };
 };
-class AdditionalCriteriaContainer extends Component<any, any> {
+interface AdditionalCriteriaContainerState {
+  additionalCriteriaArray: any[];
+  sequence: number;
+}
+class AdditionalCriteriaContainer extends Component<
+  any,
+  AdditionalCriteriaContainerState
+> {
   state = {
-    accordionId: 1,
-    posSettings: [],
-    prSettings: [],
-    posSettingsStatus: {
-      type: "covered",
-      covered: true,
-    },
-    prSettingsStatus: {
-      type: "covered",
-      covered: true,
-    },
-    isSelectAllPOS: false,
-
-    nodeList: Array(),
-    idCount: 0,
+    additionalCriteriaArray: [],
+    sequence: 0,
   };
 
-  componentDidMount() {}
+  componentDidMount() {
+    // if (this.props.additionalCriteriaBody <= 0)
+    //   this.setState({
+    //     isNewAdditionalCriteria: true,
+    //   });
+
+    if (this.props.additionalCriteriaBody)
+      this.setState({
+        additionalCriteriaArray: this.props.additionalCriteriaBody,
+      });
+  }
+
+  handleAddNewClick = () => {
+    let sequence = this.state.sequence;
+    sequence++;
+    if (this.state.additionalCriteriaArray.length < 5) {
+      this.setState({
+        additionalCriteriaArray: [
+          ...this.state.additionalCriteriaArray,
+          {
+            sequence: sequence,
+            covered: {},
+            not_covered: {},
+          },
+        ],
+        sequence,
+      });
+    }
+  };
+
+  deleteAdditionalCriteria = (additionalCriteriaId: number) => {
+    const additionalCriterias = this.state.additionalCriteriaArray.filter(
+      (additionalCriteria: any) =>
+        additionalCriteria.sequence !== additionalCriteriaId
+    );
+
+    this.setState({
+      additionalCriteriaArray: additionalCriterias,
+    });
+  };
+
+  handleChildDataSave = (additionalCriteria) => {
+    console.log(additionalCriteria);
+    this.props.handleChildDataSave(additionalCriteria);
+  };
 
   render() {
-    // const {
-    //   posSettings,
-    //   posSettingsStatus,
-    //   prSettings,
-    //   prSettingsStatus,
-    //   isSelectAllPOS,
-    // } = this.state;
     const { criteriaList } = this.props;
     return (
       <div className="__root-additional-criteria">
-        <div className="__root-additional-criteria-child">
-          <SwapIcon className="__root-additional-criteria-child-swapper" />
-          <div className="__root-additional-criteria-child-accordion">
-            <AdditionalCriteria criteriaList={criteriaList} />
+        {this.state.additionalCriteriaArray.length <= 0 ? (
+          <div className="__root-additional-criteria-child-msg">
+            Add new additional criteria
           </div>
+        ) : (
+          this.state.additionalCriteriaArray.map((additionalCriteria: any) => (
+            <div
+              className="__root-additional-criteria-child"
+              key={additionalCriteria.sequence}
+            >
+              <SwapIcon className="__root-additional-criteria-child-swapper" />
+              <div className="__root-additional-criteria-child-accordion">
+                <AdditionalCriteria
+                  criteriaList={criteriaList}
+                  additionalCriteria={additionalCriteria}
+                  handleChildDataSave={this.handleChildDataSave}
+                />
+              </div>
+              <DeleteIcon
+                className="__root-additional-criteria-child-delete"
+                onClick={() =>
+                  this.deleteAdditionalCriteria(additionalCriteria.sequence)
+                }
+              />
+            </div>
+          ))
+        )}
+        <div className="__root-additional-criteria-add-new">
+          <Button
+            // disabled={this.state.additionalCriteriaArray.length > 5}
+            className={"Button advanced-grid-search__btn-clear"}
+            onClick={() => this.handleAddNewClick()}
+          >
+            <AddCircleIcon />
+            <span>Add New</span>
+          </Button>
         </div>
       </div>
     );

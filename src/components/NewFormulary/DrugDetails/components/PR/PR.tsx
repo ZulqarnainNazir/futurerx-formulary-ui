@@ -1,6 +1,7 @@
 import React from "react";
 import { connect } from "react-redux";
 import { filter } from "lodash";
+import { ToastContainer } from "react-toastify";
 import PanelHeader from "../../../../shared/Frx-components/panel-header/PanelHeader";
 import PanelGrid from "../../../../shared/Frx-components/panel-grid/PanelGrid";
 import CustomizedSwitches from "../FormularyConfigure/components/CustomizedSwitches";
@@ -414,8 +415,8 @@ class DrugDetailPR extends React.Component<any, any> {
 
     let listCount = 0;
     this.props.getDrugDetailsPRList(apiDetails).then((json) => {
-      let tmpData = json.payload.result;
-      listCount = json.payload.count;
+      let tmpData = json.payload && json.payload.result ? json.payload.result : [];
+      listCount = json.payload?.count;
       var data: any[] = [];
       let count = 1;
       var gridData = tmpData.map((el) => {
@@ -541,12 +542,30 @@ class DrugDetailPR extends React.Component<any, any> {
     });
   };
 
+  validateGLForm = () => {
+    if(this.state.activeTabIndex === 0) {
+      let rpSelected = this.state.prSettings.filter(e => e.isChecked);
+      return !(rpSelected.length === 0);
+
+    } else if(this.state.activeTabIndex === 2) {
+      return !(this.state.posCheckedList.length === 0);
+    }
+
+    return true;
+  }
+
   showGridHandler = () => {
-    console.log("Called-----THe Show Grid Handler-----")
+    // console.log("Called-----THe Show Grid Handler-----")
     // this.getPOSDrugsList();
     console.log("The State of the Tab = ", this.state);
     // this.setState({ showGrid: true });
-    this.getPRDrugsList();
+    // this.getPRDrugsList();
+
+    if(this.validateGLForm()) {
+      this.getPRDrugsList();
+    } else {
+      showMessage("Please Select atleast one PR", "info");
+    }
   };
 
   componentWillReceiveProps(nextProps) {
@@ -721,6 +740,7 @@ class DrugDetailPR extends React.Component<any, any> {
             ) : null}
           </div>
         ) : null }
+        <ToastContainer />
       </>
     );
   }

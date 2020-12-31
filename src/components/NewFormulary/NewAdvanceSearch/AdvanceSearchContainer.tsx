@@ -17,6 +17,7 @@ import ReferenceNdc from "./CategoriesComponents/ReferenceNdc/ReferenceNdc";
 import AlternativeDrug from "./CategoriesComponents/AlternativeDrug/AlternativeDrug";
 
 import { setAdvancedSearch } from "../../../redux/slices/formulary/advancedSearch/advancedSearchSlice";
+import { setAdditionalCriteria } from "../../../redux/slices/formulary/advancedSearch/additionalCriteriaSlice";
 import { connect } from "react-redux";
 import { isEmpty } from "lodash";
 import AdditionalCriteriaContainer from "./AdditionalCriteriaContainer/AdditionalCriteriaContainer";
@@ -24,6 +25,7 @@ import AdditionalCriteriaContainer from "./AdditionalCriteriaContainer/Additiona
 function mapDispatchToProps(dispatch) {
   return {
     setAdvancedSearch: (a) => dispatch(setAdvancedSearch(a)),
+    setAdditionalCriteria: (a) => dispatch(setAdditionalCriteria(a)),
   };
 }
 
@@ -37,6 +39,8 @@ const mapStateToProps = (state) => {
     formulary: state?.application?.formulary,
     formulary_lob_id: state?.application?.formulary_lob_id,
     formulary_type_id: state?.application?.formulary_type_id,
+
+    additionalCriteria: state?.additionalCriteria,
   };
 };
 
@@ -44,6 +48,7 @@ interface Props {
   openPopup: boolean;
   onClose: () => void;
   setAdvancedSearch: (a) => void;
+  setAdditionalCriteria: (a) => void;
   advancedSearchBody: any;
   populateGrid: any;
   closeDialog: any;
@@ -52,8 +57,7 @@ interface Props {
 
   // additional Criteria
   isAdvanceSearch: boolean;
-  // getDrugDetailsPOSSettings: (api) => void;
-  // getDrugDetailsPRSettings: (api) => void;
+  additionalCriteria: any;
 }
 interface State {}
 
@@ -112,6 +116,7 @@ class AdvanceSearchContainer extends Component<Props, State> {
     // State for additional criteria
     // isAdvanceSearch: true,
     criteriaList: getAdditionalCriteriaSectionList(),
+    additionalCriteriaArray: [],
   };
 
   onClose = () => {
@@ -1219,11 +1224,41 @@ class AdvanceSearchContainer extends Component<Props, State> {
   };
 
   // Additional Criteria related methods
-  handleAdditionalCriteriaClose = () => {
-    this.onClose();
-    // this.setState({ open: !this.props.openPopup });
+  // handleAdditionalCriteriaClose = () => {
+  //   this.onClose();
+  //   // this.setState({ open: !this.props.openPopup });
+  // };
+
+  handleChildDataSave = (additionalCriteria) => {
+    console.log(additionalCriteria);
+    const additionalCriteriaArray = [additionalCriteria];
+    // additionalCriteria
+
+    // additionalCriteriaArray.forEach((add: any, index) => {
+    //   add["sequence"] = index + 1;
+    // });
+    // console.log("FINAL PAYLOAD DATA: ", additionalCriteriaArray);
+    this.setState({
+      additionalCriteriaArray,
+    });
   };
-  handleAdditionalCriteriaApply = () => {};
+  handleAdditionalCriteriaApply = () => {
+    let payload = {
+      isNewAdditionalCriteria: this.props.additionalCriteria
+        .isNewAdditionalCriteria,
+      additionalCriteriaBody: [],
+      additionalCriteriaObject: this.props.additionalCriteria
+        .additionalCriteriaObject,
+      populateGrid: this.props.additionalCriteria.populateGrid,
+      closeDialog: this.props.additionalCriteria.closeDialog,
+      listItemStatus: this.props.additionalCriteria.listItemStatus,
+    };
+
+    payload.additionalCriteriaBody = this.state.additionalCriteriaArray;
+    console.log("FINAL PAYLOAD DATA: ", payload);
+    this.props.setAdditionalCriteria(payload);
+    this.props.onClose();
+  };
 
   // onClose = () => {
   //   this.setState({ open: !this.props.openPopup });
@@ -1282,7 +1317,12 @@ class AdvanceSearchContainer extends Component<Props, State> {
           open={this.props.openPopup}
           showActions={isAdvanceSearch ? false : true}
           showCloseIcon={isAdvanceSearch ? false : true}
-          className="new-advane-search-popup  member-notes-popup-root __root-additional-criteria-popup"
+          className={
+            // "new-advane-search-popup  member-notes-popup-root __root-additional-criteria-popup"
+            isAdvanceSearch
+              ? "new-advane-search-popup  member-notes-popup-root __root-additional-criteria-popup"
+              : "root-additional-criteria member-notes-popup-root __root-additional-criteria-popup"
+          }
           height="100%"
           width="100%"
           // popupMaxWidth={isAdvanceSearch ? false : "lg"}
@@ -1482,10 +1522,7 @@ class AdvanceSearchContainer extends Component<Props, State> {
           ) : (
             <AdditionalCriteriaContainer
               criteriaList={criteriaList}
-              // getSettingsListDispatch={{
-              //   posListHandler: this.props.getDrugDetailsPOSSettings,
-              //   prListHandler: this.props.getDrugDetailsPRSettings,
-              // }}
+              handleChildDataSave={this.handleChildDataSave}
             />
           )}
         </FrxDialogPopup>

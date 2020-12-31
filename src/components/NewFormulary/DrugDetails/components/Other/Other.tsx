@@ -2,6 +2,7 @@ import React from "react";
 import { connect } from "react-redux";
 import { Table } from "antd";
 import { filter } from "lodash";
+import { ToastContainer } from "react-toastify";
 import Grid from "@material-ui/core/Grid";
 import { Row, Col } from "antd";
 import PanelHeader from "../../../../shared/Frx-components/panel-header/PanelHeader";
@@ -332,8 +333,8 @@ class DrugDetailOther extends React.Component<any, any> {
 
     let listCount = 0;
     this.props.getDrugDetailsOtherList(apiDetails).then((json) => {
-      let tmpData = json.payload.result;
-      listCount = json.payload.count;
+      let tmpData = json.payload && json.payload.result ? json.payload.result : [];
+      listCount = json.payload?.count;
       var data: any[] = [];
       let count = 1;
       var gridData = tmpData.map((el) => {
@@ -382,6 +383,8 @@ class DrugDetailOther extends React.Component<any, any> {
   onClickTab = (selectedTabIndex: number) => {
     let activeTabIndex = 0;
 
+    console.log("THe state of tab after tab switch = ", this.state);
+
     const tabs = this.state.tabs.map((tab: TabInfo, index: number) => {
       if (index === selectedTabIndex) {
         activeTabIndex = index;
@@ -390,10 +393,10 @@ class DrugDetailOther extends React.Component<any, any> {
     });
 
     if(activeTabIndex === 0 || activeTabIndex === 1) {
-      this.setState({ otherData: [] }, () => this.getOTHERSummary());
+      this.setState({ otherData: [], selectedCriteria: [] }, () => this.getOTHERSummary());
       
     } else if(activeTabIndex === 2) {
-      this.setState({ otherData: [] }, () => this.getOTHERCriteriaList());
+      this.setState({ otherData: [], selectedCriteria: [] }, () => this.getOTHERCriteriaList());
     }
 
     if(this.props.configureSwitch) {
@@ -468,8 +471,25 @@ class DrugDetailOther extends React.Component<any, any> {
     }
   }
 
+  validateGLForm = () => {
+    if(this.state.activeTabIndex === 0) {
+      return !(this.state.selectedCriteria.length === 0);
+
+    } else if(this.state.activeTabIndex === 2) {
+      return !(this.state.selectedCriteria.length === 0);
+    }
+
+    return true;
+  }
+
   openOtherGridContainer = () => {
-    this.getOtherList();
+    console.log("The State of the tab = ", this.state);
+    if(this.validateGLForm()) {
+      this.getOtherList();
+    } else {
+      showMessage("Please Select atleast one option", "info");
+    }
+    // this.getOtherList();
   };
 
   componentWillReceiveProps(nextProps) {
@@ -645,6 +665,7 @@ class DrugDetailOther extends React.Component<any, any> {
           ) : null}
         </div>
         ) : null }
+        <ToastContainer />
       </>
     );
   }

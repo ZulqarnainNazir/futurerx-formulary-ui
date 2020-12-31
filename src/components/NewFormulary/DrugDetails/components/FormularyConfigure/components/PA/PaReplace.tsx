@@ -26,11 +26,13 @@ import * as constants from "../../../../../../../api/http-commons";
 import { ToastContainer } from "react-toastify";
 import "../Tier.scss";
 import "./PA.scss";
+import { setAdditionalCriteria } from "../../../../../../../redux/slices/formulary/advancedSearch/additionalCriteriaSlice";
 
 // import AdvanceSearchContainer from "../../../../../NewAdvanceSearch/AdvanceSearchContainer";
 import {
   getPaSummary,
   getPaGrouptDescriptions,
+  getPaGrouptDescription,
   getPaTypes,
   getDrugLists,
   postFormularyDrugPA,
@@ -48,6 +50,7 @@ function mapDispatchToProps(dispatch) {
   return {
     getPaSummary: (a) => dispatch(getPaSummary(a)),
     getPaGrouptDescriptions: (a) => dispatch(getPaGrouptDescriptions(a)),
+    getPaGrouptDescription: (a) => dispatch(getPaGrouptDescription(a)),
     getPaTypes: (a) => dispatch(getPaTypes(a)),
     getDrugLists: (a) => dispatch(getDrugLists(a)),
     postFormularyDrugPA: (a) => dispatch(postFormularyDrugPA(a)),
@@ -57,6 +60,7 @@ function mapDispatchToProps(dispatch) {
     getLobFormularies: (a) => dispatch(getLobFormularies(a)),
     postRelatedFormularyDrugPA: (a) => dispatch(postRelatedFormularyDrugPA(a)),
     setAdvancedSearch: (a) => dispatch(setAdvancedSearch(a)),
+    setAdditionalCriteria: (a) => dispatch(setAdditionalCriteria(a)),
   };
 }
 
@@ -97,6 +101,7 @@ class PaReplace extends React.Component<any, any> {
     groupDescriptionProp: "",
     isAdditionalCriteriaOpen: false,
     additionalCriteriaState: null,
+    is_additional_criteria_defined:false,
   };
 
   onSelectedTableRowChanged = (selectedRowKeys) => {
@@ -177,6 +182,12 @@ class PaReplace extends React.Component<any, any> {
       });
     }
     if (nextProps.configureSwitch) {
+      this.setState({
+        showPaConfiguration:false,
+        selectedGroupDescription:null,
+        selectedPaType:null,
+        is_additional_criteria_defined:false
+      });
       this.populateGridData();
     } else {
       this.setState({ tierGridContainer: false });
@@ -207,16 +218,19 @@ class PaReplace extends React.Component<any, any> {
       ];
       apiDetails["messageBody"] = {};
       apiDetails["messageBody"]["selected_drug_ids"] = this.state.selectedDrugs;
-      apiDetails["messageBody"][
-        "base_pa_group_description_id"
-      ] = this.state.selectedGroupDescription;
-      apiDetails["messageBody"][
-        "id_pa_group_description"
-      ] = this.state.selectedLastestedVersion;
-      apiDetails["messageBody"]["id_pa_type"] = Number(
-        this.state.selectedPaType
-      );
+      apiDetails["messageBody"]["base_pa_group_description_id"] = this.state.selectedGroupDescription;
+      apiDetails["messageBody"]["id_pa_group_description"] = this.state.selectedLastestedVersion;
+      apiDetails["messageBody"]["id_pa_type"] = Number(this.state.selectedPaType);
       apiDetails["messageBody"]["search_key"] = "";
+
+      if (this.state.additionalCriteriaState!=null && this.state.is_additional_criteria_defined){ 
+        apiDetails["messageBody"]["is_custom_additional_criteria"] = true;
+        apiDetails["messageBody"]["um_criteria"] = this.state.additionalCriteriaState;
+      }else{
+        apiDetails["messageBody"]["is_custom_additional_criteria"] = false;
+        apiDetails["messageBody"]["um_criteria"] = [];
+      }
+      
 
       //apiDetails['messageBody']['id_tier'] = this.state.selectedTier;
 
@@ -253,6 +267,7 @@ class PaReplace extends React.Component<any, any> {
     apiDetails["pathParams"] = "/" + tmp_value;
 
     this.props.getPaGrouptDescriptionVersions(apiDetails).then((json) => {
+      
       let data = json.payload.data;
       let ftype = "";
       switch (this.props.formulary_lob_id) {
@@ -265,8 +280,31 @@ class PaReplace extends React.Component<any, any> {
         default:
           break;
       }
+      let latestVersionId=-1;
+      data.forEach(element => {
+        if (element.id_pa_group_description > latestVersionId){
+          latestVersionId=element.id_pa_group_description;
+        }
+      });
+      let tmp_additionalCriteria=false;
+      this.props.getPaGrouptDescription({lob_type:this.props.formulary_lob_id, 
+        pathParams: "/"+latestVersionId}).then((json) => {
+          debugger;
+          this.props.setAdditionalCriteria([]);
+          if (json.payload && json.payload.code === "200") {
+            if (json.payload.data["um_criteria"]!=null && json.payload.data["um_criteria"].length >0 ){
+              let payload: any = {};
+              payload.additionalCriteriaBody = json.payload.data["um_criteria"];
+              this.props.setAdditionalCriteria(payload);
+              tmp_additionalCriteria=true;
+            }
+          }
+          this.setState({
+            is_additional_criteria_defined:tmp_additionalCriteria,
+          });
+        });
       this.setState({
-        selectedLastestedVersion: data[0].id_pa_group_description,
+        selectedLastestedVersion: latestVersionId,
         fileType: ftype,
       });
     });
@@ -306,6 +344,7 @@ class PaReplace extends React.Component<any, any> {
   };
 
   handleChange = (e: any) => {
+    debugger;
     let tmp_value = e.target.value;
     let tmp_key = e.target.name;
     if (e.target.value == "true") {
@@ -313,7 +352,7 @@ class PaReplace extends React.Component<any, any> {
     } else if (e.target.value == "false") {
       tmp_value = false;
     }
-    this.setState({ tmp_key: e.target.value.trim() });
+    this.setState({ [tmp_key]: tmp_value });
   };
 
   populateGridData = (searchBody = null) => {
@@ -340,9 +379,7 @@ class PaReplace extends React.Component<any, any> {
     let tmp_fileType: any = "";
 
     if (this.props.configureSwitch) {
-      apiDetails["messageBody"][
-        "base_pa_group_description_id"
-      ] = this.state.selectedGroupDescription;
+      apiDetails["messageBody"]["base_pa_group_description_id"] = this.state.selectedGroupDescription;
       apiDetails["messageBody"]["id_pa_type"] = this.state.selectedPaType;
       tmp_fileType = this.state.fileType;
     } else {
@@ -359,21 +396,14 @@ class PaReplace extends React.Component<any, any> {
     }
 
     if (this.state.showPaConfiguration) {
-      apiDetails["pathParams"] =
-        this.props?.formulary_id +
-        "/" +
-        this.state.selectedLobFormulary["id_formulary"] +
-        "/" +
-        tmp_fileType +
+      apiDetails["pathParams"] = this.props?.formulary_id +"/" +this.state.selectedLobFormulary["id_formulary"] + "/" +tmp_fileType +
         "/PA/";
-      this.props
-        .postRelatedFormularyDrugPA(apiDetails)
+      this.props.postRelatedFormularyDrugPA(apiDetails)
         .then((json) => this.loadGridData(json));
     } else {
       apiDetails["pathParams"] =
         this.props?.formulary_id + "/" + tmp_fileType + "/";
-      this.props
-        .postFormularyDrugPA(apiDetails)
+      this.props.postFormularyDrugPA(apiDetails)
         .then((json) => this.loadGridData(json));
     }
 
@@ -382,6 +412,7 @@ class PaReplace extends React.Component<any, any> {
 
   loadGridData(json: any) {
     {
+      if (json.payload !=null && json.payload.code === "200") {
       let tmpData = json.payload.result;
       var data: any[] = [];
       let count = 1;
@@ -392,6 +423,7 @@ class PaReplace extends React.Component<any, any> {
         gridItem["id"] = count;
         gridItem["key"] = count;
         gridItem["tier"] = element.tier_value;
+        gridItem["isUmCriteria"] = element.is_um_criteria;
         gridItem["paGroupDescription"] = element.pa_group_description;
         gridItem["paType"] = element.pa_type;
         gridItem["fileType"] = element.file_type ? "" + element.file_type : "";
@@ -419,6 +451,7 @@ class PaReplace extends React.Component<any, any> {
         drugData: data,
         drugGridData: gridData,
       });
+    }
     }
   }
   componentDidMount() {
@@ -475,6 +508,7 @@ class PaReplace extends React.Component<any, any> {
     this.setState({ isAdditionalCriteriaOpen: false });
   };
   openAdditionalCriteria = () => {
+    debugger;
     this.setState({ isAdditionalCriteriaOpen: true });
   };
   // additional criteria toggle
@@ -498,6 +532,7 @@ class PaReplace extends React.Component<any, any> {
                 dispProp="text"
                 onSelect={this.dropDownSelectHandlerGroupDescription}
                 disabled={this.props.configureSwitch}
+                value={this.state.selectedGroupDescription}
               />
             </Col>
             <Col lg={4}></Col>
@@ -511,6 +546,7 @@ class PaReplace extends React.Component<any, any> {
                 dispProp="pa_type_name"
                 onSelect={this.dropDownSelectHandlerPaType}
                 disabled={this.props.configureSwitch}
+                value={this.state.selectedPaType}
               />
             </Col>
             <Col lg={8}>
@@ -528,7 +564,7 @@ class PaReplace extends React.Component<any, any> {
                   >
                     <FormControlLabel
                       value="true"
-                      control={<Radio disabled={this.props.configureSwitch} />}
+                      control={<Radio disabled={this.props.configureSwitch}  />}
                       label="Yes"
                     />
                     <FormControlLabel
@@ -576,7 +612,7 @@ class PaReplace extends React.Component<any, any> {
                 <span className="astrict">*</span>
               </label>
               <Space size="large">
-                <RadioButton
+                {/* <RadioButton
                   label="Yes"
                   name="add-filter"
                   checked={isAdditionalCriteriaOpen}
@@ -589,13 +625,34 @@ class PaReplace extends React.Component<any, any> {
                   checked={!isAdditionalCriteriaOpen}
                   onClick={this.closeAdditionalCriteria}
                   disabled={this.props.configureSwitch}
+                /> */}
+                <RadioGroup
+                aria-label="marketing-material-radio1"
+                className="gdp-radio"
+                name="is_additional_criteria_defined"
+                onChange={this.handleChange}
+                value={this.state.is_additional_criteria_defined}
+                
+              >
+                <FormControlLabel
+                  value={true}
+                  control={<Radio disabled={this.props.configureSwitch}/>}
+                  label="Yes"
+                  disabled={this.props.configureSwitch}
+                  onClick={this.openAdditionalCriteria}
                 />
+                <FormControlLabel
+                  value={false}
+                  control={<Radio disabled={this.props.configureSwitch}/>}
+                  label="No"
+                  disabled={this.props.editable}
+                />
+              </RadioGroup>
               </Space>
             </Col>
           </Row>
           {isAdditionalCriteriaOpen ? (
             <AdvanceSearchContainer
-              {...searchProps}
               openPopup={isAdditionalCriteriaOpen}
               onClose={this.closeAdditionalCriteria}
               isAdvanceSearch={false}
@@ -616,7 +673,7 @@ class PaReplace extends React.Component<any, any> {
         {this.state.tierGridContainer && (
           <div className="select-drug-from-table">
             <div className="bordered white-bg">
-              {!this.props.configureSwitch && (
+              
                 <div className="header space-between pr-10">
                   <div className="button-wrapper">
                     <Button
@@ -625,10 +682,12 @@ class PaReplace extends React.Component<any, any> {
                       onClick={this.advanceSearchClickHandler}
                       disabled={this.props.configureSwitch}
                     />
+                    {!this.props.configureSwitch && (
                     <Button label="Save" onClick={this.handleSave} />
+                    )}
                   </div>
                 </div>
-              )}
+              
 
               <div className="tier-grid-container">
                 <FrxDrugGridContainer
