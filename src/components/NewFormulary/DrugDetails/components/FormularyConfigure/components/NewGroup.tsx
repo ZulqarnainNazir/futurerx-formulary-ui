@@ -256,6 +256,7 @@ function NewGroup(props: any) {
     formData["id_st_type"] = (formData["st_type"]==="New Starts Only(2)")?8:7;
     formData["is_validation_required"] = is_validation;
     formData["drug_list_ids"] = drug_list_ids;
+    formData["removed_drug_list_ids"] = [2]
     let requestData = {};
     if (props.formType==1){
       requestData['messageBody'] = {...formData}
