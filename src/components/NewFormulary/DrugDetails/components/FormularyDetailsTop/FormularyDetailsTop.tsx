@@ -12,6 +12,10 @@ import ClonePopup from "../FormularySetUp/components/ClonePopup/ClonePopup";
 import { VersionHistoryData } from "../FormularySetUp/components/VersionHistoryPopup/version-hisory.model";
 import { ToastContainer } from 'react-toastify';
 import showMessage from "../../../Utils/Toast";
+import {
+  fetchDesignOptions,
+  fetchTierOptions,
+} from "../../../../.././redux/slices/formulary/setup/setupOptionsSlice";
 
 const mapStateToProps = (state) => {
   return {
@@ -26,6 +30,8 @@ function mapDispatchToProps(dispatch) {
   return {
     fetchFormularyVersions: (a) => dispatch(fetchFormularyHeader(a)),
     fetchSelectedFormulary: (a) => dispatch(fetchSelectedFormulary(a)),
+    fetchDesignOptions: (a) => dispatch(fetchDesignOptions(a)),
+    fetchTierOptions: (a) => dispatch(fetchTierOptions(a)),
   };
 }
 
@@ -173,6 +179,8 @@ class FormularyDetailsTop extends React.Component<any, any> {
 
     // this.manageFormularyType(type, id);
     this.props.fetchSelectedFormulary(id);
+    this.props.fetchDesignOptions({ type: type, id: id });
+    this.props.fetchTierOptions({ type: type, id: id });
   }
 
   // manageFormularyType(type: number, id: number) {
@@ -229,10 +237,10 @@ class FormularyDetailsTop extends React.Component<any, any> {
         payload.formulary_info.id_lob = this.props.formularyLobId;
 
         let newFormularyId = await createFormularyUsingClone(this.props.currentFormulary.id_base_formulary, payload);
-        if(newFormularyId){
-          showMessage('Cloned formulary Id:'+newFormularyId, 'success');
+        if (newFormularyId) {
+          showMessage('Cloned formulary Id:' + newFormularyId, 'success');
           this.externalInferfaceLoadFormulary(6, newFormularyId);
-        }else{
+        } else {
           showMessage('Error: No response for formulary clone', 'error')
         }
       }

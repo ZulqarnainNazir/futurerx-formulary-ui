@@ -383,8 +383,7 @@ class PaReplace extends React.Component<any, any> {
       { key: constants.KEY_LIMIT, value: 10 },
     ];
     apiDetails["messageBody"] = {};
-
-    if (searchBody) {
+        if (searchBody) {
       apiDetails["messageBody"] = Object.assign(
         apiDetails["messageBody"],
         searchBody
@@ -437,48 +436,47 @@ class PaReplace extends React.Component<any, any> {
 
   loadGridData(json: any) {
     {
-      if (json.payload != null && json.payload.code === "200") {
-        let tmpData = json.payload.result;
-        var data: any[] = [];
-        let count = 1;
-        var gridData = tmpData.map(function (el) {
-          var element = Object.assign({}, el);
-          data.push(element);
-          let gridItem = {};
-          gridItem["id"] = count;
-          gridItem["key"] = count;
-          gridItem["tier"] = element.tier_value;
-          gridItem["isUmCriteria"] = element.is_um_criteria;
-          gridItem["paGroupDescription"] = element.pa_group_description;
-          gridItem["paType"] = element.pa_type;
-          gridItem["fileType"] = element.file_type
-            ? "" + element.file_type
-            : "";
-          gridItem["dataSource"] = element.data_source
-            ? "" + element.data_source
-            : "";
-          gridItem["labelName"] = element.drug_label_name
-            ? "" + element.drug_label_name
-            : "";
-          gridItem["ndc"] = "";
-          gridItem["rxcui"] = element.rxcui ? "" + element.rxcui : "";
-          gridItem["gpi"] = element.generic_product_identifier
-            ? "" + element.generic_product_identifier
-            : "";
-          gridItem["trademark"] = element.trademark_code
-            ? "" + element.trademark_code
-            : "";
-          gridItem["databaseCategory"] = element.database_category
-            ? "" + element.database_category
-            : "";
-          count++;
-          return gridItem;
-        });
-        this.setState({
-          drugData: data,
-          drugGridData: gridData,
-        });
-      }
+      if (json.payload !=null && json.payload.code === "200") {
+        this.setState({ tierGridContainer: true });
+      let tmpData = json.payload.result;
+      var data: any[] = [];
+      let count = 1;
+      var gridData = tmpData.map(function (el) {
+        var element = Object.assign({}, el);
+        data.push(element);
+        let gridItem = {};
+        gridItem["id"] = count;
+        gridItem["key"] = count;
+        gridItem["tier"] = element.tier_value;
+        gridItem["isUmCriteria"] = element.is_um_criteria;
+        gridItem["paGroupDescription"] = element.pa_group_description;
+        gridItem["paType"] = element.pa_type;
+        gridItem["fileType"] = element.file_type ? "" + element.file_type : "";
+        gridItem["dataSource"] = element.data_source
+          ? "" + element.data_source
+          : "";
+        gridItem["labelName"] = element.drug_label_name
+          ? "" + element.drug_label_name
+          : "";
+        gridItem["ndc"] = "";
+        gridItem["rxcui"] = element.rxcui ? "" + element.rxcui : "";
+        gridItem["gpi"] = element.generic_product_identifier
+          ? "" + element.generic_product_identifier
+          : "";
+        gridItem["trademark"] = element.trademark_code
+          ? "" + element.trademark_code
+          : "";
+        gridItem["databaseCategory"] = element.database_category
+          ? "" + element.database_category
+          : "";
+        count++;
+        return gridItem;
+      });
+      this.setState({
+        drugData: data,
+        drugGridData: gridData,
+      });
+    }
     }
   }
   componentDidMount() {

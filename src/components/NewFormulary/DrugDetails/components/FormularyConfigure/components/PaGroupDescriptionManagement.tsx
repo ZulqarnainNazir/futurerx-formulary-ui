@@ -113,17 +113,19 @@ class PaGroupDescriptionManagement extends React.Component<any, any> {
       apiDetails["pathParams"] = "/" + latestVerion;
 
       this.props.getPaGrouptDescription(apiDetails).then((json) => {
-        let payload: any = {
-          additionalCriteriaObject: this.props.additionalCriteria
-            .additionalCriteriaObject,
-          additionalCriteriaBody: this.props.additionalCriteria
-            .additionalCriteriaBody,
-          populateGrid: this.props.additionalCriteria.populateGrid,
-          closeDialog: this.props.additionalCriteria.closeDialog,
-          listItemStatus: { ...this.props.additionalCriteria.listItemStatus },
-        };
-        payload.additionalCriteriaBody = json.payload.data["um_criteria"];
-        this.props.setAdditionalCriteria(payload);
+        if (json.payload && json.payload.code === "200") {
+          let payload: any = {
+            additionalCriteriaObject: this.props.additionalCriteria
+              .additionalCriteriaObject,
+            additionalCriteriaBody: this.props.additionalCriteria
+              .additionalCriteriaBody,
+            populateGrid: this.props.additionalCriteria.populateGrid,
+            closeDialog: this.props.additionalCriteria.closeDialog,
+            listItemStatus: { ...this.props.additionalCriteria.listItemStatus },
+          };
+          payload.additionalCriteriaBody = json.payload.data["um_criteria"];
+          this.props.setAdditionalCriteria(payload);
+        }
       });
 
       this.props.getPAGroupDetails({
@@ -139,6 +141,7 @@ class PaGroupDescriptionManagement extends React.Component<any, any> {
     });
   };
   addNewGroup = () => {
+    this.props.setAdditionalCriteria([]);
     this.setState({
       newGroup: false,
       selectedGrp: false,
