@@ -33,14 +33,13 @@ const AddIcon = () => (
 
 const AgeCriteria = (props) => {
   const {
-    serviceSettingsChecked,
     alSettingsServies: { alSettings, alSettingsStatus },
     handleStatus,
-    showGridHandler,
     handleAgeCriteriaChange,
+    handleAgeCriteriaMinConChange,
+    handleAgeCriteriaMaxConChange,
     isAdditionalCriteria,
     deleteIconHandler,
-    nodeId,
   } = props;
 
   return (
@@ -58,12 +57,15 @@ const AgeCriteria = (props) => {
 
             <div className="input-field-group__dropdown-field">
               <DropDown
-                placeholder="inclusive of"
-                options={["inclusive of", "Greater Than"]}
-                name="min-con"
-                onChange={(e) => props.handleAgeCriteriaChange(e)}
+                // placeholder="inclusive of"
                 value={alSettings.min_age_condition}
-                // onChange={(e) => this.props.onMinChangeHandler(e, s.index)}
+                options={[
+                  { label: "Greater Then", value: "GT" },
+                  { label: "Less Then", value: "LT" },
+                  { label: "Inclusive of", value: "IO" },
+                ]}
+                onChange={(e) => handleAgeCriteriaMinConChange(e)}
+                isOptionsObj={true}
               />
             </div>
 
@@ -72,7 +74,7 @@ const AgeCriteria = (props) => {
                 type="text"
                 className="setup-input-fields"
                 name="min-val"
-                onChange={(e) => props.handleAgeCriteriaChange(e)}
+                onChange={(e) => handleAgeCriteriaChange(e)}
                 value={alSettings.min_age_limit}
                 // onChange={(e) => this.props.handleMinChange(e, s.index)}
               />
@@ -84,13 +86,14 @@ const AgeCriteria = (props) => {
 
             <div className="input-field-group__dropdown-field">
               <DropDown
-                className=""
-                placeholder="inclusive of"
-                options={["inclusive of", "Less Than"]}
-                name="max-con"
-                onChange={(e) => props.handleAgeCriteriaChange(e)}
                 value={alSettings.max_age_condition}
-                // onChange={(e) => this.props.onMaxChangeHandler(e, s.index)}
+                options={[
+                  { label: "Greater Then", value: "GT" },
+                  { label: "Less Then", value: "LT" },
+                  { label: "Inclusive of", value: "IO" },
+                ]}
+                onChange={(e) => handleAgeCriteriaMaxConChange(e)}
+                isOptionsObj={true}
               />
             </div>
 
@@ -99,7 +102,7 @@ const AgeCriteria = (props) => {
                 type="text"
                 className="setup-input-fields"
                 name="max-val"
-                onChange={(e) => props.handleAgeCriteriaChange(e)}
+                onChange={(e) => handleAgeCriteriaChange(e)}
                 value={alSettings.max_age_limit}
                 // onChange={(e) => this.props.handleMaxChange(e, s.index)}
               />

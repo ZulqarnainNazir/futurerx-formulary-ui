@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import STAlertDialog from "./STAlertDialog";
+import { SUCCESS_MSG, ERROR_MSG } from './PopupAlerts/Constents'
 import Alerts from "./PopupAlerts/Alerts";
 import {
   deleteGroupDescription,
@@ -28,6 +29,7 @@ import FrxDrugGridContainer from "../../../../../shared/FrxGrid/FrxDrugGridConta
 import { formatTimeStr } from "antd/lib/statistic/utils";
 import showMessage from "../../../../Utils/Toast";
 import { KeyboardReturnOutlined } from "@material-ui/icons";
+import { ToastContainer } from 'react-toastify';
 
 function mapStateToProps(state) {
   return {
@@ -260,21 +262,44 @@ function PAGroupHeader(props: any) {
       .then((json) => {
         let apiDetails = {};
         apiDetails["lob_type"] = props.formulary_lob_id;
-        apiDetails["pathParams"] = "/" + props.client_id;
-        props.getPaGrouptDescriptions(apiDetails);
+        apiDetails["pathParams"] = "/" + props.client_id + "?entity_id=" + props?.formulary_id;
+        props.getPaGrouptDescriptions(apiDetails).then((json) => {
+          const groupList = json?.payload?.data;
+          const groupListLength = Object.keys(groupList).length;
+          const id_pa_group_description = groupListLength>0?groupList[0].id_base_pa_group_description:0;
+          apiDetails["pathParams"] = "/" + id_pa_group_description;
+          props.getPaGrouptDescriptionVersions(apiDetails).then((json) => {
+            const response = json.payload.data
+            const verLength = Object.keys(response).length;
+            const isEditable = response[verLength - 1].is_setup_complete;
+            const latestVerion = response[verLength - 1].id_pa_group_description;
+            const value = response[verLength - 1].value;
+            setPanelColor(isEditable ? '-green' : '')
+            setVersion(response)
+            setPlaceHolder(value)
 
-        apiDetails["pathParams"] = "/" + props.saveGdm.current_group_id;
-        props.getPaGrouptDescriptionVersions(apiDetails).then((json) => {
-          console.log(json);
-          setVersion(json.payload.data);
-          let v = props.version;
+            let apiDetails= {};
+            apiDetails["lob_type"] = props.formulary_lob_id;
+            apiDetails['pathParams'] = '/'+latestVerion;
+            props.getPaGrouptDescription(apiDetails);
+            props.getPaTypes(props.saveGdm.formulary_id)
+
+          });
         });
-        //current_group_des_id
-        apiDetails["pathParams"] = "/" + props.saveGdm.current_group_id;
-        //props.getPaGrouptDescription(apiDetails);
-        props.getPaTypes(props.saveGdm.formulary_id);
+
+        
         if (json?.payload?.status && json?.payload?.status != 200) {
+          if(json?.payload?.data?.formularies && json?.payload?.data?.formularies?.length>0){
+            let errs = ''
+            json.payload.data.formularies.map(val=>{
+                errs += "\n\n"+val.formuary_name+ "\n\n";
+            })
+            showMessage("Following Formularies are linked to current Group Description:\n"+errs,'error')
+          }
           showMessage(json.payload.data.message, "error");
+        }
+        if(json?.payload?.success?.status && json?.payload?.success?.status==200){
+          showMessage(SUCCESS_MSG['delete'],'success')
         }
         setOpen(false);
       });
@@ -293,6 +318,9 @@ function PAGroupHeader(props: any) {
         props.getPaGrouptDescriptions(apiDetails);
         if (json?.payload?.status && json?.payload?.status != 200) {
           showMessage(json.payload.data.message, "error");
+        }
+        if(json?.payload?.success?.status && json?.payload?.success?.status==200){
+          showMessage(SUCCESS_MSG['clone'],'success')
         }
         setOpen(false);
       });
@@ -333,6 +361,9 @@ function PAGroupHeader(props: any) {
         if (json?.payload?.status && json?.payload?.status != 200) {
           showMessage(json.payload.data.message, "error");
         }
+        if(json?.payload?.success?.status && json?.payload?.success?.status==200){
+          showMessage(SUCCESS_MSG['newVersion'],'success')
+        }
         setOpen(false);
       });
   };
@@ -369,8 +400,19 @@ function PAGroupHeader(props: any) {
           props.getPaTypes(props.saveGdm.formulary_id);
           setOpen(false);
         });
+               
         if (json?.payload?.status && json?.payload?.status != 200) {
+          if(json?.payload?.data?.formularies && json?.payload?.data?.formularies?.length>0){
+            let errs = ''
+            json.payload.data.formularies.map(val=>{
+                errs += "\n\n"+val.formuary_name+ "\n\n";
+            })
+            showMessage("Following Formularies are linked to current Group Description:\n"+errs,'error')
+          }
           showMessage(json.payload.data.message, "error");
+        }
+        if(json?.payload?.success?.status && json?.payload?.success?.status==200){
+          showMessage(SUCCESS_MSG['archive'],'success')
         }
         setOpen(false);
       });
@@ -488,7 +530,7 @@ function PAGroupHeader(props: any) {
             popuptitle={props.popuptitle}
           />
         </STAlertDialog>
-      ) : null}
+      ) : <ToastContainer/>}
 
       <DialogPopup
         showCloseIcon={true}

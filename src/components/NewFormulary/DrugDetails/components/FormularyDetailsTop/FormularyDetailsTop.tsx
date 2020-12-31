@@ -6,16 +6,19 @@ import FormularyDetailsContext from "../../../FormularyDetailsContext";
 import "./FormularyDetailsTop.scss";
 import { fetchFormularyHeader } from "../../../../../redux/slices/formulary/header/headerSlice";
 import { fetchSelectedFormulary } from "../../../../.././redux/slices/formulary/setup/setupSlice";
+import { createFormularyUsingClone } from "../../../../.././redux/slices/formulary/setup/setupService";
 import VersionHistoryPopup from "../FormularySetUp/components/VersionHistoryPopup/VersionHistoryPopup";
 import ClonePopup from "../FormularySetUp/components/ClonePopup/ClonePopup";
 import { VersionHistoryData } from "../FormularySetUp/components/VersionHistoryPopup/version-hisory.model";
 import { ToastContainer } from 'react-toastify';
+import showMessage from "../../../Utils/Toast";
 
 const mapStateToProps = (state) => {
   return {
     mode: state?.setup?.mode,
     currentFormulary: state.setup.formulary,
     formularyVersionList: state.header.formulary_version_list,
+    formularyLobId: state?.application?.formulary_lob_id,
   };
 };
 
@@ -61,7 +64,7 @@ class FormularyDetailsTop extends React.Component<any, any> {
       if (
         this.state.lastID !== this.props?.currentFormulary?.id_formulary &&
         this.state !==
-          this.props?.currentFormulary?.formulary_info?.version_number
+        this.props?.currentFormulary?.formulary_info?.version_number
       ) {
         this.props.fetchFormularyVersions(
           this.props.currentFormulary?.id_base_formulary
@@ -100,7 +103,7 @@ class FormularyDetailsTop extends React.Component<any, any> {
 
   onCloneClick = () => {
     console.log("Clone button clicked");
-    this.setState({ isAnyPopupOpen: true, isClonePopupOpen: true , dialogTitle: 'CLONE'});
+    this.setState({ isAnyPopupOpen: true, isClonePopupOpen: true, dialogTitle: 'CLONE' });
   };
 
   /**
@@ -140,14 +143,14 @@ class FormularyDetailsTop extends React.Component<any, any> {
     // console.log("the selected version ", data);
     // do anything with the data
     this.onClosePopup();
-    if(data && data.id_formulary && data.id_formulary > 0) {
+    if (data && data.id_formulary && data.id_formulary > 0) {
       this.externalInferfaceLoadFormulary(6, data.id_formulary);
     }
 
   };
 
   // CLONE
-  
+
   // SetupService - createFormularyUsingClone
   // createFormularyUsingClone(     baseId: number,     payload: any   ): Promise<number | null>
   // base id --- FL base ID
@@ -207,12 +210,37 @@ class FormularyDetailsTop extends React.Component<any, any> {
   //   this.props.fetchSubMthsOptions(2021);
   // }
   onFormularyCloneInfo = (cloneName, effectiveDate) => {
-    console.log("Formulary name:"+cloneName+" Date:"+effectiveDate);
+    console.log("Formulary name:" + cloneName + " Date:" + effectiveDate);
     this.onClosePopup();
+    this.handleCloneFormulary(cloneName, effectiveDate);
   }
 
   onFormularyCloneCancel = () => {
     this.onClosePopup();
+  }
+
+  handleCloneFormulary = async (cloneName, effectiveDate) => {
+    try {
+      if (this.props.currentFormulary) {
+        const payload: any = {};
+        payload.formulary_info = {};
+        payload.formulary_info.formulary_name = cloneName;
+        payload.formulary_info.effective_date = effectiveDate;
+        payload.formulary_info.id_lob = this.props.formularyLobId;
+
+        let newFormularyId = await createFormularyUsingClone(this.props.currentFormulary.id_base_formulary, payload);
+        if(newFormularyId){
+          showMessage('Cloned formulary Id:'+newFormularyId, 'success');
+          this.externalInferfaceLoadFormulary(6, newFormularyId);
+        }else{
+          showMessage('Error: No response for formulary clone', 'error')
+        }
+      }
+    } catch (error) {
+      console.log("***** clone - Error");
+      console.log(error);
+      showMessage('Error while cloning formulary', 'error')
+    }
   }
 
   render() {
@@ -250,7 +278,7 @@ class FormularyDetailsTop extends React.Component<any, any> {
               />
             )}
             {this.state.isClonePopupOpen && (
-               <ClonePopup onFormularyCloneInfo={this.onFormularyCloneInfo} onFormularyCloneCancel={this.onFormularyCloneCancel}/>
+              <ClonePopup onFormularyCloneInfo={this.onFormularyCloneInfo} onFormularyCloneCancel={this.onFormularyCloneCancel} />
             )}
           </DialogPopup>
         ) : null}
@@ -300,7 +328,7 @@ class FormularyDetailsTop extends React.Component<any, any> {
                   Version History
                 </div>
                 <div className="item item--version-history"
-                     onClick={this.onCloneClick}>
+                  onClick={this.onCloneClick}>
                   <svg
                     width="13"
                     height="13"
@@ -418,7 +446,7 @@ class FormularyDetailsTop extends React.Component<any, any> {
             </div> */}
           </div>
         )}
-        <ToastContainer/>
+        <ToastContainer />
       </div>
     );
   }
