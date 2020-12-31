@@ -15,6 +15,8 @@ import PRCriteria from "../CriteriaComponents/PRCriteria";
 import GenderCriteria from "../CriteriaComponents/GenderCriteria";
 import ICDCriteria from "../CriteriaComponents/ICDCriteria";
 import AgeCriteria from "../CriteriaComponents/AgeCriteria";
+import PNCriteria from "../CriteriaComponents/PNCriteria";
+import PTCriteria from "../CriteriaComponents/PTCriteria";
 
 function mapDispatchToProps(dispatch) {
   return {
@@ -51,10 +53,10 @@ class ListItem extends Component<any, any> {
 
     // AL
     alSettings: {
-      min_age_condition: "GT",
-      min_age_limit: "1",
-      max_age_condition: "LT",
-      max_age_limit: "10",
+      min_age_condition: "",
+      min_age_limit: "",
+      max_age_condition: "",
+      max_age_limit: "",
     },
     alSettingsStatus: { type: "covered", covered: true },
 
@@ -65,6 +67,38 @@ class ListItem extends Component<any, any> {
       { id: 3, isChecked: false, gl_type_name: "Unknown", gl_code: "U" },
     ],
     glSettingsStatus: { type: "covered", covered: true },
+
+    // ICD
+    icdSettings: { look_back_days: "", icds: "" },
+    icdSettingsStatus: { type: "covered", covered: true },
+
+    // PN
+    pnSettings: [
+      {
+        name: "",
+        key: 0,
+        show: false,
+        is_list: false,
+        value: "",
+        type: "",
+        text: "",
+      },
+    ],
+    pnSettingsStatus: { type: "covered", covered: true },
+
+    // PT
+    ptSettings: [
+      {
+        name: "",
+        key: 0,
+        show: false,
+        is_list: false,
+        value: "",
+        type: "",
+        text: "",
+      },
+    ],
+    ptSettingsStatus: { type: "covered", covered: true },
 
     // POS
     posSettings: [],
@@ -81,6 +115,13 @@ class ListItem extends Component<any, any> {
       covered: true,
     },
     isSelectAllPR: false,
+
+    // PCHL
+    pchlSettings: [],
+    pchlSettingsStatus: {
+      type: "covered",
+      covered: true,
+    },
   };
 
   componentDidMount() {
@@ -100,15 +141,16 @@ class ListItem extends Component<any, any> {
 
     const updatedPayload = this.state.payload;
     const { cardCode, cardName, isIncluded } = this.state;
-    if (false) {
-      this.props.handleGlobalState(
-        nodeId,
-        cardCode,
-        cardName,
-        isIncluded,
-        updatedPayload
-      );
-    }
+
+    // age & icd are objects
+    // gender, pos & pr are array
+    this.props.handleGlobalState(
+      nodeId,
+      cardCode,
+      cardName,
+      isIncluded,
+      updatedPayload
+    );
   }
 
   initializePreData = () => {
@@ -405,6 +447,24 @@ class ListItem extends Component<any, any> {
     this.setState({ glSettingsStatus, isIncluded });
   };
 
+  handleAgeCriteriaChange = (event) => {
+    console.log(event.target.value);
+    console.log(event.target.name);
+  };
+
+  handleALStatus = (key: string) => {
+    const COVERED = "covered";
+    const isCovered: boolean = key === COVERED ? true : false;
+
+    let glSettingsStatus = {
+      type: key,
+      covered: isCovered,
+    };
+
+    let isIncluded = glSettingsStatus.covered;
+    this.setState({ glSettingsStatus, isIncluded });
+  };
+
   render() {
     const {
       // Current Criteria
@@ -422,6 +482,18 @@ class ListItem extends Component<any, any> {
       glSettings,
       glSettingsStatus,
 
+      // ICD
+      icdSettings,
+      icdSettingsStatus,
+
+      // PN
+      pnSettings,
+      pnSettingsStatus,
+
+      // PT
+      ptSettings,
+      ptSettingsStatus,
+
       // POS
       posSettings,
       prSettings,
@@ -431,6 +503,10 @@ class ListItem extends Component<any, any> {
       posSettingsStatus,
       prSettingsStatus,
       isSelectAllPR,
+
+      // PCHL
+      pchlSettings,
+      pchlSettingsStatus,
     } = this.state;
     const {
       card: { cardCode },
@@ -438,21 +514,22 @@ class ListItem extends Component<any, any> {
     } = this.props;
     switch (cardCode) {
       case 1:
-        return (
-          <AgeCriteria
-            alSettingsServies={{
-              alSettings,
-              alSettingsStatus,
-            }}
-            handleStatus={this.handleGLStatus}
-            serviceSettingsChecked={this.serviceSettingsCheckedGL}
-            deleteIconHandler={() =>
-              deleteIconHandler(nodeId, cardCode, cardName, isIncluded, payload)
-            }
-            isAdditionalCriteria={true}
-            nodeId={nodeId}
-          />
-        );
+        return null;
+      // return (
+      //   <AgeCriteria
+      //     alSettingsServies={{
+      //       alSettings,
+      //       alSettingsStatus,
+      //     }}
+      //     handleStatus={this.handleGLStatus}
+      //     handleAgeCriteriaChange={this.handleAgeCriteriaChange}
+      //     deleteIconHandler={() =>
+      //       deleteIconHandler(nodeId, cardCode, cardName, isIncluded, payload)
+      //     }
+      //     isAdditionalCriteria={true}
+      //     nodeId={nodeId}
+      //   />
+      // );
       case 2:
         return (
           <GenderCriteria
@@ -470,25 +547,56 @@ class ListItem extends Component<any, any> {
           />
         );
       case 3:
-        return (
-          <ICDCriteria
-            glSettingsServies={{
-              glSettings,
-              glSettingsStatus,
-            }}
-            handleStatus={this.handleGLStatus}
-            serviceSettingsChecked={this.serviceSettingsCheckedGL}
-            deleteIconHandler={() =>
-              deleteIconHandler(nodeId, cardCode, cardName, isIncluded, payload)
-            }
-            isAdditionalCriteria={true}
-            nodeId={nodeId}
-          />
-        );
+        return null;
+      // return (
+      //   <ICDCriteria
+      //     icdSettingsServies={{
+      //       icdSettings,
+      //       icdSettingsStatus,
+      //     }}
+      //     handleStatus={this.handleGLStatus}
+      //     serviceSettingsChecked={this.serviceSettingsCheckedGL}
+      //     deleteIconHandler={() =>
+      //       deleteIconHandler(nodeId, cardCode, cardName, isIncluded, payload)
+      //     }
+      //     isAdditionalCriteria={true}
+      //     nodeId={nodeId}
+      //   />
+      // );
       case 4:
-        return cardName;
+        return null;
+      // return (
+      //   <PNCriteria
+      //     pnSettingsServies={{
+      //       pnSettings,
+      //       pnSettingsStatus,
+      //     }}
+      //     handleStatus={this.handlePOSStatus}
+      //     serviceSettingsChecked={this.serviceSettingsCheckedPOS}
+      //     deleteIconHandler={() =>
+      //       deleteIconHandler(nodeId, cardCode, cardName, isIncluded, payload)
+      //     }
+      //     isAdditionalCriteria={true}
+      //     nodeId={nodeId}
+      //   />
+      // );
       case 5:
-        return cardName;
+        return null;
+      // return (
+      //   <PTCriteria
+      //     ptSettingsServies={{
+      //       ptSettings,
+      //       ptSettingsStatus,
+      //     }}
+      //     handleStatus={this.handlePOSStatus}
+      //     serviceSettingsChecked={this.serviceSettingsCheckedPOS}
+      //     deleteIconHandler={() =>
+      //       deleteIconHandler(nodeId, cardCode, cardName, isIncluded, payload)
+      //     }
+      //     isAdditionalCriteria={true}
+      //     nodeId={nodeId}
+      //   />
+      // );
       case 6:
         return (
           <POSCriteria
@@ -530,7 +638,7 @@ class ListItem extends Component<any, any> {
           />
         );
       case 8:
-        return cardName;
+        return null;
       default:
         return null;
     }
