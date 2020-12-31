@@ -182,6 +182,12 @@ class PaReplace extends React.Component<any, any> {
       });
     }
     if (nextProps.configureSwitch) {
+      this.setState({
+        showPaConfiguration:false,
+        selectedGroupDescription:null,
+        selectedPaType:null,
+        is_additional_criteria_defined:false
+      });
       this.populateGridData();
     } else {
       this.setState({ tierGridContainer: false });
@@ -217,9 +223,12 @@ class PaReplace extends React.Component<any, any> {
       apiDetails["messageBody"]["id_pa_type"] = Number(this.state.selectedPaType);
       apiDetails["messageBody"]["search_key"] = "";
 
-      if (this.state.additionalCriteriaState!=null){
+      if (this.state.additionalCriteriaState!=null && this.state.is_additional_criteria_defined){ 
         apiDetails["messageBody"]["is_custom_additional_criteria"] = true;
         apiDetails["messageBody"]["um_criteria"] = this.state.additionalCriteriaState;
+      }else{
+        apiDetails["messageBody"]["is_custom_additional_criteria"] = false;
+        apiDetails["messageBody"]["um_criteria"] = [];
       }
       
 
@@ -290,11 +299,13 @@ class PaReplace extends React.Component<any, any> {
               tmp_additionalCriteria=true;
             }
           }
+          this.setState({
+            is_additional_criteria_defined:tmp_additionalCriteria,
+          });
         });
       this.setState({
         selectedLastestedVersion: latestVersionId,
         fileType: ftype,
-        is_additional_criteria_defined: tmp_additionalCriteria,
       });
     });
     this.setState({
@@ -333,6 +344,7 @@ class PaReplace extends React.Component<any, any> {
   };
 
   handleChange = (e: any) => {
+    debugger;
     let tmp_value = e.target.value;
     let tmp_key = e.target.name;
     if (e.target.value == "true") {
@@ -340,7 +352,7 @@ class PaReplace extends React.Component<any, any> {
     } else if (e.target.value == "false") {
       tmp_value = false;
     }
-    this.setState({ tmp_key: e.target.value.trim() });
+    this.setState({ [tmp_key]: tmp_value });
   };
 
   populateGridData = (searchBody = null) => {
@@ -367,9 +379,7 @@ class PaReplace extends React.Component<any, any> {
     let tmp_fileType: any = "";
 
     if (this.props.configureSwitch) {
-      apiDetails["messageBody"][
-        "base_pa_group_description_id"
-      ] = this.state.selectedGroupDescription;
+      apiDetails["messageBody"]["base_pa_group_description_id"] = this.state.selectedGroupDescription;
       apiDetails["messageBody"]["id_pa_type"] = this.state.selectedPaType;
       tmp_fileType = this.state.fileType;
     } else {
@@ -386,21 +396,14 @@ class PaReplace extends React.Component<any, any> {
     }
 
     if (this.state.showPaConfiguration) {
-      apiDetails["pathParams"] =
-        this.props?.formulary_id +
-        "/" +
-        this.state.selectedLobFormulary["id_formulary"] +
-        "/" +
-        tmp_fileType +
+      apiDetails["pathParams"] = this.props?.formulary_id +"/" +this.state.selectedLobFormulary["id_formulary"] + "/" +tmp_fileType +
         "/PA/";
-      this.props
-        .postRelatedFormularyDrugPA(apiDetails)
+      this.props.postRelatedFormularyDrugPA(apiDetails)
         .then((json) => this.loadGridData(json));
     } else {
       apiDetails["pathParams"] =
         this.props?.formulary_id + "/" + tmp_fileType + "/";
-      this.props
-        .postFormularyDrugPA(apiDetails)
+      this.props.postFormularyDrugPA(apiDetails)
         .then((json) => this.loadGridData(json));
     }
 
@@ -529,6 +532,7 @@ class PaReplace extends React.Component<any, any> {
                 dispProp="text"
                 onSelect={this.dropDownSelectHandlerGroupDescription}
                 disabled={this.props.configureSwitch}
+                value={this.state.selectedGroupDescription}
               />
             </Col>
             <Col lg={4}></Col>
@@ -542,6 +546,7 @@ class PaReplace extends React.Component<any, any> {
                 dispProp="pa_type_name"
                 onSelect={this.dropDownSelectHandlerPaType}
                 disabled={this.props.configureSwitch}
+                value={this.state.selectedPaType}
               />
             </Col>
             <Col lg={8}>
@@ -559,7 +564,7 @@ class PaReplace extends React.Component<any, any> {
                   >
                     <FormControlLabel
                       value="true"
-                      control={<Radio disabled={this.props.configureSwitch} />}
+                      control={<Radio disabled={this.props.configureSwitch}  />}
                       label="Yes"
                     />
                     <FormControlLabel
@@ -627,17 +632,18 @@ class PaReplace extends React.Component<any, any> {
                 name="is_additional_criteria_defined"
                 onChange={this.handleChange}
                 value={this.state.is_additional_criteria_defined}
+                
               >
                 <FormControlLabel
                   value={true}
-                  control={<Radio />}
+                  control={<Radio disabled={this.props.configureSwitch}/>}
                   label="Yes"
                   disabled={this.props.configureSwitch}
                   onClick={this.openAdditionalCriteria}
                 />
                 <FormControlLabel
                   value={false}
-                  control={<Radio />}
+                  control={<Radio disabled={this.props.configureSwitch}/>}
                   label="No"
                   disabled={this.props.editable}
                 />
