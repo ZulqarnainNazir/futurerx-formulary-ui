@@ -35,17 +35,22 @@ class ICDCriteria extends React.Component<any, any> {
     this.props.handleLookBackDays(event.target.value);
   };
   render() {
-    const { showGridHandler, handleStatus, icdSettingsStatus } = this.props;
+    const {
+      showGridHandler,
+      handleStatus,
+      icdSettingsServies: { icdSettingsStatus },
+      isAdditionalCriteria,
+      deleteIconHandler,
+    } = this.props;
     return (
       <div className="root-icd-limit-settings bordered mb-10">
-        <PanelHeader title="ICD Limit Settings" tooltip="ICD Limit Settings" />
-
         <div className="inner-container">
           <StatusContentFormPanel
             title="ICD"
             type={icdSettingsStatus.type}
             handleStatus={handleStatus}
-            showDelete={false}
+            isAdditionalCriteria={isAdditionalCriteria}
+            deleteIconHandler={deleteIconHandler}
           >
             <div className="icd-limit-settings__form">
               <div className="input-field-group">
@@ -74,11 +79,6 @@ class ICDCriteria extends React.Component<any, any> {
             </div>
           </StatusContentFormPanel>
         </div>
-        <Button
-          label="Apply"
-          onClick={showGridHandler}
-          disabled={this.props.isDisabled}
-        />
       </div>
     );
   }

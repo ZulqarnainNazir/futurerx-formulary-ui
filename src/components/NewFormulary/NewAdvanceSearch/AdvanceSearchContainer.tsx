@@ -1229,7 +1229,15 @@ class AdvanceSearchContainer extends Component<Props, State> {
   //   // this.setState({ open: !this.props.openPopup });
   // };
 
-  handleChildDataSave = (additionalCriteriaArray) => {
+  handleChildDataSave = (additionalCriteria) => {
+    console.log(additionalCriteria);
+    const additionalCriteriaArray = [additionalCriteria];
+    // additionalCriteria
+
+    // additionalCriteriaArray.forEach((add: any, index) => {
+    //   add["sequence"] = index + 1;
+    // });
+    // console.log("FINAL PAYLOAD DATA: ", additionalCriteriaArray);
     this.setState({
       additionalCriteriaArray,
     });
@@ -1245,9 +1253,10 @@ class AdvanceSearchContainer extends Component<Props, State> {
       closeDialog: this.props.additionalCriteria.closeDialog,
       listItemStatus: this.props.additionalCriteria.listItemStatus,
     };
-    payload.additionalCriteriaBody = this.state.additionalCriteriaArray;
-    this.props.setAdditionalCriteria(payload);
 
+    payload.additionalCriteriaBody = this.state.additionalCriteriaArray;
+    console.log("FINAL PAYLOAD DATA: ", payload);
+    this.props.setAdditionalCriteria(payload);
     this.props.onClose();
   };
 
