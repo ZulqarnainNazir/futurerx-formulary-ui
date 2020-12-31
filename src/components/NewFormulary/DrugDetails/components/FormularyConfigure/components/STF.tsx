@@ -202,10 +202,14 @@ class STF extends React.Component<any, any> {
       apiDetails["messageBody"]["search_key"] = "";
       apiDetails["messageBody"]["st_value"] = Number(this.state.stValue);
 
-      if (this.state.additionalCriteriaState!=null){
+      if (this.state.additionalCriteriaState!=null && this.state.is_additional_criteria_defined){
         apiDetails["messageBody"]["is_custom_additional_criteria"] = true;
         apiDetails["messageBody"]["um_criteria"] = this.state.additionalCriteriaState;
+      }else{
+        apiDetails["messageBody"]["is_custom_additional_criteria"] = false;
+        apiDetails["messageBody"]["um_criteria"] = [];
       }
+
 
       const saveData = this.props
         .postApplyFormularyDrugST(apiDetails)
@@ -247,11 +251,18 @@ class STF extends React.Component<any, any> {
       this.props.setAdvancedSearch(payload);
     }
     if (nextProps.additionalCriteriaBody) {
+      
       this.setState({
         additionalCriteriaState: nextProps.additionalCriteriaBody,
       });
     }
     if (nextProps.configureSwitch){
+      this.setState({
+        showStConfiguration:false,
+        selectedGroupDescription:null,
+        selectedStType:null,
+        is_additional_criteria_defined:false
+      });
       this.populateGridData();
     }else{
       this.setState({ tierGridContainer: false });
@@ -300,11 +311,13 @@ class STF extends React.Component<any, any> {
               tmp_additionalCriteria=true;
             }
           }
+          this.setState({
+            is_additional_criteria_defined: tmp_additionalCriteria,
+          });
         });
       this.setState({
         selectedLastestedVersion: latestVersionId,
         fileType: ftype,
-        is_additional_criteria_defined: tmp_additionalCriteria,
       });
       this.setState({
         tierGridContainer: false,
@@ -344,7 +357,7 @@ class STF extends React.Component<any, any> {
     } else if (e.target.value == "false") {
       tmp_value = false;
     }
-    this.setState({ [tmp_key]: e.target.value.trim() });
+    this.setState({ [tmp_key]: tmp_value });
   };
 
   populateGridData = (searchBody = null) => {
@@ -539,6 +552,7 @@ class STF extends React.Component<any, any> {
                     dispProp="text"
                     onSelect={this.dropDownSelectHandlerGroupDescription}
                     disabled={this.props.configureSwitch}
+                    value={this.state.selectedGroupDescription}
                   />
                 </div>
 
@@ -622,6 +636,7 @@ class STF extends React.Component<any, any> {
                     dispProp="st_type_name"
                     onSelect={this.dropDownSelectHandlerStType}
                     disabled={this.props.configureSwitch}
+                    value={this.state.selectedStType}
                   />
                 </div>
                 {this.state.showStConfiguration ? (
