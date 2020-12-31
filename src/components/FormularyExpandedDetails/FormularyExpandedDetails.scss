@@ -125,3 +125,80 @@
     margin-left: 2px;
   }
 }
+.view-fl-btn{
+  background: #2055b5;
+  color: white;
+  padding: 0 20px;
+  width: auto;
+  margin-right: 0;
+}
+.view-fl-field{
+  display: flex;
+  justify-content: flex-end;
+  align-items: flex-end;
+}
+.radio-group {
+  .radio-group-custom {
+    display: flex;
+    width: 100%;
+    flex-direction: row;
+    label {
+      > span.MuiButtonBase-root {
+        padding-right: 12px;
+      }
+      input[type="radio"] + div {
+        height: 16px;
+        width: 16px;
+        border-radius: 50%;
+        background: white;
+        border: 2px solid #ddd;
+        svg {
+          display: none;
+        }
+      }
+      input[type="radio"]:checked + div {
+        background: #2055b5;
+        height: 16px;
+        width: 16px;
+        border-radius: 50%;
+        border: none;
+      }
+      span.MuiFormControlLabel-label {
+        font-size: 12px;
+        text-transform: none;
+      }
+      &.Mui-disabled{
+        input[type="radio"] + div {
+          background: #e5e5e5;
+        }
+        input[type="radio"]:checked + div{
+          background: #2055b5;
+        }
+      }
+    }
+    &.mr-80 {
+      label {
+        margin-right: 77px;
+      }
+    }
+    &.mr-40{
+      margin-right: 40px;
+    }
+  }
+}
+.formulary-expanded-details-right__content{
+  .radio-group {
+    .radio-group-custom {
+      label {
+        margin-right: 40px;
+        span.MuiFormControlLabel-label{
+          color: #aaaaaa;
+        }
+        span.Mui-checked + span{
+          color: #323C47;
+          font-weight: 500;
+        }
+      }
+    }
+  }
+}

@@ -206,7 +206,8 @@ class Medicare extends React.Component<any, any> {
                 isExpandable: true,
                 expandIconColumnIndex:
                   formularyDetailsGridColumns({}).length + 1,
-                expandedRowRender: (props) => <FormularyExpandedDetails />,
+                // expandedRowRender: (props) => <FormularyExpandedDetails />,
+                expandedRowRender: (record:any) => <FormularyExpandedDetails rowData={record} drugDetailClick={this.props.drugDetailClick}/>,
                 expandCloseIcon: (
                   <span>
                     <svg
@@ -262,7 +263,7 @@ class Medicare extends React.Component<any, any> {
     this.props.homeSearchOptions(requestData).then(json=>{
       if (json.payload && json.payload.success.data.code === '200') {
 
-        let tmpData = json.payload.success.data.data;
+        let tmpData = json?.payload?.success?.data?.data || json?.payload?.success?.data?.result;
         let categoryObj = {
           'associated-contracts':'',
           'breadcrumbs':{
@@ -278,7 +279,7 @@ class Medicare extends React.Component<any, any> {
             label:'medicare_contract_type'
           },
           'client-states':{
-            code:'state_code',
+            code:'id_state',
             label:'state_name'
           },
           'tier-descriptions':{

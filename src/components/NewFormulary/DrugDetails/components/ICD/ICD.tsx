@@ -1,6 +1,7 @@
 import React from "react";
 import { connect } from "react-redux";
 import { filter } from "lodash";
+import { ToastContainer } from "react-toastify";
 import PanelHeader from "../../../../shared/Frx-components/panel-header/PanelHeader";
 import PanelGrid from "../../../../shared/Frx-components/panel-grid/PanelGrid";
 import CustomizedSwitches from "../FormularyConfigure/components/CustomizedSwitches";
@@ -344,9 +345,9 @@ class DrugDetailICD extends React.Component<any, any> {
 
     let listCount = 0;
     this.props.getDrugDetailsICDList(apiDetails).then((json) => {
-      let tmpData = json.payload.result;
+      let tmpData = json.payload && json.payload.result ? json.payload.result : [];
       console.log("The GEt ICd LIst Resp = ", tmpData);
-      listCount = json.payload.count;
+      listCount = json.payload?.count;
       var data: any[] = [];
       let count = 1;
       var gridData = tmpData.map((el) => {
@@ -498,9 +499,26 @@ class DrugDetailICD extends React.Component<any, any> {
     this.getICDReplaceSrch(selectedItem)
   }
 
+  validateGLForm = () => {
+    if(this.state.activeTabIndex === 0) {
+      return !(this.state.selectedList.length === 0);
+
+    } else if(this.state.activeTabIndex === 2) {
+      return !(this.state.icdRemoveCheckedList.length === 0);
+    }
+
+    return true;
+  }
+
   showGridHandler = () => {
-    this.getICDDrugsList();
+    // this.getICDDrugsList();
     console.log("The State of the ICD Tab = ", this.state);
+
+    if(this.validateGLForm()) {
+      this.getICDDrugsList();
+    } else {
+      showMessage("Please Select atleast one ICD limit", "info");
+    }
   };
 
   handleStatus = (key: string) => {
@@ -728,6 +746,7 @@ class DrugDetailICD extends React.Component<any, any> {
             ) : null}
           </div>
         ) : null}
+        <ToastContainer />
       </>
     );
   }

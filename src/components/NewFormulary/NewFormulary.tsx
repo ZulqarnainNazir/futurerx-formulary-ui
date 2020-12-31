@@ -166,7 +166,6 @@ class Formulary extends React.Component<any, any> {
   };
 
   drugDetailsClickHandler = (id: any) => {
-    console.log("*********************************");
     let selectedRow: any = null;
     if (id !== undefined) {
       selectedRow = this.props.formulary_list[id - 1];
@@ -236,7 +235,7 @@ class Formulary extends React.Component<any, any> {
   formularyListSearch = (categoryObj,subCat) => {
     let id_lob = this.listPayload.id_lob;
     this.listPayload = { ...defaultListPayload };
-    this.listPayload.id_lob = id_lob;
+    this.listPayload.id_lob = null;
     this.listPayload.search_by = categoryObj;
     this.listPayload.search_value = subCat!=''?[subCat]:[];
     this.props.fetchFormularies(this.listPayload);

@@ -2,9 +2,8 @@ import Button from "../../../../shared/Frx-components/button/Button";
 import React from "react";
 import DropDown from "../../../../shared/Frx-components/dropdown/DropDown";
 import PanelHeader from "../../../../shared/Frx-components/panel-header/PanelHeader";
-import StatusContentFormPanel from "../common/StatusContentFormPanel/StatusContentFormPanel";
-import Tags from "../Tags";
-import "./ICD.scss";
+import StatusContentFormPanel from "../../../DrugDetails/components/common/StatusContentFormPanel/StatusContentFormPanel";
+import "./ICDCriteria.scss";
 
 const AddIcon = () => (
   <svg
@@ -27,7 +26,7 @@ const AddIcon = () => (
   </svg>
 );
 
-class IcdLimitSettings extends React.Component<any, any> {
+class ICDCriteria extends React.Component<any, any> {
   handleReplaceSrch = (val) => {
     this.props.handleReplaceSrch(val);
   };
@@ -38,7 +37,7 @@ class IcdLimitSettings extends React.Component<any, any> {
   render() {
     const { showGridHandler, handleStatus, icdSettingsStatus } = this.props;
     return (
-      <div className="icd-limit-settings bordered mb-10">
+      <div className="root-icd-limit-settings bordered mb-10">
         <PanelHeader title="ICD Limit Settings" tooltip="ICD Limit Settings" />
 
         <div className="inner-container">
@@ -53,16 +52,11 @@ class IcdLimitSettings extends React.Component<any, any> {
                 <div className="input-field-group__label">ICD:</div>
 
                 <div className="input-field-group__dropdown-field">
-                  {/* <DropDown
-                  className=""
-                  placeholder="inclusive of"
-                  options={["inclusive of", "exclusive of"]}
-                /> */}
-                  <Tags
+                  {/* <Tags
                     options={this.props.options}
                     handleReplaceSrch={this.handleReplaceSrch}
                     disabled={this.props.isDisabled}
-                  />
+                  /> */}
                 </div>
               </div>
 
@@ -90,4 +84,4 @@ class IcdLimitSettings extends React.Component<any, any> {
   }
 }
 
-export default IcdLimitSettings;
+export default ICDCriteria;

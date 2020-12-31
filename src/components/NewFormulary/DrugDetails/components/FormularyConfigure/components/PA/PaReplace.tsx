@@ -26,6 +26,7 @@ import * as constants from "../../../../../../../api/http-commons";
 import { ToastContainer } from "react-toastify";
 import "../Tier.scss";
 import "./PA.scss";
+import { setAdditionalCriteria } from "../../../../../../../redux/slices/formulary/advancedSearch/additionalCriteriaSlice";
 
 // import AdvanceSearchContainer from "../../../../../NewAdvanceSearch/AdvanceSearchContainer";
 import {
@@ -97,6 +98,7 @@ class PaReplace extends React.Component<any, any> {
     groupDescriptionProp: "",
     isAdditionalCriteriaOpen: false,
     additionalCriteriaState: null,
+    is_additional_criteria_defined:false,
   };
 
   onSelectedTableRowChanged = (selectedRowKeys) => {
@@ -207,16 +209,16 @@ class PaReplace extends React.Component<any, any> {
       ];
       apiDetails["messageBody"] = {};
       apiDetails["messageBody"]["selected_drug_ids"] = this.state.selectedDrugs;
-      apiDetails["messageBody"][
-        "base_pa_group_description_id"
-      ] = this.state.selectedGroupDescription;
-      apiDetails["messageBody"][
-        "id_pa_group_description"
-      ] = this.state.selectedLastestedVersion;
-      apiDetails["messageBody"]["id_pa_type"] = Number(
-        this.state.selectedPaType
-      );
+      apiDetails["messageBody"]["base_pa_group_description_id"] = this.state.selectedGroupDescription;
+      apiDetails["messageBody"]["id_pa_group_description"] = this.state.selectedLastestedVersion;
+      apiDetails["messageBody"]["id_pa_type"] = Number(this.state.selectedPaType);
       apiDetails["messageBody"]["search_key"] = "";
+
+      if (this.state.additionalCriteriaState!=null){
+        apiDetails["messageBody"]["is_custom_additional_criteria"] = true;
+        apiDetails["messageBody"]["um_criteria"] = this.state.additionalCriteriaState;
+      }
+      
 
       //apiDetails['messageBody']['id_tier'] = this.state.selectedTier;
 
@@ -253,6 +255,7 @@ class PaReplace extends React.Component<any, any> {
     apiDetails["pathParams"] = "/" + tmp_value;
 
     this.props.getPaGrouptDescriptionVersions(apiDetails).then((json) => {
+      
       let data = json.payload.data;
       let ftype = "";
       switch (this.props.formulary_lob_id) {
@@ -382,6 +385,7 @@ class PaReplace extends React.Component<any, any> {
 
   loadGridData(json: any) {
     {
+      if (json.payload !=null && json.payload.code === "200") {
       let tmpData = json.payload.result;
       var data: any[] = [];
       let count = 1;
@@ -419,6 +423,7 @@ class PaReplace extends React.Component<any, any> {
         drugData: data,
         drugGridData: gridData,
       });
+    }
     }
   }
   componentDidMount() {
@@ -475,6 +480,7 @@ class PaReplace extends React.Component<any, any> {
     this.setState({ isAdditionalCriteriaOpen: false });
   };
   openAdditionalCriteria = () => {
+    debugger;
     this.setState({ isAdditionalCriteriaOpen: true });
   };
   // additional criteria toggle
@@ -576,7 +582,7 @@ class PaReplace extends React.Component<any, any> {
                 <span className="astrict">*</span>
               </label>
               <Space size="large">
-                <RadioButton
+                {/* <RadioButton
                   label="Yes"
                   name="add-filter"
                   checked={isAdditionalCriteriaOpen}
@@ -589,13 +595,33 @@ class PaReplace extends React.Component<any, any> {
                   checked={!isAdditionalCriteriaOpen}
                   onClick={this.closeAdditionalCriteria}
                   disabled={this.props.configureSwitch}
+                /> */}
+                <RadioGroup
+                aria-label="marketing-material-radio1"
+                className="gdp-radio"
+                name="is_additional_criteria_defined"
+                onChange={this.handleChange}
+                value={this.state.is_additional_criteria_defined}
+              >
+                <FormControlLabel
+                  value={true}
+                  control={<Radio />}
+                  label="Yes"
+                  disabled={this.props.configureSwitch}
+                  onClick={this.openAdditionalCriteria}
                 />
+                <FormControlLabel
+                  value={false}
+                  control={<Radio />}
+                  label="No"
+                  disabled={this.props.editable}
+                />
+              </RadioGroup>
               </Space>
             </Col>
           </Row>
           {isAdditionalCriteriaOpen ? (
             <AdvanceSearchContainer
-              {...searchProps}
               openPopup={isAdditionalCriteriaOpen}
               onClose={this.closeAdditionalCriteria}
               isAdvanceSearch={false}
@@ -616,7 +642,7 @@ class PaReplace extends React.Component<any, any> {
         {this.state.tierGridContainer && (
           <div className="select-drug-from-table">
             <div className="bordered white-bg">
-              {!this.props.configureSwitch && (
+              
                 <div className="header space-between pr-10">
                   <div className="button-wrapper">
                     <Button
@@ -625,10 +651,12 @@ class PaReplace extends React.Component<any, any> {
                       onClick={this.advanceSearchClickHandler}
                       disabled={this.props.configureSwitch}
                     />
+                    {!this.props.configureSwitch && (
                     <Button label="Save" onClick={this.handleSave} />
+                    )}
                   </div>
                 </div>
-              )}
+              
 
               <div className="tier-grid-container">
                 <FrxDrugGridContainer
