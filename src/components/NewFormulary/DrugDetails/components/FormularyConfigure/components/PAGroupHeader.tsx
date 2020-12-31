@@ -210,7 +210,7 @@ function PAGroupHeader(props: any) {
     debugger;
     let apiDetails = {};
 
-    if (effectiveDate == null) {
+    if (effectiveDate == "") {
       showMessage("Effective Date is required", "info");
       return;
     }
@@ -237,6 +237,7 @@ function PAGroupHeader(props: any) {
     props.postApplyPAGroupDescriptionFormularies(apiDetails).then((json) => {
       console.log("Save response is:" + JSON.stringify(json));
       if (json.payload && json.payload.code === "200") {
+        setShowViewAll(!showViewAll);
         showMessage("Success", "success");
       } else {
         showMessage("Failure", "error");
