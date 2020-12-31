@@ -1,11 +1,10 @@
 import React from "react";
-import Button from "../../../../shared/Frx-components/button/Button";
 import DropDown from "../../../../shared/Frx-components/dropdown/DropDown";
 import PanelHeader from "../../../../shared/Frx-components/panel-header/PanelHeader";
-import StatusContentFormPanel from "../common/StatusContentFormPanel/StatusContentFormPanel";
-import Tags from "../Tags";
+import StatusContentFormPanel from "../../../DrugDetails/components/common/StatusContentFormPanel/StatusContentFormPanel";
+import Button from "../../../../shared/Frx-components/button/Button";
 
-import "./PT.scss";
+import "./PNCriteria.scss";
 
 const AddIcon = () => (
   <svg
@@ -28,7 +27,7 @@ const AddIcon = () => (
   </svg>
 );
 
-class PrLimitSettings extends React.Component<any, any> {
+class PNCriteria extends React.Component<any, any> {
   handleReplaceSrch = (val) => {
     this.props.handleReplaceSrch(val);
   };
@@ -36,53 +35,41 @@ class PrLimitSettings extends React.Component<any, any> {
     const {
       showGridHandler,
       handleStatus,
-      ptSettingsStatus,
-      isDisabled,
+      pnSettingsServies: { pnSettingsStatus },
     } = this.props;
     return (
-      <div className="pt-limit-settings bordered mb-10">
-        <PanelHeader
-          title="prescriber taxonomy settings"
-          tooltip="prescriber taxonomy settings"
-        />
-
+      <div className="root-pn-limit-settings bordered mb-10">
         <div className="inner-container">
           <StatusContentFormPanel
-            title="Prescriber Taxonomy"
-            type={ptSettingsStatus.type}
+            title="Pharmacy Network"
+            type={pnSettingsStatus.type}
             handleStatus={handleStatus}
-            showDelete={false}
           >
             <div className="pn-limit-settings__form">
               <div className="input-field-group">
                 <div className="input-field-group__label">
-                  Prescriber Taxonomy:
+                  Pharmacy Network:
                 </div>
 
                 <div className="input-field-group__dropdown-field">
-                  {/* <DropDown
-                        className=""
-                        placeholder="Select"
-                        options={["inclusive of", "exclusive of"]}
-                      /> */}
-                  <Tags
-                    disabled={this.props.isDisabled}
-                    options={this.props.options}
-                    handleReplaceSrch={this.handleReplaceSrch}
+                  <DropDown
+                    className=""
+                    placeholder="Select"
+                    options={["inclusive of", "exclusive of"]}
                   />
+                  {/* <Tags
+                    options={this.props.options}
+                    disabled={this.props.isDisabled}
+                    handleReplaceSrch={this.handleReplaceSrch}
+                  /> */}
                 </div>
               </div>
             </div>
           </StatusContentFormPanel>
         </div>
-        <Button
-          label="Apply"
-          onClick={showGridHandler}
-          disabled={this.props.isDisabled}
-        />
       </div>
     );
   }
 }
 
-export default PrLimitSettings;
+export default PNCriteria;
