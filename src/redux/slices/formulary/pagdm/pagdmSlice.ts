@@ -92,6 +92,7 @@ export const savePAGDM = createAsyncThunk(
       dispatch(getSuccess(response));
     } catch (err) {
       dispatch(getFailed(err));
+      return err;
     }
   }
 );
@@ -116,6 +117,7 @@ export const cleanMessage = createAsyncThunk(
       success: arg.success,
     }
     dispatch(cleanMessages(obj));
+    
   }
 );
 
@@ -128,6 +130,7 @@ export const deleteGroupDescription = createAsyncThunk(
       dispatch(getSuccess(response));
     } catch (err) {
       dispatch(getFailed(err));
+      return err;
     }
   }
 );
@@ -141,6 +144,7 @@ export const cloneGroupDescription = createAsyncThunk(
       dispatch(getSuccess(response));
     } catch (err) {
       dispatch(getFailed(err));
+      return err;
     }
   }
 );
@@ -154,6 +158,7 @@ export const archiveGroupDescription = createAsyncThunk(
       dispatch(getSuccess(response));
     } catch (err) {
       dispatch(getFailed(err));
+      return err;
     }
   }
 );
@@ -167,6 +172,7 @@ export const newVersionGroupDescription = createAsyncThunk(
       dispatch(getSuccess(response));
     } catch (err) {
       dispatch(getFailed(err));
+      return err;
     }
   }
 );

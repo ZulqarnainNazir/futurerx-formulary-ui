@@ -32,6 +32,7 @@ import FormControlLabel from "@material-ui/core/FormControlLabel";
 import DialogPopup from "../../../../../shared/FrxDialogPopup/FrxDialogPopup";
 import CloneFormularyPopup from "../../FormularySetUp/components/CloneFormularyPopup";
 import { ReactComponent as EditIcon } from "../../../../../../assets/icons/EditIcon.svg";
+import { setAdditionalCriteria } from "../../../../../../redux/slices/formulary/advancedSearch/additionalCriteriaSlice";
 
 function mapDispatchToProps(dispatch) {
   return {
@@ -58,6 +59,7 @@ const mapStateToProps = (state) => {
     formulary_lob_id: state?.application?.formulary_lob_id,
     formulary_type_id: state?.application?.formulary_type_id,
     advancedSearchBody: state?.advancedSearch?.advancedSearchBody,
+    additionalCriteriaBody: state?.additionalCriteria?.additionalCriteriaBody,
     populateGrid: state?.advancedSearch?.populateGrid,
     closeDialog: state?.advancedSearch?.closeDialog,
   };
@@ -96,6 +98,9 @@ class STF extends React.Component<any, any> {
     lobFormularies: [],
     stValue: null,
     groupDescriptionProp: "",
+    isAdditionalCriteriaOpen: false,
+    additionalCriteriaState: null,
+    is_additional_criteria_defined:false,
   };
 
   onSelectedTableRowChanged = (selectedRowKeys) => {
@@ -193,6 +198,11 @@ class STF extends React.Component<any, any> {
       apiDetails["messageBody"]["search_key"] = "";
       apiDetails["messageBody"]["st_value"] = Number(this.state.stValue);
 
+      if (this.state.additionalCriteriaState!=null){
+        apiDetails["messageBody"]["is_custom_additional_criteria"] = true;
+        apiDetails["messageBody"]["um_criteria"] = this.state.additionalCriteriaState;
+      }
+
       const saveData = this.props
         .postApplyFormularyDrugST(apiDetails)
         .then((json) => {
@@ -231,6 +241,11 @@ class STF extends React.Component<any, any> {
         payload["closeDialog"] = false;
       }
       this.props.setAdvancedSearch(payload);
+    }
+    if (nextProps.additionalCriteriaBody) {
+      this.setState({
+        additionalCriteriaState: nextProps.additionalCriteriaBody,
+      });
     }
     if (nextProps.configureSwitch){
       this.populateGridData();
@@ -353,6 +368,7 @@ class STF extends React.Component<any, any> {
       .postFormularyDrugST(apiDetails)
       .then((json) => {
         debugger;
+        if (json.payload !=null && json.payload.code === "200") {
         let tmpData = json.payload.result;
         var data: any[] = [];
         let count = 1;
@@ -363,6 +379,7 @@ class STF extends React.Component<any, any> {
           gridItem["id"] = count;
           gridItem["key"] = count;
           gridItem["tier"] = element.tier_value;
+          gridItem["isUmCriteria"] = element.is_um_criteria;
           gridItem["stGroupDescription"] = element.st_group_description;
           gridItem["stType"] = element.st_type;
           gridItem["stValue"] = element.st_value;
@@ -393,6 +410,7 @@ class STF extends React.Component<any, any> {
           drugData: data,
           drugGridData: gridData,
         });
+      }
       });
     this.setState({ tierGridContainer: true });
   };
@@ -466,11 +484,20 @@ class STF extends React.Component<any, any> {
       });
     });
   }
+   // additional criteria toggle
+   closeAdditionalCriteria = () => {
+    this.setState({ isAdditionalCriteriaOpen: false });
+  };
+  openAdditionalCriteria = () => {
+    debugger;
+    this.setState({ isAdditionalCriteriaOpen: true });
+  };
   render() {
     const searchProps = {
       lobCode: this.props.lobCode,
       // pageType: pageTypes.TYPE_TIER
     };
+    const { isAdditionalCriteriaOpen } = this.state;
     return (
       <div className="bordered stf-root">
         <div className="modify-wrapper bordered white-bg">
@@ -528,9 +555,35 @@ class STF extends React.Component<any, any> {
                     <span className="astrict">*</span>
                   </label>
                   <Space size="large">
-                    <RadioButton label="Yes" disabled={this.props.configureSwitch} />
-                    <RadioButton label="No" disabled={this.props.configureSwitch}/>
+                  <RadioGroup
+                aria-label="marketing-material-radio1"
+                className="gdp-radio"
+                name="is_additional_criteria_defined"
+                onChange={this.handleChange}
+                value={this.state.is_additional_criteria_defined}
+              >
+                <FormControlLabel
+                  value={true}
+                  control={<Radio />}
+                  label="Yes"
+                  disabled={this.props.configureSwitch}
+                  onClick={this.openAdditionalCriteria}
+                />
+                <FormControlLabel
+                  value={false}
+                  control={<Radio />}
+                  label="No"
+                  disabled={this.props.editable}
+                />
+              </RadioGroup>
                   </Space>
+                  {isAdditionalCriteriaOpen ? (
+            <AdvanceSearchContainer
+              openPopup={isAdditionalCriteriaOpen}
+              onClose={this.closeAdditionalCriteria}
+              isAdvanceSearch={false}
+            />
+          ) : null}
                 </div>
               </Grid>
               <Grid item xs={4}>
@@ -601,7 +654,7 @@ class STF extends React.Component<any, any> {
           {this.state.tierGridContainer && (
             <div className="select-drug-from-table">
               <div className="bordered white-bg">
-                { !this.props.configureSwitch && (
+               
                 <div className="header space-between pr-10">
                   <div className="button-wrapper">
                     <Button
@@ -610,10 +663,12 @@ class STF extends React.Component<any, any> {
                       onClick={this.advanceSearchClickHandler}
                       disabled={this.props.configureSwitch}
                     />
-                    <Button label="Save" onClick={this.handleSave} />
+                     { !this.props.configureSwitch && (
+                      <Button label="Save" onClick={this.handleSave} />
+                    )}
                   </div>
                 </div>
-                )}
+                
 
                 <div className="tier-grid-container">
                   <FrxDrugGridContainer
