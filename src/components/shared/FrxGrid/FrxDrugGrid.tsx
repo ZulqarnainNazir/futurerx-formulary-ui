@@ -890,10 +890,10 @@ class FrxDrugGrid extends Component<FrxDrugGridProps<any>, FrxDrugGridState<any>
    * @param dataRow data row
    * @author Deepak_T
    */
-	rowSelectionChange = (dataRow:any) => {
+	rowSelectionChange = (dataRow:any, event:any) => {
     const isCheckBox =  this.props.isRowSelectorCheckbox;
 		if (this.props.rowSelectionChange)
-			this.props.rowSelectionChange(dataRow ,isCheckBox);
+			this.props.rowSelectionChange(dataRow ,event);
 	}
 
   /**

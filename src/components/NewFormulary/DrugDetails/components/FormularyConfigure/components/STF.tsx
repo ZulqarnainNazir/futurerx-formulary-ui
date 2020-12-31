@@ -353,6 +353,7 @@ class STF extends React.Component<any, any> {
       .postFormularyDrugST(apiDetails)
       .then((json) => {
         debugger;
+        if (json.payload !=null && json.payload.code === "200") {
         let tmpData = json.payload.result;
         var data: any[] = [];
         let count = 1;
@@ -393,6 +394,7 @@ class STF extends React.Component<any, any> {
           drugData: data,
           drugGridData: gridData,
         });
+      }
       });
     this.setState({ tierGridContainer: true });
   };
