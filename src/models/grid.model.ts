@@ -52,6 +52,7 @@ export interface Grid<RecordType = unknown> {
   onColumnChange?: (columns: Column<any>[]) => void;
 
   applySort?: (key: string, order: string) => void;
+  applyMultiSort?: (sorter: any) => void;
   hideResults?: boolean;
   hideItemsPerPage?: boolean;
   hidePageJumper?: boolean;

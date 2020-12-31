@@ -103,7 +103,7 @@ interface FrxDrugGridState<T> {
 
   isMultiSort: boolean;
   sortedInfo: any;
-
+	multiSortedInfo: any;
   columns: Column<T>[];
   visibleColumns: Column<T>[];
   hiddenColumns: Column<T>[];
@@ -133,7 +133,8 @@ class FrxDrugGrid extends Component<FrxDrugGridProps<any>, FrxDrugGridState<any>
     filterTable: [],
     sortedTable: [],
     isMultiSort: false,
-    sortedInfo: null,
+		sortedInfo: null,
+		multiSortedInfo: [],
     suggestions: {},
     columns: [],
     visibleColumns: [],
@@ -163,16 +164,25 @@ class FrxDrugGrid extends Component<FrxDrugGridProps<any>, FrxDrugGridState<any>
     columnKey: string;
     order: string;
     type: string;
-  }> = [];
-  pinnedCount: number;
+	}> = [];
+	multiSortArray: any[] = [];
+	gridRef: React.RefObject<HTMLDivElement>;
+	pinnedCount: number;
+  initialPinnedCount: number;
   pinnedIndexMap: Map<string, number>;
-  multiSortArray: any[] = [];
-  gridRef: React.RefObject<HTMLDivElement>;
+  isSettingsEnabled = false;
 
   constructor(props) {
     super(props);
     this.gridRef = React.createRef();
-    this.pinnedCount = 0;
+    this.isSettingsEnabled = this.props.enableSettings ? true : false;
+    this.pinnedCount =
+      this.props.fixedColumnKeys && this.isSettingsEnabled
+        ? this.props.fixedColumnKeys.length + 1
+        : this.props.fixedColumnKeys && !this.isSettingsEnabled
+        ? this.props.fixedColumnKeys.length
+        : 0; // Accounts for the fixed columns and settings key
+    this.initialPinnedCount = this.pinnedCount;
     this.pinnedIndexMap = new Map<string, number>();
   }
 
@@ -581,9 +591,14 @@ class FrxDrugGrid extends Component<FrxDrugGridProps<any>, FrxDrugGridState<any>
             return (
               <>
                 <FrxGridHeaderCell
-                  isPinningEnabled={this.props.isPinningEnabled ? this.props.isPinningEnabled : false}
+                  isPinningEnabled={this.props.isPinningEnabled ? true : false}
                   textCase={c.textCase}
                   column={c}
+                  multiSortedArray={
+                    this.multiSortArray ? this.multiSortArray : []
+                  }
+                  multiSortedInfo={this.state.multiSortedInfo}
+                  singleSortedInfo={this.state.sortedInfo}
                   multiSortOrder={this.getMultisortOrderByColKey(c.key)}
                   unpinColumn={this.unpinColumn}
                   pinColumnToLeft={this.pinColumnToLeft}
@@ -765,6 +780,8 @@ class FrxDrugGrid extends Component<FrxDrugGridProps<any>, FrxDrugGridState<any>
             ? this.state.sortedTable
             : [...this.props.data];
 		}
+
+	
     console.log(this.state.filteredInfo)
     // const from = (this.state.currentPage - 1) * +this.state.pageSize + 1;
     // Modify this in future
@@ -858,9 +875,9 @@ class FrxDrugGrid extends Component<FrxDrugGridProps<any>, FrxDrugGridState<any>
      */
 
     //IF BLOCK FOR MULTI SORT
-    if (this.state.isMultiSort) {
+		if (this.state.isMultiSort) {
       if (extra.action === "sort") {
-        const isElemPresent = function (arr: Array<any>, elem) {
+        const isElemPresent = function(arr: Array<any>, elem) {
           for (let i = 0; i < arr.length; i++) {
             if (arr[i] === elem) {
               return i;
@@ -881,16 +898,18 @@ class FrxDrugGrid extends Component<FrxDrugGridProps<any>, FrxDrugGridState<any>
           for (let sIdx = 0; sIdx < sorterArray.length; sIdx++) {
             const cKey = sorterArray[sIdx].columnKey;
             const order = sorterArray[sIdx].order;
+
             const elemIdx = isElemPresent(
               multiArray,
               sorterArray[sIdx].columnKey
             );
+
             if (elemIdx === -1) {
               multiArray.push(cKey);
               columnsAndOrder.push({
                 columnKey: cKey,
                 order: order,
-                type: this.getColumnDataType(cKey),
+                type: this.getColumnDataType(cKey)
               });
             } else {
               // Update order of the element
@@ -901,6 +920,7 @@ class FrxDrugGrid extends Component<FrxDrugGridProps<any>, FrxDrugGridState<any>
         };
         // Is sorter an array?
         const isArray: boolean = Array.isArray(sorter);
+
         if (isArray) {
           // this.multiSortArray = []; // all sorted columns will be in the sorter array.
           this.multiSortArray = mergeArrays(
@@ -908,14 +928,92 @@ class FrxDrugGrid extends Component<FrxDrugGridProps<any>, FrxDrugGridState<any>
             sorter,
             this.columnsToMultisort
           );
+
+          //==== EXTRA CODE =====
+
+          for (let sIdx = 0; sIdx < sorter.length; sIdx++) {
+            sorter[sIdx]["multiple"] = this.getMultisortOrderByColKey(
+              sorter[sIdx].columnKey
+            );
+          }
+
+          console.log("assigning multi sorter ", sorter);
+          const existingMultiSortedInfo = _.cloneDeep(
+            this.state.multiSortedInfo
+          );
+          const index = existingMultiSortedInfo.findIndex(item => {
+            return item.columnKey === sorter.columnKey;
+          });
+          if (index === -1) {
+            this.setState({
+              multiSortedInfo: [...this.state.multiSortedInfo, sorter]
+            });
+          } else {
+            const order = existingMultiSortedInfo[index].order;
+            if (order === "ascend") {
+              existingMultiSortedInfo[index].order = "descend";
+            } else if (order === "descend") {
+              existingMultiSortedInfo[index].order = "ascend";
+            }
+            if (!order) {
+              existingMultiSortedInfo[index].order = sorter.order;
+            }
+
+            this.setState({ multiSortedInfo: existingMultiSortedInfo });
+          }
+
+          //==== END OF  EXTRA CODE =====
+					if(this.props.isDataLoaded){
           for (let i = 0; i < this.multiSortArray.length; i++) {
             // const cKey = this.multiSortArray[i];
 
-            // this.handleMultisortColumnClick(cKey);
-            this.multisortColumns();
+						// this.handleMultisortColumnClick(cKey);
+				
+							this.multisortColumns();
+
+						
+							
+						
             // this.updateMultisortOrder();
-          }
+					}
+				}	else{
+					this.setState({
+								
+						currentPage: 1,
+						goToPageValue: 1,
+					});
+					console.log(" 1st")
+					if(this.props.applyMultiSort)this.props.applyMultiSort([...existingMultiSortedInfo, sorter])
+				}
         } else {
+          //====  EXTRA CODE =====
+
+          const existingMultiSortedInfo = _.cloneDeep(
+            this.state.multiSortedInfo
+          );
+          const index = existingMultiSortedInfo.findIndex(item => {
+            return item.columnKey === sorter.columnKey;
+          });
+
+          if (index === -1) {
+            this.setState({
+              multiSortedInfo: [...this.state.multiSortedInfo, sorter]
+            });
+          } else {
+            const order = existingMultiSortedInfo[index].order;
+            if (order === "ascend") {
+              existingMultiSortedInfo[index].order = "descend";
+            } else if (order === "descend") {
+              existingMultiSortedInfo[index].order = "ascend";
+            }
+            if (!order) {
+              existingMultiSortedInfo[index].order = sorter.order;
+            }
+
+            this.setState({ multiSortedInfo: existingMultiSortedInfo });
+          }
+
+          //==== END OF  EXTRA CODE =====
           const cKey = sorter.columnKey;
           const order = sorter.order;
 
@@ -925,14 +1023,42 @@ class FrxDrugGrid extends Component<FrxDrugGridProps<any>, FrxDrugGridState<any>
             this.columnsToMultisort.push({
               columnKey: cKey,
               order: order,
-              type: this.getColumnDataType(cKey),
-            });
-            this.multisortColumns();
+              type: this.getColumnDataType(cKey)
+						});
+						if(this.props.isDataLoaded){
+							this.multisortColumns();
+
+						}
+							
+							else{
+								console.log(" 2nd")
+								this.setState({
+								
+									currentPage: 1,
+									goToPageValue: 1,
+								});
+								if(this.props.applyMultiSort){
+								 this.props.applyMultiSort([...existingMultiSortedInfo, sorter])
+								}
+							}
             // this.updateMultisortOrder();
           } else {
             // Update order of the element
-            this.columnsToMultisort[elemIdx].order = order;
-            this.multisortColumns();
+						this.columnsToMultisort[elemIdx].order = order;
+						if(this.props.isDataLoaded){
+							this.multisortColumns();
+
+						}
+							
+							else{
+								console.log(" 3rd")
+								this.setState({
+								
+									currentPage: 1,
+									goToPageValue: 1,
+								});
+								if(this.props.applyMultiSort)this.props.applyMultiSort([...existingMultiSortedInfo, sorter])
+							}
             // this.updateMultisortOrder();
           }
         }
@@ -1025,52 +1151,65 @@ class FrxDrugGrid extends Component<FrxDrugGridProps<any>, FrxDrugGridState<any>
   ==================================================================================================
   */
 
-  /**
+    /**
    * @function unpinColumn
    * to unpin a column
    *
    * NOTE: no implementation as not in screens shared
    */
   unpinColumn = (column: Column<any>) => {
-      if (column.key === "name") {
-        console.log("Cannot unpin name");
-        return;
-      }
-      // if (this.state.showSecondaryColumns) return;
-      let isColumnUnpinned = false;
-      let idxOfCol = -1;
-      const columns = this.state.columns.map((c: any, idx: number) => {
-        if (c.displayTitle === column.displayTitle && c.fixed === "left") {
-          if (column.key !== "name" && column.key !== "settings") {
-            c["fixed"] = undefined;
-            this.pinnedCount--;
-            isColumnUnpinned = true;
-            idxOfCol = idx;
-          }
-        }
-        return c;
-      });
-      // Remove entry from map.
-      if (isColumnUnpinned) {
-        let oldIndex = this.pinnedIndexMap.get(column.displayTitle);
-        this.pinnedIndexMap.delete(column.displayTitle);
-        if (oldIndex !== undefined) {
-          console.log(
-            "old index of " + column.displayTitle + ": " + oldIndex.toString()
-          );
-          console.log("current index: " + idxOfCol);
-          // move back to old position.
-          if (oldIndex <= columns.length - 1) {
-            if (this.pinnedCount > oldIndex) {
-              oldIndex = this.pinnedCount!;
-            }
-            columns.splice(oldIndex, 0, columns.splice(idxOfCol, 1)[0]);
-          }
+    if (
+      column.key === "settings" ||
+      (this.props.fixedColumnKeys &&
+        this.props.fixedColumnKeys.includes(column.key))
+    ) {
+      console.log("Cannot unpin name");
+      return;
+    }
+    // if (this.state.showSecondaryColumns) return;
+    let isColumnUnpinned = false;
+    let idxOfCol = -1;
+    let columns = this.state.columns.map((c: Column<any>, idx: number) => {
+      if (c.displayTitle === column.displayTitle && c.fixed === "left") {
+        if (
+          !(
+            this.props.fixedColumnKeys &&
+            this.props.fixedColumnKeys.includes(column.key)
+          ) &&
+          column.key !== "settings"
+        ) {
+          c["fixed"] = undefined;
+          this.pinnedCount--;
+          isColumnUnpinned = true;
+          idxOfCol = idx;
         }
       }
-      this.setState({ columns: columns }, () => {
-        this.updatePinIcon();
-      });
+      return c;
+    });
+    // Remove entry from map.
+    if (isColumnUnpinned) {
+      let oldIndex = this.pinnedIndexMap.get(column.displayTitle);
+      this.pinnedIndexMap.delete(column.displayTitle);
+      if (oldIndex !== undefined) {
+        console.log(
+          "old index of " + column.displayTitle + ": " + oldIndex.toString()
+        );
+        console.log("current index: " + idxOfCol);
+        // move back to old position.
+        if (oldIndex <= columns.length - 1) {
+          if (this.pinnedCount > oldIndex) {
+            oldIndex = this.pinnedCount!;
+          }
+          columns.splice(oldIndex, 0, columns.splice(idxOfCol, 1)[0]);
+        }
+      }
+    }
+    //changing position after unpinning
+    columns = this.sortColumnsByPosition(columns);
+    this.setState({ columns: columns }, () => {
+      // this.updatePinIcon();
+      // this.updateUserPrefernces();
+    });
   };
 
   /**
@@ -1080,26 +1219,38 @@ class FrxDrugGrid extends Component<FrxDrugGridProps<any>, FrxDrugGridState<any>
    * NOTE: no implementation as not in screens shared
    */
   pinColumnToLeft = (column: Column<any>) => {
+    console.log("pin column", column);
     console.log("column: " + column.displayTitle);
-    // if (this.state.showSecondaryColumns) return;
+
     let isColumnToMove = false;
     let idxOfCol = -1;
-    // let indexToInsertPinned = 1000; // some high num
-    const columns = this.state.columns.map((c: any, idx: number) => {
-      if (c.displayTitle === column.displayTitle && !c.fixed) {
+
+    let columns = this.state.columns.map((c: Column<any>, idx: number) => {
+      if (
+        c.displayTitle === column.displayTitle &&
+        !c.fixed &&
+        !(
+          this.props.fixedColumnKeys &&
+          this.props.fixedColumnKeys.includes(column.key)
+        )
+      ) {
         isColumnToMove = true;
         idxOfCol = idx;
         c["fixed"] = "left";
         this.pinnedCount++;
+        //change position after pinning
+        console.log("pinned count after ", this.pinnedCount);
+        // c["position"] = this.pinnedCount;
       }
 
       return c;
     });
+
     console.log("pincount: " + this.pinnedCount);
     console.log("actual index: " + idxOfCol);
     if (this.pinnedCount <= 1) {
       console.log("Something wrong: Pinned count is: " + this.pinnedCount);
-      this.pinnedCount = 1; // Hack. But protects the Name column from moving.
+      this.pinnedCount = this.initialPinnedCount;
     }
 
     // Move column at index to this.pinnedCount-1
@@ -1111,11 +1262,15 @@ class FrxDrugGrid extends Component<FrxDrugGridProps<any>, FrxDrugGridState<any>
       // Insert index into map
       this.pinnedIndexMap.set(column.displayTitle, idxOfCol);
     }
-    this.setState({ columns: columns }, () => {
-      this.updatePinIcon();
-    });
-  };
 
+    //changing position after pinning
+    columns = this.sortColumnsByPosition(columns);
+    this.setState({ columns: columns }, () => {
+      // this.updatePinIcon();
+      // this.updateUserPrefernces();
+    });
+	};
+	
   updatePinIcon = () => {
     const columns = this.state.columns.map((c, index) => {
       if (c.key === "settings") {
@@ -1380,8 +1535,9 @@ class FrxDrugGrid extends Component<FrxDrugGridProps<any>, FrxDrugGridState<any>
   onToggleMultiSort = () => {
     this.multiSortArray = [];
     this.columnsToMultisort = [];
-    this.setState({ isMultiSort: !this.state.isMultiSort }, () => {
-      // this.updateMultisortOrder();
+    this.setState({ isMultiSort: !this.state.isMultiSort , multiSortedInfo:[], sortedInfo:null}, () => {
+			// this.updateMultisortOrder();
+	
     });
   };
 
@@ -1592,7 +1748,7 @@ class FrxDrugGrid extends Component<FrxDrugGridProps<any>, FrxDrugGridState<any>
       return (
         d &&
         inputText !== "" &&
-        d.toLowerCase().indexOf(inputText.toLowerCase()) > -1
+        d.toString().toLowerCase().indexOf(inputText.toLowerCase()) > -1
       );
     });
 
@@ -1626,13 +1782,13 @@ class FrxDrugGrid extends Component<FrxDrugGridProps<any>, FrxDrugGridState<any>
   ) => {
     switch (condition) {
       case "is":
-        return record[key].toLowerCase() === value.toLowerCase();
+        return record[key].toString().toLowerCase() === value.toLowerCase();
       case "is not":
-        return record[key].toLowerCase() !== value.toLowerCase();
+        return record[key].toString().toLowerCase() !== value.toLowerCase();
       case "is like":
-        return record[key].toLowerCase().includes(value.toLowerCase());
+        return record[key].toString().toLowerCase().includes(value.toLowerCase());
       case "is not like":
-        return !record[key].toLowerCase().includes(value.toLowerCase());
+        return !record[key].toString().toLowerCase().includes(value.toLowerCase());
       case "exists":
         return record[key];
       case "does not exist":
@@ -1884,10 +2040,10 @@ class FrxDrugGrid extends Component<FrxDrugGridProps<any>, FrxDrugGridState<any>
       return function (a, b) {
 				console.log("property ", property, a[property], b[property])
         // a should come before b in the sorted order
-        if (a[property].toLowerCase() < b[property].toLowerCase()) {
+        if (a[property].toString().toLowerCase() < b[property].toString().toLowerCase()) {
           return -1 * sort_order;
           // a should come after b in the sorted order
-        } else if (a[property].toLowerCase() > b[property].toLowerCase()) {
+        } else if (a[property].toString().toLowerCase() > b[property].toString().toLowerCase()) {
           return 1 * sort_order;
           // a and b are the same
         } else {
@@ -1980,7 +2136,18 @@ class FrxDrugGrid extends Component<FrxDrugGridProps<any>, FrxDrugGridState<any>
           ? this.state.filterTable
           : this.state.filteredInfo && this.state.sortedInfo
             ? this.state.sortedTable
-            : [...this.props.data];
+						: [...this.props.data];
+						// let data = [...this.props.data];
+						// if(this.props.isDataLoaded){
+						// 	data =
+						// 	this.state.sortedInfo && !this.state.filteredInfo
+						// 		? [...this.state.sortedTable]
+						// 		: this.state.filteredInfo && !this.state.sortedInfo
+						// 			? this.state.filterTable
+						// 			: this.state.filteredInfo && this.state.sortedInfo
+						// 				? this.state.sortedTable
+						// 				: [...this.props.data];
+						// }
 
     let sortedData; // = _.cloneDeep(data);
 
@@ -2039,9 +2206,9 @@ class FrxDrugGrid extends Component<FrxDrugGridProps<any>, FrxDrugGridState<any>
 
       let sort_order = order === "ascend" ? 1 : -1;
       if (type === "text") {
-        if (a[cKey].toLowerCase() < b[cKey].toLowerCase()) {
+        if (a[cKey].toString().toLowerCase() < b[cKey].toString().toLowerCase()) {
           return -1 * sort_order;
-        } else if (a[cKey].toLowerCase() > b[cKey].toLowerCase()) {
+        } else if (a[cKey].toString().toLowerCase() > b[cKey].toString().toLowerCase()) {
           return 1 * sort_order;
         } else {
           // Have to use next column for comparison.

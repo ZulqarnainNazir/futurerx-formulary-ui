@@ -106,7 +106,7 @@ interface FrxGridState<T> {
 
   isMultiSort: boolean;
   sortedInfo: any;
-
+	multiSortedInfo:any[],
   columns: Column<T>[];
   visibleColumns: Column<T>[];
   hiddenColumns: Column<T>[];
@@ -136,7 +136,8 @@ class FrxGrid extends Component<FrxGridProps<any>, FrxGridState<any>> {
     filterTable: [],
     sortedTable: [],
     isMultiSort: false,
-    sortedInfo: null,
+		sortedInfo: null,
+		multiSortedInfo:[],
     suggestions: {},
     columns: [],
     visibleColumns: [],
@@ -728,11 +729,15 @@ class FrxGrid extends Component<FrxGridProps<any>, FrxGridState<any>> {
           c["title"] = () => {
             return (
               <>
-                <FrxGridHeaderCell
-                  isPinningEnabled={this.props.isPinningEnabled}
-                  // isPinningEnabled={true}
+                    <FrxGridHeaderCell
+                  isPinningEnabled={this.props.isPinningEnabled ? true : false}
                   textCase={c.textCase}
                   column={c}
+                  multiSortedArray={
+                    this.multiSortArray ? this.multiSortArray : []
+                  }
+                  multiSortedInfo={this.state.multiSortedInfo}
+                  singleSortedInfo={this.state.sortedInfo}
                   multiSortOrder={this.getMultisortOrderByColKey(c.key)}
                   unpinColumn={this.unpinColumn}
                   pinColumnToLeft={this.pinColumnToLeft}

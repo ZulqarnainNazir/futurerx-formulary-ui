@@ -113,6 +113,7 @@ class FrxDrugGridContainer extends Component<FrxDrugGridContainerProps<any>> {
         {this.props.enableSearch ? this.getSearchComponent() : null}
         <FrxDrugGrid
           applySort={this.props.applySort}
+          applyMultiSort={this.props.applyMultiSort}
           isDataLoaded={this.props.isDataLoaded}
           bordered={false}
           columns={this.props.columns}

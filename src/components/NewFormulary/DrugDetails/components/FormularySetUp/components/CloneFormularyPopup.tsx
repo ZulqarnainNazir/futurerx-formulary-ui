@@ -118,6 +118,16 @@ class CloneFormularyPopup extends React.Component<any, any> {
 
   /**
    * the selected sorter details will be availbale here to mak api call
+   * @param sorter object carries info related to multi sort
+   * // Call api to do multi sorting if data is not pre loaded
+   *
+   */
+  onMultiSort = sorter => {
+    console.log("multi sort handler ", sorter);
+  };
+
+  /**
+   * the selected sorter details will be availbale here to mak api call
    * @param key the column key
    * @param order the sorting order : 'ascend' | 'descend'
    */
@@ -269,7 +279,7 @@ class CloneFormularyPopup extends React.Component<any, any> {
           enableSettings
           columns={gridColumns}
           customSettingIcon={"PLUS-BTN"}
-          scroll={{ x: 2000, y: 377 }}
+          scroll={{ x: 2100, y: 377 }}
           isFetchingData={false}
           enableResizingOfColumns
           data={this.state.formularyGridData}
@@ -281,8 +291,10 @@ class CloneFormularyPopup extends React.Component<any, any> {
           applyFilter={this.onApplyFilterHandler}
           //the call back for sorting to fetch data from server if data is not preloaded on front end
           applySort={this.onApplySortHandler}
+          applyMultiSort={this.onMultiSort}
           getColumnSettings={this.onSettingsIconHandler}
           pageSize={this.listPayload.limit}
+          isPinningEnabled
           selectedCurrentPage={
             this.listPayload.index / this.listPayload.limit + 1
           }
@@ -346,7 +358,7 @@ class CloneFormularyPopup extends React.Component<any, any> {
           enableSettings
           columns={gridColumns}
           customSettingIcon={"PLUS-BTN"}
-          scroll={{ x: 2000, y: 377 }}
+          scroll={{ x: 2100, y: 377 }}
           isFetchingData={false}
           enableResizingOfColumns
           data={this.state.formularyGridData}
@@ -357,8 +369,10 @@ class CloneFormularyPopup extends React.Component<any, any> {
           clearFilterHandler={this.onClearFilterHandler}
           applyFilter={this.onApplyFilterHandler}
           applySort={this.onApplySortHandler}
+          applyMultiSort={this.onMultiSort}
           getColumnSettings={this.onSettingsIconHandler}
           pageSize={this.listPayload.limit}
+          isPinningEnabled
           selectedCurrentPage={
             this.listPayload.index / this.listPayload.limit + 1
           }

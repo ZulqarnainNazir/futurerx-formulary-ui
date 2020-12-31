@@ -60,7 +60,7 @@ export const selectFormularyGridMedicare: (data) => Column<any>[] = (data) => {
       position: 3,
       sorter: {},
       textCase: "upper",
-      pixelWidth: 100,
+      pixelWidth: 150,
       key: "fromularyName",
       displayTitle: "FORMULARY NAME",
       customContent: (props) => (
@@ -206,7 +206,7 @@ export const selectFormularyGrid: (data) => Column<any>[] = (data) => {
       position: 3,
       sorter: {},
       textCase: "upper",
-      pixelWidth: 100,
+      pixelWidth: 150,
       key: "fromularyName",
       displayTitle: "FORMULARY NAME",
       dataType: "string",
