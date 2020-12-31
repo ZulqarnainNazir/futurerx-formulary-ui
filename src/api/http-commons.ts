@@ -14,12 +14,14 @@ export const SEARCH_DDID = "api/1/formulary-ddids/";
 export const SEARCH_LABEL_NAME = "api/1/formulary-drug-label-names/";
 export const SEARCH_RXCUI = "api/1/formulary-rxcuis/";
 
+export const COMPARE_FORMULARY_EXPORT_EXCEL = "api/1/compare-activity-export/";
+
 // additional criteria commom uri
 export const POS_SETTINGS_LIST = "api/1/place-of-services";
 export const PR_SETTINGS_LIST = "api/1/patient-residences";
 
 export const REQUEST_HEADER = {
-  Authorization: "Bearer 5d123376-9888-4a4f-a167-9494485fe10d",
+  Authorization: "Bearer ecac2d90-92ce-4c20-8f39-363e0b621d18",
   Accept: "application/json",
   "Content-Type": "application/json;charset=UTF-8",
 };

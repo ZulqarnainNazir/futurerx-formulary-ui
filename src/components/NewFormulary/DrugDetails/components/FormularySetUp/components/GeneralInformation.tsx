@@ -420,28 +420,19 @@ class GeneralInformation extends React.Component<any, GeneralInformationState> {
 
             {this.props.generalInfo.method === "C" && (
               <Grid item xs={4}>
+                 {this.props.formulary_mode === "NEW" && (
                 <div className="group">
                   <label>
                     CLONE FORMULARY <span className="astrict">*</span>
                   </label>
                   <span
-                    onClick={(e) => {
-                      console.log("M: " + this.props.generalInfo.method);
-                      console.log("N: " + this.props.name);
-                      console.log("D: " + this.props.effective_date);
-                      this.setState({ showClonePopup: true });
-                    }}
+                    onClick={(e) => this.setState({ showClonePopup: true })}
                     className="input-link"
                   >
                     Clone Formulary
                   </span>
-                  {/* <span
-                    onClick={(e) => this.props.createUsingClone(e)}
-                    className="input-link"
-                  >
-                    T-C
-                  </span> */}
                 </div>
+                 )}
               </Grid>
             )}
             <Grid item xs={4}>
@@ -501,21 +492,6 @@ class GeneralInformation extends React.Component<any, GeneralInformationState> {
                 />
                 <div className="marketing-material radio-group">
                   {this.getClassificationRadio()}
-                  {/* <RadioGroup 
-                  className="radio-group-custom" 
-                  aria-label={'classification_system'} 
-                  name="classification_system"
-                  value={parseInt(this.props.generalInfo.classification_system)} 
-                  onChange={(e) => this.props.onRadioChange(e,'generalInformation')}>
-                    {this.props.general_options.classification_systems.map(el => {
-                      return (
-                        <FormControlLabel 
-                          value={el.id_classification_system} 
-                          control={<Radio />} 
-                          label={el.classification_system} />
-                      )
-                    })}
-                  </RadioGroup> */}
                 </div>
               </div>
             </Grid>

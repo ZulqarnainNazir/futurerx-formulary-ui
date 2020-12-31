@@ -1,5 +1,7 @@
 import React from "react";
 import { connect } from "react-redux";
+import { filter } from "lodash";
+import { ToastContainer } from "react-toastify";
 import PanelHeader from "../../../../shared/Frx-components/panel-header/PanelHeader";
 import PanelGrid from "../../../../shared/Frx-components/panel-grid/PanelGrid";
 import CustomizedSwitches from "../FormularyConfigure/components/CustomizedSwitches";
@@ -24,6 +26,8 @@ import showMessage from "../../../Utils/Toast";
 import PtSettings from "./PtSettings";
 import FrxDrugGridContainer from "../../../../shared/FrxGrid/FrxDrugGridContainer";
 import PTRemove from "./PTRemove";
+import AdvanceSearchContainer from "../../../NewAdvanceSearch/AdvanceSearchContainer";
+import { setAdvancedSearch } from "../../../../../redux/slices/formulary/advancedSearch/advancedSearchSlice";
 
 function mapDispatchToProps(dispatch) {
   return {
@@ -33,13 +37,18 @@ function mapDispatchToProps(dispatch) {
     postPTCriteriaList: (a) => dispatch(postPTCriteriaList(a)),
     postRemovePTDrug: (a) => dispatch(postRemovePTDrug(a)),
     postReplacePTDrug: (a) => dispatch(postReplacePTDrug(a)),
+    setAdvancedSearch: (a) => dispatch(setAdvancedSearch(a)),
   };
 }
 
 const mapStateToProps = (state) => {
   return {
+    configureSwitch: state.switchReducer.configureSwitch,
     formulary_id: state?.application?.formulary_id,
     formulary_lob_id: state?.application?.formulary_lob_id,
+    advancedSearchBody: state?.advancedSearch?.advancedSearchBody,
+    populateGrid: state?.advancedSearch?.populateGrid,
+    closeDialog: state?.advancedSearch?.closeDialog,
   };
 };
 
@@ -71,6 +80,23 @@ interface ptState {
   showGrid: boolean;
 }
 
+const columnFilterMapping = {
+  prescriberTaxonomy: "is_prtx",
+  coveredTaxonomy: "covered_prescriber_taxonomies",
+  notCoveredTaxonomy: "not_covered_prescriber_taxonomies",
+  tier: "tier_value",
+  labelName: "drug_label_name",
+  ddid: "drug_descriptor_identifier",
+  gpi: "generic_product_identifier",
+  trademark: "trademark_code",
+  databaseCategory: "database_category",
+  databaseClass: "database_class",
+  createdBy: "created_by",
+  createdOn: "created_date",
+  modifiedBy: "modified_by",
+  modifiedOn: "modified_date",
+};
+
 class DrugDetailPT extends React.Component<any, any> {
   state: ptState = {
     isSearchOpen: false,
@@ -85,9 +111,9 @@ class DrugDetailPT extends React.Component<any, any> {
     columns: null,
     data: [],
     tabs: [
-      { id: 1, text: "Replace" },
-      { id: 2, text: "Append" },
-      { id: 3, text: "Remove" },
+      { id: 1, text: "Replace", disabled: false },
+      { id: 2, text: "Append", disabled: false },
+      { id: 3, text: "Remove", disabled: false },
     ],
     ptSettingsStatus: {
       type: "covered",
@@ -173,8 +199,8 @@ class DrugDetailPT extends React.Component<any, any> {
         { key: ptConstants.KEY_ENTITY_ID, value: this.props?.formulary_id },
       ];
 
-      if (this.state.activeTabIndex === 0) {
-        // Replace Drug method call
+      if (this.state.activeTabIndex === 0 || this.state.activeTabIndex === 1) {
+        // Replace and Append Drug method call
         this.rpSavePayload.selected_drug_ids = this.state.selectedDrugs;
         this.rpSavePayload.prescriber_taxonomies = this.state.selectedList;
         this.rpSavePayload.breadcrumb_code_value = "PRTX";
@@ -240,9 +266,26 @@ class DrugDetailPT extends React.Component<any, any> {
     }
   };
 
+  validateGLForm = () => {
+    if(this.state.activeTabIndex === 0) {
+      return !(this.state.selectedList.length === 0);
+
+    } else if(this.state.activeTabIndex === 2) {
+      return !(this.state.ptRemoveCheckedList.length === 0);
+    }
+
+    return true;
+  }
+
   showGridHandler = () => {
-    this.getPTDrugsList();
+    // this.getPTDrugsList();
     console.log("The State of the PT Tab = ", this.state);
+
+    if(this.validateGLForm()) {
+      this.getPTDrugsList();
+    } else {
+      showMessage("Please Select atleast one PT", "info");
+    }
   };
 
   handleStatus = (key: string) => {
@@ -255,6 +298,39 @@ class DrugDetailPT extends React.Component<any, any> {
 
     this.setState({ ptSettingsStatus, showGrid: false });
   };
+
+  refreshSelections = () => {
+    if(this.state.activeTabIndex === 0 || this.state.activeTabIndex === 1) {
+      this.setState({ selectedList: [] });
+    } else if (this.state.activeTabIndex === 2) {
+      this.getPTCriteriaList(true);
+    }
+  }
+  
+  onApplyFilterHandler = (filters) => {
+    this.listPayload.filter = Array();
+    if (filters && filter.length > 0) {
+      const fetchedKeys = Object.keys(filters);
+      fetchedKeys.map(fetchedProps => {
+        if (filters[fetchedProps] && columnFilterMapping[fetchedProps]) {
+          const fetchedOperator = filters[fetchedProps][0].condition === 'is like' ? 'is_like' :
+            filters[fetchedProps][0].condition === 'is not' ? 'is_not' :
+              filters[fetchedProps][0].condition === 'is not like' ? 'is_not_like' :
+                filters[fetchedProps][0].condition === 'does not exist' ? 'does_not_exist' :
+                  filters[fetchedProps][0].condition;
+          
+          let fetchedPropsValue;
+          if(filters[fetchedProps][0].value !== '') {
+            const fetchedPropsValueNum = Number(filters[fetchedProps][0].value.toString());
+            fetchedPropsValue = isNaN(fetchedPropsValueNum) ? filters[fetchedProps][0].value.toString() : fetchedPropsValueNum
+          }
+          const fetchedValues = filters[fetchedProps][0].value !== '' ? [fetchedPropsValue] : [];
+          this.listPayload.filter.push({ prop: columnFilterMapping[fetchedProps], operator: fetchedOperator, values: fetchedValues });
+        }
+      });
+      this.getPTDrugsList({ listPayload: this.listPayload });
+    }
+  }
 
   onPageSize = (pageSize) => {
     this.listPayload.limit = pageSize;
@@ -272,6 +348,7 @@ class DrugDetailPT extends React.Component<any, any> {
   onClearFilterHandler = () => {
     this.listPayload.index = 0;
     this.listPayload.limit = 10;
+    this.listPayload.filter = [];
     this.getPTDrugsList({
       index: defaultListPayload.index,
       limit: defaultListPayload.limit,
@@ -366,7 +443,7 @@ class DrugDetailPT extends React.Component<any, any> {
     });
   };
 
-  getPTDrugsList = ({ index = 0, limit = 10, listPayload = {} } = {}) => {
+  getPTDrugsList = ({ index = 0, limit = 10, listPayload = {}, searchBody = {}} = {}) => {
     let apiDetails = {};
     apiDetails["apiPart"] = ptConstants.GET_PT_DRUGS;
     apiDetails["pathParams"] =
@@ -393,11 +470,21 @@ class DrugDetailPT extends React.Component<any, any> {
     }
 
     apiDetails["messageBody"] = listPayload;
+    
+    if (searchBody) {
+      console.log("THe Search Body = ", searchBody, " and List Payload = ", listPayload);
+      let merged = {...listPayload, ...searchBody};
+      console.log("Merged Body = ", merged);
+      apiDetails["messageBody"] = Object.assign(
+        apiDetails["messageBody"],
+        merged
+      );
+    }
 
     let listCount = 0;
     this.props.getPTDrugList(apiDetails).then((json) => {
-      let tmpData = json.payload.result;
-      listCount = json.payload.count;
+      let tmpData = json.payload && json.payload.result ? json.payload.result : [];
+      listCount = json.payload?.count;
       var data: any[] = [];
       let count = 1;
       var gridData = tmpData.map((el) => {
@@ -495,12 +582,31 @@ class DrugDetailPT extends React.Component<any, any> {
       return tab;
     });
 
-    if (activeTabIndex === 2) {
-      this.getPTCriteriaList(true);
+    this.refreshSelections();
+
+    // if (activeTabIndex === 2) {
+    //   this.getPTCriteriaList(true);
+    // }
+
+    if(this.props.configureSwitch) {
+      this.getPTDrugsList();
     }
+
+    // let payload = { advancedSearchBody: {}, populateGrid: false, closeDialog: false, listItemStatus: {} };
+    // this.props.setAdvancedSearch(payload);
+    this.clearSearch();
 
     this.setState({ tabs, activeTabIndex, showGrid: false });
   };
+
+  clearSearch = () => {
+    let payload = { advancedSearchBody: {}, populateGrid: false, closeDialog: false, listItemStatus: {} };
+    this.props.setAdvancedSearch(payload);
+  }
+
+  componentWillUnmount() {
+    this.clearSearch();
+  }
 
   handleNoteClick = (event: React.ChangeEvent<{}>) => {
     event.stopPropagation();
@@ -522,7 +628,53 @@ class DrugDetailPT extends React.Component<any, any> {
     this.getPTReplaceSrch(selectedItem);
   };
 
+  componentWillReceiveProps(nextProps) {
+    console.log("-----Component Will Receive Props------", nextProps);
+    // if(nextProps.configureSwitch) {
+    //   this.getPTDrugsList();
+    // }
+
+    if (nextProps.configureSwitch){
+      this.setState({tabs:[
+        { id: 1, text: "Replace", disabled: true },
+        { id: 2, text: "Append", disabled: true },
+        { id: 3, text: "Remove", disabled: true },
+      ], activeTabIndex:0});
+
+      this.getPTDrugsList();
+    } else {
+      this.setState({tabs:[
+        { id: 1, text: "Replace", disabled:false },
+        { id: 2, text: "Append", disabled:false },
+        { id: 3, text: "Remove", disabled:false },
+      ]});
+    }
+
+    if (nextProps.advancedSearchBody && nextProps.populateGrid) {
+      console.log("-----Inside Advance search Body if Condition-----advancedSearchBody ", nextProps.advancedSearchBody);
+      console.log("-----Inside Advance search Body if Condition-----populateGrid ", nextProps.advancedSearchBody);
+      this.getPTDrugsList({ listPayload: this.listPayload, searchBody: nextProps.advancedSearchBody});
+      let payload = {
+        advancedSearchBody: nextProps.advancedSearchBody,
+        populateGrid: false,
+        closeDialog: nextProps.closeDialog,
+        listItemStatus: nextProps.listItemStatus,
+      };
+      if (nextProps.closeDialog) {
+        this.state.isSearchOpen = false;
+        payload["closeDialog"] = false;
+      }
+
+      console.log("---_Set Advanced Search payload = ", payload);
+      this.props.setAdvancedSearch(payload);
+    }
+  }
+
   render() {
+    const searchProps = {
+      lobCode: this.props.lobCode,
+      pageType: 0,
+    };
     let dataGrid = <FrxLoader />;
     if (this.state.data) {
       dataGrid = (
@@ -549,6 +701,7 @@ class DrugDetailPT extends React.Component<any, any> {
             onGridPageChangeHandler={this.onGridPageChangeHandler}
             totalRowsCount={this.state.listCount}
             clearFilterHandler={this.onClearFilterHandler}
+            applyFilter={this.onApplyFilterHandler}
             rowSelection={{
               columnWidth: 50,
               fixed: true,
@@ -591,8 +744,7 @@ class DrugDetailPT extends React.Component<any, any> {
                     tabList={this.state.tabs}
                     activeTabIndex={this.state.activeTabIndex}
                     onClickTab={this.onClickTab}
-                    disabledIndex={1}
-                    disabled
+                    disabled={this.props.configureSwitch}
                   />
                 </div>
               </div>
@@ -607,6 +759,7 @@ class DrugDetailPT extends React.Component<any, any> {
             handleStatus={this.handleStatus}
             showGridHandler={this.showGridHandler}
             ptSettingsStatus={this.state.ptSettingsStatus}
+            isDisabled={this.props.configureSwitch}
           />
         )}
 
@@ -629,23 +782,30 @@ class DrugDetailPT extends React.Component<any, any> {
                   label="Advance Search"
                   onClick={this.advanceSearchClickHandler}
                 />
-                <Button
+                {!this.props.configureSwitch ? <Button
                   label="Save"
                   onClick={this.saveClickHandler}
                   disabled={!(this.state.selectedDrugs.length > 0)}
-                />
+                /> : null}
               </div>
             </div>
             {dataGrid}
             {this.state.isSearchOpen ? (
-              <AdvancedSearch
-                category="Grievances"
+              // <AdvancedSearch
+              //   category="Grievances"
+              //   openPopup={this.state.isSearchOpen}
+              //   onClose={this.advanceSearchClosekHandler}
+              // />
+              <AdvanceSearchContainer
+                {...searchProps}
                 openPopup={this.state.isSearchOpen}
                 onClose={this.advanceSearchClosekHandler}
+                isAdvanceSearch={true}
               />
             ) : null}
           </div>
         ) : null}
+        <ToastContainer />
       </>
     );
   }

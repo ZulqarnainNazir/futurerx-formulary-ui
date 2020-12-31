@@ -5,23 +5,27 @@ import { createAsyncThunk } from "@reduxjs/toolkit";
 import { Formulary } from "../setup/formulary";
 
 interface ApplicationState {
+  mode: string;
   formulary_id: number;
   formulary: any;
   formulary_lob_id: number;
   formulary_type_id: number;
+  clientId: number;
+  location: number;
+  setupComplete: boolean;
   isLoading: boolean;
   error: string | null;
-  mode: string;
-  clientId: number;
 }
 
 const applicationInitialState: ApplicationState = {
+  mode: "",
   formulary_id: 0,
   formulary: null,
   formulary_lob_id: NaN,
   formulary_type_id: NaN,
-  mode: "",
   clientId: 1,
+  location: 0,
+  setupComplete: false,
   isLoading: false,
   error: null,
 };
@@ -32,6 +36,7 @@ interface ApplicationResult {
   formulary_lob_id: number;
   formulary_type_id: number;
   mode: string;
+  setupComplete: boolean;
 }
 
 function startLoading(state: ApplicationState) {
@@ -55,22 +60,28 @@ const application = createSlice({
         formulary_lob_id,
         formulary_type_id,
         mode,
+        setupComplete,
       } = payload;
       state.formulary_id = formulary_id;
       state.formulary = formulary;
       state.formulary_lob_id = formulary_lob_id;
       state.formulary_type_id = formulary_type_id;
       state.mode = mode;
+      state.setupComplete = setupComplete;
       state.isLoading = false;
       state.error = null;
       //console.log("CLIENT ID", sessionStorage.getItem('client_id'));
       //state.clientId = sessionStorage.getItem('client_id') ? parseInt(sessionStorage.getItem('client_id')) : 0;
       state.clientId = 1;
     },
+    setLocation(state, { payload }: PayloadAction<number>) {
+      console.log(" SET LOCATION : " + payload);
+      state.location = payload;
+    },
   },
 });
 
-export const { setFormularyDetails } = application.actions;
+export const { setFormularyDetails, setLocation } = application.actions;
 
 export default application.reducer;
 
@@ -85,6 +96,7 @@ export const setFormulary = createAsyncThunk(
       formulary_lob_id: arg?.id_lob,
       formulary_type_id: arg?.id_formulary_type,
       mode: "EXISTING",
+      setupComplete: arg?.is_setup_complete,
     };
     dispatch(setFormularyDetails(obj));
   }
@@ -93,7 +105,7 @@ export const setFormulary = createAsyncThunk(
 export const setFullFormulary = createAsyncThunk(
   "application",
   async (value: Formulary, { dispatch }) => {
-    //console.log("***** setFullFormulary ", arg);
+    console.log("***** setFullFormulary ", value);
 
     const obj = {
       formulary_id: value?.id_formulary,
@@ -101,6 +113,7 @@ export const setFullFormulary = createAsyncThunk(
       formulary_lob_id: value?.formulary_type_info?.id_lob,
       formulary_type_id: value?.formulary_type_info?.id_formulary_type,
       mode: "EXISTING",
+      setupComplete: value?.formulary_info?.is_setup_complete,
     };
     dispatch(setFormularyDetails(obj));
   }
@@ -115,6 +128,7 @@ export const addNewFormulary = createAsyncThunk(
       formulary_lob_id: 0,
       formulary_type_id: 0,
       mode: "NEW",
+      setupComplete: false,
     };
     dispatch(setFormularyDetails(obj));
   }

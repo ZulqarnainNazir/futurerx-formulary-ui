@@ -28,6 +28,13 @@
   }
   .radio-group {
     margin-top: 15px;
+    // .radio-group {
+    .container {
+      input:disabled {
+        cursor: not-allowed;
+      }
+    }
+    // }
   }
   .formulary-list-search {
     width: 373px !important;
@@ -35,9 +42,21 @@
     border: 1px solid #c4c4c4;
     border-radius: 5px;
     padding-left: 10px;
+    input:disabled {
+      cursor: not-allowed;
+    }
+  }
+
+  .error_class {
+    // input:required {
+    border: 1px solid red;
+    // }
   }
 }
 .drug-detail-LA-root {
+  .select-drug-from-table {
+    margin-top: 10px;
+  }
   .frx-grid-container
     .frx-grid
     .frx-grid__grid-block
@@ -48,6 +67,10 @@
     > tr
     > th {
     line-height: normal;
+    .ant-table-filter-column {
+      // display: flex;
+      // align-items: center;
+    }
   }
 }
 // .frx-grid-container

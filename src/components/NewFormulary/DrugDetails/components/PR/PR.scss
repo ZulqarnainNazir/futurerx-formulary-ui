@@ -18,29 +18,29 @@
     margin-left: 4.8px;
     text-decoration: underline dashed;
   }
-  
+
   .input-field-group {
     display: flex;
     flex-direction: column;
     padding-top: 20px;
     padding-left: 20px;
     padding-bottom: 20px;
-    
+
     &__header {
       display: flex;
       align-items: center;
       justify-content: space-between;
       padding-right: 20px;
     }
-    
+
     &__select-all-action {
       flex-direction: row;
       padding: 3px 10px;
       width: 71px;
       height: 20px;
-      background: #1D54B4;
+      background: #1d54b4;
       border-radius: 5px;
-      
+
       font-family: Roboto;
       font-style: normal;
       font-weight: 500;
@@ -51,7 +51,7 @@
       align-items: center;
       text-align: center;
       letter-spacing: 0.01em;
-      color: #FFFFFF;
+      color: #ffffff;
       cursor: pointer;
     }
 
@@ -64,9 +64,9 @@
       display: flex;
       align-items: center;
       letter-spacing: 0.01em;
-      color: #323C47;
+      color: #323c47;
     }
-    
+
     &__radio-field-group {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -85,13 +85,13 @@
         font-weight: normal;
         font-size: 12px;
         line-height: 14px;
-        color: #323C47;
+        color: #323c47;
         padding: 0px;
         margin-left: 10px;
       }
     }
   }
-  .Button{
+  .Button {
     float: right;
     align-items: center;
     text-align: center;
@@ -102,10 +102,10 @@
   }
 }
 
-.tab-prremove{
-  .ant-table-wrapper{
+.tab-prremove {
+  .ant-table-wrapper {
     width: 480px;
     border: 1px solid #e5e5e5;
-    border-radius:3px;
+    border-radius: 3px;
   }
 }

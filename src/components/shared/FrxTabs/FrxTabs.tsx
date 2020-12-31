@@ -58,7 +58,7 @@ class FrxTabs extends React.Component<TabProps, TabState> {
           aria-label="tabs"
         >
           {this.props.tabList.map((tab: TabInfo, index: number) => (
-            <TabPane
+            <TabPane disabled={tab.disable===true}
               key={tab.id}
               tab={
                 this.props.countIndex === index && this.props.count ? (

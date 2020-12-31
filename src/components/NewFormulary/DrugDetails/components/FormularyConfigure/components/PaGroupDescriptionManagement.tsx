@@ -18,6 +18,7 @@ import {
   getPaGrouptDescriptionVersions,
   getPaGrouptDescription,
 } from "../../../../../../redux/slices/formulary/pa/paActionCreation";
+import { setAdditionalCriteria } from "../../../../../../redux/slices/formulary/advancedSearch/additionalCriteriaSlice";
 
 function mapStateToProps(state) {
   return {
@@ -28,6 +29,9 @@ function mapStateToProps(state) {
     formulary: state?.application?.formulary,
     formulary_lob_id: state?.application?.formulary_lob_id, //comme- 4, medicare-1 , medicate-2, exchnage -3
     formulary_type_id: state?.application?.formulary_type_id, //6
+
+    // additional criteria
+    additionalCriteria: state.additionalCriteria,
   };
 }
 
@@ -37,10 +41,13 @@ function mapDispatchToProps(dispatch) {
     getPaGrouptDescriptions: (a) => dispatch(getPaGrouptDescriptions(a)),
     getPaTypes: (a) => dispatch(getPaTypes(a)),
     getDrugLists: (a) => dispatch(getDrugLists(a)),
-    getPaGrouptDescriptionDetail: (a) => dispatch(getPaGrouptDescriptionDetail(a)),
-    getPaGrouptDescriptionVersions: (a) => dispatch(getPaGrouptDescriptionVersions(a)),
+    getPaGrouptDescriptionDetail: (a) =>
+      dispatch(getPaGrouptDescriptionDetail(a)),
+    getPaGrouptDescriptionVersions: (a) =>
+      dispatch(getPaGrouptDescriptionVersions(a)),
     getPaGrouptDescription: (a) => dispatch(getPaGrouptDescription(a)),
     getPAGroupDetails: (arg) => dispatch(getPAGroupDetails(arg)),
+    setAdditionalCriteria: (a) => dispatch(setAdditionalCriteria(a)),
   };
 }
 
@@ -91,22 +98,35 @@ class PaGroupDescriptionManagement extends React.Component<any, any> {
     this.props.getPaGrouptDescriptionVersions(apiDetails).then((json) => {
       let tmpData = json.payload.data;
       let dataLength = tmpData.length;
-      var result = tmpData.map(function (el) {
-        var element = {};
-        element["value"] = el.value;
-        return element;
-      });
-      let latestVerion = tmpData.length > 0 ? tmpData[dataLength - 1].id_pa_group_description : 0;
-      this.setState({
-        versionList: result,
-        versionTitle: `Group Description ${tmpData[dataLength - 1].value}`,
-        latestVerion: latestVerion,
-      });
+      // var result = tmpData.map(function (el) {
+      //     var element = {};
+      //     element["value"] = el.value;
+      //     return element;
+      // })
+      let latestVerion =
+        tmpData.length > 0
+          ? tmpData[dataLength - 1].id_pa_group_description
+          : 0;
+
       let apiDetails = {};
       apiDetails["lob_type"] = this.props.formulary_lob_id;
       apiDetails["pathParams"] = "/" + latestVerion;
 
-      this.props.getPaGrouptDescription(apiDetails);
+      this.props.getPaGrouptDescription(apiDetails).then((json) => {
+        if (json.payload && json.payload.code === "200") {
+          let payload: any = {
+            additionalCriteriaObject: this.props.additionalCriteria
+              .additionalCriteriaObject,
+            additionalCriteriaBody: this.props.additionalCriteria
+              .additionalCriteriaBody,
+            populateGrid: this.props.additionalCriteria.populateGrid,
+            closeDialog: this.props.additionalCriteria.closeDialog,
+            listItemStatus: { ...this.props.additionalCriteria.listItemStatus },
+          };
+          payload.additionalCriteriaBody = json.payload.data["um_criteria"];
+          this.props.setAdditionalCriteria(payload);
+        }
+      });
 
       this.props.getPAGroupDetails({
         formulary_id: this.props.formulary_id,
@@ -121,6 +141,7 @@ class PaGroupDescriptionManagement extends React.Component<any, any> {
     });
   };
   addNewGroup = () => {
+    this.props.setAdditionalCriteria([]);
     this.setState({
       newGroup: false,
       selectedGrp: false,
@@ -146,7 +167,8 @@ class PaGroupDescriptionManagement extends React.Component<any, any> {
   componentDidMount() {
     let apiDetails = {};
     apiDetails["lob_type"] = this.props.formulary_lob_id;
-    apiDetails["pathParams"] = "/" + this.props?.client_id + "?entity_id=" + this.props?.formulary_id;
+    apiDetails["pathParams"] =
+      "/" + this.props?.client_id + "?entity_id=" + this.props?.formulary_id;
 
     this.props.getPaGrouptDescriptions(apiDetails).then((json) => {
       let tmpData = json.payload.data;
@@ -245,7 +267,11 @@ class PaGroupDescriptionManagement extends React.Component<any, any> {
               <div className="panel header">
                 <span>GROUP DESCRIPTION</span>
                 <Box display="flex" justifyContent="flex-end">
-                  <Button label="+ Add New" className="Button" onClick={this.addNewGroup} />
+                  <Button
+                    label="+ Add New"
+                    className="Button"
+                    onClick={this.addNewGroup}
+                  />
                 </Box>
               </div>
               <div className="inner-container">
@@ -288,8 +314,10 @@ class PaGroupDescriptionManagement extends React.Component<any, any> {
                   {this.state.groupsData.length > 0 &&
                     this.state.groupsData.map((group: any, key: any) =>
                       this.state.searchInput == "" ||
-                      (this.state.searchInput != "" && group.label.indexOf(this.state.searchInput) > -1) ? (
-                        this.state.activeTabIndex == 0 && group.is_archived == false ? (
+                      (this.state.searchInput != "" &&
+                        group.label.indexOf(this.state.searchInput) > -1) ? (
+                        this.state.activeTabIndex == 0 &&
+                        group.is_archived == false ? (
                           <Groups
                             key={key}
                             id={group.id}
@@ -298,7 +326,8 @@ class PaGroupDescriptionManagement extends React.Component<any, any> {
                             selectGroup={this.selectGroup}
                             isSelected={this.state.selectedGroup == group.id}
                           />
-                        ) : this.state.activeTabIndex == 1 && group.is_archived == true ? (
+                        ) : this.state.activeTabIndex == 1 &&
+                          group.is_archived == true ? (
                           <Groups
                             key={key}
                             id={group.id}
@@ -436,4 +465,7 @@ class PaGroupDescriptionManagement extends React.Component<any, any> {
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(PaGroupDescriptionManagement);
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(PaGroupDescriptionManagement);

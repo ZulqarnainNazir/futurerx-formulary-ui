@@ -126,6 +126,7 @@ export const KEY_LIMIT = "limit";
 export const SEARCHKEY = "search_value";
 
 export const TYPE_REPLACE = "replace";
+export const TYPE_APPEND = "append";
 export const TYPE_REMOVE = "remove";
 
 export const buildUrl = ({ refUrl = BASE_URL1, apiDetails }) => {

@@ -1,5 +1,5 @@
 import React from "react";
-import {connect} from "react-redux";
+import { connect } from "react-redux";
 
 import { TabInfo } from "../../models/tab.model";
 import FrxTabs from "../shared/FrxTabs/FrxTabs";
@@ -11,7 +11,14 @@ import MassMaintenance from "./MassMaintenance/MassMaintenance";
 import FormularyDashboardStats from "./../FormularyDashboardStats/FormularyDashboardStats";
 import { getFormularyDetails } from "../../mocks/formulary/formularyDetails";
 import { fetchFormularies } from "../.././redux/slices/formulary/dashboard/dashboardSlice";
-import { setFormulary } from "../.././redux/slices/formulary/application/applicationSlice";
+import {
+  setFormulary,
+  setLocation,
+} from "../.././redux/slices/formulary/application/applicationSlice";
+
+import { fetchSelectedFormulary } from "../.././redux/slices/formulary/setup/setupSlice";
+import { fetchDesignOptions } from "../.././redux/slices/formulary/setup/setupOptionsSlice";
+
 import { fetchFormularyHeader } from "../.././redux/slices/formulary/header/headerSlice";
 import { gridSettingsSlice } from "../.././redux/slices/formulary/gridHandler/gridSettingsSlice";
 import { addNewFormulary } from "../.././redux/slices/formulary/application/applicationSlice";
@@ -50,17 +57,21 @@ const mapStateToProps = (state) => {
 
 function mapDispatchToProps(dispatch) {
   return {
-    fetchFormularies:(a)=>dispatch(fetchFormularies(a)),
-    setFormulary:(arg)=>dispatch(setFormulary(arg)),
-    fetchFormularyHeader: (arg)=>dispatch(fetchFormularyHeader(arg)),
-    setHiddenColumn: (hiddenColumns) => dispatch(gridSettingsSlice.actions.setHiddenColum(hiddenColumns)),
-    clearHiddenColumns: () => dispatch(gridSettingsSlice.actions.clearHiddenColumns(true)),
-    addNewFormulary:(arg)=>dispatch(addNewFormulary(arg)),
+    fetchFormularies: (a) => dispatch(fetchFormularies(a)),
+    setFormulary: (arg) => dispatch(setFormulary(arg)),
+    fetchFormularyHeader: (arg) => dispatch(fetchFormularyHeader(arg)),
+    setHiddenColumn: (hiddenColumns) =>
+      dispatch(gridSettingsSlice.actions.setHiddenColum(hiddenColumns)),
+    clearHiddenColumns: () =>
+      dispatch(gridSettingsSlice.actions.clearHiddenColumns(true)),
+    addNewFormulary: (arg) => dispatch(addNewFormulary(arg)),
+    setLocation: (arg) => dispatch(setLocation(arg)),
+    fetchSelectedFormulary: (a) => dispatch(fetchSelectedFormulary(a)),
+    fetchDesignOptions: (a) => dispatch(fetchDesignOptions(a)),
   };
 }
 
-
-// REFERENCE :: 
+// REFERENCE ::
 // listPayload = {
 //   index: 0,
 //   limit: 10,
@@ -82,11 +93,11 @@ const defaultListPayload = {
   search_value: [],
   sort_by: ["cms_formulary_id"],
   sort_order: ["desc"],
-}
+};
 
 class Formulary extends React.Component<any, any> {
   //TODO Remove
-  snow:boolean = false;
+  snow: boolean = true;
 
   state = {
     activeTabIndex: 0,
@@ -94,7 +105,7 @@ class Formulary extends React.Component<any, any> {
     showTabs: true,
     showMassMaintenance: false,
     showDrugDetails: false,
-    pageSize: 10
+    pageSize: 10,
   };
 
   listPayload: any = {
@@ -107,9 +118,9 @@ class Formulary extends React.Component<any, any> {
     search_value: [],
     sort_by: ["cms_formulary_id"],
     sort_order: ["desc"],
-  }
+  };
 
-  componentDidMount(){
+  componentDidMount() {
     this.props.fetchFormularies(this.listPayload);
   }
 
@@ -122,7 +133,7 @@ class Formulary extends React.Component<any, any> {
       }
       return tab;
     });
-    this.setState({ tabs, activeTabIndex },()=>{
+    this.setState({ tabs, activeTabIndex }, () => {
       this.updateGrid(this.state.activeTabIndex);
     });
   };
@@ -140,10 +151,10 @@ class Formulary extends React.Component<any, any> {
       lob_id = 3;
     }
 
-    this.listPayload = {...defaultListPayload};
+    this.listPayload = { ...defaultListPayload };
     this.listPayload.id_lob = lob_id;
     this.props.fetchFormularies(this.listPayload);
-  }
+  };
 
   addNewFormulary = (id: any) => {
     console.log("***** ADD NEW");
@@ -155,18 +166,30 @@ class Formulary extends React.Component<any, any> {
   };
 
   drugDetailsClickHandler = (id: any) => {
-    console.log("*********************************");
-    let selectedRow:any = null;
-    if(id !== undefined){
-      selectedRow = this.props.formulary_list[id-1];
+    let selectedRow: any = null;
+    if (id !== undefined) {
+      selectedRow = this.props.formulary_list[id - 1];
+      console.log(selectedRow);
+      this.props.clearHiddenColumns();
+      this.setState({
+        showTabs: !this.state.showTabs,
+        showDrugDetails: !this.state.showDrugDetails,
+      });
+      console.log(" Setup Complete : " + selectedRow.is_setup_complete);
+      if (selectedRow && selectedRow.is_setup_complete) {
+        console.log(" Nav to Configure ");
+        this.props.fetchSelectedFormulary(selectedRow?.id_formulary);
+        this.props.fetchDesignOptions({
+          type: selectedRow?.id_formulary_type,
+          id: selectedRow?.id_formulary,
+        });
+        this.props.setLocation(1);
+      } else {
+        this.props.setFormulary(selectedRow);
+        this.props.setLocation(0);
+        console.log(" Nav to Setup ");
+      }
     }
-    console.log(selectedRow);
-    this.props.setFormulary(selectedRow);
-    this.props.clearHiddenColumns();
-    this.setState({
-      showTabs: !this.state.showTabs,
-      showDrugDetails: !this.state.showDrugDetails,
-    });
   };
 
   massMaintenanceCLickHandler = () => {
@@ -175,85 +198,81 @@ class Formulary extends React.Component<any, any> {
       showMassMaintenance: !this.state.showMassMaintenance,
     });
   };
-  
-  onSettingsIconHandler = (hiddenColumn,visibleColumn) => {
+
+  onSettingsIconHandler = (hiddenColumn, visibleColumn) => {
     //console.log(hiddenColumn,visibleColumn);
-    this.props.setHiddenColumn(hiddenColumn)
-  }
+    this.props.setHiddenColumn(hiddenColumn);
+  };
   onApplyFilterHandler = (filters) => {
     const fetchedProps = Object.keys(filters)[0];
-    const fetchedOperator = filters[fetchedProps][0].condition === 'is like' ? 'is_like' : 
-    filters[fetchedProps][0].condition === 'is not' ? 'is_not' : 
-    filters[fetchedProps][0].condition === 'is not like' ? 'is_not_like' : 
-    filters[fetchedProps][0].condition === 'does not exist' ? 'does_not_exist' : 
-    filters[fetchedProps][0].condition;
-    const fetchedValues = filters[fetchedProps][0].value !== '' ? [filters[fetchedProps][0].value.toString()] : [];
-    const newFilters = [{ prop: fetchedProps, operator: fetchedOperator,values: fetchedValues}];
+    const fetchedOperator =
+      filters[fetchedProps][0].condition === "is like"
+        ? "is_like"
+        : filters[fetchedProps][0].condition === "is not"
+        ? "is_not"
+        : filters[fetchedProps][0].condition === "is not like"
+        ? "is_not_like"
+        : filters[fetchedProps][0].condition === "does not exist"
+        ? "does_not_exist"
+        : filters[fetchedProps][0].condition;
+    const fetchedValues =
+      filters[fetchedProps][0].value !== ""
+        ? [filters[fetchedProps][0].value.toString()]
+        : [];
+    const newFilters = [
+      { prop: fetchedProps, operator: fetchedOperator, values: fetchedValues },
+    ];
     this.listPayload.filter = newFilters;
     this.props.fetchFormularies(this.listPayload);
-  }
+  };
   onPageSize = (pageSize) => {
     let id_lob = this.listPayload.id_lob;
-    this.listPayload = {...defaultListPayload};
-    this.listPayload.limit = pageSize
+    this.listPayload = { ...defaultListPayload };
+    this.listPayload.limit = pageSize;
     this.listPayload.id_lob = id_lob;
     this.props.fetchFormularies(this.listPayload);
-  }
+  };
+  formularyListSearch = (categoryObj,subCat) => {
+    let id_lob = this.listPayload.id_lob;
+    this.listPayload = { ...defaultListPayload };
+    this.listPayload.id_lob = null;
+    this.listPayload.search_by = categoryObj;
+    this.listPayload.search_value = subCat!=''?[subCat]:[];
+    this.props.fetchFormularies(this.listPayload);
+  };
   onGridPageChangeHandler = (pageNumber: any) => {
     this.listPayload.index = (pageNumber - 1) * this.listPayload.limit;
     this.props.fetchFormularies(this.listPayload);
-  }
+  };
   onClearFilterHandler = () => {
-    let id_lob = this.listPayload.id_lob
-    this.listPayload = {...defaultListPayload};
+    let id_lob = this.listPayload.id_lob;
+    this.listPayload = { ...defaultListPayload };
     this.listPayload.id_lob = id_lob;
     this.props.fetchFormularies(this.listPayload);
-  }
+  };
   render() {
     return (
-      <div className="formulary-root">
+      <div className="newformulary-container">
         {this.state.showTabs ? (
           <>
-{(this.snow===true)?
-(<div className="snowflakes" aria-hidden="true">
-  <div className="snowflake">
-  ❅
-  </div>
-  <div className="snowflake">
-  ❆
-  </div>
-  <div className="snowflake">
-  ❅
-  </div>
-  <div className="snowflake">
-  ❆
-  </div>
-  <div className="snowflake">
-  ❅
-  </div>
-  <div className="snowflake">
-  ❆
-  </div>
-  <div className="snowflake">
-    ❅
-  </div>
-  <div className="snowflake">
-    ❆
-  </div>
-  <div className="snowflake">
-    ❅
-  </div>
-  <div className="snowflake">
-    ❆
-  </div>
-  <div className="snowflake">
-    ❅
-  </div>
-  <div className="snowflake">
-    ❆
-  </div>
-</div>):null}
+            {this.snow === true ? (
+              <div className="snowflakes" aria-hidden="true">
+                <div className="snowflake">❅</div>
+                <div className="snowflake">❆</div>
+                <div className="snowflake">❅</div>
+                <div className="snowflake">❆</div>
+                <div className="snowflake">❅</div>
+                <div className="snowflake">❆</div>
+                <div className="snowflake">❅</div>
+                <div className="snowflake">❆</div>
+                <div className="snowflake">❅</div>
+                <div className="snowflake">❆</div>
+                <div className="snowflake">❅</div>
+                <div className="snowflake">❆</div>
+              </div>
+            ) : null}
             <FormularyDashboardStats />
+            <div className="formulary-root-divider"></div>
             <FrxTabs
               tabList={this.state.tabs}
               activeTabIndex={this.state.activeTabIndex}
@@ -266,12 +285,15 @@ class Formulary extends React.Component<any, any> {
                 onMassMaintenanceCLick={this.massMaintenanceCLickHandler}
                 onPageSize={this.onPageSize}
                 pageSize={this.listPayload.limit}
-                selectedCurrentPage={(this.listPayload.index/this.listPayload.limit + 1)}
+                selectedCurrentPage={
+                  this.listPayload.index / this.listPayload.limit + 1
+                }
                 onPageChangeHandler={this.onGridPageChangeHandler}
                 onClearFilterHandler={this.onClearFilterHandler}
                 applyFilter={this.onApplyFilterHandler}
                 getColumnSettings={this.onSettingsIconHandler}
                 addNewFormulary={this.addNewFormulary}
+                formularyListSearch={this.formularyListSearch}
               />
             </div>
           </>
@@ -279,7 +301,7 @@ class Formulary extends React.Component<any, any> {
           <DrugDetailsContext.Provider
             value={{ showDetailHandler: () => this.drugDetailsClickHandler }}
           >
-            <DrugDetails data={getFormularyDetails()}/>
+            <DrugDetails data={getFormularyDetails()} />
           </DrugDetailsContext.Provider>
         ) : this.state.showMassMaintenance ? (
           <MassMaintenanceContext.Provider
@@ -293,4 +315,4 @@ class Formulary extends React.Component<any, any> {
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps )(Formulary);
+export default connect(mapStateToProps, mapDispatchToProps)(Formulary);

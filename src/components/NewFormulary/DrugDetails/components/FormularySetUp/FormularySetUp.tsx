@@ -26,6 +26,8 @@ import {
   fetchSubMthsOptions,
   fetchStatesOptions,
 } from "../../../../.././redux/slices/formulary/setup/setupOptionsSlice";
+import { setLocation } from "../../../../.././redux/slices/formulary/application/applicationSlice";
+
 import { ToastContainer } from "react-toastify";
 import showMessage from "../../../Utils/Toast";
 import { trim, throttle } from "lodash";
@@ -615,7 +617,8 @@ class FormularySetUp extends React.Component<any, any> {
           showMessage(`Formulary Updated. ID: ${arg?.payload?.id}`, "success");
         }
         if (arg?.payload?.continue) {
-          this.props.saveAndContinue(1);
+          //this.props.saveAndContinue(1);
+          this.props.setLocation(1);
         }
       }
     });
@@ -680,7 +683,11 @@ class FormularySetUp extends React.Component<any, any> {
     }
   };
 
-  handleCloneMethodPopup;
+  overrideNave() {
+    this.props.setLocation(1);
+  }
+
+  // handleCloneMethodPopup;
 
   render() {
     return (
@@ -765,6 +772,14 @@ class FormularySetUp extends React.Component<any, any> {
                   onClick={() => this.onSave(true)}
                 />
               </Box>
+
+              {/* <Box
+                display="flex"
+                justifyContent="flex-end"
+                className="save-and-continue-btn"
+              >
+                <Button className="tempBtn" label=">" onClick={() => this.overrideNave()} />
+              </Box> */}
             </div>
           </>
         ) : (
@@ -817,6 +832,7 @@ function mapDispatchToProps(dispatch) {
     verifyFormularyName: (a) => dispatch(verifyFormularyName(a)),
     saveFormulary: (a) => dispatch(saveFormulary(a)),
     initCreateUsingClone: (a) => dispatch(initCreateUsingClone(a)),
+    setLocation: (a) => dispatch(setLocation(a)),
   };
 }
 

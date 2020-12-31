@@ -212,6 +212,11 @@
 .tier-grid-remove-container {
   padding: 20px;
 }
+.tier-grid-remove-container {
+  .ant-table-cell .ant-checkbox-wrapper .ant-checkbox-checked .ant-checkbox-inner{
+    background: #1890ff;
+  }
+}
 
 .tier-grid-remove-container .ant-table-wrapper {
   border-top: 1px solid #e5e5e5;
@@ -368,4 +373,14 @@ width: 600px;
 
 .body-checkbox {
   border-spacing: 0px;
+}
+
+
+.tier-drug-grid-header-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr 0.5fr;
+  align-items: baseline;
+  .search-input {
+    padding-left: 28px; 
+  }
 }

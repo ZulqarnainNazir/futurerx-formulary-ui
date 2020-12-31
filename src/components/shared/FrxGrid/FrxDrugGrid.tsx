@@ -13,7 +13,7 @@ import * as _ from "lodash";
 import moment from "moment";
 //react imports
 import * as React from "react";
-import {useState} from 'react';
+// import {useState} from 'react';
 import { Component } from "react";
 //library imports
 import ReactDragListView from "react-drag-listview/lib/index.js";
@@ -41,6 +41,8 @@ import {
   tooltipMock2,
   tooltipMock3,
 } from "../../../mocks/GridDrugLabelTooltip";
+
+
 
 /**
  * @component getResizableTitle
@@ -143,9 +145,9 @@ class FrxDrugGrid extends Component<FrxDrugGridProps<any>, FrxDrugGridState<any>
     showSecondaryColumns: false,
     placement: "left",
     expandedKeys: [],
-    currentPage: this.props.selectedCurrentPage ? this.props.selectedCurrentPage : 1,
+    currentPage: this.props.selectedCurrentPage && !this.props.isDataLoaded ? this.props.selectedCurrentPage : 1,
 
-    goToPageValue: this.props.selectedCurrentPage ? this.props.selectedCurrentPage : 1,
+    goToPageValue: this.props.selectedCurrentPage && !this.props.isDataLoaded ? this.props.selectedCurrentPage : 1,
     settingsAnchor: null,
     settingsMenuItems: [],
     selectedRowKeys: [],
@@ -239,13 +241,74 @@ class FrxDrugGrid extends Component<FrxDrugGridProps<any>, FrxDrugGridState<any>
     });
   };
 
-  componentDidUpdate(previousProps, previousState) {
+  // componentDidUpdate(previousProps, previousState) {
+  //   if (previousProps.columns && this.props.columns) {
+  //     if (previousProps.columns.length !== this.props.columns.length) {
+  //       this.initializeColumns();
+  //     }
+  //   }
+	// }
+	
+	componentDidUpdate(previousProps, previousState) {
     if (previousProps.columns && this.props.columns) {
       if (previousProps.columns.length !== this.props.columns.length) {
+        console.log("update grid");
+        this.initializeColumns();
+      }
+      const previousVisibleColumns = previousState.columns.filter(
+        (c: Column<any>) => !c.hidden
+      );
+      const currentVisibleColumns = this.props.columns.filter(
+        (c: Column<any>) => !c.hidden
+			);
+
+			//for setting prefs
+			if(!this.isGridColumnsSame(previousProps.columns , this.props.columns)){
+				this.initializeColumns()
+			}
+			
+			
+
+      if (
+        previousProps.scroll &&
+        this.props.scroll &&
+        previousProps.scroll.x !== this.props.scroll.x
+      ) {
+        console.log("update grid");
+        const gridWidth =
+          this.gridRef && this.gridRef.current
+            ? this.gridRef.current.clientWidth
+            : DEFAULT_GRID_WIDTH;
+        console.log("grid width ", gridWidth, this.props.scroll.x);
         this.initializeColumns();
       }
     }
-  }
+	}
+	
+	isGridColumnsSame = (
+    oldColumns: Column<any>[],
+    newColumns: Column<any>[]
+  ) => {
+    if (oldColumns === undefined && newColumns === undefined) {
+      return true;
+    }
+    if (oldColumns === undefined || newColumns === undefined) {
+      return false;
+    }
+    if (oldColumns.length !== newColumns.length) {
+      return false;
+    }
+    for (let i = 0; i < oldColumns.length; i++) {
+      if (
+        oldColumns[i].hidden !== newColumns[i].hidden 
+      ) {
+        return false;
+      }
+    }
+    return true;
+  };
+
+
 
   /**
    * swap columns if drag is enabled
@@ -637,19 +700,45 @@ class FrxDrugGrid extends Component<FrxDrugGridProps<any>, FrxDrugGridState<any>
     });
   };
 
-  /**
+  // /**
+  //  * @function sortColumnsByPosition
+  //  * to sort questions by order
+  //  * @author Deepak_T
+  //  */
+  // sortColumnsByPosition = (columns: any[]) => {
+  //   columns.sort((c1: any, c2: any) => {
+  //     if (c1.position > c2.position) return 1;
+  //     else if (c1.position < c2.position) return -1;
+  //     else return 0;
+  //   });
+
+  //   return columns;
+	// };
+	
+	  /**
    * @function sortColumnsByPosition
    * to sort questions by order
    * @author Deepak_T
    */
   sortColumnsByPosition = (columns: any[]) => {
-    columns.sort((c1: any, c2: any) => {
-      if (c1.position > c2.position) return 1;
-      else if (c1.position < c2.position) return -1;
-      else return 0;
-    });
+    // columns.sort((c1: any, c2: any) => {
+    //   if (c1.position > c2.position) return 1;
+    //   else if (c1.position < c2.position) return -1;
+    //   else return 0;
+    // });
 
-    return columns;
+    // return columns;
+    const cols = columns.map((c: Column<any>, idx: number) => {
+      c["position"] = idx + 1;
+      return c;
+    });
+    // cols.sort((c1: any, c2: any) => {
+    //   if (c1.position > c2.position) return 1;
+    //   else if (c1.position < c2.position) return -1;
+    //   else return 0;
+    // });
+
+    return cols;
   };
   /**
    * @function getGridData
@@ -665,7 +754,17 @@ class FrxDrugGrid extends Component<FrxDrugGridProps<any>, FrxDrugGridState<any>
           : this.state.filteredInfo && this.state.sortedInfo
             ? this.state.sortedTable
             : [...this.props.data];*/
-    const data = [...this.props.data];
+		let data = [...this.props.data];
+		if(this.props.isDataLoaded){
+			data =
+      this.state.sortedInfo && !this.state.filteredInfo
+        ? [...this.state.sortedTable]
+        : this.state.filteredInfo && !this.state.sortedInfo
+          ? this.state.filterTable
+          : this.state.filteredInfo && this.state.sortedInfo
+            ? this.state.sortedTable
+            : [...this.props.data];
+		}
     console.log(this.state.filteredInfo)
     // const from = (this.state.currentPage - 1) * +this.state.pageSize + 1;
     // Modify this in future
@@ -721,14 +820,29 @@ class FrxDrugGrid extends Component<FrxDrugGridProps<any>, FrxDrugGridState<any>
     }
 
     if (filters && extra.action === "filter") {
-      console.log(filters)
-      this.props.applyFilter(filters)
-      // this.getDataOnFilter(filters);
+			console.log(filters)
+			if(this.props.isDataLoaded){
+				this.getDataOnFilter(filters);
+			}else{
+				this.props.applyFilter(filters)
+			}
+    
+      
     }
 
     //ADD NOT MULTISORT CHECK
     if (sorter && extra.action === "sort" && !this.state.isMultiSort) {
-      this.sortData(sorter);
+			if(this.props.isDataLoaded){
+				this.sortData(sorter);
+			}else{
+				if(	this.props.applySort){
+					const {columnKey, order} = sorter
+					this.props.applySort(columnKey, order)
+				}
+			
+			}
+		
+      
     }
 
     if (extra.action === "paginate") {
@@ -890,10 +1004,10 @@ class FrxDrugGrid extends Component<FrxDrugGridProps<any>, FrxDrugGridState<any>
    * @param dataRow data row
    * @author Deepak_T
    */
-	rowSelectionChange = (dataRow:any) => {
+	rowSelectionChange = (dataRow:any, event:any) => {
     const isCheckBox =  this.props.isRowSelectorCheckbox;
 		if (this.props.rowSelectionChange)
-			this.props.rowSelectionChange(dataRow ,isCheckBox);
+			this.props.rowSelectionChange(dataRow ,event);
 	}
 
   /**
@@ -1207,9 +1321,9 @@ class FrxDrugGrid extends Component<FrxDrugGridProps<any>, FrxDrugGridState<any>
             ? this.state.sortedTable
             : [...this.props.data];
 
-    const toData = (to < (this.props.totalRowsCount ? this.props.totalRowsCount : data.length)) ? to : (this.props.totalRowsCount ? this.props.totalRowsCount : data.length);
+    const toData = (to < (this.props.totalRowsCount && !this.props.isDataLoaded ? this.props.totalRowsCount : data.length)) ? to : (this.props.totalRowsCount ? this.props.totalRowsCount : data.length);
     
-    const length = this.props.totalRowsCount ? this.props.totalRowsCount : 
+    const length = this.props.totalRowsCount && !this.props.isDataLoaded ? this.props.totalRowsCount : 
       this.state.filterTable && this.state.filterTable.length > 0
         ? this.state.filterTable.length
         : this.props.data.length;
@@ -1223,7 +1337,7 @@ class FrxDrugGrid extends Component<FrxDrugGridProps<any>, FrxDrugGridState<any>
    */
   getTotalPages: () => number = () => {
     let totalRows: any;
-    if(this.props.totalRowsCount){
+    if(this.props.totalRowsCount && !this.props.isDataLoaded){
       totalRows = this.props.totalRowsCount;
     }else{
       totalRows =
@@ -1242,14 +1356,17 @@ class FrxDrugGrid extends Component<FrxDrugGridProps<any>, FrxDrugGridState<any>
    * @author Deepak_T
    */
   getLastPage: () => number = () => {
-    const data =
+    let data =
       this.state.sortedInfo && !this.state.filteredInfo
         ? [...this.state.sortedTable]
         : this.state.filteredInfo && !this.state.sortedInfo
           ? this.state.filterTable
           : this.state.filteredInfo && this.state.sortedInfo
             ? this.state.sortedTable
-            : [...this.props.data];
+						: [...this.props.data];
+		if(!this.props.isDataLoaded){
+			data = [...this.props.data]
+		}
     return Math.ceil(data.length / this.state.pageSize);
   };
 
@@ -1282,7 +1399,10 @@ class FrxDrugGrid extends Component<FrxDrugGridProps<any>, FrxDrugGridState<any>
         sortedTable: [],
       },
       () => {
-        this.props.clearFilterHandler();
+				if(!this.props.isDataLoaded)
+					this.props.clearFilterHandler();
+					
+
         this.updateFilters();
       }
     );
@@ -1343,7 +1463,8 @@ class FrxDrugGrid extends Component<FrxDrugGridProps<any>, FrxDrugGridState<any>
    */
   onPageChange: (p: number) => void = (pageNumber: number) => {
     this.setState({ currentPage: pageNumber, goToPageValue: pageNumber }, () => {
-      this.props.onGridPageChangeHandler(pageNumber)
+			if(!this.props.isDataLoaded)
+      	this.props.onGridPageChangeHandler(pageNumber)
     });
   };
 
@@ -1355,7 +1476,8 @@ class FrxDrugGrid extends Component<FrxDrugGridProps<any>, FrxDrugGridState<any>
    */
   onPageSizeChange: (v: number) => void = (value: number) => {
     this.setState({ pageSize: value, currentPage: 1, goToPageValue: 1 }, () => {
-      this.props.getPerPageItemSize(value)
+			if(!this.props.isDataLoaded)
+      	this.props.getPerPageItemSize(value)
     });
 
   };
@@ -1371,7 +1493,8 @@ class FrxDrugGrid extends Component<FrxDrugGridProps<any>, FrxDrugGridState<any>
       goToPageValue: +this.state.goToPageValue,
       currentPage: +this.state.goToPageValue,
     },() => {
-      this.props.onGridPageChangeHandler(this.state.goToPageValue)
+			if(!this.props.isDataLoaded)
+       this.props.onGridPageChangeHandler(this.state.goToPageValue)
     });
   };
 
@@ -1381,7 +1504,10 @@ class FrxDrugGrid extends Component<FrxDrugGridProps<any>, FrxDrugGridState<any>
    * @author Deepak _T
    */
   onGotToFirstPage: () => void = () => {
-    this.setState({ currentPage: 1, goToPageValue: 1 });
+    this.setState({ currentPage: 1, goToPageValue: 1 }, () => {
+			if(!this.props.isDataLoaded)
+			this.props.onGridPageChangeHandler(this.state.goToPageValue)
+		});
   };
 
   /**
@@ -1401,7 +1527,10 @@ class FrxDrugGrid extends Component<FrxDrugGridProps<any>, FrxDrugGridState<any>
 
     const lastPage = Math.ceil(data.length / this.state.pageSize);
 
-    this.setState({ currentPage: lastPage, goToPageValue: lastPage });
+    this.setState({ currentPage: lastPage, goToPageValue: lastPage }, () => {
+			if(!this.props.isDataLoaded)
+			this.props.onGridPageChangeHandler(this.state.goToPageValue)
+		});
   };
 
   /*
@@ -1746,12 +1875,14 @@ class FrxDrugGrid extends Component<FrxDrugGridProps<any>, FrxDrugGridState<any>
    * TODO:  handle complex object records
    */
   dynamicsort = (property: string, order: string, type: string) => {
+		console.log("property ", property)
     var sort_order = 1;
     if (order === "descend") {
       sort_order = -1;
     }
     if (type === "text") {
       return function (a, b) {
+				console.log("property ", property, a[property], b[property])
         // a should come before b in the sorted order
         if (a[property].toLowerCase() < b[property].toLowerCase()) {
           return -1 * sort_order;
@@ -2059,19 +2190,23 @@ class FrxDrugGrid extends Component<FrxDrugGridProps<any>, FrxDrugGridState<any>
   ==================================================================================================
   */
 
-  /**
+    /**
    * @function onShowColumn
    * to move  column to displayed/selected list from the hidden/available columns list in settings drawer
    * @author Deepak_T
    */
   onShowColumn = (column: Column<any>) => {
+		console.log("column ", column)
     const hiddenColumns = this.state.hiddenColumns.filter(
-      (c) => c.key !== column.key
+      c => c.key !== column.key
     );
     const visibleColumns = [
       ...this.state.visibleColumns,
-      { ...column, hidden: false },
-    ];
+      { ...column, hidden: false }
+		];
+		
+		
+
     this.setState({ hiddenColumns, visibleColumns });
   };
 
@@ -2082,14 +2217,29 @@ class FrxDrugGrid extends Component<FrxDrugGridProps<any>, FrxDrugGridState<any>
    */
   onHideColumn = (column: Column<any>) => {
     const visibleColumns = this.state.visibleColumns.filter(
-      (c) => c.key !== column.key
+      c => c.key !== column.key
     );
     const hiddenColumns = [
       ...this.state.hiddenColumns,
-      { ...column, hidden: true },
-    ];
+      { ...column, hidden: true }
+		];
+		//extra added
+
+	
     this.setState({ hiddenColumns, visibleColumns });
-  };
+	};
+	
+	getSortedHiddenAndDisplayedColumnsByPosition = () => {
+		const cols = [...this.state.visibleColumns, ...this.state.hiddenColumns];
+		  cols.sort((c1: any, c2: any) => {
+      if (c1.position > c2.position) return 1;
+      else if (c1.position < c2.position) return -1;
+      else return 0;
+		});
+		
+		return cols;
+ 
+	}
 
   /**
    * @function onCancelSettings
@@ -2097,11 +2247,21 @@ class FrxDrugGrid extends Component<FrxDrugGridProps<any>, FrxDrugGridState<any>
    * @author Deepak_T
    */
   onCancelSettings = () => {
-    this.setState({
-      showGridSettingsModal: false,
-      visibleColumns: this.state.columns.filter((c) => !c.hidden),
-      hiddenColumns: this.state.columns.filter((c) => c.hidden),
-    });
+    // const cols = [...this.state.visibleColumns, ...this.state.hiddenColumns];
+    const cols = [...this.state.columns];
+    const columns = [...this.sortColumnsByPosition(cols)];
+
+    this.setState(
+      {
+        showGridSettingsModal: false,
+        visibleColumns: this.state.columns.filter(c => !c.hidden),
+        hiddenColumns: this.state.columns.filter(c => c.hidden)
+      },
+      () => {
+				// const changedColumns = _.cloneDeep(this.state.columns)
+        // if (this.props.onColumnChange) this.props.onColumnChange(changedColumns);
+      }
+    );
   };
 
   /**
@@ -2110,16 +2270,23 @@ class FrxDrugGrid extends Component<FrxDrugGridProps<any>, FrxDrugGridState<any>
    * @author Deepak_T
    */
   onApplySettings = () => {
-    const cols = [...this.state.visibleColumns, ...this.state.hiddenColumns];
+		// const cols = [...this.state.visibleColumns, ...this.state.hiddenColumns];
+		const cols = [...this.getSortedHiddenAndDisplayedColumnsByPosition()];
     const columns = [...this.sortColumnsByPosition(cols)];
-    this.setState({
-      columns,
-      visibleColumns: columns.filter((c) => !c.hidden),
-      hiddenColumns: columns.filter((c) => c.hidden),
-      showGridSettingsModal: false,
-    },() => {
-      this.props.getColumnSettings(columns.filter((c) => c.hidden),columns.filter((c) => !c.hidden));
-    });
+
+    this.setState(
+      {
+        columns,
+        visibleColumns: columns.filter(c => !c.hidden),
+        hiddenColumns: columns.filter(c => c.hidden),
+        showGridSettingsModal: false
+      },
+      () => {
+				// const changedCols = this.getSortedHiddenAndDisplayedColumnsByPosition()
+				const changedColumns = _.cloneDeep(this.state.columns)
+        if (this.props.onColumnChange) this.props.onColumnChange(changedColumns);
+      }
+    );
   };
 
   /**
@@ -2129,9 +2296,9 @@ class FrxDrugGrid extends Component<FrxDrugGridProps<any>, FrxDrugGridState<any>
    */
   onCloseSettings = () => {
     this.setState({
-      visibleColumns: this.state.columns.filter((c) => !c.hidden),
-      hiddenColumns: this.state.columns.filter((c) => c.hidden),
-      showGridSettingsModal: !this.state.showGridSettingsModal,
+      visibleColumns: this.state.columns.filter(c => !c.hidden),
+      hiddenColumns: this.state.columns.filter(c => c.hidden),
+      showGridSettingsModal: !this.state.showGridSettingsModal
     });
   };
 
@@ -2292,7 +2459,11 @@ class FrxDrugGrid extends Component<FrxDrugGridProps<any>, FrxDrugGridState<any>
   components = {
     header: {
       cell: ResizableTitle,
-    },
+		},
+		// body: {
+    //   wrapper: CustomTableBody,
+    //   row: CustomRow
+    // }
   };
 
   beginDrag = false;
@@ -2349,7 +2520,10 @@ class FrxDrugGrid extends Component<FrxDrugGridProps<any>, FrxDrugGridState<any>
         // Column configuration not to be checked
         name: record.name,
       }),
-    };
+		};
+		
+
+  
     
 
     return (
@@ -2419,7 +2593,7 @@ class FrxDrugGrid extends Component<FrxDrugGridProps<any>, FrxDrugGridState<any>
                   hideResults={hideResults}
                   filterTable={this.state.filterTable}
                   position={this.props.pagintionPosition}
-                  data={this.props.totalRowsCount ? this.props.totalRowsCount : this.props.data}
+                  data={this.props.totalRowsCount && !this.props.isDataLoaded ? this.props.totalRowsCount : this.props.data}
                   isMultiSort={this.state.isMultiSort}
                   sortedInfo={this.state.sortedInfo}
                   filteredInfo={this.state.filteredInfo}
@@ -2448,14 +2622,22 @@ class FrxDrugGrid extends Component<FrxDrugGridProps<any>, FrxDrugGridState<any>
                 <Table
                   className="frx-grid__grid-block__table-block"
                   rowClassName={(record, index) =>{
-                    return index % 2 === 0
+									
+										if(!record.isDisabled){
+											return index % 2 === 0
                       ? "table-row-white"
                       : "table-row-lightskyblue"
+										}else{
+										
+											return `table-row-disabled ${record["rowStyle"]}`
+										}
+                   
                     }
                   }
                   showSorterTooltip={false}
                   columns={columns}
-                  components={this.components}
+									// components={this.components}
+									components={this.components}
                   dataSource={this.getGridData()}
                   onChange={this.onTableStateChange}
                   loading={this.props.loading}
@@ -2509,12 +2691,19 @@ class FrxDrugGrid extends Component<FrxDrugGridProps<any>, FrxDrugGridState<any>
               ) : (
                   <Table
                     className="frx-grid__grid-block__table-block"
-                    rowClassName={(record, index) => {
-                        return index % 2 === 0
-                          ? "table-row-white"
-                          : "table-row-lightskyblue"
-                      }
-                    }
+										rowClassName={(record, index) =>{
+									
+											if(!record.isDisabled){
+												return index % 2 === 0
+												? "table-row-white"
+												: "table-row-lightskyblue"
+											}else{
+												
+												return `table-row-disabled ${record["rowStyle"]}`
+											}
+										 
+											}
+										}
                     rowSelection={this.props.rowSelection}
                     showSorterTooltip={false}
                     columns={columns}
@@ -2549,12 +2738,12 @@ class FrxDrugGrid extends Component<FrxDrugGridProps<any>, FrxDrugGridState<any>
                   hideResults={hideResults}
                   filterTable={this.state.filterTable}
                   position={this.props.pagintionPosition}
-                  data={this.props.data}
+									data={this.props.totalRowsCount && !this.props.isDataLoaded ? this.props.totalRowsCount : this.props.data}
                   isMultiSort={this.state.isMultiSort}
                   sortedInfo={this.state.sortedInfo}
                   filteredInfo={this.state.filteredInfo}
                   pageSize={this.state.pageSize}
-                  currentPage={this.props.selectedCurrentPage ? this.props.selectedCurrentPage : this.state.currentPage}
+                  currentPage={this.props.selectedCurrentPage && !this.props.isDataLoaded ? this.props.selectedCurrentPage : this.state.currentPage}
                   showTotal={this.getShowTotal()}
                   pages={this.getTotalPages()}
                   lastPage={this.getLastPage()}

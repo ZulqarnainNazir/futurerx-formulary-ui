@@ -6,7 +6,10 @@ import { connect } from "react-redux";
 
 import CustomizedSwitches from "../CustomizedSwitches";
 import FrxMiniTabs from "../../../../../../shared/FrxMiniTabs/FrxMiniTabs";
-import { getTapList, getMiniTabs } from "../../../../../../../mocks/formulary/mock-data";
+import {
+  getTapList,
+  getMiniTabs,
+} from "../../../../../../../mocks/formulary/mock-data";
 import DropDown from "../../../../../../shared/Frx-components/dropdown/DropDownMap";
 import { Grid } from "@material-ui/core";
 import { Row, Col, Space } from "antd";
@@ -37,6 +40,7 @@ function mapStateToProps(state) {
     current_formulary: state.application.formulary,
     paData: state.paReducer.data,
     formulary_lob_id: state?.application?.formulary_lob_id,
+    configureSwitch: state.switchReducer.configureSwitch,
   };
 }
 
@@ -49,7 +53,11 @@ class PA extends React.Component<any, any> {
     activeTabIndex: 0,
     tabs: [
       { id: 1, text: "Replace", disabled: false },
-      { id: 2, text: "Append", disabled: this.props.formulary_lob_id == 1 ? true : false },
+      {
+        id: 2,
+        text: "Append",
+        disabled: this.props.formulary_lob_id == 1 ? true : false,
+      },
       { id: 3, text: "Remove", disabled: false },
     ],
     panelGridTitle: [
@@ -105,6 +113,28 @@ class PA extends React.Component<any, any> {
     debugger;
     console.log("TIER: componentWillReceiveProps", nextProps);
 
+    if (nextProps.configureSwitch) {
+      this.setState({
+        tabs: [
+          { id: 1, text: "Replace", disabled: true },
+          { id: 2, text: "Append", disabled: true },
+          { id: 3, text: "Remove", disabled: true },
+        ],
+        activeTabIndex: 0,
+      });
+    } else {
+      this.setState({
+        tabs: [
+          { id: 1, text: "Replace", disabled: false },
+          {
+            id: 2,
+            text: "Append",
+            disabled: this.props.formulary_lob_id == 1 ? true : false,
+          },
+          { id: 3, text: "Remove", disabled: false },
+        ],
+      });
+    }
     let tmpData = nextProps.paData;
     if (tmpData && Array.isArray(tmpData) && tmpData.length > 0) {
       var tierOption: any[] = [];
@@ -133,29 +163,32 @@ class PA extends React.Component<any, any> {
   }
 
   componentDidMount() {
-    this.props.getPaSummary(this.props.current_formulary.id_formulary).then((json) => {
-      //
+    this.props
+      .getPaSummary(this.props.current_formulary.id_formulary)
+      .then((json) => {
+        //
 
-      let tmpData = json.payload && json.payload.result ? json.payload.result : [];
+        let tmpData =
+          json.payload && json.payload.result ? json.payload.result : [];
 
-      var rows = tmpData.map(function (el) {
-        var curRow = [
-          el["pa_type_name"],
-          el["total_group_description_count"],
-          el["added_group_description_count"],
-          el["removed_group_description_count"],
-          el["total_drug_count"],
-          el["added_drug_count"],
-          el["removed_drug_count"],
-        ];
-        return curRow;
+        var rows = tmpData.map(function (el) {
+          var curRow = [
+            el["pa_type_name"],
+            el["total_group_description_count"],
+            el["added_group_description_count"],
+            el["removed_group_description_count"],
+            el["total_drug_count"],
+            el["added_drug_count"],
+            el["removed_drug_count"],
+          ];
+          return curRow;
+        });
+
+        console.log(rows);
+        this.setState({
+          panelGridValue: rows,
+        });
       });
-
-      console.log(rows);
-      this.setState({
-        panelGridValue: rows,
-      });
-    });
 
     this.props.getDrugLists("0").then((json) => {
       //
@@ -192,24 +225,34 @@ class PA extends React.Component<any, any> {
                           <span>R</span>
                         </div>
                         <div className="switch-box">
-                          <CustomizedSwitches leftTitle="Modify" rightTitle="view all" />
+                          <CustomizedSwitches
+                            leftTitle="Modify"
+                            rightTitle="view all"
+                          />
                         </div>
                         <div className="mini-tabs">
                           <FrxMiniTabs
                             tabList={this.state.tabs}
                             activeTabIndex={this.state.activeTabIndex}
                             onClickTab={this.onClickTab}
+                            disabled={this.props.configureSwitch}
                           />
                         </div>
                         <div>
                           <div className="PA-list">
                             <span className="list-label">LIST</span>
-                            <DropDown options={this.state.paList} valueProp="text" dispProp="text" />
+                            <DropDown
+                              options={this.state.paList}
+                              valueProp="text"
+                              dispProp="text"
+                            />
                           </div>
                         </div>
                       </div>
                     </div>
-                    <div className="pa-tab-content">{this.renderTabContent()}</div>
+                    <div className="pa-tab-content">
+                      {this.renderTabContent()}
+                    </div>
                   </div>
                 </Grid>
               </Grid>

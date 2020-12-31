@@ -449,6 +449,13 @@
             border-radius: 3px;
             color: #219653;
           }
+          &.green-fill {
+            background: #219653;
+            border: 1px solid #219653;
+            box-sizing: border-box;
+            border-radius: 3px;
+            color: #ffffff;
+          }
           .group {
             font-family: Roboto;
             font-style: normal;
@@ -616,14 +623,18 @@
   .white-bg {
     background: white;
   }
+  .category-class-header {
+    justify-content: flex-end;
+  }
   .header {
     display: flex;
+    // justify-content: flex-end;
     height: 52px;
     border-bottom: 1px solid #e5e5e5;
     font-size: 12px;
     color: #1d54b4;
     font-weight: $font-weight-500;
-    padding: 0 20px;
+    padding: 0 10px;
     align-items: center;
     text-transform: uppercase;
     &.panel {
@@ -638,6 +649,16 @@
     }
     .pr-10 {
       padding-right: 10px;
+    }
+    .advance-search-btn {
+      margin-left: 13px;
+    }
+    .header-dropdown {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+      margin-left: 13px;
     }
     .Button {
       margin: 0 0 0 10px;
@@ -944,7 +965,6 @@
 
 .pa-new-group-form {
   .group-padding {
-    border: 2px solid red;
     padding-right: 20px !important;
   }
 

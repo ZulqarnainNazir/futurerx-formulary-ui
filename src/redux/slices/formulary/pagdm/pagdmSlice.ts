@@ -90,8 +90,10 @@ export const savePAGDM = createAsyncThunk(
       dispatch(getPending());
       const response = await savePaGroup(arg);
       dispatch(getSuccess(response));
+      return response;
     } catch (err) {
       dispatch(getFailed(err));
+      return err;
     }
   }
 );
@@ -116,6 +118,7 @@ export const cleanMessage = createAsyncThunk(
       success: arg.success,
     }
     dispatch(cleanMessages(obj));
+    
   }
 );
 
@@ -126,8 +129,10 @@ export const deleteGroupDescription = createAsyncThunk(
       dispatch(getPending());
       const response = await deletePaGroup(arg);
       dispatch(getSuccess(response));
+      return response;
     } catch (err) {
       dispatch(getFailed(err));
+      return err;
     }
   }
 );
@@ -139,8 +144,10 @@ export const cloneGroupDescription = createAsyncThunk(
       dispatch(getPending());
       const response = await clonePaGroup(arg);
       dispatch(getSuccess(response));
+      return response;
     } catch (err) {
       dispatch(getFailed(err));
+      return err;
     }
   }
 );
@@ -152,8 +159,10 @@ export const archiveGroupDescription = createAsyncThunk(
       dispatch(getPending());
       const response = await archivePaGroup(arg);
       dispatch(getSuccess(response));
+      return response;
     } catch (err) {
       dispatch(getFailed(err));
+      return err;
     }
   }
 );
@@ -165,8 +174,10 @@ export const newVersionGroupDescription = createAsyncThunk(
       dispatch(getPending());
       const response = await newVersionPaGroup(arg);
       dispatch(getSuccess(response));
+      return response;
     } catch (err) {
       dispatch(getFailed(err));
+      return err;
     }
   }
 );
