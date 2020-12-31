@@ -107,9 +107,9 @@ class DrugDetailPR extends React.Component<any, any> {
     },
     data: [],
     tabs: [
-      { id: 1, text: "Replace" },
-      { id: 2, text: "Append" },
-      { id: 3, text: "Remove" },
+      { id: 1, text: "Replace", disabled: false },
+      { id: 2, text: "Append", disabled: false },
+      { id: 3, text: "Remove", disabled: false },
     ],
     prSettings: [],
     prSettingsStatus: {
@@ -172,7 +172,7 @@ class DrugDetailPR extends React.Component<any, any> {
       ];
       apiDetails["messageBody"] = {};
 
-      if (this.state.activeTabIndex === 0) {
+      if (this.state.activeTabIndex === 0 || this.state.activeTabIndex === 1) {
         // let patientResidences: any[] = [];
         // if(this.state.prSettings.length > 0) {
         //   patientResidences = this.state.prSettings.map(e => e?.key);
@@ -192,7 +192,7 @@ class DrugDetailPR extends React.Component<any, any> {
         apiDetails["pathParams"] = this.props?.formulary_id + "/" +  getLobCode(this.props.formulary_lob_id) + "/" + prConstants.TYPE_REPLACE;
         console.log("The API Details - ", apiDetails);
 
-        // Replace Drug method call
+        // Replace and Append Drug method call
         this.props.postReplacePRDrug(apiDetails).then((json) => {
           if (json.payload && json.payload.code && json.payload.code === "200") {
             showMessage("Success", "success");
@@ -468,9 +468,11 @@ class DrugDetailPR extends React.Component<any, any> {
       return tab;
     });
 
-    if (activeTabIndex === 2) {
-      this.getPRRemoveSettings(true);
-    }
+    // if (activeTabIndex === 2) {
+    //   this.getPRRemoveSettings(true);
+    // }
+
+    this.refreshSelections();
 
     if(this.props.configureSwitch) {
       this.getPRDrugsList();
@@ -516,6 +518,14 @@ class DrugDetailPR extends React.Component<any, any> {
     this.setState({ prSettingsStatus, showGrid: false }, () => {console.log("THe Pr Settings Status = ", this.state.prSettingsStatus)});
   };
 
+  refreshSelections = () => {
+    if(this.state.activeTabIndex === 0 || this.state.activeTabIndex === 1) {
+      this.getPRSettings();
+    } else if (this.state.activeTabIndex === 2) {
+      this.getPRRemoveSettings(true);
+    }
+  }
+
   serviceSettingsChecked = (e) => {
     const { prSettings } = this.state;
 
@@ -543,7 +553,7 @@ class DrugDetailPR extends React.Component<any, any> {
   };
 
   validateGLForm = () => {
-    if(this.state.activeTabIndex === 0) {
+    if(this.state.activeTabIndex === 0 || this.state.activeTabIndex === 1) {
       let rpSelected = this.state.prSettings.filter(e => e.isChecked);
       return !(rpSelected.length === 0);
 
@@ -585,7 +595,7 @@ class DrugDetailPR extends React.Component<any, any> {
     } else {
       this.setState({tabs:[
         { id: 1, text: "Replace", disabled:false },
-        { id: 2, text: "Append", disabled:true },
+        { id: 2, text: "Append", disabled:false },
         { id: 3, text: "Remove", disabled:false },
       ]});
     }

@@ -115,9 +115,9 @@ class DrugDetailICD extends React.Component<any, any> {
     selectedDrugs: Array(),
     drugData: Array(),
     tabs: [
-      { id: 1, text: "Replace" },
-      { id: 2, text: "Append" },
-      { id: 3, text: "Remove" },
+      { id: 1, text: "Replace", disabled: false },
+      { id: 2, text: "Append", disabled: false },
+      { id: 3, text: "Remove", disabled: false },
     ],
     removeTabsData:[],
     icdRemoveCheckedList:[],
@@ -184,7 +184,7 @@ class DrugDetailICD extends React.Component<any, any> {
       covered: isCovered,
     };
 
-    this.setState({ icdRemoveSettingsStatus, showGrid: false });
+    this.setState({ icdRemoveSettingsStatus, showGrid: false, icdRemoveCheckedList: [] });
     this.getICDCriteriaList(isCovered)
   }
 
@@ -198,8 +198,8 @@ class DrugDetailICD extends React.Component<any, any> {
         { key: icdConstants.KEY_ENTITY_ID, value: this.props?.formulary_id },
       ];
 
-      if (this.state.activeTabIndex === 0) {
-        // Replace Drug method call
+      if (this.state.activeTabIndex === 0 || this.state.activeTabIndex === 1) {
+        // Replace and Append Drug method call
         this.rpSavePayload.selected_drug_ids = this.state.selectedDrugs;
         this.rpSavePayload.icd_limits.lookback_days = +this.state.lookBackDays;
         this.rpSavePayload.icd_limits.icds = this.state.selectedList;
@@ -413,6 +413,15 @@ class DrugDetailICD extends React.Component<any, any> {
     this.getICDCriteriaList(true);
   }
 
+  refreshSelections = () => {
+    if(this.state.activeTabIndex === 0 || this.state.activeTabIndex === 1) {
+      // this.getPOSSettings();
+      // this.setState({ selectedList: [], lookBackDays: 0 })
+    } else if (this.state.activeTabIndex === 2) {
+      this.getICDCriteriaList(true);
+    }
+  }
+
   onClickTab = (selectedTabIndex: number) => {
     let activeTabIndex = 0;
 
@@ -423,9 +432,11 @@ class DrugDetailICD extends React.Component<any, any> {
       return tab;
     });
 
-    if (activeTabIndex === 2) {
-      this.getICDCriteriaList(true);
-    }
+    this.refreshSelections();
+
+    // if (activeTabIndex === 2) {
+    //   this.getICDCriteriaList(true);
+    // }
 
     if(this.props.configureSwitch) {
       this.getICDDrugsList();
@@ -537,24 +548,6 @@ class DrugDetailICD extends React.Component<any, any> {
       lookBackDays:lookDays
     })
   }
-
-  // onApplyFilterHandler = (filters) => {
-  //   console.log("------The FIlters = ", filters)
-  //   const fetchedProps = Object.keys(filters)[0];
-  //   console.log("The Fetched Props = ", fetchedProps);
-  //   const fetchedOperator = filters[fetchedProps][0].condition === 'is like' ? 'is_like' : 
-  //   filters[fetchedProps][0].condition === 'is not' ? 'is_not' : 
-  //   filters[fetchedProps][0].condition === 'is not like' ? 'is_not_like' : 
-  //   filters[fetchedProps][0].condition === 'does not exist' ? 'does_not_exist' : 
-  //   filters[fetchedProps][0].condition;
-  //   const fetchedValues = filters[fetchedProps][0].value !== '' ? [filters[fetchedProps][0].value.toString()] : [];
-  //   const newFilters = [{ prop: fetchedProps, operator: fetchedOperator,values: fetchedValues}];
-  //   console.log("------THe New Filters = ", newFilters);
-  //   this.listPayload.filter = newFilters;
-  //   // this.props.fetchFormularies(this.listPayload);
-  //   console.log("THe List Payload inside APPLy filter Handler = ", this.listPayload);
-  //   this.getICDDrugsList({ index: this.listPayload.index, limit: this.listPayload.limit, listPayload: this.listPayload });
-  // }
   
   onApplyFilterHandler = (filters) => {
     this.listPayload.filter = Array();
@@ -598,7 +591,7 @@ class DrugDetailICD extends React.Component<any, any> {
     } else {
       this.setState({tabs:[
         { id: 1, text: "Replace", disabled:false },
-        { id: 2, text: "Append", disabled:true },
+        { id: 2, text: "Append", disabled:false },
         { id: 3, text: "Remove", disabled:false },
       ]});
     }

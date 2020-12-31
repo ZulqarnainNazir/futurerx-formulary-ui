@@ -1,6 +1,7 @@
 import React from "react";
 import { connect } from "react-redux";
 import { filter } from "lodash";
+import { ToastContainer } from "react-toastify";
 import PanelHeader from "../../../../shared/Frx-components/panel-header/PanelHeader";
 import PanelGrid from "../../../../shared/Frx-components/panel-grid/PanelGrid";
 import CustomizedSwitches from "../FormularyConfigure/components/CustomizedSwitches";
@@ -70,9 +71,9 @@ class DrugDetailFFF extends React.Component<any, any> {
     columns: null,
     data: [],
     tabs: [
-      { id: 1, text: "Replace" },
-      { id: 2, text: "Append" },
-      { id: 3, text: "Remove" },
+      { id: 1, text: "Replace", disabled: false  },
+      { id: 2, text: "Append", disabled: false  },
+      { id: 3, text: "Remove", disabled: false  },
     ],
     listCount: 0,
     selectedDrugs: Array(),
@@ -127,13 +128,13 @@ class DrugDetailFFF extends React.Component<any, any> {
       ];
       apiDetails["messageBody"] = {};
 
-      if (this.state.activeTabIndex === 0) {
+      if (this.state.activeTabIndex === 0 || this.state.activeTabIndex === 1) {
         this.rpSavePayload.selected_drug_ids = this.state.selectedDrugs
         apiDetails["messageBody"] = this.rpSavePayload;
         apiDetails["pathParams"] = this.props?.formulary_id + "/" +  getLobCode(this.props.formulary_lob_id) + "/" + fffConstants.TYPE_REPLACE;
         console.log("The API Details - ", apiDetails);
 
-        // Replace Drug method call
+        // Replace and Append Drug method call
         this.props.postReplaceFFFDrug(apiDetails).then((json) => {
           if (json.payload && json.payload.code && json.payload.code === "200") {
             showMessage("Success", "success");
@@ -331,7 +332,7 @@ class DrugDetailFFF extends React.Component<any, any> {
 
     console.log("The Active tab index = ", activeTabIndex)
 
-    if(activeTabIndex === 0) {
+    if(activeTabIndex === 0 || activeTabIndex === 1) {
       this.listPayload.selected_criteria_ids = [];
       this.getFFFDrugsList({ listPayload: this.listPayload });
     } else if(activeTabIndex === 2) {
@@ -382,9 +383,9 @@ class DrugDetailFFF extends React.Component<any, any> {
       this.getFFFDrugsList();
     } else {
       this.setState({tabs:[
-        { id: 1, text: "Replace", disabled:false },
-        { id: 2, text: "Append", disabled:true },
-        { id: 3, text: "Remove", disabled:false },
+        { id: 1, text: "Replace", disabled: false },
+        { id: 2, text: "Append", disabled: false },
+        { id: 3, text: "Remove", disabled: false },
       ]});
     }
 
@@ -510,6 +511,7 @@ class DrugDetailFFF extends React.Component<any, any> {
             />
           ) : null}
         </div>
+        <ToastContainer />
       </>
     );
   }
