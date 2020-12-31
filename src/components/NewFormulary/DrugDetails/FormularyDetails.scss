@@ -113,6 +113,10 @@
   display: flex;
   justify-content: space-around;
 
+  .formulary-type-dropdown {
+    background: transparent !important;
+  }
+
   .version-dd {
     width: 295px;
     border-right: 1px solid #80c483;
