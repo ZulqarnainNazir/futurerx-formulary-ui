@@ -29,6 +29,7 @@ import FrxDrugGridContainer from "../../../../../shared/FrxGrid/FrxDrugGridConta
 import { formatTimeStr } from "antd/lib/statistic/utils";
 import showMessage from "../../../../Utils/Toast";
 import { KeyboardReturnOutlined } from "@material-ui/icons";
+import { ToastContainer } from 'react-toastify';
 
 function mapStateToProps(state) {
   return {
@@ -515,7 +516,7 @@ function PAGroupHeader(props: any) {
             popuptitle={props.popuptitle}
           />
         </STAlertDialog>
-      ) : null}
+      ) : <ToastContainer/>}
 
       <DialogPopup
         showCloseIcon={true}
