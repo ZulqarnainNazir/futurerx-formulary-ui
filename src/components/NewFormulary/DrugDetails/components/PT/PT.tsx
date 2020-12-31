@@ -111,9 +111,9 @@ class DrugDetailPT extends React.Component<any, any> {
     columns: null,
     data: [],
     tabs: [
-      { id: 1, text: "Replace" },
-      { id: 2, text: "Append" },
-      { id: 3, text: "Remove" },
+      { id: 1, text: "Replace", disabled: false },
+      { id: 2, text: "Append", disabled: false },
+      { id: 3, text: "Remove", disabled: false },
     ],
     ptSettingsStatus: {
       type: "covered",
@@ -199,8 +199,8 @@ class DrugDetailPT extends React.Component<any, any> {
         { key: ptConstants.KEY_ENTITY_ID, value: this.props?.formulary_id },
       ];
 
-      if (this.state.activeTabIndex === 0) {
-        // Replace Drug method call
+      if (this.state.activeTabIndex === 0 || this.state.activeTabIndex === 1) {
+        // Replace and Append Drug method call
         this.rpSavePayload.selected_drug_ids = this.state.selectedDrugs;
         this.rpSavePayload.prescriber_taxonomies = this.state.selectedList;
         this.rpSavePayload.breadcrumb_code_value = "PRTX";
@@ -298,6 +298,14 @@ class DrugDetailPT extends React.Component<any, any> {
 
     this.setState({ ptSettingsStatus, showGrid: false });
   };
+
+  refreshSelections = () => {
+    if(this.state.activeTabIndex === 0 || this.state.activeTabIndex === 1) {
+      this.setState({ selectedList: [] });
+    } else if (this.state.activeTabIndex === 2) {
+      this.getPTCriteriaList(true);
+    }
+  }
   
   onApplyFilterHandler = (filters) => {
     this.listPayload.filter = Array();
@@ -574,9 +582,11 @@ class DrugDetailPT extends React.Component<any, any> {
       return tab;
     });
 
-    if (activeTabIndex === 2) {
-      this.getPTCriteriaList(true);
-    }
+    this.refreshSelections();
+
+    // if (activeTabIndex === 2) {
+    //   this.getPTCriteriaList(true);
+    // }
 
     if(this.props.configureSwitch) {
       this.getPTDrugsList();
@@ -635,7 +645,7 @@ class DrugDetailPT extends React.Component<any, any> {
     } else {
       this.setState({tabs:[
         { id: 1, text: "Replace", disabled:false },
-        { id: 2, text: "Append", disabled:true },
+        { id: 2, text: "Append", disabled:false },
         { id: 3, text: "Remove", disabled:false },
       ]});
     }
