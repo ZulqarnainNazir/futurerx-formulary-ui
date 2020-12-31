@@ -262,19 +262,32 @@ function PAGroupHeader(props: any) {
       .then((json) => {
         let apiDetails = {};
         apiDetails["lob_type"] = props.formulary_lob_id;
-        apiDetails["pathParams"] = "/" + props.client_id;
-        props.getPaGrouptDescriptions(apiDetails);
+        apiDetails["pathParams"] = "/" + props.client_id + "?entity_id=" + props?.formulary_id;
+        props.getPaGrouptDescriptions(apiDetails).then((json) => {
+          const groupList = json?.payload?.data;
+          const groupListLength = Object.keys(groupList).length;
+          const id_pa_group_description = groupListLength>0?groupList[0].id_base_pa_group_description:0;
+          apiDetails["pathParams"] = "/" + id_pa_group_description;
+          props.getPaGrouptDescriptionVersions(apiDetails).then((json) => {
+            const response = json.payload.data
+            const verLength = Object.keys(response).length;
+            const isEditable = response[verLength - 1].is_setup_complete;
+            const latestVerion = response[verLength - 1].id_pa_group_description;
+            const value = response[verLength - 1].value;
+            setPanelColor(isEditable ? '-green' : '')
+            setVersion(response)
+            setPlaceHolder(value)
 
-        apiDetails["pathParams"] = "/" + props.saveGdm.current_group_id;
-        props.getPaGrouptDescriptionVersions(apiDetails).then((json) => {
-          console.log(json);
-          setVersion(json.payload.data);
-          let v = props.version;
+            let apiDetails= {};
+            apiDetails["lob_type"] = props.formulary_lob_id;
+            apiDetails['pathParams'] = '/'+latestVerion;
+            props.getPaGrouptDescription(apiDetails);
+            props.getPaTypes(props.saveGdm.formulary_id)
+
+          });
         });
-        //current_group_des_id
-        apiDetails["pathParams"] = "/" + props.saveGdm.current_group_id;
-        //props.getPaGrouptDescription(apiDetails);
-        props.getPaTypes(props.saveGdm.formulary_id);
+
+        
         if (json?.payload?.status && json?.payload?.status != 200) {
           if(json?.payload?.data?.formularies && json?.payload?.data?.formularies?.length>0){
             let errs = ''
@@ -387,6 +400,7 @@ function PAGroupHeader(props: any) {
           props.getPaTypes(props.saveGdm.formulary_id);
           setOpen(false);
         });
+               
         if (json?.payload?.status && json?.payload?.status != 200) {
           if(json?.payload?.data?.formularies && json?.payload?.data?.formularies?.length>0){
             let errs = ''
