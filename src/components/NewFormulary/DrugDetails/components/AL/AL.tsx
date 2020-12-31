@@ -181,8 +181,8 @@ class DrugDetailAL extends React.Component<any, any> {
       {
         minimumVal: "",
         maximumVal: "",
-        minimumType: "IO",
-        maximumType: "IO",
+        minimumType: "",
+        maximumType: "",
         index: 0,
         covered: true,
       }
@@ -244,8 +244,8 @@ class DrugDetailAL extends React.Component<any, any> {
     {
       minimumVal: "",
       maximumVal: "",
-      minimumType: "IO",
-      maximumType: "IO",
+      minimumType: "",
+      maximumType: "",
       index: 0,
       covered: true,
     }
@@ -408,8 +408,23 @@ class DrugDetailAL extends React.Component<any, any> {
   };
 
   refreshSelections = () => {
+    console.log("----Inside refresh Selection-------")
     if(this.state.activeTabIndex === 0 || this.state.activeTabIndex === 1) {
-      // this.getPOSSettings();
+      
+      let alSettings = [
+        {
+          minimumVal: "",
+          maximumVal: "",
+          minimumType: "",
+          maximumType: "",
+          index: 0,
+          covered: true,
+        }
+      ];
+
+      this.formData2 = alSettings
+
+      this.setState({ alSettings }, () => console.log("The Al Settings = ", this.state.alSettings, " THe Form Data 2 = ", this.formData2));
     } else if (this.state.activeTabIndex === 2) {
       this.getALCriteriaList(true);
     }
@@ -417,71 +432,35 @@ class DrugDetailAL extends React.Component<any, any> {
 
   handleMinChange = (e, args) => {
     console.log("THe Handle Min change Arguments = ", args, " -- THe Event = ", e.target.value, " -THe formdata 2 = ", this.formData2);
-    // console.log("The FormData 2 = ", this.formData2);
-    // for(let i=0; this.state.alSettings.length; i++) {
-    //   if(this.state.alSettings[i]?.index === args){
-        this.formData2[args].minimumVal = e.target.value
-    //   }
-    // }
-    // console.log("The Min input Value = ", e);
-    // console.log("THe Min input value = ", e.target?.value);
-    // this.formData1[index].minimumVal = e.target?.value;
-    // this.formData1[index].index = index;
-    // this.setState({ formData: this.formData1, showApply: true });
+    this.formData2[args].minimumVal = e.target.value
   };
 
   handleMaxChange = (e, args) => {
     console.log("THe Handle Max change Arguments = ", args, " -- THe Event = ", e.target.value, " -THe formdata 2 = ", this.formData2);
     this.formData2[args].maximumVal = e.target.value
-    // for(let i=0; this.formData2.length; i++) {
-    //   if(this.formData2[i].index === args){
-    //     this.formData2[i].maximumVal = e.target.value
-    //   }
-    // }
-    // console.log("The Max input Value = ", e);
-    // console.log("THe Max input value = ", e.target?.value);
-    // this.formData1[index].maximumVal = e.target?.value;
-    // this.formData1[index].index = index;
-    // this.setState({ formData: this.formData1, showApply: true });
   };
 
   onMinChangeHandler = (e, args) => {
     console.log("THe ON Min change Arguments = ", args, " -- THe Event = ", e);
     this.formData2[args].minimumType = (e === "Greater Than") ? "GT" : "IO" ;
-    // console.log("The ON MIN Change Handler data = ", e);
-    // console.log("The on MIN Change Index data = ", index);
-    // this.formData1[index].minimumType = (e === "Greater Than") ? "GT" : "IO" ;
-    // this.formData1[index].index = index;
-    // this.setState({ formData: this.formData1 });
   };
 
   onMaxChangeHandler = (e, args) => {
     console.log("THe ON MAx change Arguments = ", args, " -- THe Event = ", e);
     this.formData2[args].maximumType = (e === "Less Than") ? "LT" : "IO" ;
-    // console.log("The ON MAX Change Handler data = ", e);
-    // console.log("The on MAX Change Index data = ", index);
-    // this.formData1[index].maximumType = (e === "Less Than") ? "LT" : "IO" ;
-    // this.formData1[index].index = index;
-    // this.setState({ formData: this.formData1 });
   }
 
   handleStatus = (key: string, args) => {
     const COVERED = "covered";
     const isCovered: boolean = key === COVERED ? true : false;
-    // let posSettingsStatus = {
-    //   type: key,
-    //   covered: isCovered,
-    // };
-    console.log("The HandleStatus Key = ", key)
-    console.log("The HandleStatus args = ", args);
-    this.formData2[args].covered = isCovered;
-    this.setState({ alSettings: this.formData2 });
+    for(let i=0; i<this.formData2.length; i++) {
+      this.formData2[i].covered = isCovered;
+    }
 
-    // this.setState({ posSettingsStatus, showGrid: false });
+    this.setState({ alSettings: this.formData2 });
   };
 
   coveredHandler = (e, index) => {
-    // this.formData1[index].covered = e.value === "covered" ? true : false;
     let covered = e.value === "covered" ? true : false;
     this.formData1.forEach(ele => {
       ele.covered = covered
@@ -489,11 +468,6 @@ class DrugDetailAL extends React.Component<any, any> {
     console.log("The covered formData1 = ", this.formData1);
     this.setState({ formData: this.formData1 });
   }
-
-  // showGrid = () => {
-  //   this.getALDrugsList();
-  //   console.log("The State of the Tab = ", this.state);
-  // }
 
   getALSummary = () => {
     let apiDetails = {};
@@ -527,12 +501,6 @@ class DrugDetailAL extends React.Component<any, any> {
     apiDetails["pathParams"] = this.props?.formulary_id;
     apiDetails["keyVals"] = [{ key: alConstants.KEY_ENTITY_ID, value: this.props?.formulary_id }];
     apiDetails["messageBody"] = {};
-    // apiDetails["messageBody"]["is_advance_search"] = false;
-    // apiDetails["messageBody"]["filter"] = [];
-    // apiDetails["messageBody"]["search_key"] = "";
-    // apiDetails["messageBody"]["selected_criteria_ids"] = [];
-    // apiDetails["messageBody"]["not_covered"] = {};
-    // apiDetails["messageBody"]["is_covered"] = this.state.isCovered;
     this.alCriteriaPayload.is_covered = isCovered
     apiDetails['messageBody'] = this.alCriteriaPayload;
     console.log("The Api Details for Criteria Request = ", apiDetails);
@@ -583,7 +551,6 @@ class DrugDetailAL extends React.Component<any, any> {
 
     let listCount = 0;
     this.props.getDrugDetailsALList(apiDetails).then((json) => {
-      // let tmpData = json.payload.result;
       let tmpData = json.payload && json.payload.result ? json.payload.result : [];
       listCount = json.payload?.count;
       var data: any[] = [];
@@ -628,24 +595,8 @@ class DrugDetailAL extends React.Component<any, any> {
   }
 
   componentDidMount() {
-    // const data = getDrugDetailData();
-    // const columns = getDrugDetailsColumnAL();
-    // this.setState({
-    //   columns: columns,
-    //   data: data,
-    // });
     this.getALSummary();
     this.getALCriteriaList(true);
-  
-    // let newAlSettings: initialFormData = {
-    //   minimumVal: "",
-    //   maximumVal: "",
-    //   minimumType: "IO",
-    //   maximumType: "IO",
-    //   index: 0,
-    //   covered: true,
-    // }
-    // this.setState({ alSettings: newAlSettings });
   }
 
   onClickTab = (selectedTabIndex: number) => {
@@ -659,10 +610,6 @@ class DrugDetailAL extends React.Component<any, any> {
     });
 
     this.refreshSelections();
-
-    // if (activeTabIndex === 2) {
-    //   this.getALCriteriaList(true);
-    // }
 
     if(this.props.configureSwitch) {
       this.getALDrugsList();
@@ -708,20 +655,21 @@ class DrugDetailAL extends React.Component<any, any> {
   };
 
   validateGLForm = () => {
-    // if(this.state.activeTabIndex === 0) {
-    //   let rpSelected = this.state.glSettings.filter(e => e.isChecked);
-    //   return !(rpSelected.length === 0);
+    let formValid = false;
+    for(let i=0; i<this.formData2.length; i++) {
+      if(this.formData2[i].minimumType && this.formData2[i].maximumType && this.formData2[i].maximumVal && this.formData2[i].maximumVal) {
+        formValid = true;
+      } else {
+        formValid = false;
+      }
+    }
 
-    // } else if(this.state.activeTabIndex === 2) {
-    //   return !(this.state.glRemoveCheckedList.length === 0);
-    // }
-
-    return true;
+    return formValid;
   }
 
   showGridHandler = () => {
-    // this.getALDrugsList();
     console.log("The State of the Tab = ", this.state);
+    console.log("The Form Data 2 = ", this.formData2);
 
     if(this.validateGLForm()) {
       this.getALDrugsList();
@@ -746,10 +694,10 @@ class DrugDetailAL extends React.Component<any, any> {
       let newAgeLimit = {
         minimumVal: "",
         maximumVal: "",
-        minimumType: "IO",
-        maximumType: "IO",
+        minimumType: "",
+        maximumType: "",
         index: this.state.alSettings.length,
-        covered: true,
+        covered: this.state.alSettings[0].covered,
       }
 
       let alSettings = [...this.state.alSettings];
@@ -770,9 +718,6 @@ class DrugDetailAL extends React.Component<any, any> {
 
   componentWillReceiveProps(nextProps) {
     console.log("-----Component Will Receive Props------", nextProps);
-    // if(nextProps.configureSwitch) {
-    //   this.getALDrugsList();
-    // }
 
     if (nextProps.configureSwitch){
       this.setState({tabs:[
@@ -784,15 +729,13 @@ class DrugDetailAL extends React.Component<any, any> {
       this.getALDrugsList();
     } else {
       this.setState({tabs:[
-        { id: 1, text: "Replace", disabled:false },
-        { id: 2, text: "Append", disabled:false },
-        { id: 3, text: "Remove", disabled:false },
+        { id: 1, text: "Replace", disabled: false },
+        { id: 2, text: "Append", disabled: false },
+        { id: 3, text: "Remove", disabled: false },
       ]});
     }
 
     if (nextProps.advancedSearchBody && nextProps.populateGrid) {
-      console.log("-----Inside Advance search Body if Condition-----advancedSearchBody ", nextProps.advancedSearchBody);
-      console.log("-----Inside Advance search Body if Condition-----populateGrid ", nextProps.advancedSearchBody);
       this.getALDrugsList({ listPayload: this.listPayload, searchBody: nextProps.advancedSearchBody});
       let payload = {
         advancedSearchBody: nextProps.advancedSearchBody,
@@ -804,8 +747,7 @@ class DrugDetailAL extends React.Component<any, any> {
         this.state.isSearchOpen = false;
         payload["closeDialog"] = false;
       }
-
-      console.log("---_Set Advanced Search payload = ", payload);
+      
       this.props.setAdvancedSearch(payload);
     }
   }
@@ -850,23 +792,6 @@ class DrugDetailAL extends React.Component<any, any> {
         </div>
       );
     }
-
-    const removeColumns = [
-      {
-        title: "Min Age Limit",
-        dataIndex: "minAgeLimit",
-        key: "minAgeLimit",
-      },
-      {
-        title: "Maximum Age Limit",
-        dataIndex: "maxAgeLimit",
-        key: "maxAgeLimit",
-      },
-    ];
-
-    console.log("The Remove columns = ", removeColumns)
-    console.log("Remove State Data = ", this.state.removeData);
-    console.log("Remove TABS State Data = ", this.state.removeTabsData);
     
     return (
       <>
@@ -910,7 +835,6 @@ class DrugDetailAL extends React.Component<any, any> {
           onMinChangeHandler={this.onMinChangeHandler}
           onMaxChangeHandler={this.onMaxChangeHandler}
           formData={this.state.formData}
-          // showApply={true}
           showGrid={this.showGridHandler}
           coveredHandler={this.coveredHandler}
           alSettings={this.state.alSettings}
@@ -942,11 +866,6 @@ class DrugDetailAL extends React.Component<any, any> {
             </div>
             {dataGrid}
             {this.state.isSearchOpen ? (
-              // <AdvancedSearch
-              //   category="Grievances"
-              //   openPopup={this.state.isSearchOpen}
-              //   onClose={this.advanceSearchClosekHandler}
-              // />
               <AdvanceSearchContainer
                 {...searchProps}
                 openPopup={this.state.isSearchOpen}
