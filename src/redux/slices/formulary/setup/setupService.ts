@@ -157,17 +157,10 @@ export async function getAllFormularyVersions(
   let url = `${BASE_URL1}api/1/formulary-versions`;
   try {
     let response;
-    if (id_formulary > 0) {
-      url += `/${id_formulary}/${clientId}?entity_id=${id_formulary}`;
-      response = await axios.put(url, payload, {
-        headers: REQUEST_HEADER,
-      });
-    } else {
-      url += `/${clientId}`;
-      response = await axios.post(url, payload, {
-        headers: REQUEST_HEADER,
-      });
-    }
+    url += `/${id_base_formulary}?index=${index}&limit=${limit}`;
+    response = await axios.post(url, payload, {
+      headers: REQUEST_HEADER,
+    });
 
     // console.log("***** createORUpdateFormulary - Success");
     // console.log(response);
