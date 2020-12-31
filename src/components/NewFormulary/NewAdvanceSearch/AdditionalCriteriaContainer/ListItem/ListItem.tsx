@@ -13,6 +13,10 @@ import {
 import POSCriteria from "../CriteriaComponents/POSCriteria";
 import PRCriteria from "../CriteriaComponents/PRCriteria";
 import GenderCriteria from "../CriteriaComponents/GenderCriteria";
+import ICDCriteria from "../CriteriaComponents/ICDCriteria";
+import AgeCriteria from "../CriteriaComponents/AgeCriteria";
+import PNCriteria from "../CriteriaComponents/PNCriteria";
+import PTCriteria from "../CriteriaComponents/PTCriteria";
 
 function mapDispatchToProps(dispatch) {
   return {
@@ -47,6 +51,55 @@ class ListItem extends Component<any, any> {
 
     payload: null,
 
+    // AL
+    alSettings: {
+      min_age_condition: "",
+      min_age_limit: "",
+      max_age_condition: "",
+      max_age_limit: "",
+    },
+    alSettingsStatus: { type: "covered", covered: true },
+
+    // GL
+    glSettings: [
+      { id: 1, isChecked: false, gl_type_name: "Female", gl_code: "F" },
+      { id: 2, isChecked: false, gl_type_name: "Male", gl_code: "M" },
+      { id: 3, isChecked: false, gl_type_name: "Unknown", gl_code: "U" },
+    ],
+    glSettingsStatus: { type: "covered", covered: true },
+
+    // ICD
+    icdSettings: { look_back_days: "", icds: "" },
+    icdSettingsStatus: { type: "covered", covered: true },
+
+    // PN
+    pnSettings: [
+      {
+        name: "",
+        key: 0,
+        show: false,
+        is_list: false,
+        value: "",
+        type: "",
+        text: "",
+      },
+    ],
+    pnSettingsStatus: { type: "covered", covered: true },
+
+    // PT
+    ptSettings: [
+      {
+        name: "",
+        key: 0,
+        show: false,
+        is_list: false,
+        value: "",
+        type: "",
+        text: "",
+      },
+    ],
+    ptSettingsStatus: { type: "covered", covered: true },
+
     // POS
     posSettings: [],
     posSettingsStatus: {
@@ -63,13 +116,12 @@ class ListItem extends Component<any, any> {
     },
     isSelectAllPR: false,
 
-    // GL
-    glSettings: [
-      { id: 1, isChecked: false, gl_type_name: "Female", gl_code: "F" },
-      { id: 2, isChecked: false, gl_type_name: "Male", gl_code: "M" },
-      { id: 3, isChecked: false, gl_type_name: "Unknown", gl_code: "U" },
-    ],
-    glSettingsStatus: { type: "covered", covered: true },
+    // PCHL
+    pchlSettings: [],
+    pchlSettingsStatus: {
+      type: "covered",
+      covered: true,
+    },
   };
 
   componentDidMount() {
@@ -90,15 +142,15 @@ class ListItem extends Component<any, any> {
     const updatedPayload = this.state.payload;
     const { cardCode, cardName, isIncluded } = this.state;
 
-    if (payload && nodeId) {
-      this.props.handleGlobalState(
-        nodeId,
-        cardCode,
-        cardName,
-        isIncluded,
-        updatedPayload
-      );
-    }
+    // age & icd are objects
+    // gender, pos & pr are array
+    this.props.handleGlobalState(
+      nodeId,
+      cardCode,
+      cardName,
+      isIncluded,
+      updatedPayload
+    );
   }
 
   initializePreData = () => {
@@ -250,7 +302,7 @@ class ListItem extends Component<any, any> {
   };
 
   serviceSettingsCheckedPOS = (e) => {
-    const posSettings = JSON.parse(JSON.stringify(this.state.posSettings));
+    const posSettings = [...this.state.posSettings];
     const { nodeId } = this.props;
     const payload: string[] = [];
 
@@ -273,7 +325,7 @@ class ListItem extends Component<any, any> {
   };
 
   serviceSettingsCheckedPR = (e) => {
-    const prSettings = JSON.parse(JSON.stringify(this.state.prSettings));
+    const prSettings = [...this.state.prSettings];
     const { nodeId } = this.props;
     const payload: string[] = [];
 
@@ -296,7 +348,7 @@ class ListItem extends Component<any, any> {
   };
 
   serviceSettingsCheckedGL = (e) => {
-    const glSettings = JSON.parse(JSON.stringify(this.state.glSettings));
+    const glSettings = [...this.state.glSettings];
     const { nodeId } = this.props;
     const payload: string[] = [];
 
@@ -395,6 +447,24 @@ class ListItem extends Component<any, any> {
     this.setState({ glSettingsStatus, isIncluded });
   };
 
+  handleAgeCriteriaChange = (event) => {
+    console.log(event.target.value);
+    console.log(event.target.name);
+  };
+
+  handleALStatus = (key: string) => {
+    const COVERED = "covered";
+    const isCovered: boolean = key === COVERED ? true : false;
+
+    let glSettingsStatus = {
+      type: key,
+      covered: isCovered,
+    };
+
+    let isIncluded = glSettingsStatus.covered;
+    this.setState({ glSettingsStatus, isIncluded });
+  };
+
   render() {
     const {
       // Current Criteria
@@ -403,6 +473,26 @@ class ListItem extends Component<any, any> {
       cardName,
       isIncluded,
       payload,
+
+      // AL
+      alSettings,
+      alSettingsStatus,
+
+      // GL
+      glSettings,
+      glSettingsStatus,
+
+      // ICD
+      icdSettings,
+      icdSettingsStatus,
+
+      // PN
+      pnSettings,
+      pnSettingsStatus,
+
+      // PT
+      ptSettings,
+      ptSettingsStatus,
 
       // POS
       posSettings,
@@ -414,9 +504,9 @@ class ListItem extends Component<any, any> {
       prSettingsStatus,
       isSelectAllPR,
 
-      // GL
-      glSettings,
-      glSettingsStatus,
+      // PCHL
+      pchlSettings,
+      pchlSettingsStatus,
     } = this.state;
     const {
       card: { cardCode },
@@ -424,7 +514,22 @@ class ListItem extends Component<any, any> {
     } = this.props;
     switch (cardCode) {
       case 1:
-        return cardName;
+        return null;
+      // return (
+      //   <AgeCriteria
+      //     alSettingsServies={{
+      //       alSettings,
+      //       alSettingsStatus,
+      //     }}
+      //     handleStatus={this.handleGLStatus}
+      //     handleAgeCriteriaChange={this.handleAgeCriteriaChange}
+      //     deleteIconHandler={() =>
+      //       deleteIconHandler(nodeId, cardCode, cardName, isIncluded, payload)
+      //     }
+      //     isAdditionalCriteria={true}
+      //     nodeId={nodeId}
+      //   />
+      // );
       case 2:
         return (
           <GenderCriteria
@@ -442,11 +547,56 @@ class ListItem extends Component<any, any> {
           />
         );
       case 3:
-        return cardName;
+        return null;
+      // return (
+      //   <ICDCriteria
+      //     icdSettingsServies={{
+      //       icdSettings,
+      //       icdSettingsStatus,
+      //     }}
+      //     handleStatus={this.handleGLStatus}
+      //     serviceSettingsChecked={this.serviceSettingsCheckedGL}
+      //     deleteIconHandler={() =>
+      //       deleteIconHandler(nodeId, cardCode, cardName, isIncluded, payload)
+      //     }
+      //     isAdditionalCriteria={true}
+      //     nodeId={nodeId}
+      //   />
+      // );
       case 4:
-        return cardName;
+        return null;
+      // return (
+      //   <PNCriteria
+      //     pnSettingsServies={{
+      //       pnSettings,
+      //       pnSettingsStatus,
+      //     }}
+      //     handleStatus={this.handlePOSStatus}
+      //     serviceSettingsChecked={this.serviceSettingsCheckedPOS}
+      //     deleteIconHandler={() =>
+      //       deleteIconHandler(nodeId, cardCode, cardName, isIncluded, payload)
+      //     }
+      //     isAdditionalCriteria={true}
+      //     nodeId={nodeId}
+      //   />
+      // );
       case 5:
-        return cardName;
+        return null;
+      // return (
+      //   <PTCriteria
+      //     ptSettingsServies={{
+      //       ptSettings,
+      //       ptSettingsStatus,
+      //     }}
+      //     handleStatus={this.handlePOSStatus}
+      //     serviceSettingsChecked={this.serviceSettingsCheckedPOS}
+      //     deleteIconHandler={() =>
+      //       deleteIconHandler(nodeId, cardCode, cardName, isIncluded, payload)
+      //     }
+      //     isAdditionalCriteria={true}
+      //     nodeId={nodeId}
+      //   />
+      // );
       case 6:
         return (
           <POSCriteria
@@ -488,7 +638,7 @@ class ListItem extends Component<any, any> {
           />
         );
       case 8:
-        return cardName;
+        return null;
       default:
         return null;
     }

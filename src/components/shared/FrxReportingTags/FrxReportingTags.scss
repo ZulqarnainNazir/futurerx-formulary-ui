@@ -150,7 +150,8 @@
     height: auto;
     // width: 160vh;
     width: auto;
-    max-width: 160vh;
+    // this was 160vh . Changing it to 160vw
+    max-width: 160vw;
     max-height: 80vh;
   }
 

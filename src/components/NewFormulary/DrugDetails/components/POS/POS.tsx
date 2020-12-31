@@ -131,9 +131,9 @@ class DrugDetailPOS extends React.Component<any, any> {
     columns: getDrugDetailsColumnPOS(),
     data: getDrugDetailData(),
     tabs: [
-      { id: 1, text: "Replace" },
-      { id: 2, text: "Append" },
-      { id: 3, text: "Remove" },
+      { id: 1, text: "Replace", disabled: false },
+      { id: 2, text: "Append", disabled: false },
+      { id: 3, text: "Remove", disabled: false },
     ],
     selectedList:[],
     selectedDrugs: Array(),
@@ -204,9 +204,8 @@ class DrugDetailPOS extends React.Component<any, any> {
         { key: posConstants.KEY_ENTITY_ID, value: this.props?.formulary_id },
       ];
 
-      if (this.state.activeTabIndex === 0) {
-        // Replace Drug method call
-
+      if (this.state.activeTabIndex === 0 || this.state.activeTabIndex === 1) {
+        // Replace & Append Drug method call
         let posRows = this.state.posSettings.filter((f) => f.isChecked).map((e) => {
           if (e.isChecked && e.isChecked !== undefined) {
             return e.id_place_of_service_type;
@@ -556,6 +555,14 @@ class DrugDetailPOS extends React.Component<any, any> {
     this.setState({ posSettingsStatus, showGrid: false });
   };
 
+  refreshSelections = () => {
+    if(this.state.activeTabIndex === 0 || this.state.activeTabIndex === 1) {
+      this.getPOSSettings();
+    } else if (this.state.activeTabIndex === 2) {
+      this.getPOSCriteriaList(true);
+    }
+  }
+
   serviceSettingsChecked = (e) => {
     // console.log(e.target.id);
     // console.log(e.target.name);
@@ -596,9 +603,11 @@ class DrugDetailPOS extends React.Component<any, any> {
       return tab;
     });
 
-    if (activeTabIndex === 2) {
-      this.getPOSCriteriaList(true);
-    }
+    // if (activeTabIndex === 2) {
+    //   this.getPOSCriteriaList(true);
+    // }
+
+    this.refreshSelections();
 
     if(this.props.configureSwitch) {
       this.getPOSDrugsList();
@@ -641,7 +650,7 @@ class DrugDetailPOS extends React.Component<any, any> {
       covered: isCovered,
     };
 
-    this.setState({ posRemoveSettingsStatus, showGrid: false });
+    this.setState({ posRemoveSettingsStatus, showGrid: false, posCheckedList: [] });
     this.getPOSCriteriaList(isCovered);
   };
 
@@ -656,7 +665,7 @@ class DrugDetailPOS extends React.Component<any, any> {
   };
 
   validateGLForm = () => {
-    if(this.state.activeTabIndex === 0) {
+    if(this.state.activeTabIndex === 0 || this.state.activeTabIndex === 1) {
       let rpSelected = this.state.posSettings.filter(e => e.isChecked);
       return !(rpSelected.length === 0);
 
@@ -698,7 +707,7 @@ class DrugDetailPOS extends React.Component<any, any> {
     } else {
       this.setState({tabs:[
         { id: 1, text: "Replace", disabled:false },
-        { id: 2, text: "Append", disabled:true },
+        { id: 2, text: "Append", disabled:false },
         { id: 3, text: "Remove", disabled:false },
       ]});
     }

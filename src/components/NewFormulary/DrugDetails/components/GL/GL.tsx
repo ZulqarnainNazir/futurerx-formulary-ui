@@ -1,6 +1,7 @@
 import React from "react";
 import { connect } from "react-redux";
 import { ToastContainer } from "react-toastify";
+import { filter } from "lodash";
 import PanelHeader from "../../../../shared/Frx-components/panel-header/PanelHeader";
 import PanelGrid from "../../../../shared/Frx-components/panel-grid/PanelGrid";
 import CustomizedSwitches from "../FormularyConfigure/components/CustomizedSwitches";
@@ -79,6 +80,23 @@ interface glState {
   showApply: boolean;
 }
 
+const columnFilterMapping = {
+  genderLimit: "is_gl",
+  coveredGender: "covered_genders",
+  noCoveredGender: "not_covered_genders",
+  tier: "tier_value",
+  labelName: "drug_label_name",
+  ddid: "drug_descriptor_identifier",
+  gpi: "generic_product_identifier",
+  trademark: "trademark_code",
+  databaseCategory: "database_category",
+  databaseClass: "database_class",
+  createdBy: "created_by",
+  createdOn: "created_date",
+  modifiedBy: "modified_by",
+  modifiedOn: "modified_date",
+}
+
 class DrugDetailGL extends React.Component<any, any> {
   state: glState = {
     isSearchOpen: false,
@@ -90,9 +108,9 @@ class DrugDetailGL extends React.Component<any, any> {
     columns: null,
     data: [],
     tabs: [
-      { id: 1, text: "Replace" },
-      { id: 2, text: "Append" },
-      { id: 3, text: "Remove" },
+      { id: 1, text: "Replace", disabled: false },
+      { id: 2, text: "Append", disabled: false },
+      { id: 3, text: "Remove", disabled: false },
     ],
     selectedDrugs: Array(),
     drugData: Array(),
@@ -204,7 +222,7 @@ class DrugDetailGL extends React.Component<any, any> {
       covered: isCovered,
     };
 
-    this.setState({ glRemoveSettingsStatus, showGrid: false });
+    this.setState({ glRemoveSettingsStatus, showGrid: false, glRemoveCheckedList: [] });
     this.getGLCriteriaList(isCovered);
   };
 
@@ -229,7 +247,7 @@ class DrugDetailGL extends React.Component<any, any> {
         { key: glConstants.KEY_ENTITY_ID, value: this.props?.formulary_id },
       ];
 
-      if (this.state.activeTabIndex === 0) {
+      if (this.state.activeTabIndex === 0 || this.state.activeTabIndex === 1) {
         this.rpSavePayload.selected_drug_ids = this.state.selectedDrugs;
         this.rpSavePayload.gender_limits = glRows;
         this.rpSavePayload.breadcrumb_code_value = "GL";
@@ -243,7 +261,7 @@ class DrugDetailGL extends React.Component<any, any> {
           glConstants.TYPE_REPLACE;
         console.log("The API Details - ", apiDetails);
 
-        // Replace Drug method call
+        // Replace and Append Drug method call
         this.props.postReplaceGLDrug(apiDetails).then((json) => {
           if (
             json.payload &&
@@ -294,6 +312,31 @@ class DrugDetailGL extends React.Component<any, any> {
       }
     }
   };
+  
+  onApplyFilterHandler = (filters) => {
+    this.listPayload.filter = Array();
+    if (filters && filter.length > 0) {
+      const fetchedKeys = Object.keys(filters);
+      fetchedKeys.map(fetchedProps => {
+        if (filters[fetchedProps] && columnFilterMapping[fetchedProps]) {
+          const fetchedOperator = filters[fetchedProps][0].condition === 'is like' ? 'is_like' :
+            filters[fetchedProps][0].condition === 'is not' ? 'is_not' :
+              filters[fetchedProps][0].condition === 'is not like' ? 'is_not_like' :
+                filters[fetchedProps][0].condition === 'does not exist' ? 'does_not_exist' :
+                  filters[fetchedProps][0].condition;
+          
+          let fetchedPropsValue;
+          if(filters[fetchedProps][0].value !== '') {
+            const fetchedPropsValueNum = Number(filters[fetchedProps][0].value.toString());
+            fetchedPropsValue = isNaN(fetchedPropsValueNum) ? filters[fetchedProps][0].value.toString() : fetchedPropsValueNum
+          }
+          const fetchedValues = filters[fetchedProps][0].value !== '' ? [fetchedPropsValue] : [];
+          this.listPayload.filter.push({ prop: columnFilterMapping[fetchedProps], operator: fetchedOperator, values: fetchedValues });
+        }
+      });
+      this.getGLDrugsList({ listPayload: this.listPayload });
+    }
+  }
 
   onPageSize = (pageSize) => {
     this.listPayload.limit = pageSize;
@@ -311,6 +354,7 @@ class DrugDetailGL extends React.Component<any, any> {
   onClearFilterHandler = () => {
     this.listPayload.index = 0;
     this.listPayload.limit = 10;
+    this.listPayload.filter = [];
     this.getGLDrugsList({
       index: defaultListPayload.index,
       limit: defaultListPayload.limit,
@@ -344,6 +388,35 @@ class DrugDetailGL extends React.Component<any, any> {
 
     this.setState({ glSettingsStatus, showGrid: false });
   };
+
+  refreshSelections = () => {
+    if(this.state.activeTabIndex === 0 || this.state.activeTabIndex === 1) {
+
+      let glCleanList: any[] = [];
+      for(let i=0; i<this.state.glSettings.length; i++ ) {
+        let glObj = {};
+        glObj['gl_code'] = this.state.glSettings[i]['gl_code'];
+        glObj['gl_type_name'] = this.state.glSettings[i]['gl_type_name'];
+        glObj['index'] = this.state.glSettings[i]['index'];
+        glObj['isChecked'] = false;
+        glCleanList.push(glObj);
+      }
+      this.setState({ glSettings: glCleanList });
+
+      // let rows = this.state.glSettings.map((ele) => {
+      //   let curRow = {
+      //     ele["id_gender_type"],
+      //     ele["gender_type_code"],
+      //     ele["gender_type_name"],
+      //     ele["is_covered"],
+      //   };
+      //   return curRow;
+      // });
+
+    } else if (this.state.activeTabIndex === 2) {
+      this.getGLCriteriaList(true);
+    }
+  }
 
   handleRemoveChecked = (selectedRows) => {
     this.setState(
@@ -435,61 +508,19 @@ class DrugDetailGL extends React.Component<any, any> {
         gridItem["id"] = count;
         gridItem["key"] = count;
         gridItem["genderLimit"] = element.is_gl ? "" + element.is_gl : "";
-        gridItem["coveredGender"] = element.covered_genders
-          ? "" + element.covered_genders
-          : "";
-        gridItem["coverAgeMin"] = element.covered_min_ages
-          ? "" + element.covered_min_ages
-          : "";
-        gridItem["coverMax"] = element.covered_max_operators
-          ? "" + element.covered_max_operators
-          : "";
-        gridItem["coverAgeMax"] = element.covered_max_ages
-          ? "" + element.covered_max_ages
-          : "";
-        gridItem["noCoveredGender"] = element.not_covered_genders
-          ? "" + element.not_covered_genders
-          : "";
-        gridItem["notCoverAgeMin"] = element.not_covered_min_ages
-          ? "" + element.not_covered_min_ages
-          : "";
-        gridItem["notCoverMax"] = element.not_covered_max_operators
-          ? "" + element.not_covered_max_operators
-          : "";
-        gridItem["notCoverAgeMax"] = element.not_covered_max_ages
-          ? "" + element.not_covered_max_ages
-          : "";
+        gridItem["coveredGender"] = element.covered_genders ? "" + element.covered_genders : "";
+        gridItem["noCoveredGender"] = element.not_covered_genders ? "" + element.not_covered_genders : "";
         gridItem["tier"] = element.tier_value ? "" + element.tier_value : "";
-        gridItem["labelName"] = element.drug_label_name
-          ? "" + element.drug_label_name
-          : "";
-        gridItem["ddid"] = element.drug_descriptor_identifier
-          ? "" + element.drug_descriptor_identifier
-          : "";
-        gridItem["gpi"] = element.generic_product_identifier
-          ? "" + element.generic_product_identifier
-          : "";
-        gridItem["trademark"] = element.trademark_code
-          ? "" + element.trademark_code
-          : "";
-        gridItem["databaseCategory"] = element.database_category
-          ? "" + element.database_category
-          : "";
-        gridItem["databaseClass"] = element.database_class
-          ? "" + element.database_class
-          : "";
-        gridItem["createdBy"] = element.created_by
-          ? "" + element.created_by
-          : "";
-        gridItem["createdOn"] = element.created_date
-          ? "" + element.created_date
-          : "";
-        gridItem["modifiedBy"] = element.modified_by
-          ? "" + element.modified_by
-          : "";
-        gridItem["modifiedOn"] = element.modified_date
-          ? "" + element.modified_date
-          : "";
+        gridItem["labelName"] = element.drug_label_name ? "" + element.drug_label_name : "";
+        gridItem["ddid"] = element.drug_descriptor_identifier ? "" + element.drug_descriptor_identifier : "";
+        gridItem["gpi"] = element.generic_product_identifier ? "" + element.generic_product_identifier : "";
+        gridItem["trademark"] = element.trademark_code ? "" + element.trademark_code : "";
+        gridItem["databaseCategory"] = element.database_category ? "" + element.database_category : "";
+        gridItem["databaseClass"] = element.database_class ? "" + element.database_class : "";
+        gridItem["createdBy"] = element.created_by ? "" + element.created_by : "";
+        gridItem["createdOn"] = element.created_date ? "" + element.created_date : "";
+        gridItem["modifiedBy"] = element.modified_by ? "" + element.modified_by : "";
+        gridItem["modifiedOn"] = element.modified_date ? "" + element.modified_date : "";
         gridItem["md5_id"] = element.md5_id ? "" + element.md5_id : "";
         count++;
         return gridItem;
@@ -525,9 +556,11 @@ class DrugDetailGL extends React.Component<any, any> {
       return tab;
     });
 
-    if (activeTabIndex === 2) {
-      this.getGLCriteriaList(true);
-    }
+    this.refreshSelections();
+
+    // if (activeTabIndex === 2) {
+    //   this.getGLCriteriaList(true);
+    // }
 
     if(this.props.configureSwitch) {
       this.getGLDrugsList();
@@ -582,7 +615,7 @@ class DrugDetailGL extends React.Component<any, any> {
   };
 
   validateGLForm = () => {
-    if(this.state.activeTabIndex === 0) {
+    if(this.state.activeTabIndex === 0 || this.state.activeTabIndex === 1) {
       let rpSelected = this.state.glSettings.filter(e => e.isChecked);
       return !(rpSelected.length === 0);
 
@@ -636,9 +669,9 @@ class DrugDetailGL extends React.Component<any, any> {
       this.getGLDrugsList();
     } else {
       this.setState({tabs:[
-        { id: 1, text: "Replace", disabled:false },
-        { id: 2, text: "Append", disabled:true },
-        { id: 3, text: "Remove", disabled:false },
+        { id: 1, text: "Replace", disabled: false },
+        { id: 2, text: "Append", disabled: false },
+        { id: 3, text: "Remove", disabled: false },
       ]});
     }
 
@@ -693,6 +726,7 @@ class DrugDetailGL extends React.Component<any, any> {
             onGridPageChangeHandler={this.onGridPageChangeHandler}
             totalRowsCount={this.state.listCount}
             clearFilterHandler={this.onClearFilterHandler}
+            applyFilter={this.onApplyFilterHandler}
             rowSelection={{
               columnWidth: 50,
               fixed: true,

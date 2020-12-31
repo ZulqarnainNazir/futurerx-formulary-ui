@@ -685,7 +685,8 @@ class FrxGrid extends Component<FrxGridProps<any>, FrxGridState<any>> {
               return (
                 <c.cellWrapper>
                   <FrxGridCell
-                    customToolTip={customToolTip}
+										customToolTip={customToolTip}
+										showDecimals={c.showDecimals}
                     customContent={customContent}
                     onCellClick={this.onCellClick}
                     dataType={c.dataType}
@@ -709,7 +710,8 @@ class FrxGrid extends Component<FrxGridProps<any>, FrxGridState<any>> {
                 : undefined;
               return (
                 <FrxGridCell
-                  customToolTip={customToolTip}
+									customToolTip={customToolTip}
+									showDecimals={c.showDecimals}
                   customContent={customContent}
                   onCellClick={this.onCellClick}
                   dataType={c.dataType}

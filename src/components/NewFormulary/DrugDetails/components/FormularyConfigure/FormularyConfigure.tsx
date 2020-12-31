@@ -30,8 +30,7 @@ function mapDispatchToProps(dispatch) {
 const mapStateToProps = (state) => {
   //console.log(state)
   return {
-    current_formulary: state?.application?.formulary,
-    edit_info: state?.application?.formulary?.edit_info,
+    editInfo: state?.application?.formulary?.edit_info,
   };
 };
 
@@ -51,22 +50,19 @@ class FormularyConfigure extends React.Component<any, any> {
     activeTabIndex: 0,
     showDrugDetails: true,
   };
-  componentDidMount() {
-    if (this.props.edit_info) {
-      for (let i = 0; i < this.props.edit_info.length; i++) {
-        if (
-          this.props.edit_info[i]["id_edit"] === 68 &&
-          this.props.edit_info[i]["id_checked"]
-        ) {
-          // let ddtabs = tabs.filter(e => e.id === 6);
-          // if(ddtabs.length > 0) {
-          //   tabs.pop();
-          // }
-          this.setState({ showDrugDetails: false });
-        }
-      }
-    }
-  }
+  // componentDidMount() {
+  //   if(this.props.edit_info) {
+  //     for(let i=0; i<this.props.edit_info.length; i++) {
+  //       if(this.props.edit_info[i]['id_edit'] === 68 && this.props.edit_info[i]['id_checked']) {
+  //         // let ddtabs = tabs.filter(e => e.id === 6);
+  //         // if(ddtabs.length > 0) {
+  //         //   tabs.pop();
+  //         // }
+  //         this.setState({ showDrugDetails: false });
+  //       }
+  //     }
+  //   }
+  // }
   onClickTab = (selectedTabIndex: number) => {
     let activeTabIndex = 0;
 
@@ -97,18 +93,66 @@ class FormularyConfigure extends React.Component<any, any> {
       case 3:
         return <PaData />;
       case 4:
-        return <StepTherpayDetails />;
-      case 5:
         return <QL />;
-      case 6:
-        return this.state.showDrugDetails ? <DrugDetails /> : null;
+      case 5:
+        return <DrugDetails />;
     }
   };
+
+  getTabs(list: TabInfo[]): TabInfo[] {
+    console.log(" --------------------------------: ", this.props?.editInfo);
+    let isPA: boolean = false;
+    let isST: boolean = false;
+    let isQL: boolean = false;
+    let isNA: boolean = false;
+
+    if (this.props?.editInfo) {
+      this.props?.editInfo.forEach((e) => {
+        console.log(e);
+        if (e && e.id_edit) {
+          if (e.id_edit === 68) {
+            isNA = true;
+          } else if (e.id_edit === 58) {
+            isPA = true;
+          } else if (e.id_edit === 59) {
+            isQL = true;
+          } else if (e.id_edit === 60) {
+            isST = true;
+          }
+        }
+      });
+    }
+    console.log(
+        " isPA : " +
+        isPA +
+        " isST : " +
+        isST +
+        " isQL : " +
+        isQL +
+        " isNA : " +
+        isNA 
+
+    );
+
+    list.forEach((t) => {
+      if (t && t.text === "PA") {
+        t.disable = isPA ? false : true;
+      } else if (t && t.text === "ST") {
+        t.disable = isST ? false : true;
+      } else if (t && t.text === "QL") {
+        t.disable = isQL ? false : true;
+      } else if (t && t.text === "DRUG DETAILS") {
+        t.disable = isNA ? true : false;
+      }
+    });
+    return list;
+  }
+
   render() {
     return (
       <div className="bordered">
         <FrxTabs
-          tabList={this.state.tabs}
+          tabList={this.getTabs(this.state.tabs)}
           activeTabIndex={this.state.activeTabIndex}
           onClickTab={this.onClickTab}
         />
