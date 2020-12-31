@@ -396,6 +396,7 @@ class PaReplace extends React.Component<any, any> {
         gridItem["id"] = count;
         gridItem["key"] = count;
         gridItem["tier"] = element.tier_value;
+        gridItem["isUmCriteria"] = element.is_um_criteria;
         gridItem["paGroupDescription"] = element.pa_group_description;
         gridItem["paType"] = element.pa_type;
         gridItem["fileType"] = element.file_type ? "" + element.file_type : "";
