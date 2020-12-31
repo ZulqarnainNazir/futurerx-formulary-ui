@@ -215,7 +215,8 @@ class Tier extends React.Component<any, tabsState> {
     }
   };
 
-  showDrugGrid = () => {
+  showDrugGrid = (searchBody = null) => {
+    debugger;
     this.setState({ drugGridContainer: true });
     console.log("{searchBody}", this.props.advancedSearchBody);
 
@@ -231,19 +232,20 @@ class Tier extends React.Component<any, tabsState> {
         { key: constants.KEY_LIMIT, value: 10 },
       ],
     };
-    if (this.props.advancedSearchBody && this.props.populateGrid) {
-      apiDetails["messageBody"] = { ...this.props.advancedSearchBody };
+    if (searchBody) {
+      apiDetails["messageBody"] = Object.assign({}, searchBody);
+      // apiDetails["messageBody"] = { ...{ searchBody } };
 
-      console.log("in if advacne");
+      // alert("in advanceSearchBody");
     }
     console.log("[apiDetails]:", apiDetails);
     this.props.postFormularyDrugQl(apiDetails).then((json) => {
       console.log("[QlDetail]:", json.payload);
-      if (json.payload) {
-        this.loadGridData(json);
-      } else {
-        showMessage("something went wrong", "error");
-      }
+      // if (json.payload) {
+      this.loadGridData(json);
+      // } else {
+      // showMessage("something went wrong", "error");
+      // }
     });
     // }
   };
@@ -631,8 +633,9 @@ class Tier extends React.Component<any, tabsState> {
   };
 
   UNSAFE_componentWillReceiveProps(nextProps) {
+    debugger;
     if (nextProps.switchState) {
-      this.showDrugGrid();
+      this.showDrugGrid({ ...nextProps.advancedSearchBody });
       this.setState({
         tabs: this.state.tabs.map((tab) => {
           tab["disabled"] = true;
@@ -652,7 +655,9 @@ class Tier extends React.Component<any, tabsState> {
     }
 
     if (nextProps.advancedSearchBody && nextProps.populateGrid) {
-      this.showDrugGrid();
+      // debugger;
+      // alert("nexProps");
+      this.showDrugGrid({ ...nextProps.advancedSearchBody });
       let payload = {
         advancedSearchBody: nextProps.advancedSearchBody,
         populateGrid: false,
