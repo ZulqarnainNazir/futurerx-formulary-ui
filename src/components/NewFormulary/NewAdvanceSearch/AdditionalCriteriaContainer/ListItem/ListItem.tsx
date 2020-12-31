@@ -212,9 +212,11 @@ class ListItem extends Component<any, any> {
       case 3:
         console.log(payload);
         let { icdSettings } = this.state;
+        // let icdResults = this.state.icdResults;
 
         if (payload !== null) {
           icdSettings = { ...payload };
+          // icdResults.value = payload.icds;
         }
         const icdSettingsStatus = {
           type: isIncluded ? COVERED : NOT_COVERED,
@@ -224,6 +226,7 @@ class ListItem extends Component<any, any> {
         this.setState({
           icdSettings,
           icdSettingsStatus,
+          // icdResults,
         });
         break;
       case 6:
