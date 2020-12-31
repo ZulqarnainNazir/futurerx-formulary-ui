@@ -85,35 +85,15 @@ class AdditionalCriteriaContainer extends Component<
       (additionalCriteria: any) =>
         additionalCriteria.sequence !== additionalCriteriaId
     );
+
     this.setState({
       additionalCriteriaArray: additionalCriterias,
     });
   };
 
   handleChildDataSave = (additionalCriteria) => {
-    console.log("Final saved object: ", additionalCriteria);
-
-    // let additionalCriteriaArray: any[] = [
-    //   ...this.state.additionalCriteriaArray,
-    // ];
-    // let index = 0;
-    // additionalCriteriaArray.forEach((s, i) => {
-    //   console.log("clg: ", additionalCriteriaArray[i]);
-    //   if (s["sequence"] === additionalCriteria["sequence"]) {
-    //     index = i;
-    //   }
-    // });
-    // additionalCriteriaArray[index] = additionalCriteria;
-    this.setState(
-      {
-        additionalCriteriaArray: [additionalCriteria],
-      },
-
-      () => {
-        this.props.handleChildDataSave(this.state.additionalCriteriaArray);
-        console.log(this.state.additionalCriteriaArray);
-      }
-    );
+    console.log(additionalCriteria);
+    this.props.handleChildDataSave(additionalCriteria);
   };
 
   render() {

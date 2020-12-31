@@ -37,11 +37,12 @@ const AgeCriteria = (props) => {
     alSettingsServies: { alSettings, alSettingsStatus },
     handleStatus,
     showGridHandler,
-
+    handleAgeCriteriaChange,
     isAdditionalCriteria,
     deleteIconHandler,
     nodeId,
   } = props;
+
   return (
     <div className="root-age-limit-settings bordered mb-10">
       <div className="inner-container">
@@ -57,9 +58,11 @@ const AgeCriteria = (props) => {
 
             <div className="input-field-group__dropdown-field">
               <DropDown
-                className=""
                 placeholder="inclusive of"
                 options={["inclusive of", "Greater Than"]}
+                name="min-con"
+                onChange={(e) => props.handleAgeCriteriaChange(e)}
+                value={alSettings.min_age_condition}
                 // onChange={(e) => this.props.onMinChangeHandler(e, s.index)}
               />
             </div>
@@ -68,6 +71,9 @@ const AgeCriteria = (props) => {
               <input
                 type="text"
                 className="setup-input-fields"
+                name="min-val"
+                onChange={(e) => props.handleAgeCriteriaChange(e)}
+                value={alSettings.min_age_limit}
                 // onChange={(e) => this.props.handleMinChange(e, s.index)}
               />
             </div>
@@ -81,6 +87,9 @@ const AgeCriteria = (props) => {
                 className=""
                 placeholder="inclusive of"
                 options={["inclusive of", "Less Than"]}
+                name="max-con"
+                onChange={(e) => props.handleAgeCriteriaChange(e)}
+                value={alSettings.max_age_condition}
                 // onChange={(e) => this.props.onMaxChangeHandler(e, s.index)}
               />
             </div>
@@ -89,6 +98,9 @@ const AgeCriteria = (props) => {
               <input
                 type="text"
                 className="setup-input-fields"
+                name="max-val"
+                onChange={(e) => props.handleAgeCriteriaChange(e)}
+                value={alSettings.max_age_limit}
                 // onChange={(e) => this.props.handleMaxChange(e, s.index)}
               />
             </div>
