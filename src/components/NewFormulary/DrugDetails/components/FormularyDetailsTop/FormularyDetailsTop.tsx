@@ -312,13 +312,17 @@ class FormularyDetailsTop extends React.Component<any, any> {
               <span className="label">Effective Date:</span>{" "}
               {this.props.currentFormulary?.formulary_info?.effective_date}
             </div> */}
-            <div className="item">
+            {/* <div className="item">
               <span className="label">Termination Date:</span>{" "}
               {this.props.currentFormulary?.terminationDate}
-            </div>
+            </div> */}
             <div className="item">
               <span className="label">Effective Date:</span>{" "}
               {this.props.currentFormulary?.formulary_info?.effective_date}
+            </div>
+						<div className="item">
+              <span className="label">Termination Date:</span>{" "}
+              {this.props.currentFormulary?.terminationDate}
             </div>
             {/* <div className="item">
               <span className="label">Termination Date:</span>{" "}
