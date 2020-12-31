@@ -367,8 +367,7 @@ class PaReplace extends React.Component<any, any> {
       { key: constants.KEY_LIMIT, value: 10 },
     ];
     apiDetails["messageBody"] = {};
-
-    if (searchBody) {
+        if (searchBody) {
       apiDetails["messageBody"] = Object.assign(
         apiDetails["messageBody"],
         searchBody
@@ -413,6 +412,7 @@ class PaReplace extends React.Component<any, any> {
   loadGridData(json: any) {
     {
       if (json.payload !=null && json.payload.code === "200") {
+        this.setState({ tierGridContainer: true });
       let tmpData = json.payload.result;
       var data: any[] = [];
       let count = 1;
