@@ -114,7 +114,6 @@ class AdditionalCriteria extends Component<any, any> {
         cardName: "place_of_services",
         isIncluded: true,
       },
-
       {
         cardCode: 7,
         cardName: "patient_residences",
@@ -488,7 +487,6 @@ class AdditionalCriteria extends Component<any, any> {
 
   setCurrentCriteriaState = () => {
     // handle deleted & saved elements
-
     this.props.handleChildDataSave(this.state.apiAdditionalCriteriaState);
   };
 
@@ -529,6 +527,7 @@ class AdditionalCriteria extends Component<any, any> {
                   deleteIconHandler={this.deleteIconHandler}
                   initialState={null}
                   payload={null}
+                  handleGlobalState={this.handleAllNodesState}
                 />
               ),
             },
@@ -562,6 +561,7 @@ class AdditionalCriteria extends Component<any, any> {
                   deleteIconHandler={this.deleteIconHandler}
                   initialState={null}
                   payload={null}
+                  handleGlobalState={this.handleAllNodesState}
                 />
               ),
             },
@@ -587,6 +587,7 @@ class AdditionalCriteria extends Component<any, any> {
                   deleteIconHandler={this.deleteIconHandler}
                   initialState={null}
                   payload={null}
+                  handleGlobalState={this.handleAllNodesState}
                 />
               ),
             },
@@ -612,6 +613,7 @@ class AdditionalCriteria extends Component<any, any> {
                   deleteIconHandler={this.deleteIconHandler}
                   initialState={null}
                   payload={null}
+                  handleGlobalState={this.handleAllNodesState}
                 />
               ),
             },
@@ -653,6 +655,7 @@ class AdditionalCriteria extends Component<any, any> {
                   deleteIconHandler={this.deleteIconHandler}
                   initialState={null}
                   payload={null}
+                  handleGlobalState={this.handleAllNodesState}
                 />
               ),
             },
