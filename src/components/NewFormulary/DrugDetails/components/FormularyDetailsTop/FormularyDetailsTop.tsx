@@ -1,16 +1,24 @@
 import React, { useContext } from "react";
 import { connect } from "react-redux";
 import DropDown from "../../../../shared/Frx-components/dropdown/DropDown";
+import DialogPopup from "../../../../shared/FrxDialogPopup/FrxDialogPopup";
 import FormularyDetailsContext from "../../../FormularyDetailsContext";
 import "./FormularyDetailsTop.scss";
 import { fetchFormularyHeader } from "../../../../../redux/slices/formulary/header/headerSlice";
 import { fetchSelectedFormulary } from "../../../../.././redux/slices/formulary/setup/setupSlice";
+import { createFormularyUsingClone } from "../../../../.././redux/slices/formulary/setup/setupService";
+import VersionHistoryPopup from "../FormularySetUp/components/VersionHistoryPopup/VersionHistoryPopup";
+import ClonePopup from "../FormularySetUp/components/ClonePopup/ClonePopup";
+import { VersionHistoryData } from "../FormularySetUp/components/VersionHistoryPopup/version-hisory.model";
+import { ToastContainer } from 'react-toastify';
+import showMessage from "../../../Utils/Toast";
 
 const mapStateToProps = (state) => {
   return {
     mode: state?.setup?.mode,
     currentFormulary: state.setup.formulary,
     formularyVersionList: state.header.formulary_version_list,
+    formularyLobId: state?.application?.formulary_lob_id,
   };
 };
 
@@ -29,13 +37,20 @@ class FormularyDetailsTop extends React.Component<any, any> {
   // }
 
   state = {
+    // to detect if any popup is open
+    isAnyPopupOpen: false,
+    //toggle flag to show and hide version history popup
+    isVersionHistoryPopupOpen: false,
+    isClonePopupOpen: false,
+    dialogTitle: '',
+
     lastID: 0,
     lastVersion: 0,
   };
 
   componentDidUpdate() {
-    console.log(this.props.mode);
-    console.log(this.props.currentFormulary);
+    // console.log(this.props.mode);
+    // console.log(this.props.currentFormulary);
     if (this.props.mode === "EXISTING" && this.props.currentFormulary) {
       // console.log(
       //   this.state.lastID + " / " + this.props?.currentFormulary?.id_formulary
@@ -49,7 +64,7 @@ class FormularyDetailsTop extends React.Component<any, any> {
       if (
         this.state.lastID !== this.props?.currentFormulary?.id_formulary &&
         this.state !==
-          this.props?.currentFormulary?.formulary_info?.version_number
+        this.props?.currentFormulary?.formulary_info?.version_number
       ) {
         this.props.fetchFormularyVersions(
           this.props.currentFormulary?.id_base_formulary
@@ -68,8 +83,165 @@ class FormularyDetailsTop extends React.Component<any, any> {
       (el) => el.value === e
     ).id_formulary;
     // console.log(formulary_id)
-    this.props.fetchSelectedFormulary(formulary_id);
+    // this.props.fetchSelectedFormulary(formulary_id);
+    // TODO
+    this.externalInferfaceLoadFormulary(6, formulary_id);
   };
+
+  /**
+   * @function onVersionHistoryClick
+   * handler for version history button
+   * opens the popup with grid showing version historie of the
+   * formulary with base id (id_base_formulary in app state)
+   *
+   * @author Deepak_T
+   */
+  onVersionHistoryClick = () => {
+    console.log("Version history clicked");
+    this.setState({ isAnyPopupOpen: true, isVersionHistoryPopupOpen: true, dialogTitle: 'VERSION HISTORY' });
+  };
+
+  onCloneClick = () => {
+    console.log("Clone button clicked");
+    this.setState({ isAnyPopupOpen: true, isClonePopupOpen: true, dialogTitle: 'CLONE' });
+  };
+
+  /**
+   * @function onClosePopup
+   * handler for closing popup
+   * @author Deepak_T
+   */
+  onClosePopup = () => {
+    this.setState({
+      isAnyPopupOpen: false,
+      isVersionHistoryPopupOpen: false,
+      isClonePopupOpen: false,
+      dialogTitle: ''
+      //add other popup toggles too if this is reused
+    });
+  };
+
+  /**
+   * @function onActionFromPopup
+   * handler for action from popup
+   * @param action the action string passed from dialog popup
+   * @author Deepak_T
+   */
+  onActionFromPopup = (action: string) => {
+    console.log("Action from popup: ", action);
+    //do any action if requiredbased ona ction type and close popup
+    this.onClosePopup();
+  };
+
+  /**
+   * @function onFormularyVersionSelection
+   * call back for version selection
+   * @param the data item selected
+   *
+   */
+  onFormularyVersionSelection = (data: VersionHistoryData) => {
+    // console.log("the selected version ", data);
+    // do anything with the data
+    this.onClosePopup();
+    if (data && data.id_formulary && data.id_formulary > 0) {
+      this.externalInferfaceLoadFormulary(6, data.id_formulary);
+    }
+
+  };
+
+  // CLONE
+
+  // SetupService - createFormularyUsingClone
+  // createFormularyUsingClone(     baseId: number,     payload: any   ): Promise<number | null>
+  // base id --- FL base ID
+  // number -- new FL no.
+  // payload
+  // const payload: any = {};
+  // payload.formulary_info = {};
+  // payload.formulary_info.formulary_name = new_name;
+  // payload.formulary_info.effective_date = inew_effective_date;
+  // payload.formulary_info.id_lob =  <GET from Store>
+
+  //  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
+  // TODO
+  // Do not modify this...
+  // Add new code above this...
+  //  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
+
+  externalInferfaceLoadFormulary(type: number, id: number) {
+    console.log(" EXTERNAL INTERFACE LOAD FL : " + type + " ID : " + id);
+
+    // this.manageFormularyType(type, id);
+    this.props.fetchSelectedFormulary(id);
+  }
+
+  // manageFormularyType(type: number, id: number) {
+  //   console.log(" Manage - TYPE : " + type + " ID : " + id);
+  //   let defaultType = 4;
+  //   if (type === -1) {
+  //     this.props.fetchGeneralOptions({ type: defaultType, id: -1 });
+  //     return;
+  //   }
+
+  //   this.props.fetchGeneralOptions({ type: type, id: id });
+  //   this.props.fetchDesignOptions({ type: type, id: id });
+  //   this.props.fetchTierOptions({ type: type, id: id });
+
+  //   if (type === 1) {
+  //     // MRC...
+  //     this.props.fetchMedicareOptions({ type: type, id: id });
+  //     this.props.fetchSupplementalOptions({ type: type, id: id });
+  //   } else if (type === 2) {
+  //     // MMP...
+  //     this.props.fetchStatesOptions(type);
+  //     this.props.fetchMedicareOptions({ type: type, id: id });
+  //     this.props.fetchSupplementalOptions({ type: type, id: id });
+  //   } else if (type === 3) {
+  //     // TODO ... MEDICADE...
+  //     this.props.fetchStatesOptions(0);
+  //   } else if (type === 4) {
+  //     // TODO ... MEDICADE...
+  //     this.props.fetchStatesOptions(0);
+  //   } else if (type === 5) {
+  //     // EXC...
+  //   } else if (type === 6) {
+  //     // COMMERCIAL...
+  //   }
+  //   this.props.fetchSubMthsOptions(2021);
+  // }
+  onFormularyCloneInfo = (cloneName, effectiveDate) => {
+    console.log("Formulary name:" + cloneName + " Date:" + effectiveDate);
+    this.onClosePopup();
+    this.handleCloneFormulary(cloneName, effectiveDate);
+  }
+
+  onFormularyCloneCancel = () => {
+    this.onClosePopup();
+  }
+
+  handleCloneFormulary = async (cloneName, effectiveDate) => {
+    try {
+      if (this.props.currentFormulary) {
+        const payload: any = {};
+        payload.formulary_info = {};
+        payload.formulary_info.formulary_name = cloneName;
+        payload.formulary_info.effective_date = effectiveDate;
+        payload.formulary_info.id_lob = this.props.formularyLobId;
+
+        let newFormularyId = await createFormularyUsingClone(this.props.currentFormulary.id_base_formulary, payload);
+        if(newFormularyId){
+          showMessage('Cloned formulary Id:'+newFormularyId, 'success');
+          this.externalInferfaceLoadFormulary(6, newFormularyId);
+        }else{
+          showMessage('Error: No response for formulary clone', 'error')
+        }
+      }
+    } catch (error) {
+      console.log("***** clone - Error");
+      console.log(error);
+      showMessage('Error while cloning formulary', 'error')
+    }
+  }
 
   render() {
     let dropDown: any;
@@ -84,8 +256,35 @@ class FormularyDetailsTop extends React.Component<any, any> {
         />
       );
     }
+
     return (
       <div className="drug-detail-top">
+        {/* The popup for version history . Maybe this can be extended for other action buttons too */}
+        {this.state.isAnyPopupOpen ? (
+          <DialogPopup
+            positiveActionText="save"
+            negativeActionText="cancel"
+            title={this.state.dialogTitle}
+            handleClose={this.onClosePopup}
+            handleAction={this.onActionFromPopup}
+            open={this.state.isAnyPopupOpen}
+            showActions={false}
+            showCloseIcon={false}
+            className="formularydetailstop-root__grid-dialog-popup"
+          >
+            {this.state.isVersionHistoryPopupOpen && (
+              <VersionHistoryPopup
+                onFormularyVersionSelection={this.onFormularyVersionSelection}
+              />
+            )}
+            {this.state.isClonePopupOpen && (
+              <ClonePopup onFormularyCloneInfo={this.onFormularyCloneInfo} onFormularyCloneCancel={this.onFormularyCloneCancel} />
+            )}
+          </DialogPopup>
+        ) : null}
+
+        {/* End of dialog popup */}
+
         <div className="breadcrum-sec">
           <div className="breadcrum">
             <span
@@ -110,7 +309,10 @@ class FormularyDetailsTop extends React.Component<any, any> {
             </div> */}
               {dropDown}
               <div>
-                <div className="item">
+                <div
+                  className="item item--version-history"
+                  onClick={this.onVersionHistoryClick}
+                >
                   <svg
                     width="11"
                     height="11"
@@ -125,7 +327,8 @@ class FormularyDetailsTop extends React.Component<any, any> {
                   </svg>
                   Version History
                 </div>
-                <div className="item">
+                <div className="item item--version-history"
+                  onClick={this.onCloneClick}>
                   <svg
                     width="13"
                     height="13"
@@ -205,10 +408,30 @@ class FormularyDetailsTop extends React.Component<any, any> {
               <span className="label">Formulary ID:</span>{" "}
               {this.props.currentFormulary?.id_formulary}
             </div>
+            {/* <div className="item">
+              <span className="tag purple">
+                {
+                  this.props.currentFormulary?.formulary_type_info
+                    ?.formulary_type
+                }
+              </span>
+            </div> */}
+            {/* <div className="item">
+              <span className="label">Formulary ID:</span>{" "}
+              {this.props.currentFormulary?.id_formulary}
+            </div> */}
             <div className="item">
               <span className="label">Version:</span>{" "}
               {this.props.currentFormulary?.formulary_info?.version_number}
             </div>
+            {/* <div className="item">
+              <span className="label">Effective Date:</span>{" "}
+              {this.props.currentFormulary?.formulary_info?.effective_date}
+            </div> */}
+            {/* <div className="item">
+              <span className="label">Termination Date:</span>{" "}
+              {this.props.currentFormulary?.terminationDate}
+            </div> */}
             <div className="item">
               <span className="label">Effective Date:</span>{" "}
               {this.props.currentFormulary?.formulary_info?.effective_date}
@@ -217,8 +440,13 @@ class FormularyDetailsTop extends React.Component<any, any> {
               <span className="label">Termination Date:</span>{" "}
               {this.props.currentFormulary?.terminationDate}
             </div>
+            {/* <div className="item">
+              <span className="label">Termination Date:</span>{" "}
+              {this.props.currentFormulary?.terminationDate}
+            </div> */}
           </div>
         )}
+        <ToastContainer />
       </div>
     );
   }

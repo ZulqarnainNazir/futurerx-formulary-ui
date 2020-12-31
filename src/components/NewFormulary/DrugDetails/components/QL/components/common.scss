@@ -28,6 +28,13 @@
   }
   .radio-group {
     margin-top: 15px;
+    // .radio-group {
+    .container {
+      input:disabled {
+        cursor: not-allowed;
+      }
+    }
+    // }
   }
   .formulary-list-search {
     width: 373px !important;

@@ -57,17 +57,19 @@ const FillLimitSettings = (props) => {
             <div className="radio-group">
               <RadioButton
                 label="Yes"
-                checked={selectedCriteria === "yes"}
+                checked={props.isChecked}
                 value="yes"
-                onChange={(e) => setSelectedCriteria(e.target.value)}
+                onChange={props.onRadioButtonClick}
                 name="limit-additional-criteria"
+                disabled={props.isViweAll}
               />
               <RadioButton
                 label="No"
-                checked={selectedCriteria === "no"}
+                checked={!props.isChecked}
                 value="no"
-                onChange={(e) => setSelectedCriteria(e.target.value)}
+                onChange={props.onRadioButtonClick}
                 name="limit-additional-criteria"
+                disabled={props.isViweAll}
               />
             </div>
           </div>
