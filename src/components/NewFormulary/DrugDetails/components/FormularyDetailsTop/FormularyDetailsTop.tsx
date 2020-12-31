@@ -79,7 +79,6 @@ class FormularyDetailsTop extends React.Component<any, any> {
     this.props.fetchSelectedFormulary(formulary_id);
   };
 
-<<<<<<< HEAD
 
 
 
@@ -156,7 +155,6 @@ class FormularyDetailsTop extends React.Component<any, any> {
 
 
 
-=======
   /**
    * @function onVersionHistoryClick
    * handler for version history button
@@ -206,7 +204,6 @@ class FormularyDetailsTop extends React.Component<any, any> {
     // do anything with the data
     this.onClosePopup();
   };
->>>>>>> feature/api_integration
 
   render() {
     let dropDown: any;
