@@ -7,7 +7,9 @@ import "./FormularyDetailsTop.scss";
 import { fetchFormularyHeader } from "../../../../../redux/slices/formulary/header/headerSlice";
 import { fetchSelectedFormulary } from "../../../../.././redux/slices/formulary/setup/setupSlice";
 import VersionHistoryPopup from "../FormularySetUp/components/VersionHistoryPopup/VersionHistoryPopup";
+import ClonePopup from "../FormularySetUp/components/ClonePopup/ClonePopup";
 import { VersionHistoryData } from "../FormularySetUp/components/VersionHistoryPopup/version-hisory.model";
+import { ToastContainer } from 'react-toastify';
 
 const mapStateToProps = (state) => {
   return {
@@ -36,6 +38,8 @@ class FormularyDetailsTop extends React.Component<any, any> {
     isAnyPopupOpen: false,
     //toggle flag to show and hide version history popup
     isVersionHistoryPopupOpen: false,
+    isClonePopupOpen: false,
+    dialogTitle: '',
 
     lastID: 0,
     lastVersion: 0,
@@ -91,7 +95,12 @@ class FormularyDetailsTop extends React.Component<any, any> {
    */
   onVersionHistoryClick = () => {
     console.log("Version history clicked");
-    this.setState({ isAnyPopupOpen: true, isVersionHistoryPopupOpen: true });
+    this.setState({ isAnyPopupOpen: true, isVersionHistoryPopupOpen: true, dialogTitle: 'VERSION HISTORY' });
+  };
+
+  onCloneClick = () => {
+    console.log("Clone button clicked");
+    this.setState({ isAnyPopupOpen: true, isClonePopupOpen: true , dialogTitle: 'CLONE'});
   };
 
   /**
@@ -103,6 +112,8 @@ class FormularyDetailsTop extends React.Component<any, any> {
     this.setState({
       isAnyPopupOpen: false,
       isVersionHistoryPopupOpen: false,
+      isClonePopupOpen: false,
+      dialogTitle: ''
       //add other popup toggles too if this is reused
     });
   };
@@ -135,15 +146,6 @@ class FormularyDetailsTop extends React.Component<any, any> {
 
   };
 
-
-
-
-
-
-
-
-
-
   // CLONE
   
   // SetupService - createFormularyUsingClone
@@ -156,24 +158,6 @@ class FormularyDetailsTop extends React.Component<any, any> {
   // payload.formulary_info.formulary_name = new_name;
   // payload.formulary_info.effective_date = inew_effective_date;
   // payload.formulary_info.id_lob =  <GET from Store>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
   //  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
   // TODO
@@ -222,6 +206,14 @@ class FormularyDetailsTop extends React.Component<any, any> {
   //   }
   //   this.props.fetchSubMthsOptions(2021);
   // }
+  onFormularyCloneInfo = (cloneName, effectiveDate) => {
+    console.log("Formulary name:"+cloneName+" Date:"+effectiveDate);
+    this.onClosePopup();
+  }
+
+  onFormularyCloneCancel = () => {
+    this.onClosePopup();
+  }
 
   render() {
     let dropDown: any;
@@ -244,7 +236,7 @@ class FormularyDetailsTop extends React.Component<any, any> {
           <DialogPopup
             positiveActionText="save"
             negativeActionText="cancel"
-            title="VERSION HISTORY"
+            title={this.state.dialogTitle}
             handleClose={this.onClosePopup}
             handleAction={this.onActionFromPopup}
             open={this.state.isAnyPopupOpen}
@@ -256,6 +248,9 @@ class FormularyDetailsTop extends React.Component<any, any> {
               <VersionHistoryPopup
                 onFormularyVersionSelection={this.onFormularyVersionSelection}
               />
+            )}
+            {this.state.isClonePopupOpen && (
+               <ClonePopup onFormularyCloneInfo={this.onFormularyCloneInfo} onFormularyCloneCancel={this.onFormularyCloneCancel}/>
             )}
           </DialogPopup>
         ) : null}
@@ -304,7 +299,8 @@ class FormularyDetailsTop extends React.Component<any, any> {
                   </svg>
                   Version History
                 </div>
-                <div className="item">
+                <div className="item item--version-history"
+                     onClick={this.onCloneClick}>
                   <svg
                     width="13"
                     height="13"
@@ -422,6 +418,7 @@ class FormularyDetailsTop extends React.Component<any, any> {
             </div> */}
           </div>
         )}
+        <ToastContainer/>
       </div>
     );
   }
