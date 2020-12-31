@@ -1,5 +1,5 @@
-.pt-limit-settings {
-  padding-bottom: 80px;
+.root-icd-limit-settings {
+  // padding-bottom: 80px;
   &__add-new-form-action {
     display: flex;
     align-items: center;
@@ -28,6 +28,7 @@
   .input-field-group {
     display: flex;
     flex-direction: column;
+    margin-right: 10px;
 
     &__label {
       font-family: Roboto;
@@ -41,13 +42,24 @@
       color: #323c47;
       margin-bottom: 10px;
     }
-
     &__dropdown-field {
       .select-box {
         .ant-select {
-          width: 479px;
+          width: 265px;
         }
       }
+    }
+    &__text-field {
+      .setup-input-fields {
+        width: 204px !important;
+        margin-bottom: 0px !important;
+      }
+    }
+  }
+  .input-field-group__dropdown-field {
+    width: 275px;
+    .MuiAutocomplete-root {
+      width: 275px !important;
     }
   }
   .Button {

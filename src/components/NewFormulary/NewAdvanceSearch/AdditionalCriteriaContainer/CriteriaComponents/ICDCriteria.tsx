@@ -1,11 +1,9 @@
-import React from "react";
 import Button from "../../../../shared/Frx-components/button/Button";
+import React from "react";
 import DropDown from "../../../../shared/Frx-components/dropdown/DropDown";
 import PanelHeader from "../../../../shared/Frx-components/panel-header/PanelHeader";
-import StatusContentFormPanel from "../common/StatusContentFormPanel/StatusContentFormPanel";
-import Tags from "../Tags";
-
-import "./PT.scss";
+import StatusContentFormPanel from "../../../DrugDetails/components/common/StatusContentFormPanel/StatusContentFormPanel";
+import "./ICDCriteria.scss";
 
 const AddIcon = () => (
   <svg
@@ -28,61 +26,62 @@ const AddIcon = () => (
   </svg>
 );
 
-class PrLimitSettings extends React.Component<any, any> {
+class ICDCriteria extends React.Component<any, any> {
   handleReplaceSrch = (val) => {
     this.props.handleReplaceSrch(val);
+  };
+
+  handleInput = (event) => {
+    this.props.handleLookBackDays(event.target.value);
   };
   render() {
     const {
       showGridHandler,
       handleStatus,
-      ptSettingsStatus,
-      isDisabled,
+      icdSettingsServies: { icdSettingsStatus },
+      isAdditionalCriteria,
+      deleteIconHandler,
     } = this.props;
     return (
-      <div className="pt-limit-settings bordered mb-10">
-        <PanelHeader
-          title="prescriber taxonomy settings"
-          tooltip="prescriber taxonomy settings"
-        />
-
+      <div className="root-icd-limit-settings bordered mb-10">
         <div className="inner-container">
           <StatusContentFormPanel
-            title="Prescriber Taxonomy"
-            type={ptSettingsStatus.type}
+            title="ICD"
+            type={icdSettingsStatus.type}
             handleStatus={handleStatus}
-            showDelete={false}
+            isAdditionalCriteria={isAdditionalCriteria}
+            deleteIconHandler={deleteIconHandler}
           >
-            <div className="pn-limit-settings__form">
+            <div className="icd-limit-settings__form">
               <div className="input-field-group">
-                <div className="input-field-group__label">
-                  Prescriber Taxonomy:
-                </div>
+                <div className="input-field-group__label">ICD:</div>
 
                 <div className="input-field-group__dropdown-field">
-                  {/* <DropDown
-                        className=""
-                        placeholder="Select"
-                        options={["inclusive of", "exclusive of"]}
-                      /> */}
-                  <Tags
-                    disabled={this.props.isDisabled}
+                  {/* <Tags
                     options={this.props.options}
                     handleReplaceSrch={this.handleReplaceSrch}
+                    disabled={this.props.isDisabled}
+                  /> */}
+                </div>
+              </div>
+
+              <div className="input-field-group">
+                <div className="input-field-group__label">Lookback Days:</div>
+                <div className="input-field-group__text-field">
+                  <input
+                    type="number"
+                    className="setup-input-fields"
+                    onChange={this.handleInput}
+                    disabled={this.props.isDisabled}
                   />
                 </div>
               </div>
             </div>
           </StatusContentFormPanel>
         </div>
-        <Button
-          label="Apply"
-          onClick={showGridHandler}
-          disabled={this.props.isDisabled}
-        />
       </div>
     );
   }
 }
 
-export default PrLimitSettings;
+export default ICDCriteria;

@@ -10,6 +10,7 @@ import RadioButton from "../../../../../shared/Frx-components/radio-button/Radio
 import {
   getStSummary,
   getStGrouptDescriptions,
+  getStGrouptDescription,
   getStTypes,
   getDrugLists,
   postFormularyDrugST,
@@ -32,11 +33,13 @@ import FormControlLabel from "@material-ui/core/FormControlLabel";
 import DialogPopup from "../../../../../shared/FrxDialogPopup/FrxDialogPopup";
 import CloneFormularyPopup from "../../FormularySetUp/components/CloneFormularyPopup";
 import { ReactComponent as EditIcon } from "../../../../../../assets/icons/EditIcon.svg";
+import { setAdditionalCriteria } from "../../../../../../redux/slices/formulary/advancedSearch/additionalCriteriaSlice";
 
 function mapDispatchToProps(dispatch) {
   return {
     getStSummary: (a) => dispatch(getStSummary(a)),
     getStGrouptDescriptions: (a) => dispatch(getStGrouptDescriptions(a)),
+    getStGrouptDescription: (a) => dispatch(getStGrouptDescription(a)),
     getStTypes: (a) => dispatch(getStTypes(a)),
     getDrugLists: (a) => dispatch(getDrugLists(a)),
     postFormularyDrugST: (a) => dispatch(postFormularyDrugST(a)),
@@ -44,7 +47,9 @@ function mapDispatchToProps(dispatch) {
       dispatch(getStGrouptDescriptionVersions(a)),
     postApplyFormularyDrugST: (a) => dispatch(postApplyFormularyDrugST(a)),
     setAdvancedSearch: (a) => dispatch(setAdvancedSearch(a)),
+    setAdditionalCriteria: (a) => dispatch(setAdditionalCriteria(a)),
     getLobFormularies: (a) => dispatch(getLobFormularies(a)),
+
   };
 }
 
@@ -58,6 +63,7 @@ const mapStateToProps = (state) => {
     formulary_lob_id: state?.application?.formulary_lob_id,
     formulary_type_id: state?.application?.formulary_type_id,
     advancedSearchBody: state?.advancedSearch?.advancedSearchBody,
+    additionalCriteriaBody: state?.additionalCriteria?.additionalCriteriaBody,
     populateGrid: state?.advancedSearch?.populateGrid,
     closeDialog: state?.advancedSearch?.closeDialog,
   };
@@ -96,6 +102,9 @@ class STF extends React.Component<any, any> {
     lobFormularies: [],
     stValue: null,
     groupDescriptionProp: "",
+    isAdditionalCriteriaOpen: false,
+    additionalCriteriaState: null,
+    is_additional_criteria_defined:false,
   };
 
   onSelectedTableRowChanged = (selectedRowKeys) => {
@@ -193,6 +202,11 @@ class STF extends React.Component<any, any> {
       apiDetails["messageBody"]["search_key"] = "";
       apiDetails["messageBody"]["st_value"] = Number(this.state.stValue);
 
+      if (this.state.additionalCriteriaState!=null){
+        apiDetails["messageBody"]["is_custom_additional_criteria"] = true;
+        apiDetails["messageBody"]["um_criteria"] = this.state.additionalCriteriaState;
+      }
+
       const saveData = this.props
         .postApplyFormularyDrugST(apiDetails)
         .then((json) => {
@@ -232,6 +246,11 @@ class STF extends React.Component<any, any> {
       }
       this.props.setAdvancedSearch(payload);
     }
+    if (nextProps.additionalCriteriaBody) {
+      this.setState({
+        additionalCriteriaState: nextProps.additionalCriteriaBody,
+      });
+    }
     if (nextProps.configureSwitch){
       this.populateGridData();
     }else{
@@ -262,9 +281,30 @@ class STF extends React.Component<any, any> {
           break;
       }
       debugger;
+      let latestVersionId=-1;
+      data.forEach(element => {
+        if (element.id_st_group_description > latestVersionId){
+          latestVersionId=element.id_st_group_description;
+        }
+      });
+      let tmp_additionalCriteria=false;
+      this.props.getStGrouptDescription({lob_type:this.props.formulary_lob_id, 
+        pathParams: "/"+latestVersionId}).then((json) => {
+          debugger;
+          this.props.setAdditionalCriteria([]);
+          if (json.payload && json.payload.code === "200") {
+            if (json.payload.data["um_criteria"]!=null && json.payload.data["um_criteria"].length >0 ){
+              let payload: any = {};
+              payload.additionalCriteriaBody = json.payload.data["um_criteria"];
+              this.props.setAdditionalCriteria(payload);
+              tmp_additionalCriteria=true;
+            }
+          }
+        });
       this.setState({
-        selectedLastestedVersion: data[0].id_st_group_description,
+        selectedLastestedVersion: latestVersionId,
         fileType: ftype,
+        is_additional_criteria_defined: tmp_additionalCriteria,
       });
       this.setState({
         tierGridContainer: false,
@@ -364,6 +404,7 @@ class STF extends React.Component<any, any> {
           gridItem["id"] = count;
           gridItem["key"] = count;
           gridItem["tier"] = element.tier_value;
+          gridItem["isUmCriteria"] = element.is_um_criteria;
           gridItem["stGroupDescription"] = element.st_group_description;
           gridItem["stType"] = element.st_type;
           gridItem["stValue"] = element.st_value;
@@ -468,11 +509,20 @@ class STF extends React.Component<any, any> {
       });
     });
   }
+   // additional criteria toggle
+   closeAdditionalCriteria = () => {
+    this.setState({ isAdditionalCriteriaOpen: false });
+  };
+  openAdditionalCriteria = () => {
+    debugger;
+    this.setState({ isAdditionalCriteriaOpen: true });
+  };
   render() {
     const searchProps = {
       lobCode: this.props.lobCode,
       // pageType: pageTypes.TYPE_TIER
     };
+    const { isAdditionalCriteriaOpen } = this.state;
     return (
       <div className="bordered stf-root">
         <div className="modify-wrapper bordered white-bg">
@@ -530,9 +580,35 @@ class STF extends React.Component<any, any> {
                     <span className="astrict">*</span>
                   </label>
                   <Space size="large">
-                    <RadioButton label="Yes" disabled={this.props.configureSwitch} />
-                    <RadioButton label="No" disabled={this.props.configureSwitch}/>
+                  <RadioGroup
+                aria-label="marketing-material-radio1"
+                className="gdp-radio"
+                name="is_additional_criteria_defined"
+                onChange={this.handleChange}
+                value={this.state.is_additional_criteria_defined}
+              >
+                <FormControlLabel
+                  value={true}
+                  control={<Radio />}
+                  label="Yes"
+                  disabled={this.props.configureSwitch}
+                  onClick={this.openAdditionalCriteria}
+                />
+                <FormControlLabel
+                  value={false}
+                  control={<Radio />}
+                  label="No"
+                  disabled={this.props.editable}
+                />
+              </RadioGroup>
                   </Space>
+                  {isAdditionalCriteriaOpen ? (
+            <AdvanceSearchContainer
+              openPopup={isAdditionalCriteriaOpen}
+              onClose={this.closeAdditionalCriteria}
+              isAdvanceSearch={false}
+            />
+          ) : null}
                 </div>
               </Grid>
               <Grid item xs={4}>
@@ -603,7 +679,7 @@ class STF extends React.Component<any, any> {
           {this.state.tierGridContainer && (
             <div className="select-drug-from-table">
               <div className="bordered white-bg">
-                { !this.props.configureSwitch && (
+               
                 <div className="header space-between pr-10">
                   <div className="button-wrapper">
                     <Button
@@ -612,10 +688,12 @@ class STF extends React.Component<any, any> {
                       onClick={this.advanceSearchClickHandler}
                       disabled={this.props.configureSwitch}
                     />
-                    <Button label="Save" onClick={this.handleSave} />
+                     { !this.props.configureSwitch && (
+                      <Button label="Save" onClick={this.handleSave} />
+                    )}
                   </div>
                 </div>
-                )}
+                
 
                 <div className="tier-grid-container">
                   <FrxDrugGridContainer
