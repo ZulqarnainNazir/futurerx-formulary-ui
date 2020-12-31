@@ -21,6 +21,7 @@ class ViewFormularies extends React.Component<any, any> {
     PopUpType: PopUpTypes.TYPE2,
 
     hidden: false,
+    baseFormulary: {},
   };
   onClose = () => {
     console.log("close");
@@ -33,6 +34,10 @@ class ViewFormularies extends React.Component<any, any> {
 
   selectFormularyClick = (dataRow) => {
     console.log(dataRow);
+    if (dataRow) {
+      this.state.baseFormulary = dataRow;
+    }
+    this.setState({ selectFormulary: false });
   };
   render() {
     return (
@@ -49,7 +54,9 @@ class ViewFormularies extends React.Component<any, any> {
                 <div className="input-element">
                   <div className="bordered pointer">
                     <span onClick={(e) => this.handleIconClick()}>
-                      Formulary 1
+                    {this.state.baseFormulary["formulary_name"]
+                        ? this.state.baseFormulary["formulary_name"]
+                        : "Select Formulary"}
                     </span>
                     <EditIcon
                       onClick={(e) => this.handleIconClick()}
@@ -65,7 +72,7 @@ class ViewFormularies extends React.Component<any, any> {
                 justifyContent="center"
                 className="view-formulary-btn"
               >
-                <Button label="View" onClick={this.props.handleViewBtn} />
+                <Button label="View" onClick={(event) => this.props.handleViewBtn(this.state.baseFormulary)} />
               </Box>
             </Grid>
           </Grid>
@@ -84,7 +91,7 @@ class ViewFormularies extends React.Component<any, any> {
                 selectFormulary: !this.state.selectFormulary,
               });
             }}
-            handleAction={() => {}}
+            handleAction={() => { }}
             open={this.state.selectFormulary}
             showActions={false}
             className=""
@@ -94,7 +101,7 @@ class ViewFormularies extends React.Component<any, any> {
             {/* <SelectFormularyPopUp formularyToggle={this.formularyToggle} /> */}
             <CloneFormularyPopup
               type="commercial" // type will be dynamic based on the LOB
-              settingsTriDotClick={this.selectFormularyClick}
+              selectFormularyClick={this.selectFormularyClick}
             />
           </DialogPopup>
         ) : null}

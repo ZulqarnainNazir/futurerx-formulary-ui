@@ -2,28 +2,29 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { createAsyncThunk } from "@reduxjs/toolkit";
 
 interface AdditionalCriteriaState {
+  isNewAdditionalCriteria: boolean;
   additionalCriteriaObject: any;
   additionalCriteriaBody: any;
   populateGrid: boolean;
   closeDialog: boolean;
   listItemStatus: any;
-
   posSettingsList: any;
   prSettingsList: any;
 }
 
 const additionalCriteriaInitialState: AdditionalCriteriaState = {
+  isNewAdditionalCriteria: false,
   additionalCriteriaObject: null,
   additionalCriteriaBody: null,
   populateGrid: false,
   closeDialog: false,
   listItemStatus: {},
-
   posSettingsList: null,
   prSettingsList: null,
 };
 
 interface AddionationalCriteriaResult {
+  isNewAdditionalCriteria: boolean;
   additionalCriteriaObject: any;
   additionalCriteriaBody: any;
   populateGrid: boolean;
@@ -39,6 +40,7 @@ const additionalCriteria = createSlice({
       state,
       { payload }: PayloadAction<AddionationalCriteriaResult>
     ) {
+      state.isNewAdditionalCriteria = payload.isNewAdditionalCriteria;
       state.additionalCriteriaObject = payload.additionalCriteriaObject;
       state.additionalCriteriaBody = payload.additionalCriteriaBody;
       state.populateGrid = payload.populateGrid;
@@ -56,6 +58,7 @@ export const setAdditionalCriteria = createAsyncThunk(
   "additionalCriteria",
   async (arg: any, { dispatch }) => {
     const obj = {
+      isNewAdditionalCriteria: arg.isNewAdditionalCriteria,
       additionalCriteriaObject: arg.additionalCriteriaObject,
       additionalCriteriaBody: arg.additionalCriteriaBody,
       populateGrid: arg.populateGrid,

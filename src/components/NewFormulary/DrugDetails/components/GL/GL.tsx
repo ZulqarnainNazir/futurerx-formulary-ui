@@ -1,5 +1,6 @@
 import React from "react";
 import { connect } from "react-redux";
+import { ToastContainer } from "react-toastify";
 import PanelHeader from "../../../../shared/Frx-components/panel-header/PanelHeader";
 import PanelGrid from "../../../../shared/Frx-components/panel-grid/PanelGrid";
 import CustomizedSwitches from "../FormularyConfigure/components/CustomizedSwitches";
@@ -423,8 +424,8 @@ class DrugDetailGL extends React.Component<any, any> {
 
     let listCount = 0;
     this.props.getDrugDetailsGLList(apiDetails).then((json) => {
-      let tmpData = json.payload.result;
-      listCount = json.payload.count;
+      let tmpData = json.payload && json.payload.result ? json.payload.result : [];
+      listCount = json.payload?.count;
       var data: any[] = [];
       let count = 1;
       var gridData = tmpData.map((el) => {
@@ -580,9 +581,43 @@ class DrugDetailGL extends React.Component<any, any> {
     });
   };
 
+  validateGLForm = () => {
+    if(this.state.activeTabIndex === 0) {
+      let rpSelected = this.state.glSettings.filter(e => e.isChecked);
+      return !(rpSelected.length === 0);
+
+    } else if(this.state.activeTabIndex === 2) {
+      return !(this.state.glRemoveCheckedList.length === 0);
+    }
+
+    return true;
+  }
+
   showGridHandler = () => {
-    this.getGLDrugsList();
     console.log("The State of the Tab = ", this.state);
+
+    if(this.validateGLForm()) {
+      this.getGLDrugsList();
+    } else {
+      showMessage("Please Select atleast one gender limit", "info");
+    }
+
+    // if(this.state.activeTabIndex === 0) {
+    //   let rpSelected = this.state.glSettings.filter(e => e.isChecked);
+    //   if(rpSelected.length === 0) {
+    //     showMessage("Please Select atleast one gender limit", "error");
+    //   } else {
+    //     this.getGLDrugsList();
+    //   }
+
+    // } else if(this.state.activeTabIndex === 2) {
+    //   // let rmSelected = this.state.glRemoveCheckedList.filter(e => e.isChecked);
+    //   if(this.state.glRemoveCheckedList.length === 0) {
+    //     showMessage("Please Select atleast one gender limit", "error");
+    //   } else {
+    //     this.getGLDrugsList();
+    //   }
+    // }
   };
 
   componentWillReceiveProps(nextProps) {
@@ -756,6 +791,7 @@ class DrugDetailGL extends React.Component<any, any> {
             ) : null}
           </div>
         ) : null}
+        <ToastContainer />
       </>
     );
   }

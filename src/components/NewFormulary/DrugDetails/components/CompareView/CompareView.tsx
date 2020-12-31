@@ -10,6 +10,10 @@ import "./CompareView.scss";
 import ViewFormularies from "./components/ViewFormularies";
 import showMessage from "../../../Utils/Toast";
 import { ToastContainer } from 'react-toastify';
+import { saveAs } from 'file-saver';
+import { exportReport } from "../../../../../redux/slices/formulary/compareView/compareViewService";
+import * as commonConstants from "../../../../../api/http-commons";
+import uuid from "react-uuid";
 
 const tabs = [
   { id: 1, text: "COMPARE FORMUARIES" },
@@ -38,6 +42,7 @@ export default class CompareView extends React.Component<
     isViewClicked: false,
     baseformulary: {},
     referenceformulary: {},
+    exportSections: Array(),
   };
   onClickTab = (selectedTabIndex: number) => {
     let activeTabIndex = 0;
@@ -63,11 +68,51 @@ export default class CompareView extends React.Component<
     }
   };
 
-  handleViewBtn = () => {
-    this.setState({
-      isViewClicked: !this.state.isViewClicked,
-    });
+  handleViewBtn = (baseFormulary) => {
+    if (baseFormulary && baseFormulary['id_formulary']) {
+      this.setState({
+        isViewClicked: !this.state.isViewClicked,
+        baseformulary: baseFormulary,
+      });
+    } else {
+      showMessage('Choose formulary to view', 'error');
+    }
   };
+
+  sectionSelected = (sectionName, checked) => {
+    console.log('Section selection:'+sectionName+' '+checked);
+    if (checked) {
+      if (!this.state.exportSections.includes(sectionName))
+        this.state.exportSections.push(sectionName);
+    } else {
+      this.state.exportSections = this.state.exportSections.filter(section => section !== sectionName);
+    }
+  }
+
+  handeReportDownload = async (type) => {
+    let param = type === 'summary' ? 'COMPAREEXC' : 'COMPAREEXCDET';
+    let apiDetails = {};
+    apiDetails["apiPart"] = commonConstants.COMPARE_FORMULARY_EXPORT_EXCEL;
+    apiDetails["pathParams"] =
+      this.state.baseformulary["id_formulary"] + 
+      "/" +
+      this.state.referenceformulary["id_formulary"] + "/" + param;
+
+    apiDetails['messageBody'] = { selected_sections: this.state.exportSections };
+    try {
+      const data = await exportReport(apiDetails);
+      if (data) {
+        const file = new Blob([data], { type: 'application/vnd.ms.excel' });
+        saveAs(file, 'User_Export_' + uuid() + '.xlsx');
+      } else {
+        showMessage("Error while exporting", "error");
+      }
+    } catch (err) {
+      console.log(err);
+      showMessage("Error while exporting", "error");
+    }
+  }
+
   renderActiveTabContent = () => {
     const tabIndex = this.state.activeTabIndex;
     switch (tabIndex) {
@@ -99,11 +144,13 @@ export default class CompareView extends React.Component<
         {activeTabIndex === 0 && isCompareClicked ? (
           <div className="bordered m-t-10 compare-table-root">
             <div className="header white-bg flex-container">
-              <label>comparison of formularies</label>
-              <DownloadIcon />
+              <label>Summary</label>
+              <DownloadIcon onClick={() => {this.handeReportDownload('summary')}} style={{marginLeft: 5}}/>
+              <label style={{marginLeft: 10}}>Details</label>
+              <DownloadIcon onClick={() => {this.handeReportDownload('detials')}} style={{marginLeft: 5}}/>
             </div>
             <div className="inner-container white-bg p-10">
-              <CompareTable baseformulary={Object.assign({},this.state.baseformulary)} referenceformulary={Object.assign({},this.state.referenceformulary)}/>
+              <CompareTable baseformulary={Object.assign({}, this.state.baseformulary)} referenceformulary={Object.assign({}, this.state.referenceformulary)} sectionSelected={this.sectionSelected}/>
             </div>
           </div>
         ) : null}
@@ -113,7 +160,7 @@ export default class CompareView extends React.Component<
               <label>summary of rxcui count</label>
             </div>
             <div className="inner-container white-bg p-10">
-              <ViewTable />
+              <ViewTable baseformulary={Object.assign({}, this.state.baseformulary)} />
             </div>
           </div>
         ) : null}
