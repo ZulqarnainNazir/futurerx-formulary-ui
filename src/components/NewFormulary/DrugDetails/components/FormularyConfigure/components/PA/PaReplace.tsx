@@ -215,6 +215,7 @@ class PaReplace extends React.Component<any, any> {
       apiDetails["messageBody"]["search_key"] = "";
 
       if (this.state.additionalCriteriaState!=null){
+        apiDetails["messageBody"]["is_custom_additional_criteria"] = true;
         apiDetails["messageBody"]["um_criteria"] = this.state.additionalCriteriaState;
       }
       
@@ -254,6 +255,7 @@ class PaReplace extends React.Component<any, any> {
     apiDetails["pathParams"] = "/" + tmp_value;
 
     this.props.getPaGrouptDescriptionVersions(apiDetails).then((json) => {
+      
       let data = json.payload.data;
       let ftype = "";
       switch (this.props.formulary_lob_id) {
@@ -394,6 +396,7 @@ class PaReplace extends React.Component<any, any> {
         gridItem["id"] = count;
         gridItem["key"] = count;
         gridItem["tier"] = element.tier_value;
+        gridItem["isUmCriteria"] = element.is_um_criteria;
         gridItem["paGroupDescription"] = element.pa_group_description;
         gridItem["paType"] = element.pa_type;
         gridItem["fileType"] = element.file_type ? "" + element.file_type : "";
@@ -640,7 +643,7 @@ class PaReplace extends React.Component<any, any> {
         {this.state.tierGridContainer && (
           <div className="select-drug-from-table">
             <div className="bordered white-bg">
-              {!this.props.configureSwitch && (
+              
                 <div className="header space-between pr-10">
                   <div className="button-wrapper">
                     <Button
@@ -649,10 +652,12 @@ class PaReplace extends React.Component<any, any> {
                       onClick={this.advanceSearchClickHandler}
                       disabled={this.props.configureSwitch}
                     />
+                    {!this.props.configureSwitch && (
                     <Button label="Save" onClick={this.handleSave} />
+                    )}
                   </div>
                 </div>
-              )}
+              
 
               <div className="tier-grid-container">
                 <FrxDrugGridContainer
