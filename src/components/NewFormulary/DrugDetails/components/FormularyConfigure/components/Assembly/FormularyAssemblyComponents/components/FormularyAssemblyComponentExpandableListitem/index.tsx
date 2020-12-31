@@ -57,6 +57,7 @@ class FormularyAssemblyComponentExpandableListitem extends Component<FormularyAs
   }
   
   render() { 
+    const { title = ""} = this.props;
     return ( 
       <div className="formulary-assembly-component-expandable-list-item">
         <div className="formulary-assembly-component-expandable-list-item__panel-header" onClick={this.togglePanel}>
@@ -64,7 +65,7 @@ class FormularyAssemblyComponentExpandableListitem extends Component<FormularyAs
             <div className="title-container__icon">
               <ApprovedIcon/>
             </div>
-            <div className="title-container__text">Tier</div>
+            <div className="title-container__text">{title}</div>
           </div>
           
           <div className="formulary-assembly-component-expandable-list-item__panel-header-actions">

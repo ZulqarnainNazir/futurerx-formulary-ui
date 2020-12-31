@@ -19,10 +19,14 @@ const AddIcon = (props) => (
 )
 
 interface FormularyAssemblyComponentListItemProps {
+  index?:number,
   id?: any;
   title?: string;
   tag?: string;
   description?: string;
+  onAdd?: any
+  onRemove?: any,
+  type?: string
 }
 
 interface FormularyAssemblyComponentListItemState {
@@ -30,6 +34,26 @@ interface FormularyAssemblyComponentListItemState {
 }
 
 class FormularyAssemblyComponentListItem extends Component<FormularyAssemblyComponentListItemProps, FormularyAssemblyComponentListItemState> {
+  
+  handleOnAddClick = () => {
+    const {index, onAdd} = this.props;
+    
+    if(typeof(onAdd) === 'function') {
+      onAdd(index);
+    }
+  }
+  
+
+  handleOnRemoveClick = () => {
+    const {id, onRemove} = this.props;
+    console.log("🚀 ~ file: index.tsx ~ line 49 ~ FormularyAssemblyComponentListItem ~ id", id)
+    
+    if(typeof(onRemove) === 'function') {
+      onRemove(id);
+    }
+  }
+  
+  
   render() { 
     return ( 
       <div className="formulary-assembly-component-list-item">
@@ -46,9 +70,15 @@ class FormularyAssemblyComponentListItem extends Component<FormularyAssemblyComp
               <EyeIcon/>
             </div>
             
-            <div className="formulary-assembly-component-list-item__action">
-              <AddIcon/>
-            </div>
+            {
+              this.props.type !== 'assembly' ?
+              <div className="formulary-assembly-component-list-item__action" onClick={this.handleOnAddClick}>
+                <AddIcon/>
+              </div>:   
+              <div className="formulary-assembly-component-list-item__action" onClick={this.handleOnRemoveClick}>
+                <span className="remove-icon">-</span>
+              </div>
+            }
           </div>
         </div>
         

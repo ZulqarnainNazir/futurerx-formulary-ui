@@ -7,7 +7,8 @@ import FormularyAssemblyComponentListItem from './../FormularyAssemblyComponentL
 
 
 interface FormularyComponentsListItemProps {
-  data?: any
+  data?: any,
+  onComponentAdd?: any
 }
 
 interface FormularyComponentsListItemState {
@@ -48,7 +49,7 @@ class FormularyComponents extends Component<FormularyComponentsListItemProps,For
       return (
         <div>
           {
-            componentList.map((currentComponent, key) => <FormularyAssemblyComponentListItem key={key} {...currentComponent} />)
+            componentList.map((currentComponent, key) => <FormularyAssemblyComponentListItem key={key} index={key} {...currentComponent} onAdd={this.props.onComponentAdd}/>)
           }
         </div>  
       );
@@ -56,7 +57,7 @@ class FormularyComponents extends Component<FormularyComponentsListItemProps,For
       return (
         <div>
           {
-            componentList.filter(item => item.tag === tabs[activeTabIndex].text).map((currentComponent, key) => <FormularyAssemblyComponentListItem key={key} {...currentComponent} />)
+            componentList.filter(item => item.tag === tabs[activeTabIndex].text).map((currentComponent, key) => <FormularyAssemblyComponentListItem key={key} index={key} {...currentComponent} onAdd={this.props.onComponentAdd}/>)
           }
         </div>  
         );
