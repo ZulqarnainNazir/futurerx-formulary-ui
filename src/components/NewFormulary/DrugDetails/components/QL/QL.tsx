@@ -220,7 +220,7 @@ class Tier extends React.Component<any, tabsState> {
   };
 
   showDrugGrid = (searchBody = null) => {
-    debugger;
+    // debugger;
     this.setState({ drugGridContainer: true });
     console.log("{searchBody}", this.props.advancedSearchBody);
 
@@ -523,7 +523,7 @@ class Tier extends React.Component<any, tabsState> {
   };
 
   handleSave = () => {
-    debugger;
+    // debugger;
     const { quantityAndFillLimitObject } = this.state;
     let currentAction = this.getCurrentAction();
     console.log(
@@ -682,7 +682,7 @@ class Tier extends React.Component<any, tabsState> {
   };
 
   UNSAFE_componentWillReceiveProps(nextProps) {
-    debugger;
+    // debugger;
     if (nextProps.switchState) {
       this.showDrugGrid({ ...nextProps.advancedSearchBody });
       this.setState({
