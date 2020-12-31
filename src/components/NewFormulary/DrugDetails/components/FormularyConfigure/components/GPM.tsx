@@ -22,6 +22,7 @@ import Groups from './Groups'
 import NewGroup from './NewGroup'
 import { getSTGroupDetails,cleanMessages } from "../../../../../../redux/slices/formulary/gdm/gdmSlice";
 import { getStSummary, getStGrouptDescriptions, getStTypes, getStGrouptDescriptionVersions, getStGrouptDescription } from "../../../../../../redux/slices/formulary/stepTherapy/stepTherapyActionCreation";
+import { setAdditionalCriteria } from "../../../../../../redux/slices/formulary/advancedSearch/additionalCriteriaSlice";
 
 function mapStateToProps(state) {
     return {
@@ -117,6 +118,7 @@ class GPM extends React.Component<any, any>{
         })
     }
     addNewGroup = () => {
+        this.props.setAdditionalCriteria([]);
         this.setState({
             newGroup: false
         })
