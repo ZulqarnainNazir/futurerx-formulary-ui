@@ -1309,10 +1309,10 @@ class AdvanceSearchContainer extends Component<Props, State> {
           showActions={isAdvanceSearch ? false : true}
           showCloseIcon={isAdvanceSearch ? false : true}
           className={
-            "new-advane-search-popup  member-notes-popup-root __root-additional-criteria-popup"
-            // isAdvanceSearch
-            //   ? "new-advane-search-popup  member-notes-popup-root __root-additional-criteria-popup"
-            //   : "root-additional-criteria"
+            // "new-advane-search-popup  member-notes-popup-root __root-additional-criteria-popup"
+            isAdvanceSearch
+              ? "new-advane-search-popup  member-notes-popup-root __root-additional-criteria-popup"
+              : "root-additional-criteria member-notes-popup-root __root-additional-criteria-popup"
           }
           height="100%"
           width="100%"
