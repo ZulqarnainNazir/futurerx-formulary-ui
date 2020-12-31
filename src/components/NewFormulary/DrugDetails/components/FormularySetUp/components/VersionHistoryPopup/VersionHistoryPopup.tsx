@@ -165,7 +165,7 @@ class ConnctedVersionHistoryPopup extends React.Component<
         index: 0,
         limit: 100
       };
-      this.props.fetchFormularyVersionHistory(data);
+      if (data.formularyBaseId) this.props.fetchFormularyVersionHistory(data);
     }
   };
 

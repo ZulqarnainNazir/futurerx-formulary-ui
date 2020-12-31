@@ -130,16 +130,26 @@ class CloneFormularyPopup extends React.Component<any, any> {
     this.listPayload = { ...defaultListPayload };
     this.listPayload.limit = pageSize;
     this.listPayload.id_lob = this.props.formulary_lob_id;
+    if (this.props.lobID > 0) {
+      this.listPayload.id_lob = parseInt(this.props.lobID);
+    }
     this.fetchFormularies(this.listPayload);
   };
   onGridPageChangeHandler = (pageNumber: any) => {
     console.log("Page change load");
     this.listPayload.index = (pageNumber - 1) * this.listPayload.limit;
+    if (this.props.lobID > 0) {
+      this.listPayload.id_lob = parseInt(this.props.lobID);
+    }
     this.fetchFormularies(this.listPayload);
   };
   onClearFilterHandler = () => {
     this.listPayload = { ...defaultListPayload };
     this.listPayload.id_lob = this.props.formulary_lob_id;
+    if (this.props.lobID > 0) {
+      this.listPayload.id_lob = parseInt(this.props.lobID);
+    }
+
     this.fetchFormularies(this.listPayload);
   };
   fetchFormularies = async payload => {

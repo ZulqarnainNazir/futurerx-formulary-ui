@@ -10,7 +10,7 @@ interface FormularyVersionHistoryState {
 
 const formularyVersionhistoryInitialState: FormularyVersionHistoryState = {
   formulary_version_history: [],
-  isLoading: true,
+  isLoading: false,
   error: null
 };
 
