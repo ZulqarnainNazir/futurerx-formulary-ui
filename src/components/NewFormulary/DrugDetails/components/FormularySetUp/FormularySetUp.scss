@@ -242,7 +242,16 @@
   margin-top: 20px;
   position: relative;
 }
-
+.ability-to-add-tags-edit-icon {
+  cursor: pointer;
+  position: relative;
+  right: 25px;
+}
+.reporting-tag-group{
+  .root--ant-select-tag{
+    width: 355px;
+  }
+}
 .formulary-design-fields-wrapper ul {
   list-style: none;
   padding: 0px;
