@@ -102,7 +102,7 @@ class AdditionalCriteriaContainer extends Component<
       <div className="__root-additional-criteria">
         {this.state.additionalCriteriaArray.length <= 0 ? (
           <div className="__root-additional-criteria-child-msg">
-            Add new additional criteria
+            <p>Click Add New to create Additional Criteria</p>
           </div>
         ) : (
           this.state.additionalCriteriaArray.map((additionalCriteria: any) => (
