@@ -223,27 +223,33 @@ function GroupHeader(props: any) {
         }
         props.cleanMessages({error:'',success:''})
         props.deleteGroupDescription({ lob_type:lob_type,pathParams:pathParams  }).then(json => {
-            props.getStGrouptDescriptions({lob_type:lob_type,pathParams:props.saveGdm.formulary_id})
-            props.getStGrouptDescriptionVersions({lob_type:lob_type,pathParams: props.saveGdm.current_group_id}).then(json=>{
-                const response = json.payload.data
-                const verLength = Object.keys(response).length;
-                const isEditable = response[verLength - 1].is_setup_complete;
-                const latestVerion = response[verLength - 1].id_st_group_description;
-                const value = response[verLength - 1].value;
-                setPanelColor(isEditable ? '-green' : '')
-                setVersion(response)
-                setPlaceHolder(value)
-
-                let apiDetails= {};
-                apiDetails["lob_type"] = lob_type;
-                apiDetails['pathParams'] = '/'+latestVerion;
-                props.getStGrouptDescription(apiDetails);
-                props.getStTypes(props.saveGdm.formulary_id)
-
-                // props.getStGrouptDescription({lob_type:lob_type,pathParams:props.saveGdm.current_group_des_id})
-                // props.getStTypes(props.saveGdm.formulary_id)
+            props.getStGrouptDescriptions({lob_type:lob_type,pathParams:props.saveGdm.formulary_id}).then((json)=>{
+                const id_st_group_description = (json?.payload?.data && json?.payload?.data[0])?json?.payload?.data[0].id_st_group_description:0
+                props.getStGrouptDescriptionVersions({lob_type:lob_type,pathParams: id_st_group_description}).then(json=>{
+                    const response = json.payload.data
+                    const verLength = Object.keys(response).length;
+                    const isEditable = response[verLength - 1].is_setup_complete;
+                    const latestVerion = response[verLength - 1].id_st_group_description;
+                    const value = response[verLength - 1].value;
+                    setPanelColor(isEditable ? '-green' : '')
+                    setVersion(response)
+                    setPlaceHolder(value)
+    
+                    let apiDetails= {};
+                    apiDetails["lob_type"] = lob_type;
+                    apiDetails['pathParams'] = '/'+latestVerion;
+                    props.getStGrouptDescription(apiDetails);
+                    props.getStTypes(props.saveGdm.formulary_id)
+                })
             })
             if(json?.payload?.status && json?.payload?.status!=200){
+                if(json?.payload?.data?.formularies && json?.payload?.data?.formularies?.length>0){
+                    let errs = ''
+                    json.payload.data.formularies.map(val=>{
+                        errs += "\n\n"+val.formuary_name+ "\n\n";
+                    })
+                    showMessage("Following Formularies are linked to current Group Description:\n"+errs,'error')
+                }
                 showMessage(json.payload.data.message,'error')
             }
             setOpen(false);
@@ -332,6 +338,13 @@ function GroupHeader(props: any) {
                 props.getStTypes(props.saveGdm.formulary_id)
             });
             if(json?.payload?.status && json?.payload?.status!=200){
+                if(json?.payload?.data?.formularies && json?.payload?.data?.formularies?.length>0){
+                    let errs = ''
+                    json.payload.data.formularies.map(val=>{
+                        errs += "\n\n"+val.formuary_name+ "\n\n";
+                    })
+                    showMessage("Following Formularies are linked to current Group Description:\n"+errs,'error')
+                }
                 showMessage(json.payload.data.message,'error')
             }
             setOpen(false);
