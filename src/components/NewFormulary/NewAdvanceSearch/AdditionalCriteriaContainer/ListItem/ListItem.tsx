@@ -13,6 +13,8 @@ import {
 import POSCriteria from "../CriteriaComponents/POSCriteria";
 import PRCriteria from "../CriteriaComponents/PRCriteria";
 import GenderCriteria from "../CriteriaComponents/GenderCriteria";
+import ICDCriteria from "../CriteriaComponents/ICDCriteria";
+import AgeCriteria from "../CriteriaComponents/AgeCriteria";
 
 function mapDispatchToProps(dispatch) {
   return {
@@ -47,6 +49,23 @@ class ListItem extends Component<any, any> {
 
     payload: null,
 
+    // AL
+    alSettings: {
+      min_age_condition: "GT",
+      min_age_limit: "1",
+      max_age_condition: "LT",
+      max_age_limit: "10",
+    },
+    alSettingsStatus: { type: "covered", covered: true },
+
+    // GL
+    glSettings: [
+      { id: 1, isChecked: false, gl_type_name: "Female", gl_code: "F" },
+      { id: 2, isChecked: false, gl_type_name: "Male", gl_code: "M" },
+      { id: 3, isChecked: false, gl_type_name: "Unknown", gl_code: "U" },
+    ],
+    glSettingsStatus: { type: "covered", covered: true },
+
     // POS
     posSettings: [],
     posSettingsStatus: {
@@ -62,14 +81,6 @@ class ListItem extends Component<any, any> {
       covered: true,
     },
     isSelectAllPR: false,
-
-    // GL
-    glSettings: [
-      { id: 1, isChecked: false, gl_type_name: "Female", gl_code: "F" },
-      { id: 2, isChecked: false, gl_type_name: "Male", gl_code: "M" },
-      { id: 3, isChecked: false, gl_type_name: "Unknown", gl_code: "U" },
-    ],
-    glSettingsStatus: { type: "covered", covered: true },
   };
 
   componentDidMount() {
@@ -89,8 +100,7 @@ class ListItem extends Component<any, any> {
 
     const updatedPayload = this.state.payload;
     const { cardCode, cardName, isIncluded } = this.state;
-
-    if (payload && nodeId) {
+    if (false) {
       this.props.handleGlobalState(
         nodeId,
         cardCode,
@@ -250,7 +260,7 @@ class ListItem extends Component<any, any> {
   };
 
   serviceSettingsCheckedPOS = (e) => {
-    const posSettings = JSON.parse(JSON.stringify(this.state.posSettings));
+    const posSettings = [...this.state.posSettings];
     const { nodeId } = this.props;
     const payload: string[] = [];
 
@@ -273,7 +283,7 @@ class ListItem extends Component<any, any> {
   };
 
   serviceSettingsCheckedPR = (e) => {
-    const prSettings = JSON.parse(JSON.stringify(this.state.prSettings));
+    const prSettings = [...this.state.prSettings];
     const { nodeId } = this.props;
     const payload: string[] = [];
 
@@ -296,7 +306,7 @@ class ListItem extends Component<any, any> {
   };
 
   serviceSettingsCheckedGL = (e) => {
-    const glSettings = JSON.parse(JSON.stringify(this.state.glSettings));
+    const glSettings = [...this.state.glSettings];
     const { nodeId } = this.props;
     const payload: string[] = [];
 
@@ -404,6 +414,14 @@ class ListItem extends Component<any, any> {
       isIncluded,
       payload,
 
+      // AL
+      alSettings,
+      alSettingsStatus,
+
+      // GL
+      glSettings,
+      glSettingsStatus,
+
       // POS
       posSettings,
       prSettings,
@@ -413,10 +431,6 @@ class ListItem extends Component<any, any> {
       posSettingsStatus,
       prSettingsStatus,
       isSelectAllPR,
-
-      // GL
-      glSettings,
-      glSettingsStatus,
     } = this.state;
     const {
       card: { cardCode },
@@ -424,7 +438,21 @@ class ListItem extends Component<any, any> {
     } = this.props;
     switch (cardCode) {
       case 1:
-        return cardName;
+        return (
+          <AgeCriteria
+            alSettingsServies={{
+              alSettings,
+              alSettingsStatus,
+            }}
+            handleStatus={this.handleGLStatus}
+            serviceSettingsChecked={this.serviceSettingsCheckedGL}
+            deleteIconHandler={() =>
+              deleteIconHandler(nodeId, cardCode, cardName, isIncluded, payload)
+            }
+            isAdditionalCriteria={true}
+            nodeId={nodeId}
+          />
+        );
       case 2:
         return (
           <GenderCriteria
@@ -442,7 +470,21 @@ class ListItem extends Component<any, any> {
           />
         );
       case 3:
-        return cardName;
+        return (
+          <ICDCriteria
+            glSettingsServies={{
+              glSettings,
+              glSettingsStatus,
+            }}
+            handleStatus={this.handleGLStatus}
+            serviceSettingsChecked={this.serviceSettingsCheckedGL}
+            deleteIconHandler={() =>
+              deleteIconHandler(nodeId, cardCode, cardName, isIncluded, payload)
+            }
+            isAdditionalCriteria={true}
+            nodeId={nodeId}
+          />
+        );
       case 4:
         return cardName;
       case 5:

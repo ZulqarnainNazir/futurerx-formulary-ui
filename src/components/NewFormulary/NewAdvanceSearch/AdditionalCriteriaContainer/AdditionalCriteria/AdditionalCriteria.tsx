@@ -12,11 +12,13 @@ import PosSettings from "../../../DrugDetails/components/POS/PosSettings";
 import { connect } from "react-redux";
 import { getDrugDetailsPOSSettings } from "../../../../../redux/slices/formulary/drugDetails/pos/posActionCreation";
 import { getDrugDetailsPRSettings } from "../../../../../redux/slices/formulary/drugDetails/pr/prActionCreation";
-import Button from "../../../../shared/Frx-components/button/Button";
 import { render } from "@testing-library/react";
 import ListItem from "../ListItem/ListItem";
 import { setAdditionalCriteria } from "../../../../../redux/slices/formulary/advancedSearch/additionalCriteriaSlice";
+import { ReactComponent as ClearIcon } from "../../../../../assets/icons/clearcircle.svg";
 import * as _ from "lodash";
+import { Button } from "@material-ui/core";
+
 // const hiddenColumns = _.cloneDeep(this.props.hiddenColumns);
 interface PayloadBody {
   age: any;
@@ -67,7 +69,7 @@ class AdditionalCriteria extends Component<any, any> {
     selectedCriteriaId: 0,
     selectedCriteriaList: Array(),
 
-    nodeList: Array(),
+    // nodeList: Array(),
     globalCardCount: 0,
 
     additionalCriteriaObject: [],
@@ -78,22 +80,57 @@ class AdditionalCriteria extends Component<any, any> {
     },
 
     deletedCache: [],
+    clearCache: [],
+    globalCardCountCache: 0,
+
+    criteriaMock: [
+      {
+        cardCode: 1,
+        cardName: "age",
+        isIncluded: true,
+      },
+      {
+        cardCode: 2,
+        cardName: "gender",
+        isIncluded: true,
+      },
+      {
+        cardCode: 3,
+        cardName: "icd",
+        isIncluded: true,
+      },
+      {
+        cardCode: 4,
+        cardName: "pharmacy_networks",
+        isIncluded: true,
+      },
+      {
+        cardCode: 5,
+        cardName: "prescriber_taxonomies",
+        isIncluded: true,
+      },
+      {
+        cardCode: 6,
+        cardName: "place_of_services",
+        isIncluded: true,
+      },
+
+      {
+        cardCode: 7,
+        cardName: "patient_residences",
+        isIncluded: true,
+      },
+      {
+        cardCode: 8,
+        cardName: "prerequisite_claims_history_lookbacks",
+        isIncluded: true,
+      },
+    ],
   };
 
   componentDidMount() {
     if (this.props.additionalCriteria) {
-      // let additionalCriteriaObject = this.props.additionalCriteriaObject[
-      //   this.state.additionalCriteriaNodeId
-      // ];
-      // const additionalCriteriaObject = null;
-      // this.props.additionalCriteriaBody.forEach((additionalCriteria) => {});
-      // const additionalCriteriaBody = this.props.additionalCriteriaBody[
-      //   this.state.apiAdditionalCriteriaIndex
-      // ];
-      this.loadSavedSettings(
-        this.props.additionalCriteria,
-        this.props.criteriaList
-      );
+      this.loadSavedSettings(this.props.additionalCriteria);
 
       this.setState({
         additionalCriteriaBody: this.props.additionalCriteria,
@@ -103,7 +140,7 @@ class AdditionalCriteria extends Component<any, any> {
 
   componentWillReceiveProps(nextProps) {}
 
-  loadSavedSettings = (additionalCriteriaBody, criteriaList) => {
+  loadSavedSettings = (additionalCriteriaBody) => {
     let savedCriteriaList: any[] = [];
     let globalCardCount = 0;
 
@@ -111,225 +148,217 @@ class AdditionalCriteria extends Component<any, any> {
     let covered;
     let not_covered;
 
-    let place_of_services = {
-      cardCode: 6,
-      cardName: "place_of_services",
-      isIncluded: true,
-    };
+    const { criteriaMock } = this.state;
 
-    let gender = {
-      cardCode: 2,
-      cardName: "gender",
-      isIncluded: true,
-    };
-
-    let patient_residences = {
-      cardCode: 7,
-      cardName: "patient_residences",
-      isIncluded: true,
-    };
-
-    for (const prop in additionalCriteriaBody) {
-      if (
-        Object.prototype.hasOwnProperty.call(
-          additionalCriteriaBody,
-          "sequence"
-        ) &&
-        prop === "sequence"
-      ) {
-        sequence = additionalCriteriaBody[prop];
-      }
-
-      if (
-        Object.prototype.hasOwnProperty.call(
-          additionalCriteriaBody,
-          "covered"
-        ) &&
-        prop === "covered"
-      ) {
-        covered = additionalCriteriaBody[prop];
-        if (Object.prototype.hasOwnProperty.call(covered, "gender")) {
-          if (covered["gender"].length > 0) {
-            globalCardCount++;
-            let currentNode = {
-              id: globalCardCount,
-              cardCode: gender.cardCode,
-              cardName: gender.cardName,
-              isIncluded: gender.isIncluded,
-              render: (
-                <ListItem
-                  nodeId={globalCardCount}
-                  deleteIconHandler={this.deleteIconHandler}
-                  card={{
-                    cardCode: gender.cardCode,
-                    cardName: gender.cardName,
-                    isIncluded: gender.isIncluded,
-                  }}
-                  payload={covered["gender"]}
-                  handleGlobalState={this.handleAllNodesState}
-                />
-              ),
-            };
-            savedCriteriaList.push(currentNode);
-          }
-        }
-        if (
-          Object.prototype.hasOwnProperty.call(covered, "place_of_services")
-        ) {
-          if (covered["place_of_services"].length > 0) {
-            globalCardCount++;
-            let currentNode = {
-              id: globalCardCount,
-              cardCode: place_of_services.cardCode,
-              cardName: place_of_services.cardName,
-              isIncluded: place_of_services.isIncluded,
-              render: (
-                <ListItem
-                  nodeId={globalCardCount}
-                  deleteIconHandler={this.deleteIconHandler}
-                  card={{
-                    cardCode: place_of_services.cardCode,
-                    cardName: place_of_services.cardName,
-                    isIncluded: place_of_services.isIncluded,
-                  }}
-                  payload={covered["place_of_services"]}
-                  handleGlobalState={this.handleAllNodesState}
-                />
-              ),
-            };
-            savedCriteriaList.push(currentNode);
-          }
-        }
-        if (
-          Object.prototype.hasOwnProperty.call(covered, "patient_residences")
-        ) {
-          if (covered["patient_residences"].length > 0) {
-            globalCardCount++;
-            let currentNode = {
-              id: globalCardCount,
-              cardCode: patient_residences.cardCode,
-              cardName: patient_residences.cardName,
-              isIncluded: patient_residences.isIncluded,
-              render: (
-                <ListItem
-                  nodeId={globalCardCount}
-                  deleteIconHandler={this.deleteIconHandler}
-                  card={{
-                    cardCode: patient_residences.cardCode,
-                    cardName: patient_residences.cardName,
-                    isIncluded: patient_residences.isIncluded,
-                  }}
-                  payload={covered["patient_residences"]}
-                  handleGlobalState={this.handleAllNodesState}
-                />
-              ),
-            };
-            savedCriteriaList.push(currentNode);
-          }
-        }
-      }
-
-      if (
-        Object.prototype.hasOwnProperty.call(
-          additionalCriteriaBody,
-          "not_covered"
-        ) &&
-        prop === "not_covered"
-      ) {
-        not_covered = additionalCriteriaBody[prop];
-        if (Object.prototype.hasOwnProperty.call(not_covered, "gender")) {
-          if (not_covered["gender"].length > 0) {
-            globalCardCount++;
-            let currentNode = {
-              id: globalCardCount,
-              cardCode: gender.cardCode,
-              cardName: gender.cardName,
-              isIncluded: !gender.isIncluded,
-              render: (
-                <ListItem
-                  nodeId={globalCardCount}
-                  deleteIconHandler={this.deleteIconHandler}
-                  card={{
-                    cardCode: gender.cardCode,
-                    cardName: gender.cardName,
-                    isIncluded: !gender.isIncluded,
-                  }}
-                  payload={not_covered["gender"]}
-                  handleGlobalState={this.handleAllNodesState}
-                />
-              ),
-            };
-            savedCriteriaList.push(currentNode);
-          }
-        }
-        if (
-          Object.prototype.hasOwnProperty.call(not_covered, "place_of_services")
-        ) {
-          if (not_covered["place_of_services"].length > 0) {
-            globalCardCount++;
-            let currentNode = {
-              id: globalCardCount,
-              cardCode: place_of_services.cardCode,
-              cardName: place_of_services.cardName,
-              isIncluded: !place_of_services.isIncluded,
-              render: (
-                <ListItem
-                  nodeId={globalCardCount}
-                  deleteIconHandler={this.deleteIconHandler}
-                  card={{
-                    cardCode: place_of_services.cardCode,
-                    cardName: place_of_services.cardName,
-                    isIncluded: !place_of_services.isIncluded,
-                  }}
-                  payload={not_covered["place_of_services"]}
-                  handleGlobalState={this.handleAllNodesState}
-                />
-              ),
-            };
-            savedCriteriaList.push(currentNode);
-          }
-        }
+    if (
+      additionalCriteriaBody.covered !== {} &&
+      additionalCriteriaBody.not_covered !== {}
+    ) {
+      for (const prop in additionalCriteriaBody) {
         if (
           Object.prototype.hasOwnProperty.call(
-            not_covered,
-            "patient_residences"
-          )
+            additionalCriteriaBody,
+            "sequence"
+          ) &&
+          prop === "sequence"
         ) {
-          if (not_covered["patient_residences"].length > 0) {
-            globalCardCount++;
-            let currentNode = {
-              id: globalCardCount,
-              cardCode: patient_residences.cardCode,
-              cardName: patient_residences.cardName,
-              isIncluded: !patient_residences.isIncluded,
-              render: (
-                <ListItem
-                  nodeId={globalCardCount}
-                  deleteIconHandler={this.deleteIconHandler}
-                  card={{
-                    cardCode: patient_residences.cardCode,
-                    cardName: patient_residences.cardName,
-                    isIncluded: !patient_residences.isIncluded,
-                  }}
-                  payload={not_covered["patient_residences"]}
-                  handleGlobalState={this.handleAllNodesState}
-                />
-              ),
-            };
-            savedCriteriaList.push(currentNode);
+          sequence = additionalCriteriaBody[prop];
+        }
+
+        if (
+          Object.prototype.hasOwnProperty.call(
+            additionalCriteriaBody,
+            "covered"
+          ) &&
+          prop === "covered"
+        ) {
+          covered = additionalCriteriaBody[prop];
+          if (Object.prototype.hasOwnProperty.call(covered, "gender")) {
+            if (covered["gender"].length > 0) {
+              globalCardCount++;
+              let currentNode = {
+                id: globalCardCount,
+                cardCode: criteriaMock[1].cardCode,
+                cardName: criteriaMock[1].cardName,
+                isIncluded: criteriaMock[1].isIncluded,
+                render: (
+                  <ListItem
+                    nodeId={globalCardCount}
+                    deleteIconHandler={this.deleteIconHandler}
+                    card={{
+                      cardCode: criteriaMock[1].cardCode,
+                      cardName: criteriaMock[1].cardName,
+                      isIncluded: criteriaMock[1].isIncluded,
+                    }}
+                    payload={covered["gender"]}
+                    handleGlobalState={this.handleAllNodesState}
+                  />
+                ),
+              };
+              savedCriteriaList.push(currentNode);
+            }
+          }
+          if (
+            Object.prototype.hasOwnProperty.call(covered, "place_of_services")
+          ) {
+            if (covered["place_of_services"].length > 0) {
+              globalCardCount++;
+              let currentNode = {
+                id: globalCardCount,
+                cardCode: criteriaMock[5].cardCode,
+                cardName: criteriaMock[5].cardName,
+                isIncluded: criteriaMock[5].isIncluded,
+                render: (
+                  <ListItem
+                    nodeId={globalCardCount}
+                    deleteIconHandler={this.deleteIconHandler}
+                    card={{
+                      cardCode: criteriaMock[5].cardCode,
+                      cardName: criteriaMock[5].cardName,
+                      isIncluded: criteriaMock[5].isIncluded,
+                    }}
+                    payload={covered["place_of_services"]}
+                    handleGlobalState={this.handleAllNodesState}
+                  />
+                ),
+              };
+              savedCriteriaList.push(currentNode);
+            }
+          }
+          if (
+            Object.prototype.hasOwnProperty.call(covered, "patient_residences")
+          ) {
+            if (covered["patient_residences"].length > 0) {
+              globalCardCount++;
+              let currentNode = {
+                id: globalCardCount,
+                cardCode: criteriaMock[6].cardCode,
+                cardName: criteriaMock[6].cardName,
+                isIncluded: criteriaMock[6].isIncluded,
+                render: (
+                  <ListItem
+                    nodeId={globalCardCount}
+                    deleteIconHandler={this.deleteIconHandler}
+                    card={{
+                      cardCode: criteriaMock[6].cardCode,
+                      cardName: criteriaMock[6].cardName,
+                      isIncluded: criteriaMock[6].isIncluded,
+                    }}
+                    payload={covered["patient_residences"]}
+                    handleGlobalState={this.handleAllNodesState}
+                  />
+                ),
+              };
+              savedCriteriaList.push(currentNode);
+            }
+          }
+        }
+
+        if (
+          Object.prototype.hasOwnProperty.call(
+            additionalCriteriaBody,
+            "not_covered"
+          ) &&
+          prop === "not_covered"
+        ) {
+          not_covered = additionalCriteriaBody[prop];
+          if (Object.prototype.hasOwnProperty.call(not_covered, "gender")) {
+            if (not_covered["gender"].length > 0) {
+              globalCardCount++;
+              let currentNode = {
+                id: globalCardCount,
+                cardCode: criteriaMock[1].cardCode,
+                cardName: criteriaMock[1].cardName,
+                isIncluded: !criteriaMock[1].isIncluded,
+                render: (
+                  <ListItem
+                    nodeId={globalCardCount}
+                    deleteIconHandler={this.deleteIconHandler}
+                    card={{
+                      cardCode: criteriaMock[1].cardCode,
+                      cardName: criteriaMock[1].cardName,
+                      isIncluded: !criteriaMock[1].isIncluded,
+                    }}
+                    payload={not_covered["gender"]}
+                    handleGlobalState={this.handleAllNodesState}
+                  />
+                ),
+              };
+              savedCriteriaList.push(currentNode);
+            }
+          }
+          if (
+            Object.prototype.hasOwnProperty.call(
+              not_covered,
+              "place_of_services"
+            )
+          ) {
+            if (not_covered["place_of_services"].length > 0) {
+              globalCardCount++;
+              let currentNode = {
+                id: globalCardCount,
+                cardCode: criteriaMock[5].cardCode,
+                cardName: criteriaMock[5].cardName,
+                isIncluded: !criteriaMock[5].isIncluded,
+                render: (
+                  <ListItem
+                    nodeId={globalCardCount}
+                    deleteIconHandler={this.deleteIconHandler}
+                    card={{
+                      cardCode: criteriaMock[5].cardCode,
+                      cardName: criteriaMock[5].cardName,
+                      isIncluded: !criteriaMock[5].isIncluded,
+                    }}
+                    payload={not_covered["place_of_services"]}
+                    handleGlobalState={this.handleAllNodesState}
+                  />
+                ),
+              };
+              savedCriteriaList.push(currentNode);
+            }
+          }
+          if (
+            Object.prototype.hasOwnProperty.call(
+              not_covered,
+              "patient_residences"
+            )
+          ) {
+            if (not_covered["patient_residences"].length > 0) {
+              globalCardCount++;
+              let currentNode = {
+                id: globalCardCount,
+                cardCode: criteriaMock[6].cardCode,
+                cardName: criteriaMock[6].cardName,
+                isIncluded: !criteriaMock[6].isIncluded,
+                render: (
+                  <ListItem
+                    nodeId={globalCardCount}
+                    deleteIconHandler={this.deleteIconHandler}
+                    card={{
+                      cardCode: criteriaMock[6].cardCode,
+                      cardName: criteriaMock[6].cardName,
+                      isIncluded: !criteriaMock[6].isIncluded,
+                    }}
+                    payload={not_covered["patient_residences"]}
+                    handleGlobalState={this.handleAllNodesState}
+                  />
+                ),
+              };
+              savedCriteriaList.push(currentNode);
+            }
           }
         }
       }
+      this.setState({
+        globalCardCount: globalCardCount,
+        selectedCriteriaList: savedCriteriaList,
+        apiAdditionalCriteriaState: {
+          sequence: sequence,
+          covered: covered,
+          not_covered: not_covered,
+        },
+      });
     }
-    this.setState({
-      globalCardCount: globalCardCount,
-      selectedCriteriaList: savedCriteriaList,
-      apiAdditionalCriteriaState: {
-        sequence: sequence,
-        covered: covered,
-        not_covered: not_covered,
-      },
-    });
   };
 
   setNodes = (cardName, cardCode, payload, filteredList) => {
@@ -341,15 +370,8 @@ class AdditionalCriteria extends Component<any, any> {
       isIncluded = !currentCard.isIncluded;
     }
     if (filteredList.length <= 1) {
-      payload.listItemStatus[globalCardCount] = isIncluded;
-      this.state.nodeList.push({
-        id: globalCardCount,
-        cardCode: cardCode,
-        cardName: cardName,
-        isIncluded: isIncluded,
-        childData: {},
-      });
-      this.props.setAdditionalCriteria(payload);
+      // payload.listItemStatus[globalCardCount] = isIncluded;
+      // this.props.setAdditionalCriteria(payload);
       this.setState({
         globalCardCount: globalCardCount,
         selectedCriteriaList: [
@@ -368,8 +390,7 @@ class AdditionalCriteria extends Component<any, any> {
                   cardCode: cardCode,
                   isIncluded: isIncluded,
                 }}
-                initialGlobalState={this.state.additionalCriteriaObject}
-                initialState={null}
+                payload={null}
                 handleGlobalState={this.handleAllNodesState}
               />
             ),
@@ -380,8 +401,6 @@ class AdditionalCriteria extends Component<any, any> {
   };
 
   deleteIconHandler = (nodeId, cardCode, cardName, isIncluded, payload) => {
-    console.log(nodeId, cardCode, cardName, isIncluded, payload);
-
     const selectedCriteriaList = this.state.selectedCriteriaList.filter(
       (s) => s.id !== nodeId
     );
@@ -397,30 +416,14 @@ class AdditionalCriteria extends Component<any, any> {
   };
 
   clearCurrentCriteriaState = () => {
-    let payload = {
-      additionalCriteriaObject: null,
-      additionalCriteriaBody: {
-        sequence: 0,
-        covered: {},
-        not_covered: {},
-      },
-      populateGrid: this.props.populateGrid,
-      closeDialog: this.props.closeDialog,
-      listItemStatus: null,
-    };
-
+    const clearCache = this.state.selectedCriteriaList;
+    const globalCardCountCache = this.state.globalCardCount;
     this.setState({
-      globalCardCount: 0,
-      additionalCriteriaObject: null,
-      apiAdditionalCriteriaState: {
-        sequence: 0,
-        covered: {},
-        not_covered: {},
-      },
       selectedCriteriaList: [],
-      nodeList: [],
+      clearCache,
+      globalCardCount: 0,
+      globalCardCountCache,
     });
-    this.props.setAdditionalCriteria(payload);
   };
 
   handleAllNodesState = (
@@ -434,9 +437,34 @@ class AdditionalCriteria extends Component<any, any> {
     let covered = { ...this.state.apiAdditionalCriteriaState.covered };
     let not_covered = { ...this.state.apiAdditionalCriteriaState.not_covered };
 
+    let isSingleNode = true;
+    const filteredList = this.state.selectedCriteriaList.filter(
+      (card) => card.cardCode === cardCode
+    );
+
+    if (filteredList.length === 1) {
+      if (filteredList[0].isIncluded !== isIncluded) {
+        isSingleNode = true;
+
+        // action for manage include state code
+      } else {
+        isSingleNode = true;
+
+        // action for manage include state code
+      }
+    }
+
+    if (filteredList.length === 2) {
+      // if (filteredList[0].isIncluded !== isIncluded) {
+      // }
+      isSingleNode = false;
+    }
+
     if (isIncluded) {
       covered = { ...covered, [cardName]: updatedPayload };
-      not_covered = { ...not_covered, [cardName]: [] };
+      not_covered = isSingleNode
+        ? { ...not_covered, [cardName]: [] }
+        : { ...not_covered };
       this.setState({
         apiAdditionalCriteriaState: {
           sequence,
@@ -446,7 +474,8 @@ class AdditionalCriteria extends Component<any, any> {
       });
     } else {
       not_covered = { ...not_covered, [cardName]: updatedPayload };
-      covered = { ...covered, [cardName]: [] };
+      covered = isSingleNode ? { ...covered, [cardName]: [] } : { ...covered };
+
       this.setState({
         apiAdditionalCriteriaState: {
           sequence,
@@ -458,6 +487,8 @@ class AdditionalCriteria extends Component<any, any> {
   };
 
   setCurrentCriteriaState = () => {
+    // handle deleted & saved elements
+
     this.props.handleChildDataSave(this.state.apiAdditionalCriteriaState);
   };
 
@@ -466,7 +497,8 @@ class AdditionalCriteria extends Component<any, any> {
       selectedCriteriaId: cardCode,
     });
 
-    let isFound = false;
+    const { criteriaMock } = this.state;
+
     let filteredList = Array();
     let payload = {
       additionalCriteriaObject: this.props.additionalCriteriaObject,
@@ -479,7 +511,7 @@ class AdditionalCriteria extends Component<any, any> {
 
     switch (cardCode) {
       case 1:
-        cardName = "AGE";
+        cardName = criteriaMock[cardCode - 1].cardName;
         this.setState({
           selectedCriteriaList: [
             ...this.state.selectedCriteriaList,
@@ -507,12 +539,12 @@ class AdditionalCriteria extends Component<any, any> {
         filteredList = this.state.selectedCriteriaList.filter(
           (card) => card.cardCode === cardCode
         );
-        cardName = "GENDER";
+        cardName = criteriaMock[cardCode - 1].cardName;
         this.setNodes(cardName, cardCode, payload, filteredList);
 
         break;
       case 3:
-        cardName = "ICD";
+        cardName = criteriaMock[cardCode - 1].cardName;
         this.setState({
           selectedCriteriaList: [
             ...this.state.selectedCriteriaList,
@@ -537,7 +569,7 @@ class AdditionalCriteria extends Component<any, any> {
         });
         break;
       case 4:
-        cardName = "PN";
+        cardName = criteriaMock[cardCode - 1].cardName;
         this.setState({
           selectedCriteriaList: [
             ...this.state.selectedCriteriaList,
@@ -562,7 +594,7 @@ class AdditionalCriteria extends Component<any, any> {
         });
         break;
       case 5:
-        cardName = "PN";
+        cardName = criteriaMock[cardCode - 1].cardName;
         this.setState({
           selectedCriteriaList: [
             ...this.state.selectedCriteriaList,
@@ -590,7 +622,7 @@ class AdditionalCriteria extends Component<any, any> {
         filteredList = this.state.selectedCriteriaList.filter(
           (card) => card.cardCode === cardCode
         );
-        cardName = "POS";
+        cardName = criteriaMock[cardCode - 1].cardName;
         this.setNodes(cardName, cardCode, payload, filteredList);
 
         break;
@@ -598,12 +630,12 @@ class AdditionalCriteria extends Component<any, any> {
         filteredList = this.state.selectedCriteriaList.filter(
           (card) => card.cardCode === cardCode
         );
-        cardName = "PR";
+        cardName = criteriaMock[cardCode - 1].cardName;
         this.setNodes(cardName, cardCode, payload, filteredList);
 
         break;
       case 8:
-        cardName = "PCHL";
+        cardName = criteriaMock[cardCode - 1].cardName;
         this.setState({
           selectedCriteriaList: [
             ...this.state.selectedCriteriaList,
@@ -681,10 +713,18 @@ class AdditionalCriteria extends Component<any, any> {
               </div>
               <div className="__root-additional-criteria-child-accordion-section-content-right-bottom">
                 <Button
-                  label="Clear"
                   onClick={this.clearCurrentCriteriaState}
-                />
-                <Button label="Save" onClick={this.setCurrentCriteriaState} />
+                  className="clear-btn"
+                >
+                  <ClearIcon />
+                  <span>Clear</span>
+                </Button>
+                <Button
+                  onClick={this.setCurrentCriteriaState}
+                  className="save-btn"
+                >
+                  <span>Save</span>
+                </Button>
               </div>
             </div>
           </div>
