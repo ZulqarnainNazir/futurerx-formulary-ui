@@ -71,6 +71,83 @@ class FormularyDetailsTop extends React.Component<any, any> {
     this.props.fetchSelectedFormulary(formulary_id);
   };
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
+// TODO 
+// Do not modify this...
+// Add new code abov this...
+//  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
+
+// externalInferfaceLoadFormulary(type: number, id: number){
+// console.log(" externalInferfaceLoadFormulary : " + type + " ID : " + id);
+
+//   this.manageFormularyType(type, id);
+//   this.props.fetchSelectedFormulary(id);
+// }
+
+// manageFormularyType(type: number, id: number) {
+//   console.log(" Manage - TYPE : " + type + " ID : " + id);
+//   let defaultType = 4;
+//   if (type === -1) {
+//     this.props.fetchGeneralOptions({ type: defaultType, id: -1 });
+//     return;
+//   }
+
+//   this.props.fetchGeneralOptions({ type: type, id: id });
+//   this.props.fetchDesignOptions({ type: type, id: id });
+//   this.props.fetchTierOptions({ type: type, id: id });
+
+//   if (type === 1) {
+//     // MRC...
+//     this.props.fetchMedicareOptions({ type: type, id: id });
+//     this.props.fetchSupplementalOptions({ type: type, id: id });
+//   } else if (type === 2) {
+//     // MMP...
+//     this.props.fetchStatesOptions(type);
+//     this.props.fetchMedicareOptions({ type: type, id: id });
+//     this.props.fetchSupplementalOptions({ type: type, id: id });
+//   } else if (type === 3) {
+//     // TODO ... MEDICADE...
+//     this.props.fetchStatesOptions(0);
+//   } else if (type === 4) {
+//     // TODO ... MEDICADE...
+//     this.props.fetchStatesOptions(0);
+//   } else if (type === 5) {
+//     // EXC...
+//   } else if (type === 6) {
+//     // COMMERCIAL...
+//   }
+//   this.props.fetchSubMthsOptions(2021);
+// }
+
+
+
+
+
+
+
+
+
+
+
+
+
   render() {
     let dropDown: any;
     if (this.props.formularyVersionList) {
