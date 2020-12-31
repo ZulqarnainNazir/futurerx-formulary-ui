@@ -19,17 +19,20 @@ import gdmReducer from "../slices/formulary/gdm/gdmSlice";
 import gdmPaReducer from "../slices/formulary/pagdm/pagdmSlice";
 import {
   stepTherapySlice,
-  stVersionSlice,
+  stVersionSlice
 } from "../slices/formulary/stepTherapy/stepTherapySlice";
 import { paSlice, paVersionSlice } from "../slices/formulary/pa/paSlice";
 import { qlSlice } from "../slices/formulary/ql/qlSlice";
+import { formularyVersionHistorySlice } from "../slices/formulary/version-history/version-history.slice";
 
-const reducer = combineReducers({
-  // here we will be adding reducers
-});
+const reducer = combineReducers(
+  {
+    // here we will be adding reducers
+  }
+);
 
 const middleware = [
-  ...getDefaultMiddleware(),
+  ...getDefaultMiddleware()
   /*YOUR CUSTOM MIDDLEWARES HERE*/
 ];
 
@@ -48,6 +51,8 @@ const categoryClass = categoryClassSlice.reducer;
 const pa = paSlice.reducer;
 
 const ql = qlSlice.reducer;
+
+const formularyVersionHistoryReducer = formularyVersionHistorySlice.reducer;
 
 // The store is configured with the state and the corresponding reducers.
 const store = configureStore({
@@ -73,8 +78,9 @@ const store = configureStore({
     paVersion: paVersion,
     categoryClass: categoryClass,
     additionalCriteria: additionalCriteriaReducer,
+    formularyVersionHistory: formularyVersionHistoryReducer
   },
-  middleware,
+  middleware
 });
 
 export default store;
