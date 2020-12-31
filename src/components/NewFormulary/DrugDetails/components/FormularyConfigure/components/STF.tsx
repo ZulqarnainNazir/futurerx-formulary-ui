@@ -10,6 +10,7 @@ import RadioButton from "../../../../../shared/Frx-components/radio-button/Radio
 import {
   getStSummary,
   getStGrouptDescriptions,
+  getStGrouptDescription,
   getStTypes,
   getDrugLists,
   postFormularyDrugST,
@@ -38,6 +39,7 @@ function mapDispatchToProps(dispatch) {
   return {
     getStSummary: (a) => dispatch(getStSummary(a)),
     getStGrouptDescriptions: (a) => dispatch(getStGrouptDescriptions(a)),
+    getStGrouptDescription: (a) => dispatch(getStGrouptDescription(a)),
     getStTypes: (a) => dispatch(getStTypes(a)),
     getDrugLists: (a) => dispatch(getDrugLists(a)),
     postFormularyDrugST: (a) => dispatch(postFormularyDrugST(a)),
@@ -45,7 +47,9 @@ function mapDispatchToProps(dispatch) {
       dispatch(getStGrouptDescriptionVersions(a)),
     postApplyFormularyDrugST: (a) => dispatch(postApplyFormularyDrugST(a)),
     setAdvancedSearch: (a) => dispatch(setAdvancedSearch(a)),
+    setAdditionalCriteria: (a) => dispatch(setAdditionalCriteria(a)),
     getLobFormularies: (a) => dispatch(getLobFormularies(a)),
+
   };
 }
 
@@ -277,9 +281,30 @@ class STF extends React.Component<any, any> {
           break;
       }
       debugger;
+      let latestVersionId=-1;
+      data.forEach(element => {
+        if (element.id_st_group_description > latestVersionId){
+          latestVersionId=element.id_st_group_description;
+        }
+      });
+      let tmp_additionalCriteria=false;
+      this.props.getStGrouptDescription({lob_type:this.props.formulary_lob_id, 
+        pathParams: "/"+latestVersionId}).then((json) => {
+          debugger;
+          this.props.setAdditionalCriteria([]);
+          if (json.payload && json.payload.code === "200") {
+            if (json.payload.data["um_criteria"]!=null && json.payload.data["um_criteria"].length >0 ){
+              let payload: any = {};
+              payload.additionalCriteriaBody = json.payload.data["um_criteria"];
+              this.props.setAdditionalCriteria(payload);
+              tmp_additionalCriteria=true;
+            }
+          }
+        });
       this.setState({
-        selectedLastestedVersion: data[0].id_st_group_description,
+        selectedLastestedVersion: latestVersionId,
         fileType: ftype,
+        is_additional_criteria_defined: tmp_additionalCriteria,
       });
       this.setState({
         tierGridContainer: false,
