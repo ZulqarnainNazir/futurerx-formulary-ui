@@ -603,7 +603,7 @@ class STF extends React.Component<any, any> {
           {this.state.tierGridContainer && (
             <div className="select-drug-from-table">
               <div className="bordered white-bg">
-                { !this.props.configureSwitch && (
+               
                 <div className="header space-between pr-10">
                   <div className="button-wrapper">
                     <Button
@@ -612,10 +612,12 @@ class STF extends React.Component<any, any> {
                       onClick={this.advanceSearchClickHandler}
                       disabled={this.props.configureSwitch}
                     />
-                    <Button label="Save" onClick={this.handleSave} />
+                     { !this.props.configureSwitch && (
+                      <Button label="Save" onClick={this.handleSave} />
+                    )}
                   </div>
                 </div>
-                )}
+                
 
                 <div className="tier-grid-container">
                   <FrxDrugGridContainer
