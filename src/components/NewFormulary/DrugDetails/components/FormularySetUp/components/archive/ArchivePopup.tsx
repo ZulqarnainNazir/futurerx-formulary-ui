@@ -33,10 +33,10 @@ export default class ArchivePopup extends React.Component<any, any> {
     try {
       let response = await archiveFormularies(formularyIDs);
       if (response && response.status && response.status === 200) {
-        if (formularyIDs && formularyIDs.length > 0) {
-          showMessage("Formulary Archived", "success");
-        } else {
+        if (formularyIDs && formularyIDs.length > 1) {
           showMessage("Full Formulary Archived", "success");
+        } else {
+          showMessage("Formulary Archived", "success");
         }
         // TODO
         // this.refreshApp();
