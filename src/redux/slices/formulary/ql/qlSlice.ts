@@ -2,8 +2,8 @@ import { createSlice } from "@reduxjs/toolkit";
 
 import {
   getQlSummary,
-  getQlGrouptDescriptionVersions,
-  getQlGrouptDescription,
+  // getQlGrouptDescriptionVersions,
+  // getQlGrouptDescription,
 } from "./qlActionCreation";
 
 import {
@@ -63,40 +63,40 @@ export const qlSlice = createSlice({
     }),
     builder.addCase(getQlSummary.rejected, (state, action) => {
       getQlRejected(state, action);
-    }),
-    builder.addCase(getQlGrouptDescription.pending, (state, action) => {
-      state.isLoading = true;
-    }),
-    builder.addCase(getQlGrouptDescription.fulfilled, (state, action) => {
-      getQlDescriptionFulfilled(state, action);
-    }),
-    builder.addCase(getQlGrouptDescription.rejected, (state, action) => {
-      getQlDescriptionRejected(state, action);
     })
+    // builder.addCase(getQlGrouptDescription.pending, (state, action) => {
+    //   state.isLoading = true;
+    // }),
+    // builder.addCase(getQlGrouptDescription.fulfilled, (state, action) => {
+    //   getQlDescriptionFulfilled(state, action);
+    // }),
+    // builder.addCase(getQlGrouptDescription.rejected, (state, action) => {
+    //   getQlDescriptionRejected(state, action);
+    // })
   ),
 });
 
 //
 
-export const paVersionSlice = createSlice({
-  name: "version",
-  initialState: qlState,
-  reducers: {},
-  extraReducers: (builder) => (
-    builder.addCase(getQlGrouptDescriptionVersions.pending, (state, action) => {
-      state.isLoading = true;
-    }),
-    builder.addCase(
-      getQlGrouptDescriptionVersions.fulfilled,
-      (state, action) => {
-        getVersionFulfilled(state, action);
-      }
-    ),
-    builder.addCase(
-      getQlGrouptDescriptionVersions.rejected,
-      (state, action) => {
-        getVersionRejected(state, action);
-      }
-    )
-  ),
-});
+// export const paVersionSlice = createSlice({
+//   name: "version",
+//   initialState: qlState,
+//   reducers: {},
+//   extraReducers: (builder) => (
+//     builder.addCase(getQlGrouptDescriptionVersions.pending, (state, action) => {
+//       state.isLoading = true;
+//     }),
+//     builder.addCase(
+//       getQlGrouptDescriptionVersions.fulfilled,
+//       (state, action) => {
+//         getVersionFulfilled(state, action);
+//       }
+//     ),
+//     builder.addCase(
+//       getQlGrouptDescriptionVersions.rejected,
+//       (state, action) => {
+//         getVersionRejected(state, action);
+//       }
+//     )
+//   ),
+// });
