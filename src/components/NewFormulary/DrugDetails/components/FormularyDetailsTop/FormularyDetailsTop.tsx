@@ -10,6 +10,8 @@ import { createFormularyUsingClone } from "../../../../.././redux/slices/formula
 import VersionHistoryPopup from "../FormularySetUp/components/VersionHistoryPopup/VersionHistoryPopup";
 import ClonePopup from "../FormularySetUp/components/ClonePopup/ClonePopup";
 import DeletePopup from "../FormularySetUp/components/DeletePopup/DeletePopup";
+import ArchivePopup from "../FormularySetUp/components/archive/ArchivePopup";
+
 import { VersionHistoryData } from "../FormularySetUp/components/VersionHistoryPopup/version-hisory.model";
 import { ToastContainer } from 'react-toastify';
 import showMessage from "../../../Utils/Toast";
@@ -50,6 +52,7 @@ class FormularyDetailsTop extends React.Component<any, any> {
     isVersionHistoryPopupOpen: false,
     isClonePopupOpen: false,
     isDeletePopupOpen: false,
+    isArchivePopupOpen: false,
     dialogTitle: '',
 
     lastID: 0,
@@ -127,6 +130,16 @@ class FormularyDetailsTop extends React.Component<any, any> {
     }
   };
 
+  onArchiveClick = () => {
+    console.log("Archive button clicked");
+    if (this.props.currentFormulary) {
+      this.setState({ isAnyPopupOpen: true, isArchivePopupOpen: true, dialogTitle: 'Archive' });
+    }else{
+      showMessage('Error: Current formulary is not set','error');
+    }
+  };
+
+
   /**
    * @function onClosePopup
    * handler for closing popup
@@ -138,6 +151,7 @@ class FormularyDetailsTop extends React.Component<any, any> {
       isVersionHistoryPopupOpen: false,
       isClonePopupOpen: false,
       isDeletePopupOpen: false,
+      isArchivePopupOpen: false,
       dialogTitle: ''
       //add other popup toggles too if this is reused
     });
@@ -307,6 +321,9 @@ class FormularyDetailsTop extends React.Component<any, any> {
             {this.state.isDeletePopupOpen && (
               <DeletePopup currentFormulary={this.props.currentFormulary} onCancel={this.onCancel} />
             )}
+            {this.state.isArchivePopupOpen && (
+              <ArchivePopup currentFormulary={this.props.currentFormulary} versionList={this.props.formularyVersionList} onCancel={this.onCancel} />
+            )}
           </DialogPopup>
         ) : null}
 
@@ -403,7 +420,7 @@ class FormularyDetailsTop extends React.Component<any, any> {
                   </svg>
                   Delete
                 </div>
-                <div className="item">
+                <div className="item item--version-history" onClick={this.onArchiveClick}>
                   <svg
                     width="11"
                     height="11"
