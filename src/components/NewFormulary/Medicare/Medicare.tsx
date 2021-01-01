@@ -190,7 +190,7 @@ class Medicare extends React.Component<any, any> {
               columns={formularyDetailsGridColumns({
                 onFormularyNameClick: (id: any) => this.props.drugDetailClick(id),
               },hiddenColumns)}
-              scroll={{ y: 377 }}
+              scroll={{ y: 630 }}
               isFetchingData={false}
               enableResizingOfColumns
               getPerPageItemSize={this.props.onPageSize}
