@@ -44,8 +44,8 @@ export default class ClonePopup extends React.Component<any, any> {
     }
 
     onCancelClicked = () => {
-        if (this.props.onFormularyCloneCancel) {
-            this.props.onFormularyCloneCancel();
+        if (this.props.onCancel) {
+            this.props.onCancel();
         }
     }
 
@@ -62,7 +62,7 @@ export default class ClonePopup extends React.Component<any, any> {
                     <Grid item xs={12}>
                         <div className="group select-formulary-name">
                             <label>New Name <span className="astrict">*</span></label>
-                            <input type="text" placeholder={this.props.formularyName} className="base-input" onChange={this.validateName} />
+                            <input type="text" placeholder={this.props?.currentFormulary?.formulary_info?.formulary_name ? this.props?.currentFormulary?.formulary_info?.formulary_name : ''} className="base-input" onChange={this.validateName} />
                         </div>
                         <div className="version-grid-date-btn-wrapper">
                             <div className="version-grid-date-wrapper">
