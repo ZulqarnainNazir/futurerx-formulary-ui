@@ -30,72 +30,7 @@ const AddIcon = () => (
 );
 
 class AgeLimitSettings extends React.Component<any, any> {
-  state = {
-    ageLimitsCount: 1,
-    ageLimitHtml: [],
-  };
-
-  // addNewAgeLimit = () => {
-  //   this.setState({ ageLimitsCount: this.state.ageLimitsCount + 1 }, () => this.loadAgeLimits());
-  // }
-
-  componentDidMount() {
-    // this.loadAgeLimits();
-    // console.log("The Form Data in Age Limit Settings = ", this.props.formData);
-    console.log(
-      "THE Age Limit Settings FILE this.props.alSettings = ",
-      this.props.alSettings
-    );
-  }
-
-  // getStatusContentForm = (index) => (
-  //   <StatusContentFormPanel title="Age" type={this.props.formData[index].covered ? "covered" : "not-covered"} coveredHandler={this.props.coveredHandler}>
-  //     <div className="input-field-group">
-  //       <div className="input-field-group__label">Minimum</div>
-
-  //       <div className="input-field-group__dropdown-field">
-  //         <DropDown
-  //           className=""
-  //           placeholder="inclusive of"
-  //           options={["inclusive of", "Greater Than"]}
-  //           onChange={(e) => this.props.onMinChangeHandler(e, index)}
-  //         />
-  //       </div>
-
-  //       <div className="input-field-group__text-field">
-  //         <input type="text" className="setup-input-fields" onChange={(e) => this.props.handleMinChange(e, index)} />
-  //       </div>
-  //     </div>
-
-  //     <div className="input-field-group">
-  //       <div className="input-field-group__label">Maximum</div>
-
-  //       <div className="input-field-group__dropdown-field">
-  //         <DropDown
-  //           className=""
-  //           placeholder="inclusive of"
-  //           options={["inclusive of", "Less Than"]}
-  //           onChange={(e) => this.props.onMaxChangeHandler(e, index)}
-  //         />
-  //       </div>
-
-  //       <div className="input-field-group__text-field">
-  //         <input type="text" className="setup-input-fields" onChange={(e) => this.props.handleMaxChange(e, index)} />
-  //       </div>
-  //     </div>
-  //   </StatusContentFormPanel>
-  // )
-
-  // loadAgeLimits = () => {
-  //   let ageLimitHtml:any = [];
-  //   for(let i=0; i<this.state.ageLimitsCount; i++) {
-  //     ageLimitHtml.push(this.getStatusContentForm(i));
-  //   }
-  //   this.setState({ ageLimitHtml })
-  // }
-
   render() {
-    console.log("--RENDER ON AGE LIMIT------");
     return (
       <>
         <div className="age-limit-settings bordered mb-10">
@@ -105,13 +40,11 @@ class AgeLimitSettings extends React.Component<any, any> {
           />
 
           <div className="inner-container">
-            {/* {this.state.ageLimitHtml} */}
 
             {this.props.alSettings.map((s) => (
               <StatusContentFormPanel
                 title="Age"
                 type={s.covered ? "covered" : "not-covered"}
-                coveredHandler={this.props.coveredHandler}
                 handleStatus={(key) => this.props.handleStatus(key, s.index)}
                 deleteIconHandler={this.props.deleteAlLimit}
               >
@@ -162,8 +95,8 @@ class AgeLimitSettings extends React.Component<any, any> {
                 </div>
               </StatusContentFormPanel>
             ))}
-
-            {(this.props.alSettings.length < 3) ? (
+            
+            {((this.props.alSettings.length < 3) && !this.props.isDisabled) ? (
               <div
                 className="age-limit-settings__add-new-form-action"
                 onClick={() => this.props.addNewAgeLimit()}
