@@ -73,7 +73,6 @@ interface drugDetailALState {
   listCount: number,
   ageLimitsCount: number,
   isCovered: boolean,
-  formData: initialFormData[],
   showGrid: boolean,
   showApply: boolean,
   removeData: any,
@@ -151,32 +150,6 @@ class DrugDetailAL extends React.Component<any, any> {
       type: "covered",
       covered: true,
     },
-    formData: [
-      {
-        minimumVal: "",
-        maximumVal: "",
-        minimumType: "IO",
-        maximumType: "IO",
-        index: 0,
-        covered: true,
-      },
-      {
-        minimumVal: "",
-        maximumVal: "",
-        minimumType: "IO",
-        maximumType: "IO",
-        index: 1,
-        covered: true,
-      },
-      {
-        minimumVal: "",
-        maximumVal: "",
-        minimumType: "IO",
-        maximumType: "IO",
-        index: 2,
-        covered: true,
-      }
-    ],
     alSettings: [
       {
         minimumVal: "",
@@ -212,33 +185,6 @@ class DrugDetailAL extends React.Component<any, any> {
     filter:[],
     search_key:""
   }
-  
-  formData1: initialFormData[] = [
-    {
-      minimumVal: "",
-      maximumVal: "",
-      minimumType: "IO",
-      maximumType: "IO",
-      index: 0,
-      covered: true,
-    },
-    {
-      minimumVal: "",
-      maximumVal: "",
-      minimumType: "IO",
-      maximumType: "IO",
-      index: 1,
-      covered: true,
-    },
-    {
-      minimumVal: "",
-      maximumVal: "",
-      minimumType: "IO",
-      maximumType: "IO",
-      index: 2,
-      covered: true,
-    }
-  ]
 
   formData2: initialFormData[] = [
     {
@@ -273,7 +219,7 @@ class DrugDetailAL extends React.Component<any, any> {
 
   saveClickHandler = () => {
     console.log("Save data");
-    console.log("The Saved Form Data - ", this.state.formData);
+    // console.log("The Saved Form Data - ", this.state.formData);
     console.log("The Selected Drugs For Save = ", this.state.selectedDrugs);
     if (this.state.selectedDrugs && this.state.selectedDrugs.length > 0) {
       let apiDetails = {};
@@ -459,15 +405,6 @@ class DrugDetailAL extends React.Component<any, any> {
 
     this.setState({ alSettings: this.formData2 });
   };
-
-  coveredHandler = (e, index) => {
-    let covered = e.value === "covered" ? true : false;
-    this.formData1.forEach(ele => {
-      ele.covered = covered
-    });
-    console.log("The covered formData1 = ", this.formData1);
-    this.setState({ formData: this.formData1 });
-  }
 
   getALSummary = () => {
     let apiDetails = {};
@@ -727,6 +664,7 @@ class DrugDetailAL extends React.Component<any, any> {
       ], activeTabIndex:0});
 
       this.getALDrugsList();
+
     } else {
       this.setState({tabs:[
         { id: 1, text: "Replace", disabled: false },
@@ -830,13 +768,12 @@ class DrugDetailAL extends React.Component<any, any> {
         </div>
 
         {(this.state.activeTabIndex==0 || this.state.activeTabIndex==1) && <AgeLimitSettings
+          key={this.state.activeTabIndex}
           handleMinChange={this.handleMinChange}
           handleMaxChange={this.handleMaxChange}
           onMinChangeHandler={this.onMinChangeHandler}
           onMaxChangeHandler={this.onMaxChangeHandler}
-          formData={this.state.formData}
           showGrid={this.showGridHandler}
-          coveredHandler={this.coveredHandler}
           alSettings={this.state.alSettings}
           addNewAgeLimit={this.addNewAgeLimit}
           deleteAlLimit={this.deleteAlLimit}
