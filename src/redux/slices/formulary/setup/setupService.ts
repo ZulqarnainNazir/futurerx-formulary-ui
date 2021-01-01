@@ -25,83 +25,6 @@ export async function getformulary(
   }
 }
 
-export async function checkNameExist(name: string): Promise<boolean | any> {
-  let url = `${BASE_URL1}api/1/check-formulary-name/`;
-  if (name != null && name != undefined && name != "") {
-    url = url + `${name}`;
-  } else {
-    url = url + ` `;
-  }
-  // url= url+`/${this.clientId}`;
-  url = url + `/1`;
-  try {
-    const response = await axios.get(url, {
-      headers: REQUEST_HEADER,
-    });
-    // console.log("***** checkNameExist  - Success");
-    // console.log(response);
-    if (response?.data?.code === "200") {
-      return response?.data?.result?.is_formulary_name_exists;
-    }
-    return true;
-  } catch (error) {
-    // console.log("***** checkNameExist - Error");
-    // console.log(error);
-    throw error;
-  }
-}
-
-export async function deleteFullFormulary(formulary_ids: any[]): Promise<any> {
-  // TODO: CLIENT_ID
-  const clientId = 1;
-  try {
-    if (formulary_ids.length > 0) {
-      let requests = Array();
-
-      formulary_ids.map(formulary_id => {
-        let url = `${BASE_URL1}api/1/formulary-version/${formulary_id}`;
-        let request = axios.delete(url, {
-          headers: REQUEST_HEADER,
-        });
-        requests.push(request);
-      });
-
-      let responses = await axios.all(requests);
-      if (responses && responses.length > 0) {
-        responses.map(response => {
-          if (response?.data?.code !== "200") {
-            return null;
-          }
-        });
-        return 'success';
-      }
-    }
-    return null;
-  } catch (error) {
-    throw error;
-  }
-}
-
-export async function deleteFormulary(formulary_id: any): Promise<any> {
-  // TODO: CLIENT_ID
-  const clientId = 1;
-  let url = `${BASE_URL1}api/1/formulary-version/${formulary_id}`;
-  try {
-    let response = await axios.delete(url, {
-      headers: REQUEST_HEADER,
-    });
-    if (response?.data?.code === "200") {
-      return {
-        data: 'success',
-        status: 200,
-      };
-    }
-    return null;
-  } catch (error) {
-    throw error;
-  }
-}
-
 export async function createORUpdateFormulary(
   payload: any,
   id_formulary: number
@@ -432,4 +355,117 @@ function getTypeInfo(
     typeInfo.max_tiers = 20;
   }
   return typeInfo;
+}
+
+export async function archiveFormularies(formulary_ids: any[]): Promise<any> {
+
+  console.log("SRC - archiveFormularies ",formulary_ids);
+
+  //POST: http://localhost:8082/api/1/archiveformulary/3515 
+  // TODO: CLIENT_ID
+  const clientId = 1;
+  try {
+    if (formulary_ids.length > 0) {
+      let requests = Array();
+      formulary_ids.map(formulary_id => {
+        let url = `${BASE_URL1}api/1/archiveformulary/${formulary_id}`;
+        let request = axios.post(url, {
+          headers: REQUEST_HEADER,
+        });
+        requests.push(request);
+      });
+      console.log(requests);
+      let responses = await axios.all(requests);
+      console.log(responses);
+      if (responses && responses.length > 0) {
+        responses.map(response => {
+          if (response?.data?.code !== "200") {
+            return null;
+          }
+        });
+        return 'success';
+      }
+    }
+    return null;
+  } catch (error) {
+    throw error;
+  }
+}
+
+
+export async function checkNameExist(name: string): Promise<boolean | any> {
+  let url = `${BASE_URL1}api/1/check-formulary-name/`;
+  if (name != null && name != undefined && name != "") {
+    url = url + `${name}`;
+  } else {
+    url = url + ` `;
+  }
+  // url= url+`/${this.clientId}`;
+  url = url + `/1`;
+  try {
+    const response = await axios.get(url, {
+      headers: REQUEST_HEADER,
+    });
+    // console.log("***** checkNameExist  - Success");
+    // console.log(response);
+    if (response?.data?.code === "200") {
+      return response?.data?.result?.is_formulary_name_exists;
+    }
+    return true;
+  } catch (error) {
+    // console.log("***** checkNameExist - Error");
+    // console.log(error);
+    throw error;
+  }
+}
+
+export async function deleteFullFormulary(formulary_ids: any[]): Promise<any> {
+  // TODO: CLIENT_ID
+  const clientId = 1;
+  try {
+    if (formulary_ids.length > 0) {
+      let requests = Array();
+
+      formulary_ids.map(formulary_id => {
+        let url = `${BASE_URL1}api/1/formulary-version/${formulary_id}`;
+        let request = axios.delete(url, {
+          headers: REQUEST_HEADER,
+        });
+        requests.push(request);
+      });
+
+      let responses = await axios.all(requests);
+      if (responses && responses.length > 0) {
+        responses.map(response => {
+          if (response?.data?.code !== "200") {
+            return null;
+          }
+        });
+        return 'success';
+      }
+    }
+    return null;
+  } catch (error) {
+    throw error;
+  }
+}
+
+export async function deleteFormulary(formulary_id: any): Promise<any> {
+  // TODO: CLIENT_ID
+  const clientId = 1;
+  let url = `${BASE_URL1}api/1/formulary-version/${formulary_id}`;
+  try {
+    let response = await axios.delete(url, {
+      headers: REQUEST_HEADER,
+    });
+    if (response?.data?.code === "200") {
+      return {
+        data: 'success',
+        status: 200,
+      };
+    }
+    return null;
+  } catch (error) {
+    throw error;
+  }
 }
