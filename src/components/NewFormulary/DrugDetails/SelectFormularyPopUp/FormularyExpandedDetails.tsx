@@ -7,8 +7,8 @@ import FormularyExpandedTiersDetails from "./FormularyExpandedTiersDetails";
 
 const miniTabs = [
   { id: 1, text: "General" },
-  { id: 3, text: "Formulary Design" },
-  { id: 4, text: "Tiers" },
+  { id: 3, text: "Formulary Design", disabled: true },
+  { id: 4, text: "Tiers", disabled: true },
 ];
 
 interface FormularyExpandedDetailsState {
@@ -51,7 +51,7 @@ export default class FormularyExpandedDetails extends React.Component<
   render() {
     return (
       <div className="formulary-expanded-details custom-formulary-expanded-details">
-        <Paper elevation={0}>
+        {/* <Paper elevation={0}> */}
           <div className="formulary-expanded-details__container">
             <div className="formulary-expanded-details-right">
               <div className="formulary-expanded-details-right__tabs">
@@ -66,7 +66,7 @@ export default class FormularyExpandedDetails extends React.Component<
               {this.renderActiveTabContent()}
             </div>
           </div>
-        </Paper>
+        {/* </Paper> */}
       </div>
     );
   }

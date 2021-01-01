@@ -44,6 +44,7 @@ class FormularyExpandedDetails extends React.Component<any,any>{
     formularySubmissionMonth: '',
     formulayId: ''
   };
+  
   fetchFormulary = async () => {
     try {
       let formularyData = await getformulary(parseInt(this.props.rowData.data.id_formulary));
@@ -70,7 +71,8 @@ class FormularyExpandedDetails extends React.Component<any,any>{
   }
   componentDidMount(){
     if(this.props.rowData && this.props.dashboard){
-      console.log(this.state);
+      const width = (document.querySelector('.ant-table-wrapper') as HTMLElement).offsetWidth - 6;
+      (document.querySelector('.table-expanded-sticky-wrapper') as HTMLElement).style.width = `${width}px`;
       this.fetchFormulary();
     }
   }
@@ -81,169 +83,170 @@ class FormularyExpandedDetails extends React.Component<any,any>{
   }
   render(){
     return (
-      <div className="formulary-expanded-details">
-        <Paper elevation={0}>
-          <div className="formulary-expanded-details__container">
-            {/* Left Container Starting*/}
-            <div className="formulary-expanded-details-left">
-              {/* <div className="formulary-expanded-details-left__container">
-                <div className="formulary-expanded-details-left__title">Versions</div>
-                <div className="formulary-expanded-details-left__list">
-                  <div className="formulary-expanded-details-left__list-item">
-                    <span className="formulary-expanded-details-left__list-item-indicator formulary-expanded-details-left__list-item-indicator--active" />Version 4
+      <div className="table-expanded-sticky-wrapper">
+        <div className="formulary-expanded-details">
+          <Paper elevation={0}>
+            <div className="formulary-expanded-details__container">
+              {/* Left Container Starting*/}
+              <div className="formulary-expanded-details-left">
+                {/* <div className="formulary-expanded-details-left__container">
+                  <div className="formulary-expanded-details-left__title">Versions</div>
+                  <div className="formulary-expanded-details-left__list">
+                    <div className="formulary-expanded-details-left__list-item">
+                      <span className="formulary-expanded-details-left__list-item-indicator formulary-expanded-details-left__list-item-indicator--active" />Version 4
+                    </div>
+                    <div className="formulary-expanded-details-left__list-item">
+                      <span className="formulary-expanded-details-left__list-item-indicator formulary-expanded-details-left__list-item-indicator--active" />Version 3
+                    </div>
+                    <div className="formulary-expanded-details-left__list-item">
+                      <span className="formulary-expanded-details-left__list-item-indicator formulary-expanded-details-left__list-item-indicator--inactive" />Version 2
+                    </div>
+                    
+                    <div className="formulary-expanded-details-left__list-add-item">+ add new version</div>
+                    
                   </div>
-                  <div className="formulary-expanded-details-left__list-item">
-                    <span className="formulary-expanded-details-left__list-item-indicator formulary-expanded-details-left__list-item-indicator--active" />Version 3
-                  </div>
-                  <div className="formulary-expanded-details-left__list-item">
-                    <span className="formulary-expanded-details-left__list-item-indicator formulary-expanded-details-left__list-item-indicator--inactive" />Version 2
-                  </div>
-                  
-                  <div className="formulary-expanded-details-left__list-add-item">+ add new version</div>
-                  
-                </div>
-              </div> */}
-            </div>
-            {/* Left Container Ending*/}
-            
-            {/* Right Container Starting*/}
-            
-              <div className="formulary-expanded-details-right">
-                {/* <div className="formulary-expanded-details-right__header">
-                  <FrxProcessStepper/>
                 </div> */}
-                <div className="formulary-expanded-details-right__tabs">
-                  <FrxMiniTabs 
-                    tabList={miniTabs} 
-                    activeTabIndex={this.state.activeMiniTabIndex} 
-                    onClickTab={(selectedTabIndex)=> this.setActiveMiniTabIndex(selectedTabIndex)}
-                    disabled
-                    disabledIndex={2}/>
-                </div>
-                
-                {
-                  this.state.activeMiniTabIndex ===  0 &&
-                  <div className="formulary-expanded-details-right__content">
-                    <div className="formulary-info-field">
-                      <div className="formulary-info-field__label">FORMULARY TYPE <span className="formulary-info-field__required">*</span></div>
-                      <div className="formulary-info-field__value">{this.state.formularyType}</div>
-                    </div>
-
-                    <div className="formulary-info-field">
-                      <div className="formulary-info-field__label">FORMULARY NAME <span className="formulary-info-field__required">*</span></div>
-                      <div className="formulary-info-field__value">{this.state.formularyName}</div>
-                    </div>
-
-                    <div className="formulary-info-field">
-                      <div className="formulary-info-field__label">ABBREVIATION</div>
-                      <div className="formulary-info-field__value">{this.state.formularyAbbrevation}</div>
-                    </div>
-                    
-                    
-                    <div className="formulary-info-field">
-                      <div className="formulary-info-field__label">Method of Formulary Build<span className="formulary-info-field__required">*</span></div>
-                      <div className="formulary-info-field__value radio-group">
-                        <RadioGroup
-                          className="radio-group-custom"
-                          aria-label={this.state.methodofFormularyBuild}
-                          name="method"
-                          value={this.state.methodofFormularyBuild}>
-                          <FormControlLabel
-                            disabled={true}
-                            value="C"
-                            control={<Radio />}
-                            label="Clone"/>
-                          <FormControlLabel
-                            disabled={true}
-                            value="U"
-                            control={<Radio />}
-                            label="Upload"/>
-                          <FormControlLabel
-                            disabled={true}
-                            value="N"
-                            control={<Radio />}
-                            label="Create New"/>
-                        </RadioGroup>
-                      </div>
-                    </div>
-
-                    
-
-                    <div className="formulary-info-field">
-                      <div className="formulary-info-field__label">EFFECTIVE DATE</div>
-                      <div className="formulary-info-field__value">{this.state.effectiveDate}</div>
-                    </div>
-                    <div className="formulary-info-field">
-                      {/* <div className="formulary-info-field__label">CLONE FORMULARY<span className="formulary-info-field__required">*</span></div>
-                      <div className="formulary-info-field__value">Clone Formulary</div> */}
-                    </div>
-                    
-                    <div className="formulary-info-field">
-                      <div className="formulary-info-field__label">SERVICE YEAR<span className="formulary-info-field__required">*</span></div>
-                      <div className="formulary-info-field__value">{this.state.serviceYear}</div>
-                    </div>
-
-                    <div className="formulary-info-field">
-                      <div className="formulary-info-field__label">FORMULARY DESCRIPTION</div>
-                      <div className="formulary-info-field__value">{this.state.formularyDescription}</div>
-                    </div>
-                    
-                    {this.state.formularyType !== 'Commercial' ? (
-                      <div className="formulary-info-field">
-                        <div className="formulary-info-field__label">Which prior year's formulary does this most closely resemble?</div>
-                        <div className="formulary-info-field__value">2019</div>
-                      </div>
-                    ) : <div className="formulary-info-field"></div>}
-
-                    <div className="formulary-info-field">
-                      <div className="formulary-info-field__label">FORMULARY CLASSIFICATION SYSTEM</div>
-                      <div className="formulary-info-field__value radio-group">
-                        <RadioGroup
-                          className="radio-group-custom"
-                          aria-label={this.state.formularyClassificationSystem}
-                          name="classification"
-                          value={this.state.formularyClassificationSystem}>
-                            {this.state.formularyType !== 'Commercial' ? (
-                              <>
-                              <FormControlLabel
-                              disabled={true}
-                              value="USP"
-                              control={<Radio />}
-                              label="USP"/>
-                              <FormControlLabel
-                              disabled={true}
-                              value="AHFS"
-                              control={<Radio />}
-                              label="AHFS"/>
-                              </>
-                            ): null}
-                          <FormControlLabel
-                            disabled={true}
-                            value="Medispan"
-                            control={<Radio />}
-                            label="Medispan"/>
-                        </RadioGroup>
-                      </div>
-                    </div>
-                    
-                    {this.state.formularyType !== 'Commercial' ? (
-                      <div className="formulary-info-field">
-                        <div className="formulary-info-field__label">SUBMISSION MONTH</div>
-                        <div className="formulary-info-field__value">October</div>
-                      </div>
-                    ) : null}
-                    <div className="formulary-info-field"></div>
-                    <div className="formulary-info-field view-fl-field">
-                      <Box display="flex" justifyContent="flex-end">
-                        <Button className="Button view-fl-btn" label="View Full Formulary" onClick={() => this.props.drugDetailClick(this.state.formulayId)} />
-                      </Box>
-                    </div>
-                  </div>
-                }
               </div>
-            {/* Right Container Ending*/}
-          </div>
-        </Paper>
+              {/* Left Container Ending*/}
+              
+              {/* Right Container Starting*/}
+                <div className="formulary-expanded-details-right">
+                  {/* <div className="formulary-expanded-details-right__header">
+                    <FrxProcessStepper/>
+                  </div> */}
+                  <div className="formulary-expanded-details-right__tabs">
+                    <FrxMiniTabs 
+                      tabList={miniTabs} 
+                      activeTabIndex={this.state.activeMiniTabIndex} 
+                      onClickTab={(selectedTabIndex)=> this.setActiveMiniTabIndex(selectedTabIndex)}
+                      disabled
+                      disabledIndex={2}/>
+                  </div>
+                  
+                  {
+                    this.state.activeMiniTabIndex ===  0 &&
+                    <div className="formulary-expanded-details-right__content">
+                      <div className="formulary-info-field">
+                        <div className="formulary-info-field__label">FORMULARY TYPE <span className="formulary-info-field__required">*</span></div>
+                        <div className="formulary-info-field__value">{this.state.formularyType}</div>
+                      </div>
+
+                      <div className="formulary-info-field">
+                        <div className="formulary-info-field__label">FORMULARY NAME <span className="formulary-info-field__required">*</span></div>
+                        <div className="formulary-info-field__value">{this.state.formularyName}</div>
+                      </div>
+
+                      <div className="formulary-info-field">
+                        <div className="formulary-info-field__label">ABBREVIATION</div>
+                        <div className="formulary-info-field__value">{this.state.formularyAbbrevation}</div>
+                      </div>
+                      
+                      
+                      <div className="formulary-info-field">
+                        <div className="formulary-info-field__label">Method of Formulary Build<span className="formulary-info-field__required">*</span></div>
+                        <div className="formulary-info-field__value radio-group">
+                          <RadioGroup
+                            className="radio-group-custom"
+                            aria-label={this.state.methodofFormularyBuild}
+                            name="method"
+                            value={this.state.methodofFormularyBuild}>
+                            <FormControlLabel
+                              disabled={true}
+                              value="C"
+                              control={<Radio />}
+                              label="Clone"/>
+                            <FormControlLabel
+                              disabled={true}
+                              value="U"
+                              control={<Radio />}
+                              label="Upload"/>
+                            <FormControlLabel
+                              disabled={true}
+                              value="N"
+                              control={<Radio />}
+                              label="Create New"/>
+                          </RadioGroup>
+                        </div>
+                      </div>
+
+                      
+
+                      <div className="formulary-info-field">
+                        <div className="formulary-info-field__label">EFFECTIVE DATE</div>
+                        <div className="formulary-info-field__value">{this.state.effectiveDate}</div>
+                      </div>
+                      <div className="formulary-info-field">
+                        {/* <div className="formulary-info-field__label">CLONE FORMULARY<span className="formulary-info-field__required">*</span></div>
+                        <div className="formulary-info-field__value">Clone Formulary</div> */}
+                      </div>
+                      
+                      <div className="formulary-info-field">
+                        <div className="formulary-info-field__label">SERVICE YEAR<span className="formulary-info-field__required">*</span></div>
+                        <div className="formulary-info-field__value">{this.state.serviceYear}</div>
+                      </div>
+
+                      <div className="formulary-info-field">
+                        <div className="formulary-info-field__label">FORMULARY DESCRIPTION</div>
+                        <div className="formulary-info-field__value">{this.state.formularyDescription}</div>
+                      </div>
+                      
+                      {this.state.formularyType !== 'Commercial' ? (
+                        <div className="formulary-info-field">
+                          <div className="formulary-info-field__label">Which prior year's formulary does this most closely resemble?</div>
+                          <div className="formulary-info-field__value">2019</div>
+                        </div>
+                      ) : <div className="formulary-info-field"></div>}
+
+                      <div className="formulary-info-field">
+                        <div className="formulary-info-field__label">FORMULARY CLASSIFICATION SYSTEM</div>
+                        <div className="formulary-info-field__value radio-group">
+                          <RadioGroup
+                            className="radio-group-custom"
+                            aria-label={this.state.formularyClassificationSystem}
+                            name="classification"
+                            value={this.state.formularyClassificationSystem}>
+                              {this.state.formularyType !== 'Commercial' ? (
+                                <>
+                                <FormControlLabel
+                                disabled={true}
+                                value="USP"
+                                control={<Radio />}
+                                label="USP"/>
+                                <FormControlLabel
+                                disabled={true}
+                                value="AHFS"
+                                control={<Radio />}
+                                label="AHFS"/>
+                                </>
+                              ): null}
+                            <FormControlLabel
+                              disabled={true}
+                              value="Medispan"
+                              control={<Radio />}
+                              label="Medispan"/>
+                          </RadioGroup>
+                        </div>
+                      </div>
+                      
+                      {this.state.formularyType !== 'Commercial' ? (
+                        <div className="formulary-info-field">
+                          <div className="formulary-info-field__label">SUBMISSION MONTH</div>
+                          <div className="formulary-info-field__value">October</div>
+                        </div>
+                      ) : null}
+                      <div className="formulary-info-field"></div>
+                      <div className="formulary-info-field view-fl-field">
+                        <Box display="flex" justifyContent="flex-end">
+                          <Button className="Button view-fl-btn" label="View Full Formulary" onClick={() => this.props.drugDetailClick(this.state.formulayId)} />
+                        </Box>
+                      </div>
+                    </div>
+                  }
+                </div>
+              {/* Right Container Ending*/}
+            </div>
+          </Paper>
+        </div>
       </div>
     )
   }
