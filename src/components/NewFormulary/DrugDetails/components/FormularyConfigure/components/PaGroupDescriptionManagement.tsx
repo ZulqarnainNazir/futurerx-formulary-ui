@@ -141,6 +141,7 @@ class PaGroupDescriptionManagement extends React.Component<any, any> {
     });
   };
   addNewGroup = () => {
+    this.props.setAdditionalCriteria([]);
     this.setState({
       newGroup: false,
       selectedGrp: false,

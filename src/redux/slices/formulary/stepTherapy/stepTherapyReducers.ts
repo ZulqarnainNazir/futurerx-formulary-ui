@@ -23,7 +23,6 @@ export const getStepTherapyRejected = (state, action) => {
 export const getStDescriptionFulfilled = (state, action) => {
   console.log("Reducer::getPaFulfilled");
   state.isLoading = false;
-  debugger;
   if(action.payload.data === undefined || (action.payload.data.length === 0)) {
     console.log("getPaFulfilled: Payload invalid");
     return;
@@ -44,7 +43,6 @@ export const getStDescriptionRejected = (state, action) => {
 export const getStDescriptionsFulfilled = (state, action) => {
   console.log("Reducer::getPaFulfilled");
   state.isLoading = false;
-  debugger;
   if(action.payload.data === undefined || (action.payload.data.length === 0)) {
     console.log("getPaFulfilled: Payload invalid");
     return;

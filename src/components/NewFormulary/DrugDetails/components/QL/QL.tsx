@@ -49,10 +49,9 @@ function mapDispatchToProps(dispatch) {
 function mapStateToProps(state) {
   return {
     current_formulary: state.application.formulary,
-    // formulary_lob_id: state.application.formulary_lob_id,
     qlData: state.qlReducer.data,
     switchState: state.switchReducer.configureSwitch,
-    // inState: state,
+
     formulary_lob_id: state?.application?.formulary_lob_id,
 
     advancedSearchBody: state?.advancedSearch?.advancedSearchBody,
@@ -86,6 +85,7 @@ interface tabsState {
   isAdvanceSearchOpen: boolean;
   isAdditionalCriteriaOpen: boolean;
   additionalCriteriaState: null;
+  is_additional_criteria_defined: boolean;
   isLoading: boolean;
 }
 
@@ -112,6 +112,7 @@ class Tier extends React.Component<any, tabsState> {
     isAdvanceSearchOpen: false,
     isAdditionalCriteriaOpen: false,
     additionalCriteriaState: null,
+    is_additional_criteria_defined: false,
     isLoading: false,
     errorObject: {},
   };
@@ -138,7 +139,6 @@ class Tier extends React.Component<any, tabsState> {
     const activeTabIndex = this.state.activeTabIndex;
     switch (activeTabIndex) {
       case 0:
-        // this.setState({ selectedTab: constants.TYPE_REPLACE });
         return (
           <Replace
             handleOnChange={this.handleOnChange}
@@ -149,7 +149,6 @@ class Tier extends React.Component<any, tabsState> {
           />
         );
       case 1:
-        // this.setState({ selectedTab: "append" });
         return (
           <Replace
             handleOnChange={this.handleOnChange}
@@ -160,7 +159,6 @@ class Tier extends React.Component<any, tabsState> {
           />
         );
       case 2:
-        // this.setState({ selectedTab: constants.TYPE_REMOVE });
         return (
           <Remove
             selectedCriteria={this.state.selectedCriteria}
@@ -169,12 +167,6 @@ class Tier extends React.Component<any, tabsState> {
         );
     }
   };
-
-  // onClickMiniTab = (num: number) => {
-  //   this.setState({
-  //     activeMiniTabIndex: num,
-  //   });
-  // };
 
   checkForRequiredFields = (quantityAndFillLimitObject) => {
     let tempErr = {};
@@ -218,7 +210,6 @@ class Tier extends React.Component<any, tabsState> {
   };
 
   showDrugGrid = (searchBody = null) => {
-    // debugger;
     this.setState({ drugGridContainer: true });
     console.log("{searchBody}", this.props.advancedSearchBody);
 
@@ -234,11 +225,12 @@ class Tier extends React.Component<any, tabsState> {
         { key: constants.KEY_LIMIT, value: 10 },
       ],
     };
+    apiDetails["messageBody"] = {};
+    apiDetails["messageBody"][
+      "selected_criteria_ids"
+    ] = this.state.selectedCriteria;
     if (searchBody) {
       apiDetails["messageBody"] = Object.assign({}, searchBody);
-      // apiDetails["messageBody"] = { ...{ searchBody } };
-
-      // alert("in advanceSearchBody");
     }
     console.log("[apiDetails]:", apiDetails);
     this.props.postFormularyDrugQl(apiDetails).then((json) => {
@@ -253,8 +245,6 @@ class Tier extends React.Component<any, tabsState> {
   };
 
   loadGridData(json: any) {
-    const { isLoading } = this.state;
-    this.setState({ isLoading: !isLoading });
     let tmpData = json.payload.result;
     var data: any[] = [];
     let count = 1;
@@ -440,12 +430,10 @@ class Tier extends React.Component<any, tabsState> {
       return gridItem;
     });
     this.setState({
-      isLoading: !isLoading,
       drugData: data,
       drugGridData: gridData,
       drugGridContainer: true,
     });
-    // showMessage("Failure", "error");
   }
 
   handleOnChange = (e) => {
@@ -521,6 +509,7 @@ class Tier extends React.Component<any, tabsState> {
   };
 
   handleSave = () => {
+    // debugger;
     const { quantityAndFillLimitObject } = this.state;
     let currentAction = this.getCurrentAction();
     console.log(
@@ -574,7 +563,10 @@ class Tier extends React.Component<any, tabsState> {
     apiDetails["messageBody"][
       "selected_criteria_ids"
     ] = this.state.selectedCriteria;
-    if (this.state.additionalCriteriaState != null) {
+    if (
+      this.state.additionalCriteriaState != null &&
+      this.state.is_additional_criteria_defined
+    ) {
       apiDetails["messageBody"]["is_custom_additional_criteria"] = true;
       apiDetails["messageBody"][
         "um_criteria"
@@ -603,7 +595,7 @@ class Tier extends React.Component<any, tabsState> {
           payload.additionalCriteriaBody = [];
 
           this.props.setAdditionalCriteria(payload);
-          this.setState({ quantityAndFillLimitObject: {} });
+          // this.setState({ quantityAndFillLimitObject: {} });
           this.showDrugGrid();
 
           this.props
@@ -623,9 +615,33 @@ class Tier extends React.Component<any, tabsState> {
   };
 
   openAdditionalCriteria = () => {
+    if (this.state.is_additional_criteria_defined) {
+      this.setState({
+        is_additional_criteria_defined: false,
+        isAdditionalCriteriaOpen: false,
+      });
+    } else {
+      this.setState({
+        is_additional_criteria_defined: true,
+        isAdditionalCriteriaOpen: true,
+      });
+    }
+  };
+  closeAdditonalCriteria = () => {
     this.setState({
-      isAdditionalCriteriaOpen: !this.state.isAdditionalCriteriaOpen,
+      isAdditionalCriteriaOpen: false,
     });
+  };
+
+  onRadioButtohandleChange = (e) => {
+    let tmp_value = e.target.value;
+    let tmp_key = e.target.name;
+    if (e.target.value == "true") {
+      tmp_value = true;
+    } else if (e.target.value == "false") {
+      tmp_value = false;
+    }
+    this.setState({ is_additional_criteria_defined: tmp_value });
   };
 
   onApply = () => {
@@ -649,7 +665,6 @@ class Tier extends React.Component<any, tabsState> {
   };
 
   UNSAFE_componentWillReceiveProps(nextProps) {
-    // debugger;
     if (nextProps.switchState) {
       this.showDrugGrid({ ...nextProps.advancedSearchBody });
       this.setState({
@@ -657,6 +672,7 @@ class Tier extends React.Component<any, tabsState> {
           tab["disabled"] = true;
           return tab;
         }),
+        is_additional_criteria_defined: false,
       });
       this.onClickTab(0);
     } else {
@@ -671,8 +687,6 @@ class Tier extends React.Component<any, tabsState> {
     }
 
     if (nextProps.advancedSearchBody && nextProps.populateGrid) {
-      // debugger;
-      // alert("nexProps");
       this.showDrugGrid({ ...nextProps.advancedSearchBody });
       let payload = {
         advancedSearchBody: nextProps.advancedSearchBody,
@@ -686,7 +700,7 @@ class Tier extends React.Component<any, tabsState> {
       }
       this.props.setAdvancedSearch(payload);
     }
-    // debugger;
+
     if (nextProps.additionalCriteriaBody) {
       const additionalCriteriaState = nextProps.additionalCriteriaBody;
       this.setState({ additionalCriteriaState }, () =>
@@ -701,6 +715,7 @@ class Tier extends React.Component<any, tabsState> {
     const searchProps = {
       lobCode: this.props.formulary_lob_id,
     };
+    const dataLength = this.state.drugGridData.length > 0 ? true : false;
     return (
       <div className="drug-detail-LA-root">
         <div className="drug-detail-la-container">
@@ -758,12 +773,15 @@ class Tier extends React.Component<any, tabsState> {
                         isViweAll={this.props.switchState}
                         isChecked={this.state.isAdditionalCriteriaOpen}
                         onRadioButtonClick={this.openAdditionalCriteria}
+                        is_additional_criteria_defined={
+                          this.state.is_additional_criteria_defined
+                        }
                       />
                       {this.state.isAdditionalCriteriaOpen && (
                         <AdvanceSearchContainer
                           {...searchProps}
                           openPopup={this.state.isAdditionalCriteriaOpen}
-                          onClose={this.openAdditionalCriteria}
+                          onClose={this.closeAdditonalCriteria}
                           isAdvanceSearch={false}
                         />
                       )}
@@ -786,7 +804,7 @@ class Tier extends React.Component<any, tabsState> {
                 ></Button>
               </div>
             </Grid>
-            {this.state.drugGridContainer && (
+            {this.state.drugGridContainer && dataLength && (
               <div className="select-drug-from-table">
                 <div className="bordered white-bg">
                   {/* {!this.props.switchState && ( */}

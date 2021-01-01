@@ -51,8 +51,55 @@ export async function checkNameExist(name: string): Promise<boolean | any> {
   }
 }
 
-export async function deleteFormulary(details: any): Promise<any> {
-  return null;
+export async function deleteFullFormulary(formulary_ids: any[]): Promise<any> {
+  // TODO: CLIENT_ID
+  const clientId = 1;
+  try {
+    if (formulary_ids.length > 0) {
+      let requests = Array();
+
+      formulary_ids.map(formulary_id => {
+        let url = `${BASE_URL1}api/1/formulary-version/${formulary_id}`;
+        let request = axios.delete(url, {
+          headers: REQUEST_HEADER,
+        });
+        requests.push(request);
+      });
+
+      let responses = await axios.all(requests);
+      if (responses && responses.length > 0) {
+        responses.map(response => {
+          if (response?.data?.code !== "200") {
+            return null;
+          }
+        });
+        return 'success';
+      }
+    }
+    return null;
+  } catch (error) {
+    throw error;
+  }
+}
+
+export async function deleteFormulary(formulary_id: any): Promise<any> {
+  // TODO: CLIENT_ID
+  const clientId = 1;
+  let url = `${BASE_URL1}api/1/formulary-version/${formulary_id}`;
+  try {
+    let response = await axios.delete(url, {
+      headers: REQUEST_HEADER,
+    });
+    if (response?.data?.code === "200") {
+      return {
+        data: 'success',
+        status: 200,
+      };
+    }
+    return null;
+  } catch (error) {
+    throw error;
+  }
 }
 
 export async function createORUpdateFormulary(
@@ -96,6 +143,36 @@ export async function createORUpdateFormulary(
       status: errorObject.status,
       data: errorObject.data,
     };
+  }
+}
+
+export async function getAllFormularyVersions(
+  payload: any,
+  id_base_formulary: number,
+  limit: number,
+  index: number
+): Promise<any> {
+  // TODO: CLIENT_ID
+  const clientId = 1;
+  let url = `${BASE_URL1}api/1/formulary-versions`;
+  try {
+    let response;
+    url += `/${id_base_formulary}?index=${index}&limit=${limit}`;
+    response = await axios.post(url, payload, {
+      headers: REQUEST_HEADER,
+    });
+
+    // console.log("***** createORUpdateFormulary - Success");
+    // console.log(response);
+    if (response?.data?.code === "200") {
+      return {
+        data: response?.data,
+        status: 200,
+      };
+    }
+    return null;
+  } catch (error) {
+    throw error;
   }
 }
 

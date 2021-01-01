@@ -9,6 +9,7 @@ import { fetchSelectedFormulary } from "../../../../.././redux/slices/formulary/
 import { createFormularyUsingClone } from "../../../../.././redux/slices/formulary/setup/setupService";
 import VersionHistoryPopup from "../FormularySetUp/components/VersionHistoryPopup/VersionHistoryPopup";
 import ClonePopup from "../FormularySetUp/components/ClonePopup/ClonePopup";
+import DeletePopup from "../FormularySetUp/components/DeletePopup/DeletePopup";
 import { VersionHistoryData } from "../FormularySetUp/components/VersionHistoryPopup/version-hisory.model";
 import { ToastContainer } from 'react-toastify';
 import showMessage from "../../../Utils/Toast";
@@ -48,6 +49,7 @@ class FormularyDetailsTop extends React.Component<any, any> {
     //toggle flag to show and hide version history popup
     isVersionHistoryPopupOpen: false,
     isClonePopupOpen: false,
+    isDeletePopupOpen: false,
     dialogTitle: '',
 
     lastID: 0,
@@ -109,7 +111,20 @@ class FormularyDetailsTop extends React.Component<any, any> {
 
   onCloneClick = () => {
     console.log("Clone button clicked");
-    this.setState({ isAnyPopupOpen: true, isClonePopupOpen: true, dialogTitle: 'CLONE' });
+    if (this.props.currentFormulary) {
+      this.setState({ isAnyPopupOpen: true, isClonePopupOpen: true, dialogTitle: 'CLONE' });
+    }else{
+      showMessage('Error: Current formulary is not set','error');
+    }
+  };
+
+  onDeleteClick = () => {
+    console.log("Delete button clicked");
+    if (this.props.currentFormulary) {
+      this.setState({ isAnyPopupOpen: true, isDeletePopupOpen: true, dialogTitle: 'DELETE' });
+    }else{
+      showMessage('Error: Current formulary is not set','error');
+    }
   };
 
   /**
@@ -122,6 +137,7 @@ class FormularyDetailsTop extends React.Component<any, any> {
       isAnyPopupOpen: false,
       isVersionHistoryPopupOpen: false,
       isClonePopupOpen: false,
+      isDeletePopupOpen: false,
       dialogTitle: ''
       //add other popup toggles too if this is reused
     });
@@ -223,7 +239,7 @@ class FormularyDetailsTop extends React.Component<any, any> {
     this.handleCloneFormulary(cloneName, effectiveDate);
   }
 
-  onFormularyCloneCancel = () => {
+  onCancel = () => {
     this.onClosePopup();
   }
 
@@ -286,7 +302,10 @@ class FormularyDetailsTop extends React.Component<any, any> {
               />
             )}
             {this.state.isClonePopupOpen && (
-              <ClonePopup onFormularyCloneInfo={this.onFormularyCloneInfo} onFormularyCloneCancel={this.onFormularyCloneCancel} />
+              <ClonePopup currentFormulary={this.props.currentFormulary} onFormularyCloneInfo={this.onFormularyCloneInfo} onCancel={this.onCancel} />
+            )}
+            {this.state.isDeletePopupOpen && (
+              <DeletePopup currentFormulary={this.props.currentFormulary} onCancel={this.onCancel} />
             )}
           </DialogPopup>
         ) : null}
@@ -366,7 +385,8 @@ class FormularyDetailsTop extends React.Component<any, any> {
                   </svg>
                   New Version
                 </div>
-                <div className="item">
+                <div className="item item--version-history"
+                     onClick={this.onDeleteClick}>
                   <svg
                     width="11"
                     height="11"

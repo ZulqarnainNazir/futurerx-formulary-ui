@@ -177,7 +177,6 @@ class STF extends React.Component<any, any> {
     if (this.state.selectedDrugs && this.state.selectedDrugs.length > 0) {
       let apiDetails = {};
       // apiDetails['apiPart'] = constants.APPLY_TIER;
-      debugger;
       apiDetails["lob_type"] = this.props.formulary_lob_id;
       apiDetails["pathParams"] =
         this.props?.formulary_id +
@@ -276,9 +275,7 @@ class STF extends React.Component<any, any> {
     let apiDetails = {};
     apiDetails["lob_type"] = this.props.formulary_lob_id;
     apiDetails["pathParams"] = "/" + tmp_value;
-    debugger;
     this.props.getStGrouptDescriptionVersions(apiDetails).then((json) => {
-      debugger;
       let data = json.payload.data;
       let ftype = "";
       switch (this.props.formulary_lob_id) {
@@ -291,7 +288,6 @@ class STF extends React.Component<any, any> {
         default:
           break;
       }
-      debugger;
       let latestVersionId=-1;
       data.forEach(element => {
         if (element.id_st_group_description > latestVersionId){
@@ -301,7 +297,6 @@ class STF extends React.Component<any, any> {
       let tmp_additionalCriteria=false;
       this.props.getStGrouptDescription({lob_type:this.props.formulary_lob_id, 
         pathParams: "/"+latestVersionId}).then((json) => {
-          debugger;
           this.props.setAdditionalCriteria([]);
           if (json.payload && json.payload.code === "200") {
             if (json.payload.data["um_criteria"]!=null && json.payload.data["um_criteria"].length >0 ){
@@ -405,7 +400,6 @@ class STF extends React.Component<any, any> {
     const drugGridDate = this.props
       .postFormularyDrugST(apiDetails)
       .then((json) => {
-        debugger;
         if (json.payload !=null && json.payload.code === "200") {
         let tmpData = json.payload.result;
         var data: any[] = [];
@@ -478,7 +472,6 @@ class STF extends React.Component<any, any> {
     this.populateGridData();
   };
   componentDidMount() {
-    debugger;
     switch (this.props.formulary_lob_id) {
       case 1:
         this.setState({
@@ -497,7 +490,6 @@ class STF extends React.Component<any, any> {
     apiDetails_1["lob_type"] = this.props.formulary_lob_id;
     apiDetails_1["pathParams"] = "/" + this.props?.client_id;
     this.props.getStGrouptDescriptions(apiDetails_1).then((json) => {
-      debugger;
       let result = json.payload.data.filter(
         (obj) => !obj.is_archived && obj.is_setup_complete
       );
@@ -516,7 +508,6 @@ class STF extends React.Component<any, any> {
       formulary_lob_id: this.props?.formulary_lob_id,
     };
     this.props.getLobFormularies(apiDetails).then((json) => {
-      debugger;
       this.setState({
         lobFormularies: json.payload.result,
       });
@@ -527,7 +518,6 @@ class STF extends React.Component<any, any> {
     this.setState({ isAdditionalCriteriaOpen: false });
   };
   openAdditionalCriteria = () => {
-    debugger;
     this.setState({ isAdditionalCriteriaOpen: true });
   };
   render() {
