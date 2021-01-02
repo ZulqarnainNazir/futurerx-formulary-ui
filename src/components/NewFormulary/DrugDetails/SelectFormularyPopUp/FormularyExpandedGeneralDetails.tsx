@@ -179,14 +179,6 @@ export default class FormularyExpandedGeneralDetails extends React.Component<
             </>
           ): null}
         </div>
-        <div className="formulary-info-field">
-          {/* <button
-            onClick={() => {}}
-            className="Button select-formulary-popup-root__submit-btn"
-          >
-            View Full Formulary
-          </button> */}
-        </div>
       </div>
     );
   }
