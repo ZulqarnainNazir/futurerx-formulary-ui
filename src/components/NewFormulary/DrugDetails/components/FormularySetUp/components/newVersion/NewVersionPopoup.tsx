@@ -1,27 +1,54 @@
 import { Grid } from "@material-ui/core";
+import { connect } from "react-redux";
 import { DatePicker, Dropdown } from "antd";
 import moment from "moment";
 import React from "react";
 import Button from "../../../../../../shared/Frx-components/button/Button";
 import DropDown from "../../../../../../shared/Frx-components/dropdown/DropDown";
 import "../CommercialPopup.scss";
-export default class NewVersionPopup extends React.Component<any, any> {
+import showMessage from "../../../../../Utils/Toast";
+import { initNewVersion } from "../../../../../../../redux/slices/formulary/setup/setupSlice";
+
+class NewVersionPopup extends React.Component<any, any> {
+  state = {
+    effectiveDate: "",
+  };
 
   disabledDate = (current) => {
     // Can not select days before today and today
     // return current && current < moment().endOf("day");
     return current.isBefore(moment(), "day");
   };
+
   onDateChange = (date, dateString) => {
     console.log("Date changed:" + dateString);
     this.setState({
       effectiveDate: dateString,
     });
   };
+
   onCancelClicked = () => {
     if (this.props.onCancel) {
       this.props.onCancel();
     }
+  };
+
+  evokeNewVersion = () => {
+    console.log(" evokeNewVersion ");  
+    if (this.state.effectiveDate === "") {
+      showMessage("Please enter Effective Date", "error");
+      return;
+    }
+    //"2021-01-20"
+    // effectiveDate: this.state.effectiveDate,
+
+    this.props.initNewVersion({
+      baseId: this.props.currentFormulary.id_base_formulary,
+      effectiveDate: this.state.effectiveDate,
+    });
+    this.props.onCancel();
+
+
   };
 
   render() {
@@ -38,7 +65,7 @@ export default class NewVersionPopup extends React.Component<any, any> {
                   <DatePicker
                     className="version-grid-date"
                     placeholder="Effective Date"
-                    format={"MM/DD/YYYY"}
+                    format={"YYYY-MM-DD"}
                     disabledDate={this.disabledDate}
                     onChange={this.onDateChange}
                     suffixIcon={
@@ -99,6 +126,7 @@ export default class NewVersionPopup extends React.Component<any, any> {
                 label="Save"
                 htmlFor="upload-file"
                 className="upload-button submit-btn"
+                onClick={() => this.evokeNewVersion()}
               />
             </div>
           </Grid>
@@ -107,3 +135,11 @@ export default class NewVersionPopup extends React.Component<any, any> {
     );
   }
 }
+
+function mapDispatchToProps(dispatch) {
+  return {
+    initNewVersion: (a) => dispatch(initNewVersion(a)),
+  };
+}
+
+export default connect(null, mapDispatchToProps)(NewVersionPopup);

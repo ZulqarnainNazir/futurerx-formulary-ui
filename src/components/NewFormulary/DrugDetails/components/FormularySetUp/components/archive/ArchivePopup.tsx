@@ -1,12 +1,14 @@
 import { Box, Grid } from "@material-ui/core";
 import { version } from "moment";
 import React from "react";
+import { connect } from "react-redux";
 import Button from "../../../../../../shared/Frx-components/button/Button";
 import "../CommercialPopup.scss";
 import { archiveFormularies } from "../../../../../../../redux/slices/formulary/setup/setupService";
 import showMessage from "../../../../../Utils/Toast";
+import { initArchiveFormularies } from "../../../../../../../redux/slices/formulary/setup/setupSlice";
 
-export default class ArchivePopup extends React.Component<any, any> {
+class ArchivePopup extends React.Component<any, any> {
   onCancelClicked = () => {
     if (this.props.onCancel) {
       this.props.onCancel();
@@ -30,23 +32,30 @@ export default class ArchivePopup extends React.Component<any, any> {
 
     console.log(" formularyIDs :: " + formularyIDs);
 
-    try {
-      let response = await archiveFormularies(formularyIDs);
-      if (response && response.status && response.status === 200) {
-        if (formularyIDs && formularyIDs.length > 1) {
-          showMessage("Full Formulary Archived", "success");
-        } else {
-          showMessage("Formulary Archived", "success");
-        }
-        // TODO
-        // this.refreshApp();
-      } else {
-        showMessage("CODE-1 Failed to archive formulary", "error");
-      }
-    } catch (error) {
-      console.log(error);
-      showMessage("Error while archiving formulary ", "error");
-    }
+    this.props.initArchiveFormularies(formularyIDs);
+    this.props.onCancel();
+
+
+    // try {
+    //   let response = await archiveFormularies(formularyIDs);
+
+    //   console.log(response);
+
+    //   if (response && response.status && response.status === 200) {
+    //     if (formularyIDs && formularyIDs.length > 1) {
+    //       showMessage("Full Formulary Archived", "success");
+    //     } else {
+    //       showMessage("Formulary Archived", "success");
+    //     }
+    //     // TODO
+    //     // this.refreshApp();
+    //   } else {
+    //     showMessage("Failed to archive formulary", "error");
+    //   }
+    // } catch (error) {
+    //   console.log(error);
+    //   showMessage("Error while archiving formulary ", "error");
+    // }
   };
 
   render() {
@@ -92,3 +101,10 @@ export default class ArchivePopup extends React.Component<any, any> {
     );
   }
 }
+function mapDispatchToProps(dispatch) {
+  return {
+    initArchiveFormularies: (a) => dispatch(initArchiveFormularies(a)),
+  };
+}
+
+export default connect(null, mapDispatchToProps)(ArchivePopup);

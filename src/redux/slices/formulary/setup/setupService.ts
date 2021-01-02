@@ -357,19 +357,56 @@ function getTypeInfo(
   return typeInfo;
 }
 
+export async function createCreateVersion(
+  baseId: number,
+  effectiveDate: string
+): Promise<any | null> {
+  let url = `${BASE_URL1}api/1/formulary-version/${baseId}/1`;
+  const payload = {
+    effective_date: effectiveDate,
+  };
+  try {
+    const response = await axios.post(url, payload, {
+      headers: REQUEST_HEADER,
+    });
+    console.log("***** SVC - NewVersion - Resp");
+    console.log(response);
+    console.log(response.data);
+    if (response?.data?.code === "200") {
+      // return response?.data?.id_formulary;
+      return {
+        status: 200,
+        data: response?.data,
+      };
+    }
+    return null;
+  } catch (error) {
+    console.log("***** SVC - NewVersion - Error");
+    console.log(error);
+    const { response } = error;
+    const { request, ...errorObject } = response; // take everything but 'request'
+    console.log(errorObject);
+    return {
+      status: errorObject.status,
+      data: errorObject.data,
+    };
+
+    throw error;
+  }
+}
+
 export async function archiveFormularies(formulary_ids: any[]): Promise<any> {
+  console.log("SRC - archiveFormularies ", formulary_ids);
 
-  console.log("SRC - archiveFormularies ",formulary_ids);
-
-  //POST: http://localhost:8082/api/1/archiveformulary/3515 
+  //POST: http://localhost:8082/api/1/archiveformulary/3515
   // TODO: CLIENT_ID
   const clientId = 1;
   try {
     if (formulary_ids.length > 0) {
       let requests = Array();
-      formulary_ids.map(formulary_id => {
+      formulary_ids.map((formulary_id) => {
         let url = `${BASE_URL1}api/1/archiveformulary/${formulary_id}`;
-        let request = axios.post(url, {
+        let request = axios.post(url, null, {
           headers: REQUEST_HEADER,
         });
         requests.push(request);
@@ -378,20 +415,30 @@ export async function archiveFormularies(formulary_ids: any[]): Promise<any> {
       let responses = await axios.all(requests);
       console.log(responses);
       if (responses && responses.length > 0) {
-        responses.map(response => {
-          if (response?.data?.code !== "200") {
-            return null;
-          }
-        });
-        return 'success';
+        if (responses[0]?.data?.code === "200") {
+          // return response?.data?.id_formulary;
+          return {
+            status: 200,
+            data: { message: "Formulary(s ) Archieve successfully." },
+          };
+        }
       }
     }
     return null;
   } catch (error) {
+    console.log("***** SVC - NewVersion - Error");
+    console.log(error);
+    const { response } = error;
+    const { request, ...errorObject } = response; // take everything but 'request'
+    console.log(errorObject);
+    return {
+      status: errorObject.status,
+      data: errorObject.data,
+    };
+
     throw error;
   }
 }
-
 
 export async function checkNameExist(name: string): Promise<boolean | any> {
   let url = `${BASE_URL1}api/1/check-formulary-name/`;
@@ -426,7 +473,7 @@ export async function deleteFullFormulary(formulary_ids: any[]): Promise<any> {
     if (formulary_ids.length > 0) {
       let requests = Array();
 
-      formulary_ids.map(formulary_id => {
+      formulary_ids.map((formulary_id) => {
         let url = `${BASE_URL1}api/1/formulary-version/${formulary_id}`;
         let request = axios.delete(url, {
           headers: REQUEST_HEADER,
@@ -436,12 +483,12 @@ export async function deleteFullFormulary(formulary_ids: any[]): Promise<any> {
 
       let responses = await axios.all(requests);
       if (responses && responses.length > 0) {
-        responses.map(response => {
+        responses.map((response) => {
           if (response?.data?.code !== "200") {
             return null;
           }
         });
-        return 'success';
+        return "success";
       }
     }
     return null;
@@ -460,7 +507,7 @@ export async function deleteFormulary(formulary_id: any): Promise<any> {
     });
     if (response?.data?.code === "200") {
       return {
-        data: 'success',
+        data: "success",
         status: 200,
       };
     }
