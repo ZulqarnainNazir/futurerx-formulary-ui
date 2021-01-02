@@ -627,7 +627,7 @@ class GeneralInformation extends React.Component<any, GeneralInformationState> {
                     });
                   }}
                   showActions={false}
-                  className=""
+                  className="dialog-popup clone-popup"
                   height="80%"
                   width="90%"
                 >

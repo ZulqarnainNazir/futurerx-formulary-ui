@@ -103,7 +103,6 @@ class FormularyExpandedDetails extends React.Component<any,any>{
       this.setState({
         parentWidth: width
       })
-      // (document.querySelector('.table-expanded-sticky-wrapper') as HTMLElement).style.width = `${width}px`;
       this.fetchFormulary();
       this.fetchGenDesignOptions();
       this.fetchGenTiersOptions();
