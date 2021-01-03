@@ -14,6 +14,7 @@ import { fetchFormularies } from "../.././redux/slices/formulary/dashboard/dashb
 import {
   setFormulary,
   setLocation,
+  setLocationHome,
 } from "../.././redux/slices/formulary/application/applicationSlice";
 
 import { fetchSelectedFormulary } from "../.././redux/slices/formulary/setup/setupSlice";
@@ -45,13 +46,14 @@ interface State {
   showMassMaintenance: boolean;
   showDrugDetails: boolean;
 }
-  
+
 const mapStateToProps = (state) => {
   //console.log("***** DB");
   //console.log(state);
   return {
     formulary_count: state?.dashboard?.formulary_count,
     formulary_list: state?.dashboard?.formulary_list,
+    location_home: state?.application?.location_home,
   };
 };
 
@@ -68,6 +70,7 @@ function mapDispatchToProps(dispatch) {
     setLocation: (arg) => dispatch(setLocation(arg)),
     fetchSelectedFormulary: (a) => dispatch(fetchSelectedFormulary(a)),
     fetchDesignOptions: (a) => dispatch(fetchDesignOptions(a)),
+    setLocationHome: (a) => dispatch(setLocationHome(a)),
   };
 }
 
@@ -232,12 +235,12 @@ class Formulary extends React.Component<any, any> {
     this.listPayload.id_lob = id_lob;
     this.props.fetchFormularies(this.listPayload);
   };
-  formularyListSearch = (categoryObj,subCat) => {
+  formularyListSearch = (categoryObj, subCat) => {
     let id_lob = this.listPayload.id_lob;
     this.listPayload = { ...defaultListPayload };
     this.listPayload.id_lob = null;
     this.listPayload.search_by = categoryObj;
-    this.listPayload.search_value = subCat!=''?[subCat]:[];
+    this.listPayload.search_value = subCat != "" ? [subCat] : [];
     this.props.fetchFormularies(this.listPayload);
   };
   onGridPageChangeHandler = (pageNumber: any) => {
@@ -250,6 +253,19 @@ class Formulary extends React.Component<any, any> {
     this.listPayload.id_lob = id_lob;
     this.props.fetchFormularies(this.listPayload);
   };
+
+  componentDidUpdate() {
+    console.log("========================================="+ this.props.location_home);
+    if (this.props.location_home > 0) {
+      console.log("**** HOME : " + this.props.location_home);
+      this.setState({
+        showTabs: !this.state.showTabs,
+        showDrugDetails: !this.state.showDrugDetails,
+      });
+      this.props.setLocationHome(0);
+      }
+  }
+
   render() {
     return (
       <div className="formulary-root">

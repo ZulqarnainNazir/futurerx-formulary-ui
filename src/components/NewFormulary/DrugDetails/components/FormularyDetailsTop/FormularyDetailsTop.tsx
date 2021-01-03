@@ -6,6 +6,8 @@ import FormularyDetailsContext from "../../../FormularyDetailsContext";
 import "./FormularyDetailsTop.scss";
 import { fetchFormularyHeader } from "../../../../../redux/slices/formulary/header/headerSlice";
 import { fetchSelectedFormulary } from "../../../../.././redux/slices/formulary/setup/setupSlice";
+import { setLocationHome } from "../../../../.././redux/slices/formulary/application/applicationSlice";
+
 import { createFormularyUsingClone } from "../../../../.././redux/slices/formulary/setup/setupService";
 import VersionHistoryPopup from "../FormularySetUp/components/VersionHistoryPopup/VersionHistoryPopup";
 import ClonePopup from "../FormularySetUp/components/ClonePopup/ClonePopup";
@@ -36,6 +38,7 @@ function mapDispatchToProps(dispatch) {
     fetchSelectedFormulary: (a) => dispatch(fetchSelectedFormulary(a)),
     fetchDesignOptions: (a) => dispatch(fetchDesignOptions(a)),
     fetchTierOptions: (a) => dispatch(fetchTierOptions(a)),
+    setLocationHome: (a) => dispatch(setLocationHome(a)),
   };
 }
 
@@ -390,7 +393,10 @@ class FormularyDetailsTop extends React.Component<any, any> {
             <span
               className="color-blue"
               // onClick={FormularyDetailsCont.showDetailHandler}
-              onClick={() => window.location.reload()}
+              onClick={() => {
+                window.location.reload();
+                //this.props.setLocationHome(1);
+              }}
             >
               Formulary Grid
             </span>

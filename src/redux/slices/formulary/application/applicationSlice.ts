@@ -12,6 +12,7 @@ interface ApplicationState {
   formulary_type_id: number;
   clientId: number;
   location: number;
+  location_home: number;
   setupComplete: boolean;
   isLoading: boolean;
   error: string | null;
@@ -25,6 +26,7 @@ const applicationInitialState: ApplicationState = {
   formulary_type_id: NaN,
   clientId: 1,
   location: 0,
+  location_home: 0,
   setupComplete: false,
   isLoading: false,
   error: null,
@@ -75,13 +77,17 @@ const application = createSlice({
       state.clientId = 1;
     },
     setLocation(state, { payload }: PayloadAction<number>) {
-      console.log(" SET LOCATION : " + payload);
+      // console.log(" SET LOCATION : " + payload);
       state.location = payload;
+    },
+    setLocationHome(state, { payload }: PayloadAction<number>) {
+      // console.log(" SET LOCATION : " + payload);
+      state.location_home = payload;
     },
   },
 });
 
-export const { setFormularyDetails, setLocation } = application.actions;
+export const { setFormularyDetails, setLocation, setLocationHome } = application.actions;
 
 export default application.reducer;
 
