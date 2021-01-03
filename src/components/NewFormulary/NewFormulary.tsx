@@ -45,7 +45,7 @@ interface State {
   showMassMaintenance: boolean;
   showDrugDetails: boolean;
 }
-  
+
 const mapStateToProps = (state) => {
   //console.log("***** DB");
   //console.log(state);
@@ -232,12 +232,12 @@ class Formulary extends React.Component<any, any> {
     this.listPayload.id_lob = id_lob;
     this.props.fetchFormularies(this.listPayload);
   };
-  formularyListSearch = (categoryObj,subCat) => {
+  formularyListSearch = (categoryObj, subCat) => {
     let id_lob = this.listPayload.id_lob;
     this.listPayload = { ...defaultListPayload };
     this.listPayload.id_lob = null;
     this.listPayload.search_by = categoryObj;
-    this.listPayload.search_value = subCat!=''?[subCat]:[];
+    this.listPayload.search_value = subCat != "" ? [subCat] : [];
     this.props.fetchFormularies(this.listPayload);
   };
   onGridPageChangeHandler = (pageNumber: any) => {
@@ -294,6 +294,9 @@ class Formulary extends React.Component<any, any> {
                 addNewFormulary={this.addNewFormulary}
                 formularyListSearch={this.formularyListSearch}
               />
+            </div>
+            <div>
+              <Medicaid />
             </div>
           </>
         ) : this.state.showDrugDetails ? (

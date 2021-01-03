@@ -39,6 +39,9 @@ interface FrxDrugGridContainerProps<T> extends Grid<T> {
   isFetchingData: boolean;
   onSearch: (searchObject: any) => void;
   searchOptions?: any;
+  isCustomCheckboxEnabled?: boolean;
+  handleCustomRowSelectionChange?: any;
+  checkBoxWidth?: number;
   isPinningEnabled?: boolean;
   getPerPageItemSize?: any;
   onGridPageChangeHandler?: any;
@@ -103,7 +106,7 @@ class FrxDrugGridContainer extends Component<FrxDrugGridContainerProps<any>> {
    * TODO: fix a type for the searchObject
    * @author Deepak_T
    */
-  handleSearch = searchObject => {
+  handleSearch = (searchObject) => {
     this.props.onSearch(searchObject);
   };
 
@@ -112,6 +115,12 @@ class FrxDrugGridContainer extends Component<FrxDrugGridContainerProps<any>> {
       <div className="frx-grid-container">
         {this.props.enableSearch ? this.getSearchComponent() : null}
         <FrxDrugGrid
+          customCheckbox={
+            this.props.isCustomCheckboxEnabled
+              ? this.props.isCustomCheckboxEnabled
+              : false
+          }
+          customRowSelectionChange={this.props.handleCustomRowSelectionChange}
           applySort={this.props.applySort}
           isDataLoaded={this.props.isDataLoaded}
           bordered={false}
@@ -124,7 +133,7 @@ class FrxDrugGridContainer extends Component<FrxDrugGridContainerProps<any>> {
           enableColumnDrag={this.props.enableColumnDrag}
           loading={{
             spinning: this.props.isFetchingData,
-            indicator: <FrxLoader />
+            indicator: <FrxLoader />,
           }}
           customSettingIcon={this.props.customSettingIcon}
           hideMultiSort={this.props.hideMultiSort}
@@ -145,6 +154,9 @@ class FrxDrugGridContainer extends Component<FrxDrugGridContainerProps<any>> {
           rowSelectionChange={this.props.rowSelectionChange}
           settingsWidth={
             this.props.settingsWidth ? this.props.settingsWidth : undefined
+          }
+          checkBoxWidth={
+            this.props.checkBoxWidth ? this.props.checkBoxWidth : 60
           }
           rowSelection={this.props.rowSelection}
           onSettingsCellClick={this.props.onSettingsCellClick}
@@ -185,7 +197,7 @@ class FrxDrugGridContainer extends Component<FrxDrugGridContainerProps<any>> {
               this.props.expandable &&
               this.props.expandable.expandedRowClassName
                 ? this.props.expandable.expandedRowClassName
-                : undefined
+                : undefined,
           }}
         />
       </div>
