@@ -33,6 +33,7 @@ interface tabsState {
   drugGridData: any[];
   selectedDrugs: any[];
   selectedRowKeys: number[];
+  fixedSelectedRows: number[];
 }
 
 const mapStateToProps = state => {
@@ -76,7 +77,8 @@ class TierReplace extends React.Component<any, tabsState> {
       { type: "FRF Change Report", key: "FRFCR" },
       { type: "Full Formulary", key: "MCR" }
     ],
-    selectedRowKeys: []
+    selectedRowKeys: [],
+    fixedSelectedRows: []
   };
 
   constructor(props) {
@@ -167,7 +169,8 @@ class TierReplace extends React.Component<any, tabsState> {
           gridItem["isDisabled"] = true;
           // decide on class names based on data properties conditionally
           // the required styles are added under each classNames in FrxGrid.scss (towards the end)
-          gridItem["rowStyle"] = "table-row--red-font";
+          //table-row--red-font (for red) table-row--green-font (for green) no class for default (for blue)
+          // gridItem["rowStyle"] = "";
         }
         //end
         gridItem["tier"] = element.tier_value;
@@ -195,6 +198,9 @@ class TierReplace extends React.Component<any, tabsState> {
       this.setState({
         drugData: data,
         drugGridData: gridData,
+        fixedSelectedRows: gridData
+          .filter(item => item.isChecked)
+          .map(item => item.key),
         selectedRowKeys: gridData
           .filter(item => item.isChecked)
           .map(item => item.key)
@@ -274,8 +280,11 @@ class TierReplace extends React.Component<any, tabsState> {
 
   onSelectedTableRowChanged = selectedRowKeys => {
     console.log("selected row ", selectedRowKeys);
+
     this.state.selectedDrugs = [];
-    this.setState({ selectedRowKeys: [...selectedRowKeys] });
+    this.setState({
+      selectedRowKeys: [...selectedRowKeys, ...this.state.fixedSelectedRows]
+    });
     if (selectedRowKeys && selectedRowKeys.length > 0) {
       this.state.selectedDrugs = selectedRowKeys.map(tierId => {
         let item = {};

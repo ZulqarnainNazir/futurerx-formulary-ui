@@ -219,14 +219,39 @@
   .ant-table-tbody {
   .table-row-disabled {
     pointer-events: none;
+    // td {
+    //   background-color: rgb(233, 210, 210);
+    // }
+  }
+
+  .table-row--red-font {
+    .ant-checkbox.ant-checkbox-checked .ant-checkbox-inner {
+      background-color: red;
+      border: 2px solid red;
+    }
+    td {
+      color: red;
+    }
+  }
+
+  .table-row--green-font {
+    .ant-checkbox.ant-checkbox-checked .ant-checkbox-inner {
+      background-color: green;
+      border: 2px solid green;
+    }
+    td {
+      color: green;
+    }
+  }
+
+  .table-row-disabled.table-row--red-font {
     td {
       background-color: rgb(233, 210, 210);
     }
   }
-
-  .table-row--red-font {
+  .table-row-disabled.table-row--gree-font {
     td {
-      color: red;
+      background-color: rgb(170, 231, 162);
     }
   }
 }
