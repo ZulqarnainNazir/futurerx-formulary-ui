@@ -537,6 +537,7 @@ class FrxDrugGrid extends Component<FrxDrugGridProps<any>, FrxDrugGridState<any>
               return (
                 <c.cellWrapper>
                   <FrxGridCell
+									handleSelectEachRow={this.rowSelectionChangeFromCell}
                     customToolTip={customToolTip}
                     customContent={customContent}
                     onCellClick={this.onCellClick}
@@ -559,6 +560,7 @@ class FrxDrugGrid extends Component<FrxDrugGridProps<any>, FrxDrugGridState<any>
               const customContent = c.customContent ? this.withDataContent(c.customContent, record) : undefined
               return (
                 <FrxGridCell
+								handleSelectEachRow={this.rowSelectionChangeFromCell}
                   customToolTip={customToolTip}
                   customContent={customContent}
                   onCellClick={this.onCellClick}
@@ -581,6 +583,7 @@ class FrxDrugGrid extends Component<FrxDrugGridProps<any>, FrxDrugGridState<any>
             return (
               <>
                 <FrxGridHeaderCell
+								  onSelectAllRows={this.onSelectAllRows}
                   isPinningEnabled={this.props.isPinningEnabled ? this.props.isPinningEnabled : false}
                   textCase={c.textCase}
                   column={c}
@@ -1009,6 +1012,27 @@ class FrxDrugGrid extends Component<FrxDrugGridProps<any>, FrxDrugGridState<any>
 		if (this.props.rowSelectionChange)
 			this.props.rowSelectionChange(dataRow ,event);
 	}
+
+	rowSelectionChangeFromCell = (
+    dataKey: string,
+    dataRow: any,
+    isSelected: boolean
+  ) => {
+    if (this.props.rowSelectionChangeFromCell) {
+      this.props.rowSelectionChangeFromCell(dataKey, dataRow, isSelected);
+    }
+  };
+
+  /**
+   * @function onSelectAllRows
+   * change handler for all rows selection checkbox
+   * @author Deepak_T
+   */
+  onSelectAllRows = (isSelected: boolean) => {
+    if (this.props.onSelectAllRows) {
+      this.props.onSelectAllRows(isSelected);
+    }
+  };
 
   /**
    * @function handleSettingsComponentMenuClose

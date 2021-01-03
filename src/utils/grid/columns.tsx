@@ -809,8 +809,24 @@ export const marketingColumns: () => Column<any>[] = () => {
 
 export const tierColumns: () => Column<any>[] = () => {
   return [
-    {
+		{
       position: 1,
+      textCase: "upper",
+      pixelWidth: 50,
+      
+      isFilterable: false,
+     
+      key: "checkbox",
+      fixed: "left",
+      displayTitle: "",
+      headerCellSelection: true,
+
+      
+      hidden: false
+     
+    },
+    {
+      position: 2,
       sorter: {},
       textCase: "upper",
       pixelWidth: 100,
@@ -823,7 +839,7 @@ export const tierColumns: () => Column<any>[] = () => {
       sortDirections: ["ascend", "descend"],
     },
     {
-      position: 2,
+      position: 3,
       sorter: {},
       textCase: "upper",
       pixelWidth: 122,
@@ -836,7 +852,7 @@ export const tierColumns: () => Column<any>[] = () => {
       sortDirections: ["ascend", "descend"],
     },
     {
-      position: 3,
+      position: 4,
       sorter: {},
       textCase: "upper",
       pixelWidth: 137,
@@ -849,7 +865,7 @@ export const tierColumns: () => Column<any>[] = () => {
       sortDirections: ["ascend", "descend"],
     },
     {
-      position: 4,
+      position: 5,
       sorter: {},
       textCase: "upper",
       pixelWidth: 163,
@@ -863,7 +879,7 @@ export const tierColumns: () => Column<any>[] = () => {
     },
 
     {
-      position: 5,
+      position: 6,
       sorter: {},
       textCase: "upper",
       pixelWidth: 100,
@@ -876,7 +892,7 @@ export const tierColumns: () => Column<any>[] = () => {
       sortDirections: ["ascend", "descend"],
     },
     {
-      position: 6,
+      position: 7,
       sorter: {},
       textCase: "upper",
       pixelWidth: 109,
@@ -889,7 +905,7 @@ export const tierColumns: () => Column<any>[] = () => {
       sortDirections: ["ascend", "descend"],
     },
     {
-      position: 7,
+      position: 8,
       sorter: {},
       textCase: "upper",
       pixelWidth: 109,
@@ -902,7 +918,7 @@ export const tierColumns: () => Column<any>[] = () => {
       sortDirections: ["ascend", "descend"],
     },
     {
-      position: 8,
+      position: 9,
       sorter: {},
       textCase: "upper",
       pixelWidth: 109,

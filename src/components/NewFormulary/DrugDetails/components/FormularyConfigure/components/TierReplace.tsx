@@ -33,6 +33,7 @@ interface tabsState {
   drugGridData: any[];
   selectedDrugs: any[];
   selectedRowKeys: number[];
+  fixedSelectedRows: number[];
 }
 
 const mapStateToProps = state => {
@@ -76,7 +77,8 @@ class TierReplace extends React.Component<any, tabsState> {
       { type: "FRF Change Report", key: "FRFCR" },
       { type: "Full Formulary", key: "MCR" }
     ],
-    selectedRowKeys: []
+    selectedRowKeys: [] as number[],
+    fixedSelectedRows: [] as number[]
   };
 
   constructor(props) {
@@ -167,7 +169,8 @@ class TierReplace extends React.Component<any, tabsState> {
           gridItem["isDisabled"] = true;
           // decide on class names based on data properties conditionally
           // the required styles are added under each classNames in FrxGrid.scss (towards the end)
-          gridItem["rowStyle"] = "table-row--red-font";
+          //table-row--red-font (for red) table-row--green-font (for green) table-row--blue-font for default (for blue)
+          gridItem["rowStyle"] = "table-row--blue-font";
         }
         //end
         gridItem["tier"] = element.tier_value;
@@ -195,6 +198,9 @@ class TierReplace extends React.Component<any, tabsState> {
       this.setState({
         drugData: data,
         drugGridData: gridData,
+        fixedSelectedRows: gridData
+          .filter(item => item.isChecked)
+          .map(item => item.key),
         selectedRowKeys: gridData
           .filter(item => item.isChecked)
           .map(item => item.key)
@@ -274,8 +280,11 @@ class TierReplace extends React.Component<any, tabsState> {
 
   onSelectedTableRowChanged = selectedRowKeys => {
     console.log("selected row ", selectedRowKeys);
+
     this.state.selectedDrugs = [];
-    this.setState({ selectedRowKeys: [...selectedRowKeys] });
+    this.setState({
+      selectedRowKeys: [...selectedRowKeys]
+    });
     if (selectedRowKeys && selectedRowKeys.length > 0) {
       this.state.selectedDrugs = selectedRowKeys.map(tierId => {
         let item = {};
@@ -373,6 +382,70 @@ class TierReplace extends React.Component<any, tabsState> {
   advanceSearchClosekHandler = () => {
     this.setState({ isSearchOpen: !this.state.isSearchOpen });
   };
+
+  rowSelectionChangeFromCell = (
+    key: string,
+    selectedRow: any,
+    isSelected: boolean
+  ) => {
+    console.log("data row ", selectedRow, isSelected);
+    if (!selectedRow["isDisabled"]) {
+      if (isSelected) {
+        const data = this.state.drugGridData.map((d: any) => {
+          if (d.key === selectedRow.key) d["isChecked"] = true;
+          // else d["isChecked"] = false;
+          return d;
+        });
+        const selectedRowKeys = [
+          ...this.state.selectedRowKeys,
+          selectedRow.key
+        ];
+        console.log("selected row keys ", selectedRowKeys);
+        const selectedRows: number[] = selectedRowKeys.filter(
+          k => this.state.fixedSelectedRows.indexOf(k) < 0
+        );
+        this.onSelectedTableRowChanged(selectedRowKeys);
+
+        this.setState({ drugGridData: data });
+      } else {
+        const data = this.state.drugGridData.map((d: any) => {
+          if (d.key === selectedRow.key) d["isChecked"] = false;
+          // else d["isChecked"] = false;
+          return d;
+        });
+
+        const selectedRowKeys: number[] = this.state.selectedRowKeys.filter(
+          k => k !== selectedRow.key
+        );
+        const selectedRows = selectedRowKeys.filter(
+          k => this.state.fixedSelectedRows.indexOf(k) < 0
+        );
+
+        this.onSelectedTableRowChanged(selectedRows);
+        this.setState({
+          drugGridData: data
+        });
+      }
+    }
+  };
+
+  onSelectAllRows = (isSelected: boolean) => {
+    const selectedRowKeys: number[] = [];
+    const data = this.state.drugGridData.map((d: any) => {
+      if (!d["isDisabled"]) {
+        d["isChecked"] = isSelected;
+        if (isSelected) selectedRowKeys.push(d["key"]);
+      }
+
+      // else d["isSelected"] = false;
+      return d;
+    });
+    const selectedRows: number[] = selectedRowKeys.filter(
+      k => this.state.fixedSelectedRows.indexOf(k) < 0
+    );
+    this.onSelectedTableRowChanged(selectedRows);
+    this.setState({ drugGridData: data });
+  };
   render() {
     const searchProps = {
       lobCode: this.props.lobCode,
@@ -450,19 +523,24 @@ class TierReplace extends React.Component<any, tabsState> {
                   fixedColumnKeys={[]}
                   pagintionPosition="topRight"
                   gridName="TIER"
-                  enableSettings={false}
+                  enableSettings
                   columns={tierColumns()}
                   scroll={{ x: 2000, y: 377 }}
                   isFetchingData={false}
                   enableResizingOfColumns
                   data={this.state.drugGridData}
-                  rowSelection={{
-                    columnWidth: 50,
-                    selectedRowKeys: this.state.selectedRowKeys,
-                    fixed: true,
-                    type: "checkbox",
-                    onChange: this.onSelectedTableRowChanged
-                  }}
+                  rowSelectionChangeFromCell={this.rowSelectionChangeFromCell}
+                  onSelectAllRows={this.onSelectAllRows}
+                  customSettingIcon={"FILL-DOT"}
+                  settingsWidth={30}
+                  // rowSelection={{
+                  //   columnWidth: 50,
+                  //   selectedRowKeys: this.state.selectedRowKeys,
+                  // 	fixed: true,
+
+                  //   type: "checkbox",
+                  //   onChange: this.onSelectedTableRowChanged
+                  // }}
                 />
               </div>
             </div>
