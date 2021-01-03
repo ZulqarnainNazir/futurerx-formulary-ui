@@ -290,6 +290,11 @@ export const initNewVersion = createAsyncThunk(
       console.log(resp);
       if (resp) {
         dispatch(createNewVersionSuccess(resp));
+        return {
+          id_formulary: resp?.data?.id_formulary
+        };
+      }else{
+        return null;
       }
     } catch (err) {
       console.log("***** createNewVersion - Exe ");
