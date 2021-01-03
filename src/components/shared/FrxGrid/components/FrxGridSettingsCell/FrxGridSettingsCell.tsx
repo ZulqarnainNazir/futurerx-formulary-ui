@@ -105,6 +105,7 @@ class FrxGridSettingsCell extends React.Component<FrxGridSettingsCellProps> {
   renderExpandedCell = () => {
     const isRowSelectionEnabled = this.props.isRowSelectionEnabled;
     let customSettingIcon = this.props.customSettingIcon;
+
     if (customSettingIcon) {
       if (
         customSettingIcon &&
@@ -113,6 +114,7 @@ class FrxGridSettingsCell extends React.Component<FrxGridSettingsCellProps> {
       ) {
         customSettingIcon = "NONE";
       }
+
       switch (customSettingIcon) {
         case "RED-DOT":
           return (
@@ -126,6 +128,7 @@ class FrxGridSettingsCell extends React.Component<FrxGridSettingsCellProps> {
               <circle cx="6" cy="6" r="6" fill="#E76262" />
             </svg>
           );
+
         case "PLUS-BTN":
           return (
             <svg
@@ -203,6 +206,7 @@ class FrxGridSettingsCell extends React.Component<FrxGridSettingsCellProps> {
   renderNonExpandedCell = () => {
     const isRowSelectionEnabled = this.props.isRowSelectionEnabled;
     let customSettingIcon = this.props.customSettingIcon;
+    const { dataRow } = this.props;
     if (customSettingIcon) {
       if (
         customSettingIcon &&
@@ -211,6 +215,7 @@ class FrxGridSettingsCell extends React.Component<FrxGridSettingsCellProps> {
       ) {
         customSettingIcon = "NONE";
       }
+
       switch (customSettingIcon) {
         case "RED-DOT":
           return (
@@ -238,6 +243,46 @@ class FrxGridSettingsCell extends React.Component<FrxGridSettingsCellProps> {
                 fill="#1D54B4"
               />
             </svg>
+          );
+        case "FILL-DOT":
+          let color = "";
+
+          if (
+            dataRow["isDisabled"] &&
+            dataRow["rowStyle"] &&
+            dataRow["rowStyle"] === "table-row--green-font"
+          ) {
+            color = "green";
+          } else if (
+            dataRow["isDisabled"] &&
+            dataRow["rowStyle"] &&
+            dataRow["rowStyle"] === "table-row--red-font"
+          ) {
+            color = "red";
+          } else if (
+            dataRow["isDisabled"] &&
+            dataRow["rowStyle"] &&
+            dataRow["rowStyle"] === "table-row--blue-font"
+          ) {
+            color = "blue";
+          }
+
+          return (
+            <>
+              {color ? (
+                <svg
+                  width="12"
+                  height="12"
+                  viewBox="0 0 12 12"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <circle cx="6" cy="6" r="6" fill={`${color}`} />
+                </svg>
+              ) : (
+                <></>
+              )}
+            </>
           );
         case "NONE":
           return null;

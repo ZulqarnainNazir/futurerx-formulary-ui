@@ -244,14 +244,30 @@
     }
   }
 
+  .table-row--blue-font {
+    .ant-checkbox.ant-checkbox-checked .ant-checkbox-inner {
+      background-color: #5f80b9; //1d54b4
+      border: 2px solid #5f80b9;
+    }
+    td {
+      color: #5f80b9;
+    }
+  }
+
   .table-row-disabled.table-row--red-font {
     td {
       background-color: rgb(233, 210, 210);
     }
   }
-  .table-row-disabled.table-row--gree-font {
+  .table-row-disabled.table-row--green-font {
     td {
       background-color: rgb(170, 231, 162);
+    }
+  }
+
+  .table-row-disabled.table-row--blue-font {
+    td {
+      background-color: #eef3f7;
     }
   }
 }

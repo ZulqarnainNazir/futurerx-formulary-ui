@@ -143,6 +143,8 @@ class FrxDrugGridContainer extends Component<FrxDrugGridContainerProps<any>> {
           summary={this.props.summary ? this.props.summary : undefined}
           isRowSelectionEnabled={this.props.isRowSelectionEnabled}
           rowSelectionChange={this.props.rowSelectionChange}
+          rowSelectionChangeFromCell={this.props.rowSelectionChangeFromCell}
+          onSelectAllRows={this.props.onSelectAllRows}
           settingsWidth={
             this.props.settingsWidth ? this.props.settingsWidth : undefined
           }
