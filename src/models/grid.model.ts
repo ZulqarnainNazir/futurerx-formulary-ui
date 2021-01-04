@@ -49,6 +49,7 @@ export interface Grid<RecordType = unknown> {
   rowSelectionChange?: (data: any, isMultiple?: boolean) => void;
   settingsTriDotClick?: (data: RecordType) => void;
   onColumnCellClick?: (record, key) => void;
+  onsettingsTriDotDropDownItemClick?: (dataRow: any, item: any) => void;
   onColumnChange?: (columns: Column<any>[]) => void;
 
 	applySort?: (key: string, order: string) => void;

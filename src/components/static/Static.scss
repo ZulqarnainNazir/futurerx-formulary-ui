@@ -1,7 +1,8 @@
 @import "../../assets/colors.scss";
 @import "../../assets/fonts.scss";
 
-.static-root, .dashboard-root {
+.static-root,
+.dashboard-root {
   // width: 90%;
   min-width: 1200px;
   margin: 20px 60px;
@@ -717,8 +718,7 @@
                 position: absolute;
                 right: 20px;
               }
-              .MuiOutlinedInput-root.Mui-focused
-                .MuiOutlinedInput-notchedOutline {
+              .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline {
                 border: none;
               }
               .MuiOutlinedInput-notchedOutline {

@@ -1,7 +1,11 @@
 import React from "react";
 import { connect } from "react-redux";
 import { Grid, Input } from "@material-ui/core";
+
+// import css
 import "./Tier.scss";
+import "./categoryclass.scss";
+
 import DialogPopup from "../../../../../shared/FrxDialogPopup/FrxDialogPopup";
 import {
   getTapList,

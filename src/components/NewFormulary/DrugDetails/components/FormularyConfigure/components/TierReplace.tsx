@@ -20,6 +20,7 @@ import * as commonConstants from "../../../../../../api/http-commons";
 import pageTypes from "../../../../../../constants/PageTypes";
 import { setAdvancedSearch } from "../../../../../../redux/slices/formulary/advancedSearch/advancedSearchSlice";
 import showMessage from "../../../../Utils/Toast";
+import SearchBox from "../../../../../shared/Frx-components/search-box/SearchBox";
 import getLobCode from "../../../../Utils/LobUtils";
 
 interface tabsState {
@@ -564,7 +565,12 @@ class TierReplace extends React.Component<any, tabsState> {
                     />
                   </div>
                 )}
-                <div className="button-wrapper">
+                <div className="tier-drug-grid-header-actions">
+                  <SearchBox
+                    iconPosition="left"
+                    className="search-input"
+                    placeholder="Search"
+                  />
                   <Button
                     className="Button normal"
                     label="Advance Search"
