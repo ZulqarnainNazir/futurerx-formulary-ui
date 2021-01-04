@@ -139,6 +139,7 @@ class DrugDetailFFF extends React.Component<any, any> {
           if (json.payload && json.payload.code && json.payload.code === "200") {
             showMessage("Success", "success");
             this.getFFFSummary();
+            this.getFFFDrugsList();
           } else {
             showMessage("Failure", "error");
           }
@@ -155,6 +156,7 @@ class DrugDetailFFF extends React.Component<any, any> {
           if (json.payload && json.payload.code && json.payload.code === "200") {
             showMessage("Success", "success");
             this.getFFFSummary();
+            this.getFFFDrugsList();
           } else {
             showMessage("Failure", "error");
           }
