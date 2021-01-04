@@ -174,7 +174,6 @@ class Medicare extends React.Component<any, any> {
     this.setState({tabs, activeMiniTabIndex});
   };
   getVariant(label: any, type: any) {
-    debugger;
     if (label === "N/A" && type === "block") {
       return 4;
     }
