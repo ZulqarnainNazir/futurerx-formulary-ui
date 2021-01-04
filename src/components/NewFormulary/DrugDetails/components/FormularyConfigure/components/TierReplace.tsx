@@ -706,6 +706,10 @@ class TierReplace extends React.Component<any, tabsState> {
       this.state.index = 0;
       this.state.limit = 10;
       this.state.hiddenColumns = Array();
+      this.state.searchNames= Array();
+      this.state.filterPlaceholder= "Search";
+      this.state.searchValue= "";
+      this.state.searchData= Array();
 
       if (nextProps.configureSwitch) {
         this.state.selectedFileKey = this.props.lobCode;
