@@ -289,7 +289,7 @@ class DrugDetailFFF extends React.Component<any, any> {
         let gridItem = {};
         gridItem["id"] = count;
         gridItem["key"] = count;
-        gridItem["freeFirstFill"] = element.is_fff ? "" + element.is_fff : "";
+        gridItem["freeFirstFill"] = element.is_fff && element.is_fff === true ? "Y" : "";
         gridItem["tier"] = element.tier_value ? "" + element.tier_value : "";
         gridItem["labelNamae"] = element.drug_label_name ? "" + element.drug_label_name : "";
         gridItem["ddid"] = element.drug_descriptor_identifier ? "" + element.drug_descriptor_identifier : "";
