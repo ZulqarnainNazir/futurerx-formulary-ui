@@ -192,6 +192,18 @@ const setup = createSlice({
       state.error = null;
     },
     getSupplementalOptionsFailure: loadingFailed,
+
+    clearSetupOptions(state, { payload }: PayloadAction<any>) {
+      console.log("***** CLEAR SETUP Options");
+
+      //state.generalOptions = null;
+      state.medicareOptions = null;
+      state.designOptions = null;
+      state.supplementalOptions = null;
+      state.tierOptions = null;
+      state.isLoading = false;
+      state.error = null;
+    },
   },
 });
 
@@ -382,6 +394,7 @@ export const {
   getSupplementalOptionsStart,
   getSupplementalOptionsSuccess,
   getSupplementalOptionsFailure,
+  clearSetupOptions
 } = setup.actions;
 
 export default setup.reducer;

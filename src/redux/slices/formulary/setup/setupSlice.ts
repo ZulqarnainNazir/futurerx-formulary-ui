@@ -8,9 +8,12 @@ import {
   createORUpdateFormulary,
   createFormularyUsingClone,
   composeCreateUsingClone,
+  createCreateVersion,
+  archiveFormularies,
 } from "./setupService";
-import { setFullFormulary } from "./../application/applicationSlice";
+import { setFullFormulary, setLocationHome } from "./../application/applicationSlice";
 import { stat } from "fs";
+import { dispatch } from "d3";
 
 interface SetupState {
   formulary: Formulary | any;
@@ -125,6 +128,51 @@ const setup = createSlice({
       // }
     },
     createCloneFormularyFailure: loadingFailed,
+    createNewVersionStart: startLoading,
+    createNewVersionSuccess(state, { payload }: PayloadAction<any>) {
+      if (payload) {
+        if (payload.status === 200) {
+          state.message = "New Version created successfully";
+          state.messageType = "success";
+          state.isLoading = false;
+          state.error = null;
+        } else if (payload.status === 400) {
+          state.message = payload?.data?.message;
+          state.messageType = "error";
+          state.isLoading = false;
+          state.error = payload?.data?.message;
+        }
+      }
+    },
+    createNewVersionFailure: loadingFailed,
+    archiveFormulariesStart: startLoading,
+    archiveFormulariesSuccess(state, { payload }: PayloadAction<any>) {
+      if (payload) {
+        if (payload.status === 200) {
+          state.message = "Formulary(s) Archived";
+          state.messageType = "success";
+          state.isLoading = false;
+          state.error = null;
+        } else if (payload.status === 400) {
+          state.message = payload?.data?.message;
+          state.messageType = "error";
+          state.isLoading = false;
+          state.error = payload?.data?.message;
+        }
+      }
+    },
+    archiveFormulariesFailure: loadingFailed,
+
+    clearSetup(state, { payload }: PayloadAction<any>) {
+      console.log("***** CLEAR SETUP ");
+      state.mode = "";
+      state.formulary = null;
+      state.nameExist = false;
+      state.message = "";
+      state.messageType = "";
+      state.isLoading = false;
+      state.error = null;
+    },
   },
 });
 
@@ -239,6 +287,55 @@ export const initCreateUsingClone = createAsyncThunk(
   }
 );
 
+export const initNewVersion = createAsyncThunk(
+  "setup",
+  async (input: any, { dispatch }) => {
+    console.log("***** createNewVersion");
+    console.log(input);
+    try {
+      dispatch(createNewVersionStart());
+      const resp: any = await createCreateVersion(
+        input.baseId,
+        input.effectiveDate
+      );
+      console.log("- - - -- - - - - - -- - - -");
+      console.log(resp);
+      if (resp) {
+        dispatch(createNewVersionSuccess(resp));
+        return {
+          id_formulary: resp?.data?.id_formulary,
+        };
+      } else {
+        return null;
+      }
+    } catch (err) {
+      console.log("***** createNewVersion - Exe ");
+      dispatch(createNewVersionFailure(err.toString()));
+    }
+  }
+);
+
+export const initArchiveFormularies = createAsyncThunk(
+  "setup",
+  async (IDs: any, { dispatch }) => {
+    console.log("***** initArchiveFormularies");
+    console.log(IDs);
+    try {
+      dispatch(archiveFormulariesStart());
+      const resp: any = await archiveFormularies(IDs);
+      console.log("- - - -- - - - - - -- - - -");
+      console.log(resp);
+      if (resp) {
+        dispatch(archiveFormulariesSuccess(resp));
+        dispatch(setLocationHome(2));
+      }
+    } catch (err) {
+      console.log("***** initArchiveFormularies - Exe ");
+      dispatch(archiveFormulariesFailure(err.toString()));
+    }
+  }
+);
+
 export const {
   getformularyStart,
   getFormularySuccess,
@@ -253,6 +350,13 @@ export const {
   createCloneFormularyStart,
   createCloneFormularySuccess,
   createCloneFormularyFailure,
+  createNewVersionStart,
+  createNewVersionSuccess,
+  createNewVersionFailure,
+  archiveFormulariesStart,
+  archiveFormulariesSuccess,
+  archiveFormulariesFailure,
+  clearSetup
 } = setup.actions;
 
 export default setup.reducer;

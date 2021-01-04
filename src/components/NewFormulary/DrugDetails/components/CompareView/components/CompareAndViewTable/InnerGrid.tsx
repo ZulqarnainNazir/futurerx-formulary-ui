@@ -534,21 +534,21 @@ class InnerGrid extends Component<InnerGridProps, any>{
 
   getAttributeValue = (row) => {
     if (this.state.rowData['attribute_field_name'] === 'tierValue') {
-      return row['tier'];
+      return ''+row['tier'];
     } else if (this.state.rowData['attribute_name'] === 'Tx Category') {
-      return row['category'];
+      return ''+row['category'];
     } else if (this.state.rowData['attribute_name'] === 'Tx Class') {
-      return row['class'];
+      return ''+row['class'];
     } else if (this.state.rowData['attribute_field_name'] === 'paType') {
-      return row['paType'];
+      return ''+row['paType'];
     } else if (this.state.rowData['attribute_field_name'] === 'paGroupDescription') {
-      return row['groupDescription'];
+      return ''+row['groupDescription'];
     } else if (this.state.rowData['attribute_field_name'] === 'stType') {
-      return row['stType'];
+      return ''+row['stType'];
     } else if (this.state.rowData['attribute_field_name'] === 'stGroupDescription') {
-      return row['groupDescription'];
+      return ''+row['groupDescription'];
     } else if (this.state.rowData['attribute_field_name'] === 'qlType') {
-      return row['qlType'];
+      return ''+row['qlType'];
     } else if (this.state.rowData['attribute_field_name'] === 'isAL') {
       return '';
     } else if (this.state.rowData['attribute_field_name'] === 'isGL') {
@@ -566,6 +566,7 @@ class InnerGrid extends Component<InnerGridProps, any>{
     } else if (this.state.rowData['attribute_type'] === 'User Defined') {
       return '';
     }
+    return '';
   }
 
   rowSelectionChange = async (data: any, event) => {
