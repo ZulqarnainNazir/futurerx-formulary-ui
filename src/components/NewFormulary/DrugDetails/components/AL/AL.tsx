@@ -261,7 +261,7 @@ class DrugDetailAL extends React.Component<any, any> {
           if (json.payload && json.payload.code && json.payload.code === "200") {
             showMessage("Success", "success");
             this.getALSummary();
-            // this.getALDrugsList();
+            this.getALDrugsList();
           } else {
             showMessage("Failure", "error");
           }
@@ -285,7 +285,8 @@ class DrugDetailAL extends React.Component<any, any> {
           if (json.payload && json.payload.code && json.payload.code === "200") {
             showMessage("Success", "success");
             this.getALSummary();
-            // this.getALDrugsList();
+            this.getALDrugsList();
+            this.getALCriteriaList(this.state.alRemoveSettingsStatus.covered);
           } else {
             console.log("------REMOVE FAILED-------")
             showMessage("Failure", "error");

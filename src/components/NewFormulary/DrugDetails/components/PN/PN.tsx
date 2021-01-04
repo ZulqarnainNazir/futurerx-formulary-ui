@@ -223,7 +223,7 @@ class DrugDetailPN extends React.Component<any, any> {
           ) {
             showMessage("Success", "success");
             this.getPNSummary();
-            // this.getPNDrugsList();
+            this.getPNDrugsList();
           } else {
             showMessage("Failure", "error");
           }
@@ -256,7 +256,8 @@ class DrugDetailPN extends React.Component<any, any> {
           ) {
             showMessage("Success", "success");
             this.getPNSummary();
-            // this.getPNDrugsList();
+            this.getPNCriteriaList(this.state.pnRemoveSettingsStatus.covered);
+            this.getPNDrugsList();
           } else {
             console.log("------REMOVE FAILED-------");
             showMessage("Failure", "error");

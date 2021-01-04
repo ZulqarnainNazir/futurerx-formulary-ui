@@ -223,7 +223,7 @@ class DrugDetailPOS extends React.Component<any, any> {
           if (json.payload && json.payload.code && json.payload.code === "200") {
             showMessage("Success", "success");
             this.getPOSSummary();
-            // this.getPOSDrugsList();
+            this.getPOSDrugsList();
           } else {
             showMessage("Failure", "error");
           }
@@ -248,7 +248,8 @@ class DrugDetailPOS extends React.Component<any, any> {
           if (json.payload && json.payload.code && json.payload.code === "200") {
             showMessage("Success", "success");
             this.getPOSSummary();
-            // this.getPOSDrugsList();
+            this.getPOSCriteriaList(this.state.posRemoveSettingsStatus.covered);
+            this.getPOSDrugsList();
           } else {
             console.log("------REMOVE FAILED-------")
             showMessage("Failure", "error");

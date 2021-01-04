@@ -270,7 +270,7 @@ class DrugDetailGL extends React.Component<any, any> {
           ) {
             showMessage("Success", "success");
             this.getGLSummary();
-            // this.getGLDrugsList();
+            this.getGLDrugsList();
           } else {
             showMessage("Failure", "error");
           }
@@ -303,7 +303,8 @@ class DrugDetailGL extends React.Component<any, any> {
           ) {
             showMessage("Success", "success");
             this.getGLSummary();
-            // this.getGLDrugsList();
+            this.getGLCriteriaList(this.state.glRemoveSettingsStatus.covered);
+            this.getGLDrugsList();
           } else {
             console.log("------REMOVE FAILED-------");
             showMessage("Failure", "error");
@@ -402,16 +403,6 @@ class DrugDetailGL extends React.Component<any, any> {
         glCleanList.push(glObj);
       }
       this.setState({ glSettings: glCleanList });
-
-      // let rows = this.state.glSettings.map((ele) => {
-      //   let curRow = {
-      //     ele["id_gender_type"],
-      //     ele["gender_type_code"],
-      //     ele["gender_type_name"],
-      //     ele["is_covered"],
-      //   };
-      //   return curRow;
-      // });
 
     } else if (this.state.activeTabIndex === 2) {
       this.getGLCriteriaList(true);

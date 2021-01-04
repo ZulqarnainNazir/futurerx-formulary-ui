@@ -197,6 +197,7 @@ class DrugDetailPR extends React.Component<any, any> {
           if (json.payload && json.payload.code && json.payload.code === "200") {
             showMessage("Success", "success");
             this.getPRSummary();
+            this.getPRDrugsList();
           } else {
             showMessage("Failure", "error");
           }
@@ -221,6 +222,8 @@ class DrugDetailPR extends React.Component<any, any> {
           if (json.payload && json.payload.code && json.payload.code === "200") {
             showMessage("Success", "success");
             this.getPRSummary();
+            this.getPRRemoveSettings(this.state.posRemoveSettingsStatus.covered);
+            this.getPRDrugsList();
           } else {
             console.log("------REMOVE FAILED-------")
             showMessage("Failure", "error");
@@ -455,7 +458,7 @@ class DrugDetailPR extends React.Component<any, any> {
   componentDidMount() {
     this.getPRSummary();
     this.getPRSettings();
-    this.getPRRemoveSettings(true)
+    this.getPRRemoveSettings(true);
   }
 
   onClickTab = (selectedTabIndex: number) => {

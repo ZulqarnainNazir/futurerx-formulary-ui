@@ -163,6 +163,7 @@ class DrugDetailOther extends React.Component<any, any> {
           if (json.payload && json.payload.code && json.payload.code === "200") {
             showMessage("Success", "success");
             this.getOTHERSummary();
+            this.getOtherList();
           } else {
             showMessage("Failure", "error");
           }
@@ -179,6 +180,7 @@ class DrugDetailOther extends React.Component<any, any> {
           if (json.payload && json.payload.code && json.payload.code === "200") {
             showMessage("Success", "success");
             this.getOTHERCriteriaList();
+            this.getOtherList();
           } else {
             showMessage("Failure", "error");
           }

@@ -234,7 +234,7 @@ class DrugDetailICD extends React.Component<any, any> {
           ) {
             showMessage("Success", "success");
             this.getICDSummary();
-            // this.getICDDrugsList();
+            this.getICDDrugsList();
           } else {
             showMessage("Failure", "error");
           }
@@ -267,7 +267,8 @@ class DrugDetailICD extends React.Component<any, any> {
           ) {
             showMessage("Success", "success");
             this.getICDSummary();
-            // this.getICDDrugsList();
+            this.getICDCriteriaList(this.state.icdRemoveSettingsStatus.covered);
+            this.getICDDrugsList();
           } else {
             console.log("------REMOVE FAILED-------");
             showMessage("Failure", "error");

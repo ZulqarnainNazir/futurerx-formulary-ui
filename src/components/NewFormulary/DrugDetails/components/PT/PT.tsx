@@ -223,7 +223,7 @@ class DrugDetailPT extends React.Component<any, any> {
           ) {
             showMessage("Success", "success");
             this.getPTSummary();
-            // this.getPTDrugsList();
+            this.getPTDrugsList();
           } else {
             showMessage("Failure", "error");
           }
@@ -256,7 +256,8 @@ class DrugDetailPT extends React.Component<any, any> {
           ) {
             showMessage("Success", "success");
             this.getPTSummary();
-            // this.getPTDrugsList();
+            this.getPTDrugsList();
+            this.getPTCriteriaList(this.state.ptRemoveSettingsStatus.covered);
           } else {
             console.log("------REMOVE FAILED-------");
             showMessage("Failure", "error");
