@@ -234,7 +234,7 @@ class DrugDetailICD extends React.Component<any, any> {
           ) {
             showMessage("Success", "success");
             this.getICDSummary();
-            // this.getICDDrugsList();
+            this.getICDDrugsList();
           } else {
             showMessage("Failure", "error");
           }
@@ -267,7 +267,8 @@ class DrugDetailICD extends React.Component<any, any> {
           ) {
             showMessage("Success", "success");
             this.getICDSummary();
-            // this.getICDDrugsList();
+            this.getICDCriteriaList(this.state.icdRemoveSettingsStatus.covered);
+            this.getICDDrugsList();
           } else {
             console.log("------REMOVE FAILED-------");
             showMessage("Failure", "error");
@@ -490,19 +491,19 @@ class DrugDetailICD extends React.Component<any, any> {
   };
 
   componentDidMount() {
-    const columns = getDrugDetailsColumnICD();
-    this.setState({
-      columns: columns,
-    });
+    // const columns = getDrugDetailsColumnICD();
+    // this.setState({
+    //   columns: columns,
+    // });
     this.getICDSummary();
     this.getICDCriteriaList(true);
   }
 
-  refreshSelections = () => {
-    if (this.state.activeTabIndex === 0 || this.state.activeTabIndex === 1) {
+  refreshSelections = ({ activeTabIndex = 0 }) => {
+    if (activeTabIndex === 0 || activeTabIndex === 1) {
       // this.getPOSSettings();
       // this.setState({ selectedList: [], lookBackDays: 0 })
-    } else if (this.state.activeTabIndex === 2) {
+    } else if (activeTabIndex === 2) {
       this.getICDCriteriaList(true);
     }
   };
@@ -517,7 +518,7 @@ class DrugDetailICD extends React.Component<any, any> {
       return tab;
     });
 
-    this.refreshSelections();
+    this.refreshSelections({ activeTabIndex });
 
     // if (activeTabIndex === 2) {
     //   this.getICDCriteriaList(true);
