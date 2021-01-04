@@ -394,8 +394,8 @@ class FormularyDetailsTop extends React.Component<any, any> {
               className="color-blue"
               // onClick={FormularyDetailsCont.showDetailHandler}
               onClick={() => {
-                window.location.reload();
-                //this.props.setLocationHome(1);
+                // window.location.reload();
+                this.props.setLocationHome(1);
               }}
             >
               Formulary Grid

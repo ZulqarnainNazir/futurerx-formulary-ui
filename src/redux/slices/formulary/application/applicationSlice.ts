@@ -84,10 +84,30 @@ const application = createSlice({
       // console.log(" SET LOCATION : " + payload);
       state.location_home = payload;
     },
+
+    clearApplication(state, { payload }: PayloadAction<number>) {
+      console.log("***** CLEAR APP ");
+      state.mode = "";
+      state.formulary_id = 0;
+      state.formulary = null;
+      state.formulary_lob_id = NaN;
+      state.formulary_type_id = NaN;
+      state.clientId = 1;
+      state.location = 0;
+      state.location_home = 0;
+      state.setupComplete = false;
+      state.isLoading = false;
+      state.error = null;
+    },
   },
 });
 
-export const { setFormularyDetails, setLocation, setLocationHome } = application.actions;
+export const {
+  setFormularyDetails,
+  setLocation,
+  setLocationHome,
+  clearApplication
+} = application.actions;
 
 export default application.reducer;
 
