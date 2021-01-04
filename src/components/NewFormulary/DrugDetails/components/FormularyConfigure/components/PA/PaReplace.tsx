@@ -451,7 +451,7 @@ class PaReplace extends React.Component<any, any> {
         gridItem["key"] = count;
         debugger;
         
-        if ( selected['pa_group_description_name'] === element.pa_group_description) {
+        if ( selected&&selected['pa_group_description_name'] === element.pa_group_description) {
           //console.log("element value tier ", selectedGroup, element.pa_group_description);
           gridItem["isChecked"] = true;
           gridItem["isDisabled"] = true;

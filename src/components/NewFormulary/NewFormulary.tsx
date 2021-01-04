@@ -31,7 +31,6 @@ import { fetchFormularyHeader } from "../.././redux/slices/formulary/header/head
 import { gridSettingsSlice } from "../.././redux/slices/formulary/gridHandler/gridSettingsSlice";
 import { addNewFormulary } from "../.././redux/slices/formulary/application/applicationSlice";
 import "./NewFormulary.scss";
-import Medicaid from "./Medicaid/Medicaid";
 
 // const tabs = [
 //   { id: 1, text: "MEDICARE" },
@@ -136,6 +135,22 @@ class Formulary extends React.Component<any, any> {
   componentDidMount() {
     this.props.fetchFormularies(this.listPayload);
   }
+
+  applySortHandler = (key, order) => {
+    console.log("key and order ", key, order);
+    const listPayload = { ...this.listPayload };
+    listPayload.sort_by = [key];
+    const sortorder = order && order === "ascend" ? "asc" : "dsc";
+    listPayload.sort_order = [sortorder];
+
+    this.props.fetchFormularies(listPayload);
+  };
+
+  applyMultiSortHandler = (sorter) => {
+    console.log("multi sorted columns ", sorter);
+    //remove duplicates from sorter
+    //api integration
+  };
 
   onClickTab = (selectedTabIndex: number) => {
     let activeTabIndex = 0;
@@ -323,6 +338,8 @@ class Formulary extends React.Component<any, any> {
                 selectedCurrentPage={
                   this.listPayload.index / this.listPayload.limit + 1
                 }
+                applySortHandler={this.applySortHandler}
+                applyMultiSortHandler={this.applyMultiSortHandler}
                 onPageChangeHandler={this.onGridPageChangeHandler}
                 onClearFilterHandler={this.onClearFilterHandler}
                 applyFilter={this.onApplyFilterHandler}

@@ -1223,25 +1223,15 @@ class AdvanceSearchContainer extends Component<Props, State> {
     this.props.setAdvancedSearch(payload);
   };
 
-  // Additional Criteria related methods
-  // handleAdditionalCriteriaClose = () => {
-  //   this.onClose();
-  //   // this.setState({ open: !this.props.openPopup });
-  // };
-
   handleChildDataSave = (additionalCriteria) => {
     console.log(additionalCriteria);
     const additionalCriteriaArray = [additionalCriteria];
-    // additionalCriteria
 
-    // additionalCriteriaArray.forEach((add: any, index) => {
-    //   add["sequence"] = index + 1;
-    // });
-    // console.log("FINAL PAYLOAD DATA: ", additionalCriteriaArray);
     this.setState({
       additionalCriteriaArray,
     });
   };
+
   handleAdditionalCriteriaApply = () => {
     let payload = {
       isNewAdditionalCriteria: this.props.additionalCriteria
@@ -1260,43 +1250,10 @@ class AdvanceSearchContainer extends Component<Props, State> {
     this.props.onClose();
   };
 
-  // onClose = () => {
-  //   this.setState({ open: !this.props.openPopup });
-  // };
-
-  // getPOSSettings = () => {
-  //   let apiDetails = {};
-  //   apiDetails["apiPart"] = posConstants.GET_DRUG_SETTING_POS;
-  //   // apiDetails["pathParams"] = this.props?.formulary_id;
-  //   // apiDetails["keyVals"] = [
-  //   //   { key: posConstants.KEY_ENTITY_ID, value: this.props?.formulary_id },
-  //   // ];
-
-  //   console.log("apiDetails: ", apiDetails);
-  //   this.props.getDrugDetailsPOSSettings(apiDetails).then((json) => {
-  //     const posSettings =
-  //       json.payload && json.payload.data ? json.payload.data : [];
-
-  //     posSettings.forEach((s) => {
-  //       s["isChecked"] = false;
-  //     });
-  //     this.setState({
-  //       posSettings,
-  //     });
-  //   });
-  // };
   render() {
-    const {
-      selectedCategory,
-      selectedCateoryList,
-      // isAdvanceSearch,
-      criteriaList,
-    } = this.state;
+    const { selectedCateoryList, criteriaList } = this.state;
 
     const { isAdvanceSearch } = this.props;
-    // const isAdvanceSearch = !this.props.isAdvanceSearch;
-    // const renderCatory = this.onRenderCateory(selectedCategory);
-    // console.log(renderCatory);
 
     return (
       <div className="AdvanceSearchContainer___root">

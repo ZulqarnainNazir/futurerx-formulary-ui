@@ -154,8 +154,8 @@ class DrugDetailAL extends React.Component<any, any> {
       {
         minimumVal: "",
         maximumVal: "",
-        minimumType: "",
-        maximumType: "",
+        minimumType: "IO",
+        maximumType: "IO",
         index: 0,
         covered: true,
       }
@@ -190,8 +190,8 @@ class DrugDetailAL extends React.Component<any, any> {
     {
       minimumVal: "",
       maximumVal: "",
-      minimumType: "",
-      maximumType: "",
+      minimumType: "IO",
+      maximumType: "IO",
       index: 0,
       covered: true,
     }
@@ -261,7 +261,7 @@ class DrugDetailAL extends React.Component<any, any> {
           if (json.payload && json.payload.code && json.payload.code === "200") {
             showMessage("Success", "success");
             this.getALSummary();
-            // this.getALDrugsList();
+            this.getALDrugsList();
           } else {
             showMessage("Failure", "error");
           }
@@ -285,7 +285,8 @@ class DrugDetailAL extends React.Component<any, any> {
           if (json.payload && json.payload.code && json.payload.code === "200") {
             showMessage("Success", "success");
             this.getALSummary();
-            // this.getALDrugsList();
+            this.getALDrugsList();
+            this.getALCriteriaList(this.state.alRemoveSettingsStatus.covered);
           } else {
             console.log("------REMOVE FAILED-------")
             showMessage("Failure", "error");
@@ -353,16 +354,16 @@ class DrugDetailAL extends React.Component<any, any> {
     }
   };
 
-  refreshSelections = () => {
+  refreshSelections = ({ activeTabIndex = 0 }) => {
     console.log("----Inside refresh Selection-------")
-    if(this.state.activeTabIndex === 0 || this.state.activeTabIndex === 1) {
+    if(activeTabIndex === 0 || activeTabIndex === 1) {
       
       let alSettings = [
         {
           minimumVal: "",
           maximumVal: "",
-          minimumType: "",
-          maximumType: "",
+          minimumType: "IO",
+          maximumType: "IO",
           index: 0,
           covered: true,
         }
@@ -371,7 +372,7 @@ class DrugDetailAL extends React.Component<any, any> {
       this.formData2 = alSettings
 
       this.setState({ alSettings }, () => console.log("The Al Settings = ", this.state.alSettings, " THe Form Data 2 = ", this.formData2));
-    } else if (this.state.activeTabIndex === 2) {
+    } else if (activeTabIndex === 2) {
       this.getALCriteriaList(true);
     }
   }
@@ -546,7 +547,7 @@ class DrugDetailAL extends React.Component<any, any> {
       return tab;
     });
 
-    this.refreshSelections();
+    this.refreshSelections({ activeTabIndex });
 
     if(this.props.configureSwitch) {
       this.getALDrugsList();
@@ -631,8 +632,8 @@ class DrugDetailAL extends React.Component<any, any> {
       let newAgeLimit = {
         minimumVal: "",
         maximumVal: "",
-        minimumType: "",
-        maximumType: "",
+        minimumType: "IO",
+        maximumType: "IO",
         index: this.state.alSettings.length,
         covered: this.state.alSettings[0].covered,
       }

@@ -101,7 +101,8 @@ interface FrxGridState<T> {
   sortedTable: T[];
 
   isMultiSort: boolean;
-  sortedInfo: any;
+	sortedInfo: any;
+	multiSortedInfo:any[]
 
   columns: Column<T>[];
   visibleColumns: Column<T>[];
@@ -132,7 +133,8 @@ class FrxGrid extends Component<FrxGridProps<any>, FrxGridState<any>> {
     filterTable: [],
     sortedTable: [],
     isMultiSort: false,
-    sortedInfo: null,
+		sortedInfo: null,
+		multiSortedInfo:[],
     suggestions: {},
     columns: [],
     visibleColumns: [],
@@ -163,24 +165,24 @@ class FrxGrid extends Component<FrxGridProps<any>, FrxGridState<any>> {
     order: string;
     type: string;
   }> = [];
-  pinnedCount: number;
-  pinnedIndexMap: Map<string, number>;
   multiSortArray: any[] = [];
   gridRef: React.RefObject<HTMLDivElement>;
+  pinnedCount: number;
+  initialPinnedCount: number;
+  pinnedIndexMap: Map<string, number>;
+  isSettingsEnabled = false;
 
   constructor(props) {
     super(props);
     this.gridRef = React.createRef();
-    if (props.customCheckbox && props.enableSettings) {
-      this.pinnedCount = 2;
-    } else if (
-      (props.enableSettings === true && props.customCheckbox === false) ||
-      (props.enableSettings === false && props.customCheckbox === true)
-    ) {
-      this.pinnedCount = 1;
-    } else {
-      this.pinnedCount = 0;
-    }
+    this.isSettingsEnabled = this.props.enableSettings ? true : false;
+    this.pinnedCount =
+      this.props.fixedColumnKeys && this.isSettingsEnabled
+        ? this.props.fixedColumnKeys.length + 1
+        : this.props.fixedColumnKeys && !this.isSettingsEnabled
+        ? this.props.fixedColumnKeys.length
+        : 0; // Accounts for the fixed columns and settings key
+    this.initialPinnedCount = this.pinnedCount;
     this.pinnedIndexMap = new Map<string, number>();
   }
 
@@ -712,11 +714,15 @@ class FrxGrid extends Component<FrxGridProps<any>, FrxGridState<any>> {
           c["title"] = () => {
             return (
               <>
-                <FrxGridHeaderCell
-                  isPinningEnabled={this.props.isPinningEnabled}
-                  // isPinningEnabled={true}
+                 <FrxGridHeaderCell
+                  isPinningEnabled={this.props.isPinningEnabled ? true : false}
                   textCase={c.textCase}
                   column={c}
+                  multiSortedArray={
+                    this.multiSortArray ? this.multiSortArray : []
+                  }
+                  multiSortedInfo={this.state.multiSortedInfo}
+                  singleSortedInfo={this.state.sortedInfo}
                   multiSortOrder={this.getMultisortOrderByColKey(c.key)}
                   unpinColumn={this.unpinColumn}
                   pinColumnToLeft={this.pinColumnToLeft}
@@ -925,9 +931,9 @@ class FrxGrid extends Component<FrxGridProps<any>, FrxGridState<any>> {
      */
 
     //IF BLOCK FOR MULTI SORT
-    if (this.state.isMultiSort) {
+		if (this.state.isMultiSort) {
       if (extra.action === "sort") {
-        const isElemPresent = function (arr: Array<any>, elem) {
+        const isElemPresent = function(arr: Array<any>, elem) {
           for (let i = 0; i < arr.length; i++) {
             if (arr[i] === elem) {
               return i;
@@ -948,16 +954,18 @@ class FrxGrid extends Component<FrxGridProps<any>, FrxGridState<any>> {
           for (let sIdx = 0; sIdx < sorterArray.length; sIdx++) {
             const cKey = sorterArray[sIdx].columnKey;
             const order = sorterArray[sIdx].order;
+
             const elemIdx = isElemPresent(
               multiArray,
               sorterArray[sIdx].columnKey
             );
+
             if (elemIdx === -1) {
               multiArray.push(cKey);
               columnsAndOrder.push({
                 columnKey: cKey,
                 order: order,
-                type: this.getColumnDataType(cKey),
+                type: this.getColumnDataType(cKey)
               });
             } else {
               // Update order of the element
@@ -968,6 +976,7 @@ class FrxGrid extends Component<FrxGridProps<any>, FrxGridState<any>> {
         };
         // Is sorter an array?
         const isArray: boolean = Array.isArray(sorter);
+
         if (isArray) {
           // this.multiSortArray = []; // all sorted columns will be in the sorter array.
           this.multiSortArray = mergeArrays(
@@ -975,6 +984,42 @@ class FrxGrid extends Component<FrxGridProps<any>, FrxGridState<any>> {
             sorter,
             this.columnsToMultisort
           );
+
+          //==== EXTRA CODE =====
+
+          for (let sIdx = 0; sIdx < sorter.length; sIdx++) {
+            sorter[sIdx]["multiple"] = this.getMultisortOrderByColKey(
+              sorter[sIdx].columnKey
+            );
+          }
+
+          console.log("assigning multi sorter ", sorter);
+          const existingMultiSortedInfo = _.cloneDeep(
+            this.state.multiSortedInfo
+          );
+          const index = existingMultiSortedInfo.findIndex(item => {
+            return item.columnKey === sorter.columnKey;
+          });
+          if (index === -1) {
+            this.setState({
+              multiSortedInfo: [...this.state.multiSortedInfo, sorter]
+            });
+          } else {
+            const order = existingMultiSortedInfo[index].order;
+            if (order === "ascend") {
+              existingMultiSortedInfo[index].order = "descend";
+            } else if (order === "descend") {
+              existingMultiSortedInfo[index].order = "ascend";
+            }
+            if (!order) {
+              existingMultiSortedInfo[index].order = sorter.order;
+            }
+
+            this.setState({ multiSortedInfo: existingMultiSortedInfo });
+          }
+
+          //==== END OF  EXTRA CODE =====
+
           for (let i = 0; i < this.multiSortArray.length; i++) {
             // const cKey = this.multiSortArray[i];
 
@@ -983,6 +1028,34 @@ class FrxGrid extends Component<FrxGridProps<any>, FrxGridState<any>> {
             // this.updateMultisortOrder();
           }
         } else {
+          //====  EXTRA CODE =====
+
+          const existingMultiSortedInfo = _.cloneDeep(
+            this.state.multiSortedInfo
+          );
+          const index = existingMultiSortedInfo.findIndex(item => {
+            return item.columnKey === sorter.columnKey;
+          });
+
+          if (index === -1) {
+            this.setState({
+              multiSortedInfo: [...this.state.multiSortedInfo, sorter]
+            });
+          } else {
+            const order = existingMultiSortedInfo[index].order;
+            if (order === "ascend") {
+              existingMultiSortedInfo[index].order = "descend";
+            } else if (order === "descend") {
+              existingMultiSortedInfo[index].order = "ascend";
+            }
+            if (!order) {
+              existingMultiSortedInfo[index].order = sorter.order;
+            }
+
+            this.setState({ multiSortedInfo: existingMultiSortedInfo });
+          }
+
+          //==== END OF  EXTRA CODE =====
           const cKey = sorter.columnKey;
           const order = sorter.order;
 
@@ -992,7 +1065,7 @@ class FrxGrid extends Component<FrxGridProps<any>, FrxGridState<any>> {
             this.columnsToMultisort.push({
               columnKey: cKey,
               order: order,
-              type: this.getColumnDataType(cKey),
+              type: this.getColumnDataType(cKey)
             });
             this.multisortColumns();
             // this.updateMultisortOrder();
