@@ -203,6 +203,28 @@ class Medicare extends React.Component<any, any> {
     });
     this.setState({ tabs, activeMiniTabIndex });
   };
+  getVariant(label: any, type: any) {
+    if (label === "N/A" && type === "block") {
+      return 4;
+    }
+    if (label === "Sell" && type === "block") {
+      return 2;
+    }
+    if (label === "Selling" && type === "block") {
+      return 1;
+    }
+
+    if (label === "Purchased" && type === "pill") {
+      return 6;
+    }
+
+    if (label === "Imported" && type === "pill") {
+      return 2;
+    }
+    if (label === "Created" && type === "pill") {
+      return 1;
+    }
+  }
   renderActiveMiniTabContent = () => {
     const miniTabIndex = this.state.activeMiniTabIndex;
     switch (miniTabIndex) {
@@ -298,14 +320,14 @@ class Medicare extends React.Component<any, any> {
         bazaar: {
           label: "N/A",
           type: "block",
-          variant: 3,
-          fill: "fill"
+          variant: this.getVariant("N/A", "block"),
+          fill: "fill",
         },
         origin: {
           label: "Purchased",
           type: "pill",
-          variant: 1,
-          fill: "fill"
+          variant: this.getVariant("Purchased", "pill"),
+          fill: "fill",
         },
         formulary_name: e.formulary_name,
         id_formulary: e.id_formulary.toString(),

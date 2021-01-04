@@ -54,6 +54,30 @@ $sell: #1fbbc4;
       color: #ffffff;
     }
   }
+  &__variant-4 {
+    &--outline {
+      background: #ffffff;
+      border: 1px solid $not-available;
+      color: $not-available;
+    }
+    &--fill {
+      background: #92B2EB;
+      border: 1px solid #92B2EB;
+      color: #ffffff;
+    }
+  }
+  &__variant-5 {
+    &--outline {
+      background: #ffffff;
+      border: 1px solid $not-available;
+      color: $not-available;
+    }
+    &--fill {
+      background: #E5E5E5;
+      border: 1px solid #E5E5E5;
+      color:#323C47;
+    }
+  }
 
   &__text {
     font-family: Roboto;
@@ -131,6 +155,30 @@ $sell: #1fbbc4;
     &--fill {
       background: #684999; //$not-available;
       border: 1px solid #684999;//$not-available;
+      color: #ffffff;
+    }
+  }
+  &__variant-5 {
+    &--outline {
+      background: #ffffff;
+      border: 1px solid #707683;
+      color: #707683;
+    }
+    &--fill {
+      background: #707683; //$not-available;
+      border: 1px solid #707683;//$not-available;
+      color: #ffffff;
+    }
+  }
+  &__variant-6 {
+    &--outline {
+      background: #ffffff;
+      border: 1px solid #707683;
+      color: #707683;
+    }
+    &--fill {
+      background: #92B2EB; //$not-available;
+      border: 1px solid #92B2EB;//$not-available;
       color: #ffffff;
     }
   }

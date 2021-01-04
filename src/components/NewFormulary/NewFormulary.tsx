@@ -306,7 +306,7 @@ class Formulary extends React.Component<any, any> {
 
   render() {
     return (
-      <div className="formulary-root">
+      <div className="newformulary-container">
         {this.state.showTabs ? (
           <>
             {this.snow === true ? (
@@ -326,6 +326,7 @@ class Formulary extends React.Component<any, any> {
               </div>
             ) : null}
             <FormularyDashboardStats />
+            <div className="formulary-root-divider"></div>
             <FrxTabs
               tabList={this.state.tabs}
               activeTabIndex={this.state.activeTabIndex}

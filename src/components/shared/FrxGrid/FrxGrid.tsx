@@ -98,6 +98,7 @@ interface FrxGridProps<T> extends Grid<T> {
   selectedCurrentPage?: any;
   applyFilter?: any;
   getColumnSettings?: any;
+  settingsTriDotDropDownItems?:any[];
 }
 interface FrxGridState<T> {
   filteredInfo: null;
@@ -577,6 +578,8 @@ class FrxGrid extends Component<FrxGridProps<any>, FrxGridState<any>> {
                     expanded={isExpanded}
                     settingsMenuItems={this.state.settingsMenuItems}
                     onSettingsTriDotClick={this.onSettingsTriDotClick}
+                    settingsTriDotDropDownItems = {this.props.settingsTriDotDropDownItems}
+                    onsettingsTriDotDropDownItemClick = {this.props.onsettingsTriDotDropDownItemClick}
                     handleMenuClick={this.settingsTriDotMenuClick}
                     handleCheck={this.props.handleCheck}
                     rowSelectionChange={this.rowSelectionChange}
