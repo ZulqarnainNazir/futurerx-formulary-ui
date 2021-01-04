@@ -7,7 +7,7 @@ import DropDown from "../../../../../shared/Frx-components/dropdown/DropDown";
 import Button from "../../../../../shared/Frx-components/button/Button";
 import Box from "@material-ui/core/Box";
 import FrxDrugGridContainer from "../../../../../shared/FrxGrid/FrxDrugGridContainer";
-import { tierColumns } from "../../../../../../utils/grid/columns";
+import { tierColumns, tierColumnsNonMcr } from "../../../../../../utils/grid/columns";
 import { TierMockData } from "../../../../../../mocks/TierMock";
 //import AdvancedSearch from './search/AdvancedSearch';
 import AdvanceSearchContainer from "../../../../NewAdvanceSearch/AdvanceSearchContainer";
@@ -59,6 +59,11 @@ function mapDispatchToProps(dispatch) {
   };
 }
 
+const defaultListPayload = {
+  index: 0,
+  limit: 10
+};
+
 class TierReplace extends React.Component<any, tabsState> {
   state = {
     tierGridContainer: false,
@@ -79,7 +84,11 @@ class TierReplace extends React.Component<any, tabsState> {
       { type: "Full Formulary", key: "MCR" }
     ],
     selectedRowKeys: [] as number[],
-    fixedSelectedRows: [] as number[]
+    fixedSelectedRows: [] as number[],
+    index: 0,
+    limit: 10,
+    filter: Array(),
+    sort_by: Array(),
   };
 
   constructor(props) {
@@ -90,6 +99,75 @@ class TierReplace extends React.Component<any, tabsState> {
 
     //this.initialize(this.props, true);
   }
+
+  /*onSettingsIconHandler = (hiddenColumn, visibleColumn) => {
+    console.log(
+      "Settings icon handler: Hidden" +
+        JSON.stringify(hiddenColumn) +
+        " Visible:" +
+        JSON.stringify(visibleColumn)
+    );
+    if (hiddenColumn && hiddenColumn.length > 0) {
+      let hiddenColumnKeys = hiddenColumn.map(column => column["key"]);
+      this.setState({
+        hiddenColumns: hiddenColumnKeys
+      });
+    }
+  };
+  onApplyFilterHandler = filters => {
+    console.log("filtering from be");
+    this.listPayload.filter = Array();
+    if (filters && filter.length > 0) {
+      const fetchedKeys = Object.keys(filters);
+      fetchedKeys.map(fetchedProps => {
+        if (filters[fetchedProps] && columnFilterMapping[fetchedProps]) {
+          const fetchedOperator =
+            filters[fetchedProps][0].condition === "is like"
+              ? "is_like"
+              : filters[fetchedProps][0].condition === "is not"
+              ? "is_not"
+              : filters[fetchedProps][0].condition === "is not like"
+              ? "is_not_like"
+              : filters[fetchedProps][0].condition === "does not exist"
+              ? "does_not_exist"
+              : filters[fetchedProps][0].condition;
+          const fetchedValues =
+            filters[fetchedProps][0].value !== ""
+              ? [filters[fetchedProps][0].value.toString()]
+              : [];
+          this.listPayload.filter.push({
+            prop: columnFilterMapping[fetchedProps],
+            operator: fetchedOperator,
+            values: fetchedValues
+          });
+        }
+      });
+      console.log("Filters:" + JSON.stringify(this.listPayload.filter));
+      this.fetchFormularies(this.listPayload);
+    }
+  };
+
+  /**
+   * the selected sorter details will be availbale here to mak api call
+   * @param key the column key
+   * @param order the sorting order : 'ascend' | 'descend'
+   */
+  /*onApplySortHandler = (key, order) => {
+    console.log("sort details ", key, order);
+  };
+  onPageSize = pageSize => {
+    console.log("Page size load");
+    this.state.limit = pageSize;
+    this.fetchFormularies(this.listPayload);
+  };
+  onGridPageChangeHandler = (pageNumber: any) => {
+    console.log("Page change load");
+    this.state.index = (pageNumber - 1) * this.state.limit;
+    this.fetchFormularies(this.listPayload);
+  };
+  onClearFilterHandler = () => {
+    this.state.filter = Array();
+  };*/
 
   componentDidMount() {
     console.log('componentDidMount');
@@ -176,12 +254,13 @@ class TierReplace extends React.Component<any, tabsState> {
     }
 
     const { selectedTier } = this.state;
+    const thisRef = this;
     const drugGridDate = this.props.postTierApplyInfo(apiDetails).then(json => {
       //debugger;
       let tmpData = json.payload.result;
       var data: any[] = [];
       let count = 1;
-      var gridData = tmpData.map(function(el, idx) {
+      var gridData = tmpData.map(function (el, idx) {
         var element = Object.assign({}, el);
         data.push(element);
         let gridItem = {};
@@ -197,24 +276,32 @@ class TierReplace extends React.Component<any, tabsState> {
           //table-row--red-font (for red) table-row--green-font (for green) table-row--blue-font for default (for blue)
           gridItem["rowStyle"] = "table-row--blue-font";
         }
+        if (thisRef.props.configureSwitch) {
+          gridItem["isDisabled"] = true;
+          gridItem["rowStyle"] = "table-row--disabled-font";
+        }
         //end
-        gridItem["tier"] = element.tier_value;
-        gridItem["fileType"] = element.file_type ? "" + element.file_type : "";
-        gridItem["dataSource"] = element.data_source
+        gridItem["tier_value"] = element.tier_value;
+        gridItem["file_type"] = element.file_type ? "" + element.file_type : "";
+        gridItem["data_source"] = element.data_source
           ? "" + element.data_source
           : "";
-        gridItem["labelName"] = element.drug_label_name
+        gridItem["drug_label_name"] = element.drug_label_name
           ? "" + element.drug_label_name
           : "";
         gridItem["ndc"] = "";
-        gridItem["rxcui"] = element.rxcui ? "" + element.rxcui : "";
-        gridItem["gpi"] = element.generic_product_identifier
+        if (thisRef.props.lobCode === 'MCR') {
+          gridItem["rxcui"] = element.rxcui ? "" + element.rxcui : "";
+        } else {
+          gridItem["drug_descriptor_identifier"] = element.drug_descriptor_identifier ? "" + element.drug_descriptor_identifier : "";
+        }
+        gridItem["generic_product_identifier"] = element.generic_product_identifier
           ? "" + element.generic_product_identifier
           : "";
-        gridItem["trademark"] = element.trademark_code
+        gridItem["trademark_code"] = element.trademark_code
           ? "" + element.trademark_code
           : "";
-        gridItem["databaseCategory"] = element.database_category
+        gridItem["database_category"] = element.database_category
           ? "" + element.database_category
           : "";
         count++;
@@ -308,7 +395,7 @@ class TierReplace extends React.Component<any, tabsState> {
         this.state.selectedFileType = "Full Formulary";
         this.state.selectedTier = -1;
 
-        if(!this.state.tierGridContainer){
+        if (!this.state.tierGridContainer) {
           this.state.tierGridContainer = true;
         }
 
@@ -457,7 +544,10 @@ class TierReplace extends React.Component<any, tabsState> {
     if (!selectedRow["isDisabled"]) {
       if (isSelected) {
         const data = this.state.drugGridData.map((d: any) => {
-          if (d.key === selectedRow.key) d["isChecked"] = true;
+          if (d.key === selectedRow.key) {
+            d["isChecked"] = true;
+            d["rowStyle"] = "table-row--green-font";
+          }
           // else d["isChecked"] = false;
           return d;
         });
@@ -474,7 +564,11 @@ class TierReplace extends React.Component<any, tabsState> {
         this.setState({ drugGridData: data });
       } else {
         const data = this.state.drugGridData.map((d: any) => {
-          if (d.key === selectedRow.key) d["isChecked"] = false;
+          if (d.key === selectedRow.key) {
+            d["isChecked"] = false;
+            if (d["rowStyle"])
+              delete d["rowStyle"];
+          }
           // else d["isChecked"] = false;
           return d;
         });
@@ -499,7 +593,13 @@ class TierReplace extends React.Component<any, tabsState> {
     const data = this.state.drugGridData.map((d: any) => {
       if (!d["isDisabled"]) {
         d["isChecked"] = isSelected;
-        if (isSelected) selectedRowKeys.push(d["key"]);
+        if (isSelected) {
+          selectedRowKeys.push(d["key"]);
+          d["rowStyle"] = "table-row--green-font";
+        } else {
+          if (d["rowStyle"])
+            delete d["rowStyle"]
+        }
       }
 
       // else d["isSelected"] = false;
@@ -583,12 +683,13 @@ class TierReplace extends React.Component<any, tabsState> {
                   isPinningEnabled={false}
                   enableSearch={false}
                   enableColumnDrag
+                  settingsWidth={50}
                   onSearch={() => { }}
                   fixedColumnKeys={[]}
                   pagintionPosition="topRight"
                   gridName="TIER"
                   enableSettings
-                  columns={tierColumns()}
+                  columns={this.props.lobCode === 'MCR' ? tierColumns() : tierColumnsNonMcr()}
                   scroll={{ x: 2000, y: 377 }}
                   isFetchingData={false}
                   enableResizingOfColumns
@@ -596,15 +697,26 @@ class TierReplace extends React.Component<any, tabsState> {
                   rowSelectionChangeFromCell={this.rowSelectionChangeFromCell}
                   onSelectAllRows={this.onSelectAllRows}
                   customSettingIcon={"FILL-DOT"}
-                  settingsWidth={30}
-                  // rowSelection={{
-                  //   columnWidth: 50,
-                  //   selectedRowKeys: this.state.selectedRowKeys,
-                  // 	fixed: true,
+                  /*totalRowsCount={this.state.dataCount}
+                  settingsTriDotClick={this.selectFormularyClick}
+                  getPerPageItemSize={this.onPageSize}
+                  onGridPageChangeHandler={this.onGridPageChangeHandler}
+                  clearFilterHandler={this.onClearFilterHandler}
+                  applyFilter={this.onApplyFilterHandler}
+                  applySort={this.onApplySortHandler}
+                  getColumnSettings={this.onSettingsIconHandler}
+                  pageSize={this.listPayload.limit}
+                  selectedCurrentPage={
+                    this.listPayload.index / this.listPayload.limit + 1
+                  }*/
+                // rowSelection={{
+                //   columnWidth: 50,
+                //   selectedRowKeys: this.state.selectedRowKeys,
+                // 	fixed: true,
 
-                  //   type: "checkbox",
-                  //   onChange: this.onSelectedTableRowChanged
-                  // }}
+                //   type: "checkbox",
+                //   onChange: this.onSelectedTableRowChanged
+                // }}
                 />
               </div>
             </div>

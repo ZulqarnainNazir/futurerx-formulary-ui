@@ -254,6 +254,16 @@
     }
   }
 
+  .table-row--disabled-font {
+    .ant-checkbox.ant-checkbox-checked .ant-checkbox-inner {
+      background-color: #eef3f7; //1d54b4
+      border: 2px solid #eef3f7;
+    }
+    td {
+      color: #C6C6C6;
+    }
+  }
+
   .table-row-disabled.table-row--red-font {
     td {
       background-color: rgb(233, 210, 210);
