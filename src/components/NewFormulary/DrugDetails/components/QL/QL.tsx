@@ -80,6 +80,7 @@ interface tabsState {
   quantityAndFillLimitObject: any; //newParamterType;
   selectedDrugs: any;
   drugData: any;
+  drugCount: number;
   selectedCriteria: any;
   errorObject: any;
   selectedTab: string;
@@ -88,6 +89,8 @@ interface tabsState {
   additionalCriteriaState: null;
   is_additional_criteria_defined: boolean;
   isLoading: boolean;
+  fixedSelectedRows: number[];
+  selectedRowKeys: number[];
 }
 
 class Tier extends React.Component<any, tabsState> {
@@ -116,6 +119,9 @@ class Tier extends React.Component<any, tabsState> {
     is_additional_criteria_defined: false,
     isLoading: false,
     errorObject: {},
+    fixedSelectedRows: Array(),
+    selectedRowKeys: Array(),
+    drugCount: 0,
   };
 
   onClickTab = (selectedTabIndex: number) => {
@@ -182,52 +188,61 @@ class Tier extends React.Component<any, tabsState> {
         fillLimitPeriodOfTime,
       } = quantityAndFillLimitObject;
 
-      if (
-        quantity != "" ||
-        days !== "" ||
-        periodOfTime != "" ||
-        fillsAllowed !== "" ||
-        fillLimitPeriodOfTime != ""
-      ) {
-        return true;
-      } else {
-        return false;
-      }
-      //   if (
-      //     quantityAndFillLimitObject.quantity == "" ||
-      //     quantityAndFillLimitObject.quantity == undefined
-      //   ) {
-      //     tempErr = {
-      //       quantity: true,
-      //     };
-      //     this.setState({ errorObject: tempErr });
-      //     return false;
-      //   } else if (
-      //     quantityAndFillLimitObject.days == "" ||
-      //     quantityAndFillLimitObject.days == undefined
-      //   ) {
-      //     tempErr = {
-      //       days: true,
-      //     };
-      //     this.setState({ errorObject: tempErr });
-      //     return false;
-      //   } else {
-      //     tempErr = {
-      //       quantity: false,
-      //       days: false,
-      //     };
-      //     this.setState({ errorObject: tempErr });
-      //     return true;
-      //   }
+      // if (
+      //   quantity != "" ||
+      //   days !== "" ||
+      //   periodOfTime != "" ||
+      //   fillsAllowed !== "" ||
+      //   fillLimitPeriodOfTime != ""
+      // ) {
+      //   return true;
       // } else {
-      //   tempErr = {
-      //     quantity: true,
-      //     days: true,
-      //   };
-      //   this.setState({ errorObject: tempErr });
       //   return false;
+      // }
+      if (
+        quantityAndFillLimitObject.quantity == "" ||
+        quantityAndFillLimitObject.quantity == undefined
+      ) {
+        if (
+          days !== "" ||
+          periodOfTime != "" ||
+          fillsAllowed !== "" ||
+          fillLimitPeriodOfTime != ""
+        ) {
+          tempErr = {
+            quantity: false,
+            days: false,
+          };
+          this.setState({ errorObject: tempErr });
+          return true;
+        }
+        // } else if (
+        //   quantityAndFillLimitObject.days == "" ||
+        //   quantityAndFillLimitObject.days == undefined
+        // ) {
+        //   tempErr = {
+        //     days: true,
+        //   };
+        //   this.setState({ errorObject: tempErr });
+        //   return false;
+      } else {
+        tempErr = {
+          quantity: false,
+          days: false,
+        };
+        this.setState({ errorObject: tempErr });
+        return true;
+      }
+    } else {
+      tempErr = {
+        quantity: true,
+        days: true,
+      };
+      this.setState({ errorObject: tempErr });
+      return false;
     }
-    return false;
+
+    // return false;
   };
 
   showDrugGrid = (searchBody = null) => {
@@ -258,6 +273,7 @@ class Tier extends React.Component<any, tabsState> {
       console.log("[QlDetail]:", json.payload);
       // if (json.payload) {
       this.loadGridData(json);
+      this.setState({ drugCount: json.count });
       // } else {
       // showMessage("something went wrong", "error");
       // }
@@ -684,7 +700,7 @@ class Tier extends React.Component<any, tabsState> {
       ) {
         this.showDrugGrid();
       } else {
-        showMessage("Please add the setting", "error");
+        showMessage("Please fill the required fields", "error");
       }
     } else {
       if (this.state.selectedCriteria.length == 0) {
@@ -694,6 +710,71 @@ class Tier extends React.Component<any, tabsState> {
       }
     }
   };
+
+  rowSelectionChangeFromCell = (
+    key: string,
+    selectedRow: any,
+    isSelected: boolean
+  ) => {
+    console.log("data row ", selectedRow, isSelected);
+    if (!selectedRow["isDisabled"]) {
+      if (isSelected) {
+        const data = this.state.drugGridData.map((d: any) => {
+          if (d.key === selectedRow.key) d["isChecked"] = true;
+          // else d["isChecked"] = false;
+          return d;
+        });
+        const selectedRowKeys = [
+          ...this.state.selectedRowKeys,
+          selectedRow.key,
+        ];
+        console.log("selected row keys ", selectedRowKeys);
+        const selectedRows: number[] = selectedRowKeys.filter(
+          (k) => this.state.fixedSelectedRows.indexOf(k) < 0
+        );
+        this.onSelectedTableRowChanged(selectedRowKeys);
+
+        this.setState({ drugGridData: data });
+      } else {
+        const data = this.state.drugGridData.map((d: any) => {
+          if (d.key === selectedRow.key) d["isChecked"] = false;
+          // else d["isChecked"] = false;
+          return d;
+        });
+
+        const selectedRowKeys: number[] = this.state.selectedRowKeys.filter(
+          (k) => k !== selectedRow.key
+        );
+        const selectedRows = selectedRowKeys.filter(
+          (k) => this.state.fixedSelectedRows.indexOf(k) < 0
+        );
+
+        this.onSelectedTableRowChanged(selectedRows);
+        this.setState({
+          drugGridData: data,
+        });
+      }
+    }
+  };
+
+  onSelectAllRows = (isSelected: boolean) => {
+    const selectedRowKeys: number[] = [];
+    const data = this.state.drugGridData.map((d: any) => {
+      if (!d["isDisabled"]) {
+        d["isChecked"] = isSelected;
+        if (isSelected) selectedRowKeys.push(d["key"]);
+      }
+
+      // else d["isSelected"] = false;
+      return d;
+    });
+    const selectedRows: number[] = selectedRowKeys.filter(
+      (k) => this.state.fixedSelectedRows.indexOf(k) < 0
+    );
+    this.onSelectedTableRowChanged(selectedRows);
+    this.setState({ drugGridData: data });
+  };
+
   componentDidUpdate = (prevState) => {
     // debugger;
     // if (
@@ -869,27 +950,33 @@ class Tier extends React.Component<any, tabsState> {
                   </div>
                   {/* )} */}
                   <div className="tier-grid-container">
-                    {/* <FrxGridContainer
-                      enableSearch={false}
-                      enableColumnDrag={false}
-                      onSearch={() => {
-                        console.log();
-                      }} //this.handleSearch}
-                      fixedColumnKeys={[]}
-                      pagintionPosition="topRight"
-                      gridName=""
-                      enableSettings={true}
-                      isFetchingData={this.state.isFetchingData}
-                      columns={QlColumns()} //{this.state.columns}
+                    {/* <FrxDrugGridContainer
                       isPinningEnabled={false}
-                      scroll={{ x: 1300, y: 377 }}
-                      enableResizingOfColumns={false}
+                      enableSearch={false}
+                      enableColumnDrag
+                      onSearch={() => {}}
+                      fixedColumnKeys={[]}
+                      totalRowsCount={this.state.drugCount}
+                      pagintionPosition="topRight"
+                      gridName="DRUG GRID"
+                      enableSettings
+                      columns={QlColumns()}
+                      scroll={{ x: 13000, y: 377 }}
+                      isFetchingData={false}
+                      enableResizingOfColumns
                       data={this.state.drugGridData}
-                      isCustomCheckboxEnabled={true}
-                      // handleCustomRowSelectionChange={this.rowSelectionChange}
-                      settingsTriDotClick={() => {
-                        console.log("object");
-                      }}
+                      rowSelectionChangeFromCell={
+                        this.rowSelectionChangeFromCell
+                      }
+                      onSelectAllRows={this.onSelectAllRows}
+                      customSettingIcon={"FILL-DOT"}
+                      settingsWidth={20}
+                      // rowSelection={{
+                      //   columnWidth: 50,
+                      //   fixed: true,
+                      //   type: "checkbox",
+                      //   onChange: this.onSelectedTableRowChanged,
+                      // }}
                     /> */}
 
                     <FrxDrugGridContainer
