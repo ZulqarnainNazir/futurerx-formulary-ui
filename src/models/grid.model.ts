@@ -25,6 +25,10 @@ export interface ColumnFilterItem {
 export interface Grid<RecordType = unknown> {
   isDataLoaded?: boolean;
   gridName: string;
+  isSingleSorted?: boolean;
+  isMultiSorted?: boolean;
+  sortedInfo?: any;
+  multiSortedInfo?: any;
 
   className?: string;
   rowClassName?: string | RowClassName<any>;
@@ -51,8 +55,16 @@ export interface Grid<RecordType = unknown> {
   onColumnCellClick?: (record, key) => void;
   onColumnChange?: (columns: Column<any>[]) => void;
 
-  applySort?: (key: string, order: string) => void;
-  applyMultiSort?: (sorter: any) => void;
+  applySort?: (key: string, order: string, sortedInfo?: any) => void;
+  applyMultiSort?: (sorter: any, sortedInf: any) => void;
+  onMultiSortToggle?: (isMultiSortOn: boolean) => void;
+
+  rowSelectionChangeFromCell?: (
+    key: string,
+    data: any,
+    isSelected: boolean
+  ) => void;
+  onSelectAllRows?: (isSelected: boolean) => void;
   hideResults?: boolean;
   hideItemsPerPage?: boolean;
   hidePageJumper?: boolean;
@@ -103,6 +115,7 @@ export interface FilterDropdownProps {
 }
 export interface Column<RecordType> {
   displayTitle: string;
+  headerCellSelection?: boolean;
   textCase?: textcasetype;
   className?: string;
   showToolTip?: boolean;

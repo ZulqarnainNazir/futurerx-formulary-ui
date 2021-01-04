@@ -79,15 +79,8 @@ const StatusContentFormPanel = (props) => {
 
   const [statusType, setStatusType] = useState(type ? type : "covered");
 
-  const handleDropdown = (value) => {
-    console.log("The handle Dropdown = ", value);
-    setStatusType(value);
-    props.coveredHandler(value);
-  };
-
   const menu = (
     <Menu>
-      {/* <Menu.Item key="covered" onClick={(e) => handleDropdown(e.key)}> */}
       <Menu.Item key="covered" onClick={(e) => handleStatus(e.key)}>
         {isAdditionalCriteria ? "Include" : "Covered"}
       </Menu.Item>

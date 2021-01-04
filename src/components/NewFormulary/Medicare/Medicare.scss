@@ -1,5 +1,16 @@
 .formulary-grid {
   margin-top: 30px;
+  .inner-container{
+    .frx-loader{
+      z-index: 999;
+    }
+  }
+  &.default-height{
+    min-height: 842px;
+    .inner-container{
+      height: 100%;
+    }
+  }
   .formulary-grid-panel-header-container  {
     display: flex;
     align-items: center;
@@ -78,4 +89,8 @@
   p{
     font-weight: normal;
   }
+}
+.table-expanded-sticky-wrapper{
+  position: sticky;
+  left: 0;
 }

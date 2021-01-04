@@ -101,9 +101,11 @@ interface FrxDrugGridState<T> {
   filterTable: T[];
   sortedTable: T[];
 
-  isMultiSort: boolean;
+  isMultiSort?: boolean;
   sortedInfo: any;
 	multiSortedInfo: any;
+
+	isSingleSort?:boolean;
   columns: Column<T>[];
   visibleColumns: Column<T>[];
   hiddenColumns: Column<T>[];
@@ -135,6 +137,9 @@ class FrxDrugGrid extends Component<FrxDrugGridProps<any>, FrxDrugGridState<any>
     isMultiSort: false,
 		sortedInfo: null,
 		multiSortedInfo: [],
+		isSingleSort:false,
+	
+
     suggestions: {},
     columns: [],
     visibleColumns: [],
@@ -260,6 +265,34 @@ class FrxDrugGrid extends Component<FrxDrugGridProps<any>, FrxDrugGridState<any>
 	// }
 	
 	componentDidUpdate(previousProps, previousState) {
+		if(this.props.isMultiSorted !== undefined && !this.props.isDataLoaded){
+			if(this.props.isMultiSorted !== previousState.isMultiSort){
+				console.log("multi sort from props ", this.props.isMultiSorted)
+				this.setState({
+					multiSortedInfo:this.props.multiSortedInfo,
+					isMultiSort:this.props.isMultiSorted
+				}, () => {
+					this.updateFilters()
+				})
+			}
+		}
+
+		if(this.props.isSingleSorted !== undefined && !this.props.isDataLoaded){
+			if(this.props.isSingleSorted !== previousState.isSingleSort){
+				const sortedInfo = {...this.props.sortedInfo}
+				
+				this.setState({
+					sortedInfo:this.props.sortedInfo,
+					isSingleSort:this.props.isSingleSorted
+				
+				}, () => {
+					this.updateFilters();
+				})
+			}
+		}
+
+
+
     if (previousProps.columns && this.props.columns) {
       if (previousProps.columns.length !== this.props.columns.length) {
         console.log("update grid");
@@ -547,6 +580,7 @@ class FrxDrugGrid extends Component<FrxDrugGridProps<any>, FrxDrugGridState<any>
               return (
                 <c.cellWrapper>
                   <FrxGridCell
+									handleSelectEachRow={this.rowSelectionChangeFromCell}
                     customToolTip={customToolTip}
                     customContent={customContent}
                     onCellClick={this.onCellClick}
@@ -569,6 +603,7 @@ class FrxDrugGrid extends Component<FrxDrugGridProps<any>, FrxDrugGridState<any>
               const customContent = c.customContent ? this.withDataContent(c.customContent, record) : undefined
               return (
                 <FrxGridCell
+								handleSelectEachRow={this.rowSelectionChangeFromCell}
                   customToolTip={customToolTip}
                   customContent={customContent}
                   onCellClick={this.onCellClick}
@@ -591,7 +626,8 @@ class FrxDrugGrid extends Component<FrxDrugGridProps<any>, FrxDrugGridState<any>
             return (
               <>
                 <FrxGridHeaderCell
-                  isPinningEnabled={this.props.isPinningEnabled ? true : false}
+								  onSelectAllRows={this.onSelectAllRows}
+                  isPinningEnabled={this.props.isPinningEnabled ? this.props.isPinningEnabled : false}
                   textCase={c.textCase}
                   column={c}
                   multiSortedArray={
@@ -828,7 +864,9 @@ class FrxDrugGrid extends Component<FrxDrugGridProps<any>, FrxDrugGridState<any>
       this.setState(
         {
           filteredInfo: isFilterApplied ? filters : null,
-          sortedInfo: isSorterApplied ? sorter : null,
+					sortedInfo: isSorterApplied ? sorter : null,
+					isSingleSort:isSorterApplied,
+					isMultiSort:isSorterApplied && this.state.isMultiSort
         },
         () => {
           this.updateFilters();
@@ -854,7 +892,8 @@ class FrxDrugGrid extends Component<FrxDrugGridProps<any>, FrxDrugGridState<any>
 			}else{
 				if(	this.props.applySort){
 					const {columnKey, order} = sorter
-					this.props.applySort(columnKey, order)
+					
+					this.props.applySort(columnKey, order, sorter)
 				}
 			
 			}
@@ -946,7 +985,8 @@ class FrxDrugGrid extends Component<FrxDrugGridProps<any>, FrxDrugGridState<any>
           });
           if (index === -1) {
             this.setState({
-              multiSortedInfo: [...this.state.multiSortedInfo, sorter]
+							multiSortedInfo: [...this.state.multiSortedInfo, sorter],
+							isMultiSort:true
             });
           } else {
             const order = existingMultiSortedInfo[index].order;
@@ -959,7 +999,7 @@ class FrxDrugGrid extends Component<FrxDrugGridProps<any>, FrxDrugGridState<any>
               existingMultiSortedInfo[index].order = sorter.order;
             }
 
-            this.setState({ multiSortedInfo: existingMultiSortedInfo });
+            this.setState({ multiSortedInfo: existingMultiSortedInfo , isMultiSort:true});
           }
 
           //==== END OF  EXTRA CODE =====
@@ -983,7 +1023,7 @@ class FrxDrugGrid extends Component<FrxDrugGridProps<any>, FrxDrugGridState<any>
 						goToPageValue: 1,
 					});
 					console.log(" 1st")
-					if(this.props.applyMultiSort)this.props.applyMultiSort([...existingMultiSortedInfo, sorter])
+					if(this.props.applyMultiSort)this.props.applyMultiSort([...existingMultiSortedInfo, sorter], this.state.multiSortedInfo)
 				}
         } else {
           //====  EXTRA CODE =====
@@ -997,7 +1037,8 @@ class FrxDrugGrid extends Component<FrxDrugGridProps<any>, FrxDrugGridState<any>
 
           if (index === -1) {
             this.setState({
-              multiSortedInfo: [...this.state.multiSortedInfo, sorter]
+							multiSortedInfo: [...this.state.multiSortedInfo, sorter],
+							isMultiSort:true
             });
           } else {
             const order = existingMultiSortedInfo[index].order;
@@ -1010,7 +1051,7 @@ class FrxDrugGrid extends Component<FrxDrugGridProps<any>, FrxDrugGridState<any>
               existingMultiSortedInfo[index].order = sorter.order;
             }
 
-            this.setState({ multiSortedInfo: existingMultiSortedInfo });
+            this.setState({ multiSortedInfo: existingMultiSortedInfo , isMultiSort:true});
           }
 
           //==== END OF  EXTRA CODE =====
@@ -1038,7 +1079,7 @@ class FrxDrugGrid extends Component<FrxDrugGridProps<any>, FrxDrugGridState<any>
 									goToPageValue: 1,
 								});
 								if(this.props.applyMultiSort){
-								 this.props.applyMultiSort([...existingMultiSortedInfo, sorter])
+								 this.props.applyMultiSort([...existingMultiSortedInfo, sorter], this.state.multiSortedInfo)
 								}
 							}
             // this.updateMultisortOrder();
@@ -1057,7 +1098,7 @@ class FrxDrugGrid extends Component<FrxDrugGridProps<any>, FrxDrugGridState<any>
 									currentPage: 1,
 									goToPageValue: 1,
 								});
-								if(this.props.applyMultiSort)this.props.applyMultiSort([...existingMultiSortedInfo, sorter])
+								if(this.props.applyMultiSort)this.props.applyMultiSort([...existingMultiSortedInfo, sorter], this.state.multiSortedInfo)
 							}
             // this.updateMultisortOrder();
           }
@@ -1135,6 +1176,27 @@ class FrxDrugGrid extends Component<FrxDrugGridProps<any>, FrxDrugGridState<any>
 		if (this.props.rowSelectionChange)
 			this.props.rowSelectionChange(dataRow ,event);
 	}
+
+	rowSelectionChangeFromCell = (
+    dataKey: string,
+    dataRow: any,
+    isSelected: boolean
+  ) => {
+    if (this.props.rowSelectionChangeFromCell) {
+      this.props.rowSelectionChangeFromCell(dataKey, dataRow, isSelected);
+    }
+  };
+
+  /**
+   * @function onSelectAllRows
+   * change handler for all rows selection checkbox
+   * @author Deepak_T
+   */
+  onSelectAllRows = (isSelected: boolean) => {
+    if (this.props.onSelectAllRows) {
+      this.props.onSelectAllRows(isSelected);
+    }
+  };
 
   /**
    * @function handleSettingsComponentMenuClose
@@ -1537,6 +1599,14 @@ class FrxDrugGrid extends Component<FrxDrugGridProps<any>, FrxDrugGridState<any>
     this.columnsToMultisort = [];
     this.setState({ isMultiSort: !this.state.isMultiSort , multiSortedInfo:[], sortedInfo:null}, () => {
 			// this.updateMultisortOrder();
+			if(!this.props.isDataLoaded){
+				if(this.props.onMultiSortToggle){
+					console.log("is multi sort on ", this.state.isMultiSort)
+					const isMultiSort = this.state.isMultiSort ? true:false
+					this.props.onMultiSortToggle(isMultiSort)
+				}
+					
+			}
 	
     });
   };
@@ -2761,7 +2831,7 @@ class FrxDrugGrid extends Component<FrxDrugGridProps<any>, FrxDrugGridState<any>
                   filterTable={this.state.filterTable}
                   position={this.props.pagintionPosition}
                   data={this.props.totalRowsCount && !this.props.isDataLoaded ? this.props.totalRowsCount : this.props.data}
-                  isMultiSort={this.state.isMultiSort}
+                  isMultiSort={this.state.isMultiSort? true:false}
                   sortedInfo={this.state.sortedInfo}
                   filteredInfo={this.state.filteredInfo}
                   pageSize={this.state.pageSize}
@@ -2906,7 +2976,7 @@ class FrxDrugGrid extends Component<FrxDrugGridProps<any>, FrxDrugGridState<any>
                   filterTable={this.state.filterTable}
                   position={this.props.pagintionPosition}
 									data={this.props.totalRowsCount && !this.props.isDataLoaded ? this.props.totalRowsCount : this.props.data}
-                  isMultiSort={this.state.isMultiSort}
+                  isMultiSort={this.state.isMultiSort? true:false}
                   sortedInfo={this.state.sortedInfo}
                   filteredInfo={this.state.filteredInfo}
                   pageSize={this.state.pageSize}

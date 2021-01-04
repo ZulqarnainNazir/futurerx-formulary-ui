@@ -29,18 +29,19 @@
       display: flex;
       width: 100%;
       &-msg {
-        margin-top: 10px;
-        font-family: Roboto;
-        font-style: normal;
-        font-weight: normal;
-        font-size: 12px;
-        line-height: 35px;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        letter-spacing: 0.01em;
-        color: #707683;
-        // text-align: center;
+        display: grid;
+        place-items: center;
+        min-height: 35rem;
+        p {
+          font-family: Roboto;
+          font-style: normal;
+          font-weight: normal;
+          font-size: 12px;
+          line-height: 35px;
+
+          letter-spacing: 0.01em;
+          color: #707683;
+        }
       }
       &-swapper {
         margin-top: 20px;

@@ -72,8 +72,13 @@ class Remove extends Component<any, State> {
     this.props.onUpdateSelectedCriteria([]);
   }
 
+  componentDidUpdate() {
+    console.log("update remove compoenent");
+  }
+
   loadGridData(json: any) {
     {
+      // this.props.onUpdateSelectedCriteria([]);
       //   const { isLoading } = this.state;
       //   this.setState({ isLoading: !isLoading });
       let tmpData = json.payload.result;

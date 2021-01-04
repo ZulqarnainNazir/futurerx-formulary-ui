@@ -22,6 +22,7 @@ import Groups from './Groups'
 import NewGroup from './NewGroup'
 import { getSTGroupDetails,cleanMessages } from "../../../../../../redux/slices/formulary/gdm/gdmSlice";
 import { getStSummary, getStGrouptDescriptions, getStTypes, getStGrouptDescriptionVersions, getStGrouptDescription } from "../../../../../../redux/slices/formulary/stepTherapy/stepTherapyActionCreation";
+import { setAdditionalCriteria } from "../../../../../../redux/slices/formulary/advancedSearch/additionalCriteriaSlice";
 
 function mapStateToProps(state) {
     return {
@@ -43,7 +44,8 @@ function mapDispatchToProps(dispatch) {
         getStGrouptDescriptionVersions: (a) => dispatch(getStGrouptDescriptionVersions(a)), //Version
         getStGrouptDescription: (a) => dispatch(getStGrouptDescription(a)), // Group ID Detail
         getSTGroupDetails:(arg)=>dispatch(getSTGroupDetails(arg)),
-        cleanMessages: (arg) => dispatch(cleanMessages(arg))
+        cleanMessages: (arg) => dispatch(cleanMessages(arg)),
+        setAdditionalCriteria: (arg) => dispatch(setAdditionalCriteria(arg))
     };
 }
 
@@ -117,6 +119,7 @@ class GPM extends React.Component<any, any>{
         })
     }
     addNewGroup = () => {
+        this.props.setAdditionalCriteria([]);
         this.setState({
             newGroup: false
         })

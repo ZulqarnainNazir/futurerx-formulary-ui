@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import { SUCCESS_MSG, ERROR_MSG } from './PopupAlerts/Constents'
 import STAlertDialog from './STAlertDialog';
 import Alerts from './PopupAlerts/Alerts'
 import DialogPopup from "../../../../../shared/FrxDialogPopup/FrxDialogPopup";
@@ -138,8 +139,17 @@ function GroupHeader(props: any) {
         const verLength = Object.keys(props.version).length;
         const selectedVersion = e.target.value
         if (verLength > 0 && selectedVersion!='') {
-            const isEditable = props.version[Number(selectedVersion.split(" ")[1]) - 1].is_setup_complete;
-            const latestVerion = verLength > 0 ? props.version[Number(selectedVersion.split(" ")[1]) - 1]?.id_st_group_description : 0;
+            const is_setup = props.version[Number(selectedVersion.split(" ")[1]) - 1];
+            let isEditable = true;
+            var latestVerion:any = 0;
+            if(is_setup){
+                isEditable = is_setup.is_setup_complete;
+                latestVerion = verLength > 0 ? is_setup.id_st_group_description : 0;
+            }else{
+                isEditable = props.version.find(val=>val.version_number==Number(selectedVersion.split(" ")[1])).is_setup_complete;
+                latestVerion = verLength > 0 ? props.version.find(val=>val.version_number==Number(selectedVersion.split(" ")[1])).id_st_group_description : 0;
+            }
+            
             setPanelColor(isEditable ? '-green' : '')
             setPlaceHolder(selectedVersion)
             
@@ -224,7 +234,14 @@ function GroupHeader(props: any) {
         props.cleanMessages({error:'',success:''})
         props.deleteGroupDescription({ lob_type:lob_type,pathParams:pathParams  }).then(json => {
             props.getStGrouptDescriptions({lob_type:lob_type,pathParams:props.saveGdm.formulary_id}).then((json)=>{
-                const id_st_group_description = (json?.payload?.data && json?.payload?.data[0])?json?.payload?.data[0].id_st_group_description:0
+                const groupList = json?.payload?.data;
+                const groupListLength = Object.keys(groupList).length;
+                let id_st_group_description = groupListLength>0?groupList.filter(val=>val.is_archived===false)[0].id_st_group_description:0;
+                if(param==='delete-version' && versionListLength>0){
+                    id_st_group_description = props.saveGdm.current_group_id;
+                }else{
+                    id_st_group_description = groupListLength>0?groupList.filter(val=>val.is_archived===false)[0].id_st_group_description:0;
+                }
                 props.getStGrouptDescriptionVersions({lob_type:lob_type,pathParams: id_st_group_description}).then(json=>{
                     const response = json.payload.data
                     const verLength = Object.keys(response).length;
@@ -252,6 +269,9 @@ function GroupHeader(props: any) {
                 }
                 showMessage(json.payload.data.message,'error')
             }
+            if(json?.payload?.success?.status && json?.payload?.success?.status==200){
+                showMessage(SUCCESS_MSG['delete'],'success')
+            }
             setOpen(false);
         })
     }
@@ -267,6 +287,9 @@ function GroupHeader(props: any) {
             props.getStGrouptDescriptions({lob_type:lob_type,pathParams:props.saveGdm.formulary_id})
             if(json?.payload?.status && json?.payload?.status!=200){
                 showMessage(json.payload.data.message,'error')
+            }
+            if(json?.payload?.success?.status && json?.payload?.success?.status==200){
+                showMessage(SUCCESS_MSG['clone'],'success')
             }
             setOpen(false);
         })
@@ -305,6 +328,9 @@ function GroupHeader(props: any) {
             // props.getStTypes(props.saveGdm.formulary_id)
             if(json?.payload?.status && json?.payload?.status!=200){
                 showMessage(json.payload.data.message,'error')
+            }
+            if(json?.payload?.success?.status && json?.payload?.success?.status==200){
+                showMessage(SUCCESS_MSG['newVersion'],'success')
             }
             setOpen(false);
         })
@@ -346,6 +372,9 @@ function GroupHeader(props: any) {
                     showMessage("Following Formularies are linked to current Group Description:\n"+errs,'error')
                 }
                 showMessage(json.payload.data.message,'error')
+            }
+            if(json?.payload?.success?.status && json?.payload?.success?.status==200){
+                showMessage(SUCCESS_MSG['archive'],'success')
             }
             setOpen(false);
         });

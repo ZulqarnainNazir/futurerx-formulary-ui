@@ -113,7 +113,12 @@ class FrxDrugGridContainer extends Component<FrxDrugGridContainerProps<any>> {
         {this.props.enableSearch ? this.getSearchComponent() : null}
         <FrxDrugGrid
           applySort={this.props.applySort}
-          applyMultiSort={this.props.applyMultiSort}
+          isSingleSorted={this.props.isSingleSorted}
+          sortedInfo={this.props.sortedInfo}
+					applyMultiSort={this.props.applyMultiSort}
+					isMultiSorted={this.props.isMultiSorted}
+					multiSortedInfo={this.props.multiSortedInfo}
+					onMultiSortToggle={this.props.onMultiSortToggle}
           isDataLoaded={this.props.isDataLoaded}
           bordered={false}
           columns={this.props.columns}
@@ -144,6 +149,8 @@ class FrxDrugGridContainer extends Component<FrxDrugGridContainerProps<any>> {
           summary={this.props.summary ? this.props.summary : undefined}
           isRowSelectionEnabled={this.props.isRowSelectionEnabled}
           rowSelectionChange={this.props.rowSelectionChange}
+          rowSelectionChangeFromCell={this.props.rowSelectionChangeFromCell}
+          onSelectAllRows={this.props.onSelectAllRows}
           settingsWidth={
             this.props.settingsWidth ? this.props.settingsWidth : undefined
           }

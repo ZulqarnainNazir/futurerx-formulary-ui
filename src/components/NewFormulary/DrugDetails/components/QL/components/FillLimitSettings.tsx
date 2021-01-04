@@ -3,6 +3,9 @@ import { Grid } from "@material-ui/core";
 import DropDown from "../../../../../shared/Frx-components/dropdown/DropDown";
 import Label from "../../../../../shared/Frx-components/label/Label";
 import RadioButton from "../../../../../shared/Frx-components/radio-button/RadioButton";
+import Radio from "@material-ui/core/Radio";
+import RadioGroup from "@material-ui/core/RadioGroup";
+import FormControlLabel from "@material-ui/core/FormControlLabel";
 import { Input } from "@material-ui/core";
 import "./common.scss";
 
@@ -57,17 +60,19 @@ const FillLimitSettings = (props) => {
             <div className="radio-group">
               <RadioButton
                 label="Yes"
-                checked={selectedCriteria === "yes"}
+                checked={props.is_additional_criteria_defined}
                 value="yes"
-                onChange={(e) => setSelectedCriteria(e.target.value)}
+                onClick={props.onRadioButtonClick}
                 name="limit-additional-criteria"
+                disabled={props.isViweAll}
               />
               <RadioButton
                 label="No"
-                checked={selectedCriteria === "no"}
+                checked={!props.is_additional_criteria_defined}
                 value="no"
-                onChange={(e) => setSelectedCriteria(e.target.value)}
+                onChange={props.onRadioButtonClick}
                 name="limit-additional-criteria"
+                disabled={props.isViweAll}
               />
             </div>
           </div>
