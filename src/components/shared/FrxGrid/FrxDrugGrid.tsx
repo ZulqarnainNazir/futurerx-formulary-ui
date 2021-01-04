@@ -905,7 +905,8 @@ class FrxDrugGrid extends Component<FrxDrugGridProps<any>, FrxDrugGridState<any>
 			if(this.props.isDataLoaded){
 				this.getDataOnFilter(filters);
 			}else{
-				this.props.applyFilter(filters)
+				const appliedFilters = _.pickBy(filters, _.identity);
+				this.props.applyFilter(appliedFilters)
 			}
     
       

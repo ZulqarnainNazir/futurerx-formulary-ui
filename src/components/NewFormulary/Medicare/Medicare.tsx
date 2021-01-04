@@ -264,6 +264,21 @@ class Medicare extends React.Component<any, any> {
     return updatedColumns;
   };
 
+  applyFilterHandler = filters => {
+    console.log("medicare filters ", filters);
+    this.setState(
+      {
+        // gridSingleSortInfo: null,
+        // isGridSingleSorted: false,
+        // gridMultiSortedInfo: [],
+        // isGridMultiSorted: false
+      },
+      () => {
+        this.props.applyFilter(filters);
+      }
+    );
+  };
+
   applySortHandler = (key, order, sortedInfo) => {
     console.log("sorted info for single sorting ", sortedInfo);
     this.setState(
@@ -321,13 +336,13 @@ class Medicare extends React.Component<any, any> {
           label: "N/A",
           type: "block",
           variant: this.getVariant("N/A", "block"),
-          fill: "fill",
+          fill: "fill"
         },
         origin: {
           label: "Purchased",
           type: "pill",
           variant: this.getVariant("Purchased", "pill"),
-          fill: "fill",
+          fill: "fill"
         },
         formulary_name: e.formulary_name,
         id_formulary: e.id_formulary.toString(),
@@ -427,7 +442,7 @@ class Medicare extends React.Component<any, any> {
               totalRowsCount={this.props.dashboardGrid.count}
               pageSize={this.props.pageSize}
               selectedCurrentPage={this.props.selectedCurrentPage}
-              applyFilter={this.props.applyFilter}
+              applyFilter={this.applyFilterHandler}
               getColumnSettings={this.props.getColumnSettings}
               data={gridData}
               expandable={{
