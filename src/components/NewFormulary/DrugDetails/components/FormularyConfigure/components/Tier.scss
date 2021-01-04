@@ -337,6 +337,32 @@
 }
 .tier-dialog-popup {
   z-index: 0 !important;
+  .MuiButton-label {
+  padding: 10px !important;
+}
+.red-bold{
+  color:red;
+  font-weight: bold;
+}
+.delete-tier-wrapper p{
+  font-family: Roboto;
+font-style: normal;
+font-weight: normal;
+font-size: 14px;
+line-height: 16px;
+
+
+color: #323C47;
+
+}
+.delete-tier-wrapper{
+ 
+height: 80px;
+width: 600px;
+
+
+
+}
 }
 
 .mini-tabs {
@@ -347,4 +373,20 @@
 
 .body-checkbox {
   border-spacing: 0px;
+}
+
+.tier-drug-grid-header-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr 0.5fr;
+  align-items: baseline;
+  .search-input {
+    padding-left: 28px; 
+  }
+}
+.remove-btn-wrapper {
+  justify-content: space-between !important;
+}
+
+.remove-btn-wrapper-right {
+  justify-content: flex-end !important;
 }

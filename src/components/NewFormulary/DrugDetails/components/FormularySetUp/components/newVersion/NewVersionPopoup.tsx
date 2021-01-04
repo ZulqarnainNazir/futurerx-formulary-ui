@@ -34,21 +34,23 @@ class NewVersionPopup extends React.Component<any, any> {
   };
 
   evokeNewVersion = () => {
-    console.log(" evokeNewVersion ");  
+    console.log(" evokeNewVersion ");
     if (this.state.effectiveDate === "") {
       showMessage("Please enter Effective Date", "error");
       return;
     }
-    //"2021-01-20"
-    // effectiveDate: this.state.effectiveDate,
-
-    this.props.initNewVersion({
-      baseId: this.props.currentFormulary.id_base_formulary,
-      effectiveDate: this.state.effectiveDate,
-    });
+    this.props
+      .initNewVersion({
+        baseId: this.props.currentFormulary.id_base_formulary,
+        effectiveDate: this.state.effectiveDate,
+      })
+      .then((arg) => {
+        console.log("New Version Callback ", arg?.payload);
+        if (arg?.payload?.id_formulary > 0) {
+          this.props.newVersion(arg?.payload?.id_formulary);
+        }
+      });
     this.props.onCancel();
-
-
   };
 
   render() {

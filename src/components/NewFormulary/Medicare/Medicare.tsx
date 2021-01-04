@@ -28,6 +28,10 @@ interface State {
   searchType: any;
   searchSubType: any;
   searchSubCategory: any;
+  gridSingleSortInfo: any;
+  isGridSignleSorted: boolean;
+  gridMultiSortedInfo: any[];
+  isGridMultiSorted: boolean;
 }
 
 const miniTabs = [
@@ -67,7 +71,10 @@ class Medicare extends React.Component<any, any> {
     searchSubType: "",
     searchCategory: searchCategory,
     searchSubCategory: [],
-    advanceSearch: false,
+    gridSingleSortInfo: null,
+    isGridSingleSorted: false,
+    gridMultiSortedInfo: [],
+    isGridMultiSorted: false,
   };
   defaultHTML = () => {
     return (
@@ -197,6 +204,28 @@ class Medicare extends React.Component<any, any> {
     });
     this.setState({ tabs, activeMiniTabIndex });
   };
+  getVariant(label: any, type: any) {
+    if (label === "N/A" && type === "block") {
+      return 4;
+    }
+    if (label === "Sell" && type === "block") {
+      return 2;
+    }
+    if (label === "Selling" && type === "block") {
+      return 1;
+    }
+
+    if (label === "Purchased" && type === "pill") {
+      return 6;
+    }
+
+    if (label === "Imported" && type === "pill") {
+      return 2;
+    }
+    if (label === "Created" && type === "pill") {
+      return 1;
+    }
+  }
   renderActiveMiniTabContent = () => {
     const miniTabIndex = this.state.activeMiniTabIndex;
     switch (miniTabIndex) {
@@ -235,6 +264,46 @@ class Medicare extends React.Component<any, any> {
     });
     return updatedColumns;
   };
+
+  applySortHandler = (key, order, sortedInfo) => {
+    console.log("sorted info for single sorting ", sortedInfo);
+    this.setState(
+      {
+        gridSingleSortInfo: sortedInfo,
+        isGridSingleSorted: true,
+        isGridMultiSorted: false,
+        gridMultiSortedInfo: [],
+      },
+      () => {
+        this.props.applySortHandler(key, order);
+      }
+    );
+
+    // this.props.fetchFormularies(this.listPayload);
+  };
+  applyMultiSortHandler = (sorter, multiSortedInfo) => {
+    this.setState(
+      {
+        isGridMultiSorted: true,
+        isGridSingleSorted: false,
+        gridMultiSortedInfo: multiSortedInfo,
+        gridSingleSortInfo: null,
+      },
+      () => {
+        this.props.applyMultiSortHandler(sorter);
+      }
+    );
+  };
+
+  onMultiSortToggle = (isMultiSortOn: boolean) => {
+    console.log("is Multi sort on ", isMultiSortOn);
+    this.setState({
+      gridSingleSortInfo: null,
+      isGridSingleSorted: false,
+      isGridMultiSorted: isMultiSortOn,
+      gridMultiSortedInfo: [],
+    });
+  };
   getGridData = () => {
     const baseData = [...this.props.dashboardGrid.list];
     let hiddenColumns = [];
@@ -252,13 +321,13 @@ class Medicare extends React.Component<any, any> {
         bazaar: {
           label: "N/A",
           type: "block",
-          variant: 3,
+          variant: this.getVariant("N/A", "block"),
           fill: "fill",
         },
         origin: {
           label: "Purchased",
           type: "pill",
-          variant: 1,
+          variant: this.getVariant("Purchased", "pill"),
           fill: "fill",
         },
         formulary_name: e.formulary_name,
@@ -318,13 +387,6 @@ class Medicare extends React.Component<any, any> {
               <button onClick={() => this.setState({ advanceSearch: true })}>
                 Advance Search
               </button>
-              {this.state.advanceSearch ? (
-                <AdvanceSearchContainer
-                  openPopup={this.state.advanceSearch}
-                  onClose={() => this.setState({ advanceSearch: false })}
-                  isAdvanceSearch={false}
-                />
-              ) : null}
             </div>
             <Popover
               content={addNewButtonDDContent}
@@ -345,6 +407,13 @@ class Medicare extends React.Component<any, any> {
               pagintionPosition="topRight"
               gridName="MEDICARE"
               enableSettings
+              applySort={this.applySortHandler}
+              isSingleSorted={this.state.isGridSingleSorted}
+              sortedInfo={this.state.gridSingleSortInfo}
+              applyMultiSort={this.applyMultiSortHandler}
+              isMultiSorted={this.state.isGridMultiSorted}
+              multiSortedInfo={this.state.gridMultiSortedInfo}
+              onMultiSortToggle={this.onMultiSortToggle}
               // isCustomCheckboxEnabled={false}
               // handleCustomRowSelectionChange={()=>{}}
               columns={formularyDetailsGridColumns(
@@ -354,7 +423,7 @@ class Medicare extends React.Component<any, any> {
                 },
                 hiddenColumns
               )}
-              scroll={{ y: 630 }}
+              scroll={{ x: 1600, y: 630 }}
               isFetchingData={false}
               enableResizingOfColumns
               getPerPageItemSize={this.props.onPageSize}

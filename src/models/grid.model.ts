@@ -25,6 +25,10 @@ export interface ColumnFilterItem {
 export interface Grid<RecordType = unknown> {
   isDataLoaded?: boolean;
   gridName: string;
+  isSingleSorted?: boolean;
+  isMultiSorted?: boolean;
+  sortedInfo?: any;
+  multiSortedInfo?: any;
 
   className?: string;
   rowClassName?: string | RowClassName<any>;
@@ -49,10 +53,14 @@ export interface Grid<RecordType = unknown> {
   rowSelectionChange?: (data: any, isMultiple?: boolean) => void;
   settingsTriDotClick?: (data: RecordType) => void;
   onColumnCellClick?: (record, key) => void;
+  onsettingsTriDotDropDownItemClick?: (dataRow: any, item: any) => void;
   onColumnChange?: (columns: Column<any>[]) => void;
 
-	applySort?: (key: string, order: string) => void;
-	rowSelectionChangeFromCell?: (
+  applySort?: (key: string, order: string, sortedInfo?: any) => void;
+  applyMultiSort?: (sorter: any, sortedInf: any) => void;
+  onMultiSortToggle?: (isMultiSortOn: boolean) => void;
+
+  rowSelectionChangeFromCell?: (
     key: string,
     data: any,
     isSelected: boolean
@@ -107,8 +115,8 @@ export interface FilterDropdownProps {
   visible: boolean;
 }
 export interface Column<RecordType> {
-	displayTitle: string;
-	headerCellSelection?: boolean;
+  displayTitle: string;
+  headerCellSelection?: boolean;
   textCase?: textcasetype;
   className?: string;
   showToolTip?: boolean;

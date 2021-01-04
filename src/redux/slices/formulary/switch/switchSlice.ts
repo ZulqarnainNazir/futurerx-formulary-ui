@@ -1,7 +1,7 @@
 import {createSlice} from "@reduxjs/toolkit";
 
 const switchState: any = {
-  configureSwitch: true,
+  configureSwitch: false,
   isLoading: false,
 }
   
