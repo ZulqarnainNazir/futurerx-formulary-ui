@@ -11,6 +11,8 @@ import MassMaintenance from "./MassMaintenance/MassMaintenance";
 import FormularyDashboardStats from "./../FormularyDashboardStats/FormularyDashboardStats";
 import { getFormularyDetails } from "../../mocks/formulary/formularyDetails";
 import { fetchFormularies } from "../.././redux/slices/formulary/dashboard/dashboardSlice";
+import _ from 'lodash';
+
 import {
   setFormulary,
   setLocation,
@@ -32,6 +34,7 @@ import { gridSettingsSlice } from "../.././redux/slices/formulary/gridHandler/gr
 import { addNewFormulary } from "../.././redux/slices/formulary/application/applicationSlice";
 import "./NewFormulary.scss";
 import Medicaid from "./Medicaid/Medicaid";
+import FrxGridSorterIcon from "../shared/FrxGrid/components/FrxGridSorterIcon/FrxGridSorterIcon";
 
 // const tabs = [
 //   { id: 1, text: "MEDICARE" },
@@ -146,9 +149,26 @@ class Formulary extends React.Component<any, any> {
 
     this.props.fetchFormularies(listPayload);
   };
-
+  uniqByKeepLast = (data) => {
+    const result = Array.from(new Set(data.map(s => s.columnKey)))
+    .map(column => {
+      const getOrder = data.find(s => s.columnKey === column).order === 'ascend' ? 'asc' : 'desc'
+      return {
+        columnKey: column,
+        order: getOrder
+      }
+    });
+    return result;
+  }
   applyMultiSortHandler = sorter => {
-		console.log("multi sorted columns ", sorter);
+    console.log("multi sorted columns ", sorter);
+    const listPayload = { ...this.listPayload };
+    const updatedSorter = this.uniqByKeepLast(sorter);
+    const sort_by = updatedSorter.map(e=>e.columnKey);
+    const sort_order = updatedSorter.map(e=>e.order);
+    listPayload.sort_by = sort_by;
+    listPayload.sort_order = sort_order
+    this.props.fetchFormularies(listPayload);
 		//remove duplicates from sorter
 		//api integration
 	};
