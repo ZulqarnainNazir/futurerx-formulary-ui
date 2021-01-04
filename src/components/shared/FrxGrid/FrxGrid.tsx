@@ -98,6 +98,7 @@ interface FrxGridProps<T> extends Grid<T> {
   selectedCurrentPage?: any;
   applyFilter?: any;
   getColumnSettings?: any;
+  settingsTriDotDropDownItems?:any[];
 }
 interface FrxGridState<T> {
   filteredInfo: null;
@@ -106,7 +107,7 @@ interface FrxGridState<T> {
 
   isMultiSort: boolean;
   sortedInfo: any;
-
+	multiSortedInfo:any[],
   columns: Column<T>[];
   visibleColumns: Column<T>[];
   hiddenColumns: Column<T>[];
@@ -136,7 +137,8 @@ class FrxGrid extends Component<FrxGridProps<any>, FrxGridState<any>> {
     filterTable: [],
     sortedTable: [],
     isMultiSort: false,
-    sortedInfo: null,
+		sortedInfo: null,
+		multiSortedInfo:[],
     suggestions: {},
     columns: [],
     visibleColumns: [],
@@ -576,6 +578,8 @@ class FrxGrid extends Component<FrxGridProps<any>, FrxGridState<any>> {
                     expanded={isExpanded}
                     settingsMenuItems={this.state.settingsMenuItems}
                     onSettingsTriDotClick={this.onSettingsTriDotClick}
+                    settingsTriDotDropDownItems = {this.props.settingsTriDotDropDownItems}
+                    onsettingsTriDotDropDownItemClick = {this.props.onsettingsTriDotDropDownItemClick}
                     handleMenuClick={this.settingsTriDotMenuClick}
                     handleCheck={this.props.handleCheck}
                     rowSelectionChange={this.rowSelectionChange}
@@ -728,11 +732,15 @@ class FrxGrid extends Component<FrxGridProps<any>, FrxGridState<any>> {
           c["title"] = () => {
             return (
               <>
-                <FrxGridHeaderCell
-                  isPinningEnabled={this.props.isPinningEnabled}
-                  // isPinningEnabled={true}
+                    <FrxGridHeaderCell
+                  isPinningEnabled={this.props.isPinningEnabled ? true : false}
                   textCase={c.textCase}
                   column={c}
+                  multiSortedArray={
+                    this.multiSortArray ? this.multiSortArray : []
+                  }
+                  multiSortedInfo={this.state.multiSortedInfo}
+                  singleSortedInfo={this.state.sortedInfo}
                   multiSortOrder={this.getMultisortOrderByColKey(c.key)}
                   unpinColumn={this.unpinColumn}
                   pinColumnToLeft={this.pinColumnToLeft}

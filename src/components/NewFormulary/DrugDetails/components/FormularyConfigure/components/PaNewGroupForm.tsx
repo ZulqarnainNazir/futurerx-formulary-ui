@@ -185,11 +185,7 @@ const FormInformationPanel = (props: any) => {
     <div className="pa-form-information-panel">
       <div className="inner-container">
         <div className="configure-mini-tabs">
-          <FrxMiniTabs
-            tabList={formInformationPanelTabs}
-            activeTabIndex={activeTabIndex}
-            onClickTab={onClickTab}
-          />
+          <FrxMiniTabs tabList={formInformationPanelTabs} activeTabIndex={activeTabIndex} onClickTab={onClickTab} />
         </div>
       </div>
       <div>{renderActiveTabContent()}</div>
@@ -489,9 +485,7 @@ function NewGroup(props: any) {
     });
   };
 
-  const [isAdditionalCriteriaPopupOpen, setAdditionalCriteriaPopup] = useState(
-    false
-  );
+  const [isAdditionalCriteriaPopupOpen, setAdditionalCriteriaPopup] = useState(false);
   const additionalCriteriaHandler = () => {
     setAdditionalCriteriaPopup(!isAdditionalCriteriaPopupOpen);
   };

@@ -1,0 +1,13 @@
+.category-class-button-wrapper {
+  display: flex;
+  align-items: baseline;
+
+  .add-file-button,
+  .select-box {
+    margin-right: 10px;
+  }
+}
+
+.category-class-title .header {
+  padding: 0px !important;
+}

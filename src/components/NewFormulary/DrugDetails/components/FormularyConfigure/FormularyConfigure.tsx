@@ -7,16 +7,18 @@ import PaData from "./components/PA/PaData";
 import StepTherpayDetails from "./components/StepTherapyData";
 import CategoryClass from "./components/CategoryClass";
 import QL from "../QL/QL";
+import Assembly from "./components/Assembly";
 import { connect } from "react-redux";
 import { setAdvancedSearch } from "../../../../../redux/slices/formulary/advancedSearch/advancedSearchSlice";
 
 const tabs = [
-  { id: 1, text: "TIER" },
-  { id: 2, text: "CATEGORY/CLASS" },
-  { id: 3, text: "PA" },
-  { id: 4, text: "ST" },
-  { id: 5, text: "QL" },
-  { id: 6, text: "DRUG DETAILS" },
+  { id: 1, text: "ASSEMBLY" },
+  { id: 2, text: "TIER" },
+  { id: 3, text: "CATEGORY/CLASS" },
+  { id: 4, text: "PA" },
+  { id: 5, text: "ST" },
+  { id: 6, text: "QL" },
+  { id: 7, text: "OTHER UM EDITS" },
 ];
 
 function mapDispatchToProps(dispatch) {
@@ -83,28 +85,18 @@ class FormularyConfigure extends React.Component<any, any> {
     const tabIndex = this.state.activeTabIndex;
     switch (tabIndex) {
       case 0:
-        return (
-          <div>
-            <Tier />
-          </div>
-        );
+        return <Assembly />;
       case 1:
-        return (
-          <div>
-            <CategoryClass />
-          </div>
-        );
+        return <Tier />;
       case 2:
-        return <PaData />;
+        return <CategoryClass />;
       case 3:
-        return (
-          <div>
-            <StepTherpayDetails />
-          </div>
-        );
+        return <PaData />;
       case 4:
-        return <QL />;
+        return <StepTherpayDetails />;
       case 5:
+        return <QL />;
+      case 6:
         return <DrugDetails />;
     }
   };

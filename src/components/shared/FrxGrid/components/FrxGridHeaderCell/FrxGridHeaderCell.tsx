@@ -10,6 +10,7 @@ import "./FrxGridHeaderCell.scss";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faThumbtack } from "@fortawesome/free-solid-svg-icons";
 import { Column } from "../../../../../models/grid.model";
+import FrxGridSorterIcon from "../FrxGridSorterIcon/FrxGridSorterIcon";
 import { Checkbox } from "antd";
 
 interface FrxGridHeaderCellProps {
@@ -17,6 +18,10 @@ interface FrxGridHeaderCellProps {
   isPinningEnabled: boolean;
   textCase?: string;
   multiSortOrder?: number;
+  multiSortedArray: string[];
+	multiSortedInfo: any[];
+	
+	singleSortedInfo:any;
   pinColumnToLeft?: (c: Column<any>) => void;
   unpinColumn?: (c: Column<any>) => void;
   onSelectAllRows?: (isSelected: boolean) => void;
@@ -83,22 +88,42 @@ class FrxGridHeaderCell extends Component<FrxGridHeaderCellProps> {
               {column.displayTitle ? column.displayTitle.toLowerCase() : null}
             </span>
             {multiSortOrder && multiSortOrder > 0 ? (
-              <span className="frx-grid-header-cell__multisortorder">
-                {multiSortOrder}
-              </span>
+               <>
+							 <FrxGridSorterIcon
+								 isMultiSort
+								 columnKey={column.key}
+								 multiSortedInfo={this.props.multiSortedInfo}
+								 singleSortedInfo={this.props.singleSortedInfo}
+								 multiSortedArray={this.props.multiSortedArray}
+							 />
+							 <span className="frx-grid-header-cell__multisortorder">
+								 {multiSortOrder}
+							 </span>
+						 </>
             ) : (
-              <span
-                className="frx-grid-header-cell__nomultisortorder"
-                style={{ visibility: "hidden" }}
-              >
-                5
-              </span>
-            )}
-          </>
-        )}
-      </>
-    );
-  }
+              <>
+            <FrxGridSorterIcon
+							
+							singleSortedInfo={this.props.singleSortedInfo}
+              columnKey={column.key}
+              multiSortedArray={this.props.multiSortedArray}
+            />
+            <span
+              className="frx-grid-header-cell__nomultisortorder"
+              style={{ visibility: "hidden" }}
+            >
+              5
+              {/* added to account for the spacing a digit will take when multi sort order has to be displayed */}
+            </span>
+						</>
+						)}
+						</>)}
+          
+       
+    
+	
+	</>)
+	}
 }
 
 export default FrxGridHeaderCell;

@@ -58,18 +58,20 @@ class ICDRemove extends React.Component<any, any> {
           </span>
         </div> */}
         <div className="inner-container">
-          <select name="cover" onChange={this.getSelectedVal}>
-            <option value="covered" selected>
-              Covered
-            </option>
-            <option value="non-covered">NonCovered</option>
-          </select>
-          <Table
-            rowSelection={rowSelection}
-            columns={columns}
-            dataSource={this.state.dataToRemove}
-            pagination={false}
-          />
+          <div className="tier-grid-remove-container">
+            <select name="cover" onChange={this.getSelectedVal}>
+              <option value="covered" selected>
+                Covered
+              </option>
+              <option value="non-covered">NonCovered</option>
+            </select>
+            <Table
+              rowSelection={rowSelection}
+              columns={columns}
+              dataSource={this.state.dataToRemove}
+              pagination={false}
+            />
+          </div>
         </div>
         <Button label="Apply" onClick={this.props.showGridHandler} />
       </div>
