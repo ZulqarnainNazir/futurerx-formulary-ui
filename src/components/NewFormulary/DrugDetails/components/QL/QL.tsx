@@ -273,7 +273,8 @@ class Tier extends React.Component<any, tabsState> {
       console.log("[QlDetail]:", json.payload);
       // if (json.payload) {
       this.loadGridData(json);
-      this.setState({ drugCount: json.count });
+      console.log("{drugCount", json.payload.count);
+      this.setState({ drugCount: json.payload.count });
       // } else {
       // showMessage("something went wrong", "error");
       // }
@@ -292,6 +293,7 @@ class Tier extends React.Component<any, tabsState> {
   loadGridData(json: any) {
     let tmpData = json.payload.result;
     var data: any[] = [];
+    var switchState = this.props.switchState;
     let count = 1;
     var gridData: any = tmpData.map(function (el) {
       var element = Object.assign({}, el);
@@ -306,6 +308,11 @@ class Tier extends React.Component<any, tabsState> {
       gridItem["covered_max_operators"] = element.covered_max_operators
         ? "" + element.covered_max_operators
         : "";
+
+      if (switchState) {
+        gridItem["isDisabled"] = true;
+      }
+
       gridItem["covered_min_ages"] = element.covered_min_ages
         ? "" + element.covered_min_ages
         : "";
@@ -789,7 +796,7 @@ class Tier extends React.Component<any, tabsState> {
     // }
   };
   UNSAFE_componentWillReceiveProps(nextProps) {
-    debugger;
+    // debugger;
     if (nextProps.switchState) {
       this.showDrugGrid({ ...nextProps.advancedSearchBody });
       this.setState({
@@ -950,10 +957,11 @@ class Tier extends React.Component<any, tabsState> {
                   </div>
                   {/* )} */}
                   <div className="tier-grid-container">
-                    {/* <FrxDrugGridContainer
+                    <FrxDrugGridContainer
                       isPinningEnabled={false}
                       enableSearch={false}
                       enableColumnDrag
+                      settingsWidth={10}
                       onSearch={() => {}}
                       fixedColumnKeys={[]}
                       totalRowsCount={this.state.drugCount}
@@ -961,7 +969,7 @@ class Tier extends React.Component<any, tabsState> {
                       gridName="DRUG GRID"
                       enableSettings
                       columns={QlColumns()}
-                      scroll={{ x: 13000, y: 377 }}
+                      scroll={{ x: 12000, y: 377 }}
                       isFetchingData={false}
                       enableResizingOfColumns
                       data={this.state.drugGridData}
@@ -970,15 +978,14 @@ class Tier extends React.Component<any, tabsState> {
                       }
                       onSelectAllRows={this.onSelectAllRows}
                       customSettingIcon={"FILL-DOT"}
-                      settingsWidth={20}
                       // rowSelection={{
-                      //   columnWidth: 50,
+                      //   // columnWidth: 50,
                       //   fixed: true,
                       //   type: "checkbox",
-                      //   onChange: this.onSelectedTableRowChanged,
+                      //   // onChange: this.onSelectedTableRowChanged,
                       // }}
-                    /> */}
-
+                    />
+                    {/* 
                     <FrxDrugGridContainer
                       isPinningEnabled={false}
                       enableSearch={false}
@@ -1000,7 +1007,7 @@ class Tier extends React.Component<any, tabsState> {
                         type: "checkbox",
                         onChange: this.onSelectedTableRowChanged,
                       }}
-                    />
+                    /> */}
                   </div>
                 </div>
               </div>
