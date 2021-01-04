@@ -375,7 +375,6 @@ width: 600px;
   border-spacing: 0px;
 }
 
-
 .tier-drug-grid-header-actions {
   display: grid;
   grid-template-columns: 1fr 1fr 0.5fr;
@@ -383,4 +382,11 @@ width: 600px;
   .search-input {
     padding-left: 28px; 
   }
+}
+.remove-btn-wrapper {
+  justify-content: space-between !important;
+}
+
+.remove-btn-wrapper-right {
+  justify-content: flex-end !important;
 }

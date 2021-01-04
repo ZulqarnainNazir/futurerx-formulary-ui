@@ -10,7 +10,7 @@ import AdvanceSearchContainer from "../../../../NewAdvanceSearch/AdvanceSearchCo
 import * as tierConstants from "../../../../../../api/http-tier";
 import * as commonConstants from "../../../../../../api/http-commons";
 import FrxDrugGridContainer from "../../../../../shared/FrxGrid/FrxDrugGridContainer";
-import { tierColumns } from "../../../../../../utils/grid/columns";
+import { tierColumns, tierColumnsNonMcr } from "../../../../../../utils/grid/columns";
 import DropDown from "../../../../../shared/Frx-components/dropdown/DropDown";
 import {
   postTierApplyInfo,
@@ -31,6 +31,13 @@ interface tabsState {
   drugGridData: any[];
   selectedCriteria: any[];
   selectedDrugs: any[];
+  hiddenColumns: any[];
+  selectedRowKeys: any[];
+  dataCount: any;
+  gridSingleSortInfo: any;
+  isGridSingleSorted: boolean;
+  gridMultiSortedInfo: any[];
+  isGridMultiSorted: boolean;
 }
 
 const mapStateToProps = (state) => {
@@ -76,6 +83,17 @@ class TierRemove extends React.Component<any, tabsState> {
       { type: "FRF Change Report", key: "FRFCR" },
       { type: "Full Formulary", key: "MCR" },
     ],
+    index: 0,
+    limit: 10,
+    filter: Array(),
+    sort_by: Array(),
+    hiddenColumns: Array(),
+    dataCount: 0,
+    selectedRowKeys: Array(),
+    gridSingleSortInfo: null,
+    isGridSingleSorted: false,
+    gridMultiSortedInfo: [],
+    isGridMultiSorted: false,
   };
 
   constructor(props) {
@@ -101,6 +119,153 @@ class TierRemove extends React.Component<any, tabsState> {
     this.state.selectedFileKey = this.props.lobCode;
   }
 
+  onSettingsIconHandler = (hiddenColumn, visibleColumn) => {
+    console.log(
+      "Settings icon handler: Hidden" +
+      JSON.stringify(hiddenColumn) +
+      " Visible:" +
+      JSON.stringify(visibleColumn)
+    );
+    if (hiddenColumn && hiddenColumn.length > 0) {
+      let hiddenColumnKeys = hiddenColumn.map(column => column["key"]);
+      this.setState({
+        hiddenColumns: hiddenColumnKeys
+      });
+    }
+  };
+  onApplyFilterHandler = filters => {
+    console.log("filtering from be:" + (JSON.stringify(filters)));
+    //this.state.filter = Array();
+    const fetchedKeys = Object.keys(filters);
+    if (fetchedKeys && fetchedKeys.length > 0) {
+      fetchedKeys.map(fetchedProps => {
+        if (filters[fetchedProps]) {
+          const fetchedOperator =
+            filters[fetchedProps][0].condition === "is like"
+              ? "is_like"
+              : filters[fetchedProps][0].condition === "is not"
+                ? "is_not"
+                : filters[fetchedProps][0].condition === "is not like"
+                  ? "is_not_like"
+                  : filters[fetchedProps][0].condition === "does not exist"
+                    ? "does_not_exist"
+                    : filters[fetchedProps][0].condition;
+          const fetchedValues =
+            filters[fetchedProps][0].value !== ""
+              ? [filters[fetchedProps][0].value.toString()]
+              : [];
+          this.state.filter.push({
+            prop: fetchedProps,
+            operator: fetchedOperator,
+            values: fetchedValues
+          });
+        }
+      });
+      console.log("Filters:" + JSON.stringify(this.state.filter));
+      if (this.props.advancedSearchBody) {
+        this.populateGridData(this.props.advancedSearchBody);
+      } else {
+        this.populateGridData();
+      }
+    }
+  };
+
+  /**
+   * the selected sorter details will be availbale here to mak api call
+   * @param key the column key
+   * @param order the sorting order : 'ascend' | 'descend'
+   */
+  onApplySortHandler = (key, order, sortedInfo) => {
+    console.log("sort details ", key, order);
+    this.state.sort_by = Array();
+    if (order) {
+      let sortOrder = order === 'ascend' ? 'asc' : 'desc';
+      this.state.sort_by = this.state.sort_by.filter(keyPair => keyPair['key'] !== key);
+      this.state.sort_by.push({ key: key, value: sortOrder });
+    }
+    this.state.gridSingleSortInfo = sortedInfo;
+    this.state.gridMultiSortedInfo = [];
+    this.state.isGridMultiSorted = false;
+    this.state.isGridSingleSorted = true;
+    if (this.props.advancedSearchBody) {
+      this.populateGridData(this.props.advancedSearchBody);
+    } else {
+      this.populateGridData();
+    }
+  };
+  applyMultiSortHandler = (sorter, multiSortedInfo) => {
+    console.log('Multisort info:'+JSON.stringify(sorter));
+    this.state.gridSingleSortInfo = null;
+    this.state.gridMultiSortedInfo = multiSortedInfo;
+    this.state.isGridMultiSorted = true;
+    this.state.isGridSingleSorted = false;
+
+    if (sorter && sorter.length > 0) {
+      let uniqueKeys = Array();
+      let filteredSorter = Array();
+      sorter.map(sortInfo => {
+        if(uniqueKeys.includes(sortInfo['columnKey'])){
+
+        }else{
+          filteredSorter.push(sortInfo);
+          uniqueKeys.push(sortInfo['columnKey']);
+        }
+      });
+      filteredSorter.map(sortInfo => {
+        let sortOrder = sortInfo['order'] === 'ascend' ? 'asc' : 'desc';
+        this.state.sort_by = this.state.sort_by.filter(keyPair => keyPair['key'] !== sortInfo['columnKey']);
+        this.state.sort_by.push({ key: sortInfo['columnKey'], value: sortOrder });
+      })
+    }
+
+    if (this.props.advancedSearchBody) {
+      this.populateGridData(this.props.advancedSearchBody);
+    } else {
+      this.populateGridData();
+    }
+  };
+
+  onMultiSortToggle = (isMultiSortOn: boolean) => {
+    console.log("is Multi sort on ", isMultiSortOn);
+    this.state.sort_by = Array();
+    this.state.gridSingleSortInfo = null;
+    this.state.gridMultiSortedInfo = [];
+    this.state.isGridMultiSorted = isMultiSortOn;
+    this.state.isGridSingleSorted = false;
+
+    if (this.props.advancedSearchBody) {
+      this.populateGridData(this.props.advancedSearchBody);
+    } else {
+      this.populateGridData();
+    }
+  };
+  onPageSize = pageSize => {
+    console.log("Page size load");
+    this.state.limit = pageSize;
+    if (this.props.advancedSearchBody) {
+      this.populateGridData(this.props.advancedSearchBody);
+    } else {
+      this.populateGridData();
+    }
+  };
+  onGridPageChangeHandler = (pageNumber: any) => {
+    console.log("Page change load");
+    this.state.index = (pageNumber - 1) * this.state.limit;
+    if (this.props.advancedSearchBody) {
+      this.populateGridData(this.props.advancedSearchBody);
+    } else {
+      this.populateGridData();
+    }
+  };
+  onClearFilterHandler = () => {
+    this.state.filter = Array();
+    if (this.props.advancedSearchBody) {
+      this.populateGridData(this.props.advancedSearchBody);
+    } else {
+      this.populateGridData();
+    }
+  };
+
   populateGridData = (searchBody = null) => {
     if (this.state.selectedCriteria && this.state.selectedCriteria.length > 0) {
       let apiDetails = {};
@@ -116,8 +281,8 @@ class TierRemove extends React.Component<any, tabsState> {
         commonConstants.TYPE_REMOVE;
       apiDetails["keyVals"] = [
         { key: commonConstants.KEY_ENTITY_ID, value: this.props?.formulary_id },
-        { key: commonConstants.KEY_INDEX, value: 0 },
-        { key: commonConstants.KEY_LIMIT, value: 10 },
+        { key: commonConstants.KEY_INDEX, value: this.state.index },
+        { key: commonConstants.KEY_LIMIT, value: this.state.limit },
       ];
       apiDetails["messageBody"] = {};
       if (
@@ -136,10 +301,27 @@ class TierRemove extends React.Component<any, tabsState> {
         );
       }
 
+      apiDetails['messageBody']['filter'] = this.state.filter;
+
+      if (this.state.sort_by && this.state.sort_by.length > 0) {
+        let keys = Array();
+        let values = Array();
+
+        this.state.sort_by.map(keyPair => {
+          keys.push(keyPair['key']);
+          values.push(keyPair['value']);
+        });
+
+        apiDetails['messageBody']['sort_by'] = keys;
+        apiDetails['messageBody']['sort_order'] = values;
+      }
+
+      const thisRef = this;
       const drugGridData = this.props
         .postTierApplyInfo(apiDetails)
         .then((json) => {
           //debugger;
+          if(json.payload && json.payload.result){
           let tmpData = json.payload.result;
           var data: any[] = [];
           let count = 1;
@@ -149,25 +331,29 @@ class TierRemove extends React.Component<any, tabsState> {
             let gridItem = {};
             gridItem["id"] = count;
             gridItem["key"] = count;
-            gridItem["tier"] = element.tier_value;
-            gridItem["fileType"] = element.file_type
+            gridItem["tier_value"] = element.tier_value;
+            gridItem["file_type"] = element.file_type
               ? "" + element.file_type
               : "";
-            gridItem["dataSource"] = element.data_source
+            gridItem["data_source"] = element.data_source
               ? "" + element.data_source
               : "";
-            gridItem["labelName"] = element.drug_label_name
+            gridItem["drug_label_name"] = element.drug_label_name
               ? "" + element.drug_label_name
               : "";
             gridItem["ndc"] = "";
-            gridItem["rxcui"] = element.rxcui ? "" + element.rxcui : "";
-            gridItem["gpi"] = element.generic_product_identifier
+            if (thisRef.props.lobCode === 'MCR') {
+              gridItem["rxcui"] = element.rxcui ? "" + element.rxcui : "";
+            } else {
+              gridItem["drug_descriptor_identifier"] = element.drug_descriptor_identifier ? "" + element.drug_descriptor_identifier : "";
+            }
+            gridItem["generic_product_identifier"] = element.generic_product_identifier
               ? "" + element.generic_product_identifier
               : "";
-            gridItem["trademark"] = element.trademark_code
+            gridItem["trademark_code"] = element.trademark_code
               ? "" + element.trademark_code
               : "";
-            gridItem["databaseCategory"] = element.database_category
+            gridItem["database_category"] = element.database_category
               ? "" + element.database_category
               : "";
             count++;
@@ -176,8 +362,16 @@ class TierRemove extends React.Component<any, tabsState> {
           this.setState({
             drugData: data,
             drugGridData: gridData,
+            dataCount: json.payload.count,
           });
-        });
+        }else{
+          this.setState({
+            drugData: Array(),
+            drugGridData: Array(),
+            dataCount: 0,
+          });
+        }
+      });
     }
   };
 
@@ -265,7 +459,77 @@ class TierRemove extends React.Component<any, tabsState> {
           : this.state.drugData[tierId - 1]["drug_id"]
       );
     }
+    console.log('Selected drugs:'+JSON.stringify(this.state.selectedDrugs));
   };
+
+  rowSelectionChangeFromCell = (
+    key: string,
+    selectedRow: any,
+    isSelected: boolean
+  ) => {
+    console.log("data row ", selectedRow, isSelected, selectedRow["isDisabled"]);
+    if (!selectedRow["isDisabled"]) {
+      if (isSelected) {
+        const data = this.state.drugGridData.map((d: any) => {
+          if (d.key === selectedRow.key) {
+            d["isChecked"] = true;
+            d["rowStyle"] = "table-row--red-font";
+          }
+          // else d["isChecked"] = false;
+          return d;
+        });
+
+        if (!this.state.selectedRowKeys.includes(selectedRow.key)) {
+          this.state.selectedRowKeys.push(selectedRow.key);
+        }
+        this.onSelectedTableRowChanged(this.state.selectedRowKeys);
+
+        this.setState({ drugGridData: data });
+      } else {
+        const data = this.state.drugGridData.map((d: any) => {
+          if (d.key === selectedRow.key) {
+            d["isChecked"] = false;
+            if (d["rowStyle"])
+              delete d["rowStyle"];
+          }
+          // else d["isChecked"] = false;
+          return d;
+        });
+
+        this.state.selectedRowKeys = this.state.selectedRowKeys.filter(rowKey => rowKey !== selectedRow.key);
+        console.log('Selected row keys:'+JSON.stringify(this.state.selectedRowKeys));
+        this.onSelectedTableRowChanged(this.state.selectedRowKeys);
+
+        this.setState({
+          drugGridData: data
+        });
+      }
+    }
+  };
+
+  onSelectAllRows = (isSelected: boolean) => {
+    const selectedRowKeys: number[] = [];
+    this.state.selectedRowKeys = Array();
+    const data = this.state.drugGridData.map((d: any) => {
+      if (!d["isDisabled"]) {
+        d["isChecked"] = isSelected;
+        if (isSelected) {
+          selectedRowKeys.push(d["key"]);
+          this.state.selectedRowKeys.push(d["key"]);
+          d["rowStyle"] = "table-row--red-font";
+        } else {
+          if (d["rowStyle"])
+            delete d["rowStyle"]
+        }
+      }
+
+      // else d["isSelected"] = false;
+      return d;
+    });
+    this.onSelectedTableRowChanged(selectedRowKeys);
+    this.setState({ drugGridData: data });
+  };
+
 
   fileTypeDropDownSelectHandler = (value, event) => {
     let fileType = event.value.toString().trim();
@@ -289,7 +553,11 @@ class TierRemove extends React.Component<any, tabsState> {
     this.setState({ tierGridContainer: true });
     this.state.drugData = [];
     this.state.drugGridData = [];
-    this.populateGridData();
+    if (this.props.advancedSearchBody) {
+      this.populateGridData(this.props.advancedSearchBody);
+    } else {
+      this.populateGridData();
+    }
   };
   advanceSearchClickHandler = (event) => {
     event.stopPropagation();
@@ -317,6 +585,10 @@ class TierRemove extends React.Component<any, tabsState> {
         key: "tierName",
       },
     ];
+    let gridColumns = this.props.lobCode === 'MCR' ? tierColumns() : tierColumnsNonMcr();
+    if (this.state.hiddenColumns.length > 0) {
+      gridColumns = gridColumns.filter(key => !this.state.hiddenColumns.includes(key));
+    }
     return (
       <>
         {!this.props.configureSwitch && (
@@ -349,7 +621,7 @@ class TierRemove extends React.Component<any, tabsState> {
         {this.state.tierGridContainer && !this.props.configureSwitch && (
           <div className="select-drug-from-table">
             <div className="bordered white-bg">
-              <div className="header space-between pr-10">
+              <div className="header remove-btn-wrapper-right pr-10">
                 <div className="button-wrapper">
                   <Button
                     className="Button normal"
@@ -365,22 +637,36 @@ class TierRemove extends React.Component<any, tabsState> {
                   isPinningEnabled={false}
                   enableSearch={false}
                   enableColumnDrag
-                  onSearch={() => {}}
+                  settingsWidth={50}
+                  onSearch={() => { }}
                   fixedColumnKeys={[]}
                   pagintionPosition="topRight"
                   gridName="TIER"
-                  enableSettings={false}
-                  columns={tierColumns()}
+                  enableSettings
+                  columns={gridColumns}
                   scroll={{ x: 2000, y: 377 }}
                   isFetchingData={false}
                   enableResizingOfColumns
                   data={this.state.drugGridData}
-                  rowSelection={{
-                    columnWidth: 50,
-                    fixed: true,
-                    type: "checkbox",
-                    onChange: this.onSelectedTableRowChanged,
-                  }}
+                  rowSelectionChangeFromCell={this.rowSelectionChangeFromCell}
+                  onSelectAllRows={this.onSelectAllRows}
+                  customSettingIcon={"FILL-DOT"}
+                  totalRowsCount={this.state.dataCount}
+                  getPerPageItemSize={this.onPageSize}
+                  onGridPageChangeHandler={this.onGridPageChangeHandler}
+                  clearFilterHandler={this.onClearFilterHandler}
+                  applySort={this.onApplySortHandler}
+                  isSingleSorted={this.state.isGridSingleSorted}
+                  sortedInfo={this.state.gridSingleSortInfo}
+                  applyMultiSort={this.applyMultiSortHandler}
+                  isMultiSorted={this.state.isGridMultiSorted}
+                  multiSortedInfo={this.state.gridMultiSortedInfo}
+                  onMultiSortToggle={this.onMultiSortToggle}
+                  getColumnSettings={this.onSettingsIconHandler}
+                  pageSize={this.state.limit}
+                  selectedCurrentPage={
+                    this.state.index / this.state.limit + 1
+                  }
                 />
               </div>
             </div>
