@@ -5,6 +5,7 @@ import { Grid } from "@material-ui/core";
 import FrxMiniTabs from "../../../../shared/FrxMiniTabs/FrxMiniTabs";
 import Button from "../../../../shared/Frx-components/button/Button";
 import FrxDrugGridContainer from "../../../../shared/FrxGrid/FrxDrugGridContainer";
+import FrxGridContainer from "../../../../shared/FrxGrid/FrxGridContainer"; // "../../../shared/FrxGrid/FrxGridContainer";
 import FrxDrugGrid from "../../../../shared/FrxGrid/FrxDrugGrid";
 import {
   getTapList,
@@ -173,40 +174,60 @@ class Tier extends React.Component<any, tabsState> {
     console.log(quantityAndFillLimitObject);
 
     if (Object.keys(quantityAndFillLimitObject).length > 0) {
+      const {
+        quantity,
+        days,
+        periodOfTime,
+        fillsAllowed,
+        fillLimitPeriodOfTime,
+      } = quantityAndFillLimitObject;
+
       if (
-        quantityAndFillLimitObject.quantity == "" ||
-        quantityAndFillLimitObject.quantity == undefined
+        quantity != "" ||
+        days !== "" ||
+        periodOfTime != "" ||
+        fillsAllowed !== "" ||
+        fillLimitPeriodOfTime != ""
       ) {
-        tempErr = {
-          quantity: true,
-        };
-        this.setState({ errorObject: tempErr });
-        return false;
-      } else if (
-        quantityAndFillLimitObject.days == "" ||
-        quantityAndFillLimitObject.days == undefined
-      ) {
-        tempErr = {
-          days: true,
-        };
-        this.setState({ errorObject: tempErr });
-        return false;
-      } else {
-        tempErr = {
-          quantity: false,
-          days: false,
-        };
-        this.setState({ errorObject: tempErr });
         return true;
+      } else {
+        return false;
       }
-    } else {
-      tempErr = {
-        quantity: true,
-        days: true,
-      };
-      this.setState({ errorObject: tempErr });
-      return false;
+      //   if (
+      //     quantityAndFillLimitObject.quantity == "" ||
+      //     quantityAndFillLimitObject.quantity == undefined
+      //   ) {
+      //     tempErr = {
+      //       quantity: true,
+      //     };
+      //     this.setState({ errorObject: tempErr });
+      //     return false;
+      //   } else if (
+      //     quantityAndFillLimitObject.days == "" ||
+      //     quantityAndFillLimitObject.days == undefined
+      //   ) {
+      //     tempErr = {
+      //       days: true,
+      //     };
+      //     this.setState({ errorObject: tempErr });
+      //     return false;
+      //   } else {
+      //     tempErr = {
+      //       quantity: false,
+      //       days: false,
+      //     };
+      //     this.setState({ errorObject: tempErr });
+      //     return true;
+      //   }
+      // } else {
+      //   tempErr = {
+      //     quantity: true,
+      //     days: true,
+      //   };
+      //   this.setState({ errorObject: tempErr });
+      //   return false;
     }
+    return false;
   };
 
   showDrugGrid = (searchBody = null) => {
@@ -242,6 +263,14 @@ class Tier extends React.Component<any, tabsState> {
       // }
     });
     // }
+  };
+
+  goToSettingSection = () => {
+    window.scrollTo({
+      top: 420,
+      left: 0,
+      behavior: "smooth",
+    });
   };
 
   loadGridData(json: any) {
@@ -596,6 +625,7 @@ class Tier extends React.Component<any, tabsState> {
 
           this.props.setAdditionalCriteria(payload);
           // this.setState({ quantityAndFillLimitObject: {} });
+          this.goToSettingSection();
           this.showDrugGrid();
 
           this.props
@@ -604,6 +634,7 @@ class Tier extends React.Component<any, tabsState> {
               console.log("[new ql summary]", json);
               this.initailizeQlSummary(json);
             });
+          // window.scrollTo(0, 50);
         } else {
           showMessage("Failure", "error");
         }
@@ -653,7 +684,7 @@ class Tier extends React.Component<any, tabsState> {
       ) {
         this.showDrugGrid();
       } else {
-        showMessage("Please fill required field", "error");
+        showMessage("Please add the setting", "error");
       }
     } else {
       if (this.state.selectedCriteria.length == 0) {
@@ -663,8 +694,21 @@ class Tier extends React.Component<any, tabsState> {
       }
     }
   };
-
+  componentDidUpdate = (prevState) => {
+    // debugger;
+    // if (
+    //   this.state.drugGridContainer &&
+    //   Object.keys(this.state.quantityAndFillLimitObject).length > 0
+    // ) {
+    //   window.scrollTo({
+    //     top: 420,
+    //     left: 0,
+    //     behavior: "smooth",
+    //   });
+    // }
+  };
   UNSAFE_componentWillReceiveProps(nextProps) {
+    debugger;
     if (nextProps.switchState) {
       this.showDrugGrid({ ...nextProps.advancedSearchBody });
       this.setState({
@@ -825,6 +869,29 @@ class Tier extends React.Component<any, tabsState> {
                   </div>
                   {/* )} */}
                   <div className="tier-grid-container">
+                    {/* <FrxGridContainer
+                      enableSearch={false}
+                      enableColumnDrag={false}
+                      onSearch={() => {
+                        console.log();
+                      }} //this.handleSearch}
+                      fixedColumnKeys={[]}
+                      pagintionPosition="topRight"
+                      gridName=""
+                      enableSettings={true}
+                      isFetchingData={this.state.isFetchingData}
+                      columns={QlColumns()} //{this.state.columns}
+                      isPinningEnabled={false}
+                      scroll={{ x: 1300, y: 377 }}
+                      enableResizingOfColumns={false}
+                      data={this.state.drugGridData}
+                      isCustomCheckboxEnabled={true}
+                      // handleCustomRowSelectionChange={this.rowSelectionChange}
+                      settingsTriDotClick={() => {
+                        console.log("object");
+                      }}
+                    /> */}
+
                     <FrxDrugGridContainer
                       isPinningEnabled={false}
                       enableSearch={false}

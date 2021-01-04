@@ -29,9 +29,7 @@ class Replace extends Component<any, any> {
               {/* <DropDown options={[1, 2, 3]} /> */}
               <div>
                 <Input
-                  className={`formulary-list-search ${
-                    this.props.errors?.quantity ? "error_class" : null
-                  }`}
+                  className={`formulary-list-search `}
                   // placeholder="Search"
 
                   type="number"
@@ -51,9 +49,7 @@ class Replace extends Component<any, any> {
               {/* <DropDown options={[1, 2, 3]} /> */}
               <div>
                 <Input
-                  className={`formulary-list-search ${
-                    this.props.errors?.days ? "error_class" : null
-                  }`}
+                  className={`formulary-list-search `}
                   // placeholder="Search"
                   type="number"
                   name="days"
