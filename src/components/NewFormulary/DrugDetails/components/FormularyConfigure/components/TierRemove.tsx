@@ -34,6 +34,10 @@ interface tabsState {
   hiddenColumns: any[];
   selectedRowKeys: any[];
   dataCount: any;
+  gridSingleSortInfo: any;
+  isGridSingleSorted: boolean;
+  gridMultiSortedInfo: any[];
+  isGridMultiSorted: boolean;
 }
 
 const mapStateToProps = (state) => {
@@ -86,6 +90,10 @@ class TierRemove extends React.Component<any, tabsState> {
     hiddenColumns: Array(),
     dataCount: 0,
     selectedRowKeys: Array(),
+    gridSingleSortInfo: null,
+    isGridSingleSorted: false,
+    gridMultiSortedInfo: [],
+    isGridMultiSorted: false,
   };
 
   constructor(props) {
@@ -127,7 +135,7 @@ class TierRemove extends React.Component<any, tabsState> {
   };
   onApplyFilterHandler = filters => {
     console.log("filtering from be:" + (JSON.stringify(filters)));
-    this.state.filter = Array();
+    //this.state.filter = Array();
     const fetchedKeys = Object.keys(filters);
     if (fetchedKeys && fetchedKeys.length > 0) {
       fetchedKeys.map(fetchedProps => {
@@ -167,7 +175,7 @@ class TierRemove extends React.Component<any, tabsState> {
    * @param key the column key
    * @param order the sorting order : 'ascend' | 'descend'
    */
-  onApplySortHandler = (key, order) => {
+  onApplySortHandler = (key, order, sortedInfo) => {
     console.log("sort details ", key, order);
     this.state.sort_by = Array();
     if (order) {
@@ -175,6 +183,56 @@ class TierRemove extends React.Component<any, tabsState> {
       this.state.sort_by = this.state.sort_by.filter(keyPair => keyPair['key'] !== key);
       this.state.sort_by.push({ key: key, value: sortOrder });
     }
+    this.state.gridSingleSortInfo = sortedInfo;
+    this.state.gridMultiSortedInfo = [];
+    this.state.isGridMultiSorted = false;
+    this.state.isGridSingleSorted = true;
+    if (this.props.advancedSearchBody) {
+      this.populateGridData(this.props.advancedSearchBody);
+    } else {
+      this.populateGridData();
+    }
+  };
+  applyMultiSortHandler = (sorter, multiSortedInfo) => {
+    console.log('Multisort info:'+JSON.stringify(sorter));
+    this.state.gridSingleSortInfo = null;
+    this.state.gridMultiSortedInfo = multiSortedInfo;
+    this.state.isGridMultiSorted = true;
+    this.state.isGridSingleSorted = false;
+
+    if (sorter && sorter.length > 0) {
+      let uniqueKeys = Array();
+      let filteredSorter = Array();
+      sorter.map(sortInfo => {
+        if(uniqueKeys.includes(sortInfo['columnKey'])){
+
+        }else{
+          filteredSorter.push(sortInfo);
+          uniqueKeys.push(sortInfo['columnKey']);
+        }
+      });
+      filteredSorter.map(sortInfo => {
+        let sortOrder = sortInfo['order'] === 'ascend' ? 'asc' : 'desc';
+        this.state.sort_by = this.state.sort_by.filter(keyPair => keyPair['key'] !== sortInfo['columnKey']);
+        this.state.sort_by.push({ key: sortInfo['columnKey'], value: sortOrder });
+      })
+    }
+
+    if (this.props.advancedSearchBody) {
+      this.populateGridData(this.props.advancedSearchBody);
+    } else {
+      this.populateGridData();
+    }
+  };
+
+  onMultiSortToggle = (isMultiSortOn: boolean) => {
+    console.log("is Multi sort on ", isMultiSortOn);
+    this.state.sort_by = Array();
+    this.state.gridSingleSortInfo = null;
+    this.state.gridMultiSortedInfo = [];
+    this.state.isGridMultiSorted = isMultiSortOn;
+    this.state.isGridSingleSorted = false;
+
     if (this.props.advancedSearchBody) {
       this.populateGridData(this.props.advancedSearchBody);
     } else {
@@ -306,7 +364,14 @@ class TierRemove extends React.Component<any, tabsState> {
             drugGridData: gridData,
             dataCount: json.payload.count,
           });
-        }});
+        }else{
+          this.setState({
+            drugData: Array(),
+            drugGridData: Array(),
+            dataCount: 0,
+          });
+        }
+      });
     }
   };
 
@@ -590,8 +655,13 @@ class TierRemove extends React.Component<any, tabsState> {
                   getPerPageItemSize={this.onPageSize}
                   onGridPageChangeHandler={this.onGridPageChangeHandler}
                   clearFilterHandler={this.onClearFilterHandler}
-                  applyFilter={this.onApplyFilterHandler}
                   applySort={this.onApplySortHandler}
+                  isSingleSorted={this.state.isGridSingleSorted}
+                  sortedInfo={this.state.gridSingleSortInfo}
+                  applyMultiSort={this.applyMultiSortHandler}
+                  isMultiSorted={this.state.isGridMultiSorted}
+                  multiSortedInfo={this.state.gridMultiSortedInfo}
+                  onMultiSortToggle={this.onMultiSortToggle}
                   getColumnSettings={this.onSettingsIconHandler}
                   pageSize={this.state.limit}
                   selectedCurrentPage={
