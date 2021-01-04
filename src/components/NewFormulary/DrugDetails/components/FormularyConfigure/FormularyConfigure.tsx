@@ -93,8 +93,10 @@ class FormularyConfigure extends React.Component<any, any> {
       case 3:
         return <PaData />;
       case 4:
-        return <QL />;
+        return <StepTherpayDetails />;
       case 5:
+        return <QL />;
+      case 6:
         return <DrugDetails />;
     }
   };
