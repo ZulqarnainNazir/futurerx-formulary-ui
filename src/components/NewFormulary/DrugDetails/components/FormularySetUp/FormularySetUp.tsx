@@ -557,9 +557,9 @@ class FormularySetUp extends React.Component<any, any> {
       if (this.state.generalInformation.effective_date === "") {
         msg.push("Formulary Effective Date is required.");
       }
-      // if (this.state.generalInformation.service_year === "") {
-      //   msg.push("Formulary Service year is required.");
-      // }
+      if (this.state.generalInformation.service_year === "") {
+        msg.push("Formulary Service year is required.");
+      }
       // if(this.tierCheck()){
       //   msg.push("Formulary Service year is required.");
       // }

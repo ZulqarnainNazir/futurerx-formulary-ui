@@ -1,8 +1,8 @@
-import React, {useState} from "react";
+import React, { useState } from "react";
 import "./DropDown.scss";
-import {Select} from "antd";
+import { Select } from "antd";
 
-const {Option} = Select;
+const { Option } = Select;
 
 export default function DropDown(props: any) {
   const [DropdownCaret, setDropdownCaret] = useState(false);
@@ -18,7 +18,7 @@ export default function DropDown(props: any) {
         suffixIcon={
           <>
             <svg
-              style={{display: DropdownCaret ? "none" : "block"}}
+              style={{ display: DropdownCaret ? "none" : "block" }}
               width="6"
               height="3"
               viewBox="0 0 6 3"
@@ -31,7 +31,7 @@ export default function DropDown(props: any) {
               />
             </svg>
             <svg
-              style={{display: DropdownCaret ? "block" : "none"}}
+              style={{ display: DropdownCaret ? "block" : "none" }}
               width="6"
               height="3"
               viewBox="0 0 6 3"
@@ -65,8 +65,8 @@ export default function DropDown(props: any) {
         {/* <option>{props.option || "select"}</option> */}
         {props.options.map((opt, ind) => (
           <Option key={ind} value={opt[props.valueProp]}>
-          {opt[props.dispProp]}
-        </Option>
+            {opt[props.dispProp]}
+          </Option>
         ))}
       </Select>
     </div>

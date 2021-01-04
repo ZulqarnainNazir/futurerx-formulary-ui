@@ -24,6 +24,7 @@ import PlanInformation from "../components/NewFormulary/EntityOwnership/PlanInfo
 import PlanInformationConfiguration from "../components/NewFormulary/EntityOwnership/PlanIfonmationConfiguaration/PlanInformationConfiguration";
 import SetupFormularyGrid from "../components/SetupFormularyGrid/SetupFormularyGrid";
 import MassMaintenanceTier from "../components/NewFormulary/MassMaintenance/configure/MassMaintenanceTier";
+import FormularyRoot from "../components/NewFormulary/FormularyRoot";
 
 class MainRouter extends React.Component {
   render() {
@@ -31,7 +32,7 @@ class MainRouter extends React.Component {
       <React.Fragment>
         <NavBar />
         <Switch>
-          <Route exact path="/" render={(props) => <Formulary {...props} />} />
+          <Route exact path="/" render={(props) => <FormularyRoot {...props} />} />
           <Route
             exact
             path="/entityownership"

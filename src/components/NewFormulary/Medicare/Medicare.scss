@@ -1,4 +1,24 @@
 .formulary-grid {
+  .status-field-block__container {
+    height: 22px;
+    width: 50px;
+  }
+
+  .status-field-block__text {   
+    font-size: 12px;
+  }
+
+  .status-field-pill__container {
+    width: 85px;
+  }
+  .status-field-pill__text {
+    text-transform: capitalize;
+  }
+
+  .status-field-block__variant-5--fill{
+    width: fit-content !important;
+    padding: 5px !important;
+  }
   margin-top: 30px;
   .inner-container{
     .frx-loader{

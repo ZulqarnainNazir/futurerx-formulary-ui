@@ -18,29 +18,33 @@ import Button from "../../../../../../shared/Frx-components/button/Button";
 import { TabInfo } from "../../../../../../../models/tab.model";
 import PaReplace from "./PaReplace";
 import PaRemove from "./PaRemove";
-import { getPaSummary,getPaGrouptDescriptions, getPaTypes, getDrugLists } from "../../../../../../../redux/slices/formulary/pa/paActionCreation";
+import {
+  getPaSummary,
+  getPaGrouptDescriptions,
+  getPaTypes,
+  getDrugLists,
+} from "../../../../../../../redux/slices/formulary/pa/paActionCreation";
 import "../Tier.scss";
 import "./PA.scss";
 
 function mapDispatchToProps(dispatch) {
   return {
-    getPaSummary:(a)=>dispatch(getPaSummary(a)),
-    getPaGrouptDescriptions:(a)=>dispatch(getPaGrouptDescriptions(a)),
-    getPaTypes:(a)=>dispatch(getPaTypes(a)),
-    getDrugLists:(a)=>dispatch(getDrugLists(a)),
+    getPaSummary: (a) => dispatch(getPaSummary(a)),
+    getPaGrouptDescriptions: (a) => dispatch(getPaGrouptDescriptions(a)),
+    getPaTypes: (a) => dispatch(getPaTypes(a)),
+    getDrugLists: (a) => dispatch(getDrugLists(a)),
   };
 }
-function mapStateToProps(state){
+function mapStateToProps(state) {
   return {
     current_formulary: state.application.formulary,
     paData: state.paReducer.data,
     formulary_lob_id: state?.application?.formulary_lob_id,
     configureSwitch: state.switchReducer.configureSwitch,
-  }
+  };
 }
 
-
-class PA extends React.Component<any, any>  {
+class PA extends React.Component<any, any> {
   state = {
     tierGridContainer: false,
     miniTabs: getMiniTabs(),
@@ -48,9 +52,13 @@ class PA extends React.Component<any, any>  {
     activeMiniTabIndex: 0,
     activeTabIndex: 0,
     tabs: [
-      { id: 1, text: "Replace", disabled:false },
-      { id: 2, text: "Append", disabled:( this.props.formulary_lob_id==1?true:false) },
-      { id: 3, text: "Remove", disabled:false },
+      { id: 1, text: "Replace", disabled: false },
+      {
+        id: 2,
+        text: "Append",
+        disabled: this.props.formulary_lob_id == 1 ? true : false,
+      },
+      { id: 3, text: "Remove", disabled: false },
     ],
     panelGridTitle: [
       "Type",
@@ -61,9 +69,7 @@ class PA extends React.Component<any, any>  {
       "Added Drugs",
       "Removed Drugs",
     ],
-    panelGridValue: [
-     
-    ],
+    panelGridValue: [],
     paList: [],
   };
 
@@ -83,7 +89,7 @@ class PA extends React.Component<any, any>  {
     const activeTabIndex = this.state.activeTabIndex;
     switch (activeTabIndex) {
       case 0:
-        return <PaReplace tab_type="replace"/>;
+        return <PaReplace tab_type="replace" />;
         break;
       case 1:
         switch (this.props.formulary_lob_id) {
@@ -91,8 +97,8 @@ class PA extends React.Component<any, any>  {
             return "";
             break;
           case 4:
-              return <PaReplace tab_type="append"/>;
-              break;
+            return <PaReplace tab_type="append" />;
+            break;
           default:
             break;
         }
@@ -105,84 +111,92 @@ class PA extends React.Component<any, any>  {
 
   componentWillReceiveProps(nextProps) {
     debugger;
-    console.log('TIER: componentWillReceiveProps', nextProps);
-    
-    if (nextProps.configureSwitch){
+    console.log("TIER: componentWillReceiveProps", nextProps);
 
-      this.setState({tabs:[
-        { id: 1, text: "Replace", disabled:true },
-        { id: 2, text: "Append", disabled:true },
-        { id: 3, text: "Remove", disabled:true },
-      ],activeTabIndex:0});
-    }else{
-      this.setState({tabs:[
-        { id: 1, text: "Replace", disabled:false },
-        { id: 2, text: "Append", disabled:( this.props.formulary_lob_id==1?true:false) },
-        { id: 3, text: "Remove", disabled:false },
-      ]});
+    if (nextProps.configureSwitch) {
+      this.setState({
+        tabs: [
+          { id: 1, text: "Replace", disabled: true },
+          { id: 2, text: "Append", disabled: true },
+          { id: 3, text: "Remove", disabled: true },
+        ],
+        activeTabIndex: 0,
+      });
+    } else {
+      this.setState({
+        tabs: [
+          { id: 1, text: "Replace", disabled: false },
+          {
+            id: 2,
+            text: "Append",
+            disabled: this.props.formulary_lob_id == 1 ? true : false,
+          },
+          { id: 3, text: "Remove", disabled: false },
+        ],
+      });
     }
     let tmpData = nextProps.paData;
     if (tmpData && Array.isArray(tmpData) && tmpData.length > 0) {
       var tierOption: any[] = [];
       var result = tmpData.map(function (el) {
-        var curRow=[ el["pa_type_name"],
-        el["total_group_description_count"],
-        el["added_group_description_count"],
-        el["removed_group_description_count"],
-        el["total_drug_count"],
-        el["added_drug_count"],
-        el["removed_drug_count"]
-      ]
+        var curRow = [
+          el["pa_type_name"],
+          el["total_group_description_count"],
+          el["added_group_description_count"],
+          el["removed_group_description_count"],
+          el["total_drug_count"],
+          el["added_drug_count"],
+          el["removed_drug_count"],
+        ];
         return curRow;
-      })
+      });
       // if (tierOption.length > 0) {
       //   let lastTier = tierOption[tierOption.length - 1];
       //   this.state.newTierId = lastTier.id_tier + 1;
       // }
       this.setState({
-       // tierDefinationColumns: TierColumns,
+        // tierDefinationColumns: TierColumns,
         panelGridValue: result,
         //tierOption: tierOption
-      })
+      });
     }
   }
 
   componentDidMount() {
-    
-    this.props.getPaSummary(this.props.current_formulary.id_formulary).then((json => {
-      //
+    this.props
+      .getPaSummary(this.props.current_formulary.id_formulary)
+      .then((json) => {
+        //
 
-      let tmpData = json.payload && json.payload.result?json.payload.result:[];
-      
-      var rows = tmpData.map(function(el) {
-        var curRow=[ el["pa_type_name"],
-        el["total_group_description_count"],
-        el["added_group_description_count"],
-        el["removed_group_description_count"],
-        el["total_drug_count"],
-        el["added_drug_count"],
-        el["removed_drug_count"]
-      ]
-        return curRow;
-      })
-      
-      console.log(rows);
-      this.setState({
-        panelGridValue: rows,
-      })
-    }))
+        let tmpData =
+          json.payload && json.payload.result ? json.payload.result : [];
 
-    this.props.getDrugLists("0").then((json => {
+        var rows = tmpData.map(function (el) {
+          var curRow = [
+            el["pa_type_name"],
+            el["total_group_description_count"],
+            el["added_group_description_count"],
+            el["removed_group_description_count"],
+            el["total_drug_count"],
+            el["added_drug_count"],
+            el["removed_drug_count"],
+          ];
+          return curRow;
+        });
+
+        console.log(rows);
+        this.setState({
+          panelGridValue: rows,
+        });
+      });
+
+    this.props.getDrugLists("0").then((json) => {
       //
       let tmpData = json.payload.data;
       this.setState({
         paList: tmpData,
-      })
-    }))
-    
-
-
-   
+      });
+    });
   }
   render() {
     return (
@@ -226,8 +240,12 @@ class PA extends React.Component<any, any>  {
                         </div>
                         <div>
                           <div className="PA-list">
-                            <span>LIST</span>
-                            <DropDown options={this.state.paList} valueProp="text" dispProp="text"/>
+                            <span className="list-label">LIST</span>
+                            <DropDown
+                              options={this.state.paList}
+                              valueProp="text"
+                              dispProp="text"
+                            />
                           </div>
                         </div>
                       </div>
@@ -246,10 +264,4 @@ class PA extends React.Component<any, any>  {
   }
 }
 
-
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(PA);
-
-
+export default connect(mapStateToProps, mapDispatchToProps)(PA);
