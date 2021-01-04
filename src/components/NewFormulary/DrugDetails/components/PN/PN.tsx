@@ -223,7 +223,7 @@ class DrugDetailPN extends React.Component<any, any> {
           ) {
             showMessage("Success", "success");
             this.getPNSummary();
-            // this.getPNDrugsList();
+            this.getPNDrugsList();
           } else {
             showMessage("Failure", "error");
           }
@@ -256,7 +256,8 @@ class DrugDetailPN extends React.Component<any, any> {
           ) {
             showMessage("Success", "success");
             this.getPNSummary();
-            // this.getPNDrugsList();
+            this.getPNCriteriaList(this.state.pnRemoveSettingsStatus.covered);
+            this.getPNDrugsList();
           } else {
             console.log("------REMOVE FAILED-------");
             showMessage("Failure", "error");
@@ -541,7 +542,7 @@ class DrugDetailPN extends React.Component<any, any> {
       return tab;
     });
 
-    this.refreshSelections();
+    this.refreshSelections({ activeTabIndex });
 
     // if (activeTabIndex === 2) {
     //   this.getPNCriteriaList(true);
@@ -620,10 +621,10 @@ class DrugDetailPN extends React.Component<any, any> {
     this.setState({ pnSettingsStatus, showGrid: false });
   };
 
-  refreshSelections = () => {
-    if(this.state.activeTabIndex === 0 || this.state.activeTabIndex === 1) {
+  refreshSelections = ({ activeTabIndex = 0 }) => {
+    if(activeTabIndex === 0 || activeTabIndex === 1) {
       // this.getPOSSettings();
-    } else if (this.state.activeTabIndex === 2) {
+    } else if (activeTabIndex === 2) {
       this.getPNCriteriaList(true);
     }
   }
