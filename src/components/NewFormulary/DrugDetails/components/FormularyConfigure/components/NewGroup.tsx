@@ -174,10 +174,7 @@ function NewGroup(props: any) {
     }
     setShowHeader(0)
     setErrorClass('');
-
-
     props.getDrugLists(props.client_id).then((json) => {
-      //debugger;
       let tmp_list:any = [];
       json?.payload?.data.map(obj => {
           let tmp_obj ={
