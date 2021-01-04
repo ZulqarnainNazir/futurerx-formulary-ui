@@ -51,11 +51,6 @@ class AdditionalCriteriaContainer extends Component<
   };
 
   componentDidMount() {
-    // if (this.props.additionalCriteriaBody <= 0)
-    //   this.setState({
-    //     isNewAdditionalCriteria: true,
-    //   });
-
     if (this.props.additionalCriteriaBody)
       this.setState({
         additionalCriteriaArray: this.props.additionalCriteriaBody,
@@ -92,7 +87,6 @@ class AdditionalCriteriaContainer extends Component<
   };
 
   handleChildDataSave = (additionalCriteria) => {
-    console.log(additionalCriteria);
     this.props.handleChildDataSave(additionalCriteria);
   };
 

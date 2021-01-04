@@ -103,7 +103,7 @@ class FrxDrugGridContainer extends Component<FrxDrugGridContainerProps<any>> {
    * TODO: fix a type for the searchObject
    * @author Deepak_T
    */
-  handleSearch = searchObject => {
+  handleSearch = (searchObject) => {
     this.props.onSearch(searchObject);
   };
 
@@ -130,7 +130,7 @@ class FrxDrugGridContainer extends Component<FrxDrugGridContainerProps<any>> {
           enableColumnDrag={this.props.enableColumnDrag}
           loading={{
             spinning: this.props.isFetchingData,
-            indicator: <FrxLoader />
+            indicator: <FrxLoader />,
           }}
           customSettingIcon={this.props.customSettingIcon}
           hideMultiSort={this.props.hideMultiSort}
@@ -193,7 +193,7 @@ class FrxDrugGridContainer extends Component<FrxDrugGridContainerProps<any>> {
               this.props.expandable &&
               this.props.expandable.expandedRowClassName
                 ? this.props.expandable.expandedRowClassName
-                : undefined
+                : undefined,
           }}
         />
       </div>
