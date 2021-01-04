@@ -6,6 +6,8 @@ import FormularyDetailsContext from "../../../FormularyDetailsContext";
 import "./FormularyDetailsTop.scss";
 import { fetchFormularyHeader } from "../../../../../redux/slices/formulary/header/headerSlice";
 import { fetchSelectedFormulary } from "../../../../.././redux/slices/formulary/setup/setupSlice";
+import { setLocationHome } from "../../../../.././redux/slices/formulary/application/applicationSlice";
+
 import { createFormularyUsingClone } from "../../../../.././redux/slices/formulary/setup/setupService";
 import VersionHistoryPopup from "../FormularySetUp/components/VersionHistoryPopup/VersionHistoryPopup";
 import ClonePopup from "../FormularySetUp/components/ClonePopup/ClonePopup";
@@ -36,6 +38,7 @@ function mapDispatchToProps(dispatch) {
     fetchSelectedFormulary: (a) => dispatch(fetchSelectedFormulary(a)),
     fetchDesignOptions: (a) => dispatch(fetchDesignOptions(a)),
     fetchTierOptions: (a) => dispatch(fetchTierOptions(a)),
+    setLocationHome: (a) => dispatch(setLocationHome(a)),
   };
 }
 
@@ -95,9 +98,6 @@ class FormularyDetailsTop extends React.Component<any, any> {
     const formulary_id = this.props.formularyVersionList.find(
       (el) => el.value === e
     ).id_formulary;
-    // console.log(formulary_id)
-    // this.props.fetchSelectedFormulary(formulary_id);
-    // TODO
     this.externalInferfaceLoadFormulary(6, formulary_id);
   };
 
@@ -230,6 +230,48 @@ class FormularyDetailsTop extends React.Component<any, any> {
   // payload.formulary_info.effective_date = inew_effective_date;
   // payload.formulary_info.id_lob =  <GET from Store>
 
+  onFormularyCloneInfo = (cloneName, effectiveDate) => {
+    console.log("Formulary name:" + cloneName + " Date:" + effectiveDate);
+    this.onClosePopup();
+    this.handleCloneFormulary(cloneName, effectiveDate);
+  };
+
+  onCancel = () => {
+    this.onClosePopup();
+  };
+
+  handleCloneFormulary = async (cloneName, effectiveDate) => {
+    try {
+      if (this.props.currentFormulary) {
+        const payload: any = {};
+        payload.formulary_info = {};
+        payload.formulary_info.formulary_name = cloneName;
+        payload.formulary_info.effective_date = effectiveDate;
+        payload.formulary_info.id_lob = this.props.formularyLobId;
+
+        let newFormularyId = await createFormularyUsingClone(
+          this.props.currentFormulary.id_base_formulary,
+          payload
+        );
+        if (newFormularyId) {
+          showMessage("Cloned formulary Id:" + newFormularyId, "success");
+          this.externalInferfaceLoadFormulary(6, newFormularyId);
+        } else {
+          showMessage("Error: No response for formulary clone", "error");
+        }
+      }
+    } catch (error) {
+      console.log("***** clone - Error");
+      console.log(error);
+      showMessage("Error while cloning formulary", "error");
+    }
+  };
+
+  newVersionHandler = (id_formulary: number) => {
+    console.log("newVersionHandler ** " + id_formulary);
+    this.externalInferfaceLoadFormulary(6, id_formulary);
+  };
+
   //  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
   // TODO
   // Do not modify this...
@@ -279,42 +321,6 @@ class FormularyDetailsTop extends React.Component<any, any> {
   //   }
   //   this.props.fetchSubMthsOptions(2021);
   // }
-  onFormularyCloneInfo = (cloneName, effectiveDate) => {
-    console.log("Formulary name:" + cloneName + " Date:" + effectiveDate);
-    this.onClosePopup();
-    this.handleCloneFormulary(cloneName, effectiveDate);
-  };
-
-  onCancel = () => {
-    this.onClosePopup();
-  };
-
-  handleCloneFormulary = async (cloneName, effectiveDate) => {
-    try {
-      if (this.props.currentFormulary) {
-        const payload: any = {};
-        payload.formulary_info = {};
-        payload.formulary_info.formulary_name = cloneName;
-        payload.formulary_info.effective_date = effectiveDate;
-        payload.formulary_info.id_lob = this.props.formularyLobId;
-
-        let newFormularyId = await createFormularyUsingClone(
-          this.props.currentFormulary.id_base_formulary,
-          payload
-        );
-        if (newFormularyId) {
-          showMessage("Cloned formulary Id:" + newFormularyId, "success");
-          this.externalInferfaceLoadFormulary(6, newFormularyId);
-        } else {
-          showMessage("Error: No response for formulary clone", "error");
-        }
-      }
-    } catch (error) {
-      console.log("***** clone - Error");
-      console.log(error);
-      showMessage("Error while cloning formulary", "error");
-    }
-  };
 
   render() {
     let dropDown: any;
@@ -374,6 +380,7 @@ class FormularyDetailsTop extends React.Component<any, any> {
               <NewVersionPopup
                 currentFormulary={this.props.currentFormulary}
                 onCancel={this.onCancel}
+                newVersion={this.newVersionHandler}
               />
             )}
           </DialogPopup>
@@ -386,7 +393,10 @@ class FormularyDetailsTop extends React.Component<any, any> {
             <span
               className="color-blue"
               // onClick={FormularyDetailsCont.showDetailHandler}
-              onClick={() => window.location.reload()}
+              onClick={() => {
+                // window.location.reload();
+                this.props.setLocationHome(1);
+              }}
             >
               Formulary Grid
             </span>

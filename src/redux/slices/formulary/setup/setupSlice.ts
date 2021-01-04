@@ -11,8 +11,9 @@ import {
   createCreateVersion,
   archiveFormularies,
 } from "./setupService";
-import { setFullFormulary } from "./../application/applicationSlice";
+import { setFullFormulary, setLocationHome } from "./../application/applicationSlice";
 import { stat } from "fs";
+import { dispatch } from "d3";
 
 interface SetupState {
   formulary: Formulary | any;
@@ -161,6 +162,17 @@ const setup = createSlice({
       }
     },
     archiveFormulariesFailure: loadingFailed,
+
+    clearSetup(state, { payload }: PayloadAction<any>) {
+      console.log("***** CLEAR SETUP ");
+      state.mode = "";
+      state.formulary = null;
+      state.nameExist = false;
+      state.message = "";
+      state.messageType = "";
+      state.isLoading = false;
+      state.error = null;
+    },
   },
 });
 
@@ -290,6 +302,11 @@ export const initNewVersion = createAsyncThunk(
       console.log(resp);
       if (resp) {
         dispatch(createNewVersionSuccess(resp));
+        return {
+          id_formulary: resp?.data?.id_formulary,
+        };
+      } else {
+        return null;
       }
     } catch (err) {
       console.log("***** createNewVersion - Exe ");
@@ -310,6 +327,7 @@ export const initArchiveFormularies = createAsyncThunk(
       console.log(resp);
       if (resp) {
         dispatch(archiveFormulariesSuccess(resp));
+        dispatch(setLocationHome(2));
       }
     } catch (err) {
       console.log("***** initArchiveFormularies - Exe ");
@@ -338,6 +356,7 @@ export const {
   archiveFormulariesStart,
   archiveFormulariesSuccess,
   archiveFormulariesFailure,
+  clearSetup
 } = setup.actions;
 
 export default setup.reducer;
