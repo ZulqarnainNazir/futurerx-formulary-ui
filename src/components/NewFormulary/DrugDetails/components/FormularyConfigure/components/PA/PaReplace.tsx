@@ -24,6 +24,8 @@ import { ToastContainer } from "react-toastify";
 import "../Tier.scss";
 import "./PA.scss";
 import { setAdditionalCriteria } from "../../../../../../../redux/slices/formulary/advancedSearch/additionalCriteriaSlice";
+import PaGroupDescriptionManagement from "../PaGroupDescriptionManagement";
+import "./PaReplace.scss";
 
 // import AdvanceSearchContainer from "../../../../../NewAdvanceSearch/AdvanceSearchContainer";
 import {
@@ -98,6 +100,7 @@ class PaReplace extends React.Component<any, any> {
     isAdditionalCriteriaOpen: false,
     additionalCriteriaState: null,
     is_additional_criteria_defined: false,
+    showPaGroupDescription: false,
   };
 
   onSelectedTableRowChanged = (selectedRowKeys) => {
@@ -626,6 +629,13 @@ class PaReplace extends React.Component<any, any> {
               </Space>
             </Col>
           </Row>
+          <button
+            onClick={() => {
+              this.setState({ showPaGroupDescription: true });
+            }}
+          >
+            Clicke me!
+          </button>
           {isAdditionalCriteriaOpen ? (
             <AdvanceSearchContainer
               openPopup={isAdditionalCriteriaOpen}
@@ -715,6 +725,28 @@ class PaReplace extends React.Component<any, any> {
             />
           </DialogPopup>
         ) : null}
+        {this.state.showPaGroupDescription && (
+          <DialogPopup
+            positiveActionText=""
+            negativeActionText="Close"
+            title={"Select Formulary"}
+            handleClose={() => {
+              this.setState({
+                showPaGroupDescription: !this.state.showPaGroupDescription,
+              });
+            }}
+            handleAction={() => {}}
+            open={this.state.showPaGroupDescription}
+            showActions={false}
+            className=""
+            height="80%"
+            width="90%"
+          >
+            {/* <SelectFormularyPopUp formularyToggle={this.formularyToggle} /> */}
+            {/* <CloneFormularyPopup type="medicare" /> */}
+            <PaGroupDescriptionManagement />
+          </DialogPopup>
+        )}
         <ToastContainer />
       </>
     );
