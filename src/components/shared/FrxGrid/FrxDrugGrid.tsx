@@ -2718,9 +2718,14 @@ class FrxDrugGrid extends Component<FrxDrugGridProps<any>, FrxDrugGridState<any>
 										rowClassName={(record, index) =>{
 									
 											if(!record.isDisabled){
-												return index % 2 === 0
+												if(record.isChecked){
+														return `${record["rowStyle"]}`
+												}else{
+													return index % 2 === 0
 												? "table-row-white"
 												: "table-row-lightskyblue"
+												}
+												
 											}else{
 												
 												return `table-row-disabled ${record["rowStyle"]}`

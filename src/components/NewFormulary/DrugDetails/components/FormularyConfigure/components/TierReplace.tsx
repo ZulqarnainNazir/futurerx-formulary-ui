@@ -7,7 +7,7 @@ import DropDown from "../../../../../shared/Frx-components/dropdown/DropDown";
 import Button from "../../../../../shared/Frx-components/button/Button";
 import Box from "@material-ui/core/Box";
 import FrxDrugGridContainer from "../../../../../shared/FrxGrid/FrxDrugGridContainer";
-import { tierColumns } from "../../../../../../utils/grid/columns";
+import { tierColumns, tierColumnsNonMcr } from "../../../../../../utils/grid/columns";
 import { TierMockData } from "../../../../../../mocks/TierMock";
 //import AdvancedSearch from './search/AdvancedSearch';
 import AdvanceSearchContainer from "../../../../NewAdvanceSearch/AdvanceSearchContainer";
@@ -36,6 +36,8 @@ interface tabsState {
   selectedDrugs: any[];
   selectedRowKeys: number[];
   fixedSelectedRows: number[];
+  hiddenColumns: any[];
+  dataCount: any;
 }
 
 const mapStateToProps = state => {
@@ -80,7 +82,13 @@ class TierReplace extends React.Component<any, tabsState> {
       { type: "Full Formulary", key: "MCR" }
     ],
     selectedRowKeys: [] as number[],
-    fixedSelectedRows: [] as number[]
+    fixedSelectedRows: [] as number[],
+    index: 0,
+    limit: 10,
+    filter: Array(),
+    sort_by: Array(),
+    hiddenColumns: Array(),
+    dataCount: 0,
   };
 
   constructor(props) {
@@ -89,8 +97,105 @@ class TierReplace extends React.Component<any, tabsState> {
       "Tier Replace constructor called. Props:" + JSON.stringify(props)
     );
 
-    //this.initialize(this.props, true);
+    this.initialize(this.props, true);
   }
+
+  onSettingsIconHandler = (hiddenColumn, visibleColumn) => {
+    console.log(
+      "Settings icon handler: Hidden" +
+      JSON.stringify(hiddenColumn) +
+      " Visible:" +
+      JSON.stringify(visibleColumn)
+    );
+    if (hiddenColumn && hiddenColumn.length > 0) {
+      let hiddenColumnKeys = hiddenColumn.map(column => column["key"]);
+      this.setState({
+        hiddenColumns: hiddenColumnKeys
+      });
+    }
+  };
+  onApplyFilterHandler = filters => {
+    console.log("filtering from be:" + (JSON.stringify(filters)));
+    this.state.filter = Array();
+    const fetchedKeys = Object.keys(filters);
+    if (fetchedKeys && fetchedKeys.length > 0) {
+      fetchedKeys.map(fetchedProps => {
+        if (filters[fetchedProps]) {
+          const fetchedOperator =
+            filters[fetchedProps][0].condition === "is like"
+              ? "is_like"
+              : filters[fetchedProps][0].condition === "is not"
+                ? "is_not"
+                : filters[fetchedProps][0].condition === "is not like"
+                  ? "is_not_like"
+                  : filters[fetchedProps][0].condition === "does not exist"
+                    ? "does_not_exist"
+                    : filters[fetchedProps][0].condition;
+          const fetchedValues =
+            filters[fetchedProps][0].value !== ""
+              ? [filters[fetchedProps][0].value.toString()]
+              : [];
+          this.state.filter.push({
+            prop: fetchedProps,
+            operator: fetchedOperator,
+            values: fetchedValues
+          });
+        }
+      });
+      console.log("Filters:" + JSON.stringify(this.state.filter));
+      if (this.props.advancedSearchBody) {
+        this.populateGridData(this.props.advancedSearchBody);
+      } else {
+        this.populateGridData();
+      }
+    }
+  };
+
+  /**
+   * the selected sorter details will be availbale here to mak api call
+   * @param key the column key
+   * @param order the sorting order : 'ascend' | 'descend'
+   */
+  onApplySortHandler = (key, order) => {
+    console.log("sort details ", key, order);
+    this.state.sort_by = Array();
+    if (order) {
+      let sortOrder = order === 'ascend' ? 'asc' : 'desc';
+      this.state.sort_by = this.state.sort_by.filter(keyPair => keyPair['key'] !== key);
+      this.state.sort_by.push({ key: key, value: sortOrder });
+    }
+    if (this.props.advancedSearchBody) {
+      this.populateGridData(this.props.advancedSearchBody);
+    } else {
+      this.populateGridData();
+    }
+  };
+  onPageSize = pageSize => {
+    console.log("Page size load");
+    this.state.limit = pageSize;
+    if (this.props.advancedSearchBody) {
+      this.populateGridData(this.props.advancedSearchBody);
+    } else {
+      this.populateGridData();
+    }
+  };
+  onGridPageChangeHandler = (pageNumber: any) => {
+    console.log("Page change load");
+    this.state.index = (pageNumber - 1) * this.state.limit;
+    if (this.props.advancedSearchBody) {
+      this.populateGridData(this.props.advancedSearchBody);
+    } else {
+      this.populateGridData();
+    }
+  };
+  onClearFilterHandler = () => {
+    this.state.filter = Array();
+    if (this.props.advancedSearchBody) {
+      this.populateGridData(this.props.advancedSearchBody);
+    } else {
+      this.populateGridData();
+    }
+  };
 
   componentDidMount() {
     console.log('componentDidMount');
@@ -146,6 +251,7 @@ class TierReplace extends React.Component<any, tabsState> {
     this.state.tierValues = tierOptions;
     if (initFileKey) {
       this.state.selectedFileKey = lobCode;
+      this.state.selectedFileType = "Full Formulary";
     }
   };
 
@@ -164,8 +270,8 @@ class TierReplace extends React.Component<any, tabsState> {
       commonConstants.TYPE_REPLACE;
     apiDetails["keyVals"] = [
       { key: commonConstants.KEY_ENTITY_ID, value: this.props?.formulary_id },
-      { key: commonConstants.KEY_INDEX, value: 0 },
-      { key: commonConstants.KEY_LIMIT, value: 10 }
+      { key: commonConstants.KEY_INDEX, value: this.state.index },
+      { key: commonConstants.KEY_LIMIT, value: this.state.limit }
     ];
     apiDetails["messageBody"] = {};
 
@@ -176,61 +282,88 @@ class TierReplace extends React.Component<any, tabsState> {
       );
     }
 
+    apiDetails['messageBody']['filter'] = this.state.filter;
+
+    if (this.state.sort_by && this.state.sort_by.length > 0) {
+      let keys = Array();
+      let values = Array();
+
+      this.state.sort_by.map(keyPair => {
+        keys.push(keyPair['key']);
+        values.push(keyPair['value']);
+      });
+
+      apiDetails['messageBody']['sort_by'] = keys;
+      apiDetails['messageBody']['sort_order'] = values;
+    }
+
     const { selectedTier } = this.state;
+    const thisRef = this;
     const drugGridDate = this.props.postTierApplyInfo(apiDetails).then(json => {
       //debugger;
-      let tmpData = json.payload.result;
-      var data: any[] = [];
-      let count = 1;
-      var gridData = tmpData.map(function(el, idx) {
-        var element = Object.assign({}, el);
-        data.push(element);
-        let gridItem = {};
-        gridItem["id"] = count;
-        gridItem["key"] = count;
-        //for preseelct items with selected tier value
-        if (selectedTier === parseInt(element.tier_value)) {
-          console.log("element value tier ", selectedTier, element.tier_value);
-          gridItem["isChecked"] = true;
-          gridItem["isDisabled"] = true;
-          // decide on class names based on data properties conditionally
-          // the required styles are added under each classNames in FrxGrid.scss (towards the end)
-          //table-row--red-font (for red) table-row--green-font (for green) table-row--blue-font for default (for blue)
-          gridItem["rowStyle"] = "table-row--blue-font";
-        }
-        //end
-        gridItem["tier"] = element.tier_value;
-        gridItem["fileType"] = element.file_type ? "" + element.file_type : "";
-        gridItem["dataSource"] = element.data_source
-          ? "" + element.data_source
-          : "";
-        gridItem["labelName"] = element.drug_label_name
-          ? "" + element.drug_label_name
-          : "";
-        gridItem["ndc"] = "";
-        gridItem["rxcui"] = element.rxcui ? "" + element.rxcui : "";
-        gridItem["gpi"] = element.generic_product_identifier
-          ? "" + element.generic_product_identifier
-          : "";
-        gridItem["trademark"] = element.trademark_code
-          ? "" + element.trademark_code
-          : "";
-        gridItem["databaseCategory"] = element.database_category
-          ? "" + element.database_category
-          : "";
-        count++;
-        return gridItem;
-      });
-      this.setState({
-        drugData: data,
-        drugGridData: gridData,
-        fixedSelectedRows: gridData
-          .filter(item => item.isChecked)
-          .map(item => item.key),
-        selectedRowKeys: gridData
-          .filter(item => item.isChecked)
-          .map(item => item.key)
-      });
+      if (json.payload && json.payload.result) {
+        let tmpData = json.payload.result;
+        var data: any[] = [];
+        let count = 1;
+        var gridData = tmpData.map(function (el, idx) {
+          var element = Object.assign({}, el);
+          data.push(element);
+          let gridItem = {};
+          gridItem["id"] = count;
+          gridItem["key"] = count;
+          //for preseelct items with selected tier value
+          if (selectedTier === parseInt(element.tier_value)) {
+            console.log("element value tier ", selectedTier, element.tier_value);
+            gridItem["isChecked"] = true;
+            gridItem["isDisabled"] = true;
+            // decide on class names based on data properties conditionally
+            // the required styles are added under each classNames in FrxGrid.scss (towards the end)
+            //table-row--red-font (for red) table-row--green-font (for green) table-row--blue-font for default (for blue)
+            gridItem["rowStyle"] = "table-row--blue-font";
+          }
+          if (thisRef.props.configureSwitch) {
+            gridItem["isDisabled"] = true;
+            gridItem["rowStyle"] = "table-row--disabled-font";
+          }
+          //end
+          gridItem["tier_value"] = element.tier_value;
+          gridItem["file_type"] = element.file_type ? "" + element.file_type : "";
+          gridItem["data_source"] = element.data_source
+            ? "" + element.data_source
+            : "";
+          gridItem["drug_label_name"] = element.drug_label_name
+            ? "" + element.drug_label_name
+            : "";
+          gridItem["ndc"] = "";
+          if (thisRef.props.lobCode === 'MCR') {
+            gridItem["rxcui"] = element.rxcui ? "" + element.rxcui : "";
+          } else {
+            gridItem["drug_descriptor_identifier"] = element.drug_descriptor_identifier ? "" + element.drug_descriptor_identifier : "";
+          }
+          gridItem["generic_product_identifier"] = element.generic_product_identifier
+            ? "" + element.generic_product_identifier
+            : "";
+          gridItem["trademark_code"] = element.trademark_code
+            ? "" + element.trademark_code
+            : "";
+          gridItem["database_category"] = element.database_category
+            ? "" + element.database_category
+            : "";
+          count++;
+          return gridItem;
+        });
+        this.setState({
+          drugData: data,
+          drugGridData: gridData,
+          dataCount: json.payload.count,
+          fixedSelectedRows: gridData
+            .filter(item => item.isChecked)
+            .map(item => item.key),
+          selectedRowKeys: gridData
+            .filter(item => item.isChecked)
+            .map(item => item.key)
+        });
+      }
     });
   };
 
@@ -304,12 +437,20 @@ class TierReplace extends React.Component<any, tabsState> {
       this.props.setAdvancedSearch(payload);
     }
     if (this.props.configureSwitch !== nextProps.configureSwitch) {
+      let payload = { advancedSearchBody: {}, populateGrid: false, closeDialog: false, listItemStatus: {} };
+      this.props.setAdvancedSearch(payload);
+      this.state.filter = Array();
+      this.state.sort_by = Array();
+      this.state.index = 0;
+      this.state.limit = 10;
+      this.state.hiddenColumns = Array();
+
       if (nextProps.configureSwitch) {
         this.state.selectedFileKey = this.props.lobCode;
         this.state.selectedFileType = "Full Formulary";
         this.state.selectedTier = -1;
 
-        if(!this.state.tierGridContainer){
+        if (!this.state.tierGridContainer) {
           this.state.tierGridContainer = true;
         }
 
@@ -432,13 +573,15 @@ class TierReplace extends React.Component<any, tabsState> {
   };
 
   openTierGridContainer = () => {
-    this.state.drugData = [];
-    this.state.drugGridData = [];
-    this.setState({ tierGridContainer: true });
-    if (this.props.advancedSearchBody) {
-      this.populateGridData(this.props.advancedSearchBody);
-    } else {
-      this.populateGridData();
+    if (this.state.selectedTier !== -1) {
+      this.state.drugData = [];
+      this.state.drugGridData = [];
+      this.setState({ tierGridContainer: true });
+      if (this.props.advancedSearchBody) {
+        this.populateGridData(this.props.advancedSearchBody);
+      } else {
+        this.populateGridData();
+      }
     }
   };
   advanceSearchClickHandler = event => {
@@ -458,7 +601,10 @@ class TierReplace extends React.Component<any, tabsState> {
     if (!selectedRow["isDisabled"]) {
       if (isSelected) {
         const data = this.state.drugGridData.map((d: any) => {
-          if (d.key === selectedRow.key) d["isChecked"] = true;
+          if (d.key === selectedRow.key) {
+            d["isChecked"] = true;
+            d["rowStyle"] = "table-row--green-font";
+          }
           // else d["isChecked"] = false;
           return d;
         });
@@ -475,7 +621,11 @@ class TierReplace extends React.Component<any, tabsState> {
         this.setState({ drugGridData: data });
       } else {
         const data = this.state.drugGridData.map((d: any) => {
-          if (d.key === selectedRow.key) d["isChecked"] = false;
+          if (d.key === selectedRow.key) {
+            d["isChecked"] = false;
+            if (d["rowStyle"])
+              delete d["rowStyle"];
+          }
           // else d["isChecked"] = false;
           return d;
         });
@@ -500,7 +650,13 @@ class TierReplace extends React.Component<any, tabsState> {
     const data = this.state.drugGridData.map((d: any) => {
       if (!d["isDisabled"]) {
         d["isChecked"] = isSelected;
-        if (isSelected) selectedRowKeys.push(d["key"]);
+        if (isSelected) {
+          selectedRowKeys.push(d["key"]);
+          d["rowStyle"] = "table-row--green-font";
+        } else {
+          if (d["rowStyle"])
+            delete d["rowStyle"]
+        }
       }
 
       // else d["isSelected"] = false;
@@ -517,6 +673,10 @@ class TierReplace extends React.Component<any, tabsState> {
       lobCode: this.props.lobCode,
       pageType: pageTypes.TYPE_TIER
     };
+    let columns = this.props.lobCode === 'MCR' ? tierColumns() : tierColumnsNonMcr();
+    if (this.state.hiddenColumns.length > 0) {
+      columns = columns.filter(key => !this.state.hiddenColumns.includes(key));
+    }
     return (
       <>
         <div className="group tier-dropdown white-bg">
@@ -546,7 +706,7 @@ class TierReplace extends React.Component<any, tabsState> {
         {this.state.tierGridContainer && (
           <div className="select-drug-from-table">
             <div className="bordered white-bg">
-              <div className="header pr-10">
+              <div className="header remove-btn-wrapper pr-10">
                 {(this.props.lobCode === "MCR" || this.props.lobCode === "COMM") && (
                   <div
                     style={{
@@ -565,22 +725,19 @@ class TierReplace extends React.Component<any, tabsState> {
                     />
                   </div>
                 )}
-                <div className="tier-drug-grid-header-actions">
-                  <SearchBox
-                    iconPosition="left"
-                    className="search-input"
-                    placeholder="Search"
-                  />
-                  <Button
-                    className="Button normal"
-                    label="Advance Search"
-                    onClick={this.advanceSearchClickHandler}
-                  />
-                  <Button
-                    label="Save"
-                    onClick={this.handleSave}
-                    disabled={this.props.configureSwitch}
-                  />
+                <div className="header remove-btn-wrapper pr-10">
+                  <div className="header pr-10">
+                    <Button
+                      className="Button normal"
+                      label="Advance Search"
+                      onClick={this.advanceSearchClickHandler}
+                    />
+                    <Button
+                      label="Save"
+                      onClick={this.handleSave}
+                      disabled={this.props.configureSwitch}
+                    />
+                  </div>
                 </div>
               </div>
 
@@ -589,12 +746,13 @@ class TierReplace extends React.Component<any, tabsState> {
                   isPinningEnabled={false}
                   enableSearch={false}
                   enableColumnDrag
+                  settingsWidth={50}
                   onSearch={() => { }}
                   fixedColumnKeys={[]}
                   pagintionPosition="topRight"
                   gridName="TIER"
                   enableSettings
-                  columns={tierColumns()}
+                  columns={columns}
                   scroll={{ x: 2000, y: 377 }}
                   isFetchingData={false}
                   enableResizingOfColumns
@@ -602,15 +760,25 @@ class TierReplace extends React.Component<any, tabsState> {
                   rowSelectionChangeFromCell={this.rowSelectionChangeFromCell}
                   onSelectAllRows={this.onSelectAllRows}
                   customSettingIcon={"FILL-DOT"}
-                  settingsWidth={30}
-                  // rowSelection={{
-                  //   columnWidth: 50,
-                  //   selectedRowKeys: this.state.selectedRowKeys,
-                  // 	fixed: true,
+                  totalRowsCount={this.state.dataCount}
+                  getPerPageItemSize={this.onPageSize}
+                  onGridPageChangeHandler={this.onGridPageChangeHandler}
+                  clearFilterHandler={this.onClearFilterHandler}
+                  applyFilter={this.onApplyFilterHandler}
+                  applySort={this.onApplySortHandler}
+                  getColumnSettings={this.onSettingsIconHandler}
+                  pageSize={this.state.limit}
+                  selectedCurrentPage={
+                    this.state.index / this.state.limit + 1
+                  }
+                // rowSelection={{
+                //   columnWidth: 50,
+                //   selectedRowKeys: this.state.selectedRowKeys,
+                // 	fixed: true,
 
-                  //   type: "checkbox",
-                  //   onChange: this.onSelectedTableRowChanged
-                  // }}
+                //   type: "checkbox",
+                //   onChange: this.onSelectedTableRowChanged
+                // }}
                 />
               </div>
             </div>
