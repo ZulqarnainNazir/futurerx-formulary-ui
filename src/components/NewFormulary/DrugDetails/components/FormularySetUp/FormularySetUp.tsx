@@ -410,7 +410,6 @@ class FormularySetUp extends React.Component<any, any> {
 
   tierCheck = () => {
     // console.log(this.state);
-    debugger;
     return true;
   };
   onCheckUncheckAllSupplementalHandler = (val) => {
@@ -706,7 +705,7 @@ class FormularySetUp extends React.Component<any, any> {
             />
             {this.state.generalInformation.type !== "" ? (
               <>
-                {this.state.generalInformation.type !== "Commercial" ? (
+                {this.state.generalInformation.type === "Medicare" ? (
                   <MedicareInformation
                     allMedicareOptions={this.state.medicare_contract_type_info}
                     medicareOptions={
@@ -742,7 +741,7 @@ class FormularySetUp extends React.Component<any, any> {
                   customTierChange={this.handleCustomTierChange}
                   deleteCustomTier={this.deleteCustomTier}
                 />
-                {this.state.generalInformation.type !== "Commercial" ? (
+                {this.state.generalInformation.type === "Medicare"  ? (
                   <SupplementalModels
                     supplemental={this.state.supplemental_benefit_info}
                     supplementalCheck={this.supplementalCheck}

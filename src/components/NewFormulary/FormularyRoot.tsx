@@ -16,7 +16,6 @@ state = {
   };
 
   onClickTab = (selectedTabIndex: number) => {
-      debugger;
     let activeTabIndex = 0;
 
     const tabs = this.state.tabs.map((tab: TabInfo, index: number) => {
@@ -29,7 +28,6 @@ state = {
   };
 
   renderActiveTabContent = () => {
-      debugger;
     const tabIndex = this.state.activeTabIndex;
     switch (tabIndex) {
       case 0:
