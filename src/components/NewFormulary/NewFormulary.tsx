@@ -146,8 +146,8 @@ class Formulary extends React.Component<any, any> {
     listPayload.sort_by = [key];
     const sortorder = order && order === "ascend" ? "asc" : "dsc";
     listPayload.sort_order = [sortorder];
-
-    this.props.fetchFormularies(listPayload);
+    this.listPayload = listPayload;
+    this.props.fetchFormularies(this.listPayload);
   };
   uniqByKeepLast = (data) => {
     const result = Array.from(new Set(data.map(s => s.columnKey)))
@@ -168,7 +168,8 @@ class Formulary extends React.Component<any, any> {
     const sort_order = updatedSorter.map(e=>e.order);
     listPayload.sort_by = sort_by;
     listPayload.sort_order = sort_order
-    this.props.fetchFormularies(listPayload);
+    this.listPayload = listPayload;
+    this.props.fetchFormularies(this.listPayload);
 		//remove duplicates from sorter
 		//api integration
 	};
@@ -253,25 +254,33 @@ class Formulary extends React.Component<any, any> {
     //console.log(hiddenColumn,visibleColumn);
     this.props.setHiddenColumn(hiddenColumn);
   };
+  
   onApplyFilterHandler = filters => {
-    const fetchedProps = Object.keys(filters)[0];
-    const fetchedOperator =
-      filters[fetchedProps][0].condition === "is like"
-        ? "is_like"
-        : filters[fetchedProps][0].condition === "is not"
-        ? "is_not"
-        : filters[fetchedProps][0].condition === "is not like"
-        ? "is_not_like"
-        : filters[fetchedProps][0].condition === "does not exist"
-        ? "does_not_exist"
-        : filters[fetchedProps][0].condition;
-    const fetchedValues =
-      filters[fetchedProps][0].value !== ""
-        ? [filters[fetchedProps][0].value.toString()]
-        : [];
-    const newFilters = [
-      { prop: fetchedProps, operator: fetchedOperator, values: fetchedValues }
-    ];
+    const fetchedKeys = Object.keys(filters);
+    let newFilters:any = [];
+    if (fetchedKeys && fetchedKeys.length > 0) {
+      fetchedKeys.map(fetchedProps => {
+        if (filters[fetchedProps]) {
+          const fetchedOperator =
+            filters[fetchedProps][0].condition === "is like"
+              ? "is_like"
+              : filters[fetchedProps][0].condition === "is not"
+                ? "is_not"
+                : filters[fetchedProps][0].condition === "is not like"
+                  ? "is_not_like"
+                  : filters[fetchedProps][0].condition === "does not exist"
+                    ? "does_not_exist"
+                    : filters[fetchedProps][0].condition;
+          const fetchedValues =
+            filters[fetchedProps][0].value !== ""
+              ? [filters[fetchedProps][0].value.toString()]
+              : [];
+          newFilters = [
+            { prop: fetchedProps,operator: fetchedOperator, values:fetchedValues}
+          ]
+        }
+      });
+    }
     this.listPayload.filter = newFilters;
     this.props.fetchFormularies(this.listPayload);
   };
