@@ -50,6 +50,16 @@
                       position: relative;
                       top: 0px;
                     }
+                    .anticon-caret-down {
+                      display: none; //added for adding frxgridsortericon
+                      position: absolute;
+                      top: 24px;
+                    }
+                    .anticon-caret-up {
+                      display: none; //added for adding frxgridsortericon
+                      position: relative;
+                      top: 0px;
+                    }
                   }
                   .ant-table-column-sorter-up.active svg,
                   .ant-table-column-sorter-down.active svg {
