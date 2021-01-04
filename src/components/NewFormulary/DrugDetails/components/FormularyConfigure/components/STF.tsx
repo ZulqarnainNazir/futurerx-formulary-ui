@@ -417,7 +417,7 @@ class STF extends React.Component<any, any> {
           let gridItem = {};
           gridItem["id"] = count;
           gridItem["key"] = count;
-          if ( selected['st_group_description_name'] === element.st_group_description) {
+          if ( selected&&['st_group_description_name'] === element.st_group_description) {
             //console.log("element value tier ", selectedGroup, element.pa_group_description);
             gridItem["isChecked"] = true;
             gridItem["isDisabled"] = true;
