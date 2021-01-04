@@ -256,23 +256,23 @@ onTriDotDropDownItemClick = (selectedItem:any) => {
           let color = "";
 
           if (
-            dataRow["isDisabled"] &&
+            (dataRow["isDisabled"] || dataRow["isChecked"]) &&
             dataRow["rowStyle"] &&
             dataRow["rowStyle"] === "table-row--green-font"
           ) {
             color = "green";
           } else if (
-            dataRow["isDisabled"] &&
+            (dataRow["isDisabled"] || dataRow["isChecked"]) &&
             dataRow["rowStyle"] &&
             dataRow["rowStyle"] === "table-row--red-font"
           ) {
             color = "red";
           } else if (
-            dataRow["isDisabled"] &&
+            (dataRow["isDisabled"] || dataRow["isChecked"]) &&
             dataRow["rowStyle"] &&
             dataRow["rowStyle"] === "table-row--blue-font"
           ) {
-            color = "blue";
+            color = "#5f80b9";
           }
 
           return (
