@@ -22,6 +22,7 @@ import { setAdvancedSearch } from "../../../../../../redux/slices/formulary/adva
 import showMessage from "../../../../Utils/Toast";
 import SearchBox from "../../../../../shared/Frx-components/search-box/SearchBox";
 import getLobCode from "../../../../Utils/LobUtils";
+import { getIntelliscenseSearch } from "../../../../../../redux/slices/formulary/categoryClass/categoryClassActionCreation";
 
 interface tabsState {
   tierGridContainer: boolean;
@@ -42,6 +43,10 @@ interface tabsState {
   isGridSingleSorted: boolean;
   gridMultiSortedInfo: any[];
   isGridMultiSorted: boolean;
+  searchNames: any[];
+  filterPlaceholder: any;
+  searchValue: any;
+  searchData: any[];
 }
 
 const mapStateToProps = state => {
@@ -62,7 +67,8 @@ function mapDispatchToProps(dispatch) {
   return {
     postTierApplyInfo: a => dispatch(postTierApplyInfo(a)),
     getTier: a => dispatch(getTier(a)),
-    setAdvancedSearch: a => dispatch(setAdvancedSearch(a))
+    setAdvancedSearch: a => dispatch(setAdvancedSearch(a)),
+    getIntelliscenseSearch: (a) => dispatch(getIntelliscenseSearch(a)),
   };
 }
 
@@ -90,6 +96,7 @@ class TierReplace extends React.Component<any, tabsState> {
     index: 0,
     limit: 10,
     filter: Array(),
+    quickFilter: Array(),
     sort_by: Array(),
     hiddenColumns: Array(),
     dataCount: 0,
@@ -97,6 +104,10 @@ class TierReplace extends React.Component<any, tabsState> {
     isGridSingleSorted: false,
     gridMultiSortedInfo: [],
     isGridMultiSorted: false,
+    searchNames: Array(),
+    filterPlaceholder: "Search",
+    searchValue: "",
+    searchData: Array(),
   };
 
   constructor(props) {
@@ -210,7 +221,7 @@ class TierReplace extends React.Component<any, tabsState> {
   };
 
   applyMultiSortHandler = (sorter, multiSortedInfo) => {
-    console.log('Multisort info:'+JSON.stringify(sorter));
+    console.log('Multisort info:' + JSON.stringify(sorter));
     this.state.gridSingleSortInfo = null;
     this.state.gridMultiSortedInfo = multiSortedInfo;
     this.state.isGridMultiSorted = true;
@@ -220,9 +231,9 @@ class TierReplace extends React.Component<any, tabsState> {
       let uniqueKeys = Array();
       let filteredSorter = Array();
       sorter.map(sortInfo => {
-        if(uniqueKeys.includes(sortInfo['columnKey'])){
+        if (uniqueKeys.includes(sortInfo['columnKey'])) {
 
-        }else{
+        } else {
           filteredSorter.push(sortInfo);
           uniqueKeys.push(sortInfo['columnKey']);
         }
@@ -314,6 +325,177 @@ class TierReplace extends React.Component<any, tabsState> {
     }
   };
 
+  onSearchValueChanges = (value, event) => {
+    console.log("Search value changed:" + event.value + " " + event.key);
+    this.state.searchValue = value;
+    this.state.quickFilter = [];
+    if (
+      this.state.searchData &&
+      Array.isArray(this.state.searchData) &&
+      this.state.searchData.length > 0
+    ) {
+      if (event.key < this.state.searchData.length) {
+        let propData = this.state.searchData[event.key];
+        switch (propData.key) {
+          case "drug_descriptor_identifier":
+            this.state.quickFilter.push({
+              prop: "drug_descriptor_identifier",
+              operator: "is_like",
+              values: [propData.value],
+            });
+            break;
+
+          case "rxcui":
+            this.state.quickFilter.push({
+              prop: "rxcui",
+              operator: "is_like",
+              values: [propData.value],
+            });
+            break;
+
+          case "ndc":
+            this.state.quickFilter.push({
+              prop: "ndc",
+              operator: "is_like",
+              values: [propData.value],
+            });
+            break;
+
+          case "generic_product_identifier":
+            this.state.quickFilter.push({
+              prop: "generic_product_identifier",
+              operator: "is_like",
+              values: [propData.value],
+            });
+            break;
+
+          case "drug_label_name":
+            this.state.quickFilter.push({
+              prop: "drug_label_name",
+              operator: "is_like",
+              values: [propData.value],
+            });
+            break;
+
+          case "database_class":
+            this.state.quickFilter.push({
+              prop: "database_class",
+              operator: "is_like",
+              values: [propData.value],
+            });
+            break;
+
+          case "database_category":
+            this.state.quickFilter.push({
+              prop: "database_category",
+              operator: "is_like",
+              values: [propData.value],
+            });
+            break;
+        }
+        if (this.props.advancedSearchBody) {
+          this.populateGridData(this.props.advancedSearchBody);
+        } else {
+          this.populateGridData();
+        }
+      }
+    }
+  };
+
+  clearSearchFilter = (e) => {
+    this.state.quickFilter = Array();
+    this.state.searchData = Array();
+    this.state.searchNames = Array();
+    this.state.filterPlaceholder = "Search";
+    this.state.searchValue = "";
+    if (this.props.advancedSearchBody) {
+      this.populateGridData(this.props.advancedSearchBody);
+    } else {
+      this.populateGridData();
+    }
+  };
+
+  onInputValueChanged = (value) => {
+    if (value) {
+      let lobCode = getLobCode(this.props.formulary_lob_id);
+      let requests = Array();
+      let apiDetails = {};
+      apiDetails["apiPart"] = commonConstants.SEARCH_GPI;
+      apiDetails["pathParams"] =
+        this.props?.formulary_id + "/" + lobCode + "/" + "F";
+      if (lobCode === "MCR") {
+        apiDetails["pathParams"] =
+          apiDetails["pathParams"] +
+          "/" +
+          (this.props.formulary_type_id === 1 ? "MC" : "MMP");
+      } else {
+        apiDetails["pathParams"] =
+          apiDetails["pathParams"] + "/" + lobCode;
+      }
+      apiDetails["keyVals"] = [
+        { key: commonConstants.KEY_SEARCH_VALUE, value: value },
+      ];
+      requests.push({
+        key: "generic_product_identifier",
+        apiDetails: apiDetails,
+      });
+
+      apiDetails = Object.assign({}, apiDetails);
+      apiDetails["apiPart"] = commonConstants.SEARCH_NDC;
+      requests.push({ key: "ndc", apiDetails: apiDetails });
+
+      apiDetails = Object.assign({}, apiDetails);
+      apiDetails["apiPart"] = commonConstants.SEARCH_LABEL_NAME;
+      requests.push({ key: "drug_label_name", apiDetails: apiDetails });
+
+      apiDetails = Object.assign({}, apiDetails);
+      apiDetails["apiPart"] = commonConstants.SEARCH_CLASS;
+      requests.push({ key: "database_class", apiDetails: apiDetails });
+
+      apiDetails = Object.assign({}, apiDetails);
+      apiDetails["apiPart"] = commonConstants.SEARCH_CATEGORY;
+      requests.push({ key: "database_category", apiDetails: apiDetails });
+
+      if (this.props.formulary_lob_id == 1) {
+        apiDetails = Object.assign({}, apiDetails);
+        apiDetails["apiPart"] = commonConstants.SEARCH_RXCUI;
+        requests.push({ key: "rxcui", apiDetails: apiDetails });
+      } else {
+        apiDetails = Object.assign({}, apiDetails);
+        apiDetails["apiPart"] = commonConstants.SEARCH_DDID;
+        requests.push({
+          key: "drug_descriptor_identifier",
+          apiDetails: apiDetails,
+        });
+      }
+
+      const drugGridData = this.props
+        .getIntelliscenseSearch(requests)
+        .then((json) => {
+          //debugger;
+          if (
+            json.payload &&
+            json.payload.data &&
+            Array.isArray(json.payload.data) &&
+            json.payload.data.length > 0
+          ) {
+            let tmpData = json.payload.data;
+            var data: any[] = [];
+            var gridData = tmpData.map(function (el) {
+              var element = Object.assign({}, el);
+              data.push(element);
+              let gridItem = element["value"];
+              return gridItem;
+            });
+            this.setState({
+              searchData: data,
+              searchNames: gridData,
+            });
+          }
+        });
+    }
+  };
+
   populateGridData = (searchBody = null) => {
     console.log("Populate grid data is called:" + this.state.selectedFileKey);
     let apiDetails = {};
@@ -341,7 +523,19 @@ class TierReplace extends React.Component<any, tabsState> {
       );
     }
 
-    apiDetails['messageBody']['filter'] = this.state.filter;
+    let allFilters = Array();
+    let filterProps = Array();
+    this.state.filter.map(filterInfo => {
+      allFilters.push(filterInfo);
+      filterProps.push(filterInfo['prop']);
+    });
+
+    this.state.quickFilter.map(filterInfo => {
+      if (!filterProps.includes(filterInfo['prop']))
+        allFilters.push(filterInfo);
+    });
+
+    apiDetails['messageBody']['filter'] = allFilters;
 
     if (this.state.sort_by && this.state.sort_by.length > 0) {
       let keys = Array();
@@ -507,6 +701,7 @@ class TierReplace extends React.Component<any, tabsState> {
       let payload = { advancedSearchBody: {}, populateGrid: false, closeDialog: false, listItemStatus: {} };
       this.props.setAdvancedSearch(payload);
       this.state.filter = Array();
+      this.state.quickFilter = Array();
       this.state.sort_by = Array();
       this.state.index = 0;
       this.state.limit = 10;
@@ -794,6 +989,24 @@ class TierReplace extends React.Component<any, tabsState> {
                 )}
                 <div className="header remove-btn-wrapper pr-10">
                   <div className="header pr-10">
+                    <div className="header-dropdown">
+                      <DropDown
+                        value={this.state.searchValue}
+                        options={this.state.searchNames}
+                        placeholder={this.state.filterPlaceholder}
+                        showSearch={true}
+                        onSearch={this.onInputValueChanged}
+                        onSelect={this.onSearchValueChanges}
+                      />
+                      {this.state.quickFilter.length > 0 && (
+                        <span
+                          style={{ marginLeft: 10 }}
+                          onClick={this.clearSearchFilter}
+                        >
+                          Clear
+                        </span>
+                      )}
+                    </div>
                     <Button
                       className="Button normal"
                       label="Advance Search"
