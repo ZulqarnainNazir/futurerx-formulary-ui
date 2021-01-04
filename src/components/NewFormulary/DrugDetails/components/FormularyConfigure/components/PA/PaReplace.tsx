@@ -99,8 +99,43 @@ class PaReplace extends React.Component<any, any> {
     groupDescriptionProp: "",
     isAdditionalCriteriaOpen: false,
     additionalCriteriaState: null,
-    is_additional_criteria_defined: false,
     showPaGroupDescription: false,
+    is_additional_criteria_defined: false,
+    selectedRowKeys: [] as number[],
+    fixedSelectedRows: [] as number[],
+  };
+
+  rowSelectionChangeFromCell = (key: string, selectedRow: any, isSelected: boolean) => {
+    console.log("data row ", selectedRow, isSelected);
+    if (!selectedRow["isDisabled"]) {
+      if (isSelected) {
+        const data = this.state.drugGridData.map((d: any) => {
+          if (d.key === selectedRow.key) d["isChecked"] = true;
+          // else d["isChecked"] = false;
+          return d;
+        });
+        const selectedRowKeys = [...this.state.selectedRowKeys, selectedRow.key];
+        console.log("selected row keys ", selectedRowKeys);
+        const selectedRows: number[] = selectedRowKeys.filter((k) => this.state.fixedSelectedRows.indexOf(k) < 0);
+        this.onSelectedTableRowChanged(selectedRowKeys);
+
+        this.setState({ drugGridData: data });
+      } else {
+        const data = this.state.drugGridData.map((d: any) => {
+          if (d.key === selectedRow.key) d["isChecked"] = false;
+          // else d["isChecked"] = false;
+          return d;
+        });
+
+        const selectedRowKeys: number[] = this.state.selectedRowKeys.filter((k) => k !== selectedRow.key);
+        const selectedRows = selectedRowKeys.filter((k) => this.state.fixedSelectedRows.indexOf(k) < 0);
+
+        this.onSelectedTableRowChanged(selectedRows);
+        this.setState({
+          drugGridData: data,
+        });
+      }
+    }
   };
 
   onSelectedTableRowChanged = (selectedRowKeys) => {
@@ -242,7 +277,6 @@ class PaReplace extends React.Component<any, any> {
   dropDownSelectHandlerGroupDescription = (value, event) => {
     let tmp_index = event.key;
     let tmp_value = event.value;
-
     this.setState({ selectedGroupDescription: tmp_value });
     let apiDetails = {};
     apiDetails["lob_type"] = this.props.formulary_lob_id;
@@ -395,12 +429,28 @@ class PaReplace extends React.Component<any, any> {
         let tmpData = json.payload.result;
         var data: any[] = [];
         let count = 1;
+
+        let selected = this.state.paGroupDescriptions.filter(
+          (obj) => obj[this.state.groupDescriptionProp] == this.state.selectedGroupDescription
+        )[0];
+        debugger;
         var gridData = tmpData.map(function (el) {
           var element = Object.assign({}, el);
           data.push(element);
           let gridItem = {};
           gridItem["id"] = count;
           gridItem["key"] = count;
+          debugger;
+
+          if (selected["pa_group_description_name"] === element.pa_group_description) {
+            //console.log("element value tier ", selectedGroup, element.pa_group_description);
+            gridItem["isChecked"] = true;
+            gridItem["isDisabled"] = true;
+            // decide on class names based on data properties conditionally
+            // the required styles are added under each classNames in FrxGrid.scss (towards the end)
+            //table-row--red-font (for red) table-row--green-font (for green) table-row--blue-font for default (for blue)
+            gridItem["rowStyle"] = "table-row--blue-font";
+          }
           gridItem["tier"] = element.tier_value;
           gridItem["isUmCriteria"] = element.is_um_criteria;
           gridItem["paGroupDescription"] = element.pa_group_description;
@@ -477,6 +527,21 @@ class PaReplace extends React.Component<any, any> {
   openAdditionalCriteria = () => {
     debugger;
     this.setState({ isAdditionalCriteriaOpen: true });
+  };
+  onSelectAllRows = (isSelected: boolean) => {
+    const selectedRowKeys: number[] = [];
+    const data = this.state.drugGridData.map((d: any) => {
+      if (!d["isDisabled"]) {
+        d["isChecked"] = isSelected;
+        if (isSelected) selectedRowKeys.push(d["key"]);
+      }
+
+      // else d["isSelected"] = false;
+      return d;
+    });
+    const selectedRows: number[] = selectedRowKeys.filter((k) => this.state.fixedSelectedRows.indexOf(k) < 0);
+    this.onSelectedTableRowChanged(selectedRows);
+    this.setState({ drugGridData: data });
   };
   // additional criteria toggle
   render() {
@@ -675,18 +740,22 @@ class PaReplace extends React.Component<any, any> {
                   fixedColumnKeys={[]}
                   pagintionPosition="topRight"
                   gridName="DRUG GRID"
-                  enableSettings={false}
+                  enableSettings
                   columns={PaColumns()}
                   scroll={{ x: 2000, y: 377 }}
                   isFetchingData={false}
                   enableResizingOfColumns
                   data={this.state.drugGridData}
-                  rowSelection={{
-                    columnWidth: 50,
-                    fixed: true,
-                    type: "checkbox",
-                    onChange: this.onSelectedTableRowChanged,
-                  }}
+                  rowSelectionChangeFromCell={this.rowSelectionChangeFromCell}
+                  onSelectAllRows={this.onSelectAllRows}
+                  customSettingIcon={"FILL-DOT"}
+                  settingsWidth={30}
+                  // rowSelection={{
+                  //   columnWidth: 50,
+                  //   fixed: true,
+                  //   type: "checkbox",
+                  //   onChange: this.onSelectedTableRowChanged,
+                  // }}
                 />
               </div>
             </div>

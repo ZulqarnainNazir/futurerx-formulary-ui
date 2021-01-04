@@ -103,7 +103,9 @@ class STF extends React.Component<any, any> {
     groupDescriptionProp: "",
     isAdditionalCriteriaOpen: false,
     additionalCriteriaState: null,
-    is_additional_criteria_defined: false,
+    is_additional_criteria_defined:false,
+    selectedRowKeys: [] as number[],
+    fixedSelectedRows: [] as number[]
   };
 
   onSelectedTableRowChanged = (selectedRowKeys) => {
@@ -176,7 +178,6 @@ class STF extends React.Component<any, any> {
     if (this.state.selectedDrugs && this.state.selectedDrugs.length > 0) {
       let apiDetails = {};
       // apiDetails['apiPart'] = constants.APPLY_TIER;
-      debugger;
       apiDetails["lob_type"] = this.props.formulary_lob_id;
       apiDetails["pathParams"] =
         this.props?.formulary_id +
@@ -278,9 +279,7 @@ class STF extends React.Component<any, any> {
     let apiDetails = {};
     apiDetails["lob_type"] = this.props.formulary_lob_id;
     apiDetails["pathParams"] = "/" + tmp_value;
-    debugger;
     this.props.getStGrouptDescriptionVersions(apiDetails).then((json) => {
-      debugger;
       let data = json.payload.data;
       let ftype = "";
       switch (this.props.formulary_lob_id) {
@@ -293,21 +292,15 @@ class STF extends React.Component<any, any> {
         default:
           break;
       }
-      debugger;
-      let latestVersionId = -1;
-      data.forEach((element) => {
-        if (element.id_st_group_description > latestVersionId) {
-          latestVersionId = element.id_st_group_description;
+      let latestVersionId=-1;
+      data.forEach(element => {
+        if (element.id_st_group_description > latestVersionId){
+          latestVersionId=element.id_st_group_description;
         }
       });
-      let tmp_additionalCriteria = false;
-      this.props
-        .getStGrouptDescription({
-          lob_type: this.props.formulary_lob_id,
-          pathParams: "/" + latestVersionId,
-        })
-        .then((json) => {
-          debugger;
+      let tmp_additionalCriteria=false;
+      this.props.getStGrouptDescription({lob_type:this.props.formulary_lob_id, 
+        pathParams: "/"+latestVersionId}).then((json) => {
           this.props.setAdditionalCriteria([]);
           if (json.payload && json.payload.code === "200") {
             if (
@@ -413,50 +406,59 @@ class STF extends React.Component<any, any> {
     const drugGridDate = this.props
       .postFormularyDrugST(apiDetails)
       .then((json) => {
-        debugger;
-        if (json.payload != null && json.payload.code === "200") {
-          let tmpData = json.payload.result;
-          var data: any[] = [];
-          let count = 1;
-          var gridData = tmpData.map(function (el) {
-            var element = Object.assign({}, el);
-            data.push(element);
-            let gridItem = {};
-            gridItem["id"] = count;
-            gridItem["key"] = count;
-            gridItem["tier"] = element.tier_value;
-            gridItem["isUmCriteria"] = element.is_um_criteria;
-            gridItem["stGroupDescription"] = element.st_group_description;
-            gridItem["stType"] = element.st_type;
-            gridItem["stValue"] = element.st_value;
-            gridItem["fileType"] = element.file_type
-              ? "" + element.file_type
-              : "";
-            gridItem["dataSource"] = element.data_source
-              ? "" + element.data_source
-              : "";
-            gridItem["labelName"] = element.drug_label_name
-              ? "" + element.drug_label_name
-              : "";
-            gridItem["ndc"] = "";
-            gridItem["rxcui"] = element.rxcui ? "" + element.rxcui : "";
-            gridItem["gpi"] = element.generic_product_identifier
-              ? "" + element.generic_product_identifier
-              : "";
-            gridItem["trademark"] = element.trademark_code
-              ? "" + element.trademark_code
-              : "";
-            gridItem["databaseCategory"] = element.database_category
-              ? "" + element.database_category
-              : "";
-            count++;
-            return gridItem;
-          });
-          this.setState({
-            drugData: data,
-            drugGridData: gridData,
-          });
-        }
+        if (json.payload !=null && json.payload.code === "200") {
+        let tmpData = json.payload.result;
+        var data: any[] = [];
+        let count = 1;
+        let selected = this.state.stGroupDescription.filter(obj => obj[this.state.groupDescriptionProp]  == this.state.selectedGroupDescription)[0];
+        var gridData = tmpData.map(function (el) {
+          var element = Object.assign({}, el);
+          data.push(element);
+          let gridItem = {};
+          gridItem["id"] = count;
+          gridItem["key"] = count;
+          if ( selected['st_group_description_name'] === element.st_group_description) {
+            //console.log("element value tier ", selectedGroup, element.pa_group_description);
+            gridItem["isChecked"] = true;
+            gridItem["isDisabled"] = true;
+            // decide on class names based on data properties conditionally
+            // the required styles are added under each classNames in FrxGrid.scss (towards the end)
+            //table-row--red-font (for red) table-row--green-font (for green) table-row--blue-font for default (for blue)
+            gridItem["rowStyle"] = "table-row--blue-font";
+          }
+          gridItem["tier"] = element.tier_value;
+          gridItem["isUmCriteria"] = element.is_um_criteria;
+          gridItem["stGroupDescription"] = element.st_group_description;
+          gridItem["stType"] = element.st_type;
+          gridItem["stValue"] = element.st_value;
+          gridItem["fileType"] = element.file_type
+            ? "" + element.file_type
+            : "";
+          gridItem["dataSource"] = element.data_source
+            ? "" + element.data_source
+            : "";
+          gridItem["labelName"] = element.drug_label_name
+            ? "" + element.drug_label_name
+            : "";
+          gridItem["ndc"] = "";
+          gridItem["rxcui"] = element.rxcui ? "" + element.rxcui : "";
+          gridItem["gpi"] = element.generic_product_identifier
+            ? "" + element.generic_product_identifier
+            : "";
+          gridItem["trademark"] = element.trademark_code
+            ? "" + element.trademark_code
+            : "";
+          gridItem["databaseCategory"] = element.database_category
+            ? "" + element.database_category
+            : "";
+          count++;
+          return gridItem;
+        });
+        this.setState({
+          drugData: data,
+          drugGridData: gridData,
+        });
+      }
       });
     this.setState({ tierGridContainer: true });
   };
@@ -486,7 +488,6 @@ class STF extends React.Component<any, any> {
     this.populateGridData();
   };
   componentDidMount() {
-    debugger;
     switch (this.props.formulary_lob_id) {
       case 1:
         this.setState({
@@ -505,7 +506,6 @@ class STF extends React.Component<any, any> {
     apiDetails_1["lob_type"] = this.props.formulary_lob_id;
     apiDetails_1["pathParams"] = "/" + this.props?.client_id;
     this.props.getStGrouptDescriptions(apiDetails_1).then((json) => {
-      debugger;
       let result = json.payload.data.filter(
         (obj) => !obj.is_archived && obj.is_setup_complete
       );
@@ -524,7 +524,6 @@ class STF extends React.Component<any, any> {
       formulary_lob_id: this.props?.formulary_lob_id,
     };
     this.props.getLobFormularies(apiDetails).then((json) => {
-      debugger;
       this.setState({
         lobFormularies: json.payload.result,
       });
@@ -535,8 +534,71 @@ class STF extends React.Component<any, any> {
     this.setState({ isAdditionalCriteriaOpen: false });
   };
   openAdditionalCriteria = () => {
-    debugger;
     this.setState({ isAdditionalCriteriaOpen: true });
+  };
+
+  rowSelectionChangeFromCell = (
+    key: string,
+    selectedRow: any,
+    isSelected: boolean
+  ) => {
+    console.log("data row ", selectedRow, isSelected);
+    if (!selectedRow["isDisabled"]) {
+      if (isSelected) {
+        const data = this.state.drugGridData.map((d: any) => {
+          if (d.key === selectedRow.key) d["isChecked"] = true;
+          // else d["isChecked"] = false;
+          return d;
+        });
+        const selectedRowKeys = [
+          ...this.state.selectedRowKeys,
+          selectedRow.key
+        ];
+        console.log("selected row keys ", selectedRowKeys);
+        const selectedRows: number[] = selectedRowKeys.filter(
+          k => this.state.fixedSelectedRows.indexOf(k) < 0
+        );
+        this.onSelectedTableRowChanged(selectedRowKeys);
+
+        this.setState({ drugGridData: data });
+      } else {
+        const data = this.state.drugGridData.map((d: any) => {
+          if (d.key === selectedRow.key) d["isChecked"] = false;
+          // else d["isChecked"] = false;
+          return d;
+        });
+
+        const selectedRowKeys: number[] = this.state.selectedRowKeys.filter(
+          k => k !== selectedRow.key
+        );
+        const selectedRows = selectedRowKeys.filter(
+          k => this.state.fixedSelectedRows.indexOf(k) < 0
+        );
+
+        this.onSelectedTableRowChanged(selectedRows);
+        this.setState({
+          drugGridData: data
+        });
+      }
+    }
+  };
+
+  onSelectAllRows = (isSelected: boolean) => {
+    const selectedRowKeys: number[] = [];
+    const data = this.state.drugGridData.map((d: any) => {
+      if (!d["isDisabled"]) {
+        d["isChecked"] = isSelected;
+        if (isSelected) selectedRowKeys.push(d["key"]);
+      }
+
+      // else d["isSelected"] = false;
+      return d;
+    });
+    const selectedRows: number[] = selectedRowKeys.filter(
+      k => this.state.fixedSelectedRows.indexOf(k) < 0
+    );
+    this.onSelectedTableRowChanged(selectedRows);
+    this.setState({ drugGridData: data });
   };
   render() {
     const searchProps = {
@@ -725,18 +787,22 @@ class STF extends React.Component<any, any> {
                     fixedColumnKeys={[]}
                     pagintionPosition="topRight"
                     gridName="TIER"
-                    enableSettings={false}
+                    enableSettings
                     columns={stColumns()}
                     scroll={{ x: 2000, y: 377 }}
                     isFetchingData={false}
                     enableResizingOfColumns
                     data={this.state.drugGridData}
-                    rowSelection={{
-                      columnWidth: 50,
-                      fixed: true,
-                      type: "checkbox",
-                      onChange: this.onSelectedTableRowChanged,
-                    }}
+                    rowSelectionChangeFromCell={this.rowSelectionChangeFromCell}
+                    onSelectAllRows={this.onSelectAllRows}
+                    customSettingIcon={"FILL-DOT"}
+                    settingsWidth={30}
+                    // rowSelection={{
+                    //   columnWidth: 50,
+                    //   fixed: true,
+                    //   type: "checkbox",
+                    //   onChange: this.onSelectedTableRowChanged,
+                    // }}
                   />
                 </div>
               </div>

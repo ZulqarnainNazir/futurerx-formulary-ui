@@ -44,7 +44,8 @@ function mapDispatchToProps(dispatch) {
         getStGrouptDescriptionVersions: (a) => dispatch(getStGrouptDescriptionVersions(a)), //Version
         getStGrouptDescription: (a) => dispatch(getStGrouptDescription(a)), // Group ID Detail
         getSTGroupDetails:(arg)=>dispatch(getSTGroupDetails(arg)),
-        cleanMessages: (arg) => dispatch(cleanMessages(arg))
+        cleanMessages: (arg) => dispatch(cleanMessages(arg)),
+        setAdditionalCriteria: (arg) => dispatch(setAdditionalCriteria(arg))
     };
 }
 

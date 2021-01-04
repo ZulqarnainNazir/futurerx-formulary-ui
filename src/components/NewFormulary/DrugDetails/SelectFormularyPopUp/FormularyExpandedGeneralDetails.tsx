@@ -3,6 +3,9 @@ import RadioButton from "../../../shared/Frx-components/radio-button/RadioButton
 import getClassificationName from "../../Utils/FormularyClassificationUtils";
 import getSubmissionMonth from "../../Utils/SubmissionMonthUtils";
 import { getformulary } from "../../../../redux/slices/formulary/setup/setupService";
+import Radio from "@material-ui/core/Radio";
+import RadioGroup from "@material-ui/core/RadioGroup";
+import FormControlLabel from "@material-ui/core/FormControlLabel";
 
 export default class FormularyExpandedGeneralDetails extends React.Component<
   any,
@@ -77,25 +80,28 @@ export default class FormularyExpandedGeneralDetails extends React.Component<
             Method of Formulary Build
             <span className="formulary-info-field__required">*</span>
           </div>
-          <div className="formulary-info-field__value">
-            <RadioButton
-              checked={this.state.methodofFormularyBuild === 'Y' ? true : false}
-              label="Yes"
-              name="method-of-formulary-material-radio"
-            />
-            <RadioButton checked={this.state.methodofFormularyBuild === 'N' ? true : false} label="No" name="method-of-formulary-material-radio" />
-          </div>
-        </div>
-
-        <div className="formulary-info-field">
-          <div className="formulary-info-field__label">
-            CLONE FORMULARY
-            <span className="formulary-info-field__required">*</span>
-          </div>
-          <div className="formulary-info-field__value">
-            <div className="input-link" onClick={() => {}}>
-              Clone Formulary
-            </div>
+          <div className="formulary-info-field__value radio-group">
+            <RadioGroup
+              className="radio-group-custom"
+              aria-label={this.state.methodofFormularyBuild}
+              name="method"
+              value={this.state.methodofFormularyBuild}>
+              <FormControlLabel
+                disabled={true}
+                value="C"
+                control={<Radio />}
+                label="Clone"/>
+              <FormControlLabel
+                disabled={true}
+                value="U"
+                control={<Radio />}
+                label="Upload"/>
+              <FormControlLabel
+                disabled={true}
+                value="N"
+                control={<Radio />}
+                label="Create New"/>
+            </RadioGroup>
           </div>
         </div>
 
@@ -103,7 +109,7 @@ export default class FormularyExpandedGeneralDetails extends React.Component<
           <div className="formulary-info-field__label">EFFECTIVE DATE</div>
           <div className="formulary-info-field__value">{this.state.effectiveDate}</div>
         </div>
-
+        <div className="formulary-info-field">                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        </div>
         <div className="formulary-info-field">
           <div className="formulary-info-field__label">
             SERVICE YEAR
@@ -122,51 +128,56 @@ export default class FormularyExpandedGeneralDetails extends React.Component<
         </div>
 
         <div className="formulary-info-field">
-          <div className="formulary-info-field__label">
-            Which prior year's formulary does this most closely resemble?
-          </div>
-          <div className="formulary-info-field__value"></div>
-        </div>
+          {this.state.formularyType !== 'Commercial' ? (
+            <>
+            <div className="formulary-info-field__label">
+              Which prior year's formulary does this most closely resemble?
+            </div>
+            <div className="formulary-info-field__value"></div>
+            </>
+          ) : null}
+        </div>                
 
         <div className="formulary-info-field">
           <div className="formulary-info-field__label">
             FORMULARY CLASSIFICATION SYSTEM
           </div>
-          <div className="formulary-info-field__value">
-            <RadioButton
-              checked={this.state.formularyClassificationSystem === 'Medispan' ? true : false}
-              label="Medispan"
-              name="formulary-classification-material-radio"
-            />
-            <RadioButton
-              checked={this.state.formularyClassificationSystem === 'AHFS' ? true : false}
-              label="AHFS"
-              name="formulary-classification-material-radio"
-            />
-            <RadioButton
-              checked={this.state.formularyClassificationSystem === 'USP' ? true : false}
-              label="USP"
-              name="formulary-classification-material-radio"
-            />
-             <RadioButton
-              checked={this.state.formularyClassificationSystem === '25346526526' ? true : false}
-              label="25346526526"
-              name="formulary-classification-material-radio"
-            />
+          <div className="formulary-info-field__value radio-group">
+            <RadioGroup
+              className="radio-group-custom"
+              aria-label={this.state.formularyClassificationSystem}
+              name="classification"
+              value={this.state.formularyClassificationSystem}>
+                {this.state.formularyType !== 'Commercial' ? (
+                  <>
+                  <FormControlLabel
+                  disabled={true}
+                  value="USP"
+                  control={<Radio />}
+                  label="USP"/>
+                  <FormControlLabel
+                  disabled={true}
+                  value="AHFS"
+                  control={<Radio />}
+                  label="AHFS"/>
+                  </>
+                ): null}
+              <FormControlLabel
+                disabled={true}
+                value="Medispan"
+                control={<Radio />}
+                label="Medispan"/>
+            </RadioGroup>
           </div>
         </div>
 
         <div className="formulary-info-field">
-          <div className="formulary-info-field__label">SUBMISSION MONTH</div>
-          <div className="formulary-info-field__value">{this.state.formularySubmissionMonth}</div>
-        </div>
-        <div className="formulary-info-field">
-          <button
-            onClick={() => {}}
-            className="Button select-formulary-popup-root__submit-btn"
-          >
-            View Full Formulary
-          </button>
+          {this.state.formularyType !== 'Commercial' ? (
+            <>
+              <div className="formulary-info-field__label">SUBMISSION MONTH</div>
+              <div className="formulary-info-field__value">{this.state.formularySubmissionMonth}</div>
+            </>
+          ): null}
         </div>
       </div>
     );

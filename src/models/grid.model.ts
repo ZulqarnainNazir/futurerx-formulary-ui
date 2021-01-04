@@ -52,7 +52,13 @@ export interface Grid<RecordType = unknown> {
   onsettingsTriDotDropDownItemClick?: (dataRow: any, item: any) => void;
   onColumnChange?: (columns: Column<any>[]) => void;
 
-  applySort?: (key: string, order: string) => void;
+	applySort?: (key: string, order: string) => void;
+	rowSelectionChangeFromCell?: (
+    key: string,
+    data: any,
+    isSelected: boolean
+  ) => void;
+  onSelectAllRows?: (isSelected: boolean) => void;
   hideResults?: boolean;
   hideItemsPerPage?: boolean;
   hidePageJumper?: boolean;
@@ -102,7 +108,8 @@ export interface FilterDropdownProps {
   visible: boolean;
 }
 export interface Column<RecordType> {
-  displayTitle: string;
+	displayTitle: string;
+	headerCellSelection?: boolean;
   textCase?: textcasetype;
   className?: string;
   showToolTip?: boolean;

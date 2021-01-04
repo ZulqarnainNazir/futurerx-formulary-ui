@@ -52,6 +52,7 @@ function mapDispatchToProps(dispatch) {
 
 const mapStateToProps = (state) => {
   return {
+    configureSwitch: state.switchReducer.configureSwitch,
     formulary_id: state?.application?.formulary_id,
     formulary: state?.application?.formulary,
     formulary_lob_id: state?.application?.formulary_lob_id,
@@ -206,6 +207,31 @@ class Tier extends React.Component<any, tabsState> {
         nextProps.formulary_type_id
       );
       this.state.lobCode = getLobCode(nextProps.formulary_lob_id);
+    }
+    if(this.props.configureSwitch !== nextProps.configureSwitch){
+      if(nextProps.configureSwitch){
+        this.state.tabs.map(tabInfo => {
+          if(tabInfo.id === 2 || tabInfo.id === 3){
+            tabInfo.disabled = true;
+          }else{
+            tabInfo.disabled = false;
+          }
+        });
+        this.setState({
+          activeTabIndex: 0,
+        });
+      }else{
+        this.state.tabs.map(tabInfo => {
+          if(tabInfo.id === 2){
+            tabInfo.disabled = true;
+          }else{
+            tabInfo.disabled = false;
+          }
+        });
+        this.setState({
+          activeTabIndex: this.state.activeTabIndex,
+        });
+      }
     }
   }
 
