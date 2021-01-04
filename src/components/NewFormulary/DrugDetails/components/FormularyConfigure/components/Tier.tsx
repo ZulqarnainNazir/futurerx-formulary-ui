@@ -29,6 +29,7 @@ import {
   getTier,
   getTierLabels,
   postNewTier,
+  replaceTier,
 } from "../../../../../../redux/slices/formulary/tier/tierActionCreation";
 //import { getFormularySetup } from "../../../../../../redux/slices/formulary/formularySummaryActionCreation";
 import { GridMenu } from "../../../../../../models/grid.model";
@@ -46,6 +47,7 @@ function mapDispatchToProps(dispatch) {
     getTierLabels: (a) => dispatch(getTierLabels(a)),
     postNewTier: (a) => dispatch(postNewTier(a)),
     setAdvancedSearch: (a) => dispatch(setAdvancedSearch(a)),
+    replaceTier: (a) => dispatch(replaceTier(a)),
     //getFormularySetup:(a)=>dispatch(getFormularySetup(a))
   };
 }
@@ -82,7 +84,14 @@ interface tabsState {
   pupupTitle: any;
   popupPositiveButtonText: any;
   selectedTierToDelete: any;
+  filteredTierLabels: any[];
+  updateTierId: any;
+  updateTierMode: any;
 }
+
+const MODE_ADD_NEW = 0;
+const MODE_REPLACE = 1;
+const MODE_DELETE = 2;
 
 class Tier extends React.Component<any, tabsState> {
   state = {
@@ -100,6 +109,7 @@ class Tier extends React.Component<any, tabsState> {
     tierLabels: [],
     settingsTriDotDropDownItems: [],
     tierLabelNames: [],
+    filteredTierLabels: [],
     tierData: [],
     tierDefinationColumns: [],
     tierDefinationData: [],
@@ -109,6 +119,8 @@ class Tier extends React.Component<any, tabsState> {
     pupupTitle: "",
     selectedTierToDelete: "",
     popupPositiveButtonText: "",
+    updateTierId: 0,
+    updateTierMode: MODE_ADD_NEW,
     tabs: [
       { id: 1, text: "Replace", disabled: false },
       { id: 2, text: "Append", disabled: true },
@@ -208,23 +220,23 @@ class Tier extends React.Component<any, tabsState> {
       );
       this.state.lobCode = getLobCode(nextProps.formulary_lob_id);
     }
-    if(this.props.configureSwitch !== nextProps.configureSwitch){
-      if(nextProps.configureSwitch){
+    if (this.props.configureSwitch !== nextProps.configureSwitch) {
+      if (nextProps.configureSwitch) {
         this.state.tabs.map(tabInfo => {
-          if(tabInfo.id === 2 || tabInfo.id === 3){
+          if (tabInfo.id === 2 || tabInfo.id === 3) {
             tabInfo.disabled = true;
-          }else{
+          } else {
             tabInfo.disabled = false;
           }
         });
         this.setState({
           activeTabIndex: 0,
         });
-      }else{
+      } else {
         this.state.tabs.map(tabInfo => {
-          if(tabInfo.id === 2){
+          if (tabInfo.id === 2) {
             tabInfo.disabled = true;
-          }else{
+          } else {
             tabInfo.disabled = false;
           }
         });
@@ -312,14 +324,12 @@ class Tier extends React.Component<any, tabsState> {
     console.log("work");
   };
   settingsTriDotClick = (data: any) => {
-    debugger;
     console.log("tri dot clicked ", data);
   };
 
   settingsTriDotDropDownItemClick = (data: any, item: any) => {
-    debugger;
     if (item === "Replace Tier") {
-      this.onAddNewTierHandler();
+      this.onAddNewTierHandler(data.id_tier, data.tier_label, MODE_REPLACE);
     } else if (item === "Delete Tier") {
       this.setState({ selectedTierToDelete: data.tier_name });
       this.onDeleteTierHandler();
@@ -335,21 +345,47 @@ class Tier extends React.Component<any, tabsState> {
       console.log("tridot menu clicked", menuItem);
     }
   };
-  onAddNewTierHandler = () => {
+  onAddNewTierHandler = (tierId, tierLabel, mode) => {
     this.setState({
       pupupTitle: "TIER DEFINITION",
       popupPositiveButtonText: "Save",
       deleteTierPupup: false,
+      updateTierMode: mode,
     });
-    let maxTierCount = getMaxTierCount(
-      this.props.formulary_lob_id,
-      this.props.formulary_type_id
-    );
-    if (this.state.newTierId > maxTierCount) {
-      showMessage("Error: Max tier limit reached", "error");
-    } else {
+    if (mode === MODE_ADD_NEW) {
+      let maxTierCount = getMaxTierCount(
+        this.props.formulary_lob_id,
+        this.props.formulary_type_id
+      );
+      if (this.state.newTierId > maxTierCount) {
+        showMessage("Error: Max tier limit reached", "error");
+      } else {
+        let filteredTierLabels = Array();
+        if (this.state.tierLabelNames.length > 0) {
+          let existingTierLabels = this.state.tierOption.map(tierInfo => {
+            return tierInfo['tier_label'];
+          });
+          filteredTierLabels = this.state.tierLabelNames.filter(label => !existingTierLabels.includes(label));
+        }
+        this.setState({
+          addNewTierPopup: true,
+          filteredTierLabels: filteredTierLabels,
+          updateTierId: tierId,
+        });
+      }
+    } else if (mode === MODE_REPLACE) {
+      let filteredTierLabels = Array();
+      if (this.state.tierLabelNames.length > 0) {
+        let existingTierLabels = this.state.tierOption.map(tierInfo => {
+          return tierInfo['tier_label'];
+        });
+        filteredTierLabels = this.state.tierLabelNames.filter(label => !existingTierLabels.includes(label));
+        filteredTierLabels = [...[tierLabel], ...filteredTierLabels];
+      }
       this.setState({
         addNewTierPopup: true,
+        filteredTierLabels: filteredTierLabels,
+        updateTierId: tierId,
       });
     }
   };
@@ -389,25 +425,43 @@ class Tier extends React.Component<any, tabsState> {
       apiDetails["pathParams"] = this.props?.formulary_id;
       apiDetails["keyVals"] = [];
       apiDetails["messageBody"] = {
-        id_tier: this.state.newTierId,
+        id_tier: this.state.updateTierId,
         id_tier_label: this.state.newTierLabelId,
       };
 
-      const TierDefinationData = this.props
-        .postNewTier(apiDetails)
-        .then((json) => {
-          if (
-            json.payload &&
-            json.payload.code &&
-            json.payload.code === "200"
-          ) {
-            showMessage("Tier Added", "success");
-            const TierColumns = tierDefinationColumns();
-            this.populateTierDetails(TierColumns, this.props.formulary_id);
-          } else {
-            showMessage("Error: Failed to add tier", "error");
-          }
-        });
+      if (this.state.updateTierMode === MODE_ADD_NEW) {
+        const TierDefinationData = this.props
+          .postNewTier(apiDetails)
+          .then((json) => {
+            if (
+              json.payload &&
+              json.payload.code &&
+              json.payload.code === "200"
+            ) {
+              showMessage("Tier Added", "success");
+              const TierColumns = tierDefinationColumns();
+              this.populateTierDetails(TierColumns, this.props.formulary_id);
+            } else {
+              showMessage("Error: Failed to add tier", "error");
+            }
+          });
+      } else if (this.state.updateTierMode === MODE_REPLACE) {
+        const TierDefinationData = this.props
+          .replaceTier(apiDetails)
+          .then((json) => {
+            if (
+              json.payload &&
+              json.payload.code &&
+              json.payload.code === "200"
+            ) {
+              showMessage("Tier Replaced", "success");
+              const TierColumns = tierDefinationColumns();
+              this.populateTierDetails(TierColumns, this.props.formulary_id);
+            } else {
+              showMessage("Error: Failed to replace tier", "error");
+            }
+          });
+      }
     }
     this.setState({
       addNewTierPopup: false,
@@ -442,7 +496,7 @@ class Tier extends React.Component<any, tabsState> {
                       <FrxGridContainer
                         enableSearch={false}
                         enableColumnDrag={false}
-                        onSearch={() => {}}
+                        onSearch={() => { }}
                         fixedColumnKeys={[]}
                         pagintionPosition="topRight"
                         gridName="TIERDEFINATIONGRID"
@@ -467,12 +521,12 @@ class Tier extends React.Component<any, tabsState> {
                         hideResults
                         data={tierDefinationData}
                         pageSize={tierDefinationData.length}
-                        onGridPageChangeHandler={(page) => {}}
-                        getPerPageItemSize={(size) => {}}
+                        onGridPageChangeHandler={(page) => { }}
+                        getPerPageItemSize={(size) => { }}
                       />
                       <div className="tier-popup-btn">
                         <svg
-                          onClick={(e) => this.onAddNewTierHandler()}
+                          onClick={(e) => this.onAddNewTierHandler(this.state.newTierId, '', MODE_ADD_NEW)}
                           width="75"
                           height="25"
                           viewBox="0 0 75 25"
@@ -535,36 +589,36 @@ class Tier extends React.Component<any, tabsState> {
                             </Grid>
                           </div>
                         ) : (
-                          <div className="tier-definition-container">
-                            <Grid item xs={12}>
-                              <div className="tier-definition-popup-wrapper">
-                                <div className="tier-number-wrapper">
-                                  <div className="heading border-right">
-                                    tier number
+                            <div className="tier-definition-container">
+                              <Grid item xs={12}>
+                                <div className="tier-definition-popup-wrapper">
+                                  <div className="tier-number-wrapper">
+                                    <div className="heading border-right">
+                                      tier number
                                   </div>
-                                  <div className="tier-number border-right">
-                                    Tier {this.state.newTierId}
+                                    <div className="tier-number border-right">
+                                      Tier {this.state.updateTierId}
+                                    </div>
+                                  </div>
+                                  <div className="tier-description-wrapper">
+                                    <div className="heading">
+                                      tier description
+                                  </div>
+                                    <div className="tier-descripption">
+                                      <DropDown
+                                        className="tier-description-dropdown"
+                                        placeholder="Select"
+                                        options={this.state.filteredTierLabels}
+                                        onSelect={
+                                          this.tierLabelDropDownSelectHandler
+                                        }
+                                      />
+                                    </div>
                                   </div>
                                 </div>
-                                <div className="tier-description-wrapper">
-                                  <div className="heading">
-                                    tier description
-                                  </div>
-                                  <div className="tier-descripption">
-                                    <DropDown
-                                      className="tier-description-dropdown"
-                                      placeholder="Select"
-                                      options={this.state.tierLabelNames}
-                                      onSelect={
-                                        this.tierLabelDropDownSelectHandler
-                                      }
-                                    />
-                                  </div>
-                                </div>
-                              </div>
-                            </Grid>
-                          </div>
-                        )}
+                              </Grid>
+                            </div>
+                          )}
                       </DialogPopup>
                     </div>
                   </div>
