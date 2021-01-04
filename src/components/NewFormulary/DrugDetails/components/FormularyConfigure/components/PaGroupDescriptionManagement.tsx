@@ -266,13 +266,16 @@ class PaGroupDescriptionManagement extends React.Component<any, any> {
             <div className="group-des">
               <div className="panel header">
                 <span>GROUP DESCRIPTION</span>
-                <Box display="flex" justifyContent="flex-end">
+                {(!this.props.isPopUpView) && (
+                  <Box display="flex" justifyContent="flex-end">
                   <Button
                     label="+ Add New"
                     className="Button"
                     onClick={this.addNewGroup}
                   />
                 </Box>
+                )}
+                
               </div>
               <div className="inner-container">
                 <div className="search-input">
@@ -362,6 +365,8 @@ class PaGroupDescriptionManagement extends React.Component<any, any> {
                 versionTitle={this.state.versionTitle}
                 activeTabIndex={this.state.activeTabIndex}
                 latestVerion={this.state.latestVerion}
+                selectGroupDescriptionClick={this.props.selectGroupDescriptionClick}
+                isPopUpView={this.props.isPopUpView}
               />
             ) : (
               <PaNewGroupForm
@@ -374,6 +379,8 @@ class PaGroupDescriptionManagement extends React.Component<any, any> {
                 versionTitle={this.state.versionTitle}
                 activeTabIndex={this.state.activeTabIndex}
                 latestVerion={this.state.latestVerion}
+                selectGroupDescriptionClick={this.props.selectGroupDescriptionClick}
+                isPopUpView={this.props.isPopUpView}
               />
             )}
             {/* <PaNewGroupForm selectedGroupId={this.state.selectedGroup}/> */}

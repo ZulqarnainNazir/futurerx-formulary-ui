@@ -90,6 +90,7 @@ class PaReplace extends React.Component<any, any> {
     drugGridData: Array(),
     selectedDrugs: Array(),
     selectedGroupDescription: null,
+    selectedGroupDescriptionObj: {},
     selectedPaType: null,
     showPaConfiguration: false,
     selectedLastestedVersion: null,
@@ -274,14 +275,22 @@ class PaReplace extends React.Component<any, any> {
     }
   };
 
-  dropDownSelectHandlerGroupDescription = (value, event) => {
-    let tmp_index = event.key;
-    let tmp_value = event.value;
+  
+  dropDownSelectHandlerGroupDescription = (tmp_value, event) => {
+    debugger;
+    // let tmp_index = event.key;
+    // let tmp_value = event.value;
     this.setState({ selectedGroupDescription: tmp_value });
     let apiDetails = {};
     apiDetails["lob_type"] = this.props.formulary_lob_id;
     apiDetails["pathParams"] = "/" + tmp_value;
-
+    this.state.showPaGroupDescription=false;
+    let selected = this.state.paGroupDescriptions.filter(
+      (obj) => obj[this.state.groupDescriptionProp] == tmp_value
+    )[0];
+    this.setState({
+      selectedGroupDescriptionObj : selected
+    });
     this.props.getPaGrouptDescriptionVersions(apiDetails).then((json) => {
       let data = json.payload.data;
       let ftype = "";
@@ -558,14 +567,24 @@ class PaReplace extends React.Component<any, any> {
               <label>
                 PA GROUP DESCRIPTION<span className="astrict">*</span>
               </label>
-              <DropDownMap
+              {/* <DropDownMap
                 options={this.state.paGroupDescriptions}
                 valueProp={this.state.groupDescriptionProp}
                 dispProp="text"
                 onSelect={this.dropDownSelectHandlerGroupDescription}
                 disabled={this.props.configureSwitch}
                 value={this.state.selectedGroupDescription}
-              />
+              /> */}
+              <div className="input-element">
+                  <div className="bordered pointer bg-green">
+                    <span onClick={(e) => {this.setState({ showPaGroupDescription: true });}} className="inner-font">
+                      {this.state.selectedGroupDescriptionObj["pa_group_description_name"]
+                        ? this.state.selectedGroupDescriptionObj["pa_group_description_name"]
+                        : "Select Group Description"}
+                    </span>
+                    <EditIcon onClick={(e) =>{this.setState({ showPaGroupDescription: true });}} className={"hide-edit-icon"} />
+                  </div>
+                </div>
             </Col>
             <Col lg={4}></Col>
             <Col lg={8} className="mb-10">
@@ -580,6 +599,7 @@ class PaReplace extends React.Component<any, any> {
                 disabled={this.props.configureSwitch}
                 value={this.state.selectedPaType}
               />
+              
             </Col>
             <Col lg={8}>
               <label>
@@ -694,13 +714,8 @@ class PaReplace extends React.Component<any, any> {
               </Space>
             </Col>
           </Row>
-          <button
-            onClick={() => {
-              this.setState({ showPaGroupDescription: true });
-            }}
-          >
-            Clicke me!
-          </button>
+         
+         
           {isAdditionalCriteriaOpen ? (
             <AdvanceSearchContainer
               openPopup={isAdditionalCriteriaOpen}
@@ -798,7 +813,7 @@ class PaReplace extends React.Component<any, any> {
           <DialogPopup
             positiveActionText=""
             negativeActionText="Close"
-            title={"Select Formulary"}
+            title={"Select Group Description"}
             handleClose={() => {
               this.setState({
                 showPaGroupDescription: !this.state.showPaGroupDescription,
@@ -813,7 +828,7 @@ class PaReplace extends React.Component<any, any> {
           >
             {/* <SelectFormularyPopUp formularyToggle={this.formularyToggle} /> */}
             {/* <CloneFormularyPopup type="medicare" /> */}
-            <PaGroupDescriptionManagement />
+            <PaGroupDescriptionManagement isPopUpView={true} selectGroupDescriptionClick={this.dropDownSelectHandlerGroupDescription} />
           </DialogPopup>
         )}
         <ToastContainer />

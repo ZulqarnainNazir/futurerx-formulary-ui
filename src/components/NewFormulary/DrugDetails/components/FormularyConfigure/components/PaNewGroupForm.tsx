@@ -25,6 +25,7 @@ import { ToastContainer } from "react-toastify";
 import showMessage from "../../../../Utils/Toast";
 import Tags from "./Tags";
 
+
 import RadioButton from "../../../../../shared/Frx-components/radio-button/RadioButton";
 import {
   getPaGrouptDescription,
@@ -211,6 +212,7 @@ function mapStateToProps(state) {
     PaGDData: state.paReducer.description,
     version: state.paVersion.paVersion,
     additionalCriteriaObject: state?.additionalCriteria?.additionalCriteriaBody,
+    savePaGdm: state.savePaGdm,
   };
 }
 
@@ -547,6 +549,19 @@ function NewGroup(props: any) {
             ? formData.pa_group_description_name
             : props.title}
         </span>
+
+        {(props.isPopUpView) && (
+          <div className="button-wrapper">
+          <Button
+            label="Select This Group"
+            className="Button"
+            onClick={( event) => props.selectGroupDescriptionClick(props.savePaGdm.current_group_id)}
+          />
+          </div>
+        )}
+        
+              
+        
       </div>
       {(props.formType > 0 || showHeader > 0) && (
         <PAGroupHeader
