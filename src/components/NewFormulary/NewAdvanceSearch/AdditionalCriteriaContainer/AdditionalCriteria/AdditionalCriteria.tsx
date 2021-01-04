@@ -1,25 +1,21 @@
 import React, { Component } from "react";
 import CustomAccordion from "../../../../shared/Frx-components/accordion/CustomAccordion";
 
-import {
-  POS_SETTINGS_LIST,
-  PR_SETTINGS_LIST,
-} from "../../../../../api/http-commons";
-
 import { ReactComponent as TiltCrossIcon } from "../../../../../assets/icons/TiltCrossIcon.svg";
-import { ReactComponent as SwapIcon } from "../../../../../assets/icons/SwapIcon.svg";
-import PosSettings from "../../../DrugDetails/components/POS/PosSettings";
 import { connect } from "react-redux";
 import { getDrugDetailsPOSSettings } from "../../../../../redux/slices/formulary/drugDetails/pos/posActionCreation";
 import { getDrugDetailsPRSettings } from "../../../../../redux/slices/formulary/drugDetails/pr/prActionCreation";
-import { render } from "@testing-library/react";
 import ListItem from "../ListItem/ListItem";
 import { setAdditionalCriteria } from "../../../../../redux/slices/formulary/advancedSearch/additionalCriteriaSlice";
 import { ReactComponent as ClearIcon } from "../../../../../assets/icons/clearcircle.svg";
 import * as _ from "lodash";
 import { Button } from "@material-ui/core";
-
+import { DndProvider } from "react-dnd";
+import { HTML5Backend } from "react-dnd-html5-backend";
+import { useDrag, DragSourceMonitor } from "react-dnd";
+import DragBox from "../ListItem/DragBox";
 // const hiddenColumns = _.cloneDeep(this.props.hiddenColumns);
+
 interface PayloadBody {
   age: any;
   gender: string[];
@@ -163,7 +159,8 @@ class AdditionalCriteria extends Component<any, any> {
         ) {
           sequence = additionalCriteriaBody[prop];
         }
-
+        /////////////////////////////
+        ///////////////////////////// COVERED
         if (
           Object.prototype.hasOwnProperty.call(
             additionalCriteriaBody,
@@ -172,6 +169,8 @@ class AdditionalCriteria extends Component<any, any> {
           prop === "covered"
         ) {
           covered = additionalCriteriaBody[prop];
+
+          ///////////////////////////// AL
           if (Object.prototype.hasOwnProperty.call(covered, "age")) {
             if (
               covered["age"]["min_age_condition"] !== "" &&
@@ -200,6 +199,8 @@ class AdditionalCriteria extends Component<any, any> {
               savedCriteriaList.push(currentNode);
             }
           }
+
+          ///////////////////////////// GL
           if (Object.prototype.hasOwnProperty.call(covered, "gender")) {
             if (covered["gender"].length > 0) {
               globalCardCount++;
@@ -225,11 +226,11 @@ class AdditionalCriteria extends Component<any, any> {
               savedCriteriaList.push(currentNode);
             }
           }
+          ///////////////////////////// ICD
           if (Object.prototype.hasOwnProperty.call(covered, "icd")) {
             if (
-              covered["icd"]["look_back_days"] !== ""
-              // (covered["icd"]["icds"] !== "" ||
-              //   covered["icd"]["icds"].length > 0)
+              covered["icd"]["look_back_days"] !== "" ||
+              covered["icd"]["icds"].length > 0
             ) {
               globalCardCount++;
               let currentNode = {
@@ -254,6 +255,68 @@ class AdditionalCriteria extends Component<any, any> {
               savedCriteriaList.push(currentNode);
             }
           }
+
+          ///////////////////////////// PN
+          if (
+            Object.prototype.hasOwnProperty.call(covered, "pharmacy_networks")
+          ) {
+            if (covered["pharmacy_networks"].length > 0) {
+              globalCardCount++;
+              let currentNode = {
+                id: globalCardCount,
+                cardCode: criteriaMock[3].cardCode,
+                cardName: criteriaMock[3].cardName,
+                isIncluded: criteriaMock[3].isIncluded,
+                render: (
+                  <ListItem
+                    nodeId={globalCardCount}
+                    deleteIconHandler={this.deleteIconHandler}
+                    card={{
+                      cardCode: criteriaMock[3].cardCode,
+                      cardName: criteriaMock[3].cardName,
+                      isIncluded: criteriaMock[3].isIncluded,
+                    }}
+                    payload={covered["pharmacy_networks"]}
+                    handleGlobalState={this.handleAllNodesState}
+                  />
+                ),
+              };
+              savedCriteriaList.push(currentNode);
+            }
+          }
+          ///////////////////////////// PT
+          if (
+            Object.prototype.hasOwnProperty.call(
+              covered,
+              "prescriber_taxonomies"
+            )
+          ) {
+            if (covered["prescriber_taxonomies"].length > 0) {
+              globalCardCount++;
+              let currentNode = {
+                id: globalCardCount,
+                cardCode: criteriaMock[4].cardCode,
+                cardName: criteriaMock[4].cardName,
+                isIncluded: criteriaMock[4].isIncluded,
+                render: (
+                  <ListItem
+                    nodeId={globalCardCount}
+                    deleteIconHandler={this.deleteIconHandler}
+                    card={{
+                      cardCode: criteriaMock[4].cardCode,
+                      cardName: criteriaMock[4].cardName,
+                      isIncluded: criteriaMock[4].isIncluded,
+                    }}
+                    payload={covered["prescriber_taxonomies"]}
+                    handleGlobalState={this.handleAllNodesState}
+                  />
+                ),
+              };
+              savedCriteriaList.push(currentNode);
+            }
+          }
+          ///////////////////////////// POS
+
           if (
             Object.prototype.hasOwnProperty.call(covered, "place_of_services")
           ) {
@@ -281,6 +344,7 @@ class AdditionalCriteria extends Component<any, any> {
               savedCriteriaList.push(currentNode);
             }
           }
+          ///////////////////////////// PR
           if (
             Object.prototype.hasOwnProperty.call(covered, "patient_residences")
           ) {
@@ -308,8 +372,45 @@ class AdditionalCriteria extends Component<any, any> {
               savedCriteriaList.push(currentNode);
             }
           }
+          ///////////////////////////// PCHL
+          if (
+            Object.prototype.hasOwnProperty.call(
+              covered,
+              "prerequisite_claims_history_lookbacks"
+            )
+          ) {
+            if (
+              // covered["prerequisite_claims_history_lookbacks"] !== "" ||
+              covered["prerequisite_claims_history_lookbacks"].length > 0
+            ) {
+              globalCardCount++;
+              let currentNode = {
+                id: globalCardCount,
+                cardCode: criteriaMock[7].cardCode,
+                cardName: criteriaMock[7].cardName,
+                isIncluded: criteriaMock[7].isIncluded,
+                render: (
+                  <ListItem
+                    nodeId={globalCardCount}
+                    deleteIconHandler={this.deleteIconHandler}
+                    card={{
+                      cardCode: criteriaMock[7].cardCode,
+                      cardName: criteriaMock[7].cardName,
+                      isIncluded: criteriaMock[7].isIncluded,
+                    }}
+                    payload={
+                      covered["prerequisite_claims_history_lookbacks"][0]
+                    }
+                    handleGlobalState={this.handleAllNodesState}
+                  />
+                ),
+              };
+              savedCriteriaList.push(currentNode);
+            }
+          }
         }
-
+        ///////////////////////////// NOT
+        ///////////////////////////// COVERED
         if (
           Object.prototype.hasOwnProperty.call(
             additionalCriteriaBody,
@@ -318,6 +419,7 @@ class AdditionalCriteria extends Component<any, any> {
           prop === "not_covered"
         ) {
           not_covered = additionalCriteriaBody[prop];
+          ///////////////////////////// AL
           if (Object.prototype.hasOwnProperty.call(not_covered, "age")) {
             if (
               not_covered["age"]["min_age_condition"] !== "" &&
@@ -346,6 +448,7 @@ class AdditionalCriteria extends Component<any, any> {
               savedCriteriaList.push(currentNode);
             }
           }
+          ///////////////////////////// GL
           if (Object.prototype.hasOwnProperty.call(not_covered, "gender")) {
             if (not_covered["gender"].length > 0) {
               globalCardCount++;
@@ -371,11 +474,12 @@ class AdditionalCriteria extends Component<any, any> {
               savedCriteriaList.push(currentNode);
             }
           }
+
+          ///////////////////////////// ICD
           if (Object.prototype.hasOwnProperty.call(not_covered, "icd")) {
             if (
-              not_covered["icd"]["look_back_days"] !== ""
-              // (not_covered["icd"]["icds"] !== "" ||
-              //   not_covered["icd"]["icds"].length > 0)
+              not_covered["icd"]["look_back_days"] !== "" ||
+              not_covered["icd"]["icds"].length > 0
             ) {
               globalCardCount++;
               let currentNode = {
@@ -400,6 +504,70 @@ class AdditionalCriteria extends Component<any, any> {
               savedCriteriaList.push(currentNode);
             }
           }
+          ///////////////////////////// PN
+          if (
+            Object.prototype.hasOwnProperty.call(
+              not_covered,
+              "pharmacy_networks"
+            )
+          ) {
+            if (not_covered["pharmacy_networks"].length > 0) {
+              globalCardCount++;
+              let currentNode = {
+                id: globalCardCount,
+                cardCode: criteriaMock[3].cardCode,
+                cardName: criteriaMock[3].cardName,
+                isIncluded: !criteriaMock[3].isIncluded,
+                render: (
+                  <ListItem
+                    nodeId={globalCardCount}
+                    deleteIconHandler={this.deleteIconHandler}
+                    card={{
+                      cardCode: criteriaMock[3].cardCode,
+                      cardName: criteriaMock[3].cardName,
+                      isIncluded: !criteriaMock[3].isIncluded,
+                    }}
+                    payload={not_covered["pharmacy_networks"]}
+                    handleGlobalState={this.handleAllNodesState}
+                  />
+                ),
+              };
+              savedCriteriaList.push(currentNode);
+            }
+          }
+          ///////////////////////////// PT
+          if (
+            Object.prototype.hasOwnProperty.call(
+              not_covered,
+              "prescriber_taxonomies"
+            )
+          ) {
+            if (not_covered["prescriber_taxonomies"].length > 0) {
+              globalCardCount++;
+              let currentNode = {
+                id: globalCardCount,
+                cardCode: criteriaMock[4].cardCode,
+                cardName: criteriaMock[4].cardName,
+                isIncluded: !criteriaMock[4].isIncluded,
+                render: (
+                  <ListItem
+                    nodeId={globalCardCount}
+                    deleteIconHandler={this.deleteIconHandler}
+                    card={{
+                      cardCode: criteriaMock[4].cardCode,
+                      cardName: criteriaMock[4].cardName,
+                      isIncluded: !criteriaMock[4].isIncluded,
+                    }}
+                    payload={not_covered["prescriber_taxonomies"]}
+                    handleGlobalState={this.handleAllNodesState}
+                  />
+                ),
+              };
+              savedCriteriaList.push(currentNode);
+            }
+          }
+
+          ///////////////////////////// POS
           if (
             Object.prototype.hasOwnProperty.call(
               not_covered,
@@ -430,6 +598,8 @@ class AdditionalCriteria extends Component<any, any> {
               savedCriteriaList.push(currentNode);
             }
           }
+
+          ///////////////////////////// PR
           if (
             Object.prototype.hasOwnProperty.call(
               not_covered,
@@ -460,8 +630,45 @@ class AdditionalCriteria extends Component<any, any> {
               savedCriteriaList.push(currentNode);
             }
           }
+          ///////////////////////////// PHCL
+          if (
+            Object.prototype.hasOwnProperty.call(
+              not_covered,
+              "prerequisite_claims_history_lookbacks"
+            )
+          ) {
+            if (
+              // not_covered["prerequisite_claims_history_lookbacks"] !== "" ||
+              not_covered["prerequisite_claims_history_lookbacks"].length > 0
+            ) {
+              globalCardCount++;
+              let currentNode = {
+                id: globalCardCount,
+                cardCode: criteriaMock[7].cardCode,
+                cardName: criteriaMock[7].cardName,
+                isIncluded: !criteriaMock[7].isIncluded,
+                render: (
+                  <ListItem
+                    nodeId={globalCardCount}
+                    deleteIconHandler={this.deleteIconHandler}
+                    card={{
+                      cardCode: criteriaMock[7].cardCode,
+                      cardName: criteriaMock[7].cardName,
+                      isIncluded: !criteriaMock[7].isIncluded,
+                    }}
+                    payload={
+                      not_covered["prerequisite_claims_history_lookbacks"][0]
+                    }
+                    handleGlobalState={this.handleAllNodesState}
+                  />
+                ),
+              };
+              savedCriteriaList.push(currentNode);
+            }
+          }
         }
       }
+
       this.setState({
         globalCardCount: globalCardCount,
         selectedCriteriaList: savedCriteriaList,
@@ -495,12 +702,12 @@ class AdditionalCriteria extends Component<any, any> {
             render: (
               <ListItem
                 nodeId={globalCardCount}
-                deleteIconHandler={this.deleteIconHandler}
                 card={{
-                  cardName: cardName,
-                  cardCode: cardCode,
-                  isIncluded: isIncluded,
+                  cardName,
+                  cardCode,
+                  isIncluded,
                 }}
+                deleteIconHandler={this.deleteIconHandler}
                 payload={null}
                 handleGlobalState={this.handleAllNodesState}
               />
@@ -536,16 +743,25 @@ class AdditionalCriteria extends Component<any, any> {
       globalCardCountCache,
     });
   };
-
+  // handlePCHLGlobalState =
   handleAllNodesState = (
     nodeId,
     cardCode,
     cardName,
     isIncluded,
-    updatedPayload
+    updatedPayload,
+    isArrCriteria
   ) => {
-    console.log(nodeId, cardCode, cardName, isIncluded, updatedPayload);
+    // console.log(
+    //   nodeId,
+    //   cardCode,
+    //   cardName,
+    //   isIncluded,
+    //   updatedPayload,
+    //   isArrCriteria
+    // );
 
+    if (isArrCriteria) updatedPayload = [updatedPayload];
     let sequence = this.state.apiAdditionalCriteriaState.sequence;
     let covered = { ...this.state.apiAdditionalCriteriaState.covered };
     let not_covered = { ...this.state.apiAdditionalCriteriaState.not_covered };
@@ -612,13 +828,7 @@ class AdditionalCriteria extends Component<any, any> {
     const { criteriaMock } = this.state;
 
     let filteredList = Array();
-    let payload = {
-      additionalCriteriaObject: this.props.additionalCriteriaObject,
-      additionalCriteriaBody: this.props.additionalCriteriaBody,
-      populateGrid: this.props.populateGrid,
-      closeDialog: this.props.closeDialog,
-      listItemStatus: { ...this.props.listItemStatus },
-    };
+
     let cardName = "";
 
     switch (cardCode) {
@@ -648,56 +858,22 @@ class AdditionalCriteria extends Component<any, any> {
 
         break;
       case 4:
+        filteredList = this.state.selectedCriteriaList.filter(
+          (card) => card.cardCode === cardCode
+        );
+
         cardName = criteriaMock[cardCode - 1].cardName;
-        this.setState({
-          selectedCriteriaList: [
-            ...this.state.selectedCriteriaList,
-            {
-              id: null,
-              cardCode: cardCode,
-              name: cardName,
-              render: (
-                <ListItem
-                  card={{
-                    cardName: cardName,
-                    cardCode: cardCode,
-                    // isIncluded: isIncluded,
-                  }}
-                  deleteIconHandler={this.deleteIconHandler}
-                  initialState={null}
-                  payload={null}
-                  handleGlobalState={this.handleAllNodesState}
-                />
-              ),
-            },
-          ],
-        });
+        this.setNodes(cardName, cardCode, filteredList);
+
         break;
       case 5:
+        filteredList = this.state.selectedCriteriaList.filter(
+          (card) => card.cardCode === cardCode
+        );
+
         cardName = criteriaMock[cardCode - 1].cardName;
-        this.setState({
-          selectedCriteriaList: [
-            ...this.state.selectedCriteriaList,
-            {
-              id: null,
-              cardCode: cardCode,
-              name: cardName,
-              render: (
-                <ListItem
-                  card={{
-                    cardName: cardName,
-                    cardCode: cardCode,
-                    // isIncluded: isIncluded,
-                  }}
-                  deleteIconHandler={this.deleteIconHandler}
-                  initialState={null}
-                  payload={null}
-                  handleGlobalState={this.handleAllNodesState}
-                />
-              ),
-            },
-          ],
-        });
+        this.setNodes(cardName, cardCode, filteredList);
+
         break;
       case 6:
         filteredList = this.state.selectedCriteriaList.filter(
@@ -716,30 +892,12 @@ class AdditionalCriteria extends Component<any, any> {
 
         break;
       case 8:
+        filteredList = this.state.selectedCriteriaList.filter(
+          (card) => card.cardCode === cardCode
+        );
         cardName = criteriaMock[cardCode - 1].cardName;
-        this.setState({
-          selectedCriteriaList: [
-            ...this.state.selectedCriteriaList,
-            {
-              id: null,
-              cardCode: cardCode,
-              name: cardName,
-              render: (
-                <ListItem
-                  card={{
-                    cardName: cardName,
-                    cardCode: cardCode,
-                    // isIncluded: isIncluded,
-                  }}
-                  deleteIconHandler={this.deleteIconHandler}
-                  initialState={null}
-                  payload={null}
-                  handleGlobalState={this.handleAllNodesState}
-                />
-              ),
-            },
-          ],
-        });
+        this.setNodes(cardName, cardCode, filteredList);
+
         break;
       default:
         console.log("default state");
@@ -758,57 +916,52 @@ class AdditionalCriteria extends Component<any, any> {
       <div className="__root-additional-criteria-child-accordion-section">
         <CustomAccordion name={`ADDITIONAL CRITERIA ${sequence}`}>
           <div className="__root-additional-criteria-child-accordion-section-content">
-            <div className="__root-additional-criteria-child-accordion-section-content-left">
-              <div className="__root-additional-criteria-child-accordion-section-content-left-inner-spacing">
-                {criteriaList.map((c) => (
-                  <div
-                    key={c.id}
-                    className="__root-additional-criteria-child-accordion-section-content-left-inner-spacing-flex"
-                    draggable="true"
-                    onClick={() => this.onCriteriaSelect(c.id)}
-                  >
-                    <TiltCrossIcon />
-                    <label htmlFor="" className="font-styling">
-                      {c.criteria}
-                    </label>
-                  </div>
-                ))}
+            <DndProvider backend={HTML5Backend}>
+              <div className="__root-additional-criteria-child-accordion-section-content-left">
+                <div className="__root-additional-criteria-child-accordion-section-content-left-inner-spacing">
+                  {criteriaList.map((c) => (
+                    <DragBox
+                      key={c.id}
+                      criteria={c}
+                      onCriteriaSelect={this.onCriteriaSelect}
+                    />
+                  ))}
+                </div>
               </div>
-            </div>
-            <div className="__root-additional-criteria-child-accordion-section-content-right">
-              <div className="__root-additional-criteria-child-accordion-section-content-right-top scroll-bar">
-                {selectedCriteriaList.length === 0 ? (
-                  <div className="text-center">
-                    <p>
-                      Drag the file type(s) from the list on the left to create
-                      a filter.
-                    </p>
-                  </div>
-                ) : (
-                  selectedCriteriaList.map((criteriaObject, idx) => (
-                    <div draggable="true" key={criteriaObject.id}>
-                      {criteriaObject["render"]}
-                      {/* {selectedCriteriaList[0]["render"]} */}
+              <div className="__root-additional-criteria-child-accordion-section-content-right">
+                <div className="__root-additional-criteria-child-accordion-section-content-right-top scroll-bar">
+                  {selectedCriteriaList.length === 0 ? (
+                    <div className="text-center">
+                      <p>
+                        Drag the file type(s) from the list on the left to
+                        create a filter.
+                      </p>
                     </div>
-                  ))
-                )}
+                  ) : (
+                    selectedCriteriaList.map((criteriaObject, idx) => (
+                      <div key={criteriaObject.id}>
+                        {criteriaObject["render"]}
+                      </div>
+                    ))
+                  )}
+                </div>
+                <div className="__root-additional-criteria-child-accordion-section-content-right-bottom">
+                  <Button
+                    onClick={this.clearCurrentCriteriaState}
+                    className="clear-btn"
+                  >
+                    <ClearIcon />
+                    <span>Clear</span>
+                  </Button>
+                  <Button
+                    onClick={this.setCurrentCriteriaState}
+                    className="save-btn"
+                  >
+                    <span>Save</span>
+                  </Button>
+                </div>
               </div>
-              <div className="__root-additional-criteria-child-accordion-section-content-right-bottom">
-                <Button
-                  onClick={this.clearCurrentCriteriaState}
-                  className="clear-btn"
-                >
-                  <ClearIcon />
-                  <span>Clear</span>
-                </Button>
-                <Button
-                  onClick={this.setCurrentCriteriaState}
-                  className="save-btn"
-                >
-                  <span>Save</span>
-                </Button>
-              </div>
-            </div>
+            </DndProvider>
           </div>
         </CustomAccordion>
       </div>

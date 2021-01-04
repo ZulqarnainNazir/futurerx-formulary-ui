@@ -86,7 +86,6 @@ const DEFAULT_GRID_WIDTH = 1284;
 interface FrxGridProps<T> extends Grid<T> {
   customSettingIcon?: string;
   checkBoxWidth?: number;
-
   handleCheck?: any;
   customCheckbox?: boolean;
   customRowSelectionChange?: any;
@@ -686,8 +685,8 @@ class FrxGrid extends Component<FrxGridProps<any>, FrxGridState<any>> {
               return (
                 <c.cellWrapper>
                   <FrxGridCell
-										customToolTip={customToolTip}
-										showDecimals={c.showDecimals}
+                    customToolTip={customToolTip}
+                    showDecimals={c.showDecimals}
                     customContent={customContent}
                     onCellClick={this.onCellClick}
                     dataType={c.dataType}
@@ -711,8 +710,8 @@ class FrxGrid extends Component<FrxGridProps<any>, FrxGridState<any>> {
                 : undefined;
               return (
                 <FrxGridCell
-									customToolTip={customToolTip}
-									showDecimals={c.showDecimals}
+                  customToolTip={customToolTip}
+                  showDecimals={c.showDecimals}
                   customContent={customContent}
                   onCellClick={this.onCellClick}
                   dataType={c.dataType}
