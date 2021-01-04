@@ -383,11 +383,7 @@ class Medicare extends React.Component<any, any> {
               </div>
             </div>
             <div className="panel-divider"></div>
-            <div>
-              <button onClick={() => this.setState({ advanceSearch: true })}>
-                Advance Search
-              </button>
-            </div>
+
             <Popover
               content={addNewButtonDDContent}
               trigger="click"

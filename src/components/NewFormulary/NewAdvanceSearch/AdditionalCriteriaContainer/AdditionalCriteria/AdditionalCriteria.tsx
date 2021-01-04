@@ -226,10 +226,12 @@ class AdditionalCriteria extends Component<any, any> {
               savedCriteriaList.push(currentNode);
             }
           }
-
           ///////////////////////////// ICD
           if (Object.prototype.hasOwnProperty.call(covered, "icd")) {
-            if (covered["icd"]["look_back_days"] !== "") {
+            if (
+              covered["icd"]["look_back_days"] !== "" ||
+              covered["icd"]["icds"].length > 0
+            ) {
               globalCardCount++;
               let currentNode = {
                 id: globalCardCount,
@@ -370,6 +372,42 @@ class AdditionalCriteria extends Component<any, any> {
               savedCriteriaList.push(currentNode);
             }
           }
+          ///////////////////////////// PCHL
+          if (
+            Object.prototype.hasOwnProperty.call(
+              covered,
+              "prerequisite_claims_history_lookbacks"
+            )
+          ) {
+            if (
+              covered["prerequisite_claims_history_lookbacks"] !== "" ||
+              covered["prerequisite_claims_history_lookbacks"].length > 0
+            ) {
+              globalCardCount++;
+              let currentNode = {
+                id: globalCardCount,
+                cardCode: criteriaMock[7].cardCode,
+                cardName: criteriaMock[7].cardName,
+                isIncluded: criteriaMock[7].isIncluded,
+                render: (
+                  <ListItem
+                    nodeId={globalCardCount}
+                    deleteIconHandler={this.deleteIconHandler}
+                    card={{
+                      cardCode: criteriaMock[7].cardCode,
+                      cardName: criteriaMock[7].cardName,
+                      isIncluded: criteriaMock[7].isIncluded,
+                    }}
+                    payload={
+                      covered["prerequisite_claims_history_lookbacks"][0]
+                    }
+                    handleGlobalState={this.handleAllNodesState}
+                  />
+                ),
+              };
+              savedCriteriaList.push(currentNode);
+            }
+          }
         }
         ///////////////////////////// NOT
         ///////////////////////////// COVERED
@@ -439,7 +477,10 @@ class AdditionalCriteria extends Component<any, any> {
 
           ///////////////////////////// ICD
           if (Object.prototype.hasOwnProperty.call(not_covered, "icd")) {
-            if (not_covered["icd"]["look_back_days"] !== "") {
+            if (
+              not_covered["icd"]["look_back_days"] !== "" ||
+              not_covered["icd"]["icds"].length > 0
+            ) {
               globalCardCount++;
               let currentNode = {
                 id: globalCardCount,
@@ -589,10 +630,45 @@ class AdditionalCriteria extends Component<any, any> {
               savedCriteriaList.push(currentNode);
             }
           }
+          ///////////////////////////// PHCL
+          if (
+            Object.prototype.hasOwnProperty.call(
+              not_covered,
+              "prerequisite_claims_history_lookbacks"
+            )
+          ) {
+            if (
+              not_covered["prerequisite_claims_history_lookbacks"] !== "" ||
+              not_covered["prerequisite_claims_history_lookbacks"].length > 0
+            ) {
+              globalCardCount++;
+              let currentNode = {
+                id: globalCardCount,
+                cardCode: criteriaMock[7].cardCode,
+                cardName: criteriaMock[7].cardName,
+                isIncluded: !criteriaMock[7].isIncluded,
+                render: (
+                  <ListItem
+                    nodeId={globalCardCount}
+                    deleteIconHandler={this.deleteIconHandler}
+                    card={{
+                      cardCode: criteriaMock[7].cardCode,
+                      cardName: criteriaMock[7].cardName,
+                      isIncluded: !criteriaMock[7].isIncluded,
+                    }}
+                    payload={
+                      not_covered["prerequisite_claims_history_lookbacks"][0]
+                    }
+                    handleGlobalState={this.handleAllNodesState}
+                  />
+                ),
+              };
+              savedCriteriaList.push(currentNode);
+            }
+          }
         }
       }
 
-      ///////////////////////////// PHCL
       this.setState({
         globalCardCount: globalCardCount,
         selectedCriteriaList: savedCriteriaList,
