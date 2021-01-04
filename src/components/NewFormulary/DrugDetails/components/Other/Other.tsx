@@ -178,7 +178,7 @@ class DrugDetailOther extends React.Component<any, any> {
         this.props.postRemoveOtherDrug(apiDetails).then((json) => {
           if (json.payload && json.payload.code && json.payload.code === "200") {
             showMessage("Success", "success");
-            this.getOTHERSummary();
+            this.getOTHERCriteriaList();
           } else {
             showMessage("Failure", "error");
           }
@@ -279,7 +279,7 @@ class DrugDetailOther extends React.Component<any, any> {
       this.setState({
         panelGridValue1: rows,
         otherData: settingsRows,
-        showGrid: this.props.configureSwitch,
+        showGrid: false,
       });
     });
   };
@@ -307,6 +307,7 @@ class DrugDetailOther extends React.Component<any, any> {
 
       this.setState({
         otherData: settingsRows,
+        showGrid: false,
       });
     });
   }
@@ -371,12 +372,6 @@ class DrugDetailOther extends React.Component<any, any> {
   }
 
   componentDidMount() {
-    const data = getDrugDetailData();
-    const columns = getDrugDetailsColumnOTHER();
-    this.setState({
-      columns: columns,
-      data: data,
-    });
 
     this.getOTHERSummary();
   }
@@ -406,7 +401,7 @@ class DrugDetailOther extends React.Component<any, any> {
 
     this.clearSearch();
 
-    this.setState({ tabs, activeTabIndex, showGrid: false, selectedCriteria: [] }, () => console.log("THe Selected Criteria = ", this.state.selectedCriteria));
+    this.setState({ tabs, activeTabIndex, showGrid: false,}, () => console.log("THe Selected Criteria = ", this.state.selectedCriteria));
   };
 
   clearSearch = () => {
@@ -432,44 +427,48 @@ class DrugDetailOther extends React.Component<any, any> {
   };
 
   onSelectedRowKeysChange = (selectedRowKeys) => {
-    this.state.selectedCriteria = [];
-    if (selectedRowKeys && selectedRowKeys.length > 0) {
-      console.log("The Selectetd Rows = ", selectedRowKeys);
-      console.log("The other data = ", this.state.otherData);
-      console.log("The Selected Row Keys Code value = ", selectedRowKeys[0], "   The Other data find = ", this.state.otherData.find(e => e.key === selectedRowKeys[0]))
+    this.setState({selectedCriteria: []}, () => {
 
-      if(this.state.activeTabIndex === 0 || this.state.activeTabIndex === 1) {
-        let codeValue = "", idEdit = "";
-        for(let i=0; i<this.state.otherData.length; i++) {
-          if(this.state.otherData[i].key === selectedRowKeys[0]) {
-            console.log("The State code value = ", this.state.otherData[i].code_value)
-            codeValue = this.state.otherData[i].code_value;
-            idEdit = this.state.otherData[i].key;
+      // this.state.selectedCriteria = [];
+      if (selectedRowKeys && selectedRowKeys.length > 0) {
+        console.log("The Selectetd Rows = ", selectedRowKeys);
+        console.log("The other data = ", this.state.otherData);
+        console.log("The Selected Row Keys Code value = ", selectedRowKeys[0], "   The Other data find = ", this.state.otherData.find(e => e.key === selectedRowKeys[0]))
+  
+        if(this.state.activeTabIndex === 0 || this.state.activeTabIndex === 1) {
+          let codeValue = "", idEdit = "";
+          for(let i=0; i<this.state.otherData.length; i++) {
+            if(this.state.otherData[i].key === selectedRowKeys[0]) {
+              console.log("The State code value = ", this.state.otherData[i].code_value)
+              codeValue = this.state.otherData[i].code_value;
+              idEdit = this.state.otherData[i].key;
+            }
           }
-        }
-
-        this.rpSavePayload.breadcrumb_code_value = codeValue;
-        this.rpSavePayload.id_edit = idEdit;
-        this.rmSavePayload.selected_criteria_ids = [];
-        console.log("The Codevalue = ", codeValue, "---THe REPLACE Save Payload = ", this.rpSavePayload);
-
-      } else if(this.state.activeTabIndex === 2) {
-        let criteriaIds: any[] = [];
-        for(let i=0; i<this.state.otherData.length; i++) {
-          if(this.state.otherData[i].key === selectedRowKeys[i]) {
-            console.log("The State code value = ", this.state.otherData[i].code_value)
-            criteriaIds.push(this.state.otherData[i].code_value);
+  
+          this.rpSavePayload.breadcrumb_code_value = codeValue;
+          this.rpSavePayload.id_edit = idEdit;
+          this.rmSavePayload.selected_criteria_ids = [];
+          console.log("The Codevalue = ", codeValue, "---THe REPLACE Save Payload = ", this.rpSavePayload);
+  
+        } else if(this.state.activeTabIndex === 2) {
+          let criteriaIds: any[] = [];
+          for(let i=0; i<this.state.otherData.length; i++) {
+            if(this.state.otherData[i].key === selectedRowKeys[i]) {
+              console.log("The State code value = ", this.state.otherData[i].code_value)
+              criteriaIds.push(this.state.otherData[i].code_value);
+            }
           }
+  
+          this.rmSavePayload.selected_criteria_ids = criteriaIds;
+          this.rpSavePayload.breadcrumb_code_value = "";
+          this.rpSavePayload.id_edit = "";
+          console.log("The criteriaIds = ", criteriaIds, "---THe REMOVE Save Payload = ", this.rmSavePayload);
         }
-
-        this.rmSavePayload.selected_criteria_ids = criteriaIds;
-        this.rpSavePayload.breadcrumb_code_value = "";
-        this.rpSavePayload.id_edit = "";
-        console.log("The criteriaIds = ", criteriaIds, "---THe REMOVE Save Payload = ", this.rmSavePayload);
+  
+        this.setState({selectedCriteria: selectedRowKeys.map(otId => otId)});
+        selectedRowKeys = [];
       }
-
-      this.setState({selectedCriteria: selectedRowKeys.map(otId => otId)});
-    }
+    });
   }
 
   openOtherGridContainer = () => {
@@ -489,6 +488,10 @@ class DrugDetailOther extends React.Component<any, any> {
   componentWillReceiveProps(nextProps) {
     console.log("-----Component Will Receive Props------", nextProps);
 
+    if(this.state.activeTabIndex !== nextProps.activeTabIndex) {
+      this.setState({ otherData: [], selectedCriteria: [] })
+    }
+
     if (nextProps.configureSwitch){
       this.setState({tabs:[
         { id: 1, text: "Replace", disabled: true },
@@ -497,12 +500,14 @@ class DrugDetailOther extends React.Component<any, any> {
       ], activeTabIndex:0});
 
       this.getOtherList();
+      this.getOTHERSummary();
     } else {
       this.setState({tabs:[
         { id: 1, text: "Replace", disabled:false },
         { id: 2, text: "Append", disabled:false },
         { id: 3, text: "Remove", disabled:false },
       ]});
+      this.getOTHERSummary();
     }
 
     if (nextProps.advancedSearchBody && nextProps.populateGrid) {
@@ -566,6 +571,14 @@ class DrugDetailOther extends React.Component<any, any> {
       );
     }
 
+    let rowSelection = {
+      selectedRowKeys: this.state.selectedCriteria,
+      // columnWidth: 20,
+      // fixed: true,
+      // type: 'checkbox',
+      onChange: this.onSelectedRowKeysChange,
+    }
+
     return (
       <>
         <div className="bordered mb-10">
@@ -601,6 +614,9 @@ class DrugDetailOther extends React.Component<any, any> {
             </div>
           </div>
         </div>
+
+        {/* <Table rowSelection={rowSelection} columns={columns} dataSource={paymentsHistory} /> */}
+
         
         <div className="white-bg">
           <Grid item xs={5}>
@@ -609,12 +625,13 @@ class DrugDetailOther extends React.Component<any, any> {
                 columns={this.state.otherColumns}
                 dataSource={this.state.otherData}
                 pagination={false}
-                rowSelection={{
-                  columnWidth: 20,
-                  fixed: true,
-                  type: "checkbox",
-                  onChange: this.onSelectedRowKeysChange,
-                }}
+                rowSelection={rowSelection}
+                // rowSelection={{
+                //   columnWidth: 20,
+                //   fixed: true,
+                //   type: "checkbox",
+                //   onChange: this.onSelectedRowKeysChange,
+                // }}
               />
             </div>
           </Grid>

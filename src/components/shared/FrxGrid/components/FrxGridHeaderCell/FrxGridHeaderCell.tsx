@@ -10,6 +10,7 @@ import "./FrxGridHeaderCell.scss";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faThumbtack } from "@fortawesome/free-solid-svg-icons";
 import { Column } from "../../../../../models/grid.model";
+import { Checkbox } from "antd";
 
 interface FrxGridHeaderCellProps {
   column: Column<any>;
@@ -18,9 +19,24 @@ interface FrxGridHeaderCellProps {
   multiSortOrder?: number;
   pinColumnToLeft?: (c: Column<any>) => void;
   unpinColumn?: (c: Column<any>) => void;
+  onSelectAllRows?: (isSelected: boolean) => void;
 }
 
 class FrxGridHeaderCell extends Component<FrxGridHeaderCellProps> {
+  /**
+   * @function onSelectAll
+   * to select all the rows in the grid
+   * @param e selection change event
+   * @author Deepak_T
+   */
+  onSelectAll = e => {
+    console.log("select all ", e);
+    if (e.target) {
+      if (this.props.onSelectAllRows)
+        this.props.onSelectAllRows(e.target.checked);
+    }
+  };
+
   render() {
     const {
       column,
@@ -32,47 +48,53 @@ class FrxGridHeaderCell extends Component<FrxGridHeaderCellProps> {
     } = this.props;
     return (
       <>
-        {isPinningEnabled && (
-          <span className="frx-grid-header-cell">
-            {column.fixed ? (
-              <FontAwesomeIcon
-                icon={faThumbtack}
-                className="frx-grid-header-cell__unpin-icon"
-                onClick={e => {
-                  e.stopPropagation();
-                  if (unpinColumn) unpinColumn(column);
-                }}
-              />
-            ) : (
-              <FontAwesomeIcon
-                className="frx-grid-header-cell__pin-icon"
-                onClick={e => {
-                  e.stopPropagation();
-                  if (pinColumnToLeft) pinColumnToLeft(column);
-                }}
-                icon={faThumbtack}
-              />
-            )}
-          </span>
-        )}
-        <span
-          className={`frx-grid-header-cell__header-name frx-grid-header-cell--dragHandler ${
-            textCase ? `frx-grid-header-cell__header-name--${textCase}` : ``
-          }`}
-        >
-          {column.displayTitle ? column.displayTitle.toLowerCase() : null}
-        </span>
-        {multiSortOrder && multiSortOrder > 0 ? (
-          <span className="frx-grid-header-cell__multisortorder">
-            {multiSortOrder}
-          </span>
+        {column.headerCellSelection ? (
+          <Checkbox onChange={this.onSelectAll} />
         ) : (
-          <span
-            className="frx-grid-header-cell__nomultisortorder"
-            style={{ visibility: "hidden" }}
-          >
-            5
-          </span>
+          <>
+            {isPinningEnabled && (
+              <span className="frx-grid-header-cell">
+                {column.fixed ? (
+                  <FontAwesomeIcon
+                    icon={faThumbtack}
+                    className="frx-grid-header-cell__unpin-icon"
+                    onClick={e => {
+                      e.stopPropagation();
+                      if (unpinColumn) unpinColumn(column);
+                    }}
+                  />
+                ) : (
+                  <FontAwesomeIcon
+                    className="frx-grid-header-cell__pin-icon"
+                    onClick={e => {
+                      e.stopPropagation();
+                      if (pinColumnToLeft) pinColumnToLeft(column);
+                    }}
+                    icon={faThumbtack}
+                  />
+                )}
+              </span>
+            )}
+            <span
+              className={`frx-grid-header-cell__header-name frx-grid-header-cell--dragHandler ${
+                textCase ? `frx-grid-header-cell__header-name--${textCase}` : ``
+              }`}
+            >
+              {column.displayTitle ? column.displayTitle.toLowerCase() : null}
+            </span>
+            {multiSortOrder && multiSortOrder > 0 ? (
+              <span className="frx-grid-header-cell__multisortorder">
+                {multiSortOrder}
+              </span>
+            ) : (
+              <span
+                className="frx-grid-header-cell__nomultisortorder"
+                style={{ visibility: "hidden" }}
+              >
+                5
+              </span>
+            )}
+          </>
         )}
       </>
     );

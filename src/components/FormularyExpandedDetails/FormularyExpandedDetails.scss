@@ -202,3 +202,53 @@
     }
   }
 }
+.table-expanded-sticky-wrapper{
+  .formulary-expanded-details-right__content{
+    display: flex;
+    flex-wrap: wrap;
+    padding: 24px 19px;
+    .formulary-info-field{
+      width: calc(100% / 3);
+    }
+    .supplemental-models-container{
+      border: none;
+      .formulary-design-fields-wrapper{
+        padding: 0;
+        .ant-checkbox-wrapper .ant-checkbox-checked .ant-checkbox-inner{
+          background: #2055B5;
+        }
+      }
+    }
+    .tiers-information-container{
+      width: 100%;
+      border: none;
+      .tiers-information-fields-wrapper.setup-label{
+        width: 100%;
+        display: flex;
+        padding: 0;
+        .tiers-dropdown-wrapper{
+          border-color: #e5e5e5;
+        }
+      }
+    }
+  }
+}
+.clone-popup{
+  .ant-table-cell{
+    .supplemental-models-container{
+      border: none;
+      .formulary-design-fields-wrapper{
+        padding: 20px 20px 0;
+        .ant-checkbox-wrapper .ant-checkbox-checked .ant-checkbox-inner{
+          background: #2055B5;
+        }
+      }
+    }
+    .tiers-information-container{
+      border: none;
+      .tiers-information-fields-wrapper.setup-label{
+        padding: 20px 20px 10px;
+      }
+    }
+  }
+}
