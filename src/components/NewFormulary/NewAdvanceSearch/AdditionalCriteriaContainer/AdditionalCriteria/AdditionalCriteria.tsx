@@ -380,7 +380,7 @@ class AdditionalCriteria extends Component<any, any> {
             )
           ) {
             if (
-              covered["prerequisite_claims_history_lookbacks"] !== "" ||
+              // covered["prerequisite_claims_history_lookbacks"] !== "" ||
               covered["prerequisite_claims_history_lookbacks"].length > 0
             ) {
               globalCardCount++;
@@ -638,7 +638,7 @@ class AdditionalCriteria extends Component<any, any> {
             )
           ) {
             if (
-              not_covered["prerequisite_claims_history_lookbacks"] !== "" ||
+              // not_covered["prerequisite_claims_history_lookbacks"] !== "" ||
               not_covered["prerequisite_claims_history_lookbacks"].length > 0
             ) {
               globalCardCount++;
@@ -743,16 +743,25 @@ class AdditionalCriteria extends Component<any, any> {
       globalCardCountCache,
     });
   };
-
+  // handlePCHLGlobalState =
   handleAllNodesState = (
     nodeId,
     cardCode,
     cardName,
     isIncluded,
-    updatedPayload
+    updatedPayload,
+    isArrCriteria
   ) => {
-    console.log(nodeId, cardCode, cardName, isIncluded, updatedPayload);
+    // console.log(
+    //   nodeId,
+    //   cardCode,
+    //   cardName,
+    //   isIncluded,
+    //   updatedPayload,
+    //   isArrCriteria
+    // );
 
+    if (isArrCriteria) updatedPayload = [updatedPayload];
     let sequence = this.state.apiAdditionalCriteriaState.sequence;
     let covered = { ...this.state.apiAdditionalCriteriaState.covered };
     let not_covered = { ...this.state.apiAdditionalCriteriaState.not_covered };

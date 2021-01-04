@@ -62,7 +62,7 @@ class ListItem extends Component<any, any> {
   state = {
     nodeId: null,
 
-    cardCode: null,
+    cardCode: 0,
     cardName: null,
     isIncluded: null,
 
@@ -154,14 +154,17 @@ class ListItem extends Component<any, any> {
     const updatedPayload = this.state.payload;
     const { cardCode, cardName, isIncluded } = this.state;
 
+    const isArrCriteria =
+      cardCode === 4 || cardCode === 5 || cardCode === 8 ? true : false;
     // age & icd are objects
-    // gender, pos & pr are array
+    // gender, pn, pt, pos, pr, pchl are array
     this.props.handleGlobalState(
       nodeId,
       cardCode,
       cardName,
       isIncluded,
-      updatedPayload
+      updatedPayload,
+      isArrCriteria
     );
   }
 
@@ -245,6 +248,7 @@ class ListItem extends Component<any, any> {
         });
         break;
       case 4:
+        console.log("PN: ", payload);
         let { pnSettings } = this.state;
         let pnDdata: any[] = [];
         let pnValue: string[] | undefined = [];
@@ -274,6 +278,7 @@ class ListItem extends Component<any, any> {
         });
         break;
       case 5:
+        console.log("PT: ", payload);
         let { ptSettings } = this.state;
         let ptData: any[] = [];
         let ptValue: string[] | undefined = [];
@@ -326,6 +331,33 @@ class ListItem extends Component<any, any> {
         break;
 
       case 8:
+        let { pchlSettings } = this.state;
+        let pchlData: any[] = [];
+        let pchlValue: string[] | undefined = [];
+
+        if (payload !== null) {
+          pchlSettings = { ...payload };
+          if (payload?.lookback_drug?.length > 0) {
+            payload.lookback_drug.forEach((ele: any) => {
+              pchlData.push(ele);
+              if (pchlValue) pchlValue.push(ele.text);
+            });
+          }
+        }
+        const pchlSettingsStatus = {
+          type: isIncluded ? COVERED : NOT_COVERED,
+          covered: isIncluded,
+        };
+
+        if (pchlValue.length === 0) pchlValue = undefined;
+        this.setState({
+          pchlSettings,
+          pchlSettingsStatus,
+          pchlResults: {
+            data: pchlData,
+            value: pchlValue,
+          },
+        });
         break;
       default:
         break;
@@ -881,25 +913,6 @@ class ListItem extends Component<any, any> {
       deleteIconHandler,
     } = this.props;
     switch (cardCode) {
-      case 8:
-        return (
-          <PCHLCriteria
-            pchlSettingsServies={{
-              pchlSettings,
-              pchlSettingsStatus,
-              pchlResults,
-            }}
-            handleStatus={this.handlePCHLStatus}
-            handlePCHLChange={this.handlePCHLChange}
-            handlePCHLSearch={this.handlePCHLSearch}
-            handlePCHLCriteriaChange={this.handlePCHLOnChange}
-            deleteIconHandler={() =>
-              deleteIconHandler(nodeId, cardCode, cardName, isIncluded, payload)
-            }
-            isAdditionalCriteria={true}
-            nodeId={nodeId}
-          />
-        );
       case 1:
         return (
           <AgeCriteria
@@ -1027,7 +1040,25 @@ class ListItem extends Component<any, any> {
             nodeId={nodeId}
           />
         );
-
+      case 8:
+        return (
+          <PCHLCriteria
+            pchlSettingsServies={{
+              pchlSettings,
+              pchlSettingsStatus,
+              pchlResults,
+            }}
+            handleStatus={this.handlePCHLStatus}
+            handlePCHLChange={this.handlePCHLChange}
+            handlePCHLSearch={this.handlePCHLSearch}
+            handlePCHLCriteriaChange={this.handlePCHLOnChange}
+            deleteIconHandler={() =>
+              deleteIconHandler(nodeId, cardCode, cardName, isIncluded, payload)
+            }
+            isAdditionalCriteria={true}
+            nodeId={nodeId}
+          />
+        );
       default:
         return null;
     }
