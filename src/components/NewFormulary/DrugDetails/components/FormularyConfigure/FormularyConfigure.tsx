@@ -143,7 +143,7 @@ class FormularyConfigure extends React.Component<any, any> {
         t.disable = isST ? false : true;
       } else if (t && t.text === "QL") {
         t.disable = isQL ? false : true;
-      } else if (t && t.text === "DRUG DETAILS") {
+      } else if (t && t.text === "OTHER UM EDITS") {
         t.disable = isNA ? true : false;
       }
     });
