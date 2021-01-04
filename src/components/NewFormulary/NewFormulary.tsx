@@ -148,8 +148,12 @@ class Formulary extends React.Component<any, any> {
   };
 
   applyMultiSortHandler = sorter => {
-    console.log("multi sorted columns ", sorter);
-  };
+		console.log("multi sorted columns ", sorter);
+		//remove duplicates from sorter
+		//api integration
+	};
+	
+
   onClickTab = (selectedTabIndex: number) => {
     let activeTabIndex = 0;
 
