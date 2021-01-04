@@ -556,10 +556,10 @@ class DrugDetailPOS extends React.Component<any, any> {
     this.setState({ posSettingsStatus, showGrid: false });
   };
 
-  refreshSelections = () => {
-    if(this.state.activeTabIndex === 0 || this.state.activeTabIndex === 1) {
+  refreshSelections = ({ activeTabIndex = 0 }) => {
+    if(activeTabIndex === 0 || activeTabIndex === 1) {
       this.getPOSSettings();
-    } else if (this.state.activeTabIndex === 2) {
+    } else if (activeTabIndex === 2) {
       this.getPOSCriteriaList(true);
     }
   }
@@ -608,7 +608,7 @@ class DrugDetailPOS extends React.Component<any, any> {
     //   this.getPOSCriteriaList(true);
     // }
 
-    this.refreshSelections();
+    this.refreshSelections({ activeTabIndex });
 
     if(this.props.configureSwitch) {
       this.getPOSDrugsList();

@@ -390,8 +390,9 @@ class DrugDetailGL extends React.Component<any, any> {
     this.setState({ glSettingsStatus, showGrid: false });
   };
 
-  refreshSelections = () => {
-    if(this.state.activeTabIndex === 0 || this.state.activeTabIndex === 1) {
+  refreshSelections = ({ activeTabIndex = 0 }) => {
+    console.log("The State of Tab ", this.state);
+    if(activeTabIndex === 0 || activeTabIndex === 1) {
 
       let glCleanList: any[] = [];
       for(let i=0; i<this.state.glSettings.length; i++ ) {
@@ -404,7 +405,7 @@ class DrugDetailGL extends React.Component<any, any> {
       }
       this.setState({ glSettings: glCleanList });
 
-    } else if (this.state.activeTabIndex === 2) {
+    } else if (activeTabIndex === 2) {
       this.getGLCriteriaList(true);
     }
   }
@@ -526,12 +527,12 @@ class DrugDetailGL extends React.Component<any, any> {
   };
 
   componentDidMount() {
-    const data = getDrugDetailData();
-    const columns = getDrugDetailsColumnGL();
-    this.setState({
-      columns: columns,
-      data: data,
-    });
+    // const data = getDrugDetailData();
+    // const columns = getDrugDetailsColumnGL();
+    // this.setState({
+    //   columns: columns,
+    //   data: data,
+    // });
     this.getGLSummary();
     this.getGLCriteriaList(true);
     // this.getGLDrugsList();
@@ -547,7 +548,7 @@ class DrugDetailGL extends React.Component<any, any> {
       return tab;
     });
 
-    this.refreshSelections();
+    this.refreshSelections({ activeTabIndex });
 
     // if (activeTabIndex === 2) {
     //   this.getGLCriteriaList(true);

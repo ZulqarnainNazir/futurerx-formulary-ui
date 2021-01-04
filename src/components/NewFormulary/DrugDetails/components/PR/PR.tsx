@@ -475,7 +475,7 @@ class DrugDetailPR extends React.Component<any, any> {
     //   this.getPRRemoveSettings(true);
     // }
 
-    this.refreshSelections();
+    this.refreshSelections({ activeTabIndex });
 
     if(this.props.configureSwitch) {
       this.getPRDrugsList();
@@ -521,10 +521,10 @@ class DrugDetailPR extends React.Component<any, any> {
     this.setState({ prSettingsStatus, showGrid: false }, () => {console.log("THe Pr Settings Status = ", this.state.prSettingsStatus)});
   };
 
-  refreshSelections = () => {
-    if(this.state.activeTabIndex === 0 || this.state.activeTabIndex === 1) {
+  refreshSelections = ({ activeTabIndex = 0 }) => {
+    if(activeTabIndex === 0 || activeTabIndex === 1) {
       this.getPRSettings();
-    } else if (this.state.activeTabIndex === 2) {
+    } else if (activeTabIndex === 2) {
       this.getPRRemoveSettings(true);
     }
   }
