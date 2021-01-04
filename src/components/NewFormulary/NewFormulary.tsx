@@ -266,13 +266,11 @@ class Formulary extends React.Component<any, any> {
   };
 
   componentDidUpdate(prevProps) {
-    console.log("=========================================");
     console.log(this.props.location_home + " / " + prevProps.location_home);
     if (
       this.props.location_home !== prevProps.location_home &&
       this.props.location_home > 0
     ) {
-      console.log("**** HOME : " + this.props.location_home);
       this.setState({
         showTabs: !this.state.showTabs,
         showDrugDetails: !this.state.showDrugDetails,
@@ -281,9 +279,9 @@ class Formulary extends React.Component<any, any> {
       this.props.clearApplication();
       this.props.clearSetup();
       this.props.clearSetupOptions();
-      if (this.props.location_home == 2) {
+      // if (this.props.location_home == 2) {
         this.onClearFilterHandler();
-      }
+      // }
     }
   }
 
