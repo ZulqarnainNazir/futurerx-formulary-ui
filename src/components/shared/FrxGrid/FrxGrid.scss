@@ -254,18 +254,28 @@
     }
   }
 
-  .table-row-disabled.table-row--red-font {
+  .table-row--disabled-font {
+    .ant-checkbox.ant-checkbox-checked .ant-checkbox-inner {
+      background-color: #eef3f7; //1d54b4
+      border: 2px solid #eef3f7;
+    }
+    td {
+      color: #c6c6c6;
+    }
+  }
+
+  .table-row--red-font {
     td {
       background-color: rgb(233, 210, 210);
     }
   }
-  .table-row-disabled.table-row--green-font {
+  .table-row--green-font {
     td {
       background-color: rgb(170, 231, 162);
     }
   }
 
-  .table-row-disabled.table-row--blue-font {
+  .table-row--blue-font {
     td {
       background-color: #eef3f7;
     }
