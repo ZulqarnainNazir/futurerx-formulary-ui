@@ -15,10 +15,17 @@ import {
   setFormulary,
   setLocation,
   setLocationHome,
+  clearApplication,
 } from "../.././redux/slices/formulary/application/applicationSlice";
 
-import { fetchSelectedFormulary } from "../.././redux/slices/formulary/setup/setupSlice";
-import { fetchDesignOptions } from "../.././redux/slices/formulary/setup/setupOptionsSlice";
+import {
+  fetchSelectedFormulary,
+  clearSetup,
+} from "../.././redux/slices/formulary/setup/setupSlice";
+import {
+  fetchDesignOptions,
+  clearSetupOptions,
+} from "../.././redux/slices/formulary/setup/setupOptionsSlice";
 
 import { fetchFormularyHeader } from "../.././redux/slices/formulary/header/headerSlice";
 import { gridSettingsSlice } from "../.././redux/slices/formulary/gridHandler/gridSettingsSlice";
@@ -71,6 +78,9 @@ function mapDispatchToProps(dispatch) {
     fetchSelectedFormulary: (a) => dispatch(fetchSelectedFormulary(a)),
     fetchDesignOptions: (a) => dispatch(fetchDesignOptions(a)),
     setLocationHome: (a) => dispatch(setLocationHome(a)),
+    clearApplication: (a) => dispatch(clearApplication(a)),
+    clearSetup: (a) => dispatch(clearSetup(a)),
+    clearSetupOptions: (a) => dispatch(clearSetupOptions(a)),
   };
 }
 
@@ -248,22 +258,33 @@ class Formulary extends React.Component<any, any> {
     this.props.fetchFormularies(this.listPayload);
   };
   onClearFilterHandler = () => {
+    console.log("Clear Filter");
     let id_lob = this.listPayload.id_lob;
     this.listPayload = { ...defaultListPayload };
     this.listPayload.id_lob = id_lob;
     this.props.fetchFormularies(this.listPayload);
   };
 
-  componentDidUpdate() {
-    console.log("========================================="+ this.props.location_home);
-    if (this.props.location_home > 0) {
+  componentDidUpdate(prevProps) {
+    console.log("=========================================");
+    console.log(this.props.location_home + " / " + prevProps.location_home);
+    if (
+      this.props.location_home !== prevProps.location_home &&
+      this.props.location_home > 0
+    ) {
       console.log("**** HOME : " + this.props.location_home);
       this.setState({
         showTabs: !this.state.showTabs,
         showDrugDetails: !this.state.showDrugDetails,
       });
       this.props.setLocationHome(0);
+      this.props.clearApplication();
+      this.props.clearSetup();
+      this.props.clearSetupOptions();
+      if (this.props.location_home == 2) {
+        this.onClearFilterHandler();
       }
+    }
   }
 
   render() {
