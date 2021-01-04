@@ -35,7 +35,7 @@ class FrxMiniTabs extends React.Component<TabProps, TabState> {
 
   render() {
     return (
-      <div className="frx-mini-tabs-root">
+      <AppBar className="frx-mini-tabs-root">
         <Tabs
           value={this.props.activeTabIndex}
           indicatorColor="primary"
@@ -48,7 +48,12 @@ class FrxMiniTabs extends React.Component<TabProps, TabState> {
             <Tab
               className="frx-mini-tabs-root__tabs__tab"
               key={tab.id}
-              disabled={(this.props.disabledIndex === index && this.props.disabled) || tab.disabled ? true : false}
+              disabled={
+                (this.props.disabledIndex === index && this.props.disabled) ||
+                tab.disabled
+                  ? true
+                  : false
+              }
               label={
                 tab.id === 3 && this.props.msgCount ? (
                   <span className="tabs-with-count">
@@ -67,7 +72,7 @@ class FrxMiniTabs extends React.Component<TabProps, TabState> {
         {/* <div className="dev-status wip">
           TODO: 3px white space below the active-line needs to be removed
         </div> */}
-      </div>
+      </AppBar>
     );
   }
 }
