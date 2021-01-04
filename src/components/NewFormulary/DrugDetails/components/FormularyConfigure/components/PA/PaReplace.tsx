@@ -24,6 +24,8 @@ import { ToastContainer } from "react-toastify";
 import "../Tier.scss";
 import "./PA.scss";
 import { setAdditionalCriteria } from "../../../../../../../redux/slices/formulary/advancedSearch/additionalCriteriaSlice";
+import PaGroupDescriptionManagement from "../PaGroupDescriptionManagement";
+import "./PaReplace.scss";
 
 // import AdvanceSearchContainer from "../../../../../NewAdvanceSearch/AdvanceSearchContainer";
 import {
@@ -97,16 +99,13 @@ class PaReplace extends React.Component<any, any> {
     groupDescriptionProp: "",
     isAdditionalCriteriaOpen: false,
     additionalCriteriaState: null,
-    is_additional_criteria_defined:false,
+    showPaGroupDescription: false,
+    is_additional_criteria_defined: false,
     selectedRowKeys: [] as number[],
-    fixedSelectedRows: [] as number[]
+    fixedSelectedRows: [] as number[],
   };
 
-  rowSelectionChangeFromCell = (
-    key: string,
-    selectedRow: any,
-    isSelected: boolean
-  ) => {
+  rowSelectionChangeFromCell = (key: string, selectedRow: any, isSelected: boolean) => {
     console.log("data row ", selectedRow, isSelected);
     if (!selectedRow["isDisabled"]) {
       if (isSelected) {
@@ -115,14 +114,9 @@ class PaReplace extends React.Component<any, any> {
           // else d["isChecked"] = false;
           return d;
         });
-        const selectedRowKeys = [
-          ...this.state.selectedRowKeys,
-          selectedRow.key
-        ];
+        const selectedRowKeys = [...this.state.selectedRowKeys, selectedRow.key];
         console.log("selected row keys ", selectedRowKeys);
-        const selectedRows: number[] = selectedRowKeys.filter(
-          k => this.state.fixedSelectedRows.indexOf(k) < 0
-        );
+        const selectedRows: number[] = selectedRowKeys.filter((k) => this.state.fixedSelectedRows.indexOf(k) < 0);
         this.onSelectedTableRowChanged(selectedRowKeys);
 
         this.setState({ drugGridData: data });
@@ -133,16 +127,12 @@ class PaReplace extends React.Component<any, any> {
           return d;
         });
 
-        const selectedRowKeys: number[] = this.state.selectedRowKeys.filter(
-          k => k !== selectedRow.key
-        );
-        const selectedRows = selectedRowKeys.filter(
-          k => this.state.fixedSelectedRows.indexOf(k) < 0
-        );
+        const selectedRowKeys: number[] = this.state.selectedRowKeys.filter((k) => k !== selectedRow.key);
+        const selectedRows = selectedRowKeys.filter((k) => this.state.fixedSelectedRows.indexOf(k) < 0);
 
         this.onSelectedTableRowChanged(selectedRows);
         this.setState({
-          drugGridData: data
+          drugGridData: data,
         });
       }
     }
@@ -432,64 +422,55 @@ class PaReplace extends React.Component<any, any> {
     this.setState({ tierGridContainer: true });
   };
 
-  
   loadGridData(json: any) {
     {
       if (json.payload != null && json.payload.code === "200") {
         this.setState({ tierGridContainer: true });
-      let tmpData = json.payload.result;
-      var data: any[] = [];
-      let count = 1;
+        let tmpData = json.payload.result;
+        var data: any[] = [];
+        let count = 1;
 
-      let selected = this.state.paGroupDescriptions.filter(obj => obj[this.state.groupDescriptionProp]  == this.state.selectedGroupDescription)[0];
-      debugger;
-      var gridData = tmpData.map(function (el) {
-        var element = Object.assign({}, el);
-        data.push(element);
-        let gridItem = {};
-        gridItem["id"] = count;
-        gridItem["key"] = count;
+        let selected = this.state.paGroupDescriptions.filter(
+          (obj) => obj[this.state.groupDescriptionProp] == this.state.selectedGroupDescription
+        )[0];
         debugger;
-        
-        if ( selected['pa_group_description_name'] === element.pa_group_description) {
-          //console.log("element value tier ", selectedGroup, element.pa_group_description);
-          gridItem["isChecked"] = true;
-          gridItem["isDisabled"] = true;
-          // decide on class names based on data properties conditionally
-          // the required styles are added under each classNames in FrxGrid.scss (towards the end)
-          //table-row--red-font (for red) table-row--green-font (for green) table-row--blue-font for default (for blue)
-          gridItem["rowStyle"] = "table-row--blue-font";
-        }
-        gridItem["tier"] = element.tier_value;
-        gridItem["isUmCriteria"] = element.is_um_criteria;
-        gridItem["paGroupDescription"] = element.pa_group_description;
-        gridItem["paType"] = element.pa_type;
-        gridItem["fileType"] = element.file_type ? "" + element.file_type : "";
-        gridItem["dataSource"] = element.data_source
-          ? "" + element.data_source
-          : "";
-        gridItem["labelName"] = element.drug_label_name
-          ? "" + element.drug_label_name
-          : "";
-        gridItem["ndc"] = "";
-        gridItem["rxcui"] = element.rxcui ? "" + element.rxcui : "";
-        gridItem["gpi"] = element.generic_product_identifier
-          ? "" + element.generic_product_identifier
-          : "";
-        gridItem["trademark"] = element.trademark_code
-          ? "" + element.trademark_code
-          : "";
-        gridItem["databaseCategory"] = element.database_category
-          ? "" + element.database_category
-          : "";
-        count++;
-        return gridItem;
-      });
-      this.setState({
-        drugData: data,
-        drugGridData: gridData,
-      });
-    }
+        var gridData = tmpData.map(function (el) {
+          var element = Object.assign({}, el);
+          data.push(element);
+          let gridItem = {};
+          gridItem["id"] = count;
+          gridItem["key"] = count;
+          debugger;
+
+          if (selected["pa_group_description_name"] === element.pa_group_description) {
+            //console.log("element value tier ", selectedGroup, element.pa_group_description);
+            gridItem["isChecked"] = true;
+            gridItem["isDisabled"] = true;
+            // decide on class names based on data properties conditionally
+            // the required styles are added under each classNames in FrxGrid.scss (towards the end)
+            //table-row--red-font (for red) table-row--green-font (for green) table-row--blue-font for default (for blue)
+            gridItem["rowStyle"] = "table-row--blue-font";
+          }
+          gridItem["tier"] = element.tier_value;
+          gridItem["isUmCriteria"] = element.is_um_criteria;
+          gridItem["paGroupDescription"] = element.pa_group_description;
+          gridItem["paType"] = element.pa_type;
+          gridItem["fileType"] = element.file_type ? "" + element.file_type : "";
+          gridItem["dataSource"] = element.data_source ? "" + element.data_source : "";
+          gridItem["labelName"] = element.drug_label_name ? "" + element.drug_label_name : "";
+          gridItem["ndc"] = "";
+          gridItem["rxcui"] = element.rxcui ? "" + element.rxcui : "";
+          gridItem["gpi"] = element.generic_product_identifier ? "" + element.generic_product_identifier : "";
+          gridItem["trademark"] = element.trademark_code ? "" + element.trademark_code : "";
+          gridItem["databaseCategory"] = element.database_category ? "" + element.database_category : "";
+          count++;
+          return gridItem;
+        });
+        this.setState({
+          drugData: data,
+          drugGridData: gridData,
+        });
+      }
     }
   }
   componentDidMount() {
@@ -558,9 +539,7 @@ class PaReplace extends React.Component<any, any> {
       // else d["isSelected"] = false;
       return d;
     });
-    const selectedRows: number[] = selectedRowKeys.filter(
-      k => this.state.fixedSelectedRows.indexOf(k) < 0
-    );
+    const selectedRows: number[] = selectedRowKeys.filter((k) => this.state.fixedSelectedRows.indexOf(k) < 0);
     this.onSelectedTableRowChanged(selectedRows);
     this.setState({ drugGridData: data });
   };
@@ -715,6 +694,13 @@ class PaReplace extends React.Component<any, any> {
               </Space>
             </Col>
           </Row>
+          <button
+            onClick={() => {
+              this.setState({ showPaGroupDescription: true });
+            }}
+          >
+            Clicke me!
+          </button>
           {isAdditionalCriteriaOpen ? (
             <AdvanceSearchContainer
               openPopup={isAdditionalCriteriaOpen}
@@ -808,6 +794,28 @@ class PaReplace extends React.Component<any, any> {
             />
           </DialogPopup>
         ) : null}
+        {this.state.showPaGroupDescription && (
+          <DialogPopup
+            positiveActionText=""
+            negativeActionText="Close"
+            title={"Select Formulary"}
+            handleClose={() => {
+              this.setState({
+                showPaGroupDescription: !this.state.showPaGroupDescription,
+              });
+            }}
+            handleAction={() => {}}
+            open={this.state.showPaGroupDescription}
+            showActions={false}
+            className=""
+            height="80%"
+            width="90%"
+          >
+            {/* <SelectFormularyPopUp formularyToggle={this.formularyToggle} /> */}
+            {/* <CloneFormularyPopup type="medicare" /> */}
+            <PaGroupDescriptionManagement />
+          </DialogPopup>
+        )}
         <ToastContainer />
       </>
     );
