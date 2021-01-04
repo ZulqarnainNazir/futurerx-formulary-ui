@@ -1112,8 +1112,9 @@ class FrxDrugGrid extends Component<FrxDrugGridProps<any>, FrxDrugGridState<any>
 							}
             // this.updateMultisortOrder();
           } else {
-            // Update order of the element
-						this.columnsToMultisort[elemIdx].order = order;
+						// Update order of the element
+						if(	this.columnsToMultisort && this.columnsToMultisort.length > elemIdx )
+							this.columnsToMultisort[elemIdx].order = order;
 						if(this.props.isDataLoaded){
 							this.multisortColumns();
 
@@ -1126,8 +1127,15 @@ class FrxDrugGrid extends Component<FrxDrugGridProps<any>, FrxDrugGridState<any>
 									currentPage: 1,
 									goToPageValue: 1,
 								});
-								if(this.props.applyMultiSort)this.props.applyMultiSort([...existingMultiSortedInfo, sorter], this.state.multiSortedInfo)
-							}
+								if(this.props.applyMultiSort){
+									console.log("grid internal multisorted info 3rd ", this.state.multiSortedInfo,[...existingMultiSortedInfo, sorter] )
+									const sorterData = [...existingMultiSortedInfo, sorter].filter((item,index,self) => {
+										return self.findIndex((val)=> val.columnKey === item.columnKey) === index
+									})
+									console.log("grid internal multisorted info 3rd sorterData", sorterData )
+									this.props.applyMultiSort(sorterData, sorterData)
+								}
+								}
             // this.updateMultisortOrder();
           }
         }
