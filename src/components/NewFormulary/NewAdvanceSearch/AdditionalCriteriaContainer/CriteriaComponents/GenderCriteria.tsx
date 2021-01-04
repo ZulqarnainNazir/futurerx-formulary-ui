@@ -11,7 +11,6 @@ const GenderCriteria = (props) => {
     serviceSettingsChecked,
     glSettingsServies: { glSettings, glSettingsStatus },
     handleStatus,
-    showGridHandler,
 
     isAdditionalCriteria,
     deleteIconHandler,
@@ -20,12 +19,6 @@ const GenderCriteria = (props) => {
 
   return (
     <div className="root-gender-limit-settings bordered mb-10">
-      {showGridHandler ? (
-        <PanelHeader
-          title="Gender Limit Settings"
-          tooltip="Gender Limit Settings"
-        />
-      ) : null}
       <div className="inner-container">
         <StatusContentFormPanel
           title="Gender"
@@ -57,10 +50,6 @@ const GenderCriteria = (props) => {
             </div>
           </div>
         </StatusContentFormPanel>
-
-        {showGridHandler ? (
-          <Button label="Apply" onClick={showGridHandler} />
-        ) : null}
       </div>
     </div>
   );

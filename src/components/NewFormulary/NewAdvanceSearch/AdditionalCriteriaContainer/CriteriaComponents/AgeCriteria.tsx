@@ -45,7 +45,7 @@ const AgeCriteria = (props) => {
               <input
                 type="text"
                 className="setup-input-fields"
-                name="min-val"
+                name="min_age_limit"
                 onChange={(e) => handleAgeCriteriaChange(e)}
                 value={alSettings.min_age_limit}
               />
@@ -72,7 +72,7 @@ const AgeCriteria = (props) => {
               <input
                 type="text"
                 className="setup-input-fields"
-                name="max-val"
+                name="max_age_limit"
                 onChange={(e) => handleAgeCriteriaChange(e)}
                 value={alSettings.max_age_limit}
               />

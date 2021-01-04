@@ -39,7 +39,6 @@ import {
   tooltipMock2,
   tooltipMock3,
 } from "../../../mocks/GridDrugLabelTooltip";
-import FrxGridCheckboxGroupCell from "./components/FrxGridCheckboxGroup/FrxGridCheckboxGroup";
 
 /**
  * @component getResizableTitle
@@ -80,11 +79,6 @@ const CLAIMS_GRID_SETTINGS_WIDTH = 28;
 const DEFAULT_GRID_WIDTH = 1284;
 
 interface FrxDrugGridProps<T> extends Grid<T> {
-  customSettingIcon?: string;
-  checkBoxWidth?: number;
-  customCheckbox?: boolean;
-  customRowSelectionChange?: any;
-
   handleCheck?: any;
   getPerPageItemSize?: any;
   onGridPageChangeHandler?: any;
@@ -94,6 +88,7 @@ interface FrxDrugGridProps<T> extends Grid<T> {
   selectedCurrentPage?: any;
   applyFilter?: any;
   getColumnSettings?: any;
+  customSettingIcon?: any;
   onRowExpandHandler?: any;
   onSettingsCellClick?: any;
 }
@@ -121,7 +116,6 @@ interface FrxDrugGridState<T> {
   goToPageValue: number;
   suggestions: { [key: string]: string[] };
   selectedRowKeys: any;
-  rowSelectionArr: any[];
   openDialogOnClickingCell: {
     isOpen: boolean;
     component?: (props) => JSX.Element;
@@ -162,7 +156,6 @@ class FrxDrugGrid extends Component<
     settingsAnchor: null,
     settingsMenuItems: [],
     selectedRowKeys: [],
-    rowSelectionArr: [],
     openDialogOnClickingCell: {
       isOpen: false,
       component: undefined,
@@ -184,107 +177,14 @@ class FrxDrugGrid extends Component<
   constructor(props) {
     super(props);
     this.gridRef = React.createRef();
-    // this.pinnedCount = 0;
-    if (props.customCheckbox && props.enableSettings) {
-      this.pinnedCount = 2;
-    } else if (
-      (props.enableSettings === true && props.customCheckbox === false) ||
-      (props.enableSettings === false && props.customCheckbox === true)
-    ) {
-      this.pinnedCount = 1;
-    } else {
-      this.pinnedCount = 0;
-    }
+    this.pinnedCount = 0;
     this.pinnedIndexMap = new Map<string, number>();
   }
 
   componentDidMount() {
     this.initializeColumns();
-    if (this.props.customCheckbox) {
-      this.initializeData();
-    }
+    console.log(this.props);
   }
-
-  /**
-   * @function initializeData
-   * to initialize grid with columns
-   * @author Santosh_JS
-   */
-  initializeData = () => {
-    const { data } = this.props;
-
-    data.map((d) => {
-      d["checked"] = false;
-      d["headChecked"] = false;
-    });
-  };
-
-  // /**
-  //  * @function initializeColumns
-  //  * to initialize grid with columns
-  //  * @author Deepak_T
-  //  */
-  // initializeColumns = () => {
-  //   const { enableSettings } = this.props;
-  //   let { columns } = this.props;
-  //   const settingsWidth = this.props.settingsWidth
-  //     ? this.props.settingsWidth
-  //     : this.props.gridName === "CLAIMS"
-  //     ? CLAIMS_GRID_SETTINGS_WIDTH
-  //     : SETTINGS_WIDTH;
-
-  //   // let modifiedColumns: Column<any>[] = [];
-  //   // let requiredColumns: Column<any>[] = [];
-  //   let modifiedSettingsEnabledColumns: Column<any>[] = [];
-  //   if (enableSettings) {
-  //     const settingsEnabledColumns = columns.map((c: Column<any>) => {
-  //       c.position += 1;
-  //       return c;
-  //     });
-
-  //     modifiedSettingsEnabledColumns = [
-  //       {
-  //         position: 1,
-  //         key: "settings",
-  //         displayTitle: " ",
-  //         hidden: false,
-  //         fixed: "left",
-  //         width: settingsWidth,
-
-  //         render: (record) => <></>,
-  //       },
-
-  //       ...settingsEnabledColumns,
-  //     ];
-  //   }
-
-  //   let requiredColumns: Column<any>[] = [];
-  //   if (enableSettings)
-  //     requiredColumns = _.cloneDeep(modifiedSettingsEnabledColumns);
-  //   else requiredColumns = _.cloneDeep(columns);
-
-  //   const visibleColumns = requiredColumns.filter((c) => !c.hidden);
-  //   const hiddenColumns = requiredColumns.filter((c) => c.hidden);
-
-  //   const gridWidth =
-  //     this.gridRef && this.gridRef.current
-  //       ? this.gridRef.current.clientWidth
-  //       : DEFAULT_GRID_WIDTH;
-
-  //   const suggestionsForEachColumn = requiredColumns.reduce(
-  //     (acc, c: Column<any>) => {
-  //       return Object.assign(acc, { [c.key]: [] });
-  //     },
-  //     {}
-  //   );
-
-  //   this.setState({
-  //     columns: requiredColumns,
-  //     suggestions: suggestionsForEachColumn,
-  //     visibleColumns,
-  //     hiddenColumns,
-  //   });
-  // };
 
   /**
    * @function initializeColumns
@@ -292,25 +192,21 @@ class FrxDrugGrid extends Component<
    * @author Deepak_T
    */
   initializeColumns = () => {
-    const { enableSettings, customCheckbox } = this.props;
+    const { enableSettings } = this.props;
     let { columns } = this.props;
     const settingsWidth = this.props.settingsWidth
       ? this.props.settingsWidth
       : this.props.gridName === "CLAIMS"
       ? CLAIMS_GRID_SETTINGS_WIDTH
       : SETTINGS_WIDTH;
-
-    let modifiedColumns: Column<any>[] = [];
-    let requiredColumns: Column<any>[] = [];
-    if (enableSettings === true && customCheckbox === false) {
-      // let modifiedSettingsEnabledColumns: Column<any>[] = [];
-
+    let modifiedSettingsEnabledColumns: Column<any>[] = [];
+    if (enableSettings) {
       const settingsEnabledColumns = columns.map((c: Column<any>) => {
         c.position += 1;
         return c;
       });
 
-      modifiedColumns = [
+      modifiedSettingsEnabledColumns = [
         {
           position: 1,
           key: "settings",
@@ -324,75 +220,12 @@ class FrxDrugGrid extends Component<
 
         ...settingsEnabledColumns,
       ];
-
-      requiredColumns = _.cloneDeep(modifiedColumns);
-    } else if (enableSettings === false && customCheckbox === true) {
-      // let modifiedCheckboxEnabledColumns: Column<any>[] = [];
-
-      const checkboxEnabledColumns = columns.map((c: Column<any>) => {
-        c.position += 1;
-        return c;
-      });
-
-      modifiedColumns = [
-        {
-          position: 1,
-          key: "checkbox",
-          displayTitle: " ",
-          hidden: false,
-          fixed: "left",
-          width: 40,
-
-          render: (record) => <></>,
-        },
-
-        ...checkboxEnabledColumns,
-      ];
-      requiredColumns = _.cloneDeep(modifiedColumns);
-    } else if (enableSettings && customCheckbox) {
-      // let modifiedSettingsAndCheckboxEnabledColumns: Column<any>[] = [];
-
-      const settingsAndcheckboxEnabledColumns = columns.map(
-        (c: Column<any>) => {
-          c.position += 2;
-          return c;
-        }
-      );
-
-      modifiedColumns = [
-        {
-          position: 1,
-          key: "settings",
-          displayTitle: " ",
-          hidden: false,
-          fixed: "left",
-          width: settingsWidth,
-
-          render: (record) => <></>,
-        },
-        {
-          position: 2,
-          key: "checkbox",
-          displayTitle: " ",
-          hidden: false,
-          fixed: "left",
-          width: 8,
-
-          render: (record) => <></>,
-        },
-
-        ...settingsAndcheckboxEnabledColumns,
-      ];
-      requiredColumns = _.cloneDeep(modifiedColumns);
-    } else {
-      modifiedColumns = [...columns];
-      requiredColumns = _.cloneDeep(modifiedColumns);
     }
 
-    // if (enableSettings) requiredColumns = _.cloneDeep(modifiedColumns);
-    // if (customCheckbox)
-    //   requiredColumns = _.cloneDeep(modifiedCheckboxEnabledColumns);
-    // else requiredColumns = _.cloneDeep(columns);
+    let requiredColumns: Column<any>[] = [];
+    if (enableSettings)
+      requiredColumns = _.cloneDeep(modifiedSettingsEnabledColumns);
+    else requiredColumns = _.cloneDeep(columns);
 
     const visibleColumns = requiredColumns.filter((c) => !c.hidden);
     const hiddenColumns = requiredColumns.filter((c) => c.hidden);
@@ -401,7 +234,6 @@ class FrxDrugGrid extends Component<
       this.gridRef && this.gridRef.current
         ? this.gridRef.current.clientWidth
         : DEFAULT_GRID_WIDTH;
-    console.log("width of grid ", gridWidth);
 
     const suggestionsForEachColumn = requiredColumns.reduce(
       (acc, c: Column<any>) => {
@@ -431,9 +263,6 @@ class FrxDrugGrid extends Component<
       if (previousProps.columns.length !== this.props.columns.length) {
         console.log("update grid");
         this.initializeColumns();
-        if (this.props.customCheckbox) {
-          this.initializeData();
-        }
       }
       const previousVisibleColumns = previousState.columns.filter(
         (c: Column<any>) => !c.hidden
@@ -445,9 +274,6 @@ class FrxDrugGrid extends Component<
       //for setting prefs
       if (!this.isGridColumnsSame(previousProps.columns, this.props.columns)) {
         this.initializeColumns();
-        if (this.props.customCheckbox) {
-          this.initializeData();
-        }
       }
 
       if (
@@ -462,9 +288,6 @@ class FrxDrugGrid extends Component<
             : DEFAULT_GRID_WIDTH;
         console.log("grid width ", gridWidth, this.props.scroll.x);
         this.initializeColumns();
-        if (this.props.customCheckbox) {
-          this.initializeData();
-        }
       }
     }
   }
@@ -573,73 +396,6 @@ class FrxDrugGrid extends Component<
     return totalWidth;
   };
 
-  /////////////////////////////////////////////////////////
-  /**
-   * @function handleAllCheckboxSelection
-   * to update all the rows checked and header checked
-   * @author Santosh_JS
-   */
-  handleAllCheckboxSelection = (e) => {
-    let updatedRowRecords: any[] = [];
-    if (e.target.checked) {
-      updatedRowRecords = this.props.data.map((d) => {
-        d.checked = e.target.checked;
-        d.headChecked = e.target.checked;
-        return d;
-      });
-      this.setState(
-        {
-          rowSelectionArr: updatedRowRecords,
-        },
-        () => {
-          this.props.customRowSelectionChange(this.state.rowSelectionArr);
-        }
-      );
-    } else {
-      this.props.data.forEach((d) => {
-        d.checked = e.target.checked;
-        d.headChecked = e.target.checked;
-        return d;
-      });
-      this.setState(
-        {
-          // rowSelectionArr: updatedRowRecords,
-          rowSelectionArr: [],
-        },
-        () => {
-          this.props.customRowSelectionChange(this.state.rowSelectionArr);
-        }
-      );
-    }
-  };
-
-  /**
-   * @function handleCheckboxRowSelection
-   * to update the checked & unchecked record
-   * @author Santosh_JS
-   */
-  handleCheckboxRowSelection = (event, record) => {
-    let newArray = [...this.state.rowSelectionArr];
-    const filteredArr = newArray;
-    if (event.target.checked) {
-      record["checked"] = event.target.checked;
-      newArray.push(record);
-    } else {
-      record["checked"] = event.target.checked;
-      // this.handleAllCheckboxSelection(event);
-      if (record.headChecked) {
-        this.props.data.forEach((d) => (d.headChecked = false));
-      }
-      newArray = filteredArr.filter((r) => r.id !== record.id);
-      newArray.forEach((r) => {
-        record.headChecked = false;
-      });
-    }
-    this.setState({ rowSelectionArr: newArray }, () => {
-      this.props.customRowSelectionChange(this.state.rowSelectionArr);
-    });
-  };
-  /////////////////////////////////////////////////////////
   /**
    * @function generateColumns
    * to generate column title and render jsx elements
@@ -743,29 +499,6 @@ class FrxDrugGrid extends Component<
               />
             );
           };
-        } else if (c.key === "checkbox") {
-          c["width"] = this.props.checkBoxWidth ? this.props.checkBoxWidth : 60;
-          c["render"] = (record: any) => {
-            return (
-              <>
-                <FrxGridCheckboxGroupCell
-                  onSelectMulitple={this.handleCheckboxRowSelection}
-                  isHeaderCell={false}
-                  currentRowRecord={record}
-                />
-              </>
-            );
-          };
-          c["title"] = () => {
-            return (
-              <FrxGridCheckboxGroupCell
-                isHeaderCell={true}
-                onSelectAll={this.handleAllCheckboxSelection}
-                allRecordsLength={this.props.data.length}
-                selectedRowArrLength={this.state.rowSelectionArr.length}
-              />
-            );
-          };
         } else {
           const key = c.key;
           const width =
@@ -816,6 +549,7 @@ class FrxDrugGrid extends Component<
               return (
                 <c.cellWrapper>
                   <FrxGridCell
+                    handleSelectEachRow={this.rowSelectionChangeFromCell}
                     customToolTip={customToolTip}
                     customContent={customContent}
                     onCellClick={this.onCellClick}
@@ -840,6 +574,7 @@ class FrxDrugGrid extends Component<
                 : undefined;
               return (
                 <FrxGridCell
+                  handleSelectEachRow={this.rowSelectionChangeFromCell}
                   customToolTip={customToolTip}
                   customContent={customContent}
                   onCellClick={this.onCellClick}
@@ -862,6 +597,7 @@ class FrxDrugGrid extends Component<
             return (
               <>
                 <FrxGridHeaderCell
+                  onSelectAllRows={this.onSelectAllRows}
                   isPinningEnabled={
                     this.props.isPinningEnabled
                       ? this.props.isPinningEnabled
@@ -1288,6 +1024,27 @@ class FrxDrugGrid extends Component<
     const isCheckBox = this.props.isRowSelectorCheckbox;
     if (this.props.rowSelectionChange)
       this.props.rowSelectionChange(dataRow, event);
+  };
+
+  rowSelectionChangeFromCell = (
+    dataKey: string,
+    dataRow: any,
+    isSelected: boolean
+  ) => {
+    if (this.props.rowSelectionChangeFromCell) {
+      this.props.rowSelectionChangeFromCell(dataKey, dataRow, isSelected);
+    }
+  };
+
+  /**
+   * @function onSelectAllRows
+   * change handler for all rows selection checkbox
+   * @author Deepak_T
+   */
+  onSelectAllRows = (isSelected: boolean) => {
+    if (this.props.onSelectAllRows) {
+      this.props.onSelectAllRows(isSelected);
+    }
   };
 
   /**

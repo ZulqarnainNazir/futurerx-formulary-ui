@@ -43,6 +43,15 @@ export const getPTReplaceSrch = createAsyncThunk(
   }
 );
 
+export const getPCHLSearch = createAsyncThunk(
+  "drug_details/PCHL_search",
+  async (apiDetails: any) => {
+    let GET_URL = buildUrl({ apiDetails });
+    const requestHeaders = getHeaders();
+    return fetchRequest(GET_URL, requestHeaders);
+  }
+);
+
 export const postPTCriteriaList = createAsyncThunk(
   "drug_details/postPTCriteriaList",
   async (apiDetails: any) => {

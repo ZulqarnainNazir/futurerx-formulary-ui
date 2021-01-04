@@ -675,7 +675,7 @@ class AdditionalCriteria extends Component<any, any> {
     isIncluded,
     updatedPayload
   ) => {
-    // console.log(nodeId, cardCode, cardName, isIncluded, updatedPayload);
+    console.log(nodeId, cardCode, cardName, isIncluded, updatedPayload);
 
     let sequence = this.state.apiAdditionalCriteriaState.sequence;
     let covered = { ...this.state.apiAdditionalCriteriaState.covered };
@@ -807,30 +807,12 @@ class AdditionalCriteria extends Component<any, any> {
 
         break;
       case 8:
+        filteredList = this.state.selectedCriteriaList.filter(
+          (card) => card.cardCode === cardCode
+        );
         cardName = criteriaMock[cardCode - 1].cardName;
-        this.setState({
-          selectedCriteriaList: [
-            ...this.state.selectedCriteriaList,
-            {
-              id: null,
-              cardCode: cardCode,
-              name: cardName,
-              render: (
-                <ListItem
-                  // nodeId={nodeId}
-                  card={{
-                    cardName,
-                    cardCode,
-                    // isIncluded,
-                  }}
-                  deleteIconHandler={this.deleteIconHandler}
-                  payload={null}
-                  handleGlobalState={this.handleAllNodesState}
-                />
-              ),
-            },
-          ],
-        });
+        this.setNodes(cardName, cardCode, filteredList);
+
         break;
       default:
         console.log("default state");
@@ -854,6 +836,7 @@ class AdditionalCriteria extends Component<any, any> {
                 <div className="__root-additional-criteria-child-accordion-section-content-left-inner-spacing">
                   {criteriaList.map((c) => (
                     <DragBox
+                      key={c.id}
                       criteria={c}
                       onCriteriaSelect={this.onCriteriaSelect}
                     />

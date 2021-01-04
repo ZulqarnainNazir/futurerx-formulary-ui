@@ -4,7 +4,6 @@
   &__add-new-form-action {
     display: flex;
     align-items: center;
-    margin-left: 16px;
   }
   &__add-new-form-action-text {
     font-family: Roboto;
@@ -42,10 +41,8 @@
       letter-spacing: 0.01em;
       color: #323c47;
       margin-bottom: 10px;
-      // margin-left: 20px;
     }
     &__dropdown-field {
-      margin-left: 20px;
       .select-icds {
         // height: auto !important;
         width: 100%;

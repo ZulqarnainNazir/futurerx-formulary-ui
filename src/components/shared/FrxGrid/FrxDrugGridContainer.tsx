@@ -39,9 +39,6 @@ interface FrxDrugGridContainerProps<T> extends Grid<T> {
   isFetchingData: boolean;
   onSearch: (searchObject: any) => void;
   searchOptions?: any;
-  isCustomCheckboxEnabled?: boolean;
-  handleCustomRowSelectionChange?: any;
-  checkBoxWidth?: number;
   isPinningEnabled?: boolean;
   getPerPageItemSize?: any;
   onGridPageChangeHandler?: any;
@@ -115,12 +112,6 @@ class FrxDrugGridContainer extends Component<FrxDrugGridContainerProps<any>> {
       <div className="frx-grid-container">
         {this.props.enableSearch ? this.getSearchComponent() : null}
         <FrxDrugGrid
-          customCheckbox={
-            this.props.isCustomCheckboxEnabled
-              ? this.props.isCustomCheckboxEnabled
-              : false
-          }
-          customRowSelectionChange={this.props.handleCustomRowSelectionChange}
           applySort={this.props.applySort}
           isDataLoaded={this.props.isDataLoaded}
           bordered={false}
@@ -152,11 +143,10 @@ class FrxDrugGridContainer extends Component<FrxDrugGridContainerProps<any>> {
           summary={this.props.summary ? this.props.summary : undefined}
           isRowSelectionEnabled={this.props.isRowSelectionEnabled}
           rowSelectionChange={this.props.rowSelectionChange}
+          rowSelectionChangeFromCell={this.props.rowSelectionChangeFromCell}
+          onSelectAllRows={this.props.onSelectAllRows}
           settingsWidth={
             this.props.settingsWidth ? this.props.settingsWidth : undefined
-          }
-          checkBoxWidth={
-            this.props.checkBoxWidth ? this.props.checkBoxWidth : 60
           }
           rowSelection={this.props.rowSelection}
           onSettingsCellClick={this.props.onSettingsCellClick}

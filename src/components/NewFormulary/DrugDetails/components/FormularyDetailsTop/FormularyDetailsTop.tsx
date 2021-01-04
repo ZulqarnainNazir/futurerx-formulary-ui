@@ -10,8 +10,11 @@ import { createFormularyUsingClone } from "../../../../.././redux/slices/formula
 import VersionHistoryPopup from "../FormularySetUp/components/VersionHistoryPopup/VersionHistoryPopup";
 import ClonePopup from "../FormularySetUp/components/ClonePopup/ClonePopup";
 import DeletePopup from "../FormularySetUp/components/DeletePopup/DeletePopup";
+import ArchivePopup from "../FormularySetUp/components/archive/ArchivePopup";
+import NewVersionPopup from "../FormularySetUp/components/newVersion/NewVersionPopoup";
+
 import { VersionHistoryData } from "../FormularySetUp/components/VersionHistoryPopup/version-hisory.model";
-import { ToastContainer } from 'react-toastify';
+import { ToastContainer } from "react-toastify";
 import showMessage from "../../../Utils/Toast";
 import {
   fetchDesignOptions,
@@ -50,7 +53,9 @@ class FormularyDetailsTop extends React.Component<any, any> {
     isVersionHistoryPopupOpen: false,
     isClonePopupOpen: false,
     isDeletePopupOpen: false,
-    dialogTitle: '',
+    isArchivePopupOpen: false,
+    isNewVersionPopupOpen: false,
+    dialogTitle: "",
 
     lastID: 0,
     lastVersion: 0,
@@ -72,7 +77,7 @@ class FormularyDetailsTop extends React.Component<any, any> {
       if (
         this.state.lastID !== this.props?.currentFormulary?.id_formulary &&
         this.state !==
-        this.props?.currentFormulary?.formulary_info?.version_number
+          this.props?.currentFormulary?.formulary_info?.version_number
       ) {
         this.props.fetchFormularyVersions(
           this.props.currentFormulary?.id_base_formulary
@@ -106,26 +111,66 @@ class FormularyDetailsTop extends React.Component<any, any> {
    */
   onVersionHistoryClick = () => {
     console.log("Version history clicked");
-    this.setState({ isAnyPopupOpen: true, isVersionHistoryPopupOpen: true, dialogTitle: 'VERSION HISTORY' });
+    this.setState({
+      isAnyPopupOpen: true,
+      isVersionHistoryPopupOpen: true,
+      dialogTitle: "VERSION HISTORY",
+    });
   };
 
   onCloneClick = () => {
     console.log("Clone button clicked");
     if (this.props.currentFormulary) {
-      this.setState({ isAnyPopupOpen: true, isClonePopupOpen: true, dialogTitle: 'CLONE' });
-    }else{
-      showMessage('Error: Current formulary is not set','error');
+      this.setState({
+        isAnyPopupOpen: true,
+        isClonePopupOpen: true,
+        dialogTitle: "CLONE",
+      });
+    } else {
+      showMessage("Error: Current formulary is not set", "error");
     }
   };
 
   onDeleteClick = () => {
     console.log("Delete button clicked");
     if (this.props.currentFormulary) {
-      this.setState({ isAnyPopupOpen: true, isDeletePopupOpen: true, dialogTitle: 'DELETE' });
-    }else{
-      showMessage('Error: Current formulary is not set','error');
+      this.setState({
+        isAnyPopupOpen: true,
+        isDeletePopupOpen: true,
+        dialogTitle: "DELETE",
+      });
+    } else {
+      showMessage("Error: Current formulary is not set", "error");
     }
   };
+
+  onArchiveClick = () => {
+    console.log("Archive button clicked");
+    if (this.props.currentFormulary) {
+      this.setState({
+        isAnyPopupOpen: true,
+        isArchivePopupOpen: true,
+        dialogTitle: "Archive",
+      });
+    } else {
+      showMessage("Error: Current formulary is not set", "error");
+    }
+  };
+
+  onNewVersionClick = () => {
+    console.log("New Version button clicked");
+    if (this.props.currentFormulary) {
+      this.setState({
+        isAnyPopupOpen: true,
+        isNewVersionPopupOpen: true,
+        dialogTitle: "New Version",
+      });
+    } else {
+      showMessage("Error: Current formulary is not set", "error");
+    }
+  };
+
+  //  isNewVersionPopupOpen
 
   /**
    * @function onClosePopup
@@ -138,7 +183,9 @@ class FormularyDetailsTop extends React.Component<any, any> {
       isVersionHistoryPopupOpen: false,
       isClonePopupOpen: false,
       isDeletePopupOpen: false,
-      dialogTitle: ''
+      isArchivePopupOpen: false,
+      isNewVersionPopupOpen: false,
+      dialogTitle: "",
       //add other popup toggles too if this is reused
     });
   };
@@ -168,7 +215,6 @@ class FormularyDetailsTop extends React.Component<any, any> {
     if (data && data.id_formulary && data.id_formulary > 0) {
       this.externalInferfaceLoadFormulary(6, data.id_formulary);
     }
-
   };
 
   // CLONE
@@ -237,11 +283,11 @@ class FormularyDetailsTop extends React.Component<any, any> {
     console.log("Formulary name:" + cloneName + " Date:" + effectiveDate);
     this.onClosePopup();
     this.handleCloneFormulary(cloneName, effectiveDate);
-  }
+  };
 
   onCancel = () => {
     this.onClosePopup();
-  }
+  };
 
   handleCloneFormulary = async (cloneName, effectiveDate) => {
     try {
@@ -252,20 +298,23 @@ class FormularyDetailsTop extends React.Component<any, any> {
         payload.formulary_info.effective_date = effectiveDate;
         payload.formulary_info.id_lob = this.props.formularyLobId;
 
-        let newFormularyId = await createFormularyUsingClone(this.props.currentFormulary.id_base_formulary, payload);
+        let newFormularyId = await createFormularyUsingClone(
+          this.props.currentFormulary.id_base_formulary,
+          payload
+        );
         if (newFormularyId) {
-          showMessage('Cloned formulary Id:' + newFormularyId, 'success');
+          showMessage("Cloned formulary Id:" + newFormularyId, "success");
           this.externalInferfaceLoadFormulary(6, newFormularyId);
         } else {
-          showMessage('Error: No response for formulary clone', 'error')
+          showMessage("Error: No response for formulary clone", "error");
         }
       }
     } catch (error) {
       console.log("***** clone - Error");
       console.log(error);
-      showMessage('Error while cloning formulary', 'error')
+      showMessage("Error while cloning formulary", "error");
     }
-  }
+  };
 
   render() {
     let dropDown: any;
@@ -302,10 +351,30 @@ class FormularyDetailsTop extends React.Component<any, any> {
               />
             )}
             {this.state.isClonePopupOpen && (
-              <ClonePopup currentFormulary={this.props.currentFormulary} onFormularyCloneInfo={this.onFormularyCloneInfo} onCancel={this.onCancel} />
+              <ClonePopup
+                currentFormulary={this.props.currentFormulary}
+                onFormularyCloneInfo={this.onFormularyCloneInfo}
+                onCancel={this.onCancel}
+              />
             )}
             {this.state.isDeletePopupOpen && (
-              <DeletePopup currentFormulary={this.props.currentFormulary} onCancel={this.onCancel} />
+              <DeletePopup
+                currentFormulary={this.props.currentFormulary}
+                onCancel={this.onCancel}
+              />
+            )}
+            {this.state.isArchivePopupOpen && (
+              <ArchivePopup
+                currentFormulary={this.props.currentFormulary}
+                versionList={this.props.formularyVersionList}
+                onCancel={this.onCancel}
+              />
+            )}
+            {this.state.isNewVersionPopupOpen && (
+              <NewVersionPopup
+                currentFormulary={this.props.currentFormulary}
+                onCancel={this.onCancel}
+              />
             )}
           </DialogPopup>
         ) : null}
@@ -354,8 +423,10 @@ class FormularyDetailsTop extends React.Component<any, any> {
                   </svg>
                   Version History
                 </div>
-                <div className="item item--version-history"
-                  onClick={this.onCloneClick}>
+                <div
+                  className="item item--version-history"
+                  onClick={this.onCloneClick}
+                >
                   <svg
                     width="13"
                     height="13"
@@ -370,7 +441,10 @@ class FormularyDetailsTop extends React.Component<any, any> {
                   </svg>
                   Clone
                 </div>
-                <div className="item">
+                <div
+                  className="item item--version-history"
+                  onClick={this.onNewVersionClick}
+                >
                   <svg
                     width="13"
                     height="12"
@@ -385,8 +459,10 @@ class FormularyDetailsTop extends React.Component<any, any> {
                   </svg>
                   New Version
                 </div>
-                <div className="item item--version-history"
-                     onClick={this.onDeleteClick}>
+                <div
+                  className="item item--version-history"
+                  onClick={this.onDeleteClick}
+                >
                   <svg
                     width="11"
                     height="11"
@@ -403,7 +479,10 @@ class FormularyDetailsTop extends React.Component<any, any> {
                   </svg>
                   Delete
                 </div>
-                <div className="item">
+                <div
+                  className="item item--version-history"
+                  onClick={this.onArchiveClick}
+                >
                   <svg
                     width="11"
                     height="11"

@@ -1232,16 +1232,12 @@ class AdvanceSearchContainer extends Component<Props, State> {
   handleChildDataSave = (additionalCriteria) => {
     console.log(additionalCriteria);
     const additionalCriteriaArray = [additionalCriteria];
-    // additionalCriteria
 
-    // additionalCriteriaArray.forEach((add: any, index) => {
-    //   add["sequence"] = index + 1;
-    // });
-    // console.log("FINAL PAYLOAD DATA: ", additionalCriteriaArray);
     this.setState({
       additionalCriteriaArray,
     });
   };
+
   handleAdditionalCriteriaApply = () => {
     let payload = {
       isNewAdditionalCriteria: this.props.additionalCriteria

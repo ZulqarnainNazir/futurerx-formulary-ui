@@ -23,7 +23,6 @@ import { fetchFormularyHeader } from "../.././redux/slices/formulary/header/head
 import { gridSettingsSlice } from "../.././redux/slices/formulary/gridHandler/gridSettingsSlice";
 import { addNewFormulary } from "../.././redux/slices/formulary/application/applicationSlice";
 import "./NewFormulary.scss";
-import Medicaid from "./Medicaid/Medicaid";
 
 // const tabs = [
 //   { id: 1, text: "MEDICARE" },
@@ -294,9 +293,6 @@ class Formulary extends React.Component<any, any> {
                 addNewFormulary={this.addNewFormulary}
                 formularyListSearch={this.formularyListSearch}
               />
-            </div>
-            <div>
-              <Medicaid />
             </div>
           </>
         ) : this.state.showDrugDetails ? (

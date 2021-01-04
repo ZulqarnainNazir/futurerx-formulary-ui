@@ -13,11 +13,12 @@ import {
 
 import { getICDReplaceSrch } from "../../../../../redux/slices/formulary/drugDetails/icd/icdActionCreation";
 import { getPNReplaceSrch } from "../../../../../redux/slices/formulary/drugDetails/pn/pnActionCreation";
-import { getPTReplaceSrch } from "../../../../../redux/slices/formulary/drugDetails/pt/ptActionCreation";
+import {
+  getPTReplaceSrch,
+  getPCHLSearch,
+} from "../../../../../redux/slices/formulary/drugDetails/pt/ptActionCreation";
 
-import * as icdConstants from "../../../../../api/http-drug-details";
-import * as pnConstants from "../../../../../api/http-drug-details";
-import * as ptConstants from "../../../../../api/http-drug-details";
+import * as apiConstants from "../../../../../api/http-drug-details";
 
 import POSCriteria from "../CriteriaComponents/POSCriteria";
 import PRCriteria from "../CriteriaComponents/PRCriteria";
@@ -26,6 +27,7 @@ import ICDCriteria from "../CriteriaComponents/ICDCriteria";
 import AgeCriteria from "../CriteriaComponents/AgeCriteria";
 import PNCriteria from "../CriteriaComponents/PNCriteria";
 import PTCriteria from "../CriteriaComponents/PTCriteria";
+import PCHLCriteria from "../CriteriaComponents/PCHLCriteria";
 
 function mapDispatchToProps(dispatch) {
   return {
@@ -36,6 +38,8 @@ function mapDispatchToProps(dispatch) {
     getICDSearch: (a) => dispatch(getICDReplaceSrch(a)),
     getPNSearch: (a) => dispatch(getPNReplaceSrch(a)),
     getPTSearch: (a) => dispatch(getPTReplaceSrch(a)),
+
+    getPCHLSearch: (a) => dispatch(getPCHLSearch(a)),
   };
 }
 
@@ -115,13 +119,21 @@ class ListItem extends Component<any, any> {
     },
     isSelectAllPR: false,
 
-    // https://api-dev-config-formulary.futurerx.com/api/1/lookback-list?search_value=d
     // PCHL
-    pchlSettings: [],
+    pchlSettings: {
+      lookback_name: "",
+      id_lookback_level: "",
+      lookback_drug: [],
+      lookback_period: "",
+      number_of_fills: "",
+      number_of_days_supply_per_fill: "",
+    },
+
     pchlSettingsStatus: {
       type: "covered",
       covered: true,
     },
+    pchlResults: { data: [], value: undefined },
   };
 
   componentDidMount() {
@@ -301,6 +313,7 @@ class ListItem extends Component<any, any> {
           posSettingsStatus,
         });
         break;
+
       case 7:
         this.initializePRSettingsListApi();
         const prSettingsStatus = {
@@ -310,6 +323,9 @@ class ListItem extends Component<any, any> {
         this.setState({
           prSettingsStatus,
         });
+        break;
+
+      case 8:
         break;
       default:
         break;
@@ -398,12 +414,10 @@ class ListItem extends Component<any, any> {
   };
 
   handleALChange = (event) => {
-    let alSettings = { ...this.state.alSettings };
-
-    if (event.target.name === "min-val")
-      alSettings.min_age_limit = event.target.value.toString();
-    if (event.target.name === "max-val")
-      alSettings.max_age_limit = event.target.value.toString();
+    let alSettings = {
+      ...this.state.alSettings,
+      [event.target.name]: event.target.value.toString(),
+    };
 
     let payload = { ...alSettings };
     this.setState({
@@ -499,11 +513,11 @@ class ListItem extends Component<any, any> {
 
   handleICDSearch = (input) => {
     let apiDetails = {};
-    apiDetails["apiPart"] = icdConstants.GET_ICD_DRUGS_REPLACE;
+    apiDetails["apiPart"] = apiConstants.GET_ICD_DRUGS_REPLACE;
     apiDetails["pathParams"] = this.props?.formulary_id;
     apiDetails["keyVals"] = [
-      { key: icdConstants.KEY_ENTITY_ID, value: this.props?.formulary_id },
-      { key: icdConstants.SEARCHKEY, value: input },
+      { key: apiConstants.KEY_ENTITY_ID, value: this.props?.formulary_id },
+      { key: apiConstants.SEARCHKEY, value: input },
     ];
     this.props.getICDSearch(apiDetails).then((json) => {
       let response = json.payload && json.payload.data ? json.payload.data : [];
@@ -552,11 +566,11 @@ class ListItem extends Component<any, any> {
 
   handlePNSearch = (input) => {
     let apiDetails = {};
-    apiDetails["apiPart"] = pnConstants.GET_PN_DRUGS_REPLACE;
+    apiDetails["apiPart"] = apiConstants.GET_PN_DRUGS_REPLACE;
     apiDetails["pathParams"] = this.props?.formulary_id;
     apiDetails["keyVals"] = [
-      { key: pnConstants.KEY_ENTITY_ID, value: this.props?.formulary_id },
-      { key: pnConstants.SEARCHKEY, value: input },
+      { key: apiConstants.KEY_ENTITY_ID, value: this.props?.formulary_id },
+      { key: apiConstants.SEARCHKEY, value: input },
     ];
     this.props.getPNSearch(apiDetails).then((json) => {
       let response = json.payload && json.payload.data ? json.payload.data : [];
@@ -605,11 +619,11 @@ class ListItem extends Component<any, any> {
 
   handlePTSearch = (input) => {
     let apiDetails = {};
-    apiDetails["apiPart"] = ptConstants.GET_PT_DRUGS_REPLACE;
+    apiDetails["apiPart"] = apiConstants.GET_PT_DRUGS_REPLACE;
     apiDetails["pathParams"] = this.props?.formulary_id;
     apiDetails["keyVals"] = [
-      { key: ptConstants.KEY_ENTITY_ID, value: this.props?.formulary_id },
-      { key: ptConstants.SEARCHKEY, value: input },
+      { key: apiConstants.KEY_ENTITY_ID, value: this.props?.formulary_id },
+      { key: apiConstants.SEARCHKEY, value: input },
     ];
     this.props.getPTSearch(apiDetails).then((json) => {
       let response = json.payload && json.payload.data ? json.payload.data : [];
@@ -749,6 +763,72 @@ class ListItem extends Component<any, any> {
     this.setState({ prSettingsStatus, isIncluded });
   };
 
+  ///////////////////// PCHL START
+
+  handlePCHLChange = (value: any[]) => {
+    let lookback_drug: any[] = [...this.state.pchlSettings.lookback_drug];
+
+    this.state.pchlResults.data.forEach((pchl: any) => {
+      value.forEach((v) => {
+        if (pchl["id"] === v) {
+          lookback_drug.push(pchl);
+        }
+      });
+    });
+
+    const payload: any = {
+      ...this.state.pchlSettings,
+      lookback_drug: lookback_drug,
+    };
+    this.setState({
+      pchlSettings: payload,
+      payload,
+    });
+  };
+
+  handlePCHLSearch = (input) => {
+    let apiDetails = {};
+    apiDetails["apiPart"] = apiConstants.GET_PCHL_DRUGS_ONSEARCH;
+    apiDetails["pathParams"] = this.props?.formulary_id;
+    apiDetails["keyVals"] = [{ key: apiConstants.SEARCHKEY, value: input }];
+    this.props.getPCHLSearch(apiDetails).then((json) => {
+      let response = json.payload && json.payload.data ? json.payload.data : [];
+      const data = [...response].slice(0, 8);
+      this.setState({
+        pchlResults: {
+          data,
+        },
+      });
+    });
+  };
+
+  handlePCHLOnChange = (event) => {
+    let pchlSettings =
+      typeof event === "string"
+        ? { ...this.state.pchlSettings, id_lookback_level: event.toString() }
+        : {
+            ...this.state.pchlSettings,
+            [event.target.name]: event.target.value.toString(),
+          };
+
+    let payload = { ...pchlSettings };
+    this.setState({
+      pchlSettings,
+      payload,
+    });
+  };
+
+  handlePCHLStatus = (key: string) => {
+    const COVERED = "covered";
+    const isCovered: boolean = key === COVERED ? true : false;
+    let pchlSettingsStatus = {
+      type: key,
+      covered: isCovered,
+    };
+    let isIncluded = pchlSettingsStatus.covered;
+    this.setState({ pchlSettingsStatus, isIncluded });
+  };
+
   ///////////////////// RENDER()
 
   render() {
@@ -774,12 +854,10 @@ class ListItem extends Component<any, any> {
       icdResults,
 
       // PN
-      pnSettings,
       pnSettingsStatus,
       pnResults,
 
       // PT
-      ptSettings,
       ptSettingsStatus,
       ptResults,
 
@@ -796,12 +874,32 @@ class ListItem extends Component<any, any> {
       // PCHL
       pchlSettings,
       pchlSettingsStatus,
+      pchlResults,
     } = this.state;
     const {
       card: { cardCode },
       deleteIconHandler,
     } = this.props;
     switch (cardCode) {
+      case 8:
+        return (
+          <PCHLCriteria
+            pchlSettingsServies={{
+              pchlSettings,
+              pchlSettingsStatus,
+              pchlResults,
+            }}
+            handleStatus={this.handlePCHLStatus}
+            handlePCHLChange={this.handlePCHLChange}
+            handlePCHLSearch={this.handlePCHLSearch}
+            handlePCHLCriteriaChange={this.handlePCHLOnChange}
+            deleteIconHandler={() =>
+              deleteIconHandler(nodeId, cardCode, cardName, isIncluded, payload)
+            }
+            isAdditionalCriteria={true}
+            nodeId={nodeId}
+          />
+        );
       case 1:
         return (
           <AgeCriteria
@@ -929,8 +1027,7 @@ class ListItem extends Component<any, any> {
             nodeId={nodeId}
           />
         );
-      case 8:
-        return null;
+
       default:
         return null;
     }
