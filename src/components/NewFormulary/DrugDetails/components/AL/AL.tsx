@@ -154,8 +154,8 @@ class DrugDetailAL extends React.Component<any, any> {
       {
         minimumVal: "",
         maximumVal: "",
-        minimumType: "",
-        maximumType: "",
+        minimumType: "IO",
+        maximumType: "IO",
         index: 0,
         covered: true,
       }
@@ -190,8 +190,8 @@ class DrugDetailAL extends React.Component<any, any> {
     {
       minimumVal: "",
       maximumVal: "",
-      minimumType: "",
-      maximumType: "",
+      minimumType: "IO",
+      maximumType: "IO",
       index: 0,
       covered: true,
     }
@@ -361,8 +361,8 @@ class DrugDetailAL extends React.Component<any, any> {
         {
           minimumVal: "",
           maximumVal: "",
-          minimumType: "",
-          maximumType: "",
+          minimumType: "IO",
+          maximumType: "IO",
           index: 0,
           covered: true,
         }
@@ -631,8 +631,8 @@ class DrugDetailAL extends React.Component<any, any> {
       let newAgeLimit = {
         minimumVal: "",
         maximumVal: "",
-        minimumType: "",
-        maximumType: "",
+        minimumType: "IO",
+        maximumType: "IO",
         index: this.state.alSettings.length,
         covered: this.state.alSettings[0].covered,
       }
