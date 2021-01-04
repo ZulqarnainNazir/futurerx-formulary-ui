@@ -103,6 +103,96 @@
     }
   }
 }
+
+//Orange
+.version-wrapper-orange {
+  border: 1px solid #f65a1c;
+  height: 37px;
+  max-width: 890px;
+  width: 100%;
+  background: #fff5f0;
+  border-radius: 3px;
+  display: flex;
+  justify-content: space-around;
+
+  .formulary-type-dropdown {
+    background: transparent !important;
+    border: none !important;
+  }
+
+  .version-dd {
+    width: 295px;
+    border-right: 1px solid #f65a1c;
+    height: 35px;
+    margin-right: 10px;
+    padding-left: 20px;
+    display: flex;
+    justify-content: space-between;
+    padding-right: 6px;
+  }
+
+  .item-text {
+    font-family: Roboto;
+    font-style: normal;
+    font-weight: 500;
+    font-size: 13px;
+    line-height: 20px;
+    display: flex;
+    align-items: center;
+    text-decoration-line: underline;
+    color: #219653;
+  }
+
+  .item {
+    display: flex;
+    line-height: 35px;
+    font-size: 12px;
+    color: #f65a1c;
+    text-decoration-line: underline;
+    font-weight: $font-weight-500;
+    align-items: center;
+    svg {
+      margin-right: 5px;
+    }
+    &:last-child {
+      margin-right: 0;
+    }
+  }
+  .ant-select-selector {
+    background: #d5ffd7 !important;
+    .ant-select-selection-placeholder {
+      color: #f65a1c !important;
+    }
+    .ant-select-selection-item {
+      color: #f65a1c !important;
+    }
+  }
+  .formulary-versions .ant-select-selector {
+    border-right: 1px solid#f65a1c !important;
+  }
+  .formulary-type-dropdown {
+    width: 205px !important;
+  }
+
+  #group-description {
+    border: none;
+    height: 37px;
+    max-width: 890px;
+    width: 100%;
+    background: #fff5f0;
+    border-radius: 3px;
+    color: #f65a1c;
+    text-decoration-line: underline;
+    font-weight: $font-weight-500;
+    align-items: center;
+    font-family: Roboto;
+    font-style: normal;
+    font-size: 12px;
+  }
+}
+//End Orange
+
+//Green
 .version-wrapper-green {
   border: 1px solid #80c483;
   height: 37px;
@@ -187,6 +277,8 @@
     font-size: 12px;
   }
 }
+//End Green
+
 .drug-detail-top {
   background: white;
   padding: 22px 20px 30px 30px;
@@ -968,6 +1060,12 @@
 }
 
 .pa-new-group-form {
+  .date-picker-container {
+    padding: 10px 0px 0px 10px;
+    .label {
+      margin-bottom: 8px;
+    }
+  }
   .group-padding {
     padding-right: 20px !important;
   }
