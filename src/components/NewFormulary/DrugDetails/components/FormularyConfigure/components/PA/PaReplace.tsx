@@ -312,7 +312,7 @@ class PaReplace extends React.Component<any, any> {
             this.props
               .getPaSummary(this.props.current_formulary.id_formulary)
               .then((json) => {
-                debugger;
+                // debugger;
                 this.setState({ tierGridContainer: true });
               });
           } else {
@@ -356,7 +356,7 @@ class PaReplace extends React.Component<any, any> {
           pathParams: "/" + latestVersionId,
         })
         .then((json) => {
-          debugger;
+          // debugger;
           this.props.setAdditionalCriteria([]);
           if (json.payload && json.payload.code === "200") {
             if (
@@ -441,7 +441,7 @@ class PaReplace extends React.Component<any, any> {
   };
 
   handleChange = (e: any) => {
-    debugger;
+    // debugger;
     let tmp_value = e.target.value;
     let tmp_key = e.target.name;
     if (e.target.value == "true") {
@@ -470,7 +470,7 @@ class PaReplace extends React.Component<any, any> {
         searchBody
       );
     }
-    debugger;
+    // debugger;
 
     let tmp_fileType: any = "";
 
@@ -528,14 +528,14 @@ class PaReplace extends React.Component<any, any> {
             obj[this.state.groupDescriptionProp] ==
             this.state.selectedGroupDescription
         )[0];
-        debugger;
+        // debugger;
         var gridData = tmpData.map(function (el) {
           var element = Object.assign({}, el);
           data.push(element);
           let gridItem = {};
           gridItem["id"] = count;
           gridItem["key"] = count;
-          debugger;
+          // debugger;
 
           if (
             selected["pa_group_description_name"] ===
@@ -638,7 +638,7 @@ class PaReplace extends React.Component<any, any> {
     this.setState({ isAdditionalCriteriaOpen: false });
   };
   openAdditionalCriteria = () => {
-    debugger;
+    // debugger;
     this.setState({ isAdditionalCriteriaOpen: true });
   };
   onSelectAllRows = (isSelected: boolean) => {

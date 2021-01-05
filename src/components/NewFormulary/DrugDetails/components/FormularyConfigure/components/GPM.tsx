@@ -168,7 +168,7 @@ class GPM extends React.Component<any, any>{
     }
 
     componentWillReceiveProps(nextProps) {
-        debugger;
+        // debugger;
         console.log('TIER: componentWillReceiveProps', nextProps);
         
         let tmpData = nextProps.descriptions;

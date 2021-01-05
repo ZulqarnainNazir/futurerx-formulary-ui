@@ -218,6 +218,7 @@ class DrugDetailOther extends React.Component<any, any> {
         this.props.postRemoveOtherDrug(apiDetails).then((json) => {
           if (json.payload && json.payload.code && json.payload.code === "200") {
             showMessage("Success", "success");
+            this.getOTHERSummary();
             this.getOTHERCriteriaList();
             this.getOtherList();
           } else {
@@ -273,6 +274,9 @@ class DrugDetailOther extends React.Component<any, any> {
 
   onSelectedTableRowChanged = (selectedRowKeys) => {
     this.state.selectedDrugs = [];
+    this.setState({
+      selectedRowKeys: [...selectedRowKeys]
+    });
     if (selectedRowKeys && selectedRowKeys.length > 0) {
       let selDrugs = selectedRowKeys.map((ele) => {
         return this.state.drugData[ele - 1]["md5_id"]
@@ -280,7 +284,9 @@ class DrugDetailOther extends React.Component<any, any> {
           : "";
       });
 
-      this.setState({ selectedDrugs: selDrugs });
+      let selStateTmpDrugs = [...this.state.selectedDrugs, ...selDrugs];
+
+      this.setState({ selectedDrugs: selStateTmpDrugs });
     } else {
       this.setState({ selectedDrugs: [] });
     }
@@ -320,7 +326,7 @@ class DrugDetailOther extends React.Component<any, any> {
       this.setState({
         panelGridValue1: rows,
         otherData: settingsRows,
-        showGrid: false,
+        // showGrid: false,
       });
     });
   };

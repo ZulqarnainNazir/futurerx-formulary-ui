@@ -77,7 +77,7 @@ function GroupHeader(props: any) {
         }
 
         props.postSTGroupDescriptionFormularies(apiDetails).then(json =>{
-            debugger;
+            // debugger;
             let tmp_array:any=[];
             let count=1;
             json.payload.result.map(obj => {
@@ -92,7 +92,7 @@ function GroupHeader(props: any) {
       };
 
       const onSelectedTableRowChanged = ( selectedRowKeys) => {
-        debugger;
+        // debugger;
         fomulariesList.map(obj => obj['applied_version'] = '');
         if (selectedRowKeys && selectedRowKeys.length > 0) {
             let tmp : any = selectedRowKeys.map(tierId => {
@@ -187,7 +187,7 @@ function GroupHeader(props: any) {
 
     const applyFormularies = (e:any) => {
 
-        debugger;
+        // debugger;
         let apiDetails= {};
 
         if (effectiveDate==null){

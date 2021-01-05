@@ -107,7 +107,7 @@ function PAGroupHeader(props: any) {
     }
 
     props.postPAGroupDescriptionFormularies(apiDetails).then((json) => {
-      debugger;
+      // debugger;
       let tmp_array: any = [];
       let count = 1;
       json.payload.result.map((obj) => {
@@ -128,7 +128,7 @@ function PAGroupHeader(props: any) {
   };
 
   useEffect(() => {
-    debugger;
+    // debugger;
     if (props.version.length > 0) {
       const verLength = Object.keys(props.version).length;
       const isEditable = props.version[verLength - 1].is_setup_complete;
@@ -206,7 +206,7 @@ function PAGroupHeader(props: any) {
   };
 
   const onSelectedTableRowChanged = (selectedRowKeys) => {
-    debugger;
+    // debugger;
     fomulariesList.map((obj) => (obj["applied_version"] = ""));
     if (selectedRowKeys && selectedRowKeys.length > 0) {
       let tmp: any = selectedRowKeys.map((tierId) => {
@@ -217,7 +217,7 @@ function PAGroupHeader(props: any) {
     }
   };
   const applyFormularies = (e: any) => {
-    debugger;
+    // debugger;
     let apiDetails = {};
 
     if (effectiveDate == "") {
@@ -234,7 +234,7 @@ function PAGroupHeader(props: any) {
     apiDetails["pathParams"] = "/" + props.saveGdm.current_group_id;
 
     apiDetails["messageBody"] = {};
-    debugger;
+    // debugger;
     //var str = effectiveDate.format("yyyy/MM/D");
     apiDetails["messageBody"]["effective_date"] = effectiveDate;
     apiDetails["messageBody"]["formulary_ids"] = selectedFormularies;
@@ -379,7 +379,7 @@ function PAGroupHeader(props: any) {
   };
 
   const newVersionGroup = (e: any, param: any) => {
-    debugger;
+    // debugger;
 
     props
       .newVersionGroupDescription({

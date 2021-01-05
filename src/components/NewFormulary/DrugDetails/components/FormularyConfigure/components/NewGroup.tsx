@@ -157,7 +157,7 @@ function NewGroup(props: any) {
   };
 
   useEffect(() => {
-    debugger;
+    // debugger;
     console.log(props.additionalCriteriaObject);
     setAdditionalCriteria(props.additionalCriteriaObject);
   }, [props.additionalCriteriaObject]);
