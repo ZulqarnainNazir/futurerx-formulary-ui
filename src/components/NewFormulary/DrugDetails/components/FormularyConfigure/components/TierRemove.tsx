@@ -19,6 +19,7 @@ import {
 import { setAdvancedSearch } from "../../../../../../redux/slices/formulary/advancedSearch/advancedSearchSlice";
 import showMessage from "../../../../Utils/Toast";
 import { getIntelliscenseSearch } from "../../../../../../redux/slices/formulary/categoryClass/categoryClassActionCreation";
+import "./TierReplace.scss";
 
 interface tabsState {
   tierGridContainer: boolean;
@@ -847,7 +848,7 @@ class TierRemove extends React.Component<any, tabsState> {
                 </div>
               </div>
 
-              <div className="tier-grid-container">
+              <div className="tier-grid-container tier-replace-root">
                 <FrxDrugGridContainer
                   isPinningEnabled={false}
                   enableSearch={false}
