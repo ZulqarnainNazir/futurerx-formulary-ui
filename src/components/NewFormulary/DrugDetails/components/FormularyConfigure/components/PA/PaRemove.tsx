@@ -526,31 +526,6 @@ class PaRemove extends React.Component<any, any> {
     });
     if (selectedRowKeys && selectedRowKeys.length > 0) {
       this.state.selectedDrugs = selectedRowKeys.map((tierId) => {
-        let item = {};
-        if (
-          this.state.drugData[tierId - 1]["formulary_drug_id"] &&
-          this.state.drugData[tierId - 1]["md5_id"]
-        ) {
-          item = {
-            formulary_drug_id: this.state.drugData[tierId - 1][
-              "formulary_drug_id"
-            ],
-            drug_id: this.state.drugData[tierId - 1]["md5_id"],
-          };
-        } else if (this.state.drugData[tierId - 1]["formulary_drug_id"]) {
-          item = {
-            formulary_drug_id: this.state.drugData[tierId - 1][
-              "formulary_drug_id"
-            ],
-          };
-        } else if (this.state.drugData[tierId - 1]["md5_id"]) {
-          item = {
-            drug_id: this.state.drugData[tierId - 1]["md5_id"],
-            formulary_drug_id: this.state.drugData[tierId - 1][
-              "formulary_drug_id"
-            ],
-          };
-        }
         return this.state.drugData[tierId - 1]["md5_id"];
       });
     }

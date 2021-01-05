@@ -117,12 +117,12 @@ class STF extends React.Component<any, any> {
     searchData: Array()
   };
 
-  onSelectedTableRowChanged = (selectedRowKeys) => {
-    this.state.selectedDrugs = [];
-    if (selectedRowKeys && selectedRowKeys.length > 0) {
-      this.state.selectedDrugs = selectedRowKeys.map((tierId) => this.state.drugData[tierId - 1]["md5_id"]);
-    }
-  };
+  // onSelectedTableRowChanged = (selectedRowKeys) => {
+  //   this.state.selectedDrugs = [];
+  //   if (selectedRowKeys && selectedRowKeys.length > 0) {
+  //     this.state.selectedDrugs = selectedRowKeys.map((tierId) => this.state.drugData[tierId - 1]["md5_id"]);
+  //   }
+  // };
 
   openTierGridContainer = () => {
     this.state.drugData = [];
@@ -698,36 +698,69 @@ class STF extends React.Component<any, any> {
     }
   };
 
-  rowSelectionChangeFromCell = (key: string, selectedRow: any, isSelected: boolean) => {
+  rowSelectionChangeFromCell = (
+    key: string,
+    selectedRow: any,
+    isSelected: boolean
+  ) => {
     console.log("data row ", selectedRow, isSelected);
     if (!selectedRow["isDisabled"]) {
       if (isSelected) {
         const data = this.state.drugGridData.map((d: any) => {
-          if (d.key === selectedRow.key) d["isChecked"] = true;
+          if (d.key === selectedRow.key) {
+            d["isChecked"] = true;
+            d["rowStyle"] = "table-row--green-font";
+          }
           // else d["isChecked"] = false;
           return d;
         });
-        const selectedRowKeys = [...this.state.selectedRowKeys, selectedRow.key];
+        const selectedRowKeys = [
+          ...this.state.selectedRowKeys,
+          selectedRow.key,
+        ];
         console.log("selected row keys ", selectedRowKeys);
-        const selectedRows: number[] = selectedRowKeys.filter((k) => this.state.fixedSelectedRows.indexOf(k) < 0);
+        const selectedRows: number[] = selectedRowKeys.filter(
+          (k) => this.state.fixedSelectedRows.indexOf(k) < 0
+        );
         this.onSelectedTableRowChanged(selectedRowKeys);
 
         this.setState({ drugGridData: data });
       } else {
         const data = this.state.drugGridData.map((d: any) => {
-          if (d.key === selectedRow.key) d["isChecked"] = false;
+          if (d.key === selectedRow.key) {
+            d["isChecked"] = false;
+            if (d["rowStyle"]) delete d["rowStyle"];
+          }
           // else d["isChecked"] = false;
           return d;
         });
 
-        const selectedRowKeys: number[] = this.state.selectedRowKeys.filter((k) => k !== selectedRow.key);
-        const selectedRows = selectedRowKeys.filter((k) => this.state.fixedSelectedRows.indexOf(k) < 0);
+        const selectedRowKeys: number[] = this.state.selectedRowKeys.filter(
+          (k) => k !== selectedRow.key
+        );
+        const selectedRows = selectedRowKeys.filter(
+          (k) => this.state.fixedSelectedRows.indexOf(k) < 0
+        );
 
         this.onSelectedTableRowChanged(selectedRows);
         this.setState({
           drugGridData: data,
         });
       }
+    }
+  };
+
+  onSelectedTableRowChanged = (selectedRowKeys) => {
+    console.log("selected row ", selectedRowKeys);
+
+    this.state.selectedDrugs = [];
+    this.setState({
+      selectedRowKeys: [...selectedRowKeys],
+    });
+    if (selectedRowKeys && selectedRowKeys.length > 0) {
+      this.state.selectedDrugs = selectedRowKeys.map((tierId) => {
+        return this.state.drugData[tierId - 1]["md5_id"];
+      });
     }
   };
 
