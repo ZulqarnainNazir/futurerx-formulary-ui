@@ -156,21 +156,28 @@ export default class CompareView extends React.Component<
         </div>
         {activeTabIndex === 0 && isCompareClicked ? (
           <div className="bordered m-t-10 compare-table-root">
-            <div className="header white-bg flex-container">
-              <label>Summary</label>
-              <DownloadIcon
-                onClick={() => {
-                  this.handeReportDownload("summary");
-                }}
-                style={{ marginLeft: 5 }}
-              />
-              <label style={{ marginLeft: 10 }}>Details</label>
-              <DownloadIcon
-                onClick={() => {
-                  this.handeReportDownload("detials");
-                }}
-                style={{ marginLeft: 5 }}
-              />
+            <div className="header white-bg flex-container compare-grid-header-download">
+              <h4 className="formulary-assembly-components__container-header-title">COMPARISON OF FORMULARIES</h4>
+              <div className="action-wrapper">
+                <div className="item-download">
+                  <label>Summary</label>
+                  <DownloadIcon
+                    onClick={() => {
+                      this.handeReportDownload("summary");
+                    }}
+                    style={{ marginLeft: 5 }}
+                  />
+                </div>
+                <div className="item-download">
+                  <label style={{ marginLeft: 10 }}>Details</label>
+                  <DownloadIcon
+                    onClick={() => {
+                      this.handeReportDownload("detials");
+                    }}
+                    style={{ marginLeft: 5 }}
+                  />
+                </div>
+              </div>
             </div>
             <div className="inner-container white-bg p-10">
               <CompareTable
