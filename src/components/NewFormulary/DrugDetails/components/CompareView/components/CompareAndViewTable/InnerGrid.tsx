@@ -36,6 +36,8 @@ const defaultListPayload = {
   index: 0,
   limit: 10,
   filter: [],
+  sort_by: [],
+  sort_order: []
 }
 
 class InnerGrid extends Component<InnerGridProps, any>{
@@ -56,12 +58,19 @@ class InnerGrid extends Component<InnerGridProps, any>{
     rejectedKeys: Array(),
     rejectedDrugIds: Array(),
     isRequestFinished: true,
+    gridSingleSortInfo: null,
+    isGridSingleSorted: false,
+    gridMultiSortedInfo: [],
+    isGridMultiSorted: false,
+    sort_by: Array(),
   }
 
   listPayload: any = {
     index: 0,
     limit: 10,
     filter: [],
+    sort_by: [],
+    sort_order: []
   }
 
   onSettingsIconHandler = (hiddenColumn, visibleColumn) => {
@@ -141,17 +150,34 @@ class InnerGrid extends Component<InnerGridProps, any>{
     }
   }
   onApplyFilterHandler = (filters) => {
-    /*const fetchedProps = Object.keys(filters)[0];
-    console.log('Fetched properties:' + JSON.stringify(fetchedProps) + " Filters:" + JSON.stringify(filters));
-    const fetchedOperator = filters[fetchedProps][0].condition === 'is like' ? 'is_like' :
-      filters[fetchedProps][0].condition === 'is not' ? 'is_not' :
-        filters[fetchedProps][0].condition === 'is not like' ? 'is_not_like' :
-          filters[fetchedProps][0].condition === 'does not exist' ? 'does_not_exist' :
-            filters[fetchedProps][0].condition;
-    const fetchedValues = filters[fetchedProps][0].value !== '' ? [filters[fetchedProps][0].value.toString()] : [];
-    const newFilters = [{ prop: fetchedProps, operator: fetchedOperator, values: fetchedValues }];
-    this.listPayload.filter = newFilters;
-    this.fetchFormularies(this.listPayload);*/
+    if (filters) {
+      const fetchedKeys = Object.keys(filters);
+      fetchedKeys.map(fetchedProps => {
+        if (filters[fetchedProps]) {
+          const fetchedOperator =
+            filters[fetchedProps][0].condition === "is like"
+              ? "is_like"
+              : filters[fetchedProps][0].condition === "is not"
+                ? "is_not"
+                : filters[fetchedProps][0].condition === "is not like"
+                  ? "is_not_like"
+                  : filters[fetchedProps][0].condition === "does not exist"
+                    ? "does_not_exist"
+                    : filters[fetchedProps][0].condition;
+          const fetchedValues =
+            filters[fetchedProps][0].value !== ""
+              ? [filters[fetchedProps][0].value.toString()]
+              : [];
+          this.listPayload.filter.push({
+            prop: fetchedProps,
+            operator: fetchedOperator,
+            values: fetchedValues
+          });
+        }
+      });
+      console.log("Filters:" + JSON.stringify(this.listPayload.filter));
+    }
+    this.populateGridData(this.state.rowData, this.state.baseFormularyId, this.state.refFormularyId, this.listPayload, this.state.isLastColumn);
   }
   onPageSize = (pageSize) => {
     this.listPayload = { ...defaultListPayload };
@@ -170,11 +196,111 @@ class InnerGrid extends Component<InnerGridProps, any>{
   }
   onClearFilterHandler = () => {
     this.listPayload = { ...defaultListPayload };
+    this.listPayload.filter = Array();
     this.setState({
       isRequestFinished: false,
     })
     this.populateGridData(this.state.rowData, this.state.baseFormularyId, this.state.refFormularyId, this.listPayload, this.state.isLastColumn);
   }
+
+  applyMultiSortHandler = (sorter, multiSortedInfo) => {
+    console.log('Multisort info:' + JSON.stringify(sorter));
+    this.setState({
+      isGridMultiSorted: true,
+      isGridSingleSorted: false,
+      gridMultiSortedInfo: multiSortedInfo,
+      gridSingleSortInfo: null,
+    })
+
+    if (sorter && sorter.length > 0) {
+      let uniqueKeys = Array();
+      let filteredSorter = Array();
+      sorter.map(sortInfo => {
+        if (uniqueKeys.includes(sortInfo['columnKey'])) {
+
+        } else {
+          filteredSorter.push(sortInfo);
+          uniqueKeys.push(sortInfo['columnKey']);
+        }
+      });
+      filteredSorter.map(sortInfo => {
+        let sortOrder = sortInfo['order'] === 'ascend' ? 'asc' : 'desc';
+        this.state.sort_by = this.state.sort_by.filter(keyPair => keyPair['key'] !== sortInfo['columnKey']);
+        this.state.sort_by.push({ key: sortInfo['columnKey'], value: sortOrder });
+      })
+
+      let keys = Array();
+      let values = Array();
+
+      this.state.sort_by.map(keyPair => {
+        keys.push(keyPair['key']);
+        values.push(keyPair['value']);
+      });
+
+      this.listPayload.sort_by = keys;
+      this.listPayload.sort_order = values;
+    }
+
+    /*this.setState({
+      isRequestFinished: false
+    });*/
+    this.populateGridData(this.state.rowData, this.state.baseFormularyId, this.state.refFormularyId, this.listPayload, this.state.isLastColumn);
+  };
+
+  onMultiSortToggle = (isMultiSortOn: boolean) => {
+    console.log("is Multi sort on ", isMultiSortOn);
+    this.state.sort_by = Array();
+    this.listPayload.sort_by = Array();
+    this.listPayload.sort_order = Array();
+    this.state.gridSingleSortInfo = null;
+    this.state.gridMultiSortedInfo = [];
+    this.state.isGridMultiSorted = isMultiSortOn;
+    this.state.isGridSingleSorted = false;
+
+    /*this.setState({
+      isRequestFinished: false
+    });*/
+    this.populateGridData(this.state.rowData, this.state.baseFormularyId, this.state.refFormularyId, this.listPayload, this.state.isLastColumn);
+  };
+
+  /**
+   * the selected sorter details will be availbale here to mak api call
+   * @param key the column key
+   * @param order the sorting order : 'ascend' | 'descend'
+   */
+  onApplySortHandler = (key, order, sortedInfo) => {
+    console.log("sort details ", key, order);
+    this.state.sort_by = Array();
+    this.listPayload.sort_by = Array();
+    this.listPayload.sort_order = Array();
+    if (order) {
+      let sortOrder = order === 'ascend' ? 'asc' : 'desc';
+      this.state.sort_by = this.state.sort_by.filter(keyPair => keyPair['key'] !== key);
+      this.state.sort_by.push({ key: key, value: sortOrder });
+    }
+    this.setState({
+      gridSingleSortInfo: sortedInfo,
+      isGridSingleSorted: true,
+      isGridMultiSorted: false,
+      gridMultiSortedInfo: []
+    });
+
+    let keys = Array();
+    let values = Array();
+
+    this.state.sort_by.map(keyPair => {
+      keys.push(keyPair['key']);
+      values.push(keyPair['value']);
+    });
+
+    this.listPayload.sort_by = keys;
+    this.listPayload.sort_order = values;
+
+    /*this.setState({
+      isRequestFinished: false
+    });*/
+    this.populateGridData(this.state.rowData, this.state.baseFormularyId, this.state.refFormularyId, this.listPayload, this.state.isLastColumn);
+  };
 
   populateGridData = async (rowData, baseFormularyId, refFormularyId, payload, isLastColumn) => {
     if (this.props.formularyLobId && this.props.formularyLobId === 4) {
@@ -202,6 +328,8 @@ class InnerGrid extends Component<InnerGridProps, any>{
         apiDetails['messageBody']['attribute_name'] = rowData['attribute_name'];
         apiDetails['messageBody']['file_type'] = rowData['file_type'];
         apiDetails['messageBody']['filter'] = payload['filter'];
+        apiDetails["messageBody"]["sort_by"] = payload["sort_by"];
+        apiDetails["messageBody"]["sort_order"] = payload["sort_order"];
       }
 
       try {
@@ -834,6 +962,13 @@ class InnerGrid extends Component<InnerGridProps, any>{
                   onGridPageChangeHandler={this.onGridPageChangeHandler}
                   clearFilterHandler={this.onClearFilterHandler}
                   applyFilter={this.onApplyFilterHandler}
+                  applySort={this.onApplySortHandler}
+                  isSingleSorted={this.state.isGridSingleSorted}
+                  sortedInfo={this.state.gridSingleSortInfo}
+                  applyMultiSort={this.applyMultiSortHandler}
+                  isMultiSorted={this.state.isGridMultiSorted}
+                  multiSortedInfo={this.state.gridMultiSortedInfo}
+                  onMultiSortToggle={this.onMultiSortToggle}
                   getColumnSettings={this.onSettingsIconHandler}
                   rowSelectionChange={this.rowSelectionChange}
                   pageSize={this.listPayload.limit}
@@ -915,6 +1050,13 @@ class InnerGrid extends Component<InnerGridProps, any>{
                   onGridPageChangeHandler={this.onGridPageChangeHandler}
                   clearFilterHandler={this.onClearFilterHandler}
                   applyFilter={this.onApplyFilterHandler}
+                  applySort={this.onApplySortHandler}
+                  isSingleSorted={this.state.isGridSingleSorted}
+                  sortedInfo={this.state.gridSingleSortInfo}
+                  applyMultiSort={this.applyMultiSortHandler}
+                  isMultiSorted={this.state.isGridMultiSorted}
+                  multiSortedInfo={this.state.gridMultiSortedInfo}
+                  onMultiSortToggle={this.onMultiSortToggle}
                   getColumnSettings={this.onSettingsIconHandler}
                   pageSize={this.listPayload.limit}
                   selectedCurrentPage={(this.listPayload.index / this.listPayload.limit + 1)}

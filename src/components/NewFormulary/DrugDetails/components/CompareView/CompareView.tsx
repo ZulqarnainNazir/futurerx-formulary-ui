@@ -14,6 +14,7 @@ import { saveAs } from "file-saver";
 import { exportReport } from "../../../../../redux/slices/formulary/compareView/compareViewService";
 import * as commonConstants from "../../../../../api/http-commons";
 import uuid from "react-uuid";
+import FrxLoader from "../../../../shared/FrxLoader/FrxLoader";
 
 const tabs = [
   { id: 1, text: "COMPARE FORMUARIES" },
@@ -28,6 +29,7 @@ interface configureState {
   isViewClicked: boolean;
   baseformulary: any;
   referenceformulary: any;
+  isRequestFinished: any;
 }
 interface configureProps { }
 
@@ -43,6 +45,7 @@ export default class CompareView extends React.Component<
     baseformulary: {},
     referenceformulary: {},
     exportSections: Array(),
+    isRequestFinished: true,
   };
   onClickTab = (selectedTabIndex: number) => {
     let activeTabIndex = 0;
@@ -123,6 +126,9 @@ export default class CompareView extends React.Component<
   };
 
   handeReportDownload = async (type) => {
+    this.setState({
+      isRequestFinished: false
+    });
     let param = type === "summary" ? "COMPAREEXC" : "COMPAREEXCDET";
     let apiDetails = {};
     apiDetails["apiPart"] = commonConstants.COMPARE_FORMULARY_EXPORT_EXCEL;
@@ -141,12 +147,21 @@ export default class CompareView extends React.Component<
       if (data) {
         const file = new Blob([data], { type: "application/vnd.ms.excel" });
         saveAs(file, "User_Export_" + uuid() + ".xlsx");
+        this.setState({
+          isRequestFinished: true
+        });
       } else {
         showMessage("Error while exporting", "error");
+        this.setState({
+          isRequestFinished: true
+        });
       }
     } catch (err) {
       console.log(err);
       showMessage("Error while exporting", "error");
+      this.setState({
+        isRequestFinished: true
+      });
     }
   };
 
@@ -165,6 +180,9 @@ export default class CompareView extends React.Component<
   };
   render() {
     const { activeTabIndex, isCompareClicked, isViewClicked } = this.state;
+    if(!this.state.isRequestFinished){
+      return <FrxLoader />;
+    }
     return (
       <>
         <div className="bordered">
