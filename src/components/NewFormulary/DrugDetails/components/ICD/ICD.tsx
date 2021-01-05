@@ -367,7 +367,7 @@ class DrugDetailICD extends React.Component<any, any> {
 
       this.setState({
         panelGridValue1: rows,
-        showGrid: false,
+        // showGrid: false,
       });
     });
   };

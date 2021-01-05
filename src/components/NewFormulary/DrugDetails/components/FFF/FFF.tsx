@@ -252,21 +252,26 @@ class DrugDetailFFF extends React.Component<any, any> {
 
   onSelectedTableRowChanged = (selectedRowKeys) => {
     this.state.selectedDrugs = [];
+    this.setState({
+      selectedRowKeys: [...selectedRowKeys]
+    });
     if (selectedRowKeys && selectedRowKeys.length > 0) {
       let selDrugs = selectedRowKeys.map(ele => {
         return this.state.drugData[ele - 1]['md5_id'] ? this.state.drugData[ele - 1]['md5_id'] : ""
       });
 
+      let selStateTmpDrugs = [...this.state.selectedDrugs, ...selDrugs];
+
       
       if(this.state.activeTabIndex === 0) {
-        this.rpSavePayload.selected_drug_ids = selDrugs;
+        this.rpSavePayload.selected_drug_ids = selStateTmpDrugs;
         this.rmSavePayload.selected_drug_ids = [];
       } else if(this.state.activeTabIndex === 2) {
-        this.rmSavePayload.selected_drug_ids = selDrugs;
+        this.rmSavePayload.selected_drug_ids = selStateTmpDrugs;
         this.rpSavePayload.selected_drug_ids = [];
       }
 
-      this.setState({ selectedDrugs: selDrugs })
+      this.setState({ selectedDrugs: selStateTmpDrugs })
     } else {
       this.setState({ selectedDrugs: [] })
     }
