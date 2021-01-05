@@ -17,7 +17,7 @@ import DropDown from "../../shared/Frx-components/dropdown/DropDown";
 import DropDownMap from "../../shared/Frx-components/dropdown/DropDownMap";
 import {
   homeSearchOptions,
-  searchFormularyData,
+  searchFormularyData
 } from "../../../redux/slices/formulary/homeSearch/searchSlice";
 import AdvanceSearchContainer from "../NewAdvanceSearch/AdvanceSearchContainer";
 interface State {
@@ -31,9 +31,9 @@ interface State {
   gridSingleSortInfo: any;
   isGridSignleSorted: boolean;
   gridMultiSortedInfo: any[];
-	isGridMultiSorted: boolean;
-	isFiltered:boolean;
-	filteredInfo:any
+  isGridMultiSorted: boolean;
+  isFiltered: boolean;
+  filteredInfo: any;
 }
 
 const miniTabs = [
@@ -42,9 +42,9 @@ const miniTabs = [
   { id: 3, text: "Alternatives" },
   {
     id: 4,
-    text: "Decision Tree",
+    text: "Decision Tree"
   },
-  { id: 5, text: "Group Description Management" },
+  { id: 5, text: "Group Description Management" }
 ];
 
 const searchCategory = [
@@ -55,7 +55,7 @@ const searchCategory = [
   { key: "medicare-contract-types", value: "Medicare Contract Type" },
   { key: "client-states", value: "State" },
   { key: "tier-descriptions", value: "Tier Description" },
-  { key: "none", value: "None" },
+  { key: "none", value: "None" }
 ];
 
 const steps = [
@@ -64,7 +64,7 @@ const steps = [
   "Compare",
   "Validation",
   "Complete",
-  "Bazaar",
+  "Bazaar"
 ];
 class Medicare extends React.Component<any, any> {
   state = {
@@ -79,9 +79,9 @@ class Medicare extends React.Component<any, any> {
     gridSingleSortInfo: null,
     isGridSingleSorted: false,
     gridMultiSortedInfo: [],
-		isGridMultiSorted: false,
-		isFiltered:false,
-		filteredInfo:null
+    isGridMultiSorted: false,
+    isFiltered: false,
+    filteredInfo: null
   };
   defaultHTML = () => {
     return (
@@ -192,7 +192,7 @@ class Medicare extends React.Component<any, any> {
                       />
                     </svg>
                   </span>
-                ),
+                )
               }}
             />
           </div>
@@ -263,35 +263,38 @@ class Medicare extends React.Component<any, any> {
         return <div>Group Description Management</div>;
     }
   };
-  updateHiddenGridColumn = (hiddenColumns) => {
-    const getKey = hiddenColumns.map((e) => e.key);
+  updateHiddenGridColumn = hiddenColumns => {
+    const getKey = hiddenColumns.map(e => e.key);
     const updatedFormularyDetailsGridColumns = formularyDetailsGridColumns();
     console.log(updatedFormularyDetailsGridColumns);
-    const updatedColumns = updatedFormularyDetailsGridColumns.map((e) => {
+    const updatedColumns = updatedFormularyDetailsGridColumns.map(e => {
       if (getKey.indexOf(e.key) !== -1) {
         e.hidden = true;
       }
       return e;
     });
     return updatedColumns;
-	};
-	
+  };
 
-	clearFilterHandler = () => {
-		this.setState({
-			isFiltered:false,
-			filteredInfo:null
-		}, () => {
-			this.props.onClearFilterHandler()
-		})
-	}
+  clearFilterHandler = () => {
+    this.setState(
+      {
+        isFiltered: false,
+        filteredInfo: null
+      },
+      () => {
+        this.props.onClearFilterHandler();
+      }
+    );
+  };
 
   applyFilterHandler = (filters, filteredInfo) => {
     console.log("medicare filters ", filters);
+    const filterInfoKeys = Object.keys(filteredInfo);
     this.setState(
       {
-				isFiltered:true,
-				filteredInfo:filteredInfo
+        isFiltered: filterInfoKeys && filterInfoKeys.length > 0 ? true : false,
+        filteredInfo: filteredInfo
         // gridSingleSortInfo: null,
         // isGridSingleSorted: false,
         // gridMultiSortedInfo: [],
@@ -310,7 +313,7 @@ class Medicare extends React.Component<any, any> {
         gridSingleSortInfo: sortedInfo,
         isGridSingleSorted: true,
         isGridMultiSorted: false,
-        gridMultiSortedInfo: [],
+        gridMultiSortedInfo: []
       },
       () => {
         this.props.applySortHandler(key, order);
@@ -325,7 +328,7 @@ class Medicare extends React.Component<any, any> {
         isGridMultiSorted: true,
         isGridSingleSorted: false,
         gridMultiSortedInfo: multiSortedInfo,
-        gridSingleSortInfo: null,
+        gridSingleSortInfo: null
       },
       () => {
         this.props.applyMultiSortHandler(sorter);
@@ -339,7 +342,7 @@ class Medicare extends React.Component<any, any> {
       gridSingleSortInfo: null,
       isGridSingleSorted: false,
       isGridMultiSorted: isMultiSortOn,
-      gridMultiSortedInfo: [],
+      gridMultiSortedInfo: []
     });
   };
   getGridData = () => {
@@ -347,7 +350,7 @@ class Medicare extends React.Component<any, any> {
     let hiddenColumns = [];
     if (this.props.dashboardGrid.grid_settings.hiddenColumns.length > 0) {
       hiddenColumns = this.props.dashboardGrid.grid_settings.hiddenColumns.map(
-        (e) => e.key
+        e => e.key
       );
     }
     // this.updateGridColumns
@@ -360,22 +363,22 @@ class Medicare extends React.Component<any, any> {
           label: "N/A",
           type: "block",
           variant: this.getVariant("N/A", "block"),
-          fill: "fill",
+          fill: "fill"
         },
         origin: {
           label: "Purchased",
           type: "pill",
           variant: this.getVariant("Purchased", "pill"),
-          fill: "fill",
+          fill: "fill"
         },
         formulary_name: e.formulary_name,
         id_formulary: e.id_formulary.toString(),
         version_number: e.version_number.toString(),
         timeRemaining: {
           text: "09/04/2020  @ 9:00 AM",
-          progress: 25,
+          progress: 25
         },
-        step: steps.indexOf(e.step) + 1,
+        step: steps.indexOf(e.step) + 1
       };
     });
     const addNewButtonDDContent = (
@@ -447,15 +450,15 @@ class Medicare extends React.Component<any, any> {
               applyMultiSort={this.applyMultiSortHandler}
               isMultiSorted={this.state.isGridMultiSorted}
               multiSortedInfo={this.state.gridMultiSortedInfo}
-							onMultiSortToggle={this.onMultiSortToggle}
-							isFiltered={this.state.isFiltered}
-							filteredInfo={this.state.filteredInfo}
+              onMultiSortToggle={this.onMultiSortToggle}
+              isFiltered={this.state.isFiltered}
+              filteredInfo={this.state.filteredInfo}
               // isCustomCheckboxEnabled={false}
               // handleCustomRowSelectionChange={()=>{}}
               columns={formularyDetailsGridColumns(
                 {
                   onFormularyNameClick: (id: any) =>
-                    this.props.drugDetailClick(id),
+                    this.props.drugDetailClick(id)
                 },
                 hiddenColumns
               )}
@@ -513,7 +516,7 @@ class Medicare extends React.Component<any, any> {
                       />
                     </svg>
                   </span>
-                ),
+                )
               }}
             />
           </div>
@@ -522,11 +525,11 @@ class Medicare extends React.Component<any, any> {
     );
   };
 
-  getFormularyType = (searchCategory) => {
+  getFormularyType = searchCategory => {
     if (searchCategory == "") {
       this.setState({
         searchType: "All",
-        searchSubType: "",
+        searchSubType: ""
       });
       this.props.formularyListSearch("", "");
     }
@@ -534,7 +537,7 @@ class Medicare extends React.Component<any, any> {
     requestData["category"] = searchCategory;
     requestData["lob_type"] = this.props.formulary_lob_id;
     requestData["pathParams"] = searchCategory + "/" + this.props.client_id;
-    this.props.homeSearchOptions(requestData).then((json) => {
+    this.props.homeSearchOptions(requestData).then(json => {
       if (json.payload && json.payload.success.data.code === "200") {
         let tmpData =
           json?.payload?.success?.data?.data ||
@@ -543,28 +546,28 @@ class Medicare extends React.Component<any, any> {
           "associated-contracts": "",
           breadcrumbs: {
             code: "code_value",
-            label: "breadcrumb_name",
+            label: "breadcrumb_name"
           },
           "formulary-types": {
             code: "code_value",
-            label: "formulary_type",
+            label: "formulary_type"
           },
           "medicare-contract-types": {
             code: "code_value",
-            label: "medicare_contract_type",
+            label: "medicare_contract_type"
           },
           "client-states": {
             code: "id_state",
-            label: "state_name",
+            label: "state_name"
           },
           "tier-descriptions": {
             code: "state_code",
-            label: "tier_label_name",
+            label: "tier_label_name"
           },
-          none: "",
+          none: ""
         }[searchCategory];
         if (tmpData && Array.isArray(tmpData) && tmpData.length > 0) {
-          var result = tmpData.map(function (el) {
+          var result = tmpData.map(function(el) {
             var element = {};
             element["code_value"] = el[categoryObj.code];
             element["label"] = el[categoryObj.label];
@@ -574,7 +577,7 @@ class Medicare extends React.Component<any, any> {
           this.setState({
             searchSubCategory: result,
             searchType: searchCategory,
-            searchSubType: "",
+            searchSubType: ""
           });
         }
       } else {
@@ -583,7 +586,7 @@ class Medicare extends React.Component<any, any> {
     });
   };
 
-  searchFormularyList = (subCat) => {
+  searchFormularyList = subCat => {
     let requestData = {};
     let categoryObj = {
       "associated-contracts": "",
@@ -591,11 +594,11 @@ class Medicare extends React.Component<any, any> {
       "formulary-types": "ft",
       "medicare-contract-types": "mct",
       "client-states": "state",
-      "tier-descriptions": "td",
+      "tier-descriptions": "td"
     }[this.state.searchType];
 
     this.setState({
-      searchSubType: subCat,
+      searchSubType: subCat
     });
 
     this.props.formularyListSearch(categoryObj, subCat);
@@ -713,27 +716,27 @@ class Medicare extends React.Component<any, any> {
     );
   }
 }
-const mapStateToProps = (state) => {
+const mapStateToProps = state => {
   return {
     dashboardGrid: {
       count: state.dashboard.formulary_count,
       list: state.dashboard.formulary_list,
       isLoading: state.dashboard.isLoading,
-      grid_settings: state.gridSettings,
+      grid_settings: state.gridSettings
     },
     formulary_id: state.application.formulary_id,
     client_id: state.application.clientId,
     current_formulary: state.application.formulary,
     formulary: state?.application?.formulary,
     formulary_lob_id: state?.application?.formulary_lob_id,
-    formulary_type_id: state?.application?.formulary_type_id,
+    formulary_type_id: state?.application?.formulary_type_id
   };
 };
 
 function mapDispatchToProps(dispatch) {
   return {
-    homeSearchOptions: (data) => dispatch(homeSearchOptions(data)),
-    searchFormularyData: (data) => dispatch(searchFormularyData(data)),
+    homeSearchOptions: data => dispatch(homeSearchOptions(data)),
+    searchFormularyData: data => dispatch(searchFormularyData(data))
   };
 }
 
