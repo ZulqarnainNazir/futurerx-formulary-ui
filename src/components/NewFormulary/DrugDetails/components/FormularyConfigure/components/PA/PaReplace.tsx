@@ -99,7 +99,11 @@ class PaReplace extends React.Component<any, any> {
     additionalCriteriaState: null,
     is_additional_criteria_defined:false,
     selectedRowKeys: [] as number[],
-    fixedSelectedRows: [] as number[]
+    fixedSelectedRows: [] as number[],
+    index: 0,
+    limit: 10,
+    filter: Array(),
+    dataCount: 0
   };
 
   rowSelectionChangeFromCell = (
@@ -344,6 +348,33 @@ class PaReplace extends React.Component<any, any> {
     });
   };
 
+  onPageSize = pageSize => {
+    console.log("Page size load");
+    this.state.limit = pageSize;
+    if (this.props.advancedSearchBody) {
+      this.populateGridData(this.props.advancedSearchBody);
+    } else {
+      this.populateGridData();
+    }
+  };
+  onGridPageChangeHandler = (pageNumber: any) => {
+    console.log("Page change load");
+    this.state.index = (pageNumber - 1) * this.state.limit;
+    if (this.props.advancedSearchBody) {
+      this.populateGridData(this.props.advancedSearchBody);
+    } else {
+      this.populateGridData();
+    }
+  };
+  onClearFilterHandler = () => {
+    this.state.filter = Array();
+    if (this.props.advancedSearchBody) {
+      this.populateGridData(this.props.advancedSearchBody);
+    } else {
+      this.populateGridData();
+    }
+  };
+
   dropDownSelectHandlerPaType = (value, event) => {
     let tmp_index = event.key;
     let tmp_value = event.value;
@@ -392,8 +423,8 @@ class PaReplace extends React.Component<any, any> {
 
     apiDetails["keyVals"] = [
       { key: constants.KEY_ENTITY_ID, value: this.props?.formulary_id },
-      { key: constants.KEY_INDEX, value: 0 },
-      { key: constants.KEY_LIMIT, value: 10 },
+      { key: constants.KEY_INDEX, value: this.state.index },
+      { key: constants.KEY_LIMIT, value: this.state.limit },
     ];
     apiDetails["messageBody"] = {};
     if (searchBody) {
@@ -451,7 +482,7 @@ class PaReplace extends React.Component<any, any> {
         gridItem["key"] = count;
         debugger;
         
-        if ( selected['pa_group_description_name'] === element.pa_group_description) {
+        if ( selected&&selected['pa_group_description_name'] === element.pa_group_description) {
           //console.log("element value tier ", selectedGroup, element.pa_group_description);
           gridItem["isChecked"] = true;
           gridItem["isDisabled"] = true;
@@ -488,6 +519,7 @@ class PaReplace extends React.Component<any, any> {
       this.setState({
         drugData: data,
         drugGridData: gridData,
+        dataCount: json.payload.count,
       });
     }
     }
@@ -680,6 +712,7 @@ class PaReplace extends React.Component<any, any> {
                       this.setState({ is_additional_criteria_defined: true });
                     }}
                     disabled={this.props.configureSwitch}
+                    checked={this.state.is_additional_criteria_defined}
                   />
                   <RadioButton
                     label="No"
@@ -689,6 +722,7 @@ class PaReplace extends React.Component<any, any> {
                       this.setState({ is_additional_criteria_defined: false });
                     }}
                     disabled={this.props.configureSwitch}
+                    checked={!this.state.is_additional_criteria_defined}
                   />
                 </div>
                 {/* <RadioGroup
@@ -764,6 +798,14 @@ class PaReplace extends React.Component<any, any> {
                   onSelectAllRows={this.onSelectAllRows}
                   customSettingIcon={"FILL-DOT"}
                   settingsWidth={30}
+                  pageSize={this.state.limit}
+                  selectedCurrentPage={
+                    this.state.index / this.state.limit + 1
+                  }
+                  totalRowsCount={this.state.dataCount}
+                  getPerPageItemSize={this.onPageSize}
+                  onGridPageChangeHandler={this.onGridPageChangeHandler}
+                  clearFilterHandler={this.onClearFilterHandler}
                   // rowSelection={{
                   //   columnWidth: 50,
                   //   fixed: true,

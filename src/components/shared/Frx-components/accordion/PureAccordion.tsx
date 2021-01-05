@@ -1,21 +1,14 @@
-import React, {
-  useState,
-  useEffect,
-  useRef,
-  createRef,
-  Component,
-} from "react";
+import React, { createRef, Component } from "react";
 import DialogPopup from "../../FrxDialogPopup/FrxDialogPopup";
 import FrxGridContainer from "../../FrxGrid/FrxDrugGridContainer";
 import Chevron from "./Chevron";
 import { Checkbox } from "antd";
 import "./PureAccordion.scss";
-import { getCompareFormularyDrugsListGridColumns } from "../../../../mocks/formulary-grid/FormularyGridColumn";
-import { getCompareFormularyDrugsListGridData } from "../../../../mocks/formulary-grid/FormularyGridData";
 import showMessage from "../../../NewFormulary/Utils/Toast";
 import * as commonConstants from "../../../../api/http-commons";
 import * as compareConstants from "../../../../api/http-compare-view";
-import { getDrugs, getAttributeValues } from "../../../../redux/slices/formulary/compareView/compareViewService";
+import { getDrugs } from "../../../../redux/slices/formulary/compareView/compareViewService";
+import FrxLoader from "../../FrxLoader/FrxLoader";
 
 interface HeaderType {
   baseFormulary: number | null;
@@ -37,14 +30,14 @@ interface PureAccordionProps {
   gridColumns?: any;
   formularyLobId?: any;
   fileType?: any;
-  sectionSelected?: (selection,checked) => void;
+  sectionSelected?: (selection, checked) => void;
 }
 
 const defaultListPayload = {
   index: 0,
   limit: 10,
   filter: [],
-}
+};
 
 class PureAccordion extends Component<PureAccordionProps, any> {
   state = {
@@ -54,30 +47,31 @@ class PureAccordion extends Component<PureAccordionProps, any> {
     openDrugsList: false,
     drugGridHeaderName: "",
     rejectedDrug: Array(),
-    toggleAll: true,
+    toggleAll: false,
     drugGridData: Array(),
     drugData: Array(),
     gridColumns: Array(),
-    baseFormularyId: '',
+    baseFormularyId: "",
     isRowSelectionEnabled: false,
     hiddenColumns: Array(),
     dataCount: 0,
+    isRequestFinished: true,
   };
 
   listPayload: any = {
     index: 0,
     limit: 10,
     filter: [],
-  }
+  };
 
   onSettingsIconHandler = (hiddenColumn, visibleColumn) => {
     if (hiddenColumn && hiddenColumn.length > 0) {
-      let hiddenColumnKeys = hiddenColumn.map(column => column['key']);
+      let hiddenColumnKeys = hiddenColumn.map((column) => column["key"]);
       this.setState({
-        hiddenColumns: hiddenColumnKeys
+        hiddenColumns: hiddenColumnKeys,
       });
     }
-  }
+  };
   onApplyFilterHandler = (filters) => {
     /*const fetchedProps = Object.keys(filters)[0];
     console.log('Fetched properties:' + JSON.stringify(fetchedProps) + " Filters:" + JSON.stringify(filters));
@@ -90,20 +84,29 @@ class PureAccordion extends Component<PureAccordionProps, any> {
     const newFilters = [{ prop: fetchedProps, operator: fetchedOperator, values: fetchedValues }];
     this.listPayload.filter = newFilters;
     this.fetchFormularies(this.listPayload);*/
-  }
+  };
   onPageSize = (pageSize) => {
     this.listPayload = { ...defaultListPayload };
     this.listPayload.limit = pageSize;
+    this.setState({
+      isRequestFinished: false,
+    })
     this.populateGridData(this.state.baseFormularyId, this.listPayload);
-  }
+  };
   onGridPageChangeHandler = (pageNumber: any) => {
     this.listPayload.index = (pageNumber - 1) * this.listPayload.limit;
+    this.setState({
+      isRequestFinished: false,
+    })
     this.populateGridData(this.state.baseFormularyId, this.listPayload);
-  }
+  };
   onClearFilterHandler = () => {
     this.listPayload = { ...defaultListPayload };
+    this.setState({
+      isRequestFinished: false,
+    })
     this.populateGridData(this.state.baseFormularyId, this.listPayload);
-  }
+  };
 
   private elementContent = createRef<HTMLDivElement>(); // createRef<T>(): RefObject<T>
 
@@ -112,61 +115,86 @@ class PureAccordion extends Component<PureAccordionProps, any> {
       let drugGridData = Array();
       let drugData = Array();
       let apiDetails = {};
-      apiDetails['apiPart'] = compareConstants.COMMERCIAL_FORMULARY_DRUGS;
-      apiDetails['pathParams'] = baseFormularyId;
-      apiDetails['keyVals'] = [];
-      apiDetails['keyVals'].push({ key: commonConstants.KEY_LIMIT, value: payload['limit'] });
-      apiDetails['keyVals'].push({ key: commonConstants.KEY_INDEX, value: payload['index'] });
+      apiDetails["apiPart"] = compareConstants.COMMERCIAL_FORMULARY_DRUGS;
+      apiDetails["pathParams"] = baseFormularyId;
+      apiDetails["keyVals"] = [];
+      apiDetails["keyVals"].push({
+        key: commonConstants.KEY_LIMIT,
+        value: payload["limit"],
+      });
+      apiDetails["keyVals"].push({
+        key: commonConstants.KEY_INDEX,
+        value: payload["index"],
+      });
 
-      apiDetails['messageBody'] = {};
-      apiDetails['messageBody']['attribute_field_data_type'] = '';
-      apiDetails['messageBody']['attribute_field_name'] = '';
-      apiDetails['messageBody']['attribute_field_value'] = '';
-      apiDetails['messageBody']['attribute_name'] = '';
-      apiDetails['messageBody']['attribute_type'] = this.props.title;
-      apiDetails['messageBody']['file_type'] = this.props.fileType;
-      apiDetails['messageBody']['filter'] = payload['filter'];
-      apiDetails['messageBody']['is_heading_count'] = true;
+      apiDetails["messageBody"] = {};
+      apiDetails["messageBody"]["attribute_field_data_type"] = "";
+      apiDetails["messageBody"]["attribute_field_name"] = "";
+      apiDetails["messageBody"]["attribute_field_value"] = "";
+      apiDetails["messageBody"]["attribute_name"] = "";
+      apiDetails["messageBody"]["attribute_type"] = this.props.title;
+      apiDetails["messageBody"]["file_type"] = this.props.fileType;
+      apiDetails["messageBody"]["filter"] = payload["filter"];
+      apiDetails["messageBody"]["is_heading_count"] = true;
 
       try {
         let data: any = null;
 
         data = await getDrugs(apiDetails);
-        if (data && data['list'] && data['list'].length > 0) {
+        if (data && data["list"] && data["list"].length > 0) {
           let idCount = 1;
-          data['list'].map(dataItem => {
+          data["list"].map((dataItem) => {
             let value = Object.assign({}, dataItem);
             drugData.push(value);
             let row = {};
-            row['id'] = idCount;
-            row['key'] = idCount;
-            row['label'] = value['drug_label_name'];
-            row['fileType'] = value['file_type'];
-            row['dataSource'] = value['data_source'];
-            row['gpi'] = value['generic_product_identifier'];
+            row["id"] = idCount;
+            row["key"] = idCount;
+            row["label"] = value["drug_label_name"];
+            row["fileType"] = value["file_type"];
+            row["dataSource"] = value["data_source"];
+            row["gpi"] = value["generic_product_identifier"];
             switch (this.props.title) {
-              case 'Tier':
-                row['tier'] = value['tier_value'];
+              case "Tier":
+                row["tier"] = value["tier_value"];
                 break;
 
-              case 'Prior Authorization (PA)':
-                row['paType'] = value['pa_type'] === null ? '' : value['pa_type'];
-                row['paGroupDescription'] = value['pa_group_description'] === null ? '' : value['pa_group_description'];
+              case "Prior Authorization (PA)":
+                row["paType"] =
+                  value["pa_type"] === null ? "" : value["pa_type"];
+                row["paGroupDescription"] =
+                  value["pa_group_description"] === null
+                    ? ""
+                    : value["pa_group_description"];
                 break;
 
-              case 'Step Therpay (ST)':
-                row['stType'] = value['st_type'] === null ? '' : value['st_type'];
-                row['stGroupDescription'] = value['st_group_description'] === null ? '' : value['st_group_description'];
-                row['stValue'] = value['st_value'] === null ? '' : value['st_value'];
+              case "Step Therpay (ST)":
+                row["stType"] =
+                  value["st_type"] === null ? "" : value["st_type"];
+                row["stGroupDescription"] =
+                  value["st_group_description"] === null
+                    ? ""
+                    : value["st_group_description"];
+                row["stValue"] =
+                  value["st_value"] === null ? "" : value["st_value"];
                 break;
 
-              case 'Quantity Limits (QL)':
-                row['qlType'] = value['ql_type'] === null ? '' : value['ql_type'];
-                row['qlDays'] = value['ql_days'] === null ? '' : value['ql_days'];
-                row['qlPeriodofTime'] = value['ql_period_of_time'] === null ? '' : value['ql_period_of_time'];
-                row['qlQuantity'] = value['ql_quantity'] === null ? '' : value['ql_quantity'];
-                row['fillsAllowed'] = value['fills_allowed'] === null ? '' : value['fills_allowed'];
-                row['fullLimitPeriod'] = value['full_limit_period_of_time'] === null ? '' : value['full_limit_period_of_time'];
+              case "Quantity Limits (QL)":
+                row["qlType"] =
+                  value["ql_type"] === null ? "" : value["ql_type"];
+                row["qlDays"] =
+                  value["ql_days"] === null ? "" : value["ql_days"];
+                row["qlPeriodofTime"] =
+                  value["ql_period_of_time"] === null
+                    ? ""
+                    : value["ql_period_of_time"];
+                row["qlQuantity"] =
+                  value["ql_quantity"] === null ? "" : value["ql_quantity"];
+                row["fillsAllowed"] =
+                  value["fills_allowed"] === null ? "" : value["fills_allowed"];
+                row["fullLimitPeriod"] =
+                  value["full_limit_period_of_time"] === null
+                    ? ""
+                    : value["full_limit_period_of_time"];
                 break;
             }
             drugGridData.push(row);
@@ -177,30 +205,32 @@ class PureAccordion extends Component<PureAccordionProps, any> {
             drugData: drugData,
             gridColumns: this.props.gridColumns,
             baseFormularyId: baseFormularyId,
-            dataCount: data['count'],
+            dataCount: data["count"],
+            isRequestFinished: true,
           });
         } else {
-          showMessage('Compare data is empty', 'error');
+          showMessage("Compare data is empty", "error");
           this.setState({
             drugGridData: Array(),
             drugData: Array(),
             gridColumns: Array(),
-            baseFormularyId: '',
-            refFormularyId: '',
+            baseFormularyId: "",
+            refFormularyId: "",
             dataCount: 0,
+            isRequestFinished: true,
           });
         }
-      }
-      catch (err) {
+      } catch (err) {
         console.log(err);
-        showMessage('Error while fetching data', 'error');
+        showMessage("Error while fetching data", "error");
         this.setState({
           drugGridData: Array(),
           drugData: Array(),
           gridColumns: Array(),
-          baseFormularyId: '',
-          refFormularyId: '',
+          baseFormularyId: "",
+          refFormularyId: "",
           dataCount: 0,
+          isRequestFinished: true,
         });
       }
     } else {
@@ -208,19 +238,20 @@ class PureAccordion extends Component<PureAccordionProps, any> {
         drugGridData: Array(),
         drugData: Array(),
         gridColumns: Array(),
-        baseFormularyId: '',
-        refFormularyId: '',
+        baseFormularyId: "",
+        refFormularyId: "",
         dataCount: 0,
+        isRequestFinished: true,
       });
     }
-  }
+  };
 
   toggleDrugsListGrid = (
     gridCellName: string | null = null,
     showCheckbox: any | null = null,
     isClose: boolean = false,
     baseFormularyId: any | null = null,
-    count: any | null = null,
+    count: any | null = null
   ) => {
     let { drugGridHeaderName } = this.state;
     if (gridCellName !== null) drugGridHeaderName = gridCellName;
@@ -231,18 +262,23 @@ class PureAccordion extends Component<PureAccordionProps, any> {
         drugGridData: Array(),
         drugData: Array(),
         gridColumns: Array(),
-        baseFormularyId: '',
-        refFormularyId: '',
+        baseFormularyId: "",
+        refFormularyId: "",
         hiddenColumns: Array(),
         dataCount: 0,
         isRowSelectionEnabled: false,
+        isRequestFinished: true,
       });
     } else {
       if (baseFormularyId && count > 0) {
         this.state.openDrugsList = !this.state.openDrugsList;
-        this.state.drugGridHeaderName = gridCellName !== null ? gridCellName : '';
+        this.state.drugGridHeaderName =
+          gridCellName !== null ? gridCellName : "";
         this.state.isRowSelectionEnabled = showCheckbox;
         this.listPayload = { ...defaultListPayload };
+        this.setState({
+          isRequestFinished: false,
+        })
         this.populateGridData(baseFormularyId, this.listPayload);
       }
     }
@@ -268,11 +304,11 @@ class PureAccordion extends Component<PureAccordionProps, any> {
     });
   };
 
-  toggleAccordionAll = () => {
+  toggleAccordionAll = (toggleAllAccordion) => {
     let active = "";
     let height = "0px";
     let rotate = "accordion__icon";
-    if (this.props.toggleAllAccordion) {
+    if (toggleAllAccordion) {
       active = "active";
       rotate = "accordion__icon rotate";
       if (null !== this.elementContent.current) {
@@ -297,22 +333,51 @@ class PureAccordion extends Component<PureAccordionProps, any> {
     console.log(this.state.rejectedDrug);
   };
 
-  componentWillReceiveProps(nextProps) {
-    // if (nextProps.toggleAllAccordion !== this.state.toggleAll) {
-    //   this.toggleAccordionAll();
-    //   this.setState({
-    //     toggleAll: nextProps.toggleAllAccordion,
-    //   });
-    // }
-    this.toggleAccordionAll();
+  componentDidMount() {
+    let active = "";
+    let height = "0px";
+    let rotate = "accordion__icon";
+    active = "active";
+    rotate = "accordion__icon rotate";
+    if (null !== this.elementContent.current) {
+      height = `${this.elementContent.current.scrollHeight}px`;
+    }
+    this.setState({
+      active,
+      height,
+      rotate,
+    });
   }
+
+  componentDidUpdate(prevProps, prevState) {
+    if (prevProps.toggleAllAccordion !== this.props.toggleAllAccordion) {
+      debugger;
+      this.toggleAccordionAll(this.props.toggleAllAccordion);
+      // this.setState({
+      //   toggleAll: prevProps.toggleAllAccordion,
+      // });
+    }
+  }
+
+  // componentWillReceiveProps(nextProps) {
+  //   debugger;
+  //   if (nextProps.toggleAllAccordion) this.toggleAccordionAll();
+  // }
 
   render() {
     let gridColumns = [...this.state.gridColumns];
-    if (this.state.gridColumns.length > 0 && this.state.hiddenColumns.length > 0)
-      gridColumns = this.state.gridColumns.filter(column => !this.state.hiddenColumns.includes(column['key']));
+    if (
+      this.state.gridColumns.length > 0 &&
+      this.state.hiddenColumns.length > 0
+    )
+      gridColumns = this.state.gridColumns.filter(
+        (column) => !this.state.hiddenColumns.includes(column["key"])
+      );
     switch (this.props.tableType) {
       case "COMPARE":
+        if(!this.state.isRequestFinished){
+          return <FrxLoader/>
+        }
         return (
           <div className="accordion__section">
             <div className={`accordion ${this.state.active}`}>
@@ -326,13 +391,16 @@ class PureAccordion extends Component<PureAccordionProps, any> {
                 {this.props.showCheckbox ? (
                   <Checkbox
                     onChange={(e) => {
-                      if(this.props.sectionSelected){
-                        this.props.sectionSelected(this.props.title,e.target.checked);
+                      if (this.props.sectionSelected) {
+                        this.props.sectionSelected(
+                          this.props.title,
+                          e.target.checked
+                        );
                       }
                     }}
                     disabled={false}
                     onClick={(e) => {
-                     
+                      e.stopPropagation();
                     }}
                   />
                 ) : null}
@@ -359,7 +427,7 @@ class PureAccordion extends Component<PureAccordionProps, any> {
                       "Base Formulary",
                       false,
                       false,
-                      this.props.baseformulary['id_formulary'],
+                      this.props.baseformulary["id_formulary"],
                       this.props.headerData.baseFormulary
                     );
                   }}
@@ -381,7 +449,7 @@ class PureAccordion extends Component<PureAccordionProps, any> {
                       "Reference Formulary",
                       false,
                       false,
-                      this.props.referenceformulary['id_formulary'],
+                      this.props.referenceformulary["id_formulary"],
                       this.props.headerData.referenceFormulary
                     );
                   }}
@@ -431,17 +499,20 @@ class PureAccordion extends Component<PureAccordionProps, any> {
                 positiveActionText="Reject"
                 negativeActionText=""
                 title={this.state.drugGridHeaderName}
-                handleClose={() => { this.toggleDrugsListGrid(null, false, true, null, null) }}
+                handleClose={() => {
+                  this.toggleDrugsListGrid(null, false, true, null, null);
+                }}
                 handleAction={this.rejectDrugAction}
                 showActions={true}
                 height="80%"
                 width="80%"
                 open={this.state.openDrugsList}
+                className="dialog-popup clone-dialog-popup"
               >
                 <FrxGridContainer
                   enableSearch={false}
                   enableColumnDrag
-                  onSearch={() => { }}
+                  onSearch={() => {}}
                   fixedColumnKeys={[]}
                   pagintionPosition="topRight"
                   gridName="MEDICARE"
@@ -454,7 +525,9 @@ class PureAccordion extends Component<PureAccordionProps, any> {
                   isPinningEnabled={true}
                   // setting gear 1st column
                   enableSettings={true}
-                  customSettingIcon={this.state.isRowSelectionEnabled ? null : "NONE"}
+                  customSettingIcon={
+                    this.state.isRowSelectionEnabled ? null : "NONE"
+                  }
                   isRowSelectionEnabled={this.state.isRowSelectionEnabled}
                   rowSelectionChange={this.rowSelectionChange}
                   isRowSelectorCheckbox
@@ -464,7 +537,9 @@ class PureAccordion extends Component<PureAccordionProps, any> {
                   applyFilter={this.onApplyFilterHandler}
                   getColumnSettings={this.onSettingsIconHandler}
                   pageSize={this.listPayload.limit}
-                  selectedCurrentPage={(this.listPayload.index / this.listPayload.limit + 1)}
+                  selectedCurrentPage={
+                    this.listPayload.index / this.listPayload.limit + 1
+                  }
                   totalRowsCount={this.state.dataCount}
                 />
               </DialogPopup>
@@ -472,6 +547,9 @@ class PureAccordion extends Component<PureAccordionProps, any> {
           </div>
         );
       case "VIEW":
+        if(!this.state.isRequestFinished){
+          return <FrxLoader/>
+        }
         return (
           <div className="accordion__section-view">
             <div className={`accordion ${this.state.active}`}>
@@ -514,7 +592,7 @@ class PureAccordion extends Component<PureAccordionProps, any> {
                       "Base Formulary",
                       false,
                       false,
-                      this.props.baseformulary['id_formulary'],
+                      this.props.baseformulary["id_formulary"],
                       this.props.headerData.baseFormulary
                     );
                   }}
@@ -536,17 +614,20 @@ class PureAccordion extends Component<PureAccordionProps, any> {
                 positiveActionText=""
                 negativeActionText=""
                 title={this.state.drugGridHeaderName}
-                handleClose={() => { this.toggleDrugsListGrid(null, false, true, null, null) }}
+                handleClose={() => {
+                  this.toggleDrugsListGrid(null, false, true, null, null);
+                }}
                 handleAction={this.rejectDrugAction}
                 showActions={true}
                 height="80%"
                 width="80%"
                 open={this.state.openDrugsList}
+                className="dialog-popup clone-dialog-popup"
               >
                 <FrxGridContainer
                   enableSearch={false}
                   enableColumnDrag
-                  onSearch={() => { }}
+                  onSearch={() => {}}
                   fixedColumnKeys={[]}
                   pagintionPosition="topRight"
                   gridName="MEDICARE"
@@ -565,7 +646,9 @@ class PureAccordion extends Component<PureAccordionProps, any> {
                   // handleCustomRowSelectionChange={(r) => {
                   //   console.log(r);
                   // }}
-                  customSettingIcon={this.state.isRowSelectionEnabled ? null : "NONE"}
+                  customSettingIcon={
+                    this.state.isRowSelectionEnabled ? null : "NONE"
+                  }
                   isRowSelectionEnabled={this.state.isRowSelectionEnabled}
                   isRowSelectorCheckbox
                   getPerPageItemSize={this.onPageSize}
@@ -574,7 +657,9 @@ class PureAccordion extends Component<PureAccordionProps, any> {
                   applyFilter={this.onApplyFilterHandler}
                   getColumnSettings={this.onSettingsIconHandler}
                   pageSize={this.listPayload.limit}
-                  selectedCurrentPage={(this.listPayload.index / this.listPayload.limit + 1)}
+                  selectedCurrentPage={
+                    this.listPayload.index / this.listPayload.limit + 1
+                  }
                   totalRowsCount={this.state.dataCount}
                 />
               </DialogPopup>
