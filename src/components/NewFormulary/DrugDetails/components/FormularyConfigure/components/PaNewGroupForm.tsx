@@ -826,7 +826,7 @@ function NewGroup(props: any) {
                       }
                       disabled={props.editable}
                       checked={formData.id_pa_type===8?true:false}
-                    /> 
+                    />
                     <RadioButton
                       label="New Starts Only"
                       name="add-filter-1"

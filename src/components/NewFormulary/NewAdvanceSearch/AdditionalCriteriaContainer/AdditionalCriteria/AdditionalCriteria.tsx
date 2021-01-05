@@ -136,6 +136,7 @@ class AdditionalCriteria extends Component<any, any> {
   componentWillReceiveProps(nextProps) {}
 
   loadSavedSettings = (additionalCriteriaBody) => {
+    const additionalCriteriaSequenceId = this.props.additionalCriteria.sequence;
     let savedCriteriaList: any[] = [];
     let globalCardCount = 0;
 
@@ -211,6 +212,7 @@ class AdditionalCriteria extends Component<any, any> {
                 isIncluded: criteriaMock[1].isIncluded,
                 render: (
                   <ListItem
+                    additionalCriteriaSequenceId={additionalCriteriaSequenceId}
                     nodeId={globalCardCount}
                     deleteIconHandler={this.deleteIconHandler}
                     card={{
@@ -329,6 +331,7 @@ class AdditionalCriteria extends Component<any, any> {
                 isIncluded: criteriaMock[5].isIncluded,
                 render: (
                   <ListItem
+                    additionalCriteriaSequenceId={additionalCriteriaSequenceId}
                     nodeId={globalCardCount}
                     deleteIconHandler={this.deleteIconHandler}
                     card={{
@@ -357,6 +360,7 @@ class AdditionalCriteria extends Component<any, any> {
                 isIncluded: criteriaMock[6].isIncluded,
                 render: (
                   <ListItem
+                    additionalCriteriaSequenceId={additionalCriteriaSequenceId}
                     nodeId={globalCardCount}
                     deleteIconHandler={this.deleteIconHandler}
                     card={{
@@ -459,6 +463,7 @@ class AdditionalCriteria extends Component<any, any> {
                 isIncluded: !criteriaMock[1].isIncluded,
                 render: (
                   <ListItem
+                    additionalCriteriaSequenceId={additionalCriteriaSequenceId}
                     nodeId={globalCardCount}
                     deleteIconHandler={this.deleteIconHandler}
                     card={{
@@ -584,6 +589,7 @@ class AdditionalCriteria extends Component<any, any> {
                 render: (
                   <ListItem
                     nodeId={globalCardCount}
+                    additionalCriteriaSequenceId={additionalCriteriaSequenceId}
                     deleteIconHandler={this.deleteIconHandler}
                     card={{
                       cardCode: criteriaMock[5].cardCode,
@@ -616,6 +622,7 @@ class AdditionalCriteria extends Component<any, any> {
                 render: (
                   <ListItem
                     nodeId={globalCardCount}
+                    additionalCriteriaSequenceId={additionalCriteriaSequenceId}
                     deleteIconHandler={this.deleteIconHandler}
                     card={{
                       cardCode: criteriaMock[6].cardCode,
@@ -682,6 +689,7 @@ class AdditionalCriteria extends Component<any, any> {
   };
 
   setNodes = (cardName, cardCode, filteredList) => {
+    const additionalCriteriaSequenceId = this.props.additionalCriteria.sequence;
     let globalCardCount = this.state.globalCardCount;
     let isIncluded = true;
     globalCardCount++;
@@ -701,6 +709,7 @@ class AdditionalCriteria extends Component<any, any> {
             isIncluded: isIncluded,
             render: (
               <ListItem
+                additionalCriteriaSequenceId={additionalCriteriaSequenceId}
                 nodeId={globalCardCount}
                 card={{
                   cardName,

@@ -9,7 +9,7 @@ const POSCriteria = (props) => {
   const {
     serviceSettingsChecked,
     posSettingsServies: { posSettings, posSettingsStatus },
-
+    additionalCriteriaSequenceId,
     selectAllHandler,
     showGridHandler,
     handleStatus,
@@ -53,13 +53,25 @@ const POSCriteria = (props) => {
                   key={s.id_place_of_service_type}
                 >
                   <Checkbox
-                    id={s.id_place_of_service_type + "" + nodeId}
+                    id={
+                      s.id_place_of_service_type +
+                      "" +
+                      nodeId +
+                      "" +
+                      additionalCriteriaSequenceId
+                    }
                     name={s.id_place_of_service_type}
                     onChange={serviceSettingsChecked}
                     checked={s.isChecked}
                   ></Checkbox>
                   <label
-                    htmlFor={s.id_place_of_service_type + "" + nodeId}
+                    htmlFor={
+                      s.id_place_of_service_type +
+                      "" +
+                      nodeId +
+                      "" +
+                      additionalCriteriaSequenceId
+                    }
                     className="checkbox-label"
                   >
                     {`${s.place_of_service_type_code} -

@@ -10,7 +10,7 @@ const PRCriteria = (props) => {
   const {
     serviceSettingsChecked,
     prSettingsServies: { prSettings, prSettingsStatus },
-
+    additionalCriteriaSequenceId,
     selectAllHandler,
     showGridHandler,
     handleStatus,
@@ -56,13 +56,25 @@ const PRCriteria = (props) => {
                   key={s.id_patient_residence_type}
                 >
                   <Checkbox
-                    id={s.id_patient_residence_type + "" + nodeId}
+                    id={
+                      s.id_patient_residence_type +
+                      "" +
+                      nodeId +
+                      "" +
+                      additionalCriteriaSequenceId
+                    }
                     name={s.id_patient_residence_type}
                     onChange={serviceSettingsChecked}
                     checked={s.isChecked}
                   ></Checkbox>
                   <label
-                    htmlFor={s.id_patient_residence_type + "" + nodeId}
+                    htmlFor={
+                      s.id_patient_residence_type +
+                      "" +
+                      nodeId +
+                      "" +
+                      additionalCriteriaSequenceId
+                    }
                     className="checkbox-label"
                   >
                     {`${s.patient_residence_type_code} -

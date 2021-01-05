@@ -11,7 +11,7 @@ const GenderCriteria = (props) => {
     serviceSettingsChecked,
     glSettingsServies: { glSettings, glSettingsStatus },
     handleStatus,
-
+    additionalCriteriaSequenceId,
     isAdditionalCriteria,
     deleteIconHandler,
     nodeId,
@@ -34,13 +34,15 @@ const GenderCriteria = (props) => {
               {glSettings.map((gl) => (
                 <div className="input-field-group__radio-field" key={gl.id}>
                   <Checkbox
-                    id={gl.id + "" + nodeId}
+                    id={gl.id + "" + nodeId + "" + additionalCriteriaSequenceId}
                     name={gl.id}
                     onChange={serviceSettingsChecked}
                     checked={gl.isChecked}
                   ></Checkbox>
                   <label
-                    htmlFor={gl.id + "" + nodeId}
+                    htmlFor={
+                      gl.id + "" + nodeId + "" + additionalCriteriaSequenceId
+                    }
                     className="checkbox-label"
                   >
                     {`${gl.gl_type_name}`}
