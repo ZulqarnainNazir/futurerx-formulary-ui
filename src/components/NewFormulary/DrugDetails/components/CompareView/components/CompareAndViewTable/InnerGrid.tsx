@@ -7,6 +7,7 @@ import { getDrugs, getAttributeValues } from "../../../../../../../redux/slices/
 import * as commonConstants from "../../../../../../../api/http-commons";
 import * as compareConstants from "../../../../../../../api/http-compare-view";
 import showMessage from "../../../../../Utils/Toast";
+import FrxLoader from "../../../../../../shared/FrxLoader/FrxLoader";
 
 import "./CompareTable.scss";
 import getLobCode from "../../../../../Utils/LobUtils";
@@ -54,6 +55,7 @@ class InnerGrid extends Component<InnerGridProps, any>{
     isLastColumn: false,
     rejectedKeys: Array(),
     rejectedDrugIds: Array(),
+    isRequestFinished: true,
   }
 
   listPayload: any = {
@@ -154,14 +156,23 @@ class InnerGrid extends Component<InnerGridProps, any>{
   onPageSize = (pageSize) => {
     this.listPayload = { ...defaultListPayload };
     this.listPayload.limit = pageSize;
+    this.setState({
+      isRequestFinished: false,
+    })
     this.populateGridData(this.state.rowData, this.state.baseFormularyId, this.state.refFormularyId, this.listPayload, this.state.isLastColumn);
   }
   onGridPageChangeHandler = (pageNumber: any) => {
     this.listPayload.index = (pageNumber - 1) * this.listPayload.limit;
+    this.setState({
+      isRequestFinished: false,
+    })
     this.populateGridData(this.state.rowData, this.state.baseFormularyId, this.state.refFormularyId, this.listPayload, this.state.isLastColumn);
   }
   onClearFilterHandler = () => {
     this.listPayload = { ...defaultListPayload };
+    this.setState({
+      isRequestFinished: false,
+    })
     this.populateGridData(this.state.rowData, this.state.baseFormularyId, this.state.refFormularyId, this.listPayload, this.state.isLastColumn);
   }
 
@@ -445,6 +456,7 @@ class InnerGrid extends Component<InnerGridProps, any>{
             refFormularyId: refFormularyId,
             dataCount: data['count'],
             isLastColumn: isLastColumn,
+            isRequestFinished: true,
           });
         } else {
           showMessage('Compare data is empty', 'error');
@@ -457,6 +469,7 @@ class InnerGrid extends Component<InnerGridProps, any>{
             refFormularyId: '',
             dataCount: 0,
             isLastColumn: isLastColumn,
+            isRequestFinished: true,
           });
         }
       }
@@ -472,6 +485,7 @@ class InnerGrid extends Component<InnerGridProps, any>{
           refFormularyId: '',
           dataCount: 0,
           isLastColumn: isLastColumn,
+          isRequestFinished: true,
         });
       }
     } else {
@@ -484,6 +498,7 @@ class InnerGrid extends Component<InnerGridProps, any>{
         refFormularyId: '',
         dataCount: 0,
         isLastColumn: isLastColumn,
+        isRequestFinished: true,
       });
     }
   }
@@ -516,6 +531,7 @@ class InnerGrid extends Component<InnerGridProps, any>{
         dataCount: 0,
         rejectedKeys: Array(),
         rejectedDrugIds: Array(),
+        isRequestFinished: true,
       });
     } else {
       if (dataCount > 0) {
@@ -526,6 +542,9 @@ class InnerGrid extends Component<InnerGridProps, any>{
         }
         this.state.openDrugsList = !this.state.openDrugsList;
         this.listPayload = { ...defaultListPayload };
+        this.setState({
+          isRequestFinished: false,
+        })
         //console.log('Base formulary ID:' + baseFormularyId + ' Ref formulary ID:' + refFormularyId + ' ' + JSON.stringify(this.props.baseformulary) + ' ' + JSON.stringify(this.props.referenceformulary));
         this.populateGridData(rowData, baseFormularyId, refFormularyId, this.listPayload, isLastColumn);
       }
@@ -675,6 +694,9 @@ class InnerGrid extends Component<InnerGridProps, any>{
       gridColumns = this.state.gridColumns.filter(column => !this.state.hiddenColumns.includes(column['key']));
     switch (this.props.tableType) {
       case "COMPARE":
+        if(!this.state.isRequestFinished){
+          return <FrxLoader />;
+        }
         return (
           <div className="inner-grid-compare-formularies">
             {this.props.dataArr.map((data) => (
@@ -824,6 +846,9 @@ class InnerGrid extends Component<InnerGridProps, any>{
         );
 
       case "VIEW":
+        if(!this.state.isRequestFinished){
+          return <FrxLoader />;
+        }
         return (
           <div className="inner-grid-view-formularies">
             {this.props.dataArr.map((data) => (
