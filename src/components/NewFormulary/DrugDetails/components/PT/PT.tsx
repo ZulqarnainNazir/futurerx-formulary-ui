@@ -395,6 +395,9 @@ class DrugDetailPT extends React.Component<any, any> {
 
   onSelectedTableRowChanged = (selectedRowKeys) => {
     this.state.selectedDrugs = [];
+    this.setState({
+      selectedRowKeys: [...selectedRowKeys]
+    });
     if (selectedRowKeys && selectedRowKeys.length > 0) {
       let selDrugs = selectedRowKeys.map((ele) => {
         return this.state.drugData[ele - 1]["md5_id"]
@@ -402,7 +405,9 @@ class DrugDetailPT extends React.Component<any, any> {
           : "";
       });
 
-      this.setState({ selectedDrugs: selDrugs });
+      let selStateTmpDrugs = [...this.state.selectedDrugs, ...selDrugs];
+
+      this.setState({ selectedDrugs: selStateTmpDrugs });
     } else {
       this.setState({ selectedDrugs: [] });
     }
@@ -482,7 +487,7 @@ class DrugDetailPT extends React.Component<any, any> {
 
       this.setState({
         panelGridValue1: rows,
-        showGrid: false,
+        // showGrid: false,
       });
     });
   };
