@@ -270,8 +270,10 @@ class DrugDetailAL extends React.Component<any, any> {
             showMessage("Success", "success");
             this.getALSummary();
             this.getALDrugsList();
+            this.refreshSelections({ activeTabIndex: this.state.activeTabIndex });
           } else {
             showMessage("Failure", "error");
+            this.refreshSelections({ activeTabIndex: this.state.activeTabIndex });
           }
         });
       } else if(this.state.activeTabIndex === 2) {
@@ -295,9 +297,11 @@ class DrugDetailAL extends React.Component<any, any> {
             this.getALSummary();
             this.getALDrugsList();
             this.getALCriteriaList(this.state.alRemoveSettingsStatus.covered);
+            this.refreshSelections({ activeTabIndex: this.state.activeTabIndex });
           } else {
             console.log("------REMOVE FAILED-------")
             showMessage("Failure", "error");
+            this.refreshSelections({ activeTabIndex: this.state.activeTabIndex });
           }
         });
       }
@@ -436,7 +440,6 @@ class DrugDetailAL extends React.Component<any, any> {
 
       this.setState({
         panelGridValue1: rows,
-        showGrid: false,
       });
     });
   }
@@ -470,6 +473,12 @@ class DrugDetailAL extends React.Component<any, any> {
     });
   }
 
+  arraysEqual = (a, b) => {
+    if(a.length !== b.length) return false;
+    
+    return a.sort().toString() == b.sort().toString();
+  }
+
   getALDrugsList = ({index = 0, limit = 10, listPayload = {}, searchBody = {}} = {}) => {
     let apiDetails = {};
     apiDetails['apiPart'] = alConstants.GET_AL_DRUGS;
@@ -496,6 +505,7 @@ class DrugDetailAL extends React.Component<any, any> {
     }
 
     let listCount = 0;
+    const thisRef = this;
     this.props.getDrugDetailsALList(apiDetails).then((json) => {
       let tmpData = json.payload && json.payload.result ? json.payload.result : [];
       listCount = json.payload?.count;
@@ -507,6 +517,63 @@ class DrugDetailAL extends React.Component<any, any> {
         let gridItem = {};
         gridItem["id"] = count;
         gridItem["key"] = count;
+        // for preseelct items with selected tier value
+
+        if(this.state.activeTabIndex !== 2) {
+          if(this.state.alSettings[0].covered) {
+            console.log("-----Al list Covered----");
+
+            let alcoveredMinopr = element.covered_min_operators ? element.covered_min_operators.split(",").map(e => e.trim()) : [];
+            let alcoveredMinages = element.covered_min_ages ? element.covered_min_ages.split(",").map(e => e.trim()) : [];
+            let alcoveredMaxopr = element.covered_max_operators ? element.covered_max_operators.split(",").map(e => e.trim()) : [];
+            let alcoveredMaxages = element.covered_max_ages ? element.covered_max_ages.split(",").map(e => e.trim()) : [];
+            if(this.formData2.length === alcoveredMinopr.length) {
+
+              let formMinTypes = this.formData2.map(e => e.minimumType);
+              let formMinValue = this.formData2.map(e => e.minimumVal);
+              let formMaxTypes = this.formData2.map(e => e.maximumType);
+              let formMaxValue = this.formData2.map(e => e.maximumVal);
+              
+              let minTypebool = thisRef.arraysEqual(alcoveredMinopr, formMinTypes);
+              let minValbool = thisRef.arraysEqual(alcoveredMinages, formMinValue);
+              let maxTypebool = thisRef.arraysEqual(alcoveredMaxopr, formMaxTypes);
+              let maxValbool = thisRef.arraysEqual(alcoveredMaxages, formMaxValue);
+
+              if(minTypebool && minValbool && maxTypebool && maxValbool) {
+                gridItem["isChecked"] = true;
+                gridItem["isDisabled"] = true;
+                gridItem["rowStyle"] = "table-row--blue-font";
+              }
+            }
+
+          } else if (!this.state.alSettings[0].covered) {
+            console.log("-----Al list NOT Covered----");
+
+            let alncoveredMinopr = element.not_covered_min_operators ? element.not_covered_min_operators.split(",").map(e => e.trim()) : [];
+            let alncoveredMinages = element.not_covered_min_ages ? element.not_covered_min_ages.split(",").map(e => e.trim()) : [];
+            let alncoveredMaxopr = element.not_covered_max_operators ? element.not_covered_max_operators.split(",").map(e => e.trim()) : [];
+            let alncoveredMaxages = element.not_covered_max_ages ? element.not_covered_max_ages.split(",").map(e => e.trim()) : [];
+            if(this.formData2.length === alncoveredMinopr.length) {
+
+              let formMinTypes = this.formData2.map(e => e.minimumType);
+              let formMinValue = this.formData2.map(e => e.minimumVal);
+              let formMaxTypes = this.formData2.map(e => e.maximumType);
+              let formMaxValue = this.formData2.map(e => e.maximumVal);
+              
+              let minTypebool = thisRef.arraysEqual(alncoveredMinopr, formMinTypes);
+              let minValbool = thisRef.arraysEqual(alncoveredMinages, formMinValue);
+              let maxTypebool = thisRef.arraysEqual(alncoveredMaxopr, formMaxTypes);
+              let maxValbool = thisRef.arraysEqual(alncoveredMaxages, formMaxValue);
+
+              if(minTypebool && minValbool && maxTypebool && maxValbool) {
+                gridItem["isChecked"] = true;
+                gridItem["isDisabled"] = true;
+                gridItem["rowStyle"] = "table-row--blue-font";
+              }
+            }
+          }
+        }
+
         gridItem["is_al"] = element.is_al ? "" + element.is_al : "";
         gridItem["covered_min_operators"] = element.covered_min_operators ? "" + element.covered_min_operators : "";
         gridItem["covered_min_ages"] = element.covered_min_ages ? "" + element.covered_min_ages : "";
@@ -857,7 +924,7 @@ class DrugDetailAL extends React.Component<any, any> {
             gridName="TIER"
             enableSettings
             columns={columns}
-            scroll={{ x: 3600, y: 377 }}
+            scroll={{ x: 4000, y: 377 }}
             isFetchingData={false}
             enableResizingOfColumns
             data={this.state.data}
