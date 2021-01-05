@@ -479,7 +479,7 @@ class PureAccordion extends Component<PureAccordionProps, any> {
 
   componentDidUpdate(prevProps, prevState) {
     if (prevProps.toggleAllAccordion !== this.props.toggleAllAccordion) {
-      debugger;
+      // debugger;
       this.toggleAccordionAll(this.props.toggleAllAccordion);
       // this.setState({
       //   toggleAll: prevProps.toggleAllAccordion,

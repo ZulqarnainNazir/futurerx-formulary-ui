@@ -224,7 +224,7 @@ class PaRemove extends React.Component<any, any> {
             this.props
               .getPaSummary(this.props.current_formulary.id_formulary)
               .then((json) => {
-                debugger;
+                // debugger;
                 this.setState({ tierGridContainer: true });
               });
           } else {
