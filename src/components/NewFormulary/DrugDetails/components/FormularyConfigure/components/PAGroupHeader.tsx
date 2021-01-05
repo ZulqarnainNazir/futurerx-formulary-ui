@@ -275,11 +275,17 @@ function PAGroupHeader(props: any) {
           const groupList = json?.payload?.data;
           const groupListLength = Object.keys(groupList).length;
           //const id_pa_group_description = groupListLength>0?groupList[0].id_base_pa_group_description:0;
-          let id_pa_group_description = groupListLength>0?groupList.filter(val=>val.is_archived===false)[0].id_base_pa_group_description:0;
-          if(param==='delete-version' && versionListLength>0){
+          let id_pa_group_description =
+            groupListLength > 0
+              ? groupList.filter((val) => val.is_archived === false)[0].id_base_pa_group_description
+              : 0;
+          if (param === "delete-version" && versionListLength > 0) {
             id_pa_group_description = props.saveGdm.current_group_id;
-          }else{
-            id_pa_group_description = groupListLength>0?groupList.filter(val=>val.is_archived===false)[0].id_base_pa_group_description:0;
+          } else {
+            id_pa_group_description =
+              groupListLength > 0
+                ? groupList.filter((val) => val.is_archived === false)[0].id_base_pa_group_description
+                : 0;
           }
           apiDetails["pathParams"] = "/" + id_pa_group_description;
           props.getPaGrouptDescriptionVersions(apiDetails).then((json) => {
@@ -428,7 +434,7 @@ function PAGroupHeader(props: any) {
       });
   };
   return (
-    <div className={`version-wrapper version-wrapper${panelColor}`}>
+    <div className={`version-wrapper${panelColor}`}>
       <select
         name="group-description"
         id="group-description"
