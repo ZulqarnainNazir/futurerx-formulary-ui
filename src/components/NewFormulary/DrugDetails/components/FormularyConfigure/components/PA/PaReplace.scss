@@ -555,4 +555,11 @@
 .select-drug-from-table-header {
   display: flex;
   justify-content: space-between;
+
+  p {
+    font-size: 12px;
+    color: #1d54b4;
+    font-weight: 500;
+    text-transform: uppercase;
+  }
 }

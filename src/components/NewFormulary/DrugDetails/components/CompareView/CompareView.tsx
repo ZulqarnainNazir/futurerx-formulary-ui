@@ -29,12 +29,12 @@ interface configureState {
   baseformulary: any;
   referenceformulary: any;
 }
-interface configureProps {}
+interface configureProps { }
 
 export default class CompareView extends React.Component<
   configureProps,
   configureState
-> {
+  > {
   state = {
     tabs: tabs,
     activeTabIndex: 0,
@@ -53,8 +53,26 @@ export default class CompareView extends React.Component<
       }
       return tab;
     });
+    this.state.isCompareClicked = false;
+    this.state.isViewClicked = false;
     this.setState({ tabs, activeTabIndex });
   };
+
+  handleCompareClear = () => {
+    if (this.state.isCompareClicked) {
+      this.setState({
+        isCompareClicked: false,
+      });
+    }
+  }
+
+  handleViewClear = () => {
+    if (this.state.isViewClicked) {
+      this.setState({
+        isViewClicked: false,
+      });
+    }
+  }
 
   handleCompareBtn = (baseFormulary, referenceFromulary) => {
     if (
@@ -63,11 +81,15 @@ export default class CompareView extends React.Component<
       baseFormulary["id_formulary"] &&
       referenceFromulary["id_formulary"]
     ) {
+      this.state.baseformulary = baseFormulary;
+      this.state.referenceformulary = referenceFromulary;
+
       this.setState({
-        // isCompareClicked: !this.state.isCompareClicked,
-        isCompareClicked: true,
-        baseformulary: baseFormulary,
-        referenceformulary: referenceFromulary,
+        isCompareClicked: false,
+      }, () => {
+        this.setState({
+          isCompareClicked: true,
+        })
       });
     } else {
       showMessage("Choose formularies to compare", "error");
@@ -76,10 +98,13 @@ export default class CompareView extends React.Component<
 
   handleViewBtn = (baseFormulary) => {
     if (baseFormulary && baseFormulary["id_formulary"]) {
+      this.state.baseformulary = baseFormulary;
       this.setState({
-        // isViewClicked: !this.state.isViewClicked,
-        isViewClicked: true,
-        baseformulary: baseFormulary,
+        isViewClicked: false,
+      }, () => {
+        this.setState({
+          isViewClicked: true,
+        })
       });
     } else {
       showMessage("Choose formulary to view", "error");
@@ -129,9 +154,9 @@ export default class CompareView extends React.Component<
     const tabIndex = this.state.activeTabIndex;
     switch (tabIndex) {
       case 0:
-        return <CompareFormularies handleCompareBtn={this.handleCompareBtn} />;
+        return <CompareFormularies handleCompareBtn={this.handleCompareBtn} handleCompareClear={this.handleCompareClear} />;
       case 1:
-        return <ViewFormularies handleViewBtn={this.handleViewBtn} />;
+        return <ViewFormularies handleViewBtn={this.handleViewBtn} handleViewClear={this.handleViewClear} />;
       case 2:
         return <div>HPMS SUMMARY</div>;
       default:
@@ -155,21 +180,28 @@ export default class CompareView extends React.Component<
         </div>
         {activeTabIndex === 0 && isCompareClicked ? (
           <div className="bordered m-t-10 compare-table-root">
-            <div className="header white-bg flex-container">
-              <label>Summary</label>
-              <DownloadIcon
-                onClick={() => {
-                  this.handeReportDownload("summary");
-                }}
-                style={{ marginLeft: 5 }}
-              />
-              <label style={{ marginLeft: 10 }}>Details</label>
-              <DownloadIcon
-                onClick={() => {
-                  this.handeReportDownload("detials");
-                }}
-                style={{ marginLeft: 5 }}
-              />
+            <div className="header white-bg flex-container compare-grid-header-download">
+              <h4 className="formulary-assembly-components__container-header-title">COMPARISON OF FORMULARIES</h4>
+              <div className="action-wrapper">
+                <div className="item-download">
+                  <label>Summary</label>
+                  <DownloadIcon
+                    onClick={() => {
+                      this.handeReportDownload("summary");
+                    }}
+                    style={{ marginLeft: 5 }}
+                  />
+                </div>
+                <div className="item-download">
+                  <label style={{ marginLeft: 10 }}>Details</label>
+                  <DownloadIcon
+                    onClick={() => {
+                      this.handeReportDownload("detials");
+                    }}
+                    style={{ marginLeft: 5 }}
+                  />
+                </div>
+              </div>
             </div>
             <div className="inner-container white-bg p-10">
               <CompareTable
