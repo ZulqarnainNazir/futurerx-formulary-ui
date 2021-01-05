@@ -260,7 +260,7 @@ function NewGroup(props: any) {
       }
     }
     setErrorClass("");
-    formData["id_st_type"] = formData["st_type"] === "New Starts Only(2)" ? 8 : 7;
+    //formData["id_st_type"] = formData["st_type"] === "New Starts Only(2)" ? 8 : 7;
     formData["is_validation_required"] = is_validation;
     formData["drug_list_ids"] = drug_list_ids;
     formData["removed_drug_list_ids"] = [2];
@@ -569,10 +569,11 @@ function NewGroup(props: any) {
                       onClick={() =>
                         updateFormData({
                           ...formData,
-                          st_type: true,
+                          id_st_type: 7
                         })
                       }
                       disabled={props.editable}
+                      checked={formData.id_st_type===7}
                     />
                     <RadioButton
                       label="New Starts Only"
@@ -581,10 +582,11 @@ function NewGroup(props: any) {
                       onClick={() =>
                         updateFormData({
                           ...formData,
-                          st_type: false,
+                          id_st_type: 8,
                         })
                       }
                       disabled={props.editable}
+                      checked={formData.id_st_type===8}
                     />
                   </div>
                 </Space>
