@@ -270,23 +270,38 @@ class FrxDrugGrid extends Component<
   //       this.initializeColumns();
   //     }
   //   }
-  // }
+	// }
+	
+	componentDidUpdate(previousProps, previousState) {
+		if(this.props.isMultiSorted !== undefined && !this.props.isDataLoaded){
+			if(this.props.isMultiSorted !== previousState.isMultiSort || 
+				!this.isGridGridMultiSortedInfoSame(this.props.multiSortedInfo, previousState.multiSortedInfo)){
+				console.log("multi sort from props ", this.props.isMultiSorted)
+				console.log("multi sort array ", this.multiSortArray)
+				this.multiSortArray = this.state.multiSortedInfo.map(item => item.columnKey)
+				this.setState({
+					multiSortedInfo:this.props.multiSortedInfo,
+					isMultiSort:this.props.isMultiSorted
+				}, () => {
+					this.updateFilters()
+				})
+			}
+		}
 
-  componentDidUpdate(previousProps, previousState) {
-    if (this.props.isMultiSorted !== undefined && !this.props.isDataLoaded) {
-      if (this.props.isMultiSorted !== previousState.isMultiSort) {
-        console.log("multi sort from props ", this.props.isMultiSorted);
-        this.setState(
-          {
-            multiSortedInfo: this.props.multiSortedInfo,
-            isMultiSort: this.props.isMultiSorted,
-          },
-          () => {
-            this.updateFilters();
-          }
-        );
-      }
-    }
+		if(this.props.isSingleSorted !== undefined && !this.props.isDataLoaded){
+			if(this.props.isSingleSorted !== previousState.isSingleSort){
+				const sortedInfo = {...this.props.sortedInfo}
+				
+				this.setState({
+					sortedInfo:this.props.sortedInfo,
+					isSingleSort:this.props.isSingleSorted
+				
+				}, () => {
+					this.updateFilters();
+				})
+			}
+		}
+
 
     if (this.props.isSingleSorted !== undefined && !this.props.isDataLoaded) {
       if (this.props.isSingleSorted !== previousState.isSingleSort) {
@@ -352,6 +367,29 @@ class FrxDrugGrid extends Component<
     }
     for (let i = 0; i < oldColumns.length; i++) {
       if (oldColumns[i].hidden !== newColumns[i].hidden) {
+        return false;
+      }
+    }
+    return true;
+	};
+	
+	isGridGridMultiSortedInfoSame = (
+    oldInfo: any[],
+    newInfo: any[]
+  ) => {
+    if (oldInfo === undefined && newInfo === undefined) {
+      return true;
+    }
+    if (oldInfo === undefined || newInfo === undefined) {
+      return false;
+    }
+    if (oldInfo.length !== newInfo.length) {
+      return false;
+    }
+    for (let i = 0; i < oldInfo.length; i++) {
+      if (
+        oldInfo[i].columnKey !== newInfo[i].columnKey ||  oldInfo[i].order !== newInfo[i].order
+      ) {
         return false;
       }
     }
@@ -894,12 +932,15 @@ class FrxDrugGrid extends Component<
     }
 
     if (filters && extra.action === "filter") {
-      console.log(filters);
-      if (this.props.isDataLoaded) {
-        this.getDataOnFilter(filters);
-      } else {
-        this.props.applyFilter(filters);
-      }
+			console.log(filters)
+			if(this.props.isDataLoaded){
+				this.getDataOnFilter(filters);
+			}else{
+				const appliedFilters = _.pickBy(filters, _.identity);
+				this.props.applyFilter(appliedFilters)
+			}
+    
+      
     }
 
     //ADD NOT MULTISORT CHECK
@@ -1084,41 +1125,51 @@ class FrxDrugGrid extends Component<
             this.columnsToMultisort.push({
               columnKey: cKey,
               order: order,
-              type: this.getColumnDataType(cKey),
-            });
-            if (this.props.isDataLoaded) {
-              this.multisortColumns();
-            } else {
-              console.log(" 2nd");
-              this.setState({
-                currentPage: 1,
-                goToPageValue: 1,
-              });
-              if (this.props.applyMultiSort) {
-                this.props.applyMultiSort(
-                  [...existingMultiSortedInfo, sorter],
-                  this.state.multiSortedInfo
-                );
-              }
-            }
+              type: this.getColumnDataType(cKey)
+						});
+						if(this.props.isDataLoaded){
+							this.multisortColumns();
+
+						}
+							
+							else{
+								console.log(" 2nd")
+								this.setState({
+								
+									currentPage: 1,
+									goToPageValue: 1,
+								});
+								if(this.props.applyMultiSort){
+									console.log("grid internal multisorted info ", this.state.multiSortedInfo,[...existingMultiSortedInfo, sorter] )
+								 this.props.applyMultiSort([...existingMultiSortedInfo, sorter], [...existingMultiSortedInfo, sorter])
+								}
+							}
             // this.updateMultisortOrder();
           } else {
-            // Update order of the element
-            this.columnsToMultisort[elemIdx].order = order;
-            if (this.props.isDataLoaded) {
-              this.multisortColumns();
-            } else {
-              console.log(" 3rd");
-              this.setState({
-                currentPage: 1,
-                goToPageValue: 1,
-              });
-              if (this.props.applyMultiSort)
-                this.props.applyMultiSort(
-                  [...existingMultiSortedInfo, sorter],
-                  this.state.multiSortedInfo
-                );
-            }
+						// Update order of the element
+						if(	this.columnsToMultisort && this.columnsToMultisort.length > elemIdx )
+							this.columnsToMultisort[elemIdx].order = order;
+						if(this.props.isDataLoaded){
+							this.multisortColumns();
+
+						}
+							
+							else{
+								console.log(" 3rd")
+								this.setState({
+								
+									currentPage: 1,
+									goToPageValue: 1,
+								});
+								if(this.props.applyMultiSort){
+									console.log("grid internal multisorted info 3rd ", this.state.multiSortedInfo,[...existingMultiSortedInfo, sorter] )
+									const sorterData = [...existingMultiSortedInfo, sorter].filter((item,index,self) => {
+										return self.findIndex((val)=> val.columnKey === item.columnKey) === index
+									})
+									console.log("grid internal multisorted info 3rd sorterData", sorterData )
+									this.props.applyMultiSort(sorterData, sorterData)
+								}
+								}
             // this.updateMultisortOrder();
           }
         }
@@ -1679,14 +1730,31 @@ class FrxDrugGrid extends Component<
           this.state.sortedInfo!["order"]
           ? this.state.sortedInfo!["order"]
           : null
-        : null;
+        : this.state.multiSortedInfo && this.state.multiSortedInfo.length > 0 ? this.getSortOrderForColumn(c):null;
       return c;
     });
 
     this.setState({ columns: columns }, () => {
       //this.props.clearFilterHandler()
     });
-  };
+	};
+	
+	/**
+	 * @function getSortOrderForColumn
+	 * to get sort order direction for columns in case of multi sort
+	 * @param c column object
+	 * @author Deepak_T
+	 */
+	getSortOrderForColumn = (c:Column<any>) => {
+		console.log("getting multi sort order")
+		const index = this.state.multiSortedInfo.findIndex(item => item.columnKey === c.key);
+		if(index !== -1){
+			const item = this.state.multiSortedInfo[index];
+			const order = item.order;
+			console.log("internal column order ", order, c.key)
+			return order;
+		}else return null;
+	}
 
   /**
    * @function onGoToPageValueChange

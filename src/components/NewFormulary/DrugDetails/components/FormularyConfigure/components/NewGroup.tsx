@@ -633,6 +633,7 @@ function NewGroup(props: any) {
                         options={drug_list}
                         getAutoCompleteChange={getAutoCompleteChangeHandler}
                         autoSelected={drug_list_ids}
+                        editable={editable}
                       />
                     </Grid>
                   </Fragment>
