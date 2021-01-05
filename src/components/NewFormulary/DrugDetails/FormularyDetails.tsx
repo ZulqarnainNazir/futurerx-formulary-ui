@@ -10,7 +10,7 @@ import Validation from "../../Validation/Validation";
 import { connect } from "react-redux";
 import { setAdvancedSearch } from "../../../redux/slices/formulary/advancedSearch/advancedSearchSlice";
 import { setLocation } from "../../../redux/slices/formulary/application/applicationSlice";
-
+import EntityOwnershipContainer from "../EntityOwnership/EntityOwnershipContainer";
 const tabs = [
   { id: 1, text: "Setup" },
   { id: 2, text: "Configure" },
@@ -88,7 +88,7 @@ class FormularyDetails extends React.Component<any, any> {
           </div>
         );
       case 4:
-        return <div>Complete</div>;
+        return <EntityOwnershipContainer />;
       case 5:
         return <div>Bazaar</div>;
     }
