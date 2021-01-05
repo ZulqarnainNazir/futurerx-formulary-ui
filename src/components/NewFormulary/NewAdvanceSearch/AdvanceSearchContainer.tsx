@@ -1229,6 +1229,12 @@ class AdvanceSearchContainer extends Component<Props, State> {
       ...this.state.additionalCriteriaArray,
       additionalCriteria,
     ];
+
+    for (let index = 0; index < additionalCriteriaArray.length; index++) {
+      const criteria = additionalCriteriaArray[index];
+      console.log(criteria, index);
+    }
+
     // let arrayIndex: number = 0;
     // this.state.additionalCriteriaArray.forEach((criteria, index) => {
     //   const sequence = index + 1;
