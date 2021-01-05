@@ -94,9 +94,20 @@ class PaGroupDescriptionManagement extends React.Component<any, any> {
     let apiDetails = {};
     apiDetails["lob_type"] = this.props.formulary_lob_id;
     apiDetails["pathParams"] = "/" + param;
-
+    let isPopUpView =this.props.isPopUpView;
     this.props.getPaGrouptDescriptionVersions(apiDetails).then((json) => {
       let tmpData = json.payload.data;
+      debugger;
+      if (isPopUpView){
+        debugger;
+        tmpData = tmpData.filter((obj)=>{
+          debugger;
+          if (obj.is_setup_complete){
+            return obj;
+          }
+        })
+      }
+
       let dataLength = tmpData.length;
       // var result = tmpData.map(function (el) {
       //     var element = {};
@@ -169,7 +180,7 @@ class PaGroupDescriptionManagement extends React.Component<any, any> {
     apiDetails["lob_type"] = this.props.formulary_lob_id;
     apiDetails["pathParams"] =
       "/" + this.props?.client_id + "?entity_id=" + this.props?.formulary_id;
-
+    let isPopUpView = this.props.isPopUpView;
     this.props.getPaGrouptDescriptions(apiDetails).then((json) => {
       let tmpData = json.payload.data;
       let groupProp = "";
@@ -178,16 +189,25 @@ class PaGroupDescriptionManagement extends React.Component<any, any> {
       } else if (this.props.formulary_lob_id == 4) {
         groupProp = "id_base_pa_group_description";
       }
+      if (isPopUpView){
+        tmpData = tmpData.filter((obj)=>{
+          if (obj.is_setup_complete){
+            return obj;
+          }
+        })
+      }
       var result = tmpData.map(function (el) {
         var element = {};
         element["id"] = el[groupProp];
         element["label"] = el.pa_group_description_name;
         element["status"] = el.is_setup_complete ? "completed" : "warning";
         element["is_archived"] = el.is_archived;
-        console.log(element);
+        //console.log(element);
 
         return element;
       });
+
+     
 
       this.setState({
         groupsData: result,

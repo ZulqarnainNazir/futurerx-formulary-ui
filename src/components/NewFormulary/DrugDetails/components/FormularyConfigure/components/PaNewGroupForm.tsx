@@ -575,6 +575,7 @@ function NewGroup(props: any) {
               ? formData.pa_group_description_name
               : props.title
           }
+          isPopUpView={props.isPopUpView}
           onChange={onChange}
         />
       )}
@@ -939,6 +940,7 @@ function NewGroup(props: any) {
                         options={props.drugList}
                         getAutoCompleteChange={getAutoCompleteChangeHandler}
                         autoSelected={drug_list_ids}
+                        disabled={props.editable}
                       />
                       {/* <Tags options={drug_list} getAutoCompleteChange={getAutoCompleteChangeHandler}
                        autoSelected={formData.drug_list_ids}/> */}
@@ -961,14 +963,14 @@ function NewGroup(props: any) {
                   >
                     <FormControlLabel
                       value={true}
-                      control={<Radio />}
+                      control={<Radio disabled={props.editable}/>}
                       label="Yes"
                       disabled={props.editable}
                       onClick={openAdditionalCriteria}
                     />
                     <FormControlLabel
                       value={false}
-                      control={<Radio />}
+                      control={<Radio disabled={props.editable}/>}
                       label="No"
                       disabled={props.editable}
                     />
@@ -989,7 +991,7 @@ function NewGroup(props: any) {
           {(props.isPopUpView) && (
             <div>
                   <AdditionalCriteriaContainer criteriaList={getAdditionalCriteriaSectionList()}
-              handleChildDataSave={()=>{}} />
+              handleChildDataSave={()=>{}}  isReadOnly={true}/>
             </div>
 
           )}
