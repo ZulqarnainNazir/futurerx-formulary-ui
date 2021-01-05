@@ -82,6 +82,12 @@ interface pnState {
   hiddenColumns: any[],
   selectedRowKeys: number[];
   fixedSelectedRows: number[];
+  gridSingleSortInfo: any;
+  isGridSingleSorted: boolean;
+  gridMultiSortedInfo: any[];
+  isGridMultiSorted: boolean;
+  filter: any[],
+  quickFilter: any[],
 }
 
 const columnFilterMapping = {
@@ -138,6 +144,12 @@ class DrugDetailPN extends React.Component<any, any> {
     hiddenColumns: Array(),
     selectedRowKeys: [],
     fixedSelectedRows: [],
+    gridSingleSortInfo: null,
+    isGridSingleSorted: false,
+    gridMultiSortedInfo: [],
+    isGridMultiSorted: false,
+    filter: Array(),
+    quickFilter: Array(),
   };
 
   listPayload: any = {
@@ -325,6 +337,9 @@ class DrugDetailPN extends React.Component<any, any> {
 
   onSelectedTableRowChanged = (selectedRowKeys) => {
     this.state.selectedDrugs = [];
+    this.setState({
+      selectedRowKeys: [...selectedRowKeys]
+    });
     if (selectedRowKeys && selectedRowKeys.length > 0) {
       let selDrugs = selectedRowKeys.map((ele) => {
         return this.state.drugData[ele - 1]["md5_id"]
@@ -332,7 +347,9 @@ class DrugDetailPN extends React.Component<any, any> {
           : "";
       });
 
-      this.setState({ selectedDrugs: selDrugs }, () =>
+      let selStateTmpDrugs = [...this.state.selectedDrugs, ...selDrugs];
+
+      this.setState({ selectedDrugs: selStateTmpDrugs }, () =>
         console.log("The Selected Drugs = ", this.state.selectedDrugs)
       );
     } else {
@@ -414,7 +431,7 @@ class DrugDetailPN extends React.Component<any, any> {
 
       this.setState({
         panelGridValue1: rows,
-        showGrid: false,
+        // showGrid: false,
       });
     });
   };
@@ -455,6 +472,24 @@ class DrugDetailPN extends React.Component<any, any> {
         apiDetails["messageBody"],
         merged
       );
+    }
+
+    if (this.state.sort_by && this.state.sort_by.length > 0) {
+      let keys = Array();
+      let values = Array();
+
+      this.state.sort_by.map(keyPair => {
+        keys.push(keyPair["key"]);
+        values.push(keyPair["value"]);
+      });
+
+      let tempKeys: any[] = [];
+      keys.forEach(e => {
+        tempKeys.push(columnFilterMapping[e]);
+      })
+
+      apiDetails["messageBody"]["sort_by"] = tempKeys;
+      apiDetails["messageBody"]["sort_order"] = values;
     }
 
     let listCount = 0;
@@ -821,7 +856,13 @@ class DrugDetailPN extends React.Component<any, any> {
     this.setState({ data: data });
   };
   
-  onApplySortHandler = (key, order) => {
+
+  /**
+   * the selected sorter details will be availbale here to mak api call
+   * @param key the column key
+   * @param order the sorting order : 'ascend' | 'descend'
+   */
+  onApplySortHandler = (key, order, sortedInfo) => {
     console.log("sort details ", key, order);
     this.state.sort_by = Array();
     if (order) {
@@ -829,8 +870,71 @@ class DrugDetailPN extends React.Component<any, any> {
       this.state.sort_by = this.state.sort_by.filter(keyPair => keyPair['key'] !== key);
       this.state.sort_by.push({ key: key, value: sortOrder });
     }
+
+    this.setState({
+      gridSingleSortInfo: sortedInfo,
+      isGridSingleSorted: true,
+      isGridMultiSorted: false,
+      gridMultiSortedInfo: []
+    });
     if (this.props.advancedSearchBody) {
       this.getPNDrugsList({ searchBody: this.props.advancedSearchBody });
+    } else {
+      this.getPNDrugsList();
+    }
+  };
+
+  onMultiSortToggle = (isMultiSortOn: boolean) => {
+    console.log("is Multi sort on ", isMultiSortOn);
+    this.state.sort_by = Array();
+    this.state.gridSingleSortInfo = null;
+    this.state.gridMultiSortedInfo = [];
+    this.state.isGridMultiSorted = isMultiSortOn;
+    this.state.isGridSingleSorted = false;
+
+    if (this.props.advancedSearchBody) {
+      // this.populateGridData(this.props.advancedSearchBody);
+      this.getPNDrugsList({ searchBody: this.props.advancedSearchBody });
+    } else {
+      this.getPNDrugsList();
+    }
+  };
+
+  applyMultiSortHandler = (sorter, multiSortedInfo) => {
+    console.log("Multisort info:" + JSON.stringify(sorter));
+		
+		this.setState(  {
+			isGridMultiSorted: true,
+			isGridSingleSorted: false,
+			gridMultiSortedInfo: multiSortedInfo,
+			gridSingleSortInfo: null,
+		})
+
+    if (sorter && sorter.length > 0) {
+      let uniqueKeys = Array();
+      let filteredSorter = Array();
+      sorter.map(sortInfo => {
+        if (uniqueKeys.includes(sortInfo["columnKey"])) {
+        } else {
+          filteredSorter.push(sortInfo);
+          uniqueKeys.push(sortInfo["columnKey"]);
+        }
+      });
+      filteredSorter.map(sortInfo => {
+        let sortOrder = sortInfo["order"] === "ascend" ? "asc" : "desc";
+        this.state.sort_by = this.state.sort_by.filter(
+          keyPair => keyPair["key"] !== sortInfo["columnKey"]
+        );
+        this.state.sort_by.push({
+          key: sortInfo["columnKey"],
+          value: sortOrder
+        });
+      });
+    }
+
+    if (this.props.advancedSearchBody) {
+      this.getPNDrugsList({ searchBody: this.props.advancedSearchBody });
+      // this.populateGridData(this.props.advancedSearchBody);
     } else {
       this.getPNDrugsList();
     }
@@ -903,6 +1007,12 @@ class DrugDetailPN extends React.Component<any, any> {
             clearFilterHandler={this.onClearFilterHandler}
             applyFilter={this.onApplyFilterHandler}
             applySort={this.onApplySortHandler}
+            isSingleSorted={this.state.isGridSingleSorted}
+            sortedInfo={this.state.gridSingleSortInfo}
+            applyMultiSort={this.applyMultiSortHandler}
+            isMultiSorted={this.state.isGridMultiSorted}
+            multiSortedInfo={this.state.gridMultiSortedInfo}
+            onMultiSortToggle={this.onMultiSortToggle}
             getColumnSettings={this.onSettingsIconHandler}
             pageSize={this.listPayload.limit}
             selectedCurrentPage={

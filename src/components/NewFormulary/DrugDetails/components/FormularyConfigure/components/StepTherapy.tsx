@@ -64,7 +64,7 @@ class StepTherapy extends React.Component<any, tabsState> {
   };
 
   componentWillReceiveProps(nextProps) {
-    debugger;
+    // debugger;
     console.log('TIER: componentWillReceiveProps', nextProps);
     
     let tmpData = nextProps.stData;
@@ -95,7 +95,7 @@ class StepTherapy extends React.Component<any, tabsState> {
   componentDidMount() {
     
     const TierDefinationData = this.props.getStSummary(this.props?.formulary_id).then((json => {
-      debugger;
+      // debugger;
       let tmpData = json.payload.result;
       var rows = tmpData.map(function(el) {
         var curRow=[ el["st_type_name"],
