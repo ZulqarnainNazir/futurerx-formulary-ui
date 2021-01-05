@@ -1134,7 +1134,7 @@ class Tier extends React.Component<any, tabsState> {
     };
     const dataLength = this.state.drugGridData.length > 0 ? true : false;
     return (
-      <div className="drug-detail-LA-root">
+      <div className="drug-detail-LA-root QL-root">
         <div className="drug-detail-la-container">
           <div className="drug-detail-la-inner">
             <Grid container spacing={2}>
@@ -1145,65 +1145,69 @@ class Tier extends React.Component<any, tabsState> {
                       title="SELECT Quantity Limit CRITERIA"
                       tooltip="This section allows for Addition or Removal of product only. To define coverage for all Medicare covered and/or Supplemental products, go to Drug Details"
                     />
-                    <div className="inner-container tier-checkbox white-bg">
-                      <PanelGrid
-                        panelGridTitle={this.state.panelGridTitle}
-                        panelGridValue={this.state.panelGridValue}
-                      />
-                    </div>
-                  </div>
-                </div>
-                <div className="mb-10">
-                  <div className="limited-access">
-                    <PanelHeader title="QUANTITY LIMIT SETTINGS" />
-                    <div className="modify-wrapper white-bg tier-modify-panel">
-                      <div className="modify-panel">
-                        <div className="icon">
-                          <span>R</span>
-                        </div>
-                        <div className="switch-box">
-                          <CustomizedSwitches
-                            leftTitle="Modify"
-                            rightTitle="view all"
-                          />
-                        </div>
-                        <div className="mini-tabs">
-                          <FrxMiniTabs
-                            tabList={this.state.tabs}
-                            activeTabIndex={this.state.activeTabIndex}
-                            onClickTab={this.onClickTab}
-                            disabled={this.props.switchState}
-                          />
+                    <div className="inner-container tier-checkbox">
+                      <div className="mb-10">
+                        <PanelGrid
+                          panelGridTitle={this.state.panelGridTitle}
+                          panelGridValue={this.state.panelGridValue}
+                        />
+                      </div>
+                      <div className="mb-10">
+                        <div className="limited-access">
+                          <PanelHeader title="QUANTITY LIMIT SETTINGS" />
+                          <div className="modify-wrapper white-bg tier-modify-panel">
+                            <div className="modify-panel">
+                              <div className="icon">
+                                <span>R</span>
+                              </div>
+                              <div className="switch-box">
+                                <CustomizedSwitches
+                                  leftTitle="Modify"
+                                  rightTitle="view all"
+                                />
+                              </div>
+                              <div className="mini-tabs">
+                                <FrxMiniTabs
+                                  tabList={this.state.tabs}
+                                  activeTabIndex={this.state.activeTabIndex}
+                                  onClickTab={this.onClickTab}
+                                  disabled={this.props.switchState}
+                                />
+                              </div>
+                            </div>
+                          </div>
+                          <div className="tab-content">
+                            {this.renderTabContent()}
+                          </div>
                         </div>
                       </div>
+                      <div>
+                        {this.state.activeTabIndex !== 2 && (
+                          <div className="limited-access">
+                            <PanelHeader title="FILL LIMIT SETTINGS" />
+                            <FillLimitSettings
+                              handleOnChange={this.handleOnChange}
+                              values={this.state.quantityAndFillLimitObject}
+                              isViweAll={this.props.switchState}
+                              isChecked={this.state.isAdditionalCriteriaOpen}
+                              onRadioButtonClick={this.openAdditionalCriteria}
+                              is_additional_criteria_defined={
+                                this.state.is_additional_criteria_defined
+                              }
+                            />
+                            {this.state.isAdditionalCriteriaOpen && (
+                              <AdvanceSearchContainer
+                                {...searchProps}
+                                openPopup={this.state.isAdditionalCriteriaOpen}
+                                onClose={this.closeAdditonalCriteria}
+                                isAdvanceSearch={false}
+                              />
+                            )}
+                          </div>
+                        )}
+                      </div>
                     </div>
-                    <div className="tab-content">{this.renderTabContent()}</div>
                   </div>
-                </div>
-                <div className="mb-10">
-                  {this.state.activeTabIndex !== 2 && (
-                    <div className="limited-access">
-                      <PanelHeader title="FILL LIMIT SETTINGS" />
-                      <FillLimitSettings
-                        handleOnChange={this.handleOnChange}
-                        values={this.state.quantityAndFillLimitObject}
-                        isViweAll={this.props.switchState}
-                        isChecked={this.state.isAdditionalCriteriaOpen}
-                        onRadioButtonClick={this.openAdditionalCriteria}
-                        is_additional_criteria_defined={
-                          this.state.is_additional_criteria_defined
-                        }
-                      />
-                      {this.state.isAdditionalCriteriaOpen && (
-                        <AdvanceSearchContainer
-                          {...searchProps}
-                          openPopup={this.state.isAdditionalCriteriaOpen}
-                          onClose={this.closeAdditonalCriteria}
-                          isAdvanceSearch={false}
-                        />
-                      )}
-                    </div>
-                  )}
                 </div>
               </Grid>
               <div

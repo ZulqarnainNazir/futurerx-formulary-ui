@@ -12,7 +12,23 @@ interface FormularyAssemblyState {
 
 }
 class FormularyAssembly extends Component<FormularyAssemblyProps, FormularyAssemblyState> {
-  render() {
+  
+  renderSection = (section:any, key: number) => {
+    const { data } = this.props;
+    
+    let list = data.filter( item => item.tag === section.text);
+    
+    return (
+      <FormularyAssemblyComponentExpandableListitem key={key} title={section.text} count={list.length}>              
+        {
+          list.map((currentComponent, key) => <FormularyAssemblyComponentListItem type="assembly" key={key} {...currentComponent} onRemove={this.props.onComponentRemove}/>)
+        }
+      </FormularyAssemblyComponentExpandableListitem>
+    )
+  }
+  
+  
+  render() { 
     const {data, sections} = this.props;
     
     return (
@@ -24,14 +40,8 @@ class FormularyAssembly extends Component<FormularyAssemblyProps, FormularyAssem
           
           <div className="formulary-assembly__container-body">
             {
-              sections.map((section, key)=>(
-                <FormularyAssemblyComponentExpandableListitem key={key} title={section.text}>
-                  
-                  {
-                    (data && data.length > 0) ? data.filter(item => item.tag === section.text).map((currentComponent, key) => <FormularyAssemblyComponentListItem type="assembly" key={key} {...currentComponent} onRemove={this.props.onComponentRemove}/>) : ""
-                  }
-                </FormularyAssemblyComponentExpandableListitem>
-                
+              sections.map((section, key) => (
+                this.renderSection(section, key)
               ))
             }
           </div>

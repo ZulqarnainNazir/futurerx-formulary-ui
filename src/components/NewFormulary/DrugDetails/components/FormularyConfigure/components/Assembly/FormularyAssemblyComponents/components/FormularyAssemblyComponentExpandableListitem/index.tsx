@@ -75,6 +75,7 @@ interface FormularyAssemblyComponentExpandableListitemProps {
   title?: string;
   tag?: string;
   description?: string;
+  count?: number
 }
 
 interface FormularyAssemblyComponentExpandableListitemState {}
@@ -88,13 +89,19 @@ class FormularyAssemblyComponentExpandableListitem extends Component<
   };
 
   togglePanel = () => {
-    this.setState({
-      panelStatus: !this.state.panelStatus,
-    });
+    const { count = 0} = this.props;
+    
+    if(count > 0) {      
+      this.setState({
+        panelStatus: !this.state.panelStatus,
+      });
+    }
   };
 
   render() {
-    const { title = "" } = this.props;
+    const { title = "", count = 0 } = this.props;
+    const status = count === 0 ? 'disable' : 'enable';
+    
     return (
       <div className="formulary-assembly-component-expandable-list-item">
         <div
@@ -103,7 +110,9 @@ class FormularyAssemblyComponentExpandableListitem extends Component<
         >
           <div className="title-container">
             <div className="title-container__icon">
-              <ApprovedIcon />
+              {
+                status === "disable" ? <UnApprovedIcon /> : <ApprovedIcon />
+              }
             </div>
             <div className="title-container__text">{title}</div>
           </div>

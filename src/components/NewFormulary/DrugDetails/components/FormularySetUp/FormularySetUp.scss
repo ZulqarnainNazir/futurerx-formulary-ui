@@ -87,6 +87,7 @@
         span.MuiFormControlLabel-label {
           font-size: 12px;
           text-transform: none;
+          color: #323c47;
         }
       }
       &.mr-80 {
@@ -337,7 +338,9 @@
   justify-content: space-between;
   padding: 10px;
 }
-
+.tiers-dropdown-wrapper div:nth-last-child(1) {  
+  border-bottom: none;
+}
 .formulary-tier-dropdown {
   width: 200px !important;
 }
