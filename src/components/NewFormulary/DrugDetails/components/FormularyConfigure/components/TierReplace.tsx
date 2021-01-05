@@ -27,6 +27,8 @@ import SearchBox from "../../../../../shared/Frx-components/search-box/SearchBox
 import getLobCode from "../../../../Utils/LobUtils";
 import { getIntelliscenseSearch } from "../../../../../../redux/slices/formulary/categoryClass/categoryClassActionCreation";
 
+import "./TierReplace.scss";
+
 interface tabsState {
   tierGridContainer: boolean;
   isSearchOpen: boolean;
@@ -1061,7 +1063,7 @@ class TierReplace extends React.Component<any, tabsState> {
                 </div>
               </div>
 
-              <div className="tier-grid-container">
+              <div className="tier-grid-container tier-replace-root">
                 <FrxDrugGridContainer
                   isPinningEnabled={false}
                   enableSearch={false}
