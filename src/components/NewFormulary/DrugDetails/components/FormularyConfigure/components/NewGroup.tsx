@@ -480,7 +480,7 @@ function NewGroup(props: any) {
                       <Grid item xs={6}>
                       <label className="st-label">List <span className="astrict">*</span></label>
                       <Tags options={drug_list} getAutoCompleteChange={getAutoCompleteChangeHandler}
-                       autoSelected={drug_list_ids}/>
+                       autoSelected={drug_list_ids} editable={editable}/>
                       </Grid>
                     </Fragment>
                 <div className="setting-1 mb-20">

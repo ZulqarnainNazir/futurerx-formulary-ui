@@ -25,11 +25,14 @@ import { getTierDefinationData } from "../../../../../../mocks/formulary/tierDef
 import { TabInfo } from "../../../../../../models/tab.model";
 import TierReplace from "./TierReplace";
 import TierRemove from "./TierRemove";
+import ReplaceDeletedTiers from "./ReplaceDeletedTiers";
 import {
   getTier,
   getTierLabels,
   postNewTier,
   replaceTier,
+  deleteTier,
+  reassignTier
 } from "../../../../../../redux/slices/formulary/tier/tierActionCreation";
 //import { getFormularySetup } from "../../../../../../redux/slices/formulary/formularySummaryActionCreation";
 import { GridMenu } from "../../../../../../models/grid.model";
@@ -48,6 +51,8 @@ function mapDispatchToProps(dispatch) {
     postNewTier: (a) => dispatch(postNewTier(a)),
     setAdvancedSearch: (a) => dispatch(setAdvancedSearch(a)),
     replaceTier: (a) => dispatch(replaceTier(a)),
+    deleteTier: (a) => dispatch(deleteTier(a)),
+    reassignTier: (a) => dispatch(reassignTier(a)),
     //getFormularySetup:(a)=>dispatch(getFormularySetup(a))
   };
 }
@@ -81,6 +86,10 @@ interface tabsState {
   addNewTierPopup: boolean;
   settingsTriDotDropDownItems: any[];
   deleteTierPupup: boolean;
+  deleteTierReplacePopup: boolean;
+  afterDeleteTierOptions: any[];
+  afterDeleteRemainigTiers: any[];
+  tierNames: any[];
   pupupTitle: any;
   popupPositiveButtonText: any;
   selectedTierToDelete: any;
@@ -116,6 +125,10 @@ class Tier extends React.Component<any, tabsState> {
     openPopup: false,
     addNewTierPopup: false,
     deleteTierPupup: false,
+    deleteTierReplacePopup: false,
+    afterDeleteTierOptions: [],
+    afterDeleteRemainigTiers: [],
+    tierNames: [],
     pupupTitle: "",
     selectedTierToDelete: "",
     popupPositiveButtonText: "",
@@ -162,6 +175,58 @@ class Tier extends React.Component<any, tabsState> {
       }
     });
   };
+
+  deleteTier = (tierId) => {
+    let lobCode = getLobCode(this.props.formulary_lob_id);
+    let apiDetails = {};
+    apiDetails["apiPart"] = tierConstants.FORMULARY_TIER;
+    apiDetails["pathParams"] = this.props?.formulary_id + '/' + lobCode + '/' + tierId;
+    const tierData = this.props
+      .deleteTier(apiDetails)
+      .then((json) => {
+        if (
+          json.payload &&
+          json.payload.code &&
+          json.payload.code === "200"
+        ) {
+          showMessage("Tier Deleted", "success");
+          const TierColumns = tierDefinationColumns();
+          this.populateTierDetails(TierColumns, this.props.formulary_id);
+        } else {
+          showMessage("Error: Failed to delete tier", "error");
+        }
+        this.setState({
+          addNewTierPopup: false
+        });
+      });
+  }
+
+  reassignTier = (payload) => {
+    let lobCode = getLobCode(this.props.formulary_lob_id);
+    let apiDetails = {};
+    apiDetails["apiPart"] = tierConstants.REASSIGN_TIER;
+    apiDetails["pathParams"] = this.props?.formulary_id + '/' + lobCode;
+    apiDetails["messageBody"] = payload;
+    const tierData = this.props
+      .reassignTier(apiDetails)
+      .then((json) => {
+        if (
+          json.payload &&
+          json.payload.code &&
+          json.payload.code === "200"
+        ) {
+          showMessage("Tier/s reassign is successful", "success");
+          const TierColumns = tierDefinationColumns();
+          this.populateTierDetails(TierColumns, this.props.formulary_id);
+        } else {
+          showMessage("Error: Failed to reassign tier/s", "error");
+        }
+        this.setState({
+          addNewTierPopup: false,
+          deleteTierReplacePopup: false
+        });
+      });
+  }
 
   populateTierLabels = (formularyId, formularyTypeId) => {
     let apiDetails = {};
@@ -470,12 +535,61 @@ class Tier extends React.Component<any, tabsState> {
 
   onDeleteTierAction = (action) => {
     if (action === "positive") {
+      const tierDataLength = this.props.tierData.length;
+      const indexOfDeletedTier = this.props.tierData.findIndex(e => e.tier_name === this.state.selectedTierToDelete) + 1;
+      if(tierDataLength === indexOfDeletedTier){
+        const deletedTierId = parseInt(this.state.selectedTierToDelete.split(" ")[1]);
+        this.deleteTier(deletedTierId);
+      }else{
+        const restofTiers = this.props.tierData.filter(e => e.tier_name !== this.state.selectedTierToDelete);
+        const fetchTierName = restofTiers.map(e => e.tier_name);
+        const dropdownoptions = this.props.tierData.map(e => e.tier_name);
+        dropdownoptions.pop();
+        this.setState({
+          addNewTierPopup: false,
+          deleteTierReplacePopup: true,
+          afterDeleteRemainigTiers: restofTiers,
+          tierNames: fetchTierName,
+          afterDeleteTierOptions: dropdownoptions
+        });
+      }
     }
-    this.setState({
-      addNewTierPopup: false,
-    });
   };
-
+  onChangeTierOptions = (e,tiername) => {
+    const updateData:any = [...this.state.afterDeleteRemainigTiers];
+    const indexOfSelect = updateData.findIndex(el => el.id_tier_label === tiername)
+    const newCol:any = {...updateData[indexOfSelect]};
+    newCol.tier_name = e;
+    updateData[indexOfSelect] = newCol;
+    this.setState({
+      afterDeleteRemainigTiers: updateData
+    });
+  }
+  onDeleteTierReplaceAction = () => {
+    const data = [...this.state.afterDeleteRemainigTiers];
+    const createdData:any = data.map((el:any) => {
+      const current_id = parseInt(el.tier_name.split(" ")[1])
+      return {
+        current_tier_value: current_id,
+        file_type: 'COMM',
+        id_tier: current_id,
+        id_tier_label: el.id_tier_label,
+        old_tier_id: el.id_tier,
+        old_tier_value: el.id_tier
+      }
+    })
+    const sendingData = {
+      removed_tier_value: parseInt(this.state.selectedTierToDelete.split(" ")[1]),
+      tiers: [...createdData]
+    }
+    this.reassignTier(sendingData)
+    // Make api call here for put request
+  }
+  onDeleteTierReplaceActionClose = () => {
+    this.setState({
+      deleteTierReplacePopup: false,
+    });
+  }
   render() {
     const tierDefinationColumns = this.state.tierDefinationColumns;
     const tierDefinationData = this.state.tierDefinationData;
@@ -557,6 +671,41 @@ class Tier extends React.Component<any, tabsState> {
                           />
                         </svg>
                       </div>
+                      <DialogPopup
+                        className="tier-dialog-popup delete-replace-popup"
+                        showCloseIcon={true}
+                        positiveActionText='Save'
+                        negativeActionText="Cancel"
+                        title={`Reassign ${this.state.selectedTierToDelete}`}
+                        handleClose={this.onDeleteTierReplaceActionClose}
+                        handleAction={this.onDeleteTierReplaceAction}
+                        showActions={true}
+                        open={this.state.deleteTierReplacePopup}
+                      >
+                        <ReplaceDeletedTiers 
+                          data={this.state.afterDeleteRemainigTiers}
+                          options={this.state.afterDeleteTierOptions}
+                          removedTier={this.state.selectedTierToDelete}
+                          updateTierOption={this.onChangeTierOptions}
+                          tierNames={this.state.tierNames} />
+                      {/* {this.state.afterDeleteRemainigTiers?.map(el => {
+                        return (
+                          <div className="gridRow">
+                            <div>
+                              <DropDown
+                                className="tier-description-dropdown"
+                                placeholder="Select"
+                                options={this.state.afterDeleteTierOptions}
+                                value={el.tier_name}
+                                onSelect={
+                                  this.tierLabelDropDownSelectHandler
+                                }
+                              />
+                            </div>
+                          </div>
+                        )
+                      }) : null} */}
+                      </DialogPopup>
                       <DialogPopup
                         className="tier-dialog-popup"
                         showCloseIcon={true}
