@@ -2197,6 +2197,7 @@ class CompareTable extends Component<any, any> {
             height="80%"
             width="80%"
             open={showViewAll}
+            className="dialog-popup clone-dialog-popup"
           >
             <FrxGridContainer
               enableSearch={false}
