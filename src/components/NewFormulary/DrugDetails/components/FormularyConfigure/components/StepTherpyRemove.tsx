@@ -64,6 +64,10 @@ class DrugGrid extends React.Component<any, any> {
     selectedCriteria: Array(),
     selectedDrugs: Array(),
     tierGridContainer: false,
+    index: 0,
+    limit: 10,
+    filter: Array(),
+    dataCount: 0,
   };
 
   onSelectedRowKeysChange = (selectedRowKeys) => {
@@ -156,8 +160,8 @@ class DrugGrid extends React.Component<any, any> {
       this.props?.formulary_id + "/" + getLobCode(this.props?.formulary_lob_id);
     apiDetails["keyVals"] = [
       { key: constants.KEY_ENTITY_ID, value: this.props?.formulary_id },
-      { key: constants.KEY_INDEX, value: 0 },
-      { key: constants.KEY_LIMIT, value: 10 },
+      { key: constants.KEY_INDEX, value: this.state.index },
+      { key: constants.KEY_LIMIT, value: this.state.limit },
     ];
     apiDetails["messageBody"] = {};
 
@@ -219,10 +223,38 @@ class DrugGrid extends React.Component<any, any> {
         this.setState({
           drugData: data,
           drugGridData: gridData,
+          dataCount: json.payload.count,
         });
 
         this.setState({ tierGridContainer: true });
       });
+  };
+
+  onPageSize = (pageSize) => {
+    console.log("Page size load");
+    this.state.limit = pageSize;
+    if (this.props.advancedSearchBody) {
+      this.populateGridData(this.props.advancedSearchBody);
+    } else {
+      this.populateGridData();
+    }
+  };
+  onGridPageChangeHandler = (pageNumber: any) => {
+    console.log("Page change load");
+    this.state.index = (pageNumber - 1) * this.state.limit;
+    if (this.props.advancedSearchBody) {
+      this.populateGridData(this.props.advancedSearchBody);
+    } else {
+      this.populateGridData();
+    }
+  };
+  onClearFilterHandler = () => {
+    this.state.filter = Array();
+    if (this.props.advancedSearchBody) {
+      this.populateGridData(this.props.advancedSearchBody);
+    } else {
+      this.populateGridData();
+    }
   };
 
   handleSave = () => {
@@ -366,6 +398,12 @@ class DrugGrid extends React.Component<any, any> {
                     type: "checkbox",
                     onChange: this.onSelectedTableRowChanged,
                   }}
+                  pageSize={this.state.limit}
+                  selectedCurrentPage={this.state.index / this.state.limit + 1}
+                  totalRowsCount={this.state.dataCount}
+                  getPerPageItemSize={this.onPageSize}
+                  onGridPageChangeHandler={this.onGridPageChangeHandler}
+                  clearFilterHandler={this.onClearFilterHandler}
                 />
               </div>
             </div>
