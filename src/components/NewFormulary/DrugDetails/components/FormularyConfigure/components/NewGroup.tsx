@@ -25,6 +25,11 @@ import {
 } from "../../../../../../redux/slices/formulary/stepTherapy/stepTherapyActionCreation";
 import AdvanceSearchContainer from "../../../../NewAdvanceSearch/AdvanceSearchContainer";
 import RadioButton from "../../../../../shared/Frx-components/radio-button/RadioButton";
+import {
+  getCategoryList,
+  getAdditionalCriteriaSectionList,
+} from "../../../../NewAdvanceSearch/advanceSearchMock";
+import AdditionalCriteriaContainer from "../../../../NewAdvanceSearch/AdditionalCriteriaContainer/AdditionalCriteriaContainer";
 
 interface Props {
   tooltip?: string;
@@ -337,11 +342,22 @@ function NewGroup(props: any) {
             ? formData.st_group_description_name
             : props.title}
         </span>
+        {props.isPopUpView}
+        {(props.isPopUpView) && (
+          <div className="button-wrapper">
+          <Button
+            label="Select This Group"
+            className="Button"
+            onClick={( event) => props.selectGroupDescriptionClick(props.saveGdm.current_group_id)}
+          />
+          </div>
+        )}
       </div>
+      
       {(props.formType > 0 || showHeader > 0) && (
         <GroupHeader
           popuptitle={formData.st_group_description_name ? formData.st_group_description_name : props.title}
-          onChange={onChange}
+          onChange={onChange} isPopUpView={props.isPopUpView}
         />
       )}
       {props.formulary_lob_id === 1 && (
@@ -549,6 +565,15 @@ function NewGroup(props: any) {
               ) : null}
             </div>
           </div>
+
+          {(props.isPopUpView) && (
+            <div>
+                  <AdditionalCriteriaContainer criteriaList={getAdditionalCriteriaSectionList()}
+              handleChildDataSave={()=>{}}  isReadOnly={true}/>
+            </div>
+
+          )}
+           {(!props.isPopUpView) && (
           <div className="button-wrapper">
             <Button label="Save Version Progress" className="Button" onClick={(event) => handleSubmit(event, false)} />
             <Button
@@ -562,6 +587,7 @@ function NewGroup(props: any) {
               onClick={(event) => handleSubmit(event, true)}
             />
           </div>
+           )}
         </div>
       )}
       {props.formulary_lob_id === 4 && (
@@ -710,7 +736,14 @@ function NewGroup(props: any) {
                         </Grid>
                     </Grid>
                 </div>)} */}
+          {(props.isPopUpView) && (
+            <div>
+                  <AdditionalCriteriaContainer criteriaList={getAdditionalCriteriaSectionList()}
+              handleChildDataSave={()=>{}}  isReadOnly={true}/>
+            </div>
 
+          )}
+           {(!props.isPopUpView) && (
           <div className="button-wrapper st-button-wrapper">
             <Button label="Save Version Progress" className="Button" onClick={(event) => handleSubmit(event, false)} />
             <Button
@@ -719,6 +752,7 @@ function NewGroup(props: any) {
               onClick={(event) => handleSubmit(event, true)}
             />
           </div>
+           )}
         </div>
       )}
       <ToastContainer />

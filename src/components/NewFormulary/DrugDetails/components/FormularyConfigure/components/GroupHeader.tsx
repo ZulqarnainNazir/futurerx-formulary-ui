@@ -105,15 +105,25 @@ function GroupHeader(props: any) {
 
     useEffect(() => {
         if (props.version.length > 0) {
-            const verLength = Object.keys(props.version).length;
-            const isEditable = props.version[verLength - 1].is_setup_complete;
-            const value = props.version[verLength - 1].value;
-            setPanelColor(isEditable ? '-green' : '')
-            setVersion(props.version)
+            let versions = props.version;
+            if (props.isPopUpView){
+                debugger;
+                versions = versions.filter((obj)=>{
+                debugger;
+                if (obj.is_setup_complete){
+                    return obj;
+                }
+                })
+            }
+            const verLength = Object.keys(versions).length;
+            const isEditable = versions[verLength - 1].is_setup_complete;
+            const value = versions[verLength - 1].value;
+            setPanelColor(isEditable ? (props.isPopUpView? "-grey":"-green") : (props.isPopUpView? "-grey": "-orange"));
+            setVersion(versions)
             setPlaceHolder(value)
 
-            setSelectedVersion(props.version[verLength - 1].version_number);
-            setSelectedVersionId(props.version[verLength - 1]['id_st_group_description']);
+            setSelectedVersion(versions[verLength - 1].version_number);
+            setSelectedVersionId(versions[verLength - 1]['id_st_group_description']);
         } else {
             setVersion([{ value: 'Version 1' }])
             setPlaceHolder('Version 1')

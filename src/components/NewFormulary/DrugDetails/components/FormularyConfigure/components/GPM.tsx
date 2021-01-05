@@ -33,6 +33,7 @@ function mapStateToProps(state) {
         formulary_lob_id: state?.application?.formulary_lob_id, //comme- 4, medicare-1 , medicate-2, exchnage -3 
         formulary_type_id: state?.application?.formulary_type_id,
         descriptions: state.stepTherapyReducer.descriptions,
+        additionalCriteria: state.additionalCriteria,
     }
 }
 
@@ -96,9 +97,18 @@ class GPM extends React.Component<any, any>{
         let apiDetails= {};
         apiDetails["lob_type"] = this.props.formulary_lob_id;
         apiDetails['pathParams'] = param;
-
+        let isPopUpView =this.props.isPopUpView;
         this.props.getStGrouptDescriptionVersions(apiDetails).then((json) => {
             let tmpData = json.payload?.data;
+            if (isPopUpView){
+                debugger;
+                tmpData = tmpData.filter((obj)=>{
+                  debugger;
+                  if (obj.is_setup_complete){
+                    return obj;
+                  }
+                })
+              }
             let dataLength = tmpData&&tmpData.length?tmpData.length:0
             let latestVerion = dataLength>0 ? tmpData[dataLength - 1].id_st_group_description : 0
             
@@ -106,7 +116,21 @@ class GPM extends React.Component<any, any>{
             apiDetails["lob_type"] = this.props.formulary_lob_id;
             apiDetails['pathParams'] = latestVerion;
 
-            this.props.getStGrouptDescription(apiDetails)
+            this.props.getStGrouptDescription(apiDetails).then((json) => {
+                if (json.payload && json.payload.code === "200") {
+                  let payload: any = {
+                    additionalCriteriaObject: this.props.additionalCriteria
+                      .additionalCriteriaObject,
+                    additionalCriteriaBody: this.props.additionalCriteria
+                      .additionalCriteriaBody,
+                    populateGrid: this.props.additionalCriteria.populateGrid,
+                    closeDialog: this.props.additionalCriteria.closeDialog,
+                    listItemStatus: { ...this.props.additionalCriteria.listItemStatus },
+                  };
+                  payload.additionalCriteriaBody = json.payload.data["um_criteria"];
+                  this.props.setAdditionalCriteria(payload);
+                }
+              });
             this.props.getSTGroupDetails({
                 formulary_id: this.props.formulary_id,
                 current_group_id: param,
@@ -144,9 +168,16 @@ class GPM extends React.Component<any, any>{
         let apiDetails= {};
         apiDetails["lob_type"] = this.props.formulary_lob_id;
         apiDetails['pathParams'] = this.props?.client_id + '?entity_id='+this.props?.formulary_id;
-
+        let isPopUpView = this.props.isPopUpView;
         this.props.getStGrouptDescriptions(apiDetails).then((json) => {
             let tmpData = json.payload.data;
+            if (isPopUpView){
+                tmpData = tmpData.filter((obj)=>{
+                  if (obj.is_setup_complete){
+                    return obj;
+                  }
+                })
+              }
             var result = tmpData.map(function (el) {
                 var element = {};
                 element["id"] = el.id_st_group_description;
@@ -158,6 +189,14 @@ class GPM extends React.Component<any, any>{
             this.setState({
                 groupsData: result,
             });
+            let completed_groups = result.filter((obj) => {
+                if (!obj.is_archived){
+                  return obj;
+                }
+              });
+              if (completed_groups.length>0){
+                this.selectGroup(completed_groups[0].id,completed_groups[0].status);
+              }
         });
         this.props.getStTypes(this.props.formulary_id).then((json) => {
             this.setState({
@@ -178,6 +217,14 @@ class GPM extends React.Component<any, any>{
                 groupProp= "id_mcr_base_st_group_description"
             }else if (this.props.formulary_lob_id==4){
                 groupProp = "id_st_group_description"; 
+            }
+            let isPopUpView = this.props.isPopUpView;
+            if (isPopUpView){
+                tmpData = tmpData.filter((obj)=>{
+                if (obj.is_setup_complete){
+                    return obj;
+                }
+                })
             }
             var result = tmpData.map(function (el) {
                 var element = {};
@@ -210,9 +257,11 @@ class GPM extends React.Component<any, any>{
                         <div className="group-des">
                             <div className="panel header">
                                 <span>GROUP DESCRIPTION</span>
+                                {(!this.props.isPopUpView) && (
                                 <Box display="flex" justifyContent="flex-end">
                                     <Button label="+ Add New" className="Button" onClick={this.addNewGroup} />
                                 </Box>
+                                )}
                             </div>
                             <div className="inner-container">
                                 <div className="search-input">
@@ -256,8 +305,12 @@ class GPM extends React.Component<any, any>{
                                 </div>
                             </div>
                         </div>
-                        {this.state.newGroup ? <NewGroup tooltip={this.state.tooltip} formType={1} editMode={true}/> : (
-                            <NewGroup tooltip={this.state.tooltip} formType={0} title={'NEW GROUP DESCRIPTION'} editMode={false}/>
+                        {this.state.newGroup ? <NewGroup 
+                        tooltip={this.state.tooltip} formType={1} 
+                        editMode={true} isPopUpView={this.props.isPopUpView} selectGroupDescriptionClick={this.props.selectGroupDescriptionClick} /> : (
+                            <NewGroup tooltip={this.state.tooltip} formType={0} 
+                            title={'NEW GROUP DESCRIPTION'} editMode={false} 
+                            isPopUpView={this.props.isPopUpView} selectGroupDescriptionClick={this.props.selectGroupDescriptionClick} />
                         )}
                     </div>
 

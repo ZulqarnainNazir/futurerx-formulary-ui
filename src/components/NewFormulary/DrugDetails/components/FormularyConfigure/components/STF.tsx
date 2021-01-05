@@ -7,17 +7,7 @@ import Box from "@material-ui/core/Box";
 import Button from "../../../../../shared/Frx-components/button/Button";
 import DropDown from "../../../../../shared/Frx-components/dropdown/DropDownMap";
 import RadioButton from "../../../../../shared/Frx-components/radio-button/RadioButton";
-import {
-  getStSummary,
-  getStGrouptDescriptions,
-  getStGrouptDescription,
-  getStTypes,
-  getDrugLists,
-  postFormularyDrugST,
-  getStGrouptDescriptionVersions,
-  postApplyFormularyDrugST,
-  getLobFormularies,
-} from "../../../../../../redux/slices/formulary/stepTherapy/stepTherapyActionCreation";
+
 import "./STF.scss";
 import * as constants from "../../../../../../api/http-commons";
 import FrxDrugGridContainer from "../../../../../shared/FrxGrid/FrxDrugGridContainer";
@@ -34,6 +24,18 @@ import DialogPopup from "../../../../../shared/FrxDialogPopup/FrxDialogPopup";
 import CloneFormularyPopup from "../../FormularySetUp/components/CloneFormularyPopup";
 import { ReactComponent as EditIcon } from "../../../../../../assets/icons/EditIcon.svg";
 import { setAdditionalCriteria } from "../../../../../../redux/slices/formulary/advancedSearch/additionalCriteriaSlice";
+import {
+  getStSummary,
+  getStGrouptDescriptions,
+  getStGrouptDescription,
+  getStTypes,
+  getDrugLists,
+  postFormularyDrugST,
+  getStGrouptDescriptionVersions,
+  postApplyFormularyDrugST,
+  getLobFormularies,
+} from "../../../../../../redux/slices/formulary/stepTherapy/stepTherapyActionCreation";
+import GPM from "./GPM";
 
 function mapDispatchToProps(dispatch) {
   return {
@@ -114,7 +116,9 @@ class STF extends React.Component<any, any> {
     searchNames: Array(),
     filterPlaceholder: "Search",
     searchValue: "",
-    searchData: Array()
+    searchData: Array(),
+    showStGroupDescription: false,
+    selectedGroupDescriptionObj:{},
   };
 
   // onSelectedTableRowChanged = (selectedRowKeys) => {
@@ -282,14 +286,21 @@ class STF extends React.Component<any, any> {
       this.setState({ tierGridContainer: false });
     }
   }
-  dropDownSelectHandlerGroupDescription = (value, event) => {
-    let tmp_index = event.key;
-    let tmp_value = event.value;
+  dropDownSelectHandlerGroupDescription = (tmp_value, event) => {
+    // let tmp_index = event.key;
+    // let tmp_value = event.value;
 
     this.setState({ selectedGroupDescription: tmp_value });
     let apiDetails = {};
     apiDetails["lob_type"] = this.props.formulary_lob_id;
     apiDetails["pathParams"] = "/" + tmp_value;
+    this.state.showStGroupDescription=false;
+    let selected = this.state.stGroupDescription.filter(
+      (obj) => obj[this.state.groupDescriptionProp] == tmp_value
+    )[0];
+    this.setState({
+      selectedGroupDescriptionObj : selected
+    });
     this.props.getStGrouptDescriptionVersions(apiDetails).then((json) => {
       let data = json.payload.data;
       let ftype = "";
@@ -442,13 +453,15 @@ class STF extends React.Component<any, any> {
         let selected = this.state.stGroupDescription.filter(
           (obj) => obj[this.state.groupDescriptionProp] == this.state.selectedGroupDescription
         )[0];
+        debugger;
         var gridData = tmpData.map(function (el) {
           var element = Object.assign({}, el);
           data.push(element);
           let gridItem = {};
           gridItem["id"] = count;
           gridItem["key"] = count;
-          if (selected && ["st_group_description_name"] === element.st_group_description) {
+          debugger;
+          if (selected && selected["st_group_description_name"] === element.st_group_description) {
             //console.log("element value tier ", selectedGroup, element.pa_group_description);
             gridItem["isChecked"] = true;
             gridItem["isDisabled"] = true;
@@ -795,14 +808,25 @@ class STF extends React.Component<any, any> {
                   <label>
                     ST GROUP DESCRIPTION<span className="astrict">*</span>
                   </label>
-                  <DropDown
+                  {/* <DropDown
                     options={this.state.stGroupDescription}
                     valueProp={this.state.groupDescriptionProp}
                     dispProp="text"
                     onSelect={this.dropDownSelectHandlerGroupDescription}
                     disabled={this.props.configureSwitch}
                     value={this.state.selectedGroupDescription}
-                  />
+                  /> */}
+
+                  <div className="input-element">
+                    <div className="bordered pointer bg-green">
+                      <span onClick={(e) => {this.setState({ showStGroupDescription: true });}} className="inner-font">
+                        {this.state.selectedGroupDescriptionObj["st_group_description_name"]
+                          ? this.state.selectedGroupDescriptionObj["st_group_description_name"]
+                          : "Select Group Description"}
+                      </span>
+                      <EditIcon onClick={(e) =>{this.setState({ showStGroupDescription: true });}} className={"hide-edit-icon"} />
+                    </div>
+                  </div>
                 </div>
 
                 <div className="group mt-10">
@@ -1016,7 +1040,28 @@ class STF extends React.Component<any, any> {
             />
           </DialogPopup>
         ) : null}
-
+        {this.state.showStGroupDescription && (
+          <DialogPopup
+            positiveActionText=""
+            negativeActionText="Close"
+            title={"Select Group Description"}
+            handleClose={() => {
+              this.setState({
+                showStGroupDescription: !this.state.showStGroupDescription,
+              });
+            }}
+            handleAction={() => {}}
+            open={this.state.showStGroupDescription}
+            showActions={false}
+            className=""
+            height="80%"
+            width="90%"
+          >
+            {/* <SelectFormularyPopUp formularyToggle={this.formularyToggle} /> */}
+            {/* <CloneFormularyPopup type="medicare" /> */}
+            <GPM isPopUpView={true} selectGroupDescriptionClick={this.dropDownSelectHandlerGroupDescription} />
+          </DialogPopup>
+        )}
         <ToastContainer />
       </div>
     );
