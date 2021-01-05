@@ -19,7 +19,7 @@ import { dateFilters, textFilters } from "../../../../../utils/grid/filters";
 
 export const getDrugDetailsColumnPOS: () => Column<any>[] = () => {
   return [
-		{
+    {
       position: 1,
       textCase: "upper",
       pixelWidth: 50,
@@ -28,7 +28,7 @@ export const getDrugDetailsColumnPOS: () => Column<any>[] = () => {
       fixed: "left",
       displayTitle: "",
       headerCellSelection: true,
-      hidden: false
+      hidden: false,
     },
     {
       position: 2,
@@ -537,7 +537,7 @@ export const getDrugDetailsColumnFFFCOMM: () => Column<any>[] = () => {
 
 export const getDrugDetailsColumnPT: () => Column<any>[] = () => {
   return [
-		{
+    {
       position: 1,
       textCase: "upper",
       pixelWidth: 50,
@@ -546,7 +546,7 @@ export const getDrugDetailsColumnPT: () => Column<any>[] = () => {
       fixed: "left",
       displayTitle: "",
       headerCellSelection: true,
-      hidden: false
+      hidden: false,
     },
     {
       position: 2,
@@ -890,7 +890,7 @@ export const getDrugDetailsColumnOTHER: () => Column<any>[] = () => {
 
 export const getDrugDetailsColumnPR: () => Column<any>[] = () => {
   return [
-		{
+    {
       position: 1,
       textCase: "upper",
       pixelWidth: 50,
@@ -899,7 +899,7 @@ export const getDrugDetailsColumnPR: () => Column<any>[] = () => {
       fixed: "left",
       displayTitle: "",
       headerCellSelection: true,
-      hidden: false
+      hidden: false,
     },
     {
       position: 2,
@@ -1085,7 +1085,7 @@ export const getDrugDetailsColumnPR: () => Column<any>[] = () => {
 
 export const getDrugDetailsColumnPN: () => Column<any>[] = () => {
   return [
-		{
+    {
       position: 1,
       textCase: "upper",
       pixelWidth: 50,
@@ -1094,7 +1094,7 @@ export const getDrugDetailsColumnPN: () => Column<any>[] = () => {
       fixed: "left",
       displayTitle: "",
       headerCellSelection: true,
-      hidden: false
+      hidden: false,
     },
     {
       position: 2,
@@ -1280,7 +1280,7 @@ export const getDrugDetailsColumnPN: () => Column<any>[] = () => {
 
 export const getDrugDetailsColumnICD: () => Column<any>[] = () => {
   return [
-		{
+    {
       position: 1,
       textCase: "upper",
       pixelWidth: 50,
@@ -1289,7 +1289,7 @@ export const getDrugDetailsColumnICD: () => Column<any>[] = () => {
       fixed: "left",
       displayTitle: "",
       headerCellSelection: true,
-      hidden: false
+      hidden: false,
     },
     {
       position: 2,
@@ -1488,7 +1488,7 @@ export const getDrugDetailsColumnICD: () => Column<any>[] = () => {
 
 export const getDrugDetailsColumnGL: () => Column<any>[] = () => {
   return [
-		{
+    {
       position: 1,
       textCase: "upper",
       pixelWidth: 50,
@@ -1497,7 +1497,7 @@ export const getDrugDetailsColumnGL: () => Column<any>[] = () => {
       fixed: "left",
       displayTitle: "",
       headerCellSelection: true,
-      hidden: false
+      hidden: false,
     },
     {
       position: 2,
@@ -1672,7 +1672,7 @@ export const getDrugDetailsColumnGL: () => Column<any>[] = () => {
 
 export const getDrugDetailsColumnAL: () => Column<any>[] = () => {
   return [
-		{
+    {
       position: 1,
       textCase: "upper",
       pixelWidth: 50,
@@ -1681,7 +1681,7 @@ export const getDrugDetailsColumnAL: () => Column<any>[] = () => {
       fixed: "left",
       displayTitle: "",
       headerCellSelection: true,
-      hidden: false
+      hidden: false,
     },
     {
       position: 2,
