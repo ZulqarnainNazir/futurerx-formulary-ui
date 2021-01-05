@@ -118,6 +118,17 @@ class CategoryClass extends React.Component<any, any> {
     addedFormularyDrugs: Array(),
     customCategory: false,
     customClass: false,
+    selectedRowKeys: Array(),
+    index: 0,
+    limit: 10,
+    sort_by: Array(),
+    hiddenColumns: Array(),
+    dataCount: 0,
+    gridSingleSortInfo: null,
+    isGridSingleSorted: false,
+    gridMultiSortedInfo: [],
+    isGridMultiSorted: false,
+    quickFilter: Array(),
   };
 
   static contextType = FormularyDetailsContext;
@@ -158,6 +169,157 @@ class CategoryClass extends React.Component<any, any> {
       });
   };
 
+  onSettingsIconHandler = (hiddenColumn, visibleColumn) => {
+    console.log(
+      "Settings icon handler: Hidden" +
+      JSON.stringify(hiddenColumn) +
+      " Visible:" +
+      JSON.stringify(visibleColumn)
+    );
+    if (hiddenColumn && hiddenColumn.length > 0) {
+      let hiddenColumnKeys = hiddenColumn.map(column => column["key"]);
+      this.setState({
+        hiddenColumns: hiddenColumnKeys
+      });
+    }
+  };
+  onApplyFilterHandler = filters => {
+    console.log("filtering from be:" + (JSON.stringify(filters)));
+    //this.state.filter = Array();
+    const fetchedKeys = Object.keys(filters);
+    if (fetchedKeys && fetchedKeys.length > 0) {
+      fetchedKeys.map(fetchedProps => {
+        if (filters[fetchedProps]) {
+          const fetchedOperator =
+            filters[fetchedProps][0].condition === "is like"
+              ? "is_like"
+              : filters[fetchedProps][0].condition === "is not"
+                ? "is_not"
+                : filters[fetchedProps][0].condition === "is not like"
+                  ? "is_not_like"
+                  : filters[fetchedProps][0].condition === "does not exist"
+                    ? "does_not_exist"
+                    : filters[fetchedProps][0].condition;
+          const fetchedValues =
+            filters[fetchedProps][0].value !== ""
+              ? [filters[fetchedProps][0].value.toString()]
+              : [];
+          this.state.filter.push({
+            prop: fetchedProps,
+            operator: fetchedOperator,
+            values: fetchedValues
+          });
+        }
+      });
+      console.log("Filters:" + JSON.stringify(this.state.filter));
+      if (this.props.advancedSearchBody) {
+        this.populateGridData(this.props.advancedSearchBody);
+      } else {
+        this.populateGridData();
+      }
+    }
+  };
+
+  /**
+   * the selected sorter details will be availbale here to mak api call
+   * @param key the column key
+   * @param order the sorting order : 'ascend' | 'descend'
+   */
+  onApplySortHandler = (key, order, sortedInfo) => {
+    console.log("sort details ", key, order);
+    this.state.sort_by = Array();
+    if (order) {
+      let sortOrder = order === 'ascend' ? 'asc' : 'desc';
+      this.state.sort_by = this.state.sort_by.filter(keyPair => keyPair['key'] !== key);
+      this.state.sort_by.push({ key: key, value: sortOrder });
+    }
+    this.setState({
+      gridSingleSortInfo: sortedInfo,
+      isGridSingleSorted: true,
+      isGridMultiSorted: false,
+      gridMultiSortedInfo: []
+    });
+    if (this.props.advancedSearchBody) {
+      this.populateGridData(this.props.advancedSearchBody);
+    } else {
+      this.populateGridData();
+    }
+  };
+  applyMultiSortHandler = (sorter, multiSortedInfo) => {
+    console.log('Multisort info:' + JSON.stringify(sorter));
+    this.setState({
+      isGridMultiSorted: true,
+      isGridSingleSorted: false,
+      gridMultiSortedInfo: multiSortedInfo,
+      gridSingleSortInfo: null,
+    })
+
+    if (sorter && sorter.length > 0) {
+      let uniqueKeys = Array();
+      let filteredSorter = Array();
+      sorter.map(sortInfo => {
+        if (uniqueKeys.includes(sortInfo['columnKey'])) {
+
+        } else {
+          filteredSorter.push(sortInfo);
+          uniqueKeys.push(sortInfo['columnKey']);
+        }
+      });
+      filteredSorter.map(sortInfo => {
+        let sortOrder = sortInfo['order'] === 'ascend' ? 'asc' : 'desc';
+        this.state.sort_by = this.state.sort_by.filter(keyPair => keyPair['key'] !== sortInfo['columnKey']);
+        this.state.sort_by.push({ key: sortInfo['columnKey'], value: sortOrder });
+      })
+    }
+
+    if (this.props.advancedSearchBody) {
+      this.populateGridData(this.props.advancedSearchBody);
+    } else {
+      this.populateGridData();
+    }
+  };
+
+  onMultiSortToggle = (isMultiSortOn: boolean) => {
+    console.log("is Multi sort on ", isMultiSortOn);
+    this.state.sort_by = Array();
+    this.state.gridSingleSortInfo = null;
+    this.state.gridMultiSortedInfo = [];
+    this.state.isGridMultiSorted = isMultiSortOn;
+    this.state.isGridSingleSorted = false;
+
+    if (this.props.advancedSearchBody) {
+      this.populateGridData(this.props.advancedSearchBody);
+    } else {
+      this.populateGridData();
+    }
+  };
+  onPageSize = pageSize => {
+    console.log("Page size load");
+    this.state.limit = pageSize;
+    if (this.props.advancedSearchBody) {
+      this.populateGridData(this.props.advancedSearchBody);
+    } else {
+      this.populateGridData();
+    }
+  };
+  onGridPageChangeHandler = (pageNumber: any) => {
+    console.log("Page change load");
+    this.state.index = (pageNumber - 1) * this.state.limit;
+    if (this.props.advancedSearchBody) {
+      this.populateGridData(this.props.advancedSearchBody);
+    } else {
+      this.populateGridData();
+    }
+  };
+  onClearFilterHandler = () => {
+    this.state.filter = Array();
+    if (this.props.advancedSearchBody) {
+      this.populateGridData(this.props.advancedSearchBody);
+    } else {
+      this.populateGridData();
+    }
+  };
+
   populateGridData = (searchBody = null) => {
     console.log("Populate grid data is called");
     let apiDetails = {};
@@ -166,10 +328,10 @@ class CategoryClass extends React.Component<any, any> {
       this.props?.formulary_id + "/" + this.state.lobCode;
     apiDetails["keyVals"] = [
       { key: commonConstants.KEY_ENTITY_ID, value: this.props?.formulary_id },
-      { key: commonConstants.KEY_INDEX, value: 0 },
-      { key: commonConstants.KEY_LIMIT, value: 10 },
+      { key: commonConstants.KEY_INDEX, value: this.state.index },
+      { key: commonConstants.KEY_LIMIT, value: this.state.limit },
     ];
-    apiDetails["messageBody"] = { filter: this.state.filter };
+    apiDetails["messageBody"] = {};
 
     if (searchBody) {
       apiDetails["messageBody"] = Object.assign(
@@ -177,6 +339,36 @@ class CategoryClass extends React.Component<any, any> {
         searchBody
       );
     }
+
+    let allFilters = Array();
+    let filterProps = Array();
+    this.state.filter.map(filterInfo => {
+      allFilters.push(filterInfo);
+      filterProps.push(filterInfo['prop']);
+    });
+
+    this.state.quickFilter.map(filterInfo => {
+      if (!filterProps.includes(filterInfo['prop']))
+        allFilters.push(filterInfo);
+    });
+
+    apiDetails['messageBody']['filter'] = allFilters;
+
+
+    if (this.state.sort_by && this.state.sort_by.length > 0) {
+      let keys = Array();
+      let values = Array();
+
+      this.state.sort_by.map(keyPair => {
+        keys.push(keyPair['key']);
+        values.push(keyPair['value']);
+      });
+
+      apiDetails['messageBody']['sort_by'] = keys;
+      apiDetails['messageBody']['sort_order'] = values;
+    }
+
+
     const thisRef = this;
 
     const drugGridData = this.props
@@ -193,33 +385,33 @@ class CategoryClass extends React.Component<any, any> {
             let gridItem = {};
             gridItem["id"] = count;
             gridItem["key"] = count;
-            gridItem["fileType"] = element.file_type
+            gridItem["file_type"] = element.file_type
               ? "" + element.file_type
               : "";
-            gridItem["labelName"] = element.drug_label_name
+            gridItem["drug_label_name"] = element.drug_label_name
               ? "" + element.drug_label_name
               : "";
             gridItem["ndc"] = "";
             if (thisRef.props.formulary_lob_id == 1) {
               gridItem["rxcui"] = element.rxcui ? "" + element.rxcui : "";
             } else {
-              gridItem["ddid"] = element.drug_descriptor_identifier
+              gridItem["drug_descriptor_identifier"] = element.drug_descriptor_identifier
                 ? "" + element.drug_descriptor_identifier
                 : "";
             }
-            gridItem["gpi"] = element.generic_product_identifier
+            gridItem["generic_product_identifier"] = element.generic_product_identifier
               ? "" + element.generic_product_identifier
               : "";
-            gridItem["databaseCategory"] = element.database_category
+            gridItem["database_category"] = element.database_category
               ? "" + element.database_category
               : "";
-            gridItem["databaseClass"] = element.database_class
+            gridItem["database_class"] = element.database_class
               ? "" + element.database_class
               : "";
-            gridItem["overrideCategory"] = element.override_category
+            gridItem["override_category"] = element.override_category
               ? "" + element.override_category
               : "";
-            gridItem["overRideClass"] = element.override_class
+            gridItem["override_class"] = element.override_class
               ? "" + element.override_class
               : "";
             count++;
@@ -230,6 +422,7 @@ class CategoryClass extends React.Component<any, any> {
             columns: columns,
             data: data,
             filteredData: gridData,
+            dataCount: json.payload.count,
           });
         }
       });
@@ -238,7 +431,7 @@ class CategoryClass extends React.Component<any, any> {
   onSearchValueChanges = (value, event) => {
     console.log("Search value changed:" + event.value + " " + event.key);
     this.state.searchValue = value;
-    this.state.filter = [];
+    this.state.quickFilter = [];
     if (
       this.state.searchData &&
       Array.isArray(this.state.searchData) &&
@@ -248,7 +441,7 @@ class CategoryClass extends React.Component<any, any> {
         let propData = this.state.searchData[event.key];
         switch (propData.key) {
           case "drug_descriptor_identifier":
-            this.state.filter.push({
+            this.state.quickFilter.push({
               prop: "drug_descriptor_identifier",
               operator: "is_like",
               values: [propData.value],
@@ -256,7 +449,7 @@ class CategoryClass extends React.Component<any, any> {
             break;
 
           case "rxcui":
-            this.state.filter.push({
+            this.state.quickFilter.push({
               prop: "rxcui",
               operator: "is_like",
               values: [propData.value],
@@ -264,7 +457,7 @@ class CategoryClass extends React.Component<any, any> {
             break;
 
           case "ndc":
-            this.state.filter.push({
+            this.state.quickFilter.push({
               prop: "ndc",
               operator: "is_like",
               values: [propData.value],
@@ -272,7 +465,7 @@ class CategoryClass extends React.Component<any, any> {
             break;
 
           case "generic_product_identifier":
-            this.state.filter.push({
+            this.state.quickFilter.push({
               prop: "generic_product_identifier",
               operator: "is_like",
               values: [propData.value],
@@ -280,7 +473,7 @@ class CategoryClass extends React.Component<any, any> {
             break;
 
           case "drug_label_name":
-            this.state.filter.push({
+            this.state.quickFilter.push({
               prop: "drug_label_name",
               operator: "is_like",
               values: [propData.value],
@@ -288,7 +481,7 @@ class CategoryClass extends React.Component<any, any> {
             break;
 
           case "database_class":
-            this.state.filter.push({
+            this.state.quickFilter.push({
               prop: "database_class",
               operator: "is_like",
               values: [propData.value],
@@ -296,7 +489,7 @@ class CategoryClass extends React.Component<any, any> {
             break;
 
           case "database_category":
-            this.state.filter.push({
+            this.state.quickFilter.push({
               prop: "database_category",
               operator: "is_like",
               values: [propData.value],
@@ -309,7 +502,7 @@ class CategoryClass extends React.Component<any, any> {
   };
 
   clearSearchFilter = (e) => {
-    this.state.filter = Array();
+    this.state.quickFilter = Array();
     this.state.searchData = Array();
     this.state.searchNames = Array();
     this.state.filterPlaceholder = "Search";
@@ -440,7 +633,7 @@ class CategoryClass extends React.Component<any, any> {
     this.setState({ materialPopupInd: false });
     return true;
   };
-  handleAddFileClick = () => {};
+  handleAddFileClick = () => { };
 
   handlePopupButtonClick = (popupName, title) => {
     if (popupName === "override") {
@@ -540,6 +733,61 @@ class CategoryClass extends React.Component<any, any> {
       });
     }
   };
+
+  rowSelectionChangeFromCell = (
+    key: string,
+    selectedRow: any,
+    isSelected: boolean
+  ) => {
+    console.log("data row ", selectedRow, isSelected, selectedRow["isDisabled"]);
+    if (!selectedRow["isDisabled"]) {
+      if (isSelected) {
+        const data = this.state.filteredData.map((d: any) => {
+          if (d.key === selectedRow.key) {
+            d["isChecked"] = true;
+          }
+          // else d["isChecked"] = false;
+          return d;
+        });
+        if (!this.state.selectedRowKeys.includes(selectedRow.key)) {
+          this.state.selectedRowKeys.push(selectedRow.key);
+        }
+        this.rowSelectionChange(this.state.selectedRowKeys);
+        this.setState({filteredData: data});
+      } else {
+        const data = this.state.filteredData.map((d: any) => {
+          if (d.key === selectedRow.key) {
+            d["isChecked"] = false;
+          }
+          // else d["isChecked"] = false;
+          return d;
+        });
+        this.state.selectedRowKeys = this.state.selectedRowKeys.filter(rowKey => rowKey !== selectedRow.key);
+        this.rowSelectionChange(this.state.selectedRowKeys);
+        this.setState({filteredData: data});
+      }
+    }
+  };
+
+  onSelectAllRows = (isSelected: boolean) => {
+    const selectedRowKeys: number[] = [];
+    this.state.selectedRowKeys = Array();
+    const data = this.state.filteredData.map((d: any) => {
+      if (!d["isDisabled"]) {
+        d["isChecked"] = isSelected;
+        if (isSelected) {
+          selectedRowKeys.push(d["key"]);
+          this.state.selectedRowKeys.push(d["key"]);
+        } else {
+
+        }
+      }
+      return d;
+    });
+    this.rowSelectionChange(selectedRowKeys);
+    this.setState({filteredData: data});
+  };
+
   onOverrideCategoryClass = (category, classValue) => {
     this.state.overriddenCategory = category;
     this.state.overriddenClass = classValue;
@@ -608,7 +856,7 @@ class CategoryClass extends React.Component<any, any> {
                           onSearch={this.onInputValueChanged}
                           onSelect={this.onSearchValueChanges}
                         />
-                        {this.state.filter.length > 0 && (
+                        {this.state.quickFilter.length > 0 && (
                           <span
                             style={{ marginLeft: 10 }}
                             onClick={this.clearSearchFilter}
@@ -636,30 +884,49 @@ class CategoryClass extends React.Component<any, any> {
                       </div>
                     </div>
                   </div>
-                  <FrxGridContainer
+                  <FrxDrugGridContainer
                     className="umair"
+                    enableSettings
+                    settingsWidth={50}
                     enableSearch={false}
                     enableColumnDrag={false}
                     onSearch={this.handleSearch}
                     fixedColumnKeys={[]}
                     pagintionPosition="topRight"
                     gridName=""
-                    enableSettings={false}
                     isFetchingData={this.state.isFetchingData}
                     columns={this.state.columns}
                     isPinningEnabled={false}
-                    scroll={{ x: 1500, y: 377 }}
-                    enableResizingOfColumns={false}
+                    scroll={{ x: 2000, y: 377 }}
+                    enableResizingOfColumns
                     data={this.state.filteredData}
-                    rowSelection={{
-                      columnWidth: 50,
-                      fixed: true,
-                      type: "checkbox",
-                      onChange: this.rowSelectionChange,
-                    }}
-                    settingsTriDotClick={() => {
-                      console.log("object");
-                    }}
+                    rowSelectionChangeFromCell={this.rowSelectionChangeFromCell}
+                    onSelectAllRows={this.onSelectAllRows}
+                    customSettingIcon={"FILL-DOT"}
+                    totalRowsCount={this.state.dataCount}
+                    getPerPageItemSize={this.onPageSize}
+                    onGridPageChangeHandler={this.onGridPageChangeHandler}
+                    clearFilterHandler={this.onClearFilterHandler}
+                    applyFilter={this.onApplyFilterHandler}
+                    applySort={this.onApplySortHandler}
+                    isSingleSorted={this.state.isGridSingleSorted}
+                    sortedInfo={this.state.gridSingleSortInfo}
+                    applyMultiSort={this.applyMultiSortHandler}
+                    isMultiSorted={this.state.isGridMultiSorted}
+                    multiSortedInfo={this.state.gridMultiSortedInfo}
+                    onMultiSortToggle={this.onMultiSortToggle}
+                    getColumnSettings={this.onSettingsIconHandler}
+                    pageSize={this.state.limit}
+                    selectedCurrentPage={this.state.index / this.state.limit + 1}
+                  /*rowSelection={{
+                    columnWidth: 50,
+                    fixed: true,
+                    type: "checkbox",
+                    onChange: this.rowSelectionChange,
+                  }}
+                  settingsTriDotClick={() => {
+                    console.log("object");
+                  }}*/
                   />
                 </div>
               </Grid>
@@ -688,8 +955,8 @@ class CategoryClass extends React.Component<any, any> {
               onOverrideClass={this.onOverrideClass}
             />
           ) : (
-            ""
-          )}
+              ""
+            )}
         </DialogPopup>
         {this.state.isSearchOpen ? (
           <AdvanceSearchContainer
