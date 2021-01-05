@@ -822,13 +822,6 @@ class PaReplace extends React.Component<any, any> {
               </Space>
             </Col>
           </Row>
-          <button
-            onClick={() => {
-              this.setState({ showPaGroupDescription: true });
-            }}
-          >
-            Clicke me!
-          </button>
           {isAdditionalCriteriaOpen ? (
             <AdvanceSearchContainer
               openPopup={isAdditionalCriteriaOpen}
