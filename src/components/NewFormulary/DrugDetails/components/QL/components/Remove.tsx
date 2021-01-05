@@ -122,6 +122,7 @@ class Remove extends Component<any, State> {
             onSearch={() => {}}
             fixedColumnKeys={[]}
             pagintionPosition="topRight"
+            hidePagination
             gridName="DRUG GRID"
             enableSettings={false}
             columns={QlRemoveColumns()}
