@@ -18,18 +18,20 @@ const FillLimitSettings = (props) => {
       <Grid container>
         <Grid item xs={4}>
           <div className="input-group">
-            <Label required={false}>fills allowed</Label>
+            <Label required={true}>fills allowed</Label>
             {/* <DropDown options={[1, 2, 3]} /> */}
-            <Input
-              className="formulary-list-search"
-              // placeholder="Search"
-              type="number"
-              name="fillsAllowed"
-              value={fillsAllowed}
-              onChange={props.handleOnChange}
-              disableUnderline={true}
-              disabled={props.isViweAll}
-            />
+            <div>
+              <Input
+                className="formulary-list-search"
+                // placeholder="Search"
+                type="number"
+                name="fillsAllowed"
+                value={fillsAllowed}
+                onChange={props.handleOnChange}
+                disableUnderline={true}
+                disabled={props.isViweAll}
+              />
+            </div>
           </div>
         </Grid>
         <Grid item xs={4}>

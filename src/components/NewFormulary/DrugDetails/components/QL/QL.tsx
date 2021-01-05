@@ -5,6 +5,7 @@ import { Grid } from "@material-ui/core";
 import FrxMiniTabs from "../../../../shared/FrxMiniTabs/FrxMiniTabs";
 import Button from "../../../../shared/Frx-components/button/Button";
 import FrxDrugGridContainer from "../../../../shared/FrxGrid/FrxDrugGridContainer";
+import FrxGridContainer from "../../../../shared/FrxGrid/FrxGridContainer"; // "../../../shared/FrxGrid/FrxGridContainer";
 import FrxDrugGrid from "../../../../shared/FrxGrid/FrxDrugGrid";
 import {
   getTapList,
@@ -79,6 +80,7 @@ interface tabsState {
   quantityAndFillLimitObject: any; //newParamterType;
   selectedDrugs: any;
   drugData: any;
+  drugCount: number;
   selectedCriteria: any;
   errorObject: any;
   selectedTab: string;
@@ -87,6 +89,15 @@ interface tabsState {
   additionalCriteriaState: null;
   is_additional_criteria_defined: boolean;
   isLoading: boolean;
+  fixedSelectedRows: number[];
+  selectedRowKeys: number[];
+  gridSingleSortInfo: any;
+  isGridSingleSorted: boolean;
+  gridMultiSortedInfo: any[];
+  isGridMultiSorted: boolean;
+  hiddenColumns: any;
+  filter: any;
+  sort_by: any;
 }
 
 class Tier extends React.Component<any, tabsState> {
@@ -105,7 +116,7 @@ class Tier extends React.Component<any, tabsState> {
     panelGridValue: [],
     drugGridData: [],
     quantityAndFillLimitObject: {},
-    selectedDrugs: [],
+    selectedDrugs: Array(),
     drugData: [],
     selectedCriteria: [],
     selectedTab: constants.TYPE_REPLACE,
@@ -115,6 +126,20 @@ class Tier extends React.Component<any, tabsState> {
     is_additional_criteria_defined: false,
     isLoading: false,
     errorObject: {},
+    fixedSelectedRows: Array(),
+    selectedRowKeys: Array(),
+    drugCount: 0,
+
+    index: 0,
+    limit: 10,
+    filter: Array(),
+    sort_by: Array(),
+    hiddenColumns: Array(),
+    dataCount: 0,
+    gridSingleSortInfo: null,
+    isGridSingleSorted: false,
+    gridMultiSortedInfo: [],
+    isGridMultiSorted: false,
   };
 
   onClickTab = (selectedTabIndex: number) => {
@@ -132,6 +157,12 @@ class Tier extends React.Component<any, tabsState> {
       drugGridContainer: false,
       quantityAndFillLimitObject: {},
       errorObject: {},
+      filter: [],
+      sort_by: [],
+      gridSingleSortInfo: null,
+      gridMultiSortedInfo: [],
+      isGridMultiSorted: false,
+      isGridSingleSorted: false,
     });
   };
 
@@ -173,24 +204,51 @@ class Tier extends React.Component<any, tabsState> {
     console.log(quantityAndFillLimitObject);
 
     if (Object.keys(quantityAndFillLimitObject).length > 0) {
+      const {
+        quantity,
+        days,
+        periodOfTime,
+        fillsAllowed,
+        fillLimitPeriodOfTime,
+      } = quantityAndFillLimitObject;
+
+      // if (
+      //   quantity != "" ||
+      //   days !== "" ||
+      //   periodOfTime != "" ||
+      //   fillsAllowed !== "" ||
+      //   fillLimitPeriodOfTime != ""
+      // ) {
+      //   return true;
+      // } else {
+      //   return false;
+      // }
       if (
         quantityAndFillLimitObject.quantity == "" ||
         quantityAndFillLimitObject.quantity == undefined
       ) {
-        tempErr = {
-          quantity: true,
-        };
-        this.setState({ errorObject: tempErr });
-        return false;
-      } else if (
-        quantityAndFillLimitObject.days == "" ||
-        quantityAndFillLimitObject.days == undefined
-      ) {
-        tempErr = {
-          days: true,
-        };
-        this.setState({ errorObject: tempErr });
-        return false;
+        if (
+          days !== "" ||
+          periodOfTime != "" ||
+          fillsAllowed !== "" ||
+          fillLimitPeriodOfTime != ""
+        ) {
+          tempErr = {
+            quantity: false,
+            days: false,
+          };
+          this.setState({ errorObject: tempErr });
+          return true;
+        }
+        // } else if (
+        //   quantityAndFillLimitObject.days == "" ||
+        //   quantityAndFillLimitObject.days == undefined
+        // ) {
+        //   tempErr = {
+        //     days: true,
+        //   };
+        //   this.setState({ errorObject: tempErr });
+        //   return false;
       } else {
         tempErr = {
           quantity: false,
@@ -207,6 +265,8 @@ class Tier extends React.Component<any, tabsState> {
       this.setState({ errorObject: tempErr });
       return false;
     }
+
+    // return false;
   };
 
   showDrugGrid = (searchBody = null) => {
@@ -221,14 +281,28 @@ class Tier extends React.Component<any, tabsState> {
         this.props.current_formulary.formulary_type_info.formulary_type_code,
 
       keyVals: [
-        { key: constants.KEY_INDEX, value: 0 },
-        { key: constants.KEY_LIMIT, value: 10 },
+        { key: constants.KEY_INDEX, value: this.state.index },
+        { key: constants.KEY_LIMIT, value: this.state.limit },
       ],
     };
     apiDetails["messageBody"] = {};
     apiDetails["messageBody"][
       "selected_criteria_ids"
     ] = this.state.selectedCriteria;
+    apiDetails["messageBody"]["filter"] = this.state.filter;
+    if (this.state.sort_by && this.state.sort_by.length > 0) {
+      let keys = Array();
+      let values = Array();
+
+      this.state.sort_by.map((keyPair) => {
+        keys.push(keyPair["key"]);
+        values.push(keyPair["value"]);
+      });
+
+      apiDetails["messageBody"]["sort_by"] = keys;
+      apiDetails["messageBody"]["sort_order"] = values;
+    }
+
     if (searchBody) {
       apiDetails["messageBody"] = Object.assign({}, searchBody);
     }
@@ -237,16 +311,36 @@ class Tier extends React.Component<any, tabsState> {
       console.log("[QlDetail]:", json.payload);
       // if (json.payload) {
       this.loadGridData(json);
+      console.log("{drugCount", json.payload.count);
+      this.setState({ drugCount: json.payload.count });
       // } else {
       // showMessage("something went wrong", "error");
       // }
+      this.setState({
+        // filter: [],
+        // sort_by: [],
+        // gridSingleSortInfo: null,
+        // gridMultiSortedInfo: [],
+        // isGridMultiSorted: false,
+        // isGridSingleSorted: false,
+      });
     });
     // }
+  };
+
+  goToSettingSection = () => {
+    window.scrollTo({
+      top: 420,
+      left: 0,
+      behavior: "smooth",
+    });
   };
 
   loadGridData(json: any) {
     let tmpData = json.payload.result;
     var data: any[] = [];
+    var switchState = this.props.switchState;
+    let selectedDrugs: any = [...this.state.selectedDrugs];
     let count = 1;
     var gridData: any = tmpData.map(function (el) {
       var element = Object.assign({}, el);
@@ -261,6 +355,20 @@ class Tier extends React.Component<any, tabsState> {
       gridItem["covered_max_operators"] = element.covered_max_operators
         ? "" + element.covered_max_operators
         : "";
+
+      if (switchState) {
+        gridItem["isDisabled"] = true;
+      }
+      if (selectedDrugs.length > 0) {
+        if (selectedDrugs.includes(element.md5_id)) {
+          gridItem["isChecked"] = true;
+          gridItem["isDisabled"] = true;
+          // decide on class names based on data properties conditionally
+          // the required styles are added under each classNames in FrxGrid.scss (towards the end)
+          //table-row--red-font (for red) table-row--green-font (for green) table-row--blue-font for default (for blue)
+          gridItem["rowStyle"] = "table-row--blue-font";
+        }
+      }
       gridItem["covered_min_ages"] = element.covered_min_ages
         ? "" + element.covered_min_ages
         : "";
@@ -433,6 +541,7 @@ class Tier extends React.Component<any, tabsState> {
       drugData: data,
       drugGridData: gridData,
       drugGridContainer: true,
+      selectedDrugs: Array(),
     });
   }
 
@@ -452,13 +561,17 @@ class Tier extends React.Component<any, tabsState> {
     });
   };
   onSelectedTableRowChanged = (selectedRowKeys) => {
-    this.state.selectedDrugs = [];
+    // this.state.selectedDrugs = [];
     console.log("[selectedRowKeys]:", selectedRowKeys);
 
     if (selectedRowKeys && selectedRowKeys.length > 0) {
-      this.state.selectedDrugs = selectedRowKeys.map(
+      // this.state.selectedDrugs = selectedRowKeys.map(
+      //   (tierId) => this.state.drugData[tierId - 1]["md5_id"]
+      // );
+      const currentDrug: any = selectedRowKeys.map(
         (tierId) => this.state.drugData[tierId - 1]["md5_id"]
       );
+      this.state.selectedDrugs = [...this.state.selectedDrugs, ...currentDrug];
     }
   };
 
@@ -573,6 +686,20 @@ class Tier extends React.Component<any, tabsState> {
       ] = this.state.additionalCriteriaState;
     }
 
+    // apiDetails["messageBody"]["filter"] = this.state.filter;
+    // if (this.state.sort_by && this.state.sort_by.length > 0) {
+    //   let keys = Array();
+    //   let values = Array();
+
+    //   this.state.sort_by.map((keyPair) => {
+    //     keys.push(keyPair["key"]);
+    //     values.push(keyPair["value"]);
+    //   });
+
+    //   apiDetails["messageBody"]["sort_by"] = keys;
+    //   apiDetails["messageBody"]["sort_order"] = values;
+    // }
+
     apiDetails["messageBody"]["filter"] = [];
 
     console.log("[path]:", apiDetails["pathParams"]);
@@ -596,6 +723,7 @@ class Tier extends React.Component<any, tabsState> {
 
           this.props.setAdditionalCriteria(payload);
           // this.setState({ quantityAndFillLimitObject: {} });
+          this.goToSettingSection();
           this.showDrugGrid();
 
           this.props
@@ -604,6 +732,7 @@ class Tier extends React.Component<any, tabsState> {
               console.log("[new ql summary]", json);
               this.initailizeQlSummary(json);
             });
+          // window.scrollTo(0, 50);
         } else {
           showMessage("Failure", "error");
         }
@@ -653,7 +782,7 @@ class Tier extends React.Component<any, tabsState> {
       ) {
         this.showDrugGrid();
       } else {
-        showMessage("Please fill required field", "error");
+        showMessage("Please fill the required fields", "error");
       }
     } else {
       if (this.state.selectedCriteria.length == 0) {
@@ -664,7 +793,295 @@ class Tier extends React.Component<any, tabsState> {
     }
   };
 
+  rowSelectionChangeFromCell = (
+    key: string,
+    selectedRow: any,
+    isSelected: boolean
+  ) => {
+    // debugger;
+    console.log("data row ", selectedRow, isSelected);
+    // this.state.selectedRowKeys = [
+    //   ...this.state.selectedRowKeys,
+    //   selectedRow.key,
+    // ];
+    if (!selectedRow["isDisabled"]) {
+      if (isSelected) {
+        const data = this.state.drugGridData.map((d: any) => {
+          if (d.key === selectedRow.key) d["isChecked"] = true;
+          // else d["isChecked"] = false;
+          return d;
+        });
+        const selectedRowKeys = [
+          ...this.state.selectedRowKeys,
+          selectedRow.key,
+        ];
+        console.log("selected row keys ", selectedRowKeys);
+        const selectedRows: number[] = selectedRowKeys.filter(
+          (k) => this.state.fixedSelectedRows.indexOf(k) < 0
+        );
+        this.onSelectedTableRowChanged(selectedRowKeys);
+
+        this.setState({ drugGridData: data });
+      } else {
+        const data = this.state.drugGridData.map((d: any) => {
+          if (d.key === selectedRow.key) d["isChecked"] = false;
+          // else d["isChecked"] = false;
+          return d;
+        });
+
+        const selectedRowKeys: number[] = this.state.selectedRowKeys.filter(
+          (k) => k !== selectedRow.key
+        );
+        const selectedRows = selectedRowKeys.filter(
+          (k) => this.state.fixedSelectedRows.indexOf(k) < 0
+        );
+        const removeSelectedDrug = this.state.selectedDrugs.filter(
+          (drugId) => drugId !== this.state.selectedDrugs[selectedRow.key - 1]
+        );
+        // this.onSelectedTableRowChanged(selectedRows);
+        this.setState({
+          drugGridData: data,
+          selectedDrugs: removeSelectedDrug,
+        });
+      }
+    }
+  };
+
+  // rowSelectionChangeFromCell = (
+  //   key: string,
+  //   selectedRow: any,
+  //   isSelected: boolean
+  // ) => {
+  //   debugger;
+  //   console.log("data row ", selectedRow, isSelected);
+  //   if (!selectedRow["isDisabled"]) {
+  //     if (isSelected) {
+  //       const data = this.state.drugGridData.map((d: any) => {
+  //         if (d.key === selectedRow.key) d["isChecked"] = true;
+  //         // else d["isChecked"] = false;
+  //         return d;
+  //       });
+  //       const selectedRowKeys = [
+  //         ...this.state.selectedRowKeys,
+  //         selectedRow.key,
+  //       ];
+  //       console.log("selected row keys ", selectedRowKeys);
+  //       const selectedRows: number[] = selectedRowKeys.filter(
+  //         (k) => this.state.fixedSelectedRows.indexOf(k) < 0
+  //       );
+  //       this.onSelectedTableRowChanged(selectedRowKeys);
+
+  //       this.setState({ drugGridData: data });
+  //     } else {
+  //       const data = this.state.drugGridData.map((d: any) => {
+  //         if (d.key === selectedRow.key) d["isChecked"] = false;
+  //         // else d["isChecked"] = false;
+  //         return d;
+  //       });
+
+  //       const selectedRowKeys: number[] = this.state.selectedRowKeys.filter(
+  //         (k) => k !== selectedRow.key
+  //       );
+  //       const selectedRows = selectedRowKeys.filter(
+  //         (k) => this.state.fixedSelectedRows.indexOf(k) < 0
+  //       );
+
+  //       this.onSelectedTableRowChanged(selectedRows);
+  //       this.setState({
+  //         drugGridData: data,
+  //       });
+  //     }
+  //   }
+  // };
+
+  onSelectAllRows = (isSelected: boolean) => {
+    const selectedRowKeys: number[] = [];
+    const data = this.state.drugGridData.map((d: any) => {
+      if (!d["isDisabled"]) {
+        d["isChecked"] = isSelected;
+        if (isSelected) selectedRowKeys.push(d["key"]);
+      }
+
+      // else d["isSelected"] = false;
+      return d;
+    });
+    const selectedRows: number[] = selectedRowKeys.filter(
+      (k) => this.state.fixedSelectedRows.indexOf(k) < 0
+    );
+    this.onSelectedTableRowChanged(selectedRows);
+    this.setState({ drugGridData: data });
+  };
+
+  onPageSize = (pageSize) => {
+    console.log("Page size load");
+    this.state.limit = pageSize;
+    if (this.props.advancedSearchBody) {
+      this.showDrugGrid(this.props.advancedSearchBody);
+    } else {
+      this.showDrugGrid();
+    }
+  };
+
+  onGridPageChangeHandler = (pageNumber: any) => {
+    console.log("Page change load");
+    this.state.index = (pageNumber - 1) * this.state.limit;
+    if (this.props.advancedSearchBody) {
+      this.showDrugGrid(this.props.advancedSearchBody);
+    } else {
+      this.showDrugGrid();
+    }
+  };
+
+  onClearFilterHandler = () => {
+    this.state.filter = Array();
+    if (this.props.advancedSearchBody) {
+      this.showDrugGrid(this.props.advancedSearchBody);
+    } else {
+      this.showDrugGrid();
+    }
+  };
+
+  onApplyFilterHandler = (filters) => {
+    // debugger;
+    console.log("filtering from be:" + JSON.stringify(filters));
+    //this.state.filter = Array();
+    const fetchedKeys = Object.keys(filters);
+    if (fetchedKeys && fetchedKeys.length > 0) {
+      fetchedKeys.map((fetchedProps) => {
+        if (filters[fetchedProps]) {
+          const fetchedOperator =
+            filters[fetchedProps][0].condition === "is like"
+              ? "is_like"
+              : filters[fetchedProps][0].condition === "is not"
+              ? "is_not"
+              : filters[fetchedProps][0].condition === "is not like"
+              ? "is_not_like"
+              : filters[fetchedProps][0].condition === "does not exist"
+              ? "does_not_exist"
+              : filters[fetchedProps][0].condition;
+          const fetchedValues =
+            filters[fetchedProps][0].value !== ""
+              ? [filters[fetchedProps][0].value.toString()]
+              : [];
+          this.state.filter.push({
+            prop: fetchedProps,
+            operator: fetchedOperator,
+            values: fetchedValues,
+          });
+        }
+      });
+      console.log("Filters:" + JSON.stringify(this.state.filter));
+      if (Object.keys(this.props.advancedSearchBody).length > 0) {
+        this.showDrugGrid(this.props.advancedSearchBody);
+      } else {
+        this.showDrugGrid();
+      }
+    }
+  };
+
+  onApplySortHandler = (key, order, sortedInfo) => {
+    // debugger;
+    console.log("sort details ", key, order);
+    this.state.sort_by = Array();
+    if (order) {
+      let sortOrder = order === "ascend" ? "asc" : "desc";
+      this.state.sort_by = this.state.sort_by.filter(
+        (keyPair) => keyPair["key"] !== key
+      );
+      this.state.sort_by.push({ key: key, value: sortOrder });
+    }
+    this.state.gridSingleSortInfo = sortedInfo;
+    this.state.gridMultiSortedInfo = [];
+    this.state.isGridMultiSorted = false;
+    this.state.isGridSingleSorted = true;
+    if (Object.keys(this.props.advancedSearchBody).length > 0) {
+      this.showDrugGrid(this.props.advancedSearchBody);
+    } else {
+      this.showDrugGrid();
+    }
+  };
+
+  applyMultiSortHandler = (sorter, multiSortedInfo) => {
+    console.log("Multisort info:" + JSON.stringify(sorter));
+    this.state.gridSingleSortInfo = null;
+    this.state.gridMultiSortedInfo = multiSortedInfo;
+    this.state.isGridMultiSorted = true;
+    this.state.isGridSingleSorted = false;
+
+    if (sorter && sorter.length > 0) {
+      let uniqueKeys = Array();
+      let filteredSorter = Array();
+      sorter.map((sortInfo) => {
+        if (uniqueKeys.includes(sortInfo["columnKey"])) {
+        } else {
+          filteredSorter.push(sortInfo);
+          uniqueKeys.push(sortInfo["columnKey"]);
+        }
+      });
+      filteredSorter.map((sortInfo) => {
+        let sortOrder = sortInfo["order"] === "ascend" ? "asc" : "desc";
+        this.state.sort_by = this.state.sort_by.filter(
+          (keyPair) => keyPair["key"] !== sortInfo["columnKey"]
+        );
+        this.state.sort_by.push({
+          key: sortInfo["columnKey"],
+          value: sortOrder,
+        });
+      });
+    }
+
+    if (Object.keys(this.props.advancedSearchBody).length > 0) {
+      this.showDrugGrid(this.props.advancedSearchBody);
+    } else {
+      this.showDrugGrid();
+    }
+  };
+
+  onMultiSortToggle = (isMultiSortOn: boolean) => {
+    console.log("is Multi sort on ", isMultiSortOn);
+    this.state.sort_by = Array();
+    this.state.gridSingleSortInfo = null;
+    this.state.gridMultiSortedInfo = [];
+    this.state.isGridMultiSorted = isMultiSortOn;
+    this.state.isGridSingleSorted = false;
+
+    if (Object.keys(this.props.advancedSearchBody).length > 0) {
+      this.showDrugGrid(this.props.advancedSearchBody);
+    } else {
+      this.showDrugGrid();
+    }
+  };
+
+  onSettingsIconHandler = (hiddenColumn, visibleColumn) => {
+    console.log(
+      "Settings icon handler: Hidden" +
+        JSON.stringify(hiddenColumn) +
+        " Visible:" +
+        JSON.stringify(visibleColumn)
+    );
+    if (hiddenColumn && hiddenColumn.length > 0) {
+      let hiddenColumnKeys = hiddenColumn.map((column) => column["key"]);
+      this.setState({
+        hiddenColumns: hiddenColumnKeys,
+      });
+    }
+  };
+
+  componentDidUpdate = (prevState) => {
+    // debugger;
+    // if (
+    //   this.state.drugGridContainer &&
+    //   Object.keys(this.state.quantityAndFillLimitObject).length > 0
+    // ) {
+    //   window.scrollTo({
+    //     top: 420,
+    //     left: 0,
+    //     behavior: "smooth",
+    //   });
+    // }
+  };
   UNSAFE_componentWillReceiveProps(nextProps) {
+    // debugger;
     if (nextProps.switchState) {
       this.showDrugGrid({ ...nextProps.advancedSearchBody });
       this.setState({
@@ -717,7 +1134,7 @@ class Tier extends React.Component<any, tabsState> {
     };
     const dataLength = this.state.drugGridData.length > 0 ? true : false;
     return (
-      <div className="drug-detail-LA-root">
+      <div className="drug-detail-LA-root QL-root">
         <div className="drug-detail-la-container">
           <div className="drug-detail-la-inner">
             <Grid container spacing={2}>
@@ -728,65 +1145,69 @@ class Tier extends React.Component<any, tabsState> {
                       title="SELECT Quantity Limit CRITERIA"
                       tooltip="This section allows for Addition or Removal of product only. To define coverage for all Medicare covered and/or Supplemental products, go to Drug Details"
                     />
-                    <div className="inner-container tier-checkbox white-bg">
-                      <PanelGrid
-                        panelGridTitle={this.state.panelGridTitle}
-                        panelGridValue={this.state.panelGridValue}
-                      />
-                    </div>
-                  </div>
-                </div>
-                <div className="mb-10">
-                  <div className="limited-access">
-                    <PanelHeader title="QUANTITY LIMIT SETTINGS" />
-                    <div className="modify-wrapper white-bg tier-modify-panel">
-                      <div className="modify-panel">
-                        <div className="icon">
-                          <span>R</span>
-                        </div>
-                        <div className="switch-box">
-                          <CustomizedSwitches
-                            leftTitle="Modify"
-                            rightTitle="view all"
-                          />
-                        </div>
-                        <div className="mini-tabs">
-                          <FrxMiniTabs
-                            tabList={this.state.tabs}
-                            activeTabIndex={this.state.activeTabIndex}
-                            onClickTab={this.onClickTab}
-                            disabled={this.props.switchState}
-                          />
+                    <div className="inner-container tier-checkbox">
+                      <div className="mb-10">
+                        <PanelGrid
+                          panelGridTitle={this.state.panelGridTitle}
+                          panelGridValue={this.state.panelGridValue}
+                        />
+                      </div>
+                      <div className="mb-10">
+                        <div className="limited-access">
+                          <PanelHeader title="QUANTITY LIMIT SETTINGS" />
+                          <div className="modify-wrapper white-bg tier-modify-panel">
+                            <div className="modify-panel">
+                              <div className="icon">
+                                <span>R</span>
+                              </div>
+                              <div className="switch-box">
+                                <CustomizedSwitches
+                                  leftTitle="Modify"
+                                  rightTitle="view all"
+                                />
+                              </div>
+                              <div className="mini-tabs">
+                                <FrxMiniTabs
+                                  tabList={this.state.tabs}
+                                  activeTabIndex={this.state.activeTabIndex}
+                                  onClickTab={this.onClickTab}
+                                  disabled={this.props.switchState}
+                                />
+                              </div>
+                            </div>
+                          </div>
+                          <div className="tab-content">
+                            {this.renderTabContent()}
+                          </div>
                         </div>
                       </div>
+                      <div>
+                        {this.state.activeTabIndex !== 2 && (
+                          <div className="limited-access">
+                            <PanelHeader title="FILL LIMIT SETTINGS" />
+                            <FillLimitSettings
+                              handleOnChange={this.handleOnChange}
+                              values={this.state.quantityAndFillLimitObject}
+                              isViweAll={this.props.switchState}
+                              isChecked={this.state.isAdditionalCriteriaOpen}
+                              onRadioButtonClick={this.openAdditionalCriteria}
+                              is_additional_criteria_defined={
+                                this.state.is_additional_criteria_defined
+                              }
+                            />
+                            {this.state.isAdditionalCriteriaOpen && (
+                              <AdvanceSearchContainer
+                                {...searchProps}
+                                openPopup={this.state.isAdditionalCriteriaOpen}
+                                onClose={this.closeAdditonalCriteria}
+                                isAdvanceSearch={false}
+                              />
+                            )}
+                          </div>
+                        )}
+                      </div>
                     </div>
-                    <div className="tab-content">{this.renderTabContent()}</div>
                   </div>
-                </div>
-                <div className="mb-10">
-                  {this.state.activeTabIndex !== 2 && (
-                    <div className="limited-access">
-                      <PanelHeader title="FILL LIMIT SETTINGS" />
-                      <FillLimitSettings
-                        handleOnChange={this.handleOnChange}
-                        values={this.state.quantityAndFillLimitObject}
-                        isViweAll={this.props.switchState}
-                        isChecked={this.state.isAdditionalCriteriaOpen}
-                        onRadioButtonClick={this.openAdditionalCriteria}
-                        is_additional_criteria_defined={
-                          this.state.is_additional_criteria_defined
-                        }
-                      />
-                      {this.state.isAdditionalCriteriaOpen && (
-                        <AdvanceSearchContainer
-                          {...searchProps}
-                          openPopup={this.state.isAdditionalCriteriaOpen}
-                          onClose={this.closeAdditonalCriteria}
-                          isAdvanceSearch={false}
-                        />
-                      )}
-                    </div>
-                  )}
                 </div>
               </Grid>
               <div
@@ -829,6 +1250,52 @@ class Tier extends React.Component<any, tabsState> {
                       isPinningEnabled={false}
                       enableSearch={false}
                       enableColumnDrag
+                      settingsWidth={10}
+                      onSearch={() => {}}
+                      fixedColumnKeys={[]}
+                      pagintionPosition="topRight"
+                      gridName="DRUG GRID"
+                      enableSettings
+                      columns={QlColumns()}
+                      scroll={{ x: 12000, y: 377 }}
+                      isFetchingData={false}
+                      enableResizingOfColumns
+                      data={this.state.drugGridData}
+                      rowSelectionChangeFromCell={
+                        this.rowSelectionChangeFromCell
+                      }
+                      onSelectAllRows={this.onSelectAllRows}
+                      customSettingIcon={"FILL-DOT"}
+                      totalRowsCount={this.state.drugCount}
+                      getPerPageItemSize={this.onPageSize}
+                      onGridPageChangeHandler={this.onGridPageChangeHandler}
+                      clearFilterHandler={this.onClearFilterHandler}
+                      applyFilter={this.onApplyFilterHandler}
+                      applySort={this.onApplySortHandler}
+                      isSingleSorted={this.state.isGridSingleSorted}
+                      sortedInfo={this.state.gridSingleSortInfo}
+                      applyMultiSort={this.applyMultiSortHandler}
+                      isMultiSorted={this.state.isGridMultiSorted}
+                      multiSortedInfo={this.state.gridMultiSortedInfo}
+                      onMultiSortToggle={this.onMultiSortToggle}
+                      getColumnSettings={this.onSettingsIconHandler}
+                      pageSize={this.state.limit}
+                      selectedCurrentPage={
+                        this.state.index / this.state.limit + 1
+                      }
+
+                      // rowSelection={{
+                      //   // columnWidth: 50,
+                      //   fixed: true,
+                      //   type: "checkbox",
+                      //   // onChange: this.onSelectedTableRowChanged,
+                      // }}
+                    />
+                    {/* 
+                    <FrxDrugGridContainer
+                      isPinningEnabled={false}
+                      enableSearch={false}
+                      enableColumnDrag
                       onSearch={() => {}}
                       fixedColumnKeys={[]}
                       pagintionPosition="topRight"
@@ -846,7 +1313,7 @@ class Tier extends React.Component<any, tabsState> {
                         type: "checkbox",
                         onChange: this.onSelectedTableRowChanged,
                       }}
-                    />
+                    /> */}
                   </div>
                 </div>
               </div>

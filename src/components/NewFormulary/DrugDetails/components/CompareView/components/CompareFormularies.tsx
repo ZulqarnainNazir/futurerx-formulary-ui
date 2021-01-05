@@ -9,6 +9,7 @@ import "../../../../../shared/FrxGrid/FrxGridContainer.scss";
 import { ReactComponent as EditIcon } from "../../../../../../assets/icons/EditIcon.svg";
 import "./CompareView.scss";
 import CloneFormularyPopup from "../../FormularySetUp/components/CloneFormularyPopup";
+import { connect } from "react-redux";
 
 enum PopUpTypes {
   TYPE1 = "SELECTFORMULARY",
@@ -28,6 +29,19 @@ interface State {
   show: boolean;
 }
 
+function mapDispatchToProps(dispatch) {
+  return {};
+}
+
+const mapStateToProps = (state) => {
+  return {
+    formulary_id: state?.application?.formulary_id,
+    formulary: state?.application?.formulary,
+    formulary_lob_id: state?.application?.formulary_lob_id,
+    formulary_type_id: state?.application?.formulary_type_id,
+  };
+};
+
 class CompareFormularies extends React.Component<any, any> {
   state = {
     selectFormulary: false,
@@ -46,6 +60,9 @@ class CompareFormularies extends React.Component<any, any> {
     return true;
   };
   handleIconClick = (popupType) => {
+    if(this.props.handleCompareClear){
+      this.props.handleCompareClear();
+    }
     this.setState({ selectFormulary: true, currentPopupType: popupType });
   };
 
@@ -71,6 +88,50 @@ class CompareFormularies extends React.Component<any, any> {
     });
   };
   render() {
+    if (
+      !this.state.baseFormulary ||
+      Object.keys(this.state.baseFormulary).length === 0
+    ) {
+      if (this.props.formulary) {
+        this.state.baseFormulary = {};
+        this.state.baseFormulary["id_formulary"] = this.props.formulary[
+          "id_formulary"
+        ];
+        this.state.baseFormulary["id_base_formulary"] = this.props.formulary[
+          "id_base_formulary"
+        ];
+        this.state.baseFormulary["formulary_name"] = this.props.formulary[
+          "formulary_info"
+        ]
+          ? this.props.formulary["formulary_info"]["formulary_name"]
+          : "";
+        this.state.baseFormulary["id_formulary_type"] = this.props.formulary[
+          "formulary_info"
+        ]
+          ? this.props.formulary["formulary_info"]["id_formulary_type"]
+          : "";
+        this.state.baseFormulary["version_number"] = this.props.formulary[
+          "formulary_info"
+        ]
+          ? this.props.formulary["formulary_info"]["version_number"]
+          : "";
+        this.state.baseFormulary["formulary_type"] = this.props.formulary[
+          "formulary_type_info"
+        ]
+          ? this.props.formulary["formulary_type_info"]["formulary_type"]
+          : "";
+        this.state.baseFormulary["id_lob"] = this.props.formulary[
+          "formulary_type_info"
+        ]
+          ? this.props.formulary["formulary_type_info"]["id_lob"]
+          : "";
+        this.state.baseFormulary["number_of_tiers"] = this.props.formulary[
+          "formulary_info"
+        ]
+          ? this.props.formulary["formulary_info"]["number_of_tiers"]
+          : "";
+      }
+    }
     return (
       <div className="compare-formularies-container">
         <h6>Select formularies for comparison</h6>
@@ -188,4 +249,5 @@ class CompareFormularies extends React.Component<any, any> {
     );
   }
 }
-export default CompareFormularies;
+
+export default connect(mapStateToProps, mapDispatchToProps)(CompareFormularies);

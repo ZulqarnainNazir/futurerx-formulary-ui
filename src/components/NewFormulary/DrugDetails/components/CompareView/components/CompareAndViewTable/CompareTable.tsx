@@ -5,21 +5,22 @@ import { ReactComponent as ShowIcon } from "../../../../../../../assets/icons/Sh
 import "./CompareTable.scss";
 import InnerGrid from "./InnerGrid";
 import Button from "../../../../../../shared/Frx-components/button/Button";
+import FrxLoader from "../../../../../../shared/FrxLoader/FrxLoader";
 import DialogPopup from "../../../../../../shared/FrxDialogPopup/FrxDialogPopup";
 import FrxGridContainer from "../../../../../../shared/FrxGrid/FrxDrugGridContainer";
-import { getCompareFormularyViewAllGridColumns, getCompareNonMcrFormularyViewAllGridColumns } from "../../../../../../../mocks/formulary-grid/FormularyGridColumn";
-import { getCompareFormularyViewAllGridData } from "../../../../../../../mocks/formulary-grid/FormularyGridData";
-import { getMainComparison, getViewAllDrugs, getViewAllDrugsReject, postDrugRejection } from "../../../../../../../redux/slices/formulary/compareView/compareViewService";
+import { getCompareNonMcrFormularyViewAllGridColumns } from "../../../../../../../mocks/formulary-grid/FormularyGridColumn";
+import {
+  getMainComparison,
+  getViewAllDrugs,
+  getViewAllDrugsReject,
+  postDrugRejection,
+} from "../../../../../../../redux/slices/formulary/compareView/compareViewService";
 import * as commonConstants from "../../../../../../../api/http-commons";
 import * as compareConstants from "../../../../../../../api/http-compare-view";
 import { connect } from "react-redux";
 import showMessage from "../../../../../Utils/Toast";
 import getLobCode from "../../../../../Utils/LobUtils";
-import {
-  dateFilters,
-  textFilters,
-  numberFilters,
-} from "../../../../../../../utils/grid/filters";
+import { textFilters } from "../../../../../../../utils/grid/filters";
 
 function mapDispatchToProps(dispatch) {
   return {};
@@ -43,7 +44,9 @@ const defaultListPayload = {
   index: 0,
   limit: 10,
   filter: [],
-}
+  sort_by: [],
+  sort_order: []
+};
 
 class CompareTable extends Component<any, any> {
   state = {
@@ -59,100 +62,304 @@ class CompareTable extends Component<any, any> {
       y: 500,
     },
     formularyTypesGridData: Array(),
-    baseFormularyId: '',
-    reformularyId: '',
+    baseFormularyId: "",
+    reformularyId: "",
     viewAllType: TYPE_SINGLE,
     dataCount: 0,
     isRowSelectionEnabled: false,
     hiddenColumns: Array(),
     rejectedKeys: Array(),
     rejectedDrugIds: Array(),
+    isRequestFinished: false,
+    gridSingleSortInfo: null,
+    isGridSingleSorted: false,
+    gridMultiSortedInfo: [],
+    isGridMultiSorted: false,
+    sort_by: Array(),
   };
 
   listPayload: any = {
     index: 0,
     limit: 10,
     filter: [],
-  }
+    sort_by: [],
+    sort_order: []
+  };
 
   onSettingsIconHandler = (hiddenColumn, visibleColumn) => {
     if (hiddenColumn && hiddenColumn.length > 0) {
-      let hiddenColumnKeys = hiddenColumn.map(column => column['key']);
+      let hiddenColumnKeys = hiddenColumn.map((column) => column["key"]);
       this.setState({
-        hiddenColumns: hiddenColumnKeys
+        hiddenColumns: hiddenColumnKeys,
       });
     }
-  }
-  onApplyFilterHandler = (filters) => {
-
-  }
+  };
+  onApplyFilterHandler = filters => {
+    //this.listPayload.filter = Array();
+    if (filters) {
+      const fetchedKeys = Object.keys(filters);
+      fetchedKeys.map(fetchedProps => {
+        if (filters[fetchedProps]) {
+          const fetchedOperator =
+            filters[fetchedProps][0].condition === "is like"
+              ? "is_like"
+              : filters[fetchedProps][0].condition === "is not"
+                ? "is_not"
+                : filters[fetchedProps][0].condition === "is not like"
+                  ? "is_not_like"
+                  : filters[fetchedProps][0].condition === "does not exist"
+                    ? "does_not_exist"
+                    : filters[fetchedProps][0].condition;
+          const fetchedValues =
+            filters[fetchedProps][0].value !== ""
+              ? [filters[fetchedProps][0].value.toString()]
+              : [];
+          this.listPayload.filter.push({
+            prop: fetchedProps,
+            operator: fetchedOperator,
+            values: fetchedValues
+          });
+        }
+      });
+      console.log("Filters:" + JSON.stringify(this.listPayload.filter));
+      /*this.setState({
+        isRequestFinished: false
+      });*/
+      this.populateViewAllData(
+        this.listPayload,
+        this.state.baseFormularyId,
+        this.state.reformularyId,
+        this.state.viewAllType
+      );
+    }
+  };
   onPageSize = (pageSize) => {
     if (this.state.viewAllType === TYPE_SINGLE) {
       this.listPayload = { ...defaultListPayload };
       this.listPayload.limit = pageSize;
-      this.populateViewAllData(this.listPayload, this.state.baseFormularyId, this.state.reformularyId, this.state.viewAllType);
+      /*this.setState({
+        isRequestFinished: false
+      });*/
+      this.populateViewAllData(
+        this.listPayload,
+        this.state.baseFormularyId,
+        this.state.reformularyId,
+        this.state.viewAllType
+      );
     }
-  }
+  };
   onGridPageChangeHandler = (pageNumber: any) => {
     if (this.state.viewAllType === TYPE_SINGLE) {
       this.listPayload.index = (pageNumber - 1) * this.listPayload.limit;
-      this.populateViewAllData(this.listPayload, this.state.baseFormularyId, this.state.reformularyId, this.state.viewAllType);
+      /*this.setState({
+        isRequestFinished: false
+      });*/
+      this.populateViewAllData(
+        this.listPayload,
+        this.state.baseFormularyId,
+        this.state.reformularyId,
+        this.state.viewAllType
+      );
     }
-  }
+  };
   onClearFilterHandler = () => {
     if (this.state.viewAllType === TYPE_SINGLE) {
       this.listPayload = { ...defaultListPayload };
-      this.populateViewAllData(this.listPayload, this.state.baseFormularyId, this.state.reformularyId, this.state.viewAllType);
+      this.listPayload.filter = Array();
+      /*this.setState({
+        isRequestFinished: false
+      });*/
+      this.populateViewAllData(
+        this.listPayload,
+        this.state.baseFormularyId,
+        this.state.reformularyId,
+        this.state.viewAllType
+      );
     }
-  }
+  };
+  applyMultiSortHandler = (sorter, multiSortedInfo) => {
+    console.log('Multisort info:' + JSON.stringify(sorter));
+    this.setState({
+      isGridMultiSorted: true,
+      isGridSingleSorted: false,
+      gridMultiSortedInfo: multiSortedInfo,
+      gridSingleSortInfo: null,
+    })
+
+    if (sorter && sorter.length > 0) {
+      let uniqueKeys = Array();
+      let filteredSorter = Array();
+      sorter.map(sortInfo => {
+        if (uniqueKeys.includes(sortInfo['columnKey'])) {
+
+        } else {
+          filteredSorter.push(sortInfo);
+          uniqueKeys.push(sortInfo['columnKey']);
+        }
+      });
+      filteredSorter.map(sortInfo => {
+        let sortOrder = sortInfo['order'] === 'ascend' ? 'asc' : 'desc';
+        this.state.sort_by = this.state.sort_by.filter(keyPair => keyPair['key'] !== sortInfo['columnKey']);
+        this.state.sort_by.push({ key: sortInfo['columnKey'], value: sortOrder });
+      })
+
+      let keys = Array();
+      let values = Array();
+
+      this.state.sort_by.map(keyPair => {
+        keys.push(keyPair['key']);
+        values.push(keyPair['value']);
+      });
+
+      this.listPayload.sort_by = keys;
+      this.listPayload.sort_order = values;
+    }
+
+    /*this.setState({
+      isRequestFinished: false
+    });*/
+    this.populateViewAllData(
+      this.listPayload,
+      this.state.baseFormularyId,
+      this.state.reformularyId,
+      this.state.viewAllType
+    );
+  };
+
+  onMultiSortToggle = (isMultiSortOn: boolean) => {
+    console.log("is Multi sort on ", isMultiSortOn);
+    this.state.sort_by = Array();
+    this.listPayload.sort_by = Array();
+    this.listPayload.sort_order = Array();
+    this.state.gridSingleSortInfo = null;
+    this.state.gridMultiSortedInfo = [];
+    this.state.isGridMultiSorted = isMultiSortOn;
+    this.state.isGridSingleSorted = false;
+
+    /*this.setState({
+      isRequestFinished: false
+    });*/
+    this.populateViewAllData(
+      this.listPayload,
+      this.state.baseFormularyId,
+      this.state.reformularyId,
+      this.state.viewAllType
+    );
+  };
+
+  /**
+   * the selected sorter details will be availbale here to mak api call
+   * @param key the column key
+   * @param order the sorting order : 'ascend' | 'descend'
+   */
+  onApplySortHandler = (key, order, sortedInfo) => {
+    console.log("sort details ", key, order);
+    this.state.sort_by = Array();
+    this.listPayload.sort_by = Array();
+    this.listPayload.sort_order = Array();
+    if (order) {
+      let sortOrder = order === 'ascend' ? 'asc' : 'desc';
+      this.state.sort_by = this.state.sort_by.filter(keyPair => keyPair['key'] !== key);
+      this.state.sort_by.push({ key: key, value: sortOrder });
+    }
+    this.setState({
+      gridSingleSortInfo: sortedInfo,
+      isGridSingleSorted: true,
+      isGridMultiSorted: false,
+      gridMultiSortedInfo: []
+    });
+
+    let keys = Array();
+    let values = Array();
+
+    this.state.sort_by.map(keyPair => {
+      keys.push(keyPair['key']);
+      values.push(keyPair['value']);
+    });
+
+    this.listPayload.sort_by = keys;
+    this.listPayload.sort_order = values;
+
+    /*this.setState({
+      isRequestFinished: false
+    });*/
+    this.populateViewAllData(
+      this.listPayload,
+      this.state.baseFormularyId,
+      this.state.reformularyId,
+      this.state.viewAllType
+    );
+  };
 
   rowSelectionChange = (data: any, event) => {
-    console.log('Main Table: Drug selected:' + JSON.stringify(data));
+    console.log("Main Table: Drug selected:" + JSON.stringify(data));
     if (event.target.checked) {
-      let filtered = this.state.data.filter(drugItem => drugItem['formulary_drug_id'] === data['formulary_drug_id']);
-      if(filtered.length > 0){
-        let drugId = filtered[0]['md5_id'];
-        if(!this.state.rejectedDrugIds.includes(drugId)){
+      let filtered = this.state.data.filter(
+        (drugItem) =>
+          drugItem["formulary_drug_id"] === data["formulary_drug_id"]
+      );
+      if (filtered.length > 0) {
+        let drugId = filtered[0]["md5_id"];
+        if (!this.state.rejectedDrugIds.includes(drugId)) {
           this.state.rejectedDrugIds.push(drugId);
         }
       }
     } else {
-      let filtered = this.state.data.filter(drugItem => drugItem['formulary_drug_id'] === data['formulary_drug_id']);
-      if(filtered.length > 0){
-        let drugId = filtered[0]['md5_id'];
-        if(!this.state.rejectedDrugIds.includes(drugId)){
-          this.state.rejectedDrugIds = this.state.rejectedDrugIds.filter(item => item !== drugId);
+      let filtered = this.state.data.filter(
+        (drugItem) =>
+          drugItem["formulary_drug_id"] === data["formulary_drug_id"]
+      );
+      if (filtered.length > 0) {
+        let drugId = filtered[0]["md5_id"];
+        if (!this.state.rejectedDrugIds.includes(drugId)) {
+          this.state.rejectedDrugIds = this.state.rejectedDrugIds.filter(
+            (item) => item !== drugId
+          );
         }
       }
     }
   };
 
   onDialogAction = (type) => {
-    console.log('Reject clicked:'+type+' '+JSON.stringify(this.state.rejectedDrugIds));
-    if (type === 'positive' && this.state.rejectedDrugIds.length > 0) {
-      console.log('Rejected drugs:' + JSON.stringify(this.state.rejectedDrugIds));
+    console.log(
+      "Reject clicked:" +
+      type +
+      " " +
+      JSON.stringify(this.state.rejectedDrugIds)
+    );
+    if (type === "positive" && this.state.rejectedDrugIds.length > 0) {
+      console.log(
+        "Rejected drugs:" + JSON.stringify(this.state.rejectedDrugIds)
+      );
       let apiBody = {
         user_id: 1,
-        attributes: Array()
+        attributes: Array(),
       };
-      this.state.rejectedDrugIds.map(attributeData => {
+      this.state.rejectedDrugIds.map((attributeData) => {
         let newTemplate = {
-          attribute_field_name: '',
-          drug_key: '',
-          attribute_current_value: '',
+          attribute_field_name: "",
+          drug_key: "",
+          attribute_current_value: "",
           is_single_update: false,
           file_type: getLobCode(this.props.formulary_lob_id),
-          multi_update_type: this.state.viewAllType === TYPE_IN_BASE_NOT_REF ? 'delete' : 'copy'
-        }
+          multi_update_type:
+            this.state.viewAllType === TYPE_IN_BASE_NOT_REF ? "delete" : "copy",
+        };
         newTemplate.drug_key = attributeData;
         apiBody.attributes.push(newTemplate);
       });
       this.onRejectClicked(apiBody);
-      this.toggleShowViewAll(null, null, TYPE_SINGLE, true)
+      this.toggleShowViewAll(null, null, TYPE_SINGLE, true);
     }
-  }
+  };
 
-  toggleShowViewAll = (baseFormularyId = null, reformularyId = null, type = TYPE_SINGLE, isClose = false, checkBoxEnabled = false) => {
+  toggleShowViewAll = (
+    baseFormularyId = null,
+    reformularyId = null,
+    type = TYPE_SINGLE,
+    isClose = false,
+    checkBoxEnabled = false
+  ) => {
     if (isClose) {
       this.setState({
         showViewAll: !this.state.showViewAll,
@@ -162,8 +369,8 @@ class CompareTable extends Component<any, any> {
         dataCount: 0,
         isRowSelectionEnabled: false,
         viewAllType: TYPE_SINGLE,
-        baseFormularyId: '',
-        reformularyId: '',
+        baseFormularyId: "",
+        reformularyId: "",
         hiddenColumns: Array(),
         rejectedKeys: Array(),
         rejectedDrugIds: Array(),
@@ -172,7 +379,15 @@ class CompareTable extends Component<any, any> {
       this.state.showViewAll = !this.state.showViewAll;
       this.state.isRowSelectionEnabled = checkBoxEnabled;
       this.listPayload = { ...defaultListPayload };
-      this.populateViewAllData(this.listPayload, baseFormularyId, reformularyId, type);
+      this.setState({
+        isRequestFinished: false
+      });
+      this.populateViewAllData(
+        this.listPayload,
+        baseFormularyId,
+        reformularyId,
+        type
+      );
     }
   };
 
@@ -378,7 +593,6 @@ class CompareTable extends Component<any, any> {
         ];
 
         return columns;
-
 
       case "Step Therpay (ST)":
         columns = [
@@ -988,7 +1202,6 @@ class CompareTable extends Component<any, any> {
         ];
 
         return columns;
-
 
       case "Step Therpay (ST)":
         columns = [
@@ -1630,7 +1843,6 @@ class CompareTable extends Component<any, any> {
         ];
 
         return columns;
-
     }
     return Array();
   };
@@ -1691,7 +1903,14 @@ class CompareTable extends Component<any, any> {
               titleBG: this.getBackgroundColor(value["attribute_type"]),
               attribute_type: value["attribute_type"],
               file_type: value["file_type"],
-              gridColumns: ['Tier', 'Prior Authorization (PA)', 'Step Therpay (ST)', 'Quantity Limits (QL)'].includes(value["attribute_type"]) ? this.getGridColumns(value["attribute_type"]) : Array(),
+              gridColumns: [
+                "Tier",
+                "Prior Authorization (PA)",
+                "Step Therpay (ST)",
+                "Quantity Limits (QL)",
+              ].includes(value["attribute_type"])
+                ? this.getGridColumns(value["attribute_type"])
+                : Array(),
               headDrugsCount: {
                 baseFormulary: null,
                 referenceFormulary: null,
@@ -1730,7 +1949,9 @@ class CompareTable extends Component<any, any> {
                   subValue["attribute_name"] === "ST Group Descriptions"
                 ) {
                   gridColumns = this.getGridColumns(subValue["attribute_name"]);
-                  gridColumnsNonMatch = this.getGridColumnsNonMatch(subValue["attribute_name"]);
+                  gridColumnsNonMatch = this.getGridColumnsNonMatch(
+                    subValue["attribute_name"]
+                  );
                 } else if (value["attribute_type"] === "Drug Details") {
                   gridColumns = this.getGridColumns(
                     value["attribute_type"],
@@ -1742,7 +1963,9 @@ class CompareTable extends Component<any, any> {
                   );
                 } else {
                   gridColumns = this.getGridColumns(value["attribute_type"]);
-                  gridColumnsNonMatch = this.getGridColumnsNonMatch(value["attribute_type"]);
+                  gridColumnsNonMatch = this.getGridColumnsNonMatch(
+                    value["attribute_type"]
+                  );
                 }
                 let subItem = {
                   name: subValue["attribute_name"],
@@ -1775,6 +1998,7 @@ class CompareTable extends Component<any, any> {
             columns: Array(),
             data: Array(),
             gridData: Array(),
+            isRequestFinished: true
           });
         } else {
           showMessage("Compare data is empty", "error");
@@ -1783,6 +2007,7 @@ class CompareTable extends Component<any, any> {
             columns: Array(),
             data: Array(),
             gridData: Array(),
+            isRequestFinished: true
           });
         }
       } catch (err) {
@@ -1793,6 +2018,7 @@ class CompareTable extends Component<any, any> {
           columns: Array(),
           data: Array(),
           gridData: Array(),
+          isRequestFinished: true
         });
       }
     } else {
@@ -1801,11 +2027,17 @@ class CompareTable extends Component<any, any> {
         columns: Array(),
         data: Array(),
         gridData: Array(),
+        isRequestFinished: true
       });
     }
   };
 
-  populateViewAllData = async (payload, baseFormularyId: any, reformularyId: any = null, type = TYPE_SINGLE) => {
+  populateViewAllData = async (
+    payload,
+    baseFormularyId: any,
+    reformularyId: any = null,
+    type = TYPE_SINGLE
+  ) => {
     if (this.props.formulary_lob_id && this.props.formulary_lob_id === 4) {
       let lobCode = getLobCode(this.props.formulary_lob_id);
       let gridData = Array();
@@ -1815,29 +2047,40 @@ class CompareTable extends Component<any, any> {
       if (type === TYPE_SINGLE) {
         apiDetails["apiPart"] = compareConstants.COMMERCIAL_FORMULARY_ALL_DRUGS;
       } else {
-        apiDetails["apiPart"] = type === TYPE_IN_BASE_NOT_REF ? compareConstants.COMMERCIAL_FORMULARY_IN_BASE_NOT_REF : compareConstants.COMMERCIAL_FORMULARY_IN_REF_NOT_BASE;
+        apiDetails["apiPart"] =
+          type === TYPE_IN_BASE_NOT_REF
+            ? compareConstants.COMMERCIAL_FORMULARY_IN_BASE_NOT_REF
+            : compareConstants.COMMERCIAL_FORMULARY_IN_REF_NOT_BASE;
       }
       if (type === TYPE_SINGLE) {
-        apiDetails["pathParams"] = baseFormularyId + '/' + lobCode;
+        apiDetails["pathParams"] = baseFormularyId + "/" + lobCode;
       } else {
-        apiDetails["pathParams"] = baseFormularyId + '/' + reformularyId;
+        apiDetails["pathParams"] = baseFormularyId + "/" + reformularyId;
       }
 
       if (type === TYPE_SINGLE) {
-        apiDetails['keyVals'] = [];
-        apiDetails['keyVals'].push({ key: commonConstants.KEY_LIMIT, value: payload['limit'] });
-        apiDetails['keyVals'].push({ key: commonConstants.KEY_INDEX, value: payload['index'] });
+        apiDetails["keyVals"] = [];
+        apiDetails["keyVals"].push({
+          key: commonConstants.KEY_LIMIT,
+          value: payload["limit"],
+        });
+        apiDetails["keyVals"].push({
+          key: commonConstants.KEY_INDEX,
+          value: payload["index"],
+        });
 
-        apiDetails['messageBody'] = {};
-        apiDetails['messageBody']['attribute_field_data_type'] = '';
-        apiDetails['messageBody']['attribute_field_name'] = '';
-        apiDetails['messageBody']['attribute_field_value'] = '';
-        apiDetails['messageBody']['attribute_name'] = '';
-        apiDetails['messageBody']['file_type'] = '';
-        apiDetails['messageBody']['filter'] = payload['filter'];
+        apiDetails["messageBody"] = {};
+        apiDetails["messageBody"]["attribute_field_data_type"] = "";
+        apiDetails["messageBody"]["attribute_field_name"] = "";
+        apiDetails["messageBody"]["attribute_field_value"] = "";
+        apiDetails["messageBody"]["attribute_name"] = "";
+        apiDetails["messageBody"]["file_type"] = "";
+        apiDetails["messageBody"]["filter"] = payload["filter"];
+        apiDetails["messageBody"]["sort_by"] = payload["sort_by"];
+        apiDetails["messageBody"]["sort_order"] = payload["sort_order"];
       }
 
-      apiDetails['type'] = type;
+      apiDetails["type"] = type;
 
       try {
         let data: any = null;
@@ -1853,15 +2096,18 @@ class CompareTable extends Component<any, any> {
             mainData.push(dataValue);
 
             let gridItem = {};
-            gridItem['id'] = index + 1;
-            gridItem['key'] = index + 1;
+            gridItem["id"] = index + 1;
+            gridItem["key"] = index + 1;
 
-            columns.map(columnData => {
-              if (Object.keys(dataValue).includes(columnData['key'])) {
-                gridItem[columnData['key']] = dataValue[columnData['key']] === null ? '' : dataValue[columnData['key']];
-              } 
+            columns.map((columnData) => {
+              if (Object.keys(dataValue).includes(columnData["key"])) {
+                gridItem[columnData["key"]] =
+                  dataValue[columnData["key"]] === null
+                    ? ""
+                    : dataValue[columnData["key"]];
+              }
             });
-            gridItem['md5'] = dataValue['md5_id'];
+            gridItem["md5"] = dataValue["md5_id"];
             gridData.push(gridItem);
           });
           this.setState({
@@ -1871,7 +2117,8 @@ class CompareTable extends Component<any, any> {
             viewAllType: type,
             baseFormularyId: baseFormularyId,
             reformularyId: reformularyId,
-            dataCount: data['count'],
+            dataCount: data["count"],
+            isRequestFinished: true
           });
         } else {
           showMessage("Compare data is empty", "error");
@@ -1883,6 +2130,7 @@ class CompareTable extends Component<any, any> {
             baseFormularyId: baseFormularyId,
             reformularyId: reformularyId,
             dataCount: 0,
+            isRequestFinished: true
           });
         }
       } catch (err) {
@@ -1896,6 +2144,7 @@ class CompareTable extends Component<any, any> {
           baseFormularyId: baseFormularyId,
           reformularyId: reformularyId,
           dataCount: 0,
+          isRequestFinished: true
         });
       }
     } else {
@@ -1907,6 +2156,7 @@ class CompareTable extends Component<any, any> {
         baseFormularyId: baseFormularyId,
         reformularyId: reformularyId,
         dataCount: 0,
+        isRequestFinished: true
       });
     }
   };
@@ -1918,35 +2168,46 @@ class CompareTable extends Component<any, any> {
       this.props.baseformulary["id_formulary"] &&
       this.props.referenceformulary["id_formulary"]
     ) {
+      this.setState({
+        isRequestFinished: false,
+      });
       this.populateComparisionData();
     }
   }
 
   onRejectClicked = async (apiBody) => {
     let apiDetails = {};
-    apiDetails['apiPart'] = compareConstants.COMMERCIAL_DRUG_REJECTION;
-    apiDetails['pathParams'] = this.props.baseformulary["id_formulary"] + '/' + this.props.referenceformulary["id_formulary"];
-    apiDetails['messageBody'] = apiBody;
+    apiDetails["apiPart"] = compareConstants.COMMERCIAL_DRUG_REJECTION;
+    apiDetails["pathParams"] =
+      this.props.baseformulary["id_formulary"] +
+      "/" +
+      this.props.referenceformulary["id_formulary"];
+    apiDetails["messageBody"] = apiBody;
 
     let response = await postDrugRejection(apiDetails);
     if (response) {
-      if (response.code && response.code === '200') {
-        showMessage('Drugs Rejection Successful', 'success');
+      if (response.code && response.code === "200") {
+        showMessage("Drugs Rejection Successful", "success");
+        this.setState({
+          isRequestFinished: false,
+        });
         this.populateComparisionData();
       } else {
         if (response.message) {
-          showMessage(response.message, 'error');
+          showMessage(response.message, "error");
         } else {
-          showMessage('Drugs Rejection Failure', 'error');
+          showMessage("Drugs Rejection Failure", "error");
         }
       }
     }
-  }
+  };
 
   render() {
     let gridColumns = [...this.state.columns];
     if (this.state.columns.length > 0 && this.state.hiddenColumns.length > 0)
-      gridColumns = this.state.columns.filter(column => !this.state.hiddenColumns.includes(column['key']));
+      gridColumns = this.state.columns.filter(
+        (column) => !this.state.hiddenColumns.includes(column["key"])
+      );
     const {
       showCheckbox,
       toggleAllAccordion,
@@ -1957,6 +2218,9 @@ class CompareTable extends Component<any, any> {
       columns,
       formularyTypesGridData,
     } = this.state;
+    if (!this.state.isRequestFinished) {
+      return <FrxLoader />;
+    }
     return (
       <>
         <div className="bordered-grid">
@@ -1990,13 +2254,14 @@ class CompareTable extends Component<any, any> {
                   </div>
                   <div
                     className="header-first-child-container-child"
-                    onClick={() => {
+                    onClick={(event) => {
+                      // event.stopPropagation();
                       this.setState({
                         toggleAllAccordion: !toggleAllAccordion,
                       });
                     }}
                   >
-                    <p>{!toggleAllAccordion ? "Collapse All" : "Expand All"}</p>
+                    <p>{!toggleAllAccordion ? "Expand All" : "Collapse All"}</p>
                   </div>
                 </div>
               </div>
@@ -2031,6 +2296,8 @@ class CompareTable extends Component<any, any> {
                   fileType={accordionHeader.file_type}
                   formularyLobId={this.props.formulary_lob_id}
                   sectionSelected={this.props.sectionSelected}
+                  headerData={accordionHeader.headDrugsCount}
+                  toggleAllAccordion={toggleAllAccordion}
                   content={() => {
                     return (
                       <InnerGrid
@@ -2045,8 +2312,6 @@ class CompareTable extends Component<any, any> {
                       />
                     );
                   }}
-                  headerData={accordionHeader.headDrugsCount}
-                  toggleAllAccordion={toggleAllAccordion}
                 />
               </div>
             ))}
@@ -2054,16 +2319,60 @@ class CompareTable extends Component<any, any> {
           <div className="__root_compare-grid-footer-container">
             <div className="border-none"></div>
             <div className="border-cells-t-l view-all-btn">
-              <Button label={"View All"} onClick={() => { this.toggleShowViewAll(this.props.baseformulary["id_formulary"], null, TYPE_SINGLE, false, false) }} />
+              <Button
+                label={"View All"}
+                onClick={() => {
+                  this.toggleShowViewAll(
+                    this.props.baseformulary["id_formulary"],
+                    null,
+                    TYPE_SINGLE,
+                    false,
+                    false
+                  );
+                }}
+              />
             </div>
             <div className="border-cells-t-l view-all-btn">
-              <Button label={"View All"} onClick={() => { this.toggleShowViewAll(this.props.referenceformulary["id_formulary"], null, TYPE_SINGLE, false, false) }} />
+              <Button
+                label={"View All"}
+                onClick={() => {
+                  this.toggleShowViewAll(
+                    this.props.referenceformulary["id_formulary"],
+                    null,
+                    TYPE_SINGLE,
+                    false,
+                    false
+                  );
+                }}
+              />
             </div>
             <div className="border-cells-t-l view-all-btn">
-              <Button label={"View All"} onClick={() => { this.toggleShowViewAll(this.props.baseformulary["id_formulary"], this.props.referenceformulary["id_formulary"], TYPE_IN_BASE_NOT_REF, false, true) }} />
+              <Button
+                label={"View All"}
+                onClick={() => {
+                  this.toggleShowViewAll(
+                    this.props.baseformulary["id_formulary"],
+                    this.props.referenceformulary["id_formulary"],
+                    TYPE_IN_BASE_NOT_REF,
+                    false,
+                    true
+                  );
+                }}
+              />
             </div>
             <div className="border-cells-t-l view-all-btn">
-              <Button label={"View All"} onClick={() => { this.toggleShowViewAll(this.props.baseformulary["id_formulary"], this.props.referenceformulary["id_formulary"], TYPE_IN_REF_NOT_BASE, false, true) }} />
+              <Button
+                label={"View All"}
+                onClick={() => {
+                  this.toggleShowViewAll(
+                    this.props.baseformulary["id_formulary"],
+                    this.props.referenceformulary["id_formulary"],
+                    TYPE_IN_REF_NOT_BASE,
+                    false,
+                    true
+                  );
+                }}
+              />
             </div>
           </div>
         </div>
@@ -2073,12 +2382,17 @@ class CompareTable extends Component<any, any> {
             positiveActionText="Reject"
             negativeActionText=""
             title="view all"
-            handleClose={() => { this.toggleShowViewAll(null, null, TYPE_SINGLE, true) }}
-            handleAction={(type) => { this.onDialogAction(type) }}
+            handleClose={() => {
+              this.toggleShowViewAll(null, null, TYPE_SINGLE, true);
+            }}
+            handleAction={(type) => {
+              this.onDialogAction(type);
+            }}
             showActions={true}
             height="80%"
             width="80%"
             open={showViewAll}
+            className="dialog-popup clone-dialog-popup"
           >
             <FrxGridContainer
               enableSearch={false}
@@ -2097,7 +2411,9 @@ class CompareTable extends Component<any, any> {
               // setting gear 1st column
               enableSettings={true}
               // checkbox 2nd column
-              customSettingIcon={this.state.isRowSelectionEnabled ? null : "NONE"}
+              customSettingIcon={
+                this.state.isRowSelectionEnabled ? null : "NONE"
+              }
               isRowSelectionEnabled={this.state.isRowSelectionEnabled}
               // settingsWidth
               settingsWidth={15}
@@ -2106,9 +2422,18 @@ class CompareTable extends Component<any, any> {
               onGridPageChangeHandler={this.onGridPageChangeHandler}
               clearFilterHandler={this.onClearFilterHandler}
               applyFilter={this.onApplyFilterHandler}
+              applySort={this.onApplySortHandler}
+              isSingleSorted={this.state.isGridSingleSorted}
+              sortedInfo={this.state.gridSingleSortInfo}
+              applyMultiSort={this.applyMultiSortHandler}
+              isMultiSorted={this.state.isGridMultiSorted}
+              multiSortedInfo={this.state.gridMultiSortedInfo}
+              onMultiSortToggle={this.onMultiSortToggle}
               getColumnSettings={this.onSettingsIconHandler}
               pageSize={this.listPayload.limit}
-              selectedCurrentPage={(this.listPayload.index / this.listPayload.limit + 1)}
+              selectedCurrentPage={
+                this.listPayload.index / this.listPayload.limit + 1
+              }
               totalRowsCount={this.state.dataCount}
               rowSelectionChange={this.rowSelectionChange}
             />

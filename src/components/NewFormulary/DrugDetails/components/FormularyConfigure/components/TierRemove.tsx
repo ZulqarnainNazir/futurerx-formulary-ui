@@ -18,6 +18,8 @@ import {
 } from "../../../../../../redux/slices/formulary/tier/tierActionCreation";
 import { setAdvancedSearch } from "../../../../../../redux/slices/formulary/advancedSearch/advancedSearchSlice";
 import showMessage from "../../../../Utils/Toast";
+import { getIntelliscenseSearch } from "../../../../../../redux/slices/formulary/categoryClass/categoryClassActionCreation";
+import "./TierReplace.scss";
 
 interface tabsState {
   tierGridContainer: boolean;
@@ -34,6 +36,12 @@ interface tabsState {
   hiddenColumns: any[];
   selectedRowKeys: any[];
   dataCount: any;
+  gridSingleSortInfo: any;
+  isGridSingleSorted: boolean;
+  gridMultiSortedInfo: any[];
+  isGridMultiSorted: boolean;
+  searchData: any[];
+  searchNames: any[];
 }
 
 const mapStateToProps = (state) => {
@@ -56,6 +64,7 @@ function mapDispatchToProps(dispatch) {
     postTierApplyInfo: (a) => dispatch(postTierApplyInfo(a)),
     getTier: (a) => dispatch(getTier(a)),
     setAdvancedSearch: (a) => dispatch(setAdvancedSearch(a)),
+    getIntelliscenseSearch: (a) => dispatch(getIntelliscenseSearch(a)),
   };
 }
 
@@ -86,6 +95,15 @@ class TierRemove extends React.Component<any, tabsState> {
     hiddenColumns: Array(),
     dataCount: 0,
     selectedRowKeys: Array(),
+    gridSingleSortInfo: null,
+    isGridSingleSorted: false,
+    gridMultiSortedInfo: [],
+    isGridMultiSorted: false,
+    searchNames: Array(),
+    filterPlaceholder: "Search",
+    searchValue: "",
+    searchData: Array(),
+    quickFilter: Array(),
   };
 
   constructor(props) {
@@ -127,7 +145,7 @@ class TierRemove extends React.Component<any, tabsState> {
   };
   onApplyFilterHandler = filters => {
     console.log("filtering from be:" + (JSON.stringify(filters)));
-    this.state.filter = Array();
+    //this.state.filter = Array();
     const fetchedKeys = Object.keys(filters);
     if (fetchedKeys && fetchedKeys.length > 0) {
       fetchedKeys.map(fetchedProps => {
@@ -167,7 +185,7 @@ class TierRemove extends React.Component<any, tabsState> {
    * @param key the column key
    * @param order the sorting order : 'ascend' | 'descend'
    */
-  onApplySortHandler = (key, order) => {
+  onApplySortHandler = (key, order, sortedInfo) => {
     console.log("sort details ", key, order);
     this.state.sort_by = Array();
     if (order) {
@@ -175,6 +193,60 @@ class TierRemove extends React.Component<any, tabsState> {
       this.state.sort_by = this.state.sort_by.filter(keyPair => keyPair['key'] !== key);
       this.state.sort_by.push({ key: key, value: sortOrder });
     }
+    this.setState({
+      gridSingleSortInfo: sortedInfo,
+      isGridSingleSorted: true,
+      isGridMultiSorted: false,
+      gridMultiSortedInfo: []
+    });
+    if (this.props.advancedSearchBody) {
+      this.populateGridData(this.props.advancedSearchBody);
+    } else {
+      this.populateGridData();
+    }
+  };
+  applyMultiSortHandler = (sorter, multiSortedInfo) => {
+    console.log('Multisort info:' + JSON.stringify(sorter));
+    this.setState(  {
+			isGridMultiSorted: true,
+			isGridSingleSorted: false,
+			gridMultiSortedInfo: multiSortedInfo,
+			gridSingleSortInfo: null,
+		})
+
+    if (sorter && sorter.length > 0) {
+      let uniqueKeys = Array();
+      let filteredSorter = Array();
+      sorter.map(sortInfo => {
+        if (uniqueKeys.includes(sortInfo['columnKey'])) {
+
+        } else {
+          filteredSorter.push(sortInfo);
+          uniqueKeys.push(sortInfo['columnKey']);
+        }
+      });
+      filteredSorter.map(sortInfo => {
+        let sortOrder = sortInfo['order'] === 'ascend' ? 'asc' : 'desc';
+        this.state.sort_by = this.state.sort_by.filter(keyPair => keyPair['key'] !== sortInfo['columnKey']);
+        this.state.sort_by.push({ key: sortInfo['columnKey'], value: sortOrder });
+      })
+    }
+
+    if (this.props.advancedSearchBody) {
+      this.populateGridData(this.props.advancedSearchBody);
+    } else {
+      this.populateGridData();
+    }
+  };
+
+  onMultiSortToggle = (isMultiSortOn: boolean) => {
+    console.log("is Multi sort on ", isMultiSortOn);
+    this.state.sort_by = Array();
+    this.state.gridSingleSortInfo = null;
+    this.state.gridMultiSortedInfo = [];
+    this.state.isGridMultiSorted = isMultiSortOn;
+    this.state.isGridSingleSorted = false;
+
     if (this.props.advancedSearchBody) {
       this.populateGridData(this.props.advancedSearchBody);
     } else {
@@ -205,6 +277,177 @@ class TierRemove extends React.Component<any, tabsState> {
       this.populateGridData(this.props.advancedSearchBody);
     } else {
       this.populateGridData();
+    }
+  };
+
+  onSearchValueChanges = (value, event) => {
+    console.log("Search value changed:" + event.value + " " + event.key);
+    this.state.searchValue = value;
+    this.state.quickFilter = [];
+    if (
+      this.state.searchData &&
+      Array.isArray(this.state.searchData) &&
+      this.state.searchData.length > 0
+    ) {
+      if (event.key < this.state.searchData.length) {
+        let propData = this.state.searchData[event.key];
+        switch (propData.key) {
+          case "drug_descriptor_identifier":
+            this.state.quickFilter.push({
+              prop: "drug_descriptor_identifier",
+              operator: "is_like",
+              values: [propData.value],
+            });
+            break;
+
+          case "rxcui":
+            this.state.quickFilter.push({
+              prop: "rxcui",
+              operator: "is_like",
+              values: [propData.value],
+            });
+            break;
+
+          case "ndc":
+            this.state.quickFilter.push({
+              prop: "ndc",
+              operator: "is_like",
+              values: [propData.value],
+            });
+            break;
+
+          case "generic_product_identifier":
+            this.state.quickFilter.push({
+              prop: "generic_product_identifier",
+              operator: "is_like",
+              values: [propData.value],
+            });
+            break;
+
+          case "drug_label_name":
+            this.state.quickFilter.push({
+              prop: "drug_label_name",
+              operator: "is_like",
+              values: [propData.value],
+            });
+            break;
+
+          case "database_class":
+            this.state.quickFilter.push({
+              prop: "database_class",
+              operator: "is_like",
+              values: [propData.value],
+            });
+            break;
+
+          case "database_category":
+            this.state.quickFilter.push({
+              prop: "database_category",
+              operator: "is_like",
+              values: [propData.value],
+            });
+            break;
+        }
+        if (this.props.advancedSearchBody) {
+          this.populateGridData(this.props.advancedSearchBody);
+        } else {
+          this.populateGridData();
+        }
+      }
+    }
+  };
+
+  clearSearchFilter = (e) => {
+    this.state.quickFilter = Array();
+    this.state.searchData = Array();
+    this.state.searchNames = Array();
+    this.state.filterPlaceholder = "Search";
+    this.state.searchValue = "";
+    if (this.props.advancedSearchBody) {
+      this.populateGridData(this.props.advancedSearchBody);
+    } else {
+      this.populateGridData();
+    }
+  };
+
+  onInputValueChanged = (value) => {
+    if (value) {
+      let lobCode = this.props.lobCode;
+      let requests = Array();
+      let apiDetails = {};
+      apiDetails["apiPart"] = commonConstants.SEARCH_GPI;
+      apiDetails["pathParams"] =
+        this.props?.formulary_id + "/" + lobCode + "/" + "F";
+      if (lobCode === "MCR") {
+        apiDetails["pathParams"] =
+          apiDetails["pathParams"] +
+          "/" +
+          (this.props.formulary_type_id === 1 ? "MC" : "MMP");
+      } else {
+        apiDetails["pathParams"] =
+          apiDetails["pathParams"] + "/" + lobCode;
+      }
+      apiDetails["keyVals"] = [
+        { key: commonConstants.KEY_SEARCH_VALUE, value: value },
+      ];
+      requests.push({
+        key: "generic_product_identifier",
+        apiDetails: apiDetails,
+      });
+
+      apiDetails = Object.assign({}, apiDetails);
+      apiDetails["apiPart"] = commonConstants.SEARCH_NDC;
+      requests.push({ key: "ndc", apiDetails: apiDetails });
+
+      apiDetails = Object.assign({}, apiDetails);
+      apiDetails["apiPart"] = commonConstants.SEARCH_LABEL_NAME;
+      requests.push({ key: "drug_label_name", apiDetails: apiDetails });
+
+      apiDetails = Object.assign({}, apiDetails);
+      apiDetails["apiPart"] = commonConstants.SEARCH_CLASS;
+      requests.push({ key: "database_class", apiDetails: apiDetails });
+
+      apiDetails = Object.assign({}, apiDetails);
+      apiDetails["apiPart"] = commonConstants.SEARCH_CATEGORY;
+      requests.push({ key: "database_category", apiDetails: apiDetails });
+
+      if (this.props.formulary_lob_id == 1) {
+        apiDetails = Object.assign({}, apiDetails);
+        apiDetails["apiPart"] = commonConstants.SEARCH_RXCUI;
+        requests.push({ key: "rxcui", apiDetails: apiDetails });
+      } else {
+        apiDetails = Object.assign({}, apiDetails);
+        apiDetails["apiPart"] = commonConstants.SEARCH_DDID;
+        requests.push({
+          key: "drug_descriptor_identifier",
+          apiDetails: apiDetails,
+        });
+      }
+
+      const drugGridData = this.props
+        .getIntelliscenseSearch(requests)
+        .then((json) => {
+          //debugger;
+          if (
+            json.payload &&
+            json.payload.data &&
+            Array.isArray(json.payload.data) &&
+            json.payload.data.length > 0
+          ) {
+            let tmpData = json.payload.data;
+            var data: any[] = [];
+            var gridData = tmpData.map(function (el) {
+              var element = Object.assign({}, el);
+              data.push(element);
+              let gridItem = element["value"];
+              return gridItem;
+            });
+            this.setState({
+              searchData: data,
+              searchNames: gridData,
+            });
+          }
+        });
     }
   };
 
@@ -243,7 +486,20 @@ class TierRemove extends React.Component<any, tabsState> {
         );
       }
 
-      apiDetails['messageBody']['filter'] = this.state.filter;
+      let allFilters = Array();
+      let filterProps = Array();
+      this.state.filter.map(filterInfo => {
+        allFilters.push(filterInfo);
+        filterProps.push(filterInfo['prop']);
+      });
+
+      this.state.quickFilter.map(filterInfo => {
+        if (!filterProps.includes(filterInfo['prop']))
+          allFilters.push(filterInfo);
+      });
+
+      apiDetails['messageBody']['filter'] = allFilters;
+
 
       if (this.state.sort_by && this.state.sort_by.length > 0) {
         let keys = Array();
@@ -263,50 +519,57 @@ class TierRemove extends React.Component<any, tabsState> {
         .postTierApplyInfo(apiDetails)
         .then((json) => {
           //debugger;
-          if(json.payload && json.payload.result){
-          let tmpData = json.payload.result;
-          var data: any[] = [];
-          let count = 1;
-          var gridData = tmpData.map(function (el) {
-            var element = Object.assign({}, el);
-            data.push(element);
-            let gridItem = {};
-            gridItem["id"] = count;
-            gridItem["key"] = count;
-            gridItem["tier_value"] = element.tier_value;
-            gridItem["file_type"] = element.file_type
-              ? "" + element.file_type
-              : "";
-            gridItem["data_source"] = element.data_source
-              ? "" + element.data_source
-              : "";
-            gridItem["drug_label_name"] = element.drug_label_name
-              ? "" + element.drug_label_name
-              : "";
-            gridItem["ndc"] = "";
-            if (thisRef.props.lobCode === 'MCR') {
-              gridItem["rxcui"] = element.rxcui ? "" + element.rxcui : "";
-            } else {
-              gridItem["drug_descriptor_identifier"] = element.drug_descriptor_identifier ? "" + element.drug_descriptor_identifier : "";
-            }
-            gridItem["generic_product_identifier"] = element.generic_product_identifier
-              ? "" + element.generic_product_identifier
-              : "";
-            gridItem["trademark_code"] = element.trademark_code
-              ? "" + element.trademark_code
-              : "";
-            gridItem["database_category"] = element.database_category
-              ? "" + element.database_category
-              : "";
-            count++;
-            return gridItem;
-          });
-          this.setState({
-            drugData: data,
-            drugGridData: gridData,
-            dataCount: json.payload.count,
-          });
-        }});
+          if (json.payload && json.payload.result) {
+            let tmpData = json.payload.result;
+            var data: any[] = [];
+            let count = 1;
+            var gridData = tmpData.map(function (el) {
+              var element = Object.assign({}, el);
+              data.push(element);
+              let gridItem = {};
+              gridItem["id"] = count;
+              gridItem["key"] = count;
+              gridItem["tier_value"] = element.tier_value;
+              gridItem["file_type"] = element.file_type
+                ? "" + element.file_type
+                : "";
+              gridItem["data_source"] = element.data_source
+                ? "" + element.data_source
+                : "";
+              gridItem["drug_label_name"] = element.drug_label_name
+                ? "" + element.drug_label_name
+                : "";
+              gridItem["ndc"] = "";
+              if (thisRef.props.lobCode === 'MCR') {
+                gridItem["rxcui"] = element.rxcui ? "" + element.rxcui : "";
+              } else {
+                gridItem["drug_descriptor_identifier"] = element.drug_descriptor_identifier ? "" + element.drug_descriptor_identifier : "";
+              }
+              gridItem["generic_product_identifier"] = element.generic_product_identifier
+                ? "" + element.generic_product_identifier
+                : "";
+              gridItem["trademark_code"] = element.trademark_code
+                ? "" + element.trademark_code
+                : "";
+              gridItem["database_category"] = element.database_category
+                ? "" + element.database_category
+                : "";
+              count++;
+              return gridItem;
+            });
+            this.setState({
+              drugData: data,
+              drugGridData: gridData,
+              dataCount: json.payload.count,
+            });
+          } else {
+            this.setState({
+              drugData: Array(),
+              drugGridData: Array(),
+              dataCount: 0,
+            });
+          }
+        });
     }
   };
 
@@ -394,7 +657,7 @@ class TierRemove extends React.Component<any, tabsState> {
           : this.state.drugData[tierId - 1]["drug_id"]
       );
     }
-    console.log('Selected drugs:'+JSON.stringify(this.state.selectedDrugs));
+    console.log('Selected drugs:' + JSON.stringify(this.state.selectedDrugs));
   };
 
   rowSelectionChangeFromCell = (
@@ -432,7 +695,7 @@ class TierRemove extends React.Component<any, tabsState> {
         });
 
         this.state.selectedRowKeys = this.state.selectedRowKeys.filter(rowKey => rowKey !== selectedRow.key);
-        console.log('Selected row keys:'+JSON.stringify(this.state.selectedRowKeys));
+        console.log('Selected row keys:' + JSON.stringify(this.state.selectedRowKeys));
         this.onSelectedTableRowChanged(this.state.selectedRowKeys);
 
         this.setState({
@@ -557,6 +820,24 @@ class TierRemove extends React.Component<any, tabsState> {
           <div className="select-drug-from-table">
             <div className="bordered white-bg">
               <div className="header remove-btn-wrapper-right pr-10">
+                <div className="header-dropdown">
+                  <DropDown
+                    value={this.state.searchValue}
+                    options={this.state.searchNames}
+                    placeholder={this.state.filterPlaceholder}
+                    showSearch={true}
+                    onSearch={this.onInputValueChanged}
+                    onSelect={this.onSearchValueChanges}
+                  />
+                  {this.state.quickFilter.length > 0 && (
+                    <span
+                      style={{ marginLeft: 10 }}
+                      onClick={this.clearSearchFilter}
+                    >
+                      Clear
+                    </span>
+                  )}
+                </div>
                 <div className="button-wrapper">
                   <Button
                     className="Button normal"
@@ -567,7 +848,7 @@ class TierRemove extends React.Component<any, tabsState> {
                 </div>
               </div>
 
-              <div className="tier-grid-container">
+              <div className="tier-grid-container tier-replace-root">
                 <FrxDrugGridContainer
                   isPinningEnabled={false}
                   enableSearch={false}
@@ -590,8 +871,13 @@ class TierRemove extends React.Component<any, tabsState> {
                   getPerPageItemSize={this.onPageSize}
                   onGridPageChangeHandler={this.onGridPageChangeHandler}
                   clearFilterHandler={this.onClearFilterHandler}
-                  applyFilter={this.onApplyFilterHandler}
                   applySort={this.onApplySortHandler}
+                  isSingleSorted={this.state.isGridSingleSorted}
+                  sortedInfo={this.state.gridSingleSortInfo}
+                  applyMultiSort={this.applyMultiSortHandler}
+                  isMultiSorted={this.state.isGridMultiSorted}
+                  multiSortedInfo={this.state.gridMultiSortedInfo}
+                  onMultiSortToggle={this.onMultiSortToggle}
                   getColumnSettings={this.onSettingsIconHandler}
                   pageSize={this.state.limit}
                   selectedCurrentPage={

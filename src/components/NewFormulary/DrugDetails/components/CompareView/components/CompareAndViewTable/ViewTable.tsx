@@ -10,6 +10,7 @@ import { connect } from "react-redux";
 import showMessage from "../../../../../Utils/Toast";
 import getLobCode from "../../../../../Utils/LobUtils";
 import { getMainComparison } from "../../../../../../../redux/slices/formulary/compareView/compareViewService";
+import FrxLoader from "../../../../../../shared/FrxLoader/FrxLoader";
 import {
   dateFilters,
   textFilters,
@@ -38,6 +39,7 @@ class ViewTable extends Component<any, any> {
     showViewAll: false,
     showViewAllNonMatch: false,
     formularyTypesGridData: Array(),
+    isRequestFinished: false,
   };
 
   componentDidMount() {
@@ -45,6 +47,9 @@ class ViewTable extends Component<any, any> {
       this.props.baseformulary &&
       this.props.baseformulary["id_formulary"]
     ) {
+      this.setState({
+        isRequestFinished: false
+      });
       this.populateSummaryData();
     }
   }
@@ -682,11 +687,13 @@ class ViewTable extends Component<any, any> {
           });
           this.setState({
             formularyTypesGridData: formularyTypesGridData,
+            isRequestFinished: true
           });
         } else {
           showMessage("Compare data is empty", "error");
           this.setState({
             formularyTypesGridData: formularyTypesGridData,
+            isRequestFinished: true
           });
         }
       } catch (err) {
@@ -694,16 +701,21 @@ class ViewTable extends Component<any, any> {
         showMessage("Error while fetching data", "error");
         this.setState({
           formularyTypesGridData: formularyTypesGridData,
+          isRequestFinished: true
         });
       }
     } else {
       this.setState({
         formularyTypesGridData: formularyTypesGridData,
+        isRequestFinished: true
       });
     }
   };
   render() {
     const { showCheckbox, toggleAllAccordion } = this.state;
+    if(!this.state.isRequestFinished){
+      return <FrxLoader />;
+    }
     return (
       <>
         <div className="bordered-grid">
@@ -743,7 +755,7 @@ class ViewTable extends Component<any, any> {
                       });
                     }}
                   >
-                    <p>{!toggleAllAccordion ? "Collapse All" : "Expand All"}</p>
+                    <p>{!toggleAllAccordion ? "Expand All" : "Collapse All"}</p>
                   </div>
                 </div>
               </div>

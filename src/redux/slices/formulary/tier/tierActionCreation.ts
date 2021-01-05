@@ -126,3 +126,91 @@ export const postNewTier = createAsyncThunk(
       });
   }
 );
+
+export const replaceTier = createAsyncThunk(
+  "tier/replaceTier",
+  async (apiDetails: any) => {
+    let apiPart = apiDetails.apiPart;
+    let pathParams = apiDetails.pathParams;
+    let keyVals = apiDetails.keyVals;
+    let messageBody = apiDetails.messageBody;
+    let POST_URL = URL + apiPart + pathParams;
+    if(keyVals){
+      keyVals = keyVals.map(pair => pair.key+'='+pair.value);
+      POST_URL = POST_URL + "?" + keyVals.join('&');
+    }
+    console.log("replaceTier action creator:: url: " + POST_URL);
+    const requestHeaders  = {
+        method: 'PUT',
+        body: JSON.stringify(messageBody),
+        headers: commonConstants.REQUEST_HEADER
+    }
+    return fetch(POST_URL,requestHeaders)
+      .then((response) => {
+        if (!response.ok) throw Error(response.statusText);
+        return response.json();
+      })
+      .then((json) => {
+        console.log("replaceTier: ", json);
+        return json;
+      });
+  }
+);
+
+export const deleteTier = createAsyncThunk(
+  "tier/deleteTier",
+  async (apiDetails: any) => {
+    let apiPart = apiDetails.apiPart;
+    let pathParams = apiDetails.pathParams;
+    let keyVals = apiDetails.keyVals;
+    let GET_URL = URL + apiPart + pathParams;
+    if(keyVals){
+      keyVals = keyVals.map(pair => pair.key+'='+pair.value);
+      GET_URL = GET_URL + "?" + keyVals.join('&');
+    }
+    console.log("deleteTier action creator:: url: " + GET_URL);
+    const requestHeaders  = {
+        method: 'DELETE',
+        headers: commonConstants.REQUEST_HEADER
+    }
+    return fetch(GET_URL,requestHeaders)
+      .then((response) => {
+        if (!response.ok) throw Error(response.statusText);
+        return response.json();
+      })
+      .then((json) => {
+        console.log("deleteTier: ", json);
+        return json;
+      });
+  }
+);
+
+export const reassignTier = createAsyncThunk(
+  "tier/reassignTier",
+  async (apiDetails: any) => {
+    let apiPart = apiDetails.apiPart;
+    let pathParams = apiDetails.pathParams;
+    let keyVals = apiDetails.keyVals;
+    let messageBody = apiDetails.messageBody;
+    let POST_URL = URL + apiPart + pathParams;
+    if(keyVals){
+      keyVals = keyVals.map(pair => pair.key+'='+pair.value);
+      POST_URL = POST_URL + "?" + keyVals.join('&');
+    }
+    console.log("reassignTier action creator:: url: " + POST_URL);
+    const requestHeaders  = {
+        method: 'PUT',
+        body: JSON.stringify(messageBody),
+        headers: commonConstants.REQUEST_HEADER
+    }
+    return fetch(POST_URL,requestHeaders)
+      .then((response) => {
+        if (!response.ok) throw Error(response.statusText);
+        return response.json();
+      })
+      .then((json) => {
+        console.log("reassignTier: ", json);
+        return json;
+      });
+  }
+);

@@ -213,7 +213,10 @@
   padding: 20px;
 }
 .tier-grid-remove-container {
-  .ant-table-cell .ant-checkbox-wrapper .ant-checkbox-checked .ant-checkbox-inner{
+  .ant-table-cell
+    .ant-checkbox-wrapper
+    .ant-checkbox-checked
+    .ant-checkbox-inner {
     background: #1890ff;
   }
 }
@@ -329,40 +332,34 @@
     border-bottom: 0;
   }
 }
-.float-left{
+.float-left {
   float: left;
 }
-.margin-right{
+.margin-right {
   margin-right: 10px;
 }
 .tier-dialog-popup {
   z-index: 0 !important;
   .MuiButton-label {
-  padding: 10px !important;
-}
-.red-bold{
-  color:red;
-  font-weight: bold;
-}
-.delete-tier-wrapper p{
-  font-family: Roboto;
-font-style: normal;
-font-weight: normal;
-font-size: 14px;
-line-height: 16px;
+    padding: 10px !important;
+  }
+  .red-bold {
+    color: red;
+    font-weight: bold;
+  }
+  .delete-tier-wrapper p {
+    font-family: Roboto;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 14px;
+    line-height: 16px;
 
-
-color: #323C47;
-
-}
-.delete-tier-wrapper{
- 
-height: 80px;
-width: 600px;
-
-
-
-}
+    color: #323c47;
+  }
+  .delete-tier-wrapper {
+    height: 80px;
+    width: 600px;
+  }
 }
 
 .mini-tabs {
@@ -380,7 +377,7 @@ width: 600px;
   grid-template-columns: 1fr 1fr 0.5fr;
   align-items: baseline;
   .search-input {
-    padding-left: 28px; 
+    padding-left: 28px;
   }
 }
 .remove-btn-wrapper {
@@ -389,4 +386,57 @@ width: 600px;
 
 .remove-btn-wrapper-right {
   justify-content: flex-end !important;
+}
+
+.tier-mini-tabs {
+  border-right: none !important;
+}
+
+.delete-replace-popup {
+  .gridRow {
+    display: flex;
+    margin-bottom: 0;
+    &.header {
+      background: #2055b5;
+      color: white;
+      border-radius: 3px 3px 0 0;
+      overflow: hidden;
+      border: none;
+      padding: 0;
+    }
+    border: 1px solid #e5e5e5;
+    border-bottom: none;
+    padding: 8px 0;
+    > div {
+      text-align: center;
+    }
+    .dropdown-col {
+      width: 285px;
+      .ant-select {
+        text-align: left;
+      }
+    }
+    .tiername-col {
+      width: 240px;
+    }
+    .tierdesc-col {
+      width: 240px;
+    }
+    &:last-child {
+      border-bottom: 1px solid #e5e5e5;
+      border-radius: 0 0 3px 3px;
+    }
+  }
+}
+.class-category
+  .frx-grid-container
+  .frx-grid
+  .frx-grid__grid-block
+  .frx-grid__grid-block__table-block
+  .ant-table
+  .ant-table-header
+  .ant-table-thead
+  > tr
+  > th {
+  line-height: 50px !important;
 }

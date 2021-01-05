@@ -72,7 +72,7 @@ function mapStateToProps(state){
     };
 
     componentWillReceiveProps(nextProps) {
-        debugger;
+        // debugger;
         console.log('TIER: componentWillReceiveProps', nextProps);
         
         if (nextProps.configureSwitch){
