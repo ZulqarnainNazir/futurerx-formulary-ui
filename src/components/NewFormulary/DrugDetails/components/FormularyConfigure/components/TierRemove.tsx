@@ -192,10 +192,12 @@ class TierRemove extends React.Component<any, tabsState> {
       this.state.sort_by = this.state.sort_by.filter(keyPair => keyPair['key'] !== key);
       this.state.sort_by.push({ key: key, value: sortOrder });
     }
-    this.state.gridSingleSortInfo = sortedInfo;
-    this.state.gridMultiSortedInfo = [];
-    this.state.isGridMultiSorted = false;
-    this.state.isGridSingleSorted = true;
+    this.setState({
+      gridSingleSortInfo: sortedInfo,
+      isGridSingleSorted: true,
+      isGridMultiSorted: false,
+      gridMultiSortedInfo: []
+    });
     if (this.props.advancedSearchBody) {
       this.populateGridData(this.props.advancedSearchBody);
     } else {
@@ -204,10 +206,12 @@ class TierRemove extends React.Component<any, tabsState> {
   };
   applyMultiSortHandler = (sorter, multiSortedInfo) => {
     console.log('Multisort info:' + JSON.stringify(sorter));
-    this.state.gridSingleSortInfo = null;
-    this.state.gridMultiSortedInfo = multiSortedInfo;
-    this.state.isGridMultiSorted = true;
-    this.state.isGridSingleSorted = false;
+    this.setState(  {
+			isGridMultiSorted: true,
+			isGridSingleSorted: false,
+			gridMultiSortedInfo: multiSortedInfo,
+			gridSingleSortInfo: null,
+		})
 
     if (sorter && sorter.length > 0) {
       let uniqueKeys = Array();
