@@ -114,3 +114,24 @@
   position: sticky;
   left: 0;
 }
+.top-search-wrapper{
+  display: flex;
+  .multiSelectCheck{
+    min-width: 170px;
+    display: flex;
+    align-items: center;
+    .select-box, .custom-multi-select{
+      width: 170px;
+    }
+    .custom-multi-select{
+      border: 1px solid #e5e5e5;
+      border-radius: 3px;
+      &:before{
+        border: none;
+      }
+    }
+    .search-btn{
+      margin-left: 10px;
+    }
+  }
+}

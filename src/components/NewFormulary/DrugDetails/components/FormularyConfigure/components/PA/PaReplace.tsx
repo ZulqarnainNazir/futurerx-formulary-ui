@@ -712,6 +712,7 @@ class PaReplace extends React.Component<any, any> {
                       this.setState({ is_additional_criteria_defined: true });
                     }}
                     disabled={this.props.configureSwitch}
+                    checked={this.state.is_additional_criteria_defined}
                   />
                   <RadioButton
                     label="No"
@@ -721,6 +722,7 @@ class PaReplace extends React.Component<any, any> {
                       this.setState({ is_additional_criteria_defined: false });
                     }}
                     disabled={this.props.configureSwitch}
+                    checked={!this.state.is_additional_criteria_defined}
                   />
                 </div>
                 {/* <RadioGroup
