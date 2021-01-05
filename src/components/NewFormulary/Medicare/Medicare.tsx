@@ -38,7 +38,10 @@ const miniTabs = [
   { id: 1, text: "Formulary" },
   { id: 2, text: "Mass Maintenance" },
   { id: 3, text: "Alternatives" },
-  { id: 4, text: "Decision Tree" },
+  {
+    id: 4,
+    text: "Decision Tree",
+  },
   { id: 5, text: "Group Description Management" },
 ];
 
@@ -247,7 +250,17 @@ class Medicare extends React.Component<any, any> {
       case 2:
         return <Alternatives />;
       case 3:
-        return <div>Decision Tree</div>;
+        return (
+          <div>
+            <a
+              href="http://localhost:3001"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Decision Tree
+            </a>
+          </div>
+        );
       case 4:
         return <div>Group Description Management</div>;
     }
@@ -265,7 +278,7 @@ class Medicare extends React.Component<any, any> {
     return updatedColumns;
   };
 
-  applyFilterHandler = filters => {
+  applyFilterHandler = (filters) => {
     console.log("medicare filters ", filters);
     this.setState(
       {
@@ -337,13 +350,13 @@ class Medicare extends React.Component<any, any> {
           label: "N/A",
           type: "block",
           variant: this.getVariant("N/A", "block"),
-          fill: "fill"
+          fill: "fill",
         },
         origin: {
           label: "Purchased",
           type: "pill",
           variant: this.getVariant("Purchased", "pill"),
-          fill: "fill"
+          fill: "fill",
         },
         formulary_name: e.formulary_name,
         id_formulary: e.id_formulary.toString(),
