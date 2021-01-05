@@ -53,6 +53,8 @@ export default class CompareView extends React.Component<
       }
       return tab;
     });
+    this.state.isCompareClicked = false;
+    this.state.isViewClicked = false;
     this.setState({ tabs, activeTabIndex });
   };
 
@@ -96,10 +98,13 @@ export default class CompareView extends React.Component<
 
   handleViewBtn = (baseFormulary) => {
     if (baseFormulary && baseFormulary["id_formulary"]) {
+      this.state.baseformulary = baseFormulary;
       this.setState({
-        // isViewClicked: !this.state.isViewClicked,
-        isViewClicked: true,
-        baseformulary: baseFormulary,
+        isViewClicked: false,
+      }, () => {
+        this.setState({
+          isViewClicked: true,
+        })
       });
     } else {
       showMessage("Choose formulary to view", "error");

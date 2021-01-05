@@ -29,6 +29,9 @@ class ViewFormularies extends React.Component<any, any> {
     return true;
   };
   handleIconClick = () => {
+    if(this.props.handleViewClear){
+      this.props.handleViewClear();
+    }
     this.setState({ selectFormulary: true });
   };
 
