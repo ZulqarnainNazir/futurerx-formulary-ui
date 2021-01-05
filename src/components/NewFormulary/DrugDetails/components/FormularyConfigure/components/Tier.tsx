@@ -31,6 +31,8 @@ import {
   getTierLabels,
   postNewTier,
   replaceTier,
+  deleteTier,
+  reassignTier
 } from "../../../../../../redux/slices/formulary/tier/tierActionCreation";
 //import { getFormularySetup } from "../../../../../../redux/slices/formulary/formularySummaryActionCreation";
 import { GridMenu } from "../../../../../../models/grid.model";
@@ -49,6 +51,8 @@ function mapDispatchToProps(dispatch) {
     postNewTier: (a) => dispatch(postNewTier(a)),
     setAdvancedSearch: (a) => dispatch(setAdvancedSearch(a)),
     replaceTier: (a) => dispatch(replaceTier(a)),
+    deleteTier: (a) => dispatch(deleteTier(a)),
+    reassignTier: (a) => dispatch(reassignTier(a)),
     //getFormularySetup:(a)=>dispatch(getFormularySetup(a))
   };
 }
@@ -171,6 +175,51 @@ class Tier extends React.Component<any, tabsState> {
       }
     });
   };
+
+  deleteTier = (tierId) => {
+    let lobCode = getLobCode(this.props.formulary_lob_id);
+    let apiDetails = {};
+    apiDetails["apiPart"] = tierConstants.FORMULARY_TIER;
+    apiDetails["pathParams"] = this.props?.formulary_id + '/' + lobCode + '/' + tierId;
+    const tierData = this.props
+      .deleteTier(apiDetails)
+      .then((json) => {
+        if (
+          json.payload &&
+          json.payload.code &&
+          json.payload.code === "200"
+        ) {
+          showMessage("Tier Deleted", "success");
+          const TierColumns = tierDefinationColumns();
+          this.populateTierDetails(TierColumns, this.props.formulary_id);
+        } else {
+          showMessage("Error: Failed to delete tier", "error");
+        }
+      });
+  }
+
+  reassignTier = (payload) => {
+    let lobCode = getLobCode(this.props.formulary_lob_id);
+    let apiDetails = {};
+    apiDetails["apiPart"] = tierConstants.REASSIGN_TIER;
+    apiDetails["pathParams"] = this.props?.formulary_id + '/' + lobCode;
+    apiDetails["messageBody"] = payload;
+    const tierData = this.props
+      .deleteTier(apiDetails)
+      .then((json) => {
+        if (
+          json.payload &&
+          json.payload.code &&
+          json.payload.code === "200"
+        ) {
+          showMessage("Tier/s reassign is successful", "success");
+          const TierColumns = tierDefinationColumns();
+          this.populateTierDetails(TierColumns, this.props.formulary_id);
+        } else {
+          showMessage("Error: Failed to reassign tier/s", "error");
+        }
+      });
+  }
 
   populateTierLabels = (formularyId, formularyTypeId) => {
     let apiDetails = {};
