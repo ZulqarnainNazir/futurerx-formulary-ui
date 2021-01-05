@@ -33,12 +33,12 @@ function mapDispatchToProps(dispatch) {
   return {};
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
   return {
     formulary_id: state?.application?.formulary_id,
     formulary: state?.application?.formulary,
     formulary_lob_id: state?.application?.formulary_lob_id,
-    formulary_type_id: state?.application?.formulary_type_id
+    formulary_type_id: state?.application?.formulary_type_id,
   };
 };
 
@@ -85,17 +85,48 @@ class CompareFormularies extends React.Component<any, any> {
     });
   };
   render() {
-    if(!this.state.baseFormulary || Object.keys(this.state.baseFormulary).length === 0){
-      if(this.props.formulary){
+    if (
+      !this.state.baseFormulary ||
+      Object.keys(this.state.baseFormulary).length === 0
+    ) {
+      if (this.props.formulary) {
         this.state.baseFormulary = {};
-        this.state.baseFormulary['id_formulary'] = this.props.formulary['id_formulary'];
-        this.state.baseFormulary['id_base_formulary'] = this.props.formulary['id_base_formulary'];
-        this.state.baseFormulary['formulary_name'] = this.props.formulary['formulary_info'] ? this.props.formulary['formulary_info']['formulary_name'] : '';
-        this.state.baseFormulary['id_formulary_type'] = this.props.formulary['formulary_info'] ? this.props.formulary['formulary_info']['id_formulary_type'] : '';
-        this.state.baseFormulary['version_number'] = this.props.formulary['formulary_info'] ? this.props.formulary['formulary_info']['version_number'] : '';
-        this.state.baseFormulary['formulary_type'] = this.props.formulary['formulary_type_info'] ? this.props.formulary['formulary_type_info']['formulary_type'] : '';
-        this.state.baseFormulary['id_lob'] = this.props.formulary['formulary_type_info'] ? this.props.formulary['formulary_type_info']['id_lob'] : '';
-        this.state.baseFormulary['number_of_tiers'] = this.props.formulary['formulary_info'] ? this.props.formulary['formulary_info']['number_of_tiers'] : '';
+        this.state.baseFormulary["id_formulary"] = this.props.formulary[
+          "id_formulary"
+        ];
+        this.state.baseFormulary["id_base_formulary"] = this.props.formulary[
+          "id_base_formulary"
+        ];
+        this.state.baseFormulary["formulary_name"] = this.props.formulary[
+          "formulary_info"
+        ]
+          ? this.props.formulary["formulary_info"]["formulary_name"]
+          : "";
+        this.state.baseFormulary["id_formulary_type"] = this.props.formulary[
+          "formulary_info"
+        ]
+          ? this.props.formulary["formulary_info"]["id_formulary_type"]
+          : "";
+        this.state.baseFormulary["version_number"] = this.props.formulary[
+          "formulary_info"
+        ]
+          ? this.props.formulary["formulary_info"]["version_number"]
+          : "";
+        this.state.baseFormulary["formulary_type"] = this.props.formulary[
+          "formulary_type_info"
+        ]
+          ? this.props.formulary["formulary_type_info"]["formulary_type"]
+          : "";
+        this.state.baseFormulary["id_lob"] = this.props.formulary[
+          "formulary_type_info"
+        ]
+          ? this.props.formulary["formulary_type_info"]["id_lob"]
+          : "";
+        this.state.baseFormulary["number_of_tiers"] = this.props.formulary[
+          "formulary_info"
+        ]
+          ? this.props.formulary["formulary_info"]["number_of_tiers"]
+          : "";
       }
     }
     return (
@@ -216,7 +247,4 @@ class CompareFormularies extends React.Component<any, any> {
   }
 }
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(CompareFormularies);
+export default connect(mapStateToProps, mapDispatchToProps)(CompareFormularies);

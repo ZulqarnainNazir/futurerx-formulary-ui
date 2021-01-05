@@ -80,6 +80,10 @@ interface drugDetailALState {
   alRemoveCheckedList: any[],
   alRemoveSettingsStatus: any,
   alSettings: initialFormData[],
+  sort_by: any[],
+  hiddenColumns: any[],
+  selectedRowKeys: number[];
+  fixedSelectedRows: number[];
 }
 
 const defaultListPayload = {
@@ -159,7 +163,11 @@ class DrugDetailAL extends React.Component<any, any> {
         index: 0,
         covered: true,
       }
-    ]
+    ],
+    sort_by: Array(),
+    hiddenColumns: Array(),
+    selectedRowKeys: [],
+    fixedSelectedRows: [],
   };
 
   listPayload: any = {
@@ -262,8 +270,10 @@ class DrugDetailAL extends React.Component<any, any> {
             showMessage("Success", "success");
             this.getALSummary();
             this.getALDrugsList();
+            this.refreshSelections({ activeTabIndex: this.state.activeTabIndex });
           } else {
             showMessage("Failure", "error");
+            this.refreshSelections({ activeTabIndex: this.state.activeTabIndex });
           }
         });
       } else if(this.state.activeTabIndex === 2) {
@@ -287,9 +297,11 @@ class DrugDetailAL extends React.Component<any, any> {
             this.getALSummary();
             this.getALDrugsList();
             this.getALCriteriaList(this.state.alRemoveSettingsStatus.covered);
+            this.refreshSelections({ activeTabIndex: this.state.activeTabIndex });
           } else {
             console.log("------REMOVE FAILED-------")
             showMessage("Failure", "error");
+            this.refreshSelections({ activeTabIndex: this.state.activeTabIndex });
           }
         });
       }
@@ -428,7 +440,6 @@ class DrugDetailAL extends React.Component<any, any> {
 
       this.setState({
         panelGridValue1: rows,
-        showGrid: false,
       });
     });
   }
@@ -462,6 +473,12 @@ class DrugDetailAL extends React.Component<any, any> {
     });
   }
 
+  arraysEqual = (a, b) => {
+    if(a.length !== b.length) return false;
+    
+    return a.sort().toString() == b.sort().toString();
+  }
+
   getALDrugsList = ({index = 0, limit = 10, listPayload = {}, searchBody = {}} = {}) => {
     let apiDetails = {};
     apiDetails['apiPart'] = alConstants.GET_AL_DRUGS;
@@ -488,6 +505,7 @@ class DrugDetailAL extends React.Component<any, any> {
     }
 
     let listCount = 0;
+    const thisRef = this;
     this.props.getDrugDetailsALList(apiDetails).then((json) => {
       let tmpData = json.payload && json.payload.result ? json.payload.result : [];
       listCount = json.payload?.count;
@@ -499,6 +517,63 @@ class DrugDetailAL extends React.Component<any, any> {
         let gridItem = {};
         gridItem["id"] = count;
         gridItem["key"] = count;
+        // for preseelct items with selected tier value
+
+        if(this.state.activeTabIndex !== 2) {
+          if(this.state.alSettings[0].covered) {
+            console.log("-----Al list Covered----");
+
+            let alcoveredMinopr = element.covered_min_operators ? element.covered_min_operators.split(",").map(e => e.trim()) : [];
+            let alcoveredMinages = element.covered_min_ages ? element.covered_min_ages.split(",").map(e => e.trim()) : [];
+            let alcoveredMaxopr = element.covered_max_operators ? element.covered_max_operators.split(",").map(e => e.trim()) : [];
+            let alcoveredMaxages = element.covered_max_ages ? element.covered_max_ages.split(",").map(e => e.trim()) : [];
+            if(this.formData2.length === alcoveredMinopr.length) {
+
+              let formMinTypes = this.formData2.map(e => e.minimumType);
+              let formMinValue = this.formData2.map(e => e.minimumVal);
+              let formMaxTypes = this.formData2.map(e => e.maximumType);
+              let formMaxValue = this.formData2.map(e => e.maximumVal);
+              
+              let minTypebool = thisRef.arraysEqual(alcoveredMinopr, formMinTypes);
+              let minValbool = thisRef.arraysEqual(alcoveredMinages, formMinValue);
+              let maxTypebool = thisRef.arraysEqual(alcoveredMaxopr, formMaxTypes);
+              let maxValbool = thisRef.arraysEqual(alcoveredMaxages, formMaxValue);
+
+              if(minTypebool && minValbool && maxTypebool && maxValbool) {
+                gridItem["isChecked"] = true;
+                gridItem["isDisabled"] = true;
+                gridItem["rowStyle"] = "table-row--blue-font";
+              }
+            }
+
+          } else if (!this.state.alSettings[0].covered) {
+            console.log("-----Al list NOT Covered----");
+
+            let alncoveredMinopr = element.not_covered_min_operators ? element.not_covered_min_operators.split(",").map(e => e.trim()) : [];
+            let alncoveredMinages = element.not_covered_min_ages ? element.not_covered_min_ages.split(",").map(e => e.trim()) : [];
+            let alncoveredMaxopr = element.not_covered_max_operators ? element.not_covered_max_operators.split(",").map(e => e.trim()) : [];
+            let alncoveredMaxages = element.not_covered_max_ages ? element.not_covered_max_ages.split(",").map(e => e.trim()) : [];
+            if(this.formData2.length === alncoveredMinopr.length) {
+
+              let formMinTypes = this.formData2.map(e => e.minimumType);
+              let formMinValue = this.formData2.map(e => e.minimumVal);
+              let formMaxTypes = this.formData2.map(e => e.maximumType);
+              let formMaxValue = this.formData2.map(e => e.maximumVal);
+              
+              let minTypebool = thisRef.arraysEqual(alncoveredMinopr, formMinTypes);
+              let minValbool = thisRef.arraysEqual(alncoveredMinages, formMinValue);
+              let maxTypebool = thisRef.arraysEqual(alncoveredMaxopr, formMaxTypes);
+              let maxValbool = thisRef.arraysEqual(alncoveredMaxages, formMaxValue);
+
+              if(minTypebool && minValbool && maxTypebool && maxValbool) {
+                gridItem["isChecked"] = true;
+                gridItem["isDisabled"] = true;
+                gridItem["rowStyle"] = "table-row--blue-font";
+              }
+            }
+          }
+        }
+
         gridItem["is_al"] = element.is_al ? "" + element.is_al : "";
         gridItem["covered_min_operators"] = element.covered_min_operators ? "" + element.covered_min_operators : "";
         gridItem["covered_min_ages"] = element.covered_min_ages ? "" + element.covered_min_ages : "";
@@ -691,16 +766,126 @@ class DrugDetailAL extends React.Component<any, any> {
     }
   }
 
+  onSettingsIconHandler = (hiddenColumn, visibleColumn) => {
+    console.log(
+      "Settings icon handler: Hidden" +
+      JSON.stringify(hiddenColumn) +
+      " Visible:" +
+      JSON.stringify(visibleColumn)
+    );
+    if (hiddenColumn && hiddenColumn.length > 0) {
+      let hiddenColumnKeys = hiddenColumn.map(column => column["key"]);
+      this.setState({
+        hiddenColumns: hiddenColumnKeys
+      });
+    }
+  };
+
+  rowSelectionChangeFromCell = (
+    key: string,
+    selectedRow: any,
+    isSelected: boolean
+  ) => {
+    console.log("data row ", selectedRow, isSelected);
+    if (!selectedRow["isDisabled"]) {
+      if (isSelected) {
+        const data = this.state.data.map((d: any) => {
+          if (d.key === selectedRow.key) {
+            d["isChecked"] = true;
+            d["rowStyle"] = this.state.activeTabIndex === 2 ? "table-row--red-font" : "table-row--green-font";
+          }
+          // else d["isChecked"] = false;
+          return d;
+        });
+        const selectedRowKeys = [
+          ...this.state.selectedRowKeys,
+          selectedRow.key
+        ];
+        console.log("selected row keys ", selectedRowKeys);
+        const selectedRows: number[] = selectedRowKeys.filter(
+          k => this.state.fixedSelectedRows.indexOf(k) < 0
+        );
+        this.onSelectedTableRowChanged(selectedRowKeys);
+
+        this.setState({ data: data });
+      } else {
+        const data = this.state.data.map((d: any) => {
+          if (d.key === selectedRow.key) {
+            d["isChecked"] = false;
+            if (d["rowStyle"])
+              delete d["rowStyle"];
+          }
+          // else d["isChecked"] = false;
+          return d;
+        });
+
+        const selectedRowKeys: number[] = this.state.selectedRowKeys.filter(
+          k => k !== selectedRow.key
+        );
+        const selectedRows = selectedRowKeys.filter(
+          k => this.state.fixedSelectedRows.indexOf(k) < 0
+        );
+
+        this.onSelectedTableRowChanged(selectedRows);
+        this.setState({
+          data: data
+        });
+      }
+    }
+  };
+
+  onSelectAllRows = (isSelected: boolean) => {
+    const selectedRowKeys: number[] = [];
+    const data = this.state.data.map((d: any) => {
+      if (!d["isDisabled"]) {
+        d["isChecked"] = isSelected;
+        if (isSelected) {
+          selectedRowKeys.push(d["key"]);
+          d["rowStyle"] = this.state.activeTabIndex === 2 ? "table-row--red-font" : "table-row--green-font";
+        } else {
+          if (d["rowStyle"])
+            delete d["rowStyle"]
+        }
+      }
+      
+      return d;
+    });
+    const selectedRows: number[] = selectedRowKeys.filter(
+      k => this.state.fixedSelectedRows.indexOf(k) < 0
+    );
+    this.onSelectedTableRowChanged(selectedRows);
+    this.setState({ data: data });
+  };
+  
+  onApplySortHandler = (key, order) => {
+    console.log("sort details ", key, order);
+    this.state.sort_by = Array();
+    if (order) {
+      let sortOrder = order === 'ascend' ? 'asc' : 'desc';
+      this.state.sort_by = this.state.sort_by.filter(keyPair => keyPair['key'] !== key);
+      this.state.sort_by.push({ key: key, value: sortOrder });
+    }
+    if (this.props.advancedSearchBody) {
+      this.getALDrugsList({ searchBody: this.props.advancedSearchBody });
+    } else {
+      this.getALDrugsList();
+    }
+  };
+
   render() {
     const searchProps = {
       lobCode: this.props.lobCode,
       pageType: 0,
     };
+    let columns = getDrugDetailsColumnAL();
+    if (this.state.hiddenColumns.length > 0) {
+      columns = columns.filter(key => !this.state.hiddenColumns.includes(key));
+    }
     let dataGrid = <FrxLoader />;
     if (this.state.data) {
       dataGrid = (
         <div className="tier-grid-container">
-          <FrxDrugGridContainer
+          {/* <FrxDrugGridContainer
             isPinningEnabled={false}
             enableSearch={false}
             enableColumnDrag
@@ -727,6 +912,36 @@ class DrugDetailAL extends React.Component<any, any> {
               type: "checkbox",
               onChange: this.onSelectedTableRowChanged,
             }}
+          /> */}
+          <FrxDrugGridContainer
+            isPinningEnabled={false}
+            enableSearch={false}
+            enableColumnDrag
+            settingsWidth={50}
+            onSearch={() => { }}
+            fixedColumnKeys={[]}
+            pagintionPosition="topRight"
+            gridName="TIER"
+            enableSettings
+            columns={columns}
+            scroll={{ x: 4000, y: 377 }}
+            isFetchingData={false}
+            enableResizingOfColumns
+            data={this.state.data}
+            rowSelectionChangeFromCell={this.rowSelectionChangeFromCell}
+            onSelectAllRows={this.onSelectAllRows}
+            customSettingIcon={"FILL-DOT"}
+            totalRowsCount={this.state.listCount}
+            getPerPageItemSize={this.onPageSize}
+            onGridPageChangeHandler={this.onGridPageChangeHandler}
+            clearFilterHandler={this.onClearFilterHandler}
+            applyFilter={this.onApplyFilterHandler}
+            applySort={this.onApplySortHandler}
+            getColumnSettings={this.onSettingsIconHandler}
+            pageSize={this.listPayload.limit}
+            selectedCurrentPage={
+              this.listPayload.index / this.listPayload.limit + 1
+            }
           />
         </div>
       );
