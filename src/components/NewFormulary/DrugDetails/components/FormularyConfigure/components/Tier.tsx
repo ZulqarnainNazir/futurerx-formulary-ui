@@ -786,7 +786,7 @@ class Tier extends React.Component<any, tabsState> {
                             rightTitle="view all"
                           />
                         </div>
-                        <div className="mini-tabs">
+                        <div className="mini-tabs tier-mini-tabs">
                           <FrxMiniTabs
                             tabList={this.state.tabs}
                             activeTabIndex={this.state.activeTabIndex}

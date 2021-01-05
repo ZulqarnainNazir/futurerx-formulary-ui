@@ -4,7 +4,7 @@
     width: 50px;
   }
 
-  .status-field-block__text {   
+  .status-field-block__text {
     font-size: 12px;
   }
 
@@ -15,33 +15,34 @@
     text-transform: capitalize;
   }
 
-  .status-field-block__variant-5--fill{
+  .status-field-block__variant-5--fill {
     width: fit-content !important;
     padding: 5px !important;
   }
   margin-top: 30px;
-  .inner-container{
-    .frx-loader{
+  .inner-container {
+    .frx-loader {
       z-index: 999;
     }
   }
-  &.default-height{
+  &.default-height {
     min-height: 842px;
-    .inner-container{
+    .inner-container {
       height: 100%;
     }
   }
-  .formulary-grid-panel-header-container  {
+  .formulary-grid-panel-header-container {
     display: flex;
     align-items: center;
     border-bottom: 1px solid#e5e5e5;
     position: relative;
+    background: #ffffff;
   }
 
-  .formulary-grid-panel-header  {
-    border-bottom: 0px;  
+  .formulary-grid-panel-header {
+    border-bottom: 0px;
   }
-  
+
   .bordered {
     border: 1px solid#e5e5e5;
     border-radius: 5px;
@@ -50,9 +51,10 @@
       padding-top: 0px;
       position: relative;
       top: -8px;
+      background: #ffffff;
     }
   }
-  
+
   .fields-container {
     display: flex;
     margin-left: 30px;
@@ -66,15 +68,15 @@
       }
     }
   }
-  
+
   .panel-divider {
-      position: absolute;
-      width: 1px;
-      height: 48px;
-      background: #E5E5E5;
-      right: 253px;
+    position: absolute;
+    width: 1px;
+    height: 48px;
+    background: #e5e5e5;
+    right: 253px;
   }
-  
+
   .add-new-formulary-button {
     position: absolute;
     right: 40px;
@@ -84,33 +86,33 @@
     padding: 10px 20px;
     width: 160px;
     height: 34px;
-    background: #FFFFFF;
-    border: 1px solid #1D54B4;
+    background: #ffffff;
+    border: 1px solid #1d54b4;
     box-sizing: border-box;
     border-radius: 5px;
-    
+
     font-family: Roboto;
     font-style: normal;
     font-weight: normal;
     font-size: 12px;
     line-height: 14px;
-    color: #1D54B4;
+    color: #1d54b4;
     text-align: center;
     letter-spacing: 0.01em;
     cursor: pointer;
   }
 }
-.add-new-dd{
+.add-new-dd {
   font-size: 12px;
   line-height: 35px;
   color: #666;
   cursor: pointer;
   font-weight: normal;
-  p{
+  p {
     font-weight: normal;
   }
 }
-.table-expanded-sticky-wrapper{
+.table-expanded-sticky-wrapper {
   position: sticky;
   left: 0;
 }
