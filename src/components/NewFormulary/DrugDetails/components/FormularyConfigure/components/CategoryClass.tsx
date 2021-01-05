@@ -743,9 +743,10 @@ class CategoryClass extends React.Component<any, any> {
     if (!selectedRow["isDisabled"]) {
       if (isSelected) {
         const data = this.state.filteredData.map((d: any) => {
-          if (!d["isDisabled"]) {
+          if (d.key === selectedRow.key) {
             d["isChecked"] = true;
           }
+          // else d["isChecked"] = false;
           return d;
         });
         if (!this.state.selectedRowKeys.includes(selectedRow.key)) {
@@ -755,9 +756,10 @@ class CategoryClass extends React.Component<any, any> {
         this.setState({filteredData: data});
       } else {
         const data = this.state.filteredData.map((d: any) => {
-          if (!d["isDisabled"]) {
+          if (d.key === selectedRow.key) {
             d["isChecked"] = false;
           }
+          // else d["isChecked"] = false;
           return d;
         });
         this.state.selectedRowKeys = this.state.selectedRowKeys.filter(rowKey => rowKey !== selectedRow.key);
