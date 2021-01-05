@@ -297,7 +297,7 @@ class Formulary extends React.Component<any, any> {
     this.listPayload = { ...defaultListPayload };
     this.listPayload.id_lob = null;
     this.listPayload.search_by = categoryObj;
-    this.listPayload.search_value = subCat != "" ? [subCat] : [];
+    this.listPayload.search_value = subCat != "" ? subCat : [];
     this.props.fetchFormularies(this.listPayload);
   };
   onGridPageChangeHandler = (pageNumber: any) => {
