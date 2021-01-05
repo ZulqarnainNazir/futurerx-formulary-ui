@@ -8,6 +8,7 @@ import showMessage from "../../../NewFormulary/Utils/Toast";
 import * as commonConstants from "../../../../api/http-commons";
 import * as compareConstants from "../../../../api/http-compare-view";
 import { getDrugs } from "../../../../redux/slices/formulary/compareView/compareViewService";
+import FrxLoader from "../../FrxLoader/FrxLoader";
 
 interface HeaderType {
   baseFormulary: number | null;
@@ -54,6 +55,7 @@ class PureAccordion extends Component<PureAccordionProps, any> {
     isRowSelectionEnabled: false,
     hiddenColumns: Array(),
     dataCount: 0,
+    isRequestFinished: true,
   };
 
   listPayload: any = {
@@ -86,14 +88,23 @@ class PureAccordion extends Component<PureAccordionProps, any> {
   onPageSize = (pageSize) => {
     this.listPayload = { ...defaultListPayload };
     this.listPayload.limit = pageSize;
+    this.setState({
+      isRequestFinished: false,
+    })
     this.populateGridData(this.state.baseFormularyId, this.listPayload);
   };
   onGridPageChangeHandler = (pageNumber: any) => {
     this.listPayload.index = (pageNumber - 1) * this.listPayload.limit;
+    this.setState({
+      isRequestFinished: false,
+    })
     this.populateGridData(this.state.baseFormularyId, this.listPayload);
   };
   onClearFilterHandler = () => {
     this.listPayload = { ...defaultListPayload };
+    this.setState({
+      isRequestFinished: false,
+    })
     this.populateGridData(this.state.baseFormularyId, this.listPayload);
   };
 
@@ -195,6 +206,7 @@ class PureAccordion extends Component<PureAccordionProps, any> {
             gridColumns: this.props.gridColumns,
             baseFormularyId: baseFormularyId,
             dataCount: data["count"],
+            isRequestFinished: true,
           });
         } else {
           showMessage("Compare data is empty", "error");
@@ -205,6 +217,7 @@ class PureAccordion extends Component<PureAccordionProps, any> {
             baseFormularyId: "",
             refFormularyId: "",
             dataCount: 0,
+            isRequestFinished: true,
           });
         }
       } catch (err) {
@@ -217,6 +230,7 @@ class PureAccordion extends Component<PureAccordionProps, any> {
           baseFormularyId: "",
           refFormularyId: "",
           dataCount: 0,
+          isRequestFinished: true,
         });
       }
     } else {
@@ -227,6 +241,7 @@ class PureAccordion extends Component<PureAccordionProps, any> {
         baseFormularyId: "",
         refFormularyId: "",
         dataCount: 0,
+        isRequestFinished: true,
       });
     }
   };
@@ -252,6 +267,7 @@ class PureAccordion extends Component<PureAccordionProps, any> {
         hiddenColumns: Array(),
         dataCount: 0,
         isRowSelectionEnabled: false,
+        isRequestFinished: true,
       });
     } else {
       if (baseFormularyId && count > 0) {
@@ -260,6 +276,9 @@ class PureAccordion extends Component<PureAccordionProps, any> {
           gridCellName !== null ? gridCellName : "";
         this.state.isRowSelectionEnabled = showCheckbox;
         this.listPayload = { ...defaultListPayload };
+        this.setState({
+          isRequestFinished: false,
+        })
         this.populateGridData(baseFormularyId, this.listPayload);
       }
     }
@@ -356,6 +375,9 @@ class PureAccordion extends Component<PureAccordionProps, any> {
       );
     switch (this.props.tableType) {
       case "COMPARE":
+        if(!this.state.isRequestFinished){
+          return <FrxLoader/>
+        }
         return (
           <div className="accordion__section">
             <div className={`accordion ${this.state.active}`}>
@@ -525,6 +547,9 @@ class PureAccordion extends Component<PureAccordionProps, any> {
           </div>
         );
       case "VIEW":
+        if(!this.state.isRequestFinished){
+          return <FrxLoader/>
+        }
         return (
           <div className="accordion__section-view">
             <div className={`accordion ${this.state.active}`}>
