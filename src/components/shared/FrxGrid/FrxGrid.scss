@@ -29,7 +29,13 @@
                   border-bottom: none;
                   padding: 0 8px 0 8px; // 0 19 0 20 => 0 15 0 20 => 0 10 0 10 => 0 19 => 0 8 0 8
                   line-height: 50px;
+
                   .ant-table-filter-trigger-container {
+                    .ant-dropdown-trigger.ant-table-filter-trigger {
+                      display: flex;
+                      justify-content: center;
+                      align-items: center;
+                    }
                     .frx-grid-filter-icon {
                       position: relative;
                       top: 3px;
