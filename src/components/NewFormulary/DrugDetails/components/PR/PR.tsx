@@ -197,6 +197,7 @@ class DrugDetailPR extends React.Component<any, any> {
           if (json.payload && json.payload.code && json.payload.code === "200") {
             showMessage("Success", "success");
             this.getPRSummary();
+            this.getPRDrugsList();
           } else {
             showMessage("Failure", "error");
           }
@@ -221,6 +222,8 @@ class DrugDetailPR extends React.Component<any, any> {
           if (json.payload && json.payload.code && json.payload.code === "200") {
             showMessage("Success", "success");
             this.getPRSummary();
+            this.getPRRemoveSettings(this.state.posRemoveSettingsStatus.covered);
+            this.getPRDrugsList();
           } else {
             console.log("------REMOVE FAILED-------")
             showMessage("Failure", "error");
@@ -455,7 +458,7 @@ class DrugDetailPR extends React.Component<any, any> {
   componentDidMount() {
     this.getPRSummary();
     this.getPRSettings();
-    this.getPRRemoveSettings(true)
+    this.getPRRemoveSettings(true);
   }
 
   onClickTab = (selectedTabIndex: number) => {
@@ -472,7 +475,7 @@ class DrugDetailPR extends React.Component<any, any> {
     //   this.getPRRemoveSettings(true);
     // }
 
-    this.refreshSelections();
+    this.refreshSelections({ activeTabIndex });
 
     if(this.props.configureSwitch) {
       this.getPRDrugsList();
@@ -518,10 +521,10 @@ class DrugDetailPR extends React.Component<any, any> {
     this.setState({ prSettingsStatus, showGrid: false }, () => {console.log("THe Pr Settings Status = ", this.state.prSettingsStatus)});
   };
 
-  refreshSelections = () => {
-    if(this.state.activeTabIndex === 0 || this.state.activeTabIndex === 1) {
+  refreshSelections = ({ activeTabIndex = 0 }) => {
+    if(activeTabIndex === 0 || activeTabIndex === 1) {
       this.getPRSettings();
-    } else if (this.state.activeTabIndex === 2) {
+    } else if (activeTabIndex === 2) {
       this.getPRRemoveSettings(true);
     }
   }

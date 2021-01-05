@@ -12,7 +12,14 @@ import {
 } from "../../../../../api/http-commons";
 
 import { getICDReplaceSrch } from "../../../../../redux/slices/formulary/drugDetails/icd/icdActionCreation";
-import * as icdConstants from "../../../../../api/http-drug-details";
+import { getPNReplaceSrch } from "../../../../../redux/slices/formulary/drugDetails/pn/pnActionCreation";
+import {
+  getPTReplaceSrch,
+  getPCHLSearch,
+} from "../../../../../redux/slices/formulary/drugDetails/pt/ptActionCreation";
+
+import * as apiConstants from "../../../../../api/http-drug-details";
+
 import POSCriteria from "../CriteriaComponents/POSCriteria";
 import PRCriteria from "../CriteriaComponents/PRCriteria";
 import GenderCriteria from "../CriteriaComponents/GenderCriteria";
@@ -20,13 +27,19 @@ import ICDCriteria from "../CriteriaComponents/ICDCriteria";
 import AgeCriteria from "../CriteriaComponents/AgeCriteria";
 import PNCriteria from "../CriteriaComponents/PNCriteria";
 import PTCriteria from "../CriteriaComponents/PTCriteria";
+import PCHLCriteria from "../CriteriaComponents/PCHLCriteria";
 
 function mapDispatchToProps(dispatch) {
   return {
     getPOSSettings: (a) => dispatch(getDrugDetailsPOSSettings(a)),
     getPRSettings: (a) => dispatch(getDrugDetailsPRSettings(a)),
     setAdditionalCriteria: (a) => dispatch(setAdditionalCriteria(a)),
-    getICDReplaceSrch: (a) => dispatch(getICDReplaceSrch(a)),
+
+    getICDSearch: (a) => dispatch(getICDReplaceSrch(a)),
+    getPNSearch: (a) => dispatch(getPNReplaceSrch(a)),
+    getPTSearch: (a) => dispatch(getPTReplaceSrch(a)),
+
+    getPCHLSearch: (a) => dispatch(getPCHLSearch(a)),
   };
 }
 
@@ -49,7 +62,7 @@ class ListItem extends Component<any, any> {
   state = {
     nodeId: null,
 
-    cardCode: null,
+    cardCode: 0,
     cardName: null,
     isIncluded: null,
 
@@ -81,32 +94,14 @@ class ListItem extends Component<any, any> {
     },
 
     // PN
-    pnSettings: [
-      {
-        name: "",
-        key: 0,
-        show: false,
-        is_list: false,
-        value: "",
-        type: "",
-        text: "",
-      },
-    ],
+    pnSettings: [],
     pnSettingsStatus: { type: "covered", covered: true },
+    pnResults: { data: [], value: undefined },
 
     // PT
-    ptSettings: [
-      {
-        name: "",
-        key: 0,
-        show: false,
-        is_list: false,
-        value: "",
-        type: "",
-        text: "",
-      },
-    ],
+    ptSettings: [],
     ptSettingsStatus: { type: "covered", covered: true },
+    ptResults: { data: [], value: undefined },
 
     // POS
     posSettings: [],
@@ -125,11 +120,20 @@ class ListItem extends Component<any, any> {
     isSelectAllPR: false,
 
     // PCHL
-    pchlSettings: [],
+    pchlSettings: {
+      lookback_name: "",
+      id_lookback_level: "",
+      lookback_drug: [],
+      lookback_period: "",
+      number_of_fills: "",
+      number_of_days_supply_per_fill: "",
+    },
+
     pchlSettingsStatus: {
       type: "covered",
       covered: true,
     },
+    pchlResults: { data: [], value: undefined },
   };
 
   componentDidMount() {
@@ -150,14 +154,17 @@ class ListItem extends Component<any, any> {
     const updatedPayload = this.state.payload;
     const { cardCode, cardName, isIncluded } = this.state;
 
+    const isArrCriteria =
+      cardCode === 4 || cardCode === 5 || cardCode === 8 ? true : false;
     // age & icd are objects
-    // gender, pos & pr are array
+    // gender, pn, pt, pos, pr, pchl are array
     this.props.handleGlobalState(
       nodeId,
       cardCode,
       cardName,
       isIncluded,
-      updatedPayload
+      updatedPayload,
+      isArrCriteria
     );
   }
 
@@ -210,25 +217,97 @@ class ListItem extends Component<any, any> {
         });
         break;
       case 3:
-        console.log(payload);
         let { icdSettings } = this.state;
-        // let icdResults = this.state.icdResults;
+        let icdData: any[] = [];
+        let icdValue: string[] | undefined = [];
 
         if (payload !== null) {
           icdSettings = { ...payload };
-          // icdResults.value = payload.icds;
+          if (payload.icds !== "") {
+            if (payload.icds.length > 0) {
+              payload.icds.forEach((ele: any) => {
+                icdData.push(ele);
+                if (icdValue) icdValue.push(ele.text);
+              });
+            }
+          }
         }
         const icdSettingsStatus = {
           type: isIncluded ? COVERED : NOT_COVERED,
           covered: isIncluded,
         };
 
+        if (icdValue.length === 0) icdValue = undefined;
         this.setState({
           icdSettings,
           icdSettingsStatus,
-          // icdResults,
+          icdResults: {
+            data: icdData,
+            value: icdValue,
+          },
         });
         break;
+      case 4:
+        console.log("PN: ", payload);
+        let { pnSettings } = this.state;
+        let pnDdata: any[] = [];
+        let pnValue: string[] | undefined = [];
+
+        if (payload !== null) {
+          pnSettings = { ...payload };
+          if (payload.length > 0) {
+            payload.forEach((ele: any) => {
+              pnDdata.push(ele);
+              if (pnValue) pnValue.push(ele.text);
+            });
+          }
+        }
+        const pnSettingsStatus = {
+          type: isIncluded ? COVERED : NOT_COVERED,
+          covered: isIncluded,
+        };
+
+        if (pnValue.length === 0) pnValue = undefined;
+        this.setState({
+          pnSettings,
+          pnSettingsStatus,
+          pnResults: {
+            data: pnDdata,
+            value: pnValue,
+          },
+        });
+        break;
+      case 5:
+        console.log("PT: ", payload);
+        let { ptSettings } = this.state;
+        let ptData: any[] = [];
+        let ptValue: string[] | undefined = [];
+
+        if (payload !== null) {
+          ptSettings = { ...payload };
+          if (payload.length > 0) {
+            payload.forEach((ele: any) => {
+              ptData.push(ele);
+              if (ptValue) ptValue.push(ele.text);
+            });
+          }
+        }
+        const ptSettingsStatus = {
+          type: isIncluded ? COVERED : NOT_COVERED,
+          covered: isIncluded,
+        };
+
+        if (ptValue.length === 0) ptValue = undefined;
+        this.setState({
+          ptSettings,
+          ptSettingsStatus,
+          ptResults: {
+            data: ptData,
+            value: ptValue,
+          },
+        });
+        break;
+
       case 6:
         this.initializePOSSettingsListApi();
         const posSettingsStatus = {
@@ -239,6 +318,7 @@ class ListItem extends Component<any, any> {
           posSettingsStatus,
         });
         break;
+
       case 7:
         this.initializePRSettingsListApi();
         const prSettingsStatus = {
@@ -247,6 +327,36 @@ class ListItem extends Component<any, any> {
         };
         this.setState({
           prSettingsStatus,
+        });
+        break;
+
+      case 8:
+        let { pchlSettings } = this.state;
+        let pchlData: any[] = [];
+        let pchlValue: string[] | undefined = [];
+
+        if (payload !== null) {
+          pchlSettings = { ...payload };
+          if (payload?.lookback_drug?.length > 0) {
+            payload.lookback_drug.forEach((ele: any) => {
+              pchlData.push(ele);
+              if (pchlValue) pchlValue.push(ele.text);
+            });
+          }
+        }
+        const pchlSettingsStatus = {
+          type: isIncluded ? COVERED : NOT_COVERED,
+          covered: isIncluded,
+        };
+
+        if (pchlValue.length === 0) pchlValue = undefined;
+        this.setState({
+          pchlSettings,
+          pchlSettingsStatus,
+          pchlResults: {
+            data: pchlData,
+            value: pchlValue,
+          },
         });
         break;
       default:
@@ -313,7 +423,9 @@ class ListItem extends Component<any, any> {
     });
   };
 
-  handleAgeCriteriaMinConChange = (value) => {
+  ///////////////////// AL START
+
+  handleALMinConChange = (value) => {
     let alSettings = { ...this.state.alSettings };
     alSettings.min_age_condition = value;
     let payload = { ...alSettings };
@@ -322,7 +434,8 @@ class ListItem extends Component<any, any> {
       payload,
     });
   };
-  handleAgeCriteriaMaxConChange = (value) => {
+
+  handleALMaxConChange = (value) => {
     let alSettings = { ...this.state.alSettings };
     alSettings.max_age_condition = value;
     let payload = { ...alSettings };
@@ -331,13 +444,12 @@ class ListItem extends Component<any, any> {
       payload,
     });
   };
-  handleAgeCriteriaChange = (event) => {
-    let alSettings = { ...this.state.alSettings };
 
-    if (event.target.name === "min-val")
-      alSettings.min_age_limit = event.target.value.toString();
-    if (event.target.name === "max-val")
-      alSettings.max_age_limit = event.target.value.toString();
+  handleALChange = (event) => {
+    let alSettings = {
+      ...this.state.alSettings,
+      [event.target.name]: event.target.value.toString(),
+    };
 
     let payload = { ...alSettings };
     this.setState({
@@ -358,6 +470,8 @@ class ListItem extends Component<any, any> {
     let isIncluded = alSettingsStatus.covered;
     this.setState({ alSettingsStatus, isIncluded });
   };
+
+  ///////////////////// GL START
 
   serviceSettingsCheckedGL = (e) => {
     const glSettings = [...this.state.glSettings];
@@ -395,21 +509,7 @@ class ListItem extends Component<any, any> {
     this.setState({ glSettingsStatus, isIncluded });
   };
 
-  // https://api-dev-config-formulary.futurerx.com/api/1/icds?search_value=t
-  // Request Method: GET
-
-  handleICDStatus = (key: string) => {
-    const COVERED = "covered";
-    const isCovered: boolean = key === COVERED ? true : false;
-
-    let icdSettingsStatus = {
-      type: key,
-      covered: isCovered,
-    };
-
-    let isIncluded = icdSettingsStatus.covered;
-    this.setState({ icdSettingsStatus, isIncluded });
-  };
+  ///////////////////// ICD START
 
   handleICDOnChange = (event) => {
     let icdSettings = { ...this.state.icdSettings };
@@ -443,20 +543,15 @@ class ListItem extends Component<any, any> {
     });
   };
 
-  // is_list: false
-  // key: 68677
-  // text: "T07-Unspecified multiple injuries"
-  // value: "T07-Unspecified multiple injuries"
-
   handleICDSearch = (input) => {
     let apiDetails = {};
-    apiDetails["apiPart"] = icdConstants.GET_ICD_DRUGS_REPLACE;
+    apiDetails["apiPart"] = apiConstants.GET_ICD_DRUGS_REPLACE;
     apiDetails["pathParams"] = this.props?.formulary_id;
     apiDetails["keyVals"] = [
-      { key: icdConstants.KEY_ENTITY_ID, value: this.props?.formulary_id },
-      { key: icdConstants.SEARCHKEY, value: input },
+      { key: apiConstants.KEY_ENTITY_ID, value: this.props?.formulary_id },
+      { key: apiConstants.SEARCHKEY, value: input },
     ];
-    this.props.getICDReplaceSrch(apiDetails).then((json) => {
+    this.props.getICDSearch(apiDetails).then((json) => {
       let response = json.payload && json.payload.data ? json.payload.data : [];
       const data = [...response].slice(0, 8);
       this.setState({
@@ -466,6 +561,127 @@ class ListItem extends Component<any, any> {
       });
     });
   };
+
+  handleICDStatus = (key: string) => {
+    const COVERED = "covered";
+    const isCovered: boolean = key === COVERED ? true : false;
+
+    let icdSettingsStatus = {
+      type: key,
+      covered: isCovered,
+    };
+
+    let isIncluded = icdSettingsStatus.covered;
+    this.setState({ icdSettingsStatus, isIncluded });
+  };
+
+  ///////////////////// PN START
+
+  handlePNChange = (value: any[]) => {
+    let pnSettings: any[] = [...this.state.pnSettings];
+
+    // let pns: any[] = [];
+    this.state.pnResults.data.forEach((pn: any) => {
+      value.forEach((v) => {
+        if (pn["key"] === v) {
+          pnSettings.push(pn);
+        }
+      });
+    });
+
+    const payload: any = { ...pnSettings };
+    this.setState({
+      pnSettings,
+      payload,
+    });
+  };
+
+  handlePNSearch = (input) => {
+    let apiDetails = {};
+    apiDetails["apiPart"] = apiConstants.GET_PN_DRUGS_REPLACE;
+    apiDetails["pathParams"] = this.props?.formulary_id;
+    apiDetails["keyVals"] = [
+      { key: apiConstants.KEY_ENTITY_ID, value: this.props?.formulary_id },
+      { key: apiConstants.SEARCHKEY, value: input },
+    ];
+    this.props.getPNSearch(apiDetails).then((json) => {
+      let response = json.payload && json.payload.data ? json.payload.data : [];
+      const data = [...response].slice(0, 8);
+      this.setState({
+        pnResults: {
+          data,
+        },
+      });
+    });
+  };
+
+  handlePNStatus = (key: string) => {
+    const COVERED = "covered";
+    const isCovered: boolean = key === COVERED ? true : false;
+
+    let pnSettingsStatus = {
+      type: key,
+      covered: isCovered,
+    };
+
+    let isIncluded = pnSettingsStatus.covered;
+    this.setState({ pnSettingsStatus, isIncluded });
+  };
+
+  ///////////////////// PT START
+
+  handlePTChange = (value: any[]) => {
+    let ptSettings: any[] = [...this.state.ptSettings];
+
+    // let icds: any[] = [];
+    this.state.ptResults.data.forEach((pt: any) => {
+      value.forEach((v) => {
+        if (pt["key"] === v) {
+          ptSettings.push(pt);
+        }
+      });
+    });
+
+    const payload: any = { ...ptSettings };
+    this.setState({
+      ptSettings,
+      payload,
+    });
+  };
+
+  handlePTSearch = (input) => {
+    let apiDetails = {};
+    apiDetails["apiPart"] = apiConstants.GET_PT_DRUGS_REPLACE;
+    apiDetails["pathParams"] = this.props?.formulary_id;
+    apiDetails["keyVals"] = [
+      { key: apiConstants.KEY_ENTITY_ID, value: this.props?.formulary_id },
+      { key: apiConstants.SEARCHKEY, value: input },
+    ];
+    this.props.getPTSearch(apiDetails).then((json) => {
+      let response = json.payload && json.payload.data ? json.payload.data : [];
+      const data = [...response].slice(0, 8);
+      this.setState({
+        ptResults: {
+          data,
+        },
+      });
+    });
+  };
+
+  handlePTStatus = (key: string) => {
+    const COVERED = "covered";
+    const isCovered: boolean = key === COVERED ? true : false;
+
+    let ptSettingsStatus = {
+      type: key,
+      covered: isCovered,
+    };
+
+    let isIncluded = ptSettingsStatus.covered;
+    this.setState({ ptSettingsStatus, isIncluded });
+  };
+
+  ///////////////////// POS START
 
   serviceSettingsCheckedPOS = (e) => {
     const posSettings = [...this.state.posSettings];
@@ -489,6 +705,7 @@ class ListItem extends Component<any, any> {
       payload,
     });
   };
+
   handlePOSSelectAll = () => {
     const { posSettings, isSelectAllPOS } = this.state;
     const payload: string[] = [];
@@ -520,6 +737,8 @@ class ListItem extends Component<any, any> {
     let isIncluded = posSettingsStatus.covered;
     this.setState({ posSettingsStatus, isIncluded });
   };
+
+  ///////////////////// PR START
 
   serviceSettingsCheckedPR = (e) => {
     const prSettings = [...this.state.prSettings];
@@ -576,6 +795,74 @@ class ListItem extends Component<any, any> {
     this.setState({ prSettingsStatus, isIncluded });
   };
 
+  ///////////////////// PCHL START
+
+  handlePCHLChange = (value: any[]) => {
+    let lookback_drug: any[] = [...this.state.pchlSettings.lookback_drug];
+
+    this.state.pchlResults.data.forEach((pchl: any) => {
+      value.forEach((v) => {
+        if (pchl["id"] === v) {
+          lookback_drug.push(pchl);
+        }
+      });
+    });
+
+    const payload: any = {
+      ...this.state.pchlSettings,
+      lookback_drug: lookback_drug,
+    };
+    this.setState({
+      pchlSettings: payload,
+      payload,
+    });
+  };
+
+  handlePCHLSearch = (input) => {
+    let apiDetails = {};
+    apiDetails["apiPart"] = apiConstants.GET_PCHL_DRUGS_ONSEARCH;
+    apiDetails["pathParams"] = this.props?.formulary_id;
+    apiDetails["keyVals"] = [{ key: apiConstants.SEARCHKEY, value: input }];
+    this.props.getPCHLSearch(apiDetails).then((json) => {
+      let response = json.payload && json.payload.data ? json.payload.data : [];
+      const data = [...response].slice(0, 8);
+      this.setState({
+        pchlResults: {
+          data,
+        },
+      });
+    });
+  };
+
+  handlePCHLOnChange = (event) => {
+    let pchlSettings =
+      typeof event === "string"
+        ? { ...this.state.pchlSettings, id_lookback_level: event.toString() }
+        : {
+            ...this.state.pchlSettings,
+            [event.target.name]: event.target.value.toString(),
+          };
+
+    let payload = { ...pchlSettings };
+    this.setState({
+      pchlSettings,
+      payload,
+    });
+  };
+
+  handlePCHLStatus = (key: string) => {
+    const COVERED = "covered";
+    const isCovered: boolean = key === COVERED ? true : false;
+    let pchlSettingsStatus = {
+      type: key,
+      covered: isCovered,
+    };
+    let isIncluded = pchlSettingsStatus.covered;
+    this.setState({ pchlSettingsStatus, isIncluded });
+  };
+
+  ///////////////////// RENDER()
+
   render() {
     const {
       // Current Criteria
@@ -599,12 +886,12 @@ class ListItem extends Component<any, any> {
       icdResults,
 
       // PN
-      pnSettings,
       pnSettingsStatus,
+      pnResults,
 
       // PT
-      ptSettings,
       ptSettingsStatus,
+      ptResults,
 
       // POS
       posSettings,
@@ -619,6 +906,7 @@ class ListItem extends Component<any, any> {
       // PCHL
       pchlSettings,
       pchlSettingsStatus,
+      pchlResults,
     } = this.state;
     const {
       card: { cardCode },
@@ -633,9 +921,9 @@ class ListItem extends Component<any, any> {
               alSettingsStatus,
             }}
             handleStatus={this.handleALStatus}
-            handleAgeCriteriaMinConChange={this.handleAgeCriteriaMinConChange}
-            handleAgeCriteriaMaxConChange={this.handleAgeCriteriaMaxConChange}
-            handleAgeCriteriaChange={this.handleAgeCriteriaChange}
+            handleAgeCriteriaMinConChange={this.handleALMinConChange}
+            handleAgeCriteriaMaxConChange={this.handleALMaxConChange}
+            handleAgeCriteriaChange={this.handleALChange}
             deleteIconHandler={() =>
               deleteIconHandler(nodeId, cardCode, cardName, isIncluded, payload)
             }
@@ -679,39 +967,39 @@ class ListItem extends Component<any, any> {
           />
         );
       case 4:
-        return null;
-      // return (
-      //   <PNCriteria
-      //     pnSettingsServies={{
-      //       pnSettings,
-      //       pnSettingsStatus,
-      //     }}
-      //     handleStatus={this.handlePOSStatus}
-      //     serviceSettingsChecked={this.serviceSettingsCheckedPOS}
-      //     deleteIconHandler={() =>
-      //       deleteIconHandler(nodeId, cardCode, cardName, isIncluded, payload)
-      //     }
-      //     isAdditionalCriteria={true}
-      //     nodeId={nodeId}
-      //   />
-      // );
+        return (
+          <PNCriteria
+            pnSettingsServies={{
+              pnSettingsStatus,
+              pnResults,
+            }}
+            handleStatus={this.handlePNStatus}
+            handlePNChange={this.handlePNChange}
+            handlePNSearch={this.handlePNSearch}
+            deleteIconHandler={() =>
+              deleteIconHandler(nodeId, cardCode, cardName, isIncluded, payload)
+            }
+            isAdditionalCriteria={true}
+            nodeId={nodeId}
+          />
+        );
       case 5:
-        return null;
-      // return (
-      //   <PTCriteria
-      //     ptSettingsServies={{
-      //       ptSettings,
-      //       ptSettingsStatus,
-      //     }}
-      //     handleStatus={this.handlePOSStatus}
-      //     serviceSettingsChecked={this.serviceSettingsCheckedPOS}
-      //     deleteIconHandler={() =>
-      //       deleteIconHandler(nodeId, cardCode, cardName, isIncluded, payload)
-      //     }
-      //     isAdditionalCriteria={true}
-      //     nodeId={nodeId}
-      //   />
-      // );
+        return (
+          <PTCriteria
+            ptSettingsServies={{
+              ptSettingsStatus,
+              ptResults,
+            }}
+            handleStatus={this.handlePTStatus}
+            handlePTChange={this.handlePTChange}
+            handlePTSearch={this.handlePTSearch}
+            deleteIconHandler={() =>
+              deleteIconHandler(nodeId, cardCode, cardName, isIncluded, payload)
+            }
+            isAdditionalCriteria={true}
+            nodeId={nodeId}
+          />
+        );
       case 6:
         return (
           <POSCriteria
@@ -753,7 +1041,24 @@ class ListItem extends Component<any, any> {
           />
         );
       case 8:
-        return null;
+        return (
+          <PCHLCriteria
+            pchlSettingsServies={{
+              pchlSettings,
+              pchlSettingsStatus,
+              pchlResults,
+            }}
+            handleStatus={this.handlePCHLStatus}
+            handlePCHLChange={this.handlePCHLChange}
+            handlePCHLSearch={this.handlePCHLSearch}
+            handlePCHLCriteriaChange={this.handlePCHLOnChange}
+            deleteIconHandler={() =>
+              deleteIconHandler(nodeId, cardCode, cardName, isIncluded, payload)
+            }
+            isAdditionalCriteria={true}
+            nodeId={nodeId}
+          />
+        );
       default:
         return null;
     }
