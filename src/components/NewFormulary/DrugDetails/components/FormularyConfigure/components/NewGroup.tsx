@@ -174,10 +174,7 @@ function NewGroup(props: any) {
     }
     setShowHeader(0)
     setErrorClass('');
-
-
     props.getDrugLists(props.client_id).then((json) => {
-      //debugger;
       let tmp_list:any = [];
       json?.payload?.data.map(obj => {
           let tmp_obj ={
@@ -312,7 +309,7 @@ function NewGroup(props: any) {
   return (
     <div className="new-group-des">
       <div className="panel header">
-        <span>{showHeader>0&&formData.st_group_description_name ? formData.st_group_description_name : props.title}</span>
+        <span>{(props.formType > 0 || showHeader>0)&&formData.st_group_description_name ? formData.st_group_description_name : props.title}</span>
       </div>
       {(props.formType > 0 || showHeader>0) && <GroupHeader popuptitle={formData.st_group_description_name ? formData.st_group_description_name : props.title} onChange={onChange}/>}
       {props.formulary_lob_id===1&&<div className="inner-container">

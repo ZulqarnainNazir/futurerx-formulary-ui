@@ -16,6 +16,7 @@ interface VersionHistoryPopupProps {
     isLoading: boolean;
     error: string | null;
   };
+  baseId?: number;
   onFormularyVersionSelection: (record: VersionHistoryData) => void;
   fetchFormularyVersionHistory?: (data: {
     formularyBaseId: number;
@@ -34,15 +35,15 @@ interface VersionHistoryPopupState {
 const mapStateToProps = state => {
   console.log("version history: App state ", state);
   let data = {};
-  if (
-    state &&
-    state.application &&
-    state.application.formulary &&
-    state.application.formulary.id_base_formulary
-  ) {
-    const id_base_formulary = state.application.formulary.id_base_formulary;
-    data = { ...data, id_base_formulary };
-  }
+  // if (
+  //   state &&
+  //   state.application &&
+  //   state.application.formulary &&
+  //   state.application.formulary.id_base_formulary
+  // ) {
+  //   const id_base_formulary = state.application.formulary.id_base_formulary;
+  //   data = { ...data, id_base_formulary };
+  // }
 
   if (state.formularyVersionHistory) {
     data = {
@@ -155,12 +156,9 @@ class ConnctedVersionHistoryPopup extends React.Component<
    * @author Deepak_t
    */
   fetchFormularyVersionHistory = () => {
-    if (
-      this.props.fetchFormularyVersionHistory &&
-      this.props.id_base_formulary
-    ) {
+    if (this.props.fetchFormularyVersionHistory && this.props.baseId) {
       const data = {
-        formularyBaseId: this.props.id_base_formulary,
+        formularyBaseId: this.props.baseId,
         // formularyBaseId: 2581, (this id has some data to display)
         index: 0,
         limit: 100

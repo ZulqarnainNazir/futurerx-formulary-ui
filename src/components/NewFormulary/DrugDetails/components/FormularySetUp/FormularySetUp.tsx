@@ -410,7 +410,6 @@ class FormularySetUp extends React.Component<any, any> {
 
   tierCheck = () => {
     // console.log(this.state);
-    debugger;
     return true;
   };
   onCheckUncheckAllSupplementalHandler = (val) => {
@@ -557,9 +556,9 @@ class FormularySetUp extends React.Component<any, any> {
       if (this.state.generalInformation.effective_date === "") {
         msg.push("Formulary Effective Date is required.");
       }
-      // if (this.state.generalInformation.service_year === "") {
-      //   msg.push("Formulary Service year is required.");
-      // }
+      if (this.state.generalInformation.service_year === "") {
+        msg.push("Formulary Service year is required.");
+      }
       // if(this.tierCheck()){
       //   msg.push("Formulary Service year is required.");
       // }
@@ -706,7 +705,7 @@ class FormularySetUp extends React.Component<any, any> {
             />
             {this.state.generalInformation.type !== "" ? (
               <>
-                {this.state.generalInformation.type !== "Commercial" ? (
+                {this.state.generalInformation.type === "Medicare" ? (
                   <MedicareInformation
                     allMedicareOptions={this.state.medicare_contract_type_info}
                     medicareOptions={
@@ -742,7 +741,7 @@ class FormularySetUp extends React.Component<any, any> {
                   customTierChange={this.handleCustomTierChange}
                   deleteCustomTier={this.deleteCustomTier}
                 />
-                {this.state.generalInformation.type !== "Commercial" ? (
+                {this.state.generalInformation.type === "Medicare"  ? (
                   <SupplementalModels
                     supplemental={this.state.supplemental_benefit_info}
                     supplementalCheck={this.supplementalCheck}
@@ -773,13 +772,13 @@ class FormularySetUp extends React.Component<any, any> {
                 />
               </Box>
 
-              <Box
+              {/* <Box
                 display="flex"
                 justifyContent="flex-end"
                 className="save-and-continue-btn"
               >
                 <Button className="tempBtn" label=">" onClick={() => this.overrideNave()} />
-              </Box>
+              </Box> */}
             </div>
           </>
         ) : (

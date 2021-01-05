@@ -8,8 +8,8 @@ import Tab from "@material-ui/core/Tab";
 import { Tooltip, Button } from "@material-ui/core";
 
 // Shared models
-import { TabInfo } from "../../../models/tab.model"; 
- 
+import { TabInfo } from "../../../models/tab.model";
+
 // Styling imports
 import "./FrxMiniTabs.scss";
 
@@ -17,7 +17,7 @@ interface TabProps {
   tabList: TabInfo[];
   activeTabIndex: number;
   onClickTab: (clickedTab: number) => void;
-  msgCount?:number;
+  msgCount?: number;
   disabledIndex?: number;
   disabled?: boolean;
 }
@@ -34,7 +34,6 @@ class FrxMiniTabs extends React.Component<TabProps, TabState> {
   };
 
   render() {
-
     return (
       <AppBar className="frx-mini-tabs-root">
         <Tabs
@@ -48,9 +47,23 @@ class FrxMiniTabs extends React.Component<TabProps, TabState> {
           {this.props.tabList.map((tab: any, index: number) => (
             <Tab
               className="frx-mini-tabs-root__tabs__tab"
-              key={tab.id} 
-              disabled = {((this.props.disabledIndex === index && this.props.disabled) || tab.disabled ) ? true : false}
-              label={tab.id === 3 && this.props.msgCount ? <span className="tabs-with-count">{tab.text.split('(')[0]}<em>{this.props.msgCount}</em></span> : tab.text}
+              key={tab.id}
+              disabled={
+                (this.props.disabledIndex === index && this.props.disabled) ||
+                tab.disabled
+                  ? true
+                  : false
+              }
+              label={
+                tab.id === 3 && this.props.msgCount ? (
+                  <span className="tabs-with-count">
+                    {tab.text.split("(")[0]}
+                    <em>{this.props.msgCount}</em>
+                  </span>
+                ) : (
+                  tab.text
+                )
+              }
             />
           ))}
         </Tabs>

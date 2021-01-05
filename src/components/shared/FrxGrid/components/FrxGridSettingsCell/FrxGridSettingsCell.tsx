@@ -113,6 +113,7 @@ onTriDotDropDownItemClick = (selectedItem:any) => {
   renderExpandedCell = () => {
     const isRowSelectionEnabled = this.props.isRowSelectionEnabled;
     let customSettingIcon = this.props.customSettingIcon;
+
     if (customSettingIcon) {
       if (
         customSettingIcon &&
@@ -121,6 +122,7 @@ onTriDotDropDownItemClick = (selectedItem:any) => {
       ) {
         customSettingIcon = "NONE";
       }
+
       switch (customSettingIcon) {
         case "RED-DOT":
           return (
@@ -134,6 +136,7 @@ onTriDotDropDownItemClick = (selectedItem:any) => {
               <circle cx="6" cy="6" r="6" fill="#E76262" />
             </svg>
           );
+
         case "PLUS-BTN":
           return (
             <svg
@@ -211,6 +214,7 @@ onTriDotDropDownItemClick = (selectedItem:any) => {
   renderNonExpandedCell = () => {
     const isRowSelectionEnabled = this.props.isRowSelectionEnabled;
     let customSettingIcon = this.props.customSettingIcon;
+    const { dataRow } = this.props;
     if (customSettingIcon) {
       if (
         customSettingIcon &&
@@ -219,6 +223,7 @@ onTriDotDropDownItemClick = (selectedItem:any) => {
       ) {
         customSettingIcon = "NONE";
       }
+
       switch (customSettingIcon) {
         case "RED-DOT":
           return (
@@ -246,6 +251,46 @@ onTriDotDropDownItemClick = (selectedItem:any) => {
                 fill="#1D54B4"
               />
             </svg>
+          );
+        case "FILL-DOT":
+          let color = "";
+
+          if (
+            (dataRow["isDisabled"] || dataRow["isChecked"]) &&
+            dataRow["rowStyle"] &&
+            dataRow["rowStyle"] === "table-row--green-font"
+          ) {
+            color = "green";
+          } else if (
+            (dataRow["isDisabled"] || dataRow["isChecked"]) &&
+            dataRow["rowStyle"] &&
+            dataRow["rowStyle"] === "table-row--red-font"
+          ) {
+            color = "red";
+          } else if (
+            (dataRow["isDisabled"] || dataRow["isChecked"]) &&
+            dataRow["rowStyle"] &&
+            dataRow["rowStyle"] === "table-row--blue-font"
+          ) {
+            color = "#5f80b9";
+          }
+
+          return (
+            <>
+              {color ? (
+                <svg
+                  width="12"
+                  height="12"
+                  viewBox="0 0 12 12"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <circle cx="6" cy="6" r="6" fill={`${color}`} />
+                </svg>
+              ) : (
+                <></>
+              )}
+            </>
           );
         case "NONE":
           return null;

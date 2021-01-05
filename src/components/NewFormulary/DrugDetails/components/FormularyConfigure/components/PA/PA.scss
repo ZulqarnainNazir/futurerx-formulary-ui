@@ -4,7 +4,7 @@
   align-items: center;
   padding: 0 2rem;
 
-  span {
+  .list-label {
     font-size: 12px;
     font-weight: 400;
     color: #707683;
@@ -22,4 +22,23 @@
 .pa-settings-grid-container .frx-grid-container {
   background: #ffffff;
   padding: 10px;
+}
+
+.input-element {
+  .bordered {
+    padding: 5px;
+    width: 410px;
+    p {
+      font-size: 12px;
+      display: inline;
+      color: #2055b5;
+      text-decoration: underline dotted;
+      cursor: pointer;
+    }
+  }
+  .hide-edit-icon {
+    float: right;
+    font-size: 8px;
+    cursor: pointer;
+  }
 }

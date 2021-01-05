@@ -36,5 +36,11 @@ export const getAssemblyComponentList = () => {
       tag: 'PA',
       description: 'A brief description of PA'
     },
+    {
+      id: 6,
+      title: 'STList123',
+      tag: 'ST',
+      description: 'A brief description of ST'
+    },
   ]
 }

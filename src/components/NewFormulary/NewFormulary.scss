@@ -61,7 +61,7 @@ label.custom-checkbox{
         }
         + span{
             font-size: 12px;
-            color: #707683;
+            color: #323C47;
             padding-left: 0;
             margin-left: 10px;
             line-height: 16px;
@@ -115,9 +115,45 @@ label.custom-checkbox{
 
     color: #FFFFFF;
 }
-.inner-formulary-root-container{
-    min-width: 1200px;
-    margin: 0px 60px;
+.ant-select:not(.ant-select-customize-input) .ant-select-selector{
+    height: 35px;
+    border-radius: 3px;
+}
+.ant-table-cell{
+    .frx-mini-tabs-root {
+        position: unset;
+        border-bottom: 0px solid #e5e5e5;
+        border-top-left-radius: 10px;
+        border-top-right-radius: 10px;
+        box-sizing: border-box;
+        box-shadow: none;
+        background: #ffffff;
+        padding: 0;
+        min-width: 122px;
+        min-height: 30px;
+        .frx-mini-tabs-root__tabs {
+            background-color: #ffffff;
+            box-shadow: none;
+            border: 1px solid #2055b5;
+            flex-direction: row;
+            border-radius: 4px;
+            padding: 3px;
+            min-height: 24px;
+            min-width: 61px;
+            width: max-content;
+            .frx-mini-tabs-root__tabs__tab {
+                padding: 0;
+                font-size: 12px;
+                min-height: 24px;
+                min-width: 61px;
+                font-weight: bold;
+                color: #666666;
+                text-transform: capitalize;
+                opacity: unset;
+                border-radius: 2px;
+            }
+        }
+    }
 }
 .snowflake {
     color: #fff;

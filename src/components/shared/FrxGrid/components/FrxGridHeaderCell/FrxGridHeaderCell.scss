@@ -9,6 +9,26 @@
       margin-right: 5px;
       cursor: pointer;
     }
+
+    //removing ant sorter icons
+    .ant-table
+      .ant-table-header
+      .ant-table-thead
+      > tr
+      > th
+      .ant-table-column-sorter-inner
+      .anticon-caret-up {
+      display: none;
+    }
+    .ant-table
+      .ant-table-header
+      .ant-table-thead
+      > tr
+      > th
+      .ant-table-column-sorter-inner
+      .anticon-caret-down {
+      display: none;
+    }
   }
   .frx-grid-header-cell__header-name {
     font-size: $font-12;

@@ -3,7 +3,9 @@ import FormularyAssemblyComponentListItem from "../FormularyAssemblyComponentLis
 import FormularyAssemblyComponentExpandableListitem from './../FormularyAssemblyComponentExpandableListitem';
 
 interface FormularyAssemblyProps {
-  data?: any
+  data?: any;
+  sections?: any;
+  onComponentRemove?: any
 }
 
 interface FormularyAssemblyState {
@@ -11,6 +13,8 @@ interface FormularyAssemblyState {
 }
 class FormularyAssembly extends Component<FormularyAssemblyProps, FormularyAssemblyState> {
   render() {
+    const {data, sections} = this.props;
+    
     return (
       <div className="formulary-assembly">
         <div className="formulary-assembly__container">
@@ -19,18 +23,17 @@ class FormularyAssembly extends Component<FormularyAssemblyProps, FormularyAssem
           </div>
           
           <div className="formulary-assembly__container-body">
-            <FormularyAssemblyComponentExpandableListitem>
-              {this.props.data.map((currentComponent, key) => <FormularyAssemblyComponentListItem key={key} {...currentComponent} />)}
-            </FormularyAssemblyComponentExpandableListitem>
-            <FormularyAssemblyComponentExpandableListitem>
-              {this.props.data.map((currentComponent, key) => <FormularyAssemblyComponentListItem key={key} {...currentComponent} />)}
-            </FormularyAssemblyComponentExpandableListitem>
-            <FormularyAssemblyComponentExpandableListitem>
-              {this.props.data.map((currentComponent, key) => <FormularyAssemblyComponentListItem key={key} {...currentComponent} />)}
-            </FormularyAssemblyComponentExpandableListitem>
-            <FormularyAssemblyComponentExpandableListitem>
-              {this.props.data.map((currentComponent, key) => <FormularyAssemblyComponentListItem key={key} {...currentComponent} />)}
-            </FormularyAssemblyComponentExpandableListitem>
+            {
+              sections.map((section, key)=>(
+                <FormularyAssemblyComponentExpandableListitem key={key} title={section.text}>
+                  
+                  {
+                    (data && data.length > 0) ? data.filter(item => item.tag === section.text).map((currentComponent, key) => <FormularyAssemblyComponentListItem type="assembly" key={key} {...currentComponent} onRemove={this.props.onComponentRemove}/>) : ""
+                  }
+                </FormularyAssemblyComponentExpandableListitem>
+                
+              ))
+            }
           </div>
         </div>
       </div>

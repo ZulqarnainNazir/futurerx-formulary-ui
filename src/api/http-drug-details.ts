@@ -75,11 +75,11 @@ export const GET_AL_CRITERIA_LIST = "api/1/criteria-list-al/";
 // GL TAB
 export const GET_DRUG_SUMMARY_GL = "api/1/formulary-drug-summary-gl/";
 export const GET_GL_DRUGS = "api/1/formulary-drugs-gl/";
-export const APPLY_GL_DRUGS = "api/1/apply-formulary-drug-gl/"
-export const GET_GL_CRITERIA_LIST = "api/1/criteria-list-gl/"
+export const APPLY_GL_DRUGS = "api/1/apply-formulary-drug-gl/";
+export const GET_GL_CRITERIA_LIST = "api/1/criteria-list-gl/";
 
 // ICD TAB
-export const GET_DRUG_SUMMARY_ICD = "api/1/formulary-drug-summary-icdl/"
+export const GET_DRUG_SUMMARY_ICD = "api/1/formulary-drug-summary-icdl/";
 export const GET_ICD_DRUGS = "api/1/formulary-drugs-icdl/";
 export const GET_ICD_DRUGS_REPLACE = "api/1/icds/";
 export const GET_ICD_CRITERIA_LIST = "api/1/criteria-list-icdl/";
@@ -120,12 +120,16 @@ export const GET_OTHER_CRITERIA_LIST = "api/1/criteria-list-edoth/";
 export const GET_OTHER_DRUGS = "api/1/formulary-drugs-edoth/";
 export const APPLY_OTHER_DRUGS = "api/1/apply-formulary-drug-edoth/";
 
+// PHCL API
+export const GET_PCHL_DRUGS_ONSEARCH = "api/1/lookback-list/DRUG/6";
+
 export const KEY_ENTITY_ID = "entity_id";
 export const KEY_INDEX = "index";
 export const KEY_LIMIT = "limit";
 export const SEARCHKEY = "search_value";
 
 export const TYPE_REPLACE = "replace";
+export const TYPE_APPEND = "append";
 export const TYPE_REMOVE = "remove";
 
 export const buildUrl = ({ refUrl = BASE_URL1, apiDetails }) => {

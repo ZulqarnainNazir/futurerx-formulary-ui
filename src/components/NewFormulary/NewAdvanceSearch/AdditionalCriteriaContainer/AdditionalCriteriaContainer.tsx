@@ -51,11 +51,6 @@ class AdditionalCriteriaContainer extends Component<
   };
 
   componentDidMount() {
-    // if (this.props.additionalCriteriaBody <= 0)
-    //   this.setState({
-    //     isNewAdditionalCriteria: true,
-    //   });
-
     if (this.props.additionalCriteriaBody)
       this.setState({
         additionalCriteriaArray: this.props.additionalCriteriaBody,
@@ -92,7 +87,6 @@ class AdditionalCriteriaContainer extends Component<
   };
 
   handleChildDataSave = (additionalCriteria) => {
-    console.log(additionalCriteria);
     this.props.handleChildDataSave(additionalCriteria);
   };
 
@@ -102,7 +96,7 @@ class AdditionalCriteriaContainer extends Component<
       <div className="__root-additional-criteria">
         {this.state.additionalCriteriaArray.length <= 0 ? (
           <div className="__root-additional-criteria-child-msg">
-            Add new additional criteria
+            <p>Click Add New to create Additional Criteria</p>
           </div>
         ) : (
           this.state.additionalCriteriaArray.map((additionalCriteria: any) => (

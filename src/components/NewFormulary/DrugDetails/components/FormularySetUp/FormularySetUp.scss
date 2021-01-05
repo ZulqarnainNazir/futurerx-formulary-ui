@@ -1,3 +1,10 @@
+.drug-details-bottom{
+  .general-information-container{
+    .header{
+      justify-content: flex-start;
+    }
+  }
+}
 .general-information-container,
 .formulary-design-container,
 .supplemental-models-container,
@@ -80,6 +87,7 @@
         span.MuiFormControlLabel-label {
           font-size: 12px;
           text-transform: none;
+          color: #323c47;
         }
       }
       &.mr-80 {
@@ -235,7 +243,16 @@
   margin-top: 20px;
   position: relative;
 }
-
+.ability-to-add-tags-edit-icon {
+  cursor: pointer;
+  position: relative;
+  right: 25px;
+}
+.reporting-tag-group{
+  .root--ant-select-tag{
+    width: 355px;
+  }
+}
 .formulary-design-fields-wrapper ul {
   list-style: none;
   padding: 0px;
@@ -321,7 +338,9 @@
   justify-content: space-between;
   padding: 10px;
 }
-
+.tiers-dropdown-wrapper div:nth-last-child(1) {  
+  border-bottom: none;
+}
 .formulary-tier-dropdown {
   width: 200px !important;
 }

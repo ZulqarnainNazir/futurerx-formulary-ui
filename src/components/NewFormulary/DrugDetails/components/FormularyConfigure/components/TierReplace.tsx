@@ -7,7 +7,7 @@ import DropDown from "../../../../../shared/Frx-components/dropdown/DropDown";
 import Button from "../../../../../shared/Frx-components/button/Button";
 import Box from "@material-ui/core/Box";
 import FrxDrugGridContainer from "../../../../../shared/FrxGrid/FrxDrugGridContainer";
-import { tierColumns } from "../../../../../../utils/grid/columns";
+import { tierColumns, tierColumnsNonMcr } from "../../../../../../utils/grid/columns";
 import { TierMockData } from "../../../../../../mocks/TierMock";
 //import AdvancedSearch from './search/AdvancedSearch';
 import AdvanceSearchContainer from "../../../../NewAdvanceSearch/AdvanceSearchContainer";
@@ -21,6 +21,7 @@ import pageTypes from "../../../../../../constants/PageTypes";
 import { setAdvancedSearch } from "../../../../../../redux/slices/formulary/advancedSearch/advancedSearchSlice";
 import showMessage from "../../../../Utils/Toast";
 import SearchBox from "../../../../../shared/Frx-components/search-box/SearchBox";
+import getLobCode from "../../../../Utils/LobUtils";
 
 interface tabsState {
   tierGridContainer: boolean;
@@ -34,6 +35,13 @@ interface tabsState {
   drugGridData: any[];
   selectedDrugs: any[];
   selectedRowKeys: number[];
+  fixedSelectedRows: number[];
+  hiddenColumns: any[];
+  dataCount: any;
+  gridSingleSortInfo: any;
+  isGridSingleSorted: boolean;
+  gridMultiSortedInfo: any[];
+  isGridMultiSorted: boolean;
 }
 
 const mapStateToProps = state => {
@@ -68,7 +76,7 @@ class TierReplace extends React.Component<any, tabsState> {
     drugGridData: Array(),
     selectedDrugs: Array(),
     selectedTier: -1,
-    selectedFileKey: null,
+    selectedFileKey: '',
     selectedFileType: "Full Formulary",
     fileTypes: [
       { type: "FRF", key: "FRF" },
@@ -77,7 +85,18 @@ class TierReplace extends React.Component<any, tabsState> {
       { type: "FRF Change Report", key: "FRFCR" },
       { type: "Full Formulary", key: "MCR" }
     ],
-    selectedRowKeys: []
+    selectedRowKeys: [] as number[],
+    fixedSelectedRows: [] as number[],
+    index: 0,
+    limit: 10,
+    filter: Array(),
+    sort_by: Array(),
+    hiddenColumns: Array(),
+    dataCount: 0,
+    gridSingleSortInfo: null,
+    isGridSingleSorted: false,
+    gridMultiSortedInfo: [],
+    isGridMultiSorted: false,
   };
 
   constructor(props) {
@@ -89,41 +108,214 @@ class TierReplace extends React.Component<any, tabsState> {
     this.initialize(this.props, true);
   }
 
+  onSettingsIconHandler = (hiddenColumn, visibleColumn) => {
+    console.log(
+      "Settings icon handler: Hidden" +
+      JSON.stringify(hiddenColumn) +
+      " Visible:" +
+      JSON.stringify(visibleColumn)
+    );
+    if (hiddenColumn && hiddenColumn.length > 0) {
+      let hiddenColumnKeys = hiddenColumn.map(column => column["key"]);
+      this.setState({
+        hiddenColumns: hiddenColumnKeys
+      });
+    }
+  };
+  onApplyFilterHandler = filters => {
+    console.log("filtering from be:" + (JSON.stringify(filters)));
+    //this.state.filter = Array();
+    const fetchedKeys = Object.keys(filters);
+    if (fetchedKeys && fetchedKeys.length > 0) {
+      fetchedKeys.map(fetchedProps => {
+        if (filters[fetchedProps]) {
+          const fetchedOperator =
+            filters[fetchedProps][0].condition === "is like"
+              ? "is_like"
+              : filters[fetchedProps][0].condition === "is not"
+                ? "is_not"
+                : filters[fetchedProps][0].condition === "is not like"
+                  ? "is_not_like"
+                  : filters[fetchedProps][0].condition === "does not exist"
+                    ? "does_not_exist"
+                    : filters[fetchedProps][0].condition;
+          const fetchedValues =
+            filters[fetchedProps][0].value !== ""
+              ? [filters[fetchedProps][0].value.toString()]
+              : [];
+          this.state.filter.push({
+            prop: fetchedProps,
+            operator: fetchedOperator,
+            values: fetchedValues
+          });
+        }
+      });
+      console.log("Filters:" + JSON.stringify(this.state.filter));
+      if (this.props.advancedSearchBody) {
+        this.populateGridData(this.props.advancedSearchBody);
+      } else {
+        this.populateGridData();
+      }
+    }
+  };
+
+  /**
+   * the selected sorter details will be availbale here to mak api call
+   * @param key the column key
+   * @param order the sorting order : 'ascend' | 'descend'
+   */
+  onApplySortHandler = (key, order, sortedInfo) => {
+    console.log("sort details ", key, order);
+    this.state.sort_by = Array();
+    if (order) {
+      let sortOrder = order === 'ascend' ? 'asc' : 'desc';
+      this.state.sort_by = this.state.sort_by.filter(keyPair => keyPair['key'] !== key);
+      this.state.sort_by.push({ key: key, value: sortOrder });
+    }
+    this.state.gridSingleSortInfo = sortedInfo;
+    this.state.gridMultiSortedInfo = [];
+    this.state.isGridMultiSorted = false;
+    this.state.isGridSingleSorted = true;
+    if (this.props.advancedSearchBody) {
+      this.populateGridData(this.props.advancedSearchBody);
+    } else {
+      this.populateGridData();
+    }
+  };
+  onPageSize = pageSize => {
+    console.log("Page size load");
+    this.state.limit = pageSize;
+    if (this.props.advancedSearchBody) {
+      this.populateGridData(this.props.advancedSearchBody);
+    } else {
+      this.populateGridData();
+    }
+  };
+  onGridPageChangeHandler = (pageNumber: any) => {
+    console.log("Page change load");
+    this.state.index = (pageNumber - 1) * this.state.limit;
+    if (this.props.advancedSearchBody) {
+      this.populateGridData(this.props.advancedSearchBody);
+    } else {
+      this.populateGridData();
+    }
+  };
+  onClearFilterHandler = () => {
+    this.state.filter = Array();
+    if (this.props.advancedSearchBody) {
+      this.populateGridData(this.props.advancedSearchBody);
+    } else {
+      this.populateGridData();
+    }
+  };
+
+  applyMultiSortHandler = (sorter, multiSortedInfo) => {
+    console.log('Multisort info:'+JSON.stringify(sorter));
+    this.state.gridSingleSortInfo = null;
+    this.state.gridMultiSortedInfo = multiSortedInfo;
+    this.state.isGridMultiSorted = true;
+    this.state.isGridSingleSorted = false;
+
+    if (sorter && sorter.length > 0) {
+      let uniqueKeys = Array();
+      let filteredSorter = Array();
+      sorter.map(sortInfo => {
+        if(uniqueKeys.includes(sortInfo['columnKey'])){
+
+        }else{
+          filteredSorter.push(sortInfo);
+          uniqueKeys.push(sortInfo['columnKey']);
+        }
+      });
+      filteredSorter.map(sortInfo => {
+        let sortOrder = sortInfo['order'] === 'ascend' ? 'asc' : 'desc';
+        this.state.sort_by = this.state.sort_by.filter(keyPair => keyPair['key'] !== sortInfo['columnKey']);
+        this.state.sort_by.push({ key: sortInfo['columnKey'], value: sortOrder });
+      })
+    }
+
+    if (this.props.advancedSearchBody) {
+      this.populateGridData(this.props.advancedSearchBody);
+    } else {
+      this.populateGridData();
+    }
+  };
+
+  onMultiSortToggle = (isMultiSortOn: boolean) => {
+    console.log("is Multi sort on ", isMultiSortOn);
+    this.state.sort_by = Array();
+    this.state.gridSingleSortInfo = null;
+    this.state.gridMultiSortedInfo = [];
+    this.state.isGridMultiSorted = isMultiSortOn;
+    this.state.isGridSingleSorted = false;
+
+    if (this.props.advancedSearchBody) {
+      this.populateGridData(this.props.advancedSearchBody);
+    } else {
+      this.populateGridData();
+    }
+  };
+
+  componentDidMount() {
+    console.log('componentDidMount');
+    this.initialize(this.props, true);
+    if (this.props.configureSwitch) {
+      this.state.tierGridContainer = true;
+      if (this.props.advancedSearchBody) {
+        this.populateGridData(this.props.advancedSearchBody);
+      } else {
+        this.populateGridData();
+      }
+    }
+  }
+
   initialize = (props, initFileKey = false) => {
     var tierOptions = Array();
+    let lobCode = getLobCode(this.props.formulary_lob_id);
+    console.log('Initialize called:' + lobCode);
     if (props.tierOptions) {
       props.tierOptions.map(tier => {
         tierOptions.push(tier.tier_value);
       });
     }
-    if (this.props.lobCode === "MCR") {
+    if (lobCode === "MCR") {
       let fileTypesModified: any[] = [];
       if (
-        props.lobCode === "MCR" &&
+        lobCode === "MCR" &&
         props.formulary_type_id &&
         props.formulary_type_id == 2
       ) {
         fileTypesModified.push({ type: "ADD", key: "ADD" });
-        fileTypesModified.push({ type: "Full Formulary", key: props.lobCode });
+        fileTypesModified.push({ type: "Full Formulary", key: lobCode });
       } else {
         this.state.fileTypes.map(fileType => {
           if (fileType.type === "Full Formulary") {
-            fileType.key = props.lobCode;
+            fileType.key = lobCode;
           }
           fileTypesModified.push(fileType);
         });
       }
       this.state.fileTypes = fileTypesModified;
+    } else if (lobCode === "COMM") {
+      let fileTypesModified: any[] = [];
+      fileTypesModified.push({ type: "Drug Table", key: "COMMDF" });
+      fileTypesModified.push({ type: "Full Formulary", key: lobCode });
+      this.state.fileValues = Array();
+
+      this.state.fileValues.push("Drug Table");
+      this.state.fileValues.push("Full Formulary");
+
+      this.state.fileTypes = fileTypesModified;
     }
     this.state.tierValues = tierOptions;
     if (initFileKey) {
-      this.state.selectedFileKey =
-        props.lobCode === "COMM" ? "COMMDF" : props.lobCode;
+      this.state.selectedFileKey = lobCode;
+      this.state.selectedFileType = "Full Formulary";
     }
   };
 
   populateGridData = (searchBody = null) => {
-    console.log("Populate grid data is called");
+    console.log("Populate grid data is called:" + this.state.selectedFileKey);
     let apiDetails = {};
     apiDetails["apiPart"] =
       this.state.selectedFileKey === this.props.lobCode
@@ -137,8 +329,8 @@ class TierReplace extends React.Component<any, tabsState> {
       commonConstants.TYPE_REPLACE;
     apiDetails["keyVals"] = [
       { key: commonConstants.KEY_ENTITY_ID, value: this.props?.formulary_id },
-      { key: commonConstants.KEY_INDEX, value: 0 },
-      { key: commonConstants.KEY_LIMIT, value: 10 }
+      { key: commonConstants.KEY_INDEX, value: this.state.index },
+      { key: commonConstants.KEY_LIMIT, value: this.state.limit }
     ];
     apiDetails["messageBody"] = {};
 
@@ -149,57 +341,96 @@ class TierReplace extends React.Component<any, tabsState> {
       );
     }
 
+    apiDetails['messageBody']['filter'] = this.state.filter;
+
+    if (this.state.sort_by && this.state.sort_by.length > 0) {
+      let keys = Array();
+      let values = Array();
+
+      this.state.sort_by.map(keyPair => {
+        keys.push(keyPair['key']);
+        values.push(keyPair['value']);
+      });
+
+      apiDetails['messageBody']['sort_by'] = keys;
+      apiDetails['messageBody']['sort_order'] = values;
+    }
+
     const { selectedTier } = this.state;
+    const thisRef = this;
     const drugGridDate = this.props.postTierApplyInfo(apiDetails).then(json => {
       //debugger;
-      let tmpData = json.payload.result;
-      var data: any[] = [];
-      let count = 1;
-      var gridData = tmpData.map(function(el, idx) {
-        var element = Object.assign({}, el);
-        data.push(element);
-        let gridItem = {};
-        gridItem["id"] = count;
-        gridItem["key"] = count;
-        //for preseelct items with selected tier value
-        if (selectedTier === parseInt(element.tier_value)) {
-          console.log("element value tier ", selectedTier, element.tier_value);
-          gridItem["isChecked"] = true;
-          gridItem["isDisabled"] = true;
-          // decide on class names based on data properties conditionally
-          // the required styles are added under each classNames in FrxGrid.scss (towards the end)
-          gridItem["rowStyle"] = "table-row--red-font";
-        }
-        //end
-        gridItem["tier"] = element.tier_value;
-        gridItem["fileType"] = element.file_type ? "" + element.file_type : "";
-        gridItem["dataSource"] = element.data_source
-          ? "" + element.data_source
-          : "";
-        gridItem["labelName"] = element.drug_label_name
-          ? "" + element.drug_label_name
-          : "";
-        gridItem["ndc"] = "";
-        gridItem["rxcui"] = element.rxcui ? "" + element.rxcui : "";
-        gridItem["gpi"] = element.generic_product_identifier
-          ? "" + element.generic_product_identifier
-          : "";
-        gridItem["trademark"] = element.trademark_code
-          ? "" + element.trademark_code
-          : "";
-        gridItem["databaseCategory"] = element.database_category
-          ? "" + element.database_category
-          : "";
-        count++;
-        return gridItem;
-      });
-      this.setState({
-        drugData: data,
-        drugGridData: gridData,
-        selectedRowKeys: gridData
-          .filter(item => item.isChecked)
-          .map(item => item.key)
-      });
+      if (json.payload && json.payload.result) {
+        let tmpData = json.payload.result;
+        var data: any[] = [];
+        let count = 1;
+        var gridData = tmpData.map(function (el, idx) {
+          var element = Object.assign({}, el);
+          data.push(element);
+          let gridItem = {};
+          gridItem["id"] = count;
+          gridItem["key"] = count;
+          //for preseelct items with selected tier value
+          if (selectedTier === parseInt(element.tier_value)) {
+            console.log("element value tier ", selectedTier, element.tier_value);
+            gridItem["isChecked"] = true;
+            gridItem["isDisabled"] = true;
+            // decide on class names based on data properties conditionally
+            // the required styles are added under each classNames in FrxGrid.scss (towards the end)
+            //table-row--red-font (for red) table-row--green-font (for green) table-row--blue-font for default (for blue)
+            gridItem["rowStyle"] = "table-row--blue-font";
+          }
+          if (thisRef.props.configureSwitch) {
+            gridItem["isDisabled"] = true;
+            gridItem["rowStyle"] = "table-row--disabled-font";
+          }
+          //end
+          gridItem["tier_value"] = element.tier_value;
+          gridItem["file_type"] = element.file_type ? "" + element.file_type : "";
+          gridItem["data_source"] = element.data_source
+            ? "" + element.data_source
+            : "";
+          gridItem["drug_label_name"] = element.drug_label_name
+            ? "" + element.drug_label_name
+            : "";
+          gridItem["ndc"] = "";
+          if (thisRef.props.lobCode === 'MCR') {
+            gridItem["rxcui"] = element.rxcui ? "" + element.rxcui : "";
+          } else {
+            gridItem["drug_descriptor_identifier"] = element.drug_descriptor_identifier ? "" + element.drug_descriptor_identifier : "";
+          }
+          gridItem["generic_product_identifier"] = element.generic_product_identifier
+            ? "" + element.generic_product_identifier
+            : "";
+          gridItem["trademark_code"] = element.trademark_code
+            ? "" + element.trademark_code
+            : "";
+          gridItem["database_category"] = element.database_category
+            ? "" + element.database_category
+            : "";
+          count++;
+          return gridItem;
+        });
+        this.setState({
+          drugData: data,
+          drugGridData: gridData,
+          dataCount: json.payload.count,
+          fixedSelectedRows: gridData
+            .filter(item => item.isChecked)
+            .map(item => item.key),
+          selectedRowKeys: gridData
+            .filter(item => item.isChecked)
+            .map(item => item.key)
+        });
+      } else {
+        this.setState({
+          drugData: Array(),
+          drugGridData: Array(),
+          dataCount: 0,
+          fixedSelectedRows: Array(),
+          selectedRowKeys: Array()
+        });
+      }
     });
   };
 
@@ -256,7 +487,8 @@ class TierReplace extends React.Component<any, tabsState> {
   };
 
   componentWillReceiveProps(nextProps) {
-    this.initialize(nextProps);
+    console.log('TIER REPLACE: componentWillReceiveProps');
+    this.initialize(nextProps, true);
     if (nextProps.advancedSearchBody && nextProps.populateGrid) {
       this.populateGridData(nextProps.advancedSearchBody);
       let payload = {
@@ -271,12 +503,55 @@ class TierReplace extends React.Component<any, tabsState> {
       }
       this.props.setAdvancedSearch(payload);
     }
+    if (this.props.configureSwitch !== nextProps.configureSwitch) {
+      let payload = { advancedSearchBody: {}, populateGrid: false, closeDialog: false, listItemStatus: {} };
+      this.props.setAdvancedSearch(payload);
+      this.state.filter = Array();
+      this.state.sort_by = Array();
+      this.state.index = 0;
+      this.state.limit = 10;
+      this.state.hiddenColumns = Array();
+
+      if (nextProps.configureSwitch) {
+        this.state.selectedFileKey = this.props.lobCode;
+        this.state.selectedFileType = "Full Formulary";
+        this.state.selectedTier = -1;
+
+        if (!this.state.tierGridContainer) {
+          this.state.tierGridContainer = true;
+        }
+
+        if (this.props.advancedSearchBody) {
+          this.populateGridData(this.props.advancedSearchBody);
+        } else {
+          this.populateGridData();
+        }
+      } else {
+        this.state.selectedFileKey = 'COMMDF';
+        this.state.selectedFileType = "Drug Table";
+
+        if (this.state.selectedTier != -1) {
+          if (this.props.advancedSearchBody) {
+            this.populateGridData(this.props.advancedSearchBody);
+          } else {
+            this.populateGridData();
+          }
+        } else {
+          this.setState({
+            tierGridContainer: false
+          });
+        }
+      }
+    }
   }
 
   onSelectedTableRowChanged = selectedRowKeys => {
     console.log("selected row ", selectedRowKeys);
+
     this.state.selectedDrugs = [];
-    this.setState({ selectedRowKeys: [...selectedRowKeys] });
+    this.setState({
+      selectedRowKeys: [...selectedRowKeys]
+    });
     if (selectedRowKeys && selectedRowKeys.length > 0) {
       this.state.selectedDrugs = selectedRowKeys.map(tierId => {
         let item = {};
@@ -313,10 +588,9 @@ class TierReplace extends React.Component<any, tabsState> {
     let tierIndex = event.key;
     let tierValue = event.value;
 
-    this.state.fileValues = [];
-    this.state.selectedFileKey =
-      this.props.lobCode === "COMM" ? "COMMDF" : this.props.lobCode;
     if (this.props.lobCode === "MCR") {
+      this.state.fileValues = [];
+      this.state.selectedFileKey = this.props.lobCode;
       if (this.props.tierOptions && tierIndex < this.props.tierOptions.length) {
         let tierObject = this.props.tierOptions[tierIndex];
         if (
@@ -358,14 +632,24 @@ class TierReplace extends React.Component<any, tabsState> {
     this.state.selectedFileKey = fileKey;
     //this.setState({ selectedFileKey: fileKey });
 
-    this.populateGridData();
+    if (this.props.advancedSearchBody) {
+      this.populateGridData(this.props.advancedSearchBody);
+    } else {
+      this.populateGridData();
+    }
   };
 
   openTierGridContainer = () => {
-    this.state.drugData = [];
-    this.state.drugGridData = [];
-    this.setState({ tierGridContainer: true });
-    this.populateGridData();
+    if (this.state.selectedTier !== -1) {
+      this.state.drugData = [];
+      this.state.drugGridData = [];
+      this.setState({ tierGridContainer: true });
+      if (this.props.advancedSearchBody) {
+        this.populateGridData(this.props.advancedSearchBody);
+      } else {
+        this.populateGridData();
+      }
+    }
   };
   advanceSearchClickHandler = event => {
     event.stopPropagation();
@@ -374,11 +658,92 @@ class TierReplace extends React.Component<any, tabsState> {
   advanceSearchClosekHandler = () => {
     this.setState({ isSearchOpen: !this.state.isSearchOpen });
   };
+
+  rowSelectionChangeFromCell = (
+    key: string,
+    selectedRow: any,
+    isSelected: boolean
+  ) => {
+    console.log("data row ", selectedRow, isSelected);
+    if (!selectedRow["isDisabled"]) {
+      if (isSelected) {
+        const data = this.state.drugGridData.map((d: any) => {
+          if (d.key === selectedRow.key) {
+            d["isChecked"] = true;
+            d["rowStyle"] = "table-row--green-font";
+          }
+          // else d["isChecked"] = false;
+          return d;
+        });
+        const selectedRowKeys = [
+          ...this.state.selectedRowKeys,
+          selectedRow.key
+        ];
+        console.log("selected row keys ", selectedRowKeys);
+        const selectedRows: number[] = selectedRowKeys.filter(
+          k => this.state.fixedSelectedRows.indexOf(k) < 0
+        );
+        this.onSelectedTableRowChanged(selectedRowKeys);
+
+        this.setState({ drugGridData: data });
+      } else {
+        const data = this.state.drugGridData.map((d: any) => {
+          if (d.key === selectedRow.key) {
+            d["isChecked"] = false;
+            if (d["rowStyle"])
+              delete d["rowStyle"];
+          }
+          // else d["isChecked"] = false;
+          return d;
+        });
+
+        const selectedRowKeys: number[] = this.state.selectedRowKeys.filter(
+          k => k !== selectedRow.key
+        );
+        const selectedRows = selectedRowKeys.filter(
+          k => this.state.fixedSelectedRows.indexOf(k) < 0
+        );
+
+        this.onSelectedTableRowChanged(selectedRows);
+        this.setState({
+          drugGridData: data
+        });
+      }
+    }
+  };
+
+  onSelectAllRows = (isSelected: boolean) => {
+    const selectedRowKeys: number[] = [];
+    const data = this.state.drugGridData.map((d: any) => {
+      if (!d["isDisabled"]) {
+        d["isChecked"] = isSelected;
+        if (isSelected) {
+          selectedRowKeys.push(d["key"]);
+          d["rowStyle"] = "table-row--green-font";
+        } else {
+          if (d["rowStyle"])
+            delete d["rowStyle"]
+        }
+      }
+
+      // else d["isSelected"] = false;
+      return d;
+    });
+    const selectedRows: number[] = selectedRowKeys.filter(
+      k => this.state.fixedSelectedRows.indexOf(k) < 0
+    );
+    this.onSelectedTableRowChanged(selectedRows);
+    this.setState({ drugGridData: data });
+  };
   render() {
     const searchProps = {
       lobCode: this.props.lobCode,
       pageType: pageTypes.TYPE_TIER
     };
+    let columns = this.props.lobCode === 'MCR' ? tierColumns() : tierColumnsNonMcr();
+    if (this.state.hiddenColumns.length > 0) {
+      columns = columns.filter(key => !this.state.hiddenColumns.includes(key));
+    }
     return (
       <>
         <div className="group tier-dropdown white-bg">
@@ -388,7 +753,7 @@ class TierReplace extends React.Component<any, tabsState> {
                 TIER <span className="astrict">*</span>
               </label>
               <DropDown
-                // value={this.state.selectedTier !== -1 ? this.state.selectedTier:undefined}
+                value={this.state.selectedTier !== -1 ? this.state.selectedTier : ''}
                 options={this.state.tierValues}
                 disabled={this.props.configureSwitch}
                 onSelect={this.tierDropDownSelectHandler}
@@ -405,12 +770,11 @@ class TierReplace extends React.Component<any, tabsState> {
             </Grid>
           </Grid>
         </div>
-        {this.state.tierGridContainer && !this.props.configureSwitch && (
+        {this.state.tierGridContainer && (
           <div className="select-drug-from-table">
             <div className="bordered white-bg">
-              <div className="header space-between pr-10">
-                Drug Grid
-                {this.props.lobCode === "MCR" && (
+              <div className="header remove-btn-wrapper pr-10">
+                {(this.props.lobCode === "MCR" || this.props.lobCode === "COMM") && (
                   <div
                     style={{
                       display: "flex",
@@ -428,23 +792,19 @@ class TierReplace extends React.Component<any, tabsState> {
                     />
                   </div>
                 )}
-                <div className="tier-drug-grid-header-actions">
-                  <SearchBox
-                    iconPosition="left"
-                    className="search-input"
-                    placeholder="Search"
-                  />
-                  <Button
-                    className="Button normal"
-                    label="Advance Search"
-                    onClick={this.advanceSearchClickHandler}
-                    disabled={this.props.configureSwitch}
-                  />
-                  <Button
-                    label="Save"
-                    onClick={this.handleSave}
-                    disabled={this.props.configureSwitch}
-                  />
+                <div className="header remove-btn-wrapper pr-10">
+                  <div className="header pr-10">
+                    <Button
+                      className="Button normal"
+                      label="Advance Search"
+                      onClick={this.advanceSearchClickHandler}
+                    />
+                    <Button
+                      label="Save"
+                      onClick={this.handleSave}
+                      disabled={this.props.configureSwitch}
+                    />
+                  </div>
                 </div>
               </div>
 
@@ -453,23 +813,45 @@ class TierReplace extends React.Component<any, tabsState> {
                   isPinningEnabled={false}
                   enableSearch={false}
                   enableColumnDrag
-                  onSearch={() => {}}
+                  settingsWidth={50}
+                  onSearch={() => { }}
                   fixedColumnKeys={[]}
                   pagintionPosition="topRight"
                   gridName="TIER"
                   enableSettings
-                  columns={tierColumns()}
+                  columns={columns}
                   scroll={{ x: 2000, y: 377 }}
                   isFetchingData={false}
                   enableResizingOfColumns
                   data={this.state.drugGridData}
-                  rowSelection={{
-                    columnWidth: 50,
-                    selectedRowKeys: this.state.selectedRowKeys,
-                    fixed: true,
-                    type: "checkbox",
-                    onChange: this.onSelectedTableRowChanged
-                  }}
+                  rowSelectionChangeFromCell={this.rowSelectionChangeFromCell}
+                  onSelectAllRows={this.onSelectAllRows}
+                  customSettingIcon={"FILL-DOT"}
+                  totalRowsCount={this.state.dataCount}
+                  getPerPageItemSize={this.onPageSize}
+                  onGridPageChangeHandler={this.onGridPageChangeHandler}
+                  clearFilterHandler={this.onClearFilterHandler}
+                  applyFilter={this.onApplyFilterHandler}
+                  applySort={this.onApplySortHandler}
+                  isSingleSorted={this.state.isGridSingleSorted}
+                  sortedInfo={this.state.gridSingleSortInfo}
+                  applyMultiSort={this.applyMultiSortHandler}
+                  isMultiSorted={this.state.isGridMultiSorted}
+                  multiSortedInfo={this.state.gridMultiSortedInfo}
+                  onMultiSortToggle={this.onMultiSortToggle}
+                  getColumnSettings={this.onSettingsIconHandler}
+                  pageSize={this.state.limit}
+                  selectedCurrentPage={
+                    this.state.index / this.state.limit + 1
+                  }
+                // rowSelection={{
+                //   columnWidth: 50,
+                //   selectedRowKeys: this.state.selectedRowKeys,
+                // 	fixed: true,
+
+                //   type: "checkbox",
+                //   onChange: this.onSelectedTableRowChanged
+                // }}
                 />
               </div>
             </div>

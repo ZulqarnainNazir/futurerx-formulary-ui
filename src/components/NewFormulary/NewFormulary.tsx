@@ -14,16 +14,23 @@ import { fetchFormularies } from "../.././redux/slices/formulary/dashboard/dashb
 import {
   setFormulary,
   setLocation,
+  setLocationHome,
+  clearApplication,
 } from "../.././redux/slices/formulary/application/applicationSlice";
 
-import { fetchSelectedFormulary } from "../.././redux/slices/formulary/setup/setupSlice";
-import { fetchDesignOptions } from "../.././redux/slices/formulary/setup/setupOptionsSlice";
+import {
+  fetchSelectedFormulary,
+  clearSetup,
+} from "../.././redux/slices/formulary/setup/setupSlice";
+import {
+  fetchDesignOptions,
+  clearSetupOptions,
+} from "../.././redux/slices/formulary/setup/setupOptionsSlice";
 
 import { fetchFormularyHeader } from "../.././redux/slices/formulary/header/headerSlice";
 import { gridSettingsSlice } from "../.././redux/slices/formulary/gridHandler/gridSettingsSlice";
 import { addNewFormulary } from "../.././redux/slices/formulary/application/applicationSlice";
 import "./NewFormulary.scss";
-import Medicaid from "./Medicaid/Medicaid";
 
 // const tabs = [
 //   { id: 1, text: "MEDICARE" },
@@ -45,13 +52,14 @@ interface State {
   showMassMaintenance: boolean;
   showDrugDetails: boolean;
 }
-  
+
 const mapStateToProps = (state) => {
   //console.log("***** DB");
   //console.log(state);
   return {
     formulary_count: state?.dashboard?.formulary_count,
     formulary_list: state?.dashboard?.formulary_list,
+    location_home: state?.application?.location_home,
   };
 };
 
@@ -68,6 +76,10 @@ function mapDispatchToProps(dispatch) {
     setLocation: (arg) => dispatch(setLocation(arg)),
     fetchSelectedFormulary: (a) => dispatch(fetchSelectedFormulary(a)),
     fetchDesignOptions: (a) => dispatch(fetchDesignOptions(a)),
+    setLocationHome: (a) => dispatch(setLocationHome(a)),
+    clearApplication: (a) => dispatch(clearApplication(a)),
+    clearSetup: (a) => dispatch(clearSetup(a)),
+    clearSetupOptions: (a) => dispatch(clearSetupOptions(a)),
   };
 }
 
@@ -97,7 +109,7 @@ const defaultListPayload = {
 
 class Formulary extends React.Component<any, any> {
   //TODO Remove
-  snow: boolean = false;
+  snow: boolean = true;
 
   state = {
     activeTabIndex: 0,
@@ -123,6 +135,22 @@ class Formulary extends React.Component<any, any> {
   componentDidMount() {
     this.props.fetchFormularies(this.listPayload);
   }
+
+  applySortHandler = (key, order) => {
+    console.log("key and order ", key, order);
+    const listPayload = { ...this.listPayload };
+    listPayload.sort_by = [key];
+    const sortorder = order && order === "ascend" ? "asc" : "dsc";
+    listPayload.sort_order = [sortorder];
+
+    this.props.fetchFormularies(listPayload);
+  };
+
+  applyMultiSortHandler = (sorter) => {
+    console.log("multi sorted columns ", sorter);
+    //remove duplicates from sorter
+    //api integration
+  };
 
   onClickTab = (selectedTabIndex: number) => {
     let activeTabIndex = 0;
@@ -232,12 +260,12 @@ class Formulary extends React.Component<any, any> {
     this.listPayload.id_lob = id_lob;
     this.props.fetchFormularies(this.listPayload);
   };
-  formularyListSearch = (categoryObj,subCat) => {
+  formularyListSearch = (categoryObj, subCat) => {
     let id_lob = this.listPayload.id_lob;
     this.listPayload = { ...defaultListPayload };
     this.listPayload.id_lob = null;
     this.listPayload.search_by = categoryObj;
-    this.listPayload.search_value = subCat!=''?[subCat]:[];
+    this.listPayload.search_value = subCat != "" ? [subCat] : [];
     this.props.fetchFormularies(this.listPayload);
   };
   onGridPageChangeHandler = (pageNumber: any) => {
@@ -245,11 +273,35 @@ class Formulary extends React.Component<any, any> {
     this.props.fetchFormularies(this.listPayload);
   };
   onClearFilterHandler = () => {
+    console.log("Clear Filter");
     let id_lob = this.listPayload.id_lob;
     this.listPayload = { ...defaultListPayload };
     this.listPayload.id_lob = id_lob;
     this.props.fetchFormularies(this.listPayload);
   };
+
+  componentDidUpdate(prevProps) {
+    console.log("=========================================");
+    console.log(this.props.location_home + " / " + prevProps.location_home);
+    if (
+      this.props.location_home !== prevProps.location_home &&
+      this.props.location_home > 0
+    ) {
+      console.log("**** HOME : " + this.props.location_home);
+      this.setState({
+        showTabs: !this.state.showTabs,
+        showDrugDetails: !this.state.showDrugDetails,
+      });
+      this.props.setLocationHome(0);
+      this.props.clearApplication();
+      this.props.clearSetup();
+      this.props.clearSetupOptions();
+      if (this.props.location_home == 2) {
+        this.onClearFilterHandler();
+      }
+    }
+  }
+
   render() {
     return (
       <div className="newformulary-container">
@@ -288,6 +340,8 @@ class Formulary extends React.Component<any, any> {
                 selectedCurrentPage={
                   this.listPayload.index / this.listPayload.limit + 1
                 }
+                applySortHandler={this.applySortHandler}
+                applyMultiSortHandler={this.applyMultiSortHandler}
                 onPageChangeHandler={this.onGridPageChangeHandler}
                 onClearFilterHandler={this.onClearFilterHandler}
                 applyFilter={this.onApplyFilterHandler}
