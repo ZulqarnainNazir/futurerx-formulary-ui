@@ -463,14 +463,15 @@
       .panel {
         display: flex;
         justify-content: space-between;
+        .Button {
+          background: none;
+          color: #2055b5;
+          border: 1px solid #2055b5;
+          width: auto;
+          padding: 0 20px;
+        }
       }
-      .Button {
-        background: none;
-        color: #c2cfe0;
-        border: 1px solid #c2cfe0;
-        width: auto;
-        padding: 0 20px;
-      }
+
       .search-input {
         input {
           background: #ffffff;
@@ -490,12 +491,12 @@
       .group-wrapper {
         margin-top: 15px;
         .list {
-          padding: 0px 20px 0px 10px;
+          padding: 0px 10px 0px 10px;
           display: flex;
           justify-content: space-between;
           align-items: center;
           // padding: 6px;
-          width: 339px;
+          width: 328px;
           height: 40px;
           margin-bottom: 5px;
           &.orange {
@@ -531,7 +532,8 @@
               }
             }
             .group-wrapper {
-              margin-top: 15px;
+              margin-top: 25px;
+              padding: 20px;
               .list {
                 display: flex;
                 justify-content: space-between;
@@ -702,7 +704,11 @@
       border-radius: 5px;
       margin-left: 10px;
       .inner-container {
+        padding: 0px 20px 0px 20px;
         .setting-1 {
+          .custom-textfield {
+            padding: 8px;
+          }
           span {
             font-family: Roboto;
             font-style: normal;
@@ -823,7 +829,7 @@
     font-size: 12px;
     color: #1d54b4;
     font-weight: $font-weight-500;
-    padding: 0 10px;
+    padding: 0 20px;
     align-items: center;
     text-transform: uppercase;
     &.panel {
