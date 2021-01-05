@@ -21,6 +21,7 @@ import {
   getStGrouptDescription,
   getDrugLists,
   getStGrouptDescriptions,
+  getStGrouptDescriptionVersions,
 } from "../../../../../../redux/slices/formulary/stepTherapy/stepTherapyActionCreation";
 import AdvanceSearchContainer from "../../../../NewAdvanceSearch/AdvanceSearchContainer";
 import RadioButton from "../../../../../shared/Frx-components/radio-button/RadioButton";
@@ -102,6 +103,8 @@ function mapDispatchToProps(dispatch) {
     getStGrouptDescription: (a) => dispatch(getStGrouptDescription(a)),
     getDrugLists: (a) => dispatch(getDrugLists(a)),
     getStGrouptDescriptions: (arg) => dispatch(getStGrouptDescriptions(arg)),
+    getStGrouptDescriptionVersions: (arg) => dispatch(getStGrouptDescriptionVersions(arg)),
+    
   };
 }
 
@@ -128,7 +131,7 @@ function NewGroup(props: any) {
       [e.target.name]: formVal,
     });
   };
-
+  const [formType, setFormType] = React.useState(props.formType);
   const openAdditionalCriteria = () => toggleAdditionalCriteriaOpen(true);
   const closeAddiionalCriteria = () => toggleAdditionalCriteriaOpen(false);
 
@@ -222,7 +225,7 @@ function NewGroup(props: any) {
         return;
       }
     }
-    if (props.formType === 1 && props.formulary_lob_id === 1) {
+    if (formType === 1 && props.formulary_lob_id === 1) {
       let msg: string[] = [];
       if (formData.st_group_description_name === "") {
         //msg.push("Formulary Description Name is required.");
@@ -235,7 +238,7 @@ function NewGroup(props: any) {
       }
     }
 
-    if (props.formType === 0 && props.formulary_lob_id === 4) {
+    if (formType === 0 && props.formulary_lob_id === 4) {
       let msg: string[] = [];
       if (formData.st_group_description_name === "") {
         //msg.push("Formulary Description Name is required.");
@@ -247,7 +250,7 @@ function NewGroup(props: any) {
         return;
       }
     }
-    if (props.formType === 1 && props.formulary_lob_id === 4) {
+    if (formType === 1 && props.formulary_lob_id === 4) {
       let msg: string[] = [];
       if (formData.st_group_description_name === "") {
         //msg.push("Formulary Description Name is required.");
@@ -265,7 +268,7 @@ function NewGroup(props: any) {
     formData["drug_list_ids"] = drug_list_ids;
     formData["removed_drug_list_ids"] = [2];
     let requestData = {};
-    if (props.formType == 1) {
+    if (formType == 1) {
       requestData["messageBody"] = { ...formData };
       if (additionalCriteria != null) {
         requestData["messageBody"]["um_criteria"] = additionalCriteria;
@@ -281,6 +284,10 @@ function NewGroup(props: any) {
           apiDetails["lob_type"] = props.formulary_lob_id;
           apiDetails["pathParams"] = "/" + props?.client_id + "?entity_id=" + props?.formulary_id;
           props.getStGrouptDescriptions(apiDetails);
+
+          apiDetails["pathParams"] = "/" + json.payload.id_base_st_group_description;
+          props.getStGrouptDescriptionVersions(apiDetails);
+
         } else if (json?.payload?.status && json?.payload?.status != 200) {
           showMessage(json.payload.data.message, "error");
         } else {
@@ -300,9 +307,15 @@ function NewGroup(props: any) {
         if (json?.payload && json?.payload?.success?.data?.code === "200") {
           showMessage("Saved Successfully", "success");
           let apiDetails = {};
+          setFormType(1);
+          formData["id_st_group_description"] = json.payload.success.data.id_st_group_description;
+
           apiDetails["lob_type"] = props.formulary_lob_id;
           apiDetails["pathParams"] = "/" + props?.client_id + "?entity_id=" + props?.formulary_id;
+          
           props.getStGrouptDescriptions(apiDetails);
+          apiDetails["pathParams"] = "/" + json.payload.success.data.id_base_st_group_description;
+          props.getStGrouptDescriptionVersions(apiDetails);
         } else if (json?.payload?.status && json?.payload?.status != 200) {
           showMessage(json.payload.data.message, "error");
         } else {

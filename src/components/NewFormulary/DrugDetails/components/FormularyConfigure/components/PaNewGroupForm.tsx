@@ -198,6 +198,7 @@ function mapDispatchToProps(dispatch) {
     postPAGroupDescription: (a) => dispatch(postPAGroupDescription(a)),
     putPAGroupDescription: (a) => dispatch(putPAGroupDescription(a)),
     getPaGrouptDescriptions: (a) => dispatch(getPaGrouptDescriptions(a)),
+    getPaGrouptDescriptionVersions: (a) => dispatch(getPaGrouptDescriptionVersions(a)),
     getDrugLists: (a) => dispatch(getDrugLists(a)),
   };
 }
@@ -226,6 +227,7 @@ function NewGroup(props: any) {
   const [errorClass, setErrorClass] = React.useState("");
   const [drug_list_ids, setDrug_list_ids] = React.useState([]);
   const [drug_list, setDrug_list] = React.useState([]);
+  const [formType, setFormType] = React.useState(props.formType);
 
   const [isAdditionalCriteriaOpen, toggleAdditionalCriteriaOpen] = useState(false);
 
@@ -341,7 +343,7 @@ function NewGroup(props: any) {
       requestData["messageBody"]["coverage_restrictions"] = formData["coverage_restrictions"];
       requestData["messageBody"]["other_criteria"] = formData["other_criteria"];
 
-      if (props.formType == 1) {
+      if (formType == 1) {
         requestData["apiPart"] = "api/1/mcr-pa-group-description";
         requestData["pathParams"] =
           "/" + formData["id_pa_group_description"] + "/" + props?.formulary_id + "?entity_id=0";
@@ -370,7 +372,7 @@ function NewGroup(props: any) {
             let apiDetails = {};
             apiDetails["lob_type"] = props.formulary_lob_id;
             apiDetails["pathParams"] = "/" + props?.client_id + "?entity_id=" + props?.formulary_id;
-
+            setFormType(1);
             props.getPaGrouptDescriptions(apiDetails);
           } else {
             if (json.payload && json.payload.message !== undefined) {
@@ -388,7 +390,7 @@ function NewGroup(props: any) {
       requestData["messageBody"]["id_pa_type"] = Number(formData["id_pa_type"]);
       requestData["messageBody"]["is_additional_criteria_defined"] = formData["is_additional_criteria_defined"];
       requestData["messageBody"]["drug_list_ids"] = drug_list_ids;
-      if (props.formType == 1) {
+      if (formType == 1) {
         requestData["pathParams"] =
           "/" + formData["id_pa_group_description"] + "/" + props?.formulary_id + "?entity_id=0";
         props.putPAGroupDescription(requestData).then((json) => {
@@ -399,6 +401,8 @@ function NewGroup(props: any) {
             apiDetails["pathParams"] = "/" + props?.client_id + "?entity_id=" + props?.formulary_id;
 
             props.getPaGrouptDescriptions(apiDetails);
+            apiDetails["pathParams"] = "/" + json.payload.id_base_pa_group_description;
+            props.getPaGrouptDescriptionVersions(apiDetails);
           } else if (json?.payload?.status && json?.payload?.status != 200) {
             showMessage(json.payload.data.message, "error");
           } else {
@@ -413,8 +417,14 @@ function NewGroup(props: any) {
             let apiDetails = {};
             apiDetails["lob_type"] = props.formulary_lob_id;
             apiDetails["pathParams"] = "/" + props?.client_id + "?entity_id=" + props?.formulary_id;
-
             props.getPaGrouptDescriptions(apiDetails);
+            //props.formType=1;
+            setFormType(1);
+            formData["id_pa_group_description"] = json.payload.id_pa_group_description;
+            
+
+            apiDetails["pathParams"] = "/" + json.payload.id_base_pa_group_description;
+            props.getPaGrouptDescriptionVersions(apiDetails);
           } else if (json?.payload?.status && json?.payload?.status != 200) {
             showMessage(json.payload.data.message, "error");
           } else {
@@ -486,6 +496,7 @@ function NewGroup(props: any) {
     if (!props.editMode) {
       setEditable(false);
     }
+    setFormType(props.formType);
     setShowHeader(0);
     setErrorClass("");
   }, [props.PaGDData || props.versionList || props.activeTabIndex || props.editMode]);
@@ -893,6 +904,7 @@ function NewGroup(props: any) {
                     name="pa_criteria"
                     onChange={handleChange}
                     defaultValue={formData.pa_criteria}
+                    value={formData.pa_criteria}
                     disabled={props.editable}
                   />
                 </div>
