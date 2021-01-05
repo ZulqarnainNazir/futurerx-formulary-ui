@@ -71,6 +71,7 @@ class PaRemove extends React.Component<any, any> {
     searchValue: "",
     searchData: Array(),
     fixedSelectedRows: [] as number[],
+    selectedRowKeys: [] as number[],
   };
 
   onSelectedRowKeysChange = (selectedRowKeys) => {
@@ -190,6 +191,7 @@ class PaRemove extends React.Component<any, any> {
           gridItem["id"] = count;
           gridItem["key"] = count;
           gridItem["tier"] = element.tier_value;
+          gridItem["is_um_criteria"] = element.is_um_criteria;
           gridItem["pa_group_description"] = element.pa_group_description;
           gridItem["pa_type"] = element.pa_type;
           gridItem["file_type"] = element.file_type
@@ -462,6 +464,52 @@ class PaRemove extends React.Component<any, any> {
       this.populateGridData();
     }
   };
+
+  rowSelectionChangeFromCell = (
+    key: string,
+    selectedRow: any,
+    isSelected: boolean
+  ) => {
+    console.log("data row ", selectedRow, isSelected);
+    if (!selectedRow["isDisabled"]) {
+      if (isSelected) {
+        const data = this.state.drugGridData.map((d: any) => {
+          if (d.key === selectedRow.key) d["isChecked"] = true;
+          // else d["isChecked"] = false;
+          return d;
+        });
+        const selectedRowKeys = [
+          ...this.state.selectedRowKeys,
+          selectedRow.key,
+        ];
+        console.log("selected row keys ", selectedRowKeys);
+        const selectedRows: number[] = selectedRowKeys.filter(
+          (k) => this.state.fixedSelectedRows.indexOf(k) < 0
+        );
+        this.onSelectedTableRowChanged(selectedRowKeys);
+
+        this.setState({ drugGridData: data });
+      } else {
+        const data = this.state.drugGridData.map((d: any) => {
+          if (d.key === selectedRow.key) d["isChecked"] = false;
+          // else d["isChecked"] = false;
+          return d;
+        });
+
+        const selectedRowKeys: number[] = this.state.selectedRowKeys.filter(
+          (k) => k !== selectedRow.key
+        );
+        const selectedRows = selectedRowKeys.filter(
+          (k) => this.state.fixedSelectedRows.indexOf(k) < 0
+        );
+
+        this.onSelectedTableRowChanged(selectedRows);
+        this.setState({
+          drugGridData: data,
+        });
+      }
+    }
+  };
   render() {
     const columns = [
       {
@@ -554,6 +602,10 @@ class PaRemove extends React.Component<any, any> {
                   isMultiSorted={this.state.isGridMultiSorted}
                   multiSortedInfo={this.state.gridMultiSortedInfo}
                   onMultiSortToggle={this.onMultiSortToggle}
+                  rowSelectionChangeFromCell={this.rowSelectionChangeFromCell}
+                  onSelectAllRows={this.onSelectAllRows}
+                  customSettingIcon={"FILL-DOT"}
+                  settingsWidth={30}
                 />
               </div>
             </div>
