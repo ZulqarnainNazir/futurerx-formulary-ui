@@ -29,6 +29,8 @@ export interface Grid<RecordType = unknown> {
   isMultiSorted?: boolean;
   sortedInfo?: any;
   multiSortedInfo?: any;
+  isFiltered?: boolean;
+  filteredInfo?: any;
 
   className?: string;
   rowClassName?: string | RowClassName<any>;

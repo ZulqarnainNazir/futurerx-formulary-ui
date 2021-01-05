@@ -31,7 +31,9 @@ interface State {
   gridSingleSortInfo: any;
   isGridSignleSorted: boolean;
   gridMultiSortedInfo: any[];
-  isGridMultiSorted: boolean;
+	isGridMultiSorted: boolean;
+	isFiltered:boolean;
+	filteredInfo:any
 }
 
 const miniTabs = [
@@ -77,7 +79,9 @@ class Medicare extends React.Component<any, any> {
     gridSingleSortInfo: null,
     isGridSingleSorted: false,
     gridMultiSortedInfo: [],
-    isGridMultiSorted: false,
+		isGridMultiSorted: false,
+		isFiltered:false,
+		filteredInfo:null
   };
   defaultHTML = () => {
     return (
@@ -144,7 +148,7 @@ class Medicare extends React.Component<any, any> {
               totalRowsCount={this.props.dashboardGrid.count}
               pageSize={this.props.pageSize}
               selectedCurrentPage={this.props.selectedCurrentPage}
-              applyFilter={this.props.applyFilter}
+              applyFilter={this.applyFilterHandler}
               getColumnSettings={this.props.getColumnSettings}
               data={[]}
               expandable={{
@@ -270,12 +274,24 @@ class Medicare extends React.Component<any, any> {
       return e;
     });
     return updatedColumns;
-  };
+	};
+	
 
-  applyFilterHandler = (filters) => {
+	clearFilterHandler = () => {
+		this.setState({
+			isFiltered:false,
+			filteredInfo:null
+		}, () => {
+			this.props.onClearFilterHandler()
+		})
+	}
+
+  applyFilterHandler = (filters, filteredInfo) => {
     console.log("medicare filters ", filters);
     this.setState(
       {
+				isFiltered:true,
+				filteredInfo:filteredInfo
         // gridSingleSortInfo: null,
         // isGridSingleSorted: false,
         // gridMultiSortedInfo: [],
@@ -431,7 +447,9 @@ class Medicare extends React.Component<any, any> {
               applyMultiSort={this.applyMultiSortHandler}
               isMultiSorted={this.state.isGridMultiSorted}
               multiSortedInfo={this.state.gridMultiSortedInfo}
-              onMultiSortToggle={this.onMultiSortToggle}
+							onMultiSortToggle={this.onMultiSortToggle}
+							isFiltered={this.state.isFiltered}
+							filteredInfo={this.state.filteredInfo}
               // isCustomCheckboxEnabled={false}
               // handleCustomRowSelectionChange={()=>{}}
               columns={formularyDetailsGridColumns(
@@ -446,7 +464,7 @@ class Medicare extends React.Component<any, any> {
               enableResizingOfColumns
               getPerPageItemSize={this.props.onPageSize}
               onGridPageChangeHandler={this.props.onPageChangeHandler}
-              clearFilterHandler={this.props.onClearFilterHandler}
+              clearFilterHandler={this.clearFilterHandler}
               totalRowsCount={this.props.dashboardGrid.count}
               pageSize={this.props.pageSize}
               selectedCurrentPage={this.props.selectedCurrentPage}
