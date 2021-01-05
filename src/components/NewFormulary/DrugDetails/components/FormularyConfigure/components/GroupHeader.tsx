@@ -389,7 +389,7 @@ function GroupHeader(props: any) {
                     : <option value={e.value}>{e.value}</option>
                 ))}
             </select>
-            <div className="item" onClick={toggleShowViewAll}>
+            <div className="item item--version-history" onClick={toggleShowViewAll}>
                 <svg
                     width="11"
                     height="11"
@@ -404,7 +404,7 @@ function GroupHeader(props: any) {
                 </svg>
           Version History
         </div>
-            <div className="item" onClick={() => handleClickOpen('clone')}>
+            <div className="item item--version-history" onClick={() => handleClickOpen('clone')}>
                 <svg
                     width="13"
                     height="13"
@@ -419,7 +419,7 @@ function GroupHeader(props: any) {
                 </svg>
           Clone
         </div>
-            <div className="item" onClick={() => handleClickOpen('newVersion')}>
+            <div className="item item--version-history" onClick={() => handleClickOpen('newVersion')}>
                 <svg
                     width="13"
                     height="12"
@@ -434,7 +434,7 @@ function GroupHeader(props: any) {
                 </svg>
           New Version
         </div>
-            <div className="item" onClick={() => handleClickOpen('delete')}>
+            <div className="item item--version-history" onClick={() => handleClickOpen('delete')}>
                 <svg
                     width="11"
                     height="11"
@@ -451,7 +451,7 @@ function GroupHeader(props: any) {
                 </svg>
           Delete
         </div>
-            <div className="item" onClick={() => handleClickOpen('archive')}>
+            <div className="item item--version-history" onClick={() => handleClickOpen('archive')}>
                 <svg
                     width="11"
                     height="11"
