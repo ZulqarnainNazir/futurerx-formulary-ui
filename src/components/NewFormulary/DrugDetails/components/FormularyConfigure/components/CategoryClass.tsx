@@ -597,17 +597,6 @@ class CategoryClass extends React.Component<any, any> {
                 </div>
                 <div className="bordered">
                   <div className="header pr-10 category-class-header">
-                    <div
-                      className="add-file-button"
-                      onClick={(e) =>
-                        this.handlePopupButtonClick(
-                          "override",
-                          "CATEGORY AND CLASS ASSIGNMENT"
-                        )
-                      }
-                    >
-                      Override
-                    </div>
                     <div className="header-dropdown"
                       // style={{
                       //   display: "flex",
@@ -632,6 +621,17 @@ class CategoryClass extends React.Component<any, any> {
                           Clear
                         </span>
                       )}
+                    </div>
+                    <div
+                      className="add-file-button"
+                      onClick={(e) =>
+                        this.handlePopupButtonClick(
+                          "override",
+                          "CATEGORY AND CLASS ASSIGNMENT"
+                        )
+                      }
+                    >
+                      Override
                     </div>
                     <div
                       className="advance-search-button advance-search-btn"

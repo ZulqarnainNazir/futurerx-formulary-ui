@@ -26,6 +26,7 @@ export default function CheckboxesTags(props:any) {
       value={props.autoSelected} 
       getOptionLabel={(option:any) => option.value}
       onChange={onchangeHandler}
+      disabled={props.editable}
       renderOption={(option, { selected }) => (
         <React.Fragment>
           <Checkbox
@@ -44,21 +45,3 @@ export default function CheckboxesTags(props:any) {
     />
   );
 }
-
-const top100Films = [
-  {
-    "key":1,
-    "text":"my dl1",
-    "value":"my dl1"
-    },
-    {
-    "key":1,
-    "text":"my dl1",
-    "value":"my dl1"
-    },
-    {
-    "key":2,
-    "text":"my dl2",
-    "value":"my dl2"
-    }
-];

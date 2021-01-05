@@ -11,6 +11,8 @@ import MassMaintenance from "./MassMaintenance/MassMaintenance";
 import FormularyDashboardStats from "./../FormularyDashboardStats/FormularyDashboardStats";
 import { getFormularyDetails } from "../../mocks/formulary/formularyDetails";
 import { fetchFormularies } from "../.././redux/slices/formulary/dashboard/dashboardSlice";
+import _ from 'lodash';
+
 import {
   setFormulary,
   setLocation,
@@ -31,6 +33,8 @@ import { fetchFormularyHeader } from "../.././redux/slices/formulary/header/head
 import { gridSettingsSlice } from "../.././redux/slices/formulary/gridHandler/gridSettingsSlice";
 import { addNewFormulary } from "../.././redux/slices/formulary/application/applicationSlice";
 import "./NewFormulary.scss";
+import Medicaid from "./Medicaid/Medicaid";
+import FrxGridSorterIcon from "../shared/FrxGrid/components/FrxGridSorterIcon/FrxGridSorterIcon";
 
 // const tabs = [
 //   { id: 1, text: "MEDICARE" },
@@ -145,12 +149,30 @@ class Formulary extends React.Component<any, any> {
 
     this.props.fetchFormularies(listPayload);
   };
-
-  applyMultiSortHandler = (sorter) => {
+  uniqByKeepLast = (data) => {
+    const result = Array.from(new Set(data.map(s => s.columnKey)))
+    .map(column => {
+      const getOrder = data.find(s => s.columnKey === column).order === 'ascend' ? 'asc' : 'desc'
+      return {
+        columnKey: column,
+        order: getOrder
+      }
+    });
+    return result;
+  }
+  applyMultiSortHandler = sorter => {
     console.log("multi sorted columns ", sorter);
-    //remove duplicates from sorter
-    //api integration
-  };
+    const listPayload = { ...this.listPayload };
+    const updatedSorter = this.uniqByKeepLast(sorter);
+    const sort_by = updatedSorter.map(e=>e.columnKey);
+    const sort_order = updatedSorter.map(e=>e.order);
+    listPayload.sort_by = sort_by;
+    listPayload.sort_order = sort_order
+    this.props.fetchFormularies(listPayload);
+		//remove duplicates from sorter
+		//api integration
+	};
+	
 
   onClickTab = (selectedTabIndex: number) => {
     let activeTabIndex = 0;
@@ -281,13 +303,11 @@ class Formulary extends React.Component<any, any> {
   };
 
   componentDidUpdate(prevProps) {
-    console.log("=========================================");
     console.log(this.props.location_home + " / " + prevProps.location_home);
     if (
       this.props.location_home !== prevProps.location_home &&
       this.props.location_home > 0
     ) {
-      console.log("**** HOME : " + this.props.location_home);
       this.setState({
         showTabs: !this.state.showTabs,
         showDrugDetails: !this.state.showDrugDetails,
@@ -296,9 +316,9 @@ class Formulary extends React.Component<any, any> {
       this.props.clearApplication();
       this.props.clearSetup();
       this.props.clearSetupOptions();
-      if (this.props.location_home == 2) {
+      // if (this.props.location_home == 2) {
         this.onClearFilterHandler();
-      }
+      // }
     }
   }
 

@@ -38,7 +38,10 @@ const miniTabs = [
   { id: 1, text: "Formulary" },
   { id: 2, text: "Mass Maintenance" },
   { id: 3, text: "Alternatives" },
-  { id: 4, text: "Decision Tree" },
+  {
+    id: 4,
+    text: "Decision Tree",
+  },
   { id: 5, text: "Group Description Management" },
 ];
 
@@ -198,6 +201,10 @@ class Medicare extends React.Component<any, any> {
 
     const tabs = this.state.miniTabs.map((tab: TabInfo, index: number) => {
       if (index === selectedTabIndex) {
+        if (selectedTabIndex === 3) {
+          // window.location.href = "http://localhost:3001";
+          window.open("http://localhost:3001", "_blank");
+        }
         activeMiniTabIndex = index;
       }
       return tab;
@@ -247,7 +254,7 @@ class Medicare extends React.Component<any, any> {
       case 2:
         return <Alternatives />;
       case 3:
-        return <div>Decision Tree</div>;
+        break;
       case 4:
         return <div>Group Description Management</div>;
     }
@@ -263,6 +270,21 @@ class Medicare extends React.Component<any, any> {
       return e;
     });
     return updatedColumns;
+  };
+
+  applyFilterHandler = (filters) => {
+    console.log("medicare filters ", filters);
+    this.setState(
+      {
+        // gridSingleSortInfo: null,
+        // isGridSingleSorted: false,
+        // gridMultiSortedInfo: [],
+        // isGridMultiSorted: false
+      },
+      () => {
+        this.props.applyFilter(filters);
+      }
+    );
   };
 
   applySortHandler = (key, order, sortedInfo) => {
@@ -428,7 +450,7 @@ class Medicare extends React.Component<any, any> {
               totalRowsCount={this.props.dashboardGrid.count}
               pageSize={this.props.pageSize}
               selectedCurrentPage={this.props.selectedCurrentPage}
-              applyFilter={this.props.applyFilter}
+              applyFilter={this.applyFilterHandler}
               getColumnSettings={this.props.getColumnSettings}
               data={gridData}
               expandable={{

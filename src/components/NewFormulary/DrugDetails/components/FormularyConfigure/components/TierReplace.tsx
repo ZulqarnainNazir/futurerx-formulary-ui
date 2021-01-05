@@ -7,7 +7,10 @@ import DropDown from "../../../../../shared/Frx-components/dropdown/DropDown";
 import Button from "../../../../../shared/Frx-components/button/Button";
 import Box from "@material-ui/core/Box";
 import FrxDrugGridContainer from "../../../../../shared/FrxGrid/FrxDrugGridContainer";
-import { tierColumns, tierColumnsNonMcr } from "../../../../../../utils/grid/columns";
+import {
+  tierColumns,
+  tierColumnsNonMcr
+} from "../../../../../../utils/grid/columns";
 import { TierMockData } from "../../../../../../mocks/TierMock";
 //import AdvancedSearch from './search/AdvancedSearch';
 import AdvanceSearchContainer from "../../../../NewAdvanceSearch/AdvanceSearchContainer";
@@ -22,6 +25,7 @@ import { setAdvancedSearch } from "../../../../../../redux/slices/formulary/adva
 import showMessage from "../../../../Utils/Toast";
 import SearchBox from "../../../../../shared/Frx-components/search-box/SearchBox";
 import getLobCode from "../../../../Utils/LobUtils";
+import { getIntelliscenseSearch } from "../../../../../../redux/slices/formulary/categoryClass/categoryClassActionCreation";
 
 interface tabsState {
   tierGridContainer: boolean;
@@ -42,12 +46,16 @@ interface tabsState {
   isGridSingleSorted: boolean;
   gridMultiSortedInfo: any[];
   isGridMultiSorted: boolean;
+  searchNames: any[];
+  filterPlaceholder: any;
+  searchValue: any;
+  searchData: any[];
 }
 
 const mapStateToProps = state => {
   return {
     configureSwitch: state.switchReducer.configureSwitch,
-    applyData: state.tierSliceReducer.applyData,
+    //applyData: state.tierSliceReducer.applyData,
     formulary_id: state?.application?.formulary_id,
     formulary: state?.application?.formulary,
     formulary_lob_id: state?.application?.formulary_lob_id,
@@ -62,7 +70,8 @@ function mapDispatchToProps(dispatch) {
   return {
     postTierApplyInfo: a => dispatch(postTierApplyInfo(a)),
     getTier: a => dispatch(getTier(a)),
-    setAdvancedSearch: a => dispatch(setAdvancedSearch(a))
+    setAdvancedSearch: a => dispatch(setAdvancedSearch(a)),
+    getIntelliscenseSearch: a => dispatch(getIntelliscenseSearch(a))
   };
 }
 
@@ -76,7 +85,7 @@ class TierReplace extends React.Component<any, tabsState> {
     drugGridData: Array(),
     selectedDrugs: Array(),
     selectedTier: -1,
-    selectedFileKey: '',
+    selectedFileKey: "",
     selectedFileType: "Full Formulary",
     fileTypes: [
       { type: "FRF", key: "FRF" },
@@ -90,6 +99,7 @@ class TierReplace extends React.Component<any, tabsState> {
     index: 0,
     limit: 10,
     filter: Array(),
+    quickFilter: Array(),
     sort_by: Array(),
     hiddenColumns: Array(),
     dataCount: 0,
@@ -97,6 +107,10 @@ class TierReplace extends React.Component<any, tabsState> {
     isGridSingleSorted: false,
     gridMultiSortedInfo: [],
     isGridMultiSorted: false,
+    searchNames: Array(),
+    filterPlaceholder: "Search",
+    searchValue: "",
+    searchData: Array()
   };
 
   constructor(props) {
@@ -111,9 +125,9 @@ class TierReplace extends React.Component<any, tabsState> {
   onSettingsIconHandler = (hiddenColumn, visibleColumn) => {
     console.log(
       "Settings icon handler: Hidden" +
-      JSON.stringify(hiddenColumn) +
-      " Visible:" +
-      JSON.stringify(visibleColumn)
+        JSON.stringify(hiddenColumn) +
+        " Visible:" +
+        JSON.stringify(visibleColumn)
     );
     if (hiddenColumn && hiddenColumn.length > 0) {
       let hiddenColumnKeys = hiddenColumn.map(column => column["key"]);
@@ -123,7 +137,7 @@ class TierReplace extends React.Component<any, tabsState> {
     }
   };
   onApplyFilterHandler = filters => {
-    console.log("filtering from be:" + (JSON.stringify(filters)));
+    console.log("filtering from be:" + JSON.stringify(filters));
     //this.state.filter = Array();
     const fetchedKeys = Object.keys(filters);
     if (fetchedKeys && fetchedKeys.length > 0) {
@@ -133,12 +147,12 @@ class TierReplace extends React.Component<any, tabsState> {
             filters[fetchedProps][0].condition === "is like"
               ? "is_like"
               : filters[fetchedProps][0].condition === "is not"
-                ? "is_not"
-                : filters[fetchedProps][0].condition === "is not like"
-                  ? "is_not_like"
-                  : filters[fetchedProps][0].condition === "does not exist"
-                    ? "does_not_exist"
-                    : filters[fetchedProps][0].condition;
+              ? "is_not"
+              : filters[fetchedProps][0].condition === "is not like"
+              ? "is_not_like"
+              : filters[fetchedProps][0].condition === "does not exist"
+              ? "does_not_exist"
+              : filters[fetchedProps][0].condition;
           const fetchedValues =
             filters[fetchedProps][0].value !== ""
               ? [filters[fetchedProps][0].value.toString()]
@@ -168,14 +182,19 @@ class TierReplace extends React.Component<any, tabsState> {
     console.log("sort details ", key, order);
     this.state.sort_by = Array();
     if (order) {
-      let sortOrder = order === 'ascend' ? 'asc' : 'desc';
-      this.state.sort_by = this.state.sort_by.filter(keyPair => keyPair['key'] !== key);
+      let sortOrder = order === "ascend" ? "asc" : "desc";
+      this.state.sort_by = this.state.sort_by.filter(
+        keyPair => keyPair["key"] !== key
+      );
       this.state.sort_by.push({ key: key, value: sortOrder });
     }
-    this.state.gridSingleSortInfo = sortedInfo;
-    this.state.gridMultiSortedInfo = [];
-    this.state.isGridMultiSorted = false;
-    this.state.isGridSingleSorted = true;
+
+    this.setState({
+      gridSingleSortInfo: sortedInfo,
+      isGridSingleSorted: true,
+      isGridMultiSorted: false,
+      gridMultiSortedInfo: []
+    });
     if (this.props.advancedSearchBody) {
       this.populateGridData(this.props.advancedSearchBody);
     } else {
@@ -210,28 +229,36 @@ class TierReplace extends React.Component<any, tabsState> {
   };
 
   applyMultiSortHandler = (sorter, multiSortedInfo) => {
-    console.log('Multisort info:'+JSON.stringify(sorter));
-    this.state.gridSingleSortInfo = null;
-    this.state.gridMultiSortedInfo = multiSortedInfo;
-    this.state.isGridMultiSorted = true;
-    this.state.isGridSingleSorted = false;
+    console.log("Multisort info:" + JSON.stringify(sorter));
+    
+		
+		this.setState(  {
+			isGridMultiSorted: true,
+			isGridSingleSorted: false,
+			gridMultiSortedInfo: multiSortedInfo,
+			gridSingleSortInfo: null,
+		})
 
     if (sorter && sorter.length > 0) {
       let uniqueKeys = Array();
       let filteredSorter = Array();
       sorter.map(sortInfo => {
-        if(uniqueKeys.includes(sortInfo['columnKey'])){
-
-        }else{
+        if (uniqueKeys.includes(sortInfo["columnKey"])) {
+        } else {
           filteredSorter.push(sortInfo);
-          uniqueKeys.push(sortInfo['columnKey']);
+          uniqueKeys.push(sortInfo["columnKey"]);
         }
       });
       filteredSorter.map(sortInfo => {
-        let sortOrder = sortInfo['order'] === 'ascend' ? 'asc' : 'desc';
-        this.state.sort_by = this.state.sort_by.filter(keyPair => keyPair['key'] !== sortInfo['columnKey']);
-        this.state.sort_by.push({ key: sortInfo['columnKey'], value: sortOrder });
-      })
+        let sortOrder = sortInfo["order"] === "ascend" ? "asc" : "desc";
+        this.state.sort_by = this.state.sort_by.filter(
+          keyPair => keyPair["key"] !== sortInfo["columnKey"]
+        );
+        this.state.sort_by.push({
+          key: sortInfo["columnKey"],
+          value: sortOrder
+        });
+      });
     }
 
     if (this.props.advancedSearchBody) {
@@ -257,7 +284,7 @@ class TierReplace extends React.Component<any, tabsState> {
   };
 
   componentDidMount() {
-    console.log('componentDidMount');
+    console.log("componentDidMount");
     this.initialize(this.props, true);
     if (this.props.configureSwitch) {
       this.state.tierGridContainer = true;
@@ -272,7 +299,7 @@ class TierReplace extends React.Component<any, tabsState> {
   initialize = (props, initFileKey = false) => {
     var tierOptions = Array();
     let lobCode = getLobCode(this.props.formulary_lob_id);
-    console.log('Initialize called:' + lobCode);
+    console.log("Initialize called:" + lobCode);
     if (props.tierOptions) {
       props.tierOptions.map(tier => {
         tierOptions.push(tier.tier_value);
@@ -314,6 +341,176 @@ class TierReplace extends React.Component<any, tabsState> {
     }
   };
 
+  onSearchValueChanges = (value, event) => {
+    console.log("Search value changed:" + event.value + " " + event.key);
+    this.state.searchValue = value;
+    this.state.quickFilter = [];
+    if (
+      this.state.searchData &&
+      Array.isArray(this.state.searchData) &&
+      this.state.searchData.length > 0
+    ) {
+      if (event.key < this.state.searchData.length) {
+        let propData = this.state.searchData[event.key];
+        switch (propData.key) {
+          case "drug_descriptor_identifier":
+            this.state.quickFilter.push({
+              prop: "drug_descriptor_identifier",
+              operator: "is_like",
+              values: [propData.value]
+            });
+            break;
+
+          case "rxcui":
+            this.state.quickFilter.push({
+              prop: "rxcui",
+              operator: "is_like",
+              values: [propData.value]
+            });
+            break;
+
+          case "ndc":
+            this.state.quickFilter.push({
+              prop: "ndc",
+              operator: "is_like",
+              values: [propData.value]
+            });
+            break;
+
+          case "generic_product_identifier":
+            this.state.quickFilter.push({
+              prop: "generic_product_identifier",
+              operator: "is_like",
+              values: [propData.value]
+            });
+            break;
+
+          case "drug_label_name":
+            this.state.quickFilter.push({
+              prop: "drug_label_name",
+              operator: "is_like",
+              values: [propData.value]
+            });
+            break;
+
+          case "database_class":
+            this.state.quickFilter.push({
+              prop: "database_class",
+              operator: "is_like",
+              values: [propData.value]
+            });
+            break;
+
+          case "database_category":
+            this.state.quickFilter.push({
+              prop: "database_category",
+              operator: "is_like",
+              values: [propData.value]
+            });
+            break;
+        }
+        if (this.props.advancedSearchBody) {
+          this.populateGridData(this.props.advancedSearchBody);
+        } else {
+          this.populateGridData();
+        }
+      }
+    }
+  };
+
+  clearSearchFilter = e => {
+    this.state.quickFilter = Array();
+    this.state.searchData = Array();
+    this.state.searchNames = Array();
+    this.state.filterPlaceholder = "Search";
+    this.state.searchValue = "";
+    if (this.props.advancedSearchBody) {
+      this.populateGridData(this.props.advancedSearchBody);
+    } else {
+      this.populateGridData();
+    }
+  };
+
+  onInputValueChanged = value => {
+    if (value) {
+      let lobCode = getLobCode(this.props.formulary_lob_id);
+      let requests = Array();
+      let apiDetails = {};
+      apiDetails["apiPart"] = commonConstants.SEARCH_GPI;
+      apiDetails["pathParams"] =
+        this.props?.formulary_id + "/" + lobCode + "/" + "F";
+      if (lobCode === "MCR") {
+        apiDetails["pathParams"] =
+          apiDetails["pathParams"] +
+          "/" +
+          (this.props.formulary_type_id === 1 ? "MC" : "MMP");
+      } else {
+        apiDetails["pathParams"] = apiDetails["pathParams"] + "/" + lobCode;
+      }
+      apiDetails["keyVals"] = [
+        { key: commonConstants.KEY_SEARCH_VALUE, value: value }
+      ];
+      requests.push({
+        key: "generic_product_identifier",
+        apiDetails: apiDetails
+      });
+
+      apiDetails = Object.assign({}, apiDetails);
+      apiDetails["apiPart"] = commonConstants.SEARCH_NDC;
+      requests.push({ key: "ndc", apiDetails: apiDetails });
+
+      apiDetails = Object.assign({}, apiDetails);
+      apiDetails["apiPart"] = commonConstants.SEARCH_LABEL_NAME;
+      requests.push({ key: "drug_label_name", apiDetails: apiDetails });
+
+      apiDetails = Object.assign({}, apiDetails);
+      apiDetails["apiPart"] = commonConstants.SEARCH_CLASS;
+      requests.push({ key: "database_class", apiDetails: apiDetails });
+
+      apiDetails = Object.assign({}, apiDetails);
+      apiDetails["apiPart"] = commonConstants.SEARCH_CATEGORY;
+      requests.push({ key: "database_category", apiDetails: apiDetails });
+
+      if (this.props.formulary_lob_id == 1) {
+        apiDetails = Object.assign({}, apiDetails);
+        apiDetails["apiPart"] = commonConstants.SEARCH_RXCUI;
+        requests.push({ key: "rxcui", apiDetails: apiDetails });
+      } else {
+        apiDetails = Object.assign({}, apiDetails);
+        apiDetails["apiPart"] = commonConstants.SEARCH_DDID;
+        requests.push({
+          key: "drug_descriptor_identifier",
+          apiDetails: apiDetails
+        });
+      }
+
+      const drugGridData = this.props
+        .getIntelliscenseSearch(requests)
+        .then(json => {
+          //debugger;
+          if (
+            json.payload &&
+            json.payload.data &&
+            Array.isArray(json.payload.data) &&
+            json.payload.data.length > 0
+          ) {
+            let tmpData = json.payload.data;
+            var data: any[] = [];
+            var gridData = tmpData.map(function(el) {
+              var element = Object.assign({}, el);
+              data.push(element);
+              let gridItem = element["value"];
+              return gridItem;
+            });
+            this.setState({
+              searchData: data,
+              searchNames: gridData
+            });
+          }
+        });
+    }
+  };
+
   populateGridData = (searchBody = null) => {
     console.log("Populate grid data is called:" + this.state.selectedFileKey);
     let apiDetails = {};
@@ -341,19 +538,31 @@ class TierReplace extends React.Component<any, tabsState> {
       );
     }
 
-    apiDetails['messageBody']['filter'] = this.state.filter;
+    let allFilters = Array();
+    let filterProps = Array();
+    this.state.filter.map(filterInfo => {
+      allFilters.push(filterInfo);
+      filterProps.push(filterInfo["prop"]);
+    });
+
+    this.state.quickFilter.map(filterInfo => {
+      if (!filterProps.includes(filterInfo["prop"]))
+        allFilters.push(filterInfo);
+    });
+
+    apiDetails["messageBody"]["filter"] = allFilters;
 
     if (this.state.sort_by && this.state.sort_by.length > 0) {
       let keys = Array();
       let values = Array();
 
       this.state.sort_by.map(keyPair => {
-        keys.push(keyPair['key']);
-        values.push(keyPair['value']);
+        keys.push(keyPair["key"]);
+        values.push(keyPair["value"]);
       });
 
-      apiDetails['messageBody']['sort_by'] = keys;
-      apiDetails['messageBody']['sort_order'] = values;
+      apiDetails["messageBody"]["sort_by"] = keys;
+      apiDetails["messageBody"]["sort_order"] = values;
     }
 
     const { selectedTier } = this.state;
@@ -364,7 +573,7 @@ class TierReplace extends React.Component<any, tabsState> {
         let tmpData = json.payload.result;
         var data: any[] = [];
         let count = 1;
-        var gridData = tmpData.map(function (el, idx) {
+        var gridData = tmpData.map(function(el, idx) {
           var element = Object.assign({}, el);
           data.push(element);
           let gridItem = {};
@@ -372,7 +581,11 @@ class TierReplace extends React.Component<any, tabsState> {
           gridItem["key"] = count;
           //for preseelct items with selected tier value
           if (selectedTier === parseInt(element.tier_value)) {
-            console.log("element value tier ", selectedTier, element.tier_value);
+            console.log(
+              "element value tier ",
+              selectedTier,
+              element.tier_value
+            );
             gridItem["isChecked"] = true;
             gridItem["isDisabled"] = true;
             // decide on class names based on data properties conditionally
@@ -386,7 +599,9 @@ class TierReplace extends React.Component<any, tabsState> {
           }
           //end
           gridItem["tier_value"] = element.tier_value;
-          gridItem["file_type"] = element.file_type ? "" + element.file_type : "";
+          gridItem["file_type"] = element.file_type
+            ? "" + element.file_type
+            : "";
           gridItem["data_source"] = element.data_source
             ? "" + element.data_source
             : "";
@@ -394,12 +609,18 @@ class TierReplace extends React.Component<any, tabsState> {
             ? "" + element.drug_label_name
             : "";
           gridItem["ndc"] = "";
-          if (thisRef.props.lobCode === 'MCR') {
+          if (thisRef.props.lobCode === "MCR") {
             gridItem["rxcui"] = element.rxcui ? "" + element.rxcui : "";
           } else {
-            gridItem["drug_descriptor_identifier"] = element.drug_descriptor_identifier ? "" + element.drug_descriptor_identifier : "";
+            gridItem[
+              "drug_descriptor_identifier"
+            ] = element.drug_descriptor_identifier
+              ? "" + element.drug_descriptor_identifier
+              : "";
           }
-          gridItem["generic_product_identifier"] = element.generic_product_identifier
+          gridItem[
+            "generic_product_identifier"
+          ] = element.generic_product_identifier
             ? "" + element.generic_product_identifier
             : "";
           gridItem["trademark_code"] = element.trademark_code
@@ -487,8 +708,7 @@ class TierReplace extends React.Component<any, tabsState> {
   };
 
   componentWillReceiveProps(nextProps) {
-    console.log('TIER REPLACE: componentWillReceiveProps');
-    this.initialize(nextProps, true);
+    console.log("TIER REPLACE: componentWillReceiveProps");
     if (nextProps.advancedSearchBody && nextProps.populateGrid) {
       this.populateGridData(nextProps.advancedSearchBody);
       let payload = {
@@ -504,13 +724,24 @@ class TierReplace extends React.Component<any, tabsState> {
       this.props.setAdvancedSearch(payload);
     }
     if (this.props.configureSwitch !== nextProps.configureSwitch) {
-      let payload = { advancedSearchBody: {}, populateGrid: false, closeDialog: false, listItemStatus: {} };
+      this.initialize(nextProps, true);
+      let payload = {
+        advancedSearchBody: {},
+        populateGrid: false,
+        closeDialog: false,
+        listItemStatus: {}
+      };
       this.props.setAdvancedSearch(payload);
       this.state.filter = Array();
+      this.state.quickFilter = Array();
       this.state.sort_by = Array();
       this.state.index = 0;
       this.state.limit = 10;
       this.state.hiddenColumns = Array();
+      this.state.searchNames = Array();
+      this.state.filterPlaceholder = "Search";
+      this.state.searchValue = "";
+      this.state.searchData = Array();
 
       if (nextProps.configureSwitch) {
         this.state.selectedFileKey = this.props.lobCode;
@@ -527,7 +758,7 @@ class TierReplace extends React.Component<any, tabsState> {
           this.populateGridData();
         }
       } else {
-        this.state.selectedFileKey = 'COMMDF';
+        this.state.selectedFileKey = "COMMDF";
         this.state.selectedFileType = "Drug Table";
 
         if (this.state.selectedTier != -1) {
@@ -542,6 +773,8 @@ class TierReplace extends React.Component<any, tabsState> {
           });
         }
       }
+    } else {
+      this.initialize(nextProps, false);
     }
   }
 
@@ -690,8 +923,7 @@ class TierReplace extends React.Component<any, tabsState> {
         const data = this.state.drugGridData.map((d: any) => {
           if (d.key === selectedRow.key) {
             d["isChecked"] = false;
-            if (d["rowStyle"])
-              delete d["rowStyle"];
+            if (d["rowStyle"]) delete d["rowStyle"];
           }
           // else d["isChecked"] = false;
           return d;
@@ -721,8 +953,7 @@ class TierReplace extends React.Component<any, tabsState> {
           selectedRowKeys.push(d["key"]);
           d["rowStyle"] = "table-row--green-font";
         } else {
-          if (d["rowStyle"])
-            delete d["rowStyle"]
+          if (d["rowStyle"]) delete d["rowStyle"];
         }
       }
 
@@ -740,7 +971,8 @@ class TierReplace extends React.Component<any, tabsState> {
       lobCode: this.props.lobCode,
       pageType: pageTypes.TYPE_TIER
     };
-    let columns = this.props.lobCode === 'MCR' ? tierColumns() : tierColumnsNonMcr();
+    let columns =
+      this.props.lobCode === "MCR" ? tierColumns() : tierColumnsNonMcr();
     if (this.state.hiddenColumns.length > 0) {
       columns = columns.filter(key => !this.state.hiddenColumns.includes(key));
     }
@@ -753,7 +985,9 @@ class TierReplace extends React.Component<any, tabsState> {
                 TIER <span className="astrict">*</span>
               </label>
               <DropDown
-                value={this.state.selectedTier !== -1 ? this.state.selectedTier : ''}
+                value={
+                  this.state.selectedTier !== -1 ? this.state.selectedTier : ""
+                }
                 options={this.state.tierValues}
                 disabled={this.props.configureSwitch}
                 onSelect={this.tierDropDownSelectHandler}
@@ -774,7 +1008,8 @@ class TierReplace extends React.Component<any, tabsState> {
           <div className="select-drug-from-table">
             <div className="bordered white-bg">
               <div className="header remove-btn-wrapper pr-10">
-                {(this.props.lobCode === "MCR" || this.props.lobCode === "COMM") && (
+                {(this.props.lobCode === "MCR" ||
+                  this.props.lobCode === "COMM") && (
                   <div
                     style={{
                       display: "flex",
@@ -794,6 +1029,24 @@ class TierReplace extends React.Component<any, tabsState> {
                 )}
                 <div className="header remove-btn-wrapper pr-10">
                   <div className="header pr-10">
+                    <div className="header-dropdown">
+                      <DropDown
+                        value={this.state.searchValue}
+                        options={this.state.searchNames}
+                        placeholder={this.state.filterPlaceholder}
+                        showSearch={true}
+                        onSearch={this.onInputValueChanged}
+                        onSelect={this.onSearchValueChanges}
+                      />
+                      {this.state.quickFilter.length > 0 && (
+                        <span
+                          style={{ marginLeft: 10 }}
+                          onClick={this.clearSearchFilter}
+                        >
+                          Clear
+                        </span>
+                      )}
+                    </div>
                     <Button
                       className="Button normal"
                       label="Advance Search"
@@ -814,7 +1067,7 @@ class TierReplace extends React.Component<any, tabsState> {
                   enableSearch={false}
                   enableColumnDrag
                   settingsWidth={50}
-                  onSearch={() => { }}
+                  onSearch={() => {}}
                   fixedColumnKeys={[]}
                   pagintionPosition="topRight"
                   gridName="TIER"
@@ -841,17 +1094,15 @@ class TierReplace extends React.Component<any, tabsState> {
                   onMultiSortToggle={this.onMultiSortToggle}
                   getColumnSettings={this.onSettingsIconHandler}
                   pageSize={this.state.limit}
-                  selectedCurrentPage={
-                    this.state.index / this.state.limit + 1
-                  }
-                // rowSelection={{
-                //   columnWidth: 50,
-                //   selectedRowKeys: this.state.selectedRowKeys,
-                // 	fixed: true,
+                  selectedCurrentPage={this.state.index / this.state.limit + 1}
+                  // rowSelection={{
+                  //   columnWidth: 50,
+                  //   selectedRowKeys: this.state.selectedRowKeys,
+                  // 	fixed: true,
 
-                //   type: "checkbox",
-                //   onChange: this.onSelectedTableRowChanged
-                // }}
+                  //   type: "checkbox",
+                  //   onChange: this.onSelectedTableRowChanged
+                  // }}
                 />
               </div>
             </div>

@@ -786,6 +786,7 @@ class InnerGrid extends Component<InnerGridProps, any>{
                 height="80%"
                 width="80%"
                 open={this.state.openDrugsList}
+                className="dialog-popup clone-dialog-popup"
               >
                 <FrxGridContainer
                   enableSearch={false}
@@ -862,6 +863,7 @@ class InnerGrid extends Component<InnerGridProps, any>{
                 height="80%"
                 width="80%"
                 open={this.state.openDrugsList}
+                className="dialog-popup clone-dialog-popup"
               >
                 <FrxGridContainer
                   enableSearch={false}
