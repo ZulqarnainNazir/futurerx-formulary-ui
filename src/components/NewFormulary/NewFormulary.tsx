@@ -18,6 +18,7 @@ import {
   setLocation,
   setLocationHome,
   clearApplication,
+  setModeLob
 } from "../.././redux/slices/formulary/application/applicationSlice";
 
 import {
@@ -84,6 +85,7 @@ function mapDispatchToProps(dispatch) {
     clearApplication: (a) => dispatch(clearApplication(a)),
     clearSetup: (a) => dispatch(clearSetup(a)),
     clearSetupOptions: (a) => dispatch(clearSetupOptions(a)),
+    setModeLob: (a) => dispatch(setModeLob(a)),
   };
 }
 
@@ -200,7 +202,7 @@ class Formulary extends React.Component<any, any> {
     } else if (currentTabIndex === 3) {
       lob_id = 3;
     }
-
+    this.props.setModeLob(lob_id);
     this.listPayload = { ...defaultListPayload };
     this.listPayload.id_lob = lob_id;
     this.props.fetchFormularies(this.listPayload);
