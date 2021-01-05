@@ -126,3 +126,33 @@ export const postNewTier = createAsyncThunk(
       });
   }
 );
+
+export const replaceTier = createAsyncThunk(
+  "tier/replaceTier",
+  async (apiDetails: any) => {
+    let apiPart = apiDetails.apiPart;
+    let pathParams = apiDetails.pathParams;
+    let keyVals = apiDetails.keyVals;
+    let messageBody = apiDetails.messageBody;
+    let POST_URL = URL + apiPart + pathParams;
+    if(keyVals){
+      keyVals = keyVals.map(pair => pair.key+'='+pair.value);
+      POST_URL = POST_URL + "?" + keyVals.join('&');
+    }
+    console.log("replaceTier action creator:: url: " + POST_URL);
+    const requestHeaders  = {
+        method: 'PUT',
+        body: JSON.stringify(messageBody),
+        headers: commonConstants.REQUEST_HEADER
+    }
+    return fetch(POST_URL,requestHeaders)
+      .then((response) => {
+        if (!response.ok) throw Error(response.statusText);
+        return response.json();
+      })
+      .then((json) => {
+        console.log("replaceTier: ", json);
+        return json;
+      });
+  }
+);
