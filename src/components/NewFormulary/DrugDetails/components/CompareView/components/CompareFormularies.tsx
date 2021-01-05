@@ -60,6 +60,9 @@ class CompareFormularies extends React.Component<any, any> {
     return true;
   };
   handleIconClick = (popupType) => {
+    if(this.props.handleCompareClear){
+      this.props.handleCompareClear();
+    }
     this.setState({ selectFormulary: true, currentPopupType: popupType });
   };
 

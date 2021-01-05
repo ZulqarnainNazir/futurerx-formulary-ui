@@ -5,6 +5,7 @@ import { ReactComponent as ShowIcon } from "../../../../../../../assets/icons/Sh
 import "./CompareTable.scss";
 import InnerGrid from "./InnerGrid";
 import Button from "../../../../../../shared/Frx-components/button/Button";
+import FrxLoader from "../../../../../../shared/FrxLoader/FrxLoader";
 import DialogPopup from "../../../../../../shared/FrxDialogPopup/FrxDialogPopup";
 import FrxGridContainer from "../../../../../../shared/FrxGrid/FrxDrugGridContainer";
 import { getCompareNonMcrFormularyViewAllGridColumns } from "../../../../../../../mocks/formulary-grid/FormularyGridColumn";
@@ -67,6 +68,7 @@ class CompareTable extends Component<any, any> {
     hiddenColumns: Array(),
     rejectedKeys: Array(),
     rejectedDrugIds: Array(),
+    isRequestFinished: false,
   };
 
   listPayload: any = {
@@ -88,6 +90,9 @@ class CompareTable extends Component<any, any> {
     if (this.state.viewAllType === TYPE_SINGLE) {
       this.listPayload = { ...defaultListPayload };
       this.listPayload.limit = pageSize;
+      this.setState({
+        isRequestFinished: false
+      });
       this.populateViewAllData(
         this.listPayload,
         this.state.baseFormularyId,
@@ -99,6 +104,9 @@ class CompareTable extends Component<any, any> {
   onGridPageChangeHandler = (pageNumber: any) => {
     if (this.state.viewAllType === TYPE_SINGLE) {
       this.listPayload.index = (pageNumber - 1) * this.listPayload.limit;
+      this.setState({
+        isRequestFinished: false
+      });
       this.populateViewAllData(
         this.listPayload,
         this.state.baseFormularyId,
@@ -110,6 +118,9 @@ class CompareTable extends Component<any, any> {
   onClearFilterHandler = () => {
     if (this.state.viewAllType === TYPE_SINGLE) {
       this.listPayload = { ...defaultListPayload };
+      this.setState({
+        isRequestFinished: false
+      });
       this.populateViewAllData(
         this.listPayload,
         this.state.baseFormularyId,
@@ -207,6 +218,9 @@ class CompareTable extends Component<any, any> {
       this.state.showViewAll = !this.state.showViewAll;
       this.state.isRowSelectionEnabled = checkBoxEnabled;
       this.listPayload = { ...defaultListPayload };
+      this.setState({
+        isRequestFinished: false
+      });
       this.populateViewAllData(
         this.listPayload,
         baseFormularyId,
@@ -1823,6 +1837,7 @@ class CompareTable extends Component<any, any> {
             columns: Array(),
             data: Array(),
             gridData: Array(),
+            isRequestFinished: true
           });
         } else {
           showMessage("Compare data is empty", "error");
@@ -1831,6 +1846,7 @@ class CompareTable extends Component<any, any> {
             columns: Array(),
             data: Array(),
             gridData: Array(),
+            isRequestFinished: true
           });
         }
       } catch (err) {
@@ -1841,6 +1857,7 @@ class CompareTable extends Component<any, any> {
           columns: Array(),
           data: Array(),
           gridData: Array(),
+          isRequestFinished: true
         });
       }
     } else {
@@ -1849,6 +1866,7 @@ class CompareTable extends Component<any, any> {
         columns: Array(),
         data: Array(),
         gridData: Array(),
+        isRequestFinished: true
       });
     }
   };
@@ -1937,6 +1955,7 @@ class CompareTable extends Component<any, any> {
             baseFormularyId: baseFormularyId,
             reformularyId: reformularyId,
             dataCount: data["count"],
+            isRequestFinished: true
           });
         } else {
           showMessage("Compare data is empty", "error");
@@ -1948,6 +1967,7 @@ class CompareTable extends Component<any, any> {
             baseFormularyId: baseFormularyId,
             reformularyId: reformularyId,
             dataCount: 0,
+            isRequestFinished: true
           });
         }
       } catch (err) {
@@ -1961,6 +1981,7 @@ class CompareTable extends Component<any, any> {
           baseFormularyId: baseFormularyId,
           reformularyId: reformularyId,
           dataCount: 0,
+          isRequestFinished: true
         });
       }
     } else {
@@ -1972,6 +1993,7 @@ class CompareTable extends Component<any, any> {
         baseFormularyId: baseFormularyId,
         reformularyId: reformularyId,
         dataCount: 0,
+        isRequestFinished: true
       });
     }
   };
@@ -1983,6 +2005,9 @@ class CompareTable extends Component<any, any> {
       this.props.baseformulary["id_formulary"] &&
       this.props.referenceformulary["id_formulary"]
     ) {
+      this.setState({
+        isRequestFinished: false,
+      });
       this.populateComparisionData();
     }
   }
@@ -2000,6 +2025,9 @@ class CompareTable extends Component<any, any> {
     if (response) {
       if (response.code && response.code === "200") {
         showMessage("Drugs Rejection Successful", "success");
+        this.setState({
+          isRequestFinished: false,
+        });
         this.populateComparisionData();
       } else {
         if (response.message) {
@@ -2027,6 +2055,9 @@ class CompareTable extends Component<any, any> {
       columns,
       formularyTypesGridData,
     } = this.state;
+    if(!this.state.isRequestFinished){
+      return <FrxLoader />;
+    }
     return (
       <>
         <div className="bordered-grid">
