@@ -680,7 +680,8 @@ class DrugDetailFFF extends React.Component<any, any> {
     let dataGrid = <FrxLoader />;
     if (this.state.data) {
       dataGrid = (
-        // <FrxDrugGridContainer
+        <div className="tier-grid-container">
+        {/* // <FrxDrugGridContainer
         //   isPinningEnabled={false}
         //   enableSearch={false}
         //   enableColumnDrag
@@ -707,43 +708,44 @@ class DrugDetailFFF extends React.Component<any, any> {
         //     type: "checkbox",
         //     onChange: this.onSelectedTableRowChanged,
         //   }}
-        // />
-        <FrxDrugGridContainer
-          isPinningEnabled={false}
-          enableSearch={false}
-          enableColumnDrag
-          settingsWidth={50}
-          onSearch={() => { }}
-          fixedColumnKeys={[]}
-          pagintionPosition="topRight"
-          gridName="TIER"
-          enableSettings
-          columns={columns}
-          scroll={{ x: 3000, y: 377 }}
-          isFetchingData={false}
-          enableResizingOfColumns
-          data={this.state.data}
-          rowSelectionChangeFromCell={this.rowSelectionChangeFromCell}
-          onSelectAllRows={this.onSelectAllRows}
-          customSettingIcon={"FILL-DOT"}
-          totalRowsCount={this.state.listCount}
-          getPerPageItemSize={this.onPageSize}
-          onGridPageChangeHandler={this.onGridPageChangeHandler}
-          clearFilterHandler={this.onClearFilterHandler}
-          applyFilter={this.onApplyFilterHandler}
-          applySort={this.onApplySortHandler}
-          isSingleSorted={this.state.isGridSingleSorted}
-          sortedInfo={this.state.gridSingleSortInfo}
-          applyMultiSort={this.applyMultiSortHandler}
-          isMultiSorted={this.state.isGridMultiSorted}
-          multiSortedInfo={this.state.gridMultiSortedInfo}
-          onMultiSortToggle={this.onMultiSortToggle}
-          getColumnSettings={this.onSettingsIconHandler}
-          pageSize={this.listPayload.limit}
-          selectedCurrentPage={
-            this.listPayload.index / this.listPayload.limit + 1
-          }
-        />
+        // /> */}
+          <FrxDrugGridContainer
+            isPinningEnabled={false}
+            enableSearch={false}
+            enableColumnDrag
+            settingsWidth={50}
+            onSearch={() => { }}
+            fixedColumnKeys={[]}
+            pagintionPosition="topRight"
+            gridName="TIER"
+            enableSettings
+            columns={columns}
+            scroll={{ x: 3000, y: 377 }}
+            isFetchingData={false}
+            enableResizingOfColumns
+            data={this.state.data}
+            rowSelectionChangeFromCell={this.rowSelectionChangeFromCell}
+            onSelectAllRows={this.onSelectAllRows}
+            customSettingIcon={"FILL-DOT"}
+            totalRowsCount={this.state.listCount}
+            getPerPageItemSize={this.onPageSize}
+            onGridPageChangeHandler={this.onGridPageChangeHandler}
+            clearFilterHandler={this.onClearFilterHandler}
+            applyFilter={this.onApplyFilterHandler}
+            applySort={this.onApplySortHandler}
+            isSingleSorted={this.state.isGridSingleSorted}
+            sortedInfo={this.state.gridSingleSortInfo}
+            applyMultiSort={this.applyMultiSortHandler}
+            isMultiSorted={this.state.isGridMultiSorted}
+            multiSortedInfo={this.state.gridMultiSortedInfo}
+            onMultiSortToggle={this.onMultiSortToggle}
+            getColumnSettings={this.onSettingsIconHandler}
+            pageSize={this.listPayload.limit}
+            selectedCurrentPage={
+              this.listPayload.index / this.listPayload.limit + 1
+            }
+          />
+        </div>
       );
     }
 
