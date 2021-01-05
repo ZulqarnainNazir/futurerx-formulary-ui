@@ -266,6 +266,22 @@ class Medicare extends React.Component<any, any> {
       return 1;
     }
   }
+
+  getStepName(stepNumber:any){
+    if(stepNumber === 1){
+      return "Work in progress";
+    }
+    if(stepNumber === 2){
+      return "Review";
+    }
+    if(stepNumber === 3){
+      return "Approved";
+    }
+    if(stepNumber === 4){
+      return "In production";
+    }
+
+  }
   renderActiveMiniTabContent = () => {
     const miniTabIndex = this.state.activeMiniTabIndex;
     switch (miniTabIndex) {
@@ -463,7 +479,10 @@ class Medicare extends React.Component<any, any> {
           text: "09/04/2020  @ 9:00 AM",
           progress: 25
         },
-        step: steps.indexOf(e.step) + 1
+        step: {
+          step_name:this.getStepName(steps.indexOf(e.step) + 1),
+          step: steps.indexOf(e.step) + 1
+        },
       };
     });
     const addNewButtonDDContent = (

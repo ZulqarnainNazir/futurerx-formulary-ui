@@ -132,7 +132,7 @@ class FormularyExpandedDetails extends React.Component<any,any>{
             <div className="formulary-expanded-details__container">
               {/* Left Container Starting*/}
               <div className="formulary-expanded-details-left">
-                {/* <div className="formulary-expanded-details-left__container">
+                <div className="formulary-expanded-details-left__container">
                   <div className="formulary-expanded-details-left__title">Versions</div>
                   <div className="formulary-expanded-details-left__list">
                     <div className="formulary-expanded-details-left__list-item">
@@ -148,7 +148,7 @@ class FormularyExpandedDetails extends React.Component<any,any>{
                     <div className="formulary-expanded-details-left__list-add-item">+ add new version</div>
                     
                   </div>
-                </div> */}
+                </div>
               </div>
               {/* Left Container Ending*/}
               

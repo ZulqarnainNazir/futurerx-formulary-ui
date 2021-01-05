@@ -582,7 +582,7 @@ class CategoryClass extends React.Component<any, any> {
   }
   render() {
     return (
-      <div className="drug-detail-LA-root">
+      <div className="drug-detail-LA-root class-category">
         <div className="drug-detail-la-container">
           <div className="drug-detail-la-inner">
             <Grid container spacing={2}>
@@ -596,51 +596,48 @@ class CategoryClass extends React.Component<any, any> {
                   </div>
                 </div>
                 <div className="bordered">
-                  <div className="header pr-10 category-class-header">
-                    <div className="header-dropdown"
-                      // style={{
-                      //   display: "flex",
-                      //   flexDirection: "row",
-                      //   alignItems: "center",
-                      //   justifyContent: "space-between",
-                      // }}
-                    >
-                      <DropDown
-                        value={this.state.searchValue}
-                        options={this.state.searchNames}
-                        placeholder={this.state.filterPlaceholder}
-                        showSearch={true}
-                        onSearch={this.onInputValueChanged}
-                        onSelect={this.onSearchValueChanges}
-                      />
-                      {this.state.filter.length > 0 && (
-                        <span
-                          style={{ marginLeft: 10 }}
-                          onClick={this.clearSearchFilter}
-                        >
-                          Clear
-                        </span>
-                      )}
-                    </div>
-                    <div
-                      className="add-file-button"
-                      onClick={(e) =>
-                        this.handlePopupButtonClick(
-                          "override",
-                          "CATEGORY AND CLASS ASSIGNMENT"
-                        )
-                      }
-                    >
-                      Override
-                    </div>
-                    <div
-                      className="advance-search-button advance-search-btn"
-                      onClick={(e) => this.advanceSearchClickHandler(e)}
-                    >
-                      Advanced Search
+                  <div className="header pr-10 category-class-wrapper">
+                    <p>Select Drugs From</p>
+                    <div className="category-class-button-wrapper">
+                      <div className="header-dropdown">
+                        <DropDown
+                          value={this.state.searchValue}
+                          options={this.state.searchNames}
+                          placeholder={this.state.filterPlaceholder}
+                          showSearch={true}
+                          onSearch={this.onInputValueChanged}
+                          onSelect={this.onSearchValueChanges}
+                        />
+                        {this.state.filter.length > 0 && (
+                          <span
+                            style={{ marginLeft: 10 }}
+                            onClick={this.clearSearchFilter}
+                          >
+                            Clear
+                          </span>
+                        )}
+                      </div>
+                      <div
+                        className="add-file-button"
+                        onClick={(e) =>
+                          this.handlePopupButtonClick(
+                            "override",
+                            "CATEGORY AND CLASS ASSIGNMENT"
+                          )
+                        }
+                      >
+                        Override
+                      </div>
+                      <div
+                        className="advance-search-button advance-search-btn"
+                        onClick={(e) => this.advanceSearchClickHandler(e)}
+                      >
+                        Advanced Search
+                      </div>
                     </div>
                   </div>
-                  <FrxDrugGridContainer
+                  <FrxGridContainer
+                    className="umair"
                     enableSearch={false}
                     enableColumnDrag={false}
                     onSearch={this.handleSearch}
@@ -651,11 +648,9 @@ class CategoryClass extends React.Component<any, any> {
                     isFetchingData={this.state.isFetchingData}
                     columns={this.state.columns}
                     isPinningEnabled={false}
-                    scroll={{ x: 0, y: 377 }}
+                    scroll={{ x: 1500, y: 377 }}
                     enableResizingOfColumns={false}
                     data={this.state.filteredData}
-                    /*isCustomCheckboxEnabled={true}
-                    handleCustomRowSelectionChange={this.rowSelectionChange}*/
                     rowSelection={{
                       columnWidth: 50,
                       fixed: true,

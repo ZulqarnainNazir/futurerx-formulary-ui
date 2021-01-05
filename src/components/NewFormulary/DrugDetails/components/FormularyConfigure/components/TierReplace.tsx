@@ -16,7 +16,7 @@ import { TierMockData } from "../../../../../../mocks/TierMock";
 import AdvanceSearchContainer from "../../../../NewAdvanceSearch/AdvanceSearchContainer";
 import {
   postTierApplyInfo,
-  getTier
+  getTier,
 } from "../../../../../../redux/slices/formulary/tier/tierActionCreation";
 import * as tierConstants from "../../../../../../api/http-tier";
 import * as commonConstants from "../../../../../../api/http-commons";
@@ -54,7 +54,7 @@ interface tabsState {
   searchData: any[];
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
   return {
     configureSwitch: state.switchReducer.configureSwitch,
     //applyData: state.tierSliceReducer.applyData,
@@ -64,7 +64,7 @@ const mapStateToProps = state => {
     formulary_type_id: state?.application?.formulary_type_id,
     advancedSearchBody: state?.advancedSearch?.advancedSearchBody,
     populateGrid: state?.advancedSearch?.populateGrid,
-    closeDialog: state?.advancedSearch?.closeDialog
+    closeDialog: state?.advancedSearch?.closeDialog,
   };
 };
 
@@ -94,7 +94,7 @@ class TierReplace extends React.Component<any, tabsState> {
       { type: "ORF/ERF", key: "OTC" },
       { type: "Non FRF Products", key: "NONFRF" },
       { type: "FRF Change Report", key: "FRFCR" },
-      { type: "Full Formulary", key: "MCR" }
+      { type: "Full Formulary", key: "MCR" },
     ],
     selectedRowKeys: [] as number[],
     fixedSelectedRows: [] as number[],
@@ -132,9 +132,9 @@ class TierReplace extends React.Component<any, tabsState> {
         JSON.stringify(visibleColumn)
     );
     if (hiddenColumn && hiddenColumn.length > 0) {
-      let hiddenColumnKeys = hiddenColumn.map(column => column["key"]);
+      let hiddenColumnKeys = hiddenColumn.map((column) => column["key"]);
       this.setState({
-        hiddenColumns: hiddenColumnKeys
+        hiddenColumns: hiddenColumnKeys,
       });
     }
   };
@@ -143,7 +143,7 @@ class TierReplace extends React.Component<any, tabsState> {
     //this.state.filter = Array();
     const fetchedKeys = Object.keys(filters);
     if (fetchedKeys && fetchedKeys.length > 0) {
-      fetchedKeys.map(fetchedProps => {
+      fetchedKeys.map((fetchedProps) => {
         if (filters[fetchedProps]) {
           const fetchedOperator =
             filters[fetchedProps][0].condition === "is like"
@@ -162,7 +162,7 @@ class TierReplace extends React.Component<any, tabsState> {
           this.state.filter.push({
             prop: fetchedProps,
             operator: fetchedOperator,
-            values: fetchedValues
+            values: fetchedValues,
           });
         }
       });
@@ -203,7 +203,7 @@ class TierReplace extends React.Component<any, tabsState> {
       this.populateGridData();
     }
   };
-  onPageSize = pageSize => {
+  onPageSize = (pageSize) => {
     console.log("Page size load");
     this.state.limit = pageSize;
     if (this.props.advancedSearchBody) {
@@ -303,7 +303,7 @@ class TierReplace extends React.Component<any, tabsState> {
     let lobCode = getLobCode(this.props.formulary_lob_id);
     console.log("Initialize called:" + lobCode);
     if (props.tierOptions) {
-      props.tierOptions.map(tier => {
+      props.tierOptions.map((tier) => {
         tierOptions.push(tier.tier_value);
       });
     }
@@ -317,7 +317,7 @@ class TierReplace extends React.Component<any, tabsState> {
         fileTypesModified.push({ type: "ADD", key: "ADD" });
         fileTypesModified.push({ type: "Full Formulary", key: lobCode });
       } else {
-        this.state.fileTypes.map(fileType => {
+        this.state.fileTypes.map((fileType) => {
           if (fileType.type === "Full Formulary") {
             fileType.key = lobCode;
           }
@@ -529,7 +529,7 @@ class TierReplace extends React.Component<any, tabsState> {
     apiDetails["keyVals"] = [
       { key: commonConstants.KEY_ENTITY_ID, value: this.props?.formulary_id },
       { key: commonConstants.KEY_INDEX, value: this.state.index },
-      { key: commonConstants.KEY_LIMIT, value: this.state.limit }
+      { key: commonConstants.KEY_LIMIT, value: this.state.limit },
     ];
     apiDetails["messageBody"] = {};
 
@@ -677,7 +677,7 @@ class TierReplace extends React.Component<any, tabsState> {
       apiDetails["messageBody"]["selected_drug_ids"] = this.state.selectedDrugs;
       apiDetails["messageBody"]["id_tier"] = this.state.selectedTier;
 
-      const saveData = this.props.postTierApplyInfo(apiDetails).then(json => {
+      const saveData = this.props.postTierApplyInfo(apiDetails).then((json) => {
         console.log("Save response is:" + JSON.stringify(json));
         if (json.payload && json.payload.code && json.payload.code === "200") {
           showMessage("Success", "success");
@@ -691,15 +691,15 @@ class TierReplace extends React.Component<any, tabsState> {
           apiDetails["keyVals"] = [
             {
               key: commonConstants.KEY_ENTITY_ID,
-              value: this.props?.formulary_id
-            }
+              value: this.props?.formulary_id,
+            },
           ];
 
           const TierDefinationData = this.props
             .getTier(apiDetails)
-            .then(json => {
+            .then((json) => {
               this.setState({
-                tierGridContainer: true
+                tierGridContainer: true,
               });
             });
         } else {
@@ -717,7 +717,7 @@ class TierReplace extends React.Component<any, tabsState> {
         advancedSearchBody: nextProps.advancedSearchBody,
         populateGrid: false,
         closeDialog: nextProps.closeDialog,
-        listItemStatus: nextProps.listItemStatus
+        listItemStatus: nextProps.listItemStatus,
       };
       if (nextProps.closeDialog) {
         this.state.isSearchOpen = false;
@@ -771,7 +771,7 @@ class TierReplace extends React.Component<any, tabsState> {
           }
         } else {
           this.setState({
-            tierGridContainer: false
+            tierGridContainer: false,
           });
         }
       }
@@ -780,15 +780,15 @@ class TierReplace extends React.Component<any, tabsState> {
     }
   }
 
-  onSelectedTableRowChanged = selectedRowKeys => {
+  onSelectedTableRowChanged = (selectedRowKeys) => {
     console.log("selected row ", selectedRowKeys);
 
     this.state.selectedDrugs = [];
     this.setState({
-      selectedRowKeys: [...selectedRowKeys]
+      selectedRowKeys: [...selectedRowKeys],
     });
     if (selectedRowKeys && selectedRowKeys.length > 0) {
-      this.state.selectedDrugs = selectedRowKeys.map(tierId => {
+      this.state.selectedDrugs = selectedRowKeys.map((tierId) => {
         let item = {};
         if (
           this.state.drugData[tierId - 1]["formulary_drug_id"] &&
@@ -798,20 +798,20 @@ class TierReplace extends React.Component<any, tabsState> {
             formulary_drug_id: this.state.drugData[tierId - 1][
               "formulary_drug_id"
             ],
-            drug_id: this.state.drugData[tierId - 1]["drug_id"]
+            drug_id: this.state.drugData[tierId - 1]["drug_id"],
           };
         } else if (this.state.drugData[tierId - 1]["formulary_drug_id"]) {
           item = {
             formulary_drug_id: this.state.drugData[tierId - 1][
               "formulary_drug_id"
-            ]
+            ],
           };
         } else if (this.state.drugData[tierId - 1]["drug_id"]) {
           item = {
             drug_id: this.state.drugData[tierId - 1]["drug_id"],
             formulary_drug_id: this.state.drugData[tierId - 1][
               "formulary_drug_id"
-            ]
+            ],
           };
         }
         return item;
@@ -833,7 +833,7 @@ class TierReplace extends React.Component<any, tabsState> {
           this.props.formulary_type_id &&
           this.props.formulary_type_id == 2
         ) {
-          this.state.fileTypes.map(fileType => {
+          this.state.fileTypes.map((fileType) => {
             this.state.fileValues.push(fileType.type);
           });
         } else {
@@ -841,7 +841,7 @@ class TierReplace extends React.Component<any, tabsState> {
             this.state.fileValues.push("ORF/ERF");
             this.state.fileValues.push("Full Formulary");
           } else {
-            this.state.fileTypes.map(fileType => {
+            this.state.fileTypes.map((fileType) => {
               this.state.fileValues.push(fileType.type);
             });
           }
@@ -857,7 +857,7 @@ class TierReplace extends React.Component<any, tabsState> {
 
     if (fileType) {
       let filtered = this.state.fileTypes.filter(
-        fileObject => fileObject.type.toString().trim() === fileType
+        (fileObject) => fileObject.type.toString().trim() === fileType
       );
       if (filtered && filtered.length > 0) {
         fileKey = filtered[0].key;
@@ -886,7 +886,7 @@ class TierReplace extends React.Component<any, tabsState> {
       }
     }
   };
-  advanceSearchClickHandler = event => {
+  advanceSearchClickHandler = (event) => {
     event.stopPropagation();
     this.setState({ isSearchOpen: !this.state.isSearchOpen });
   };
@@ -912,11 +912,11 @@ class TierReplace extends React.Component<any, tabsState> {
         });
         const selectedRowKeys = [
           ...this.state.selectedRowKeys,
-          selectedRow.key
+          selectedRow.key,
         ];
         console.log("selected row keys ", selectedRowKeys);
         const selectedRows: number[] = selectedRowKeys.filter(
-          k => this.state.fixedSelectedRows.indexOf(k) < 0
+          (k) => this.state.fixedSelectedRows.indexOf(k) < 0
         );
         this.onSelectedTableRowChanged(selectedRowKeys);
 
@@ -932,15 +932,15 @@ class TierReplace extends React.Component<any, tabsState> {
         });
 
         const selectedRowKeys: number[] = this.state.selectedRowKeys.filter(
-          k => k !== selectedRow.key
+          (k) => k !== selectedRow.key
         );
         const selectedRows = selectedRowKeys.filter(
-          k => this.state.fixedSelectedRows.indexOf(k) < 0
+          (k) => this.state.fixedSelectedRows.indexOf(k) < 0
         );
 
         this.onSelectedTableRowChanged(selectedRows);
         this.setState({
-          drugGridData: data
+          drugGridData: data,
         });
       }
     }
@@ -963,7 +963,7 @@ class TierReplace extends React.Component<any, tabsState> {
       return d;
     });
     const selectedRows: number[] = selectedRowKeys.filter(
-      k => this.state.fixedSelectedRows.indexOf(k) < 0
+      (k) => this.state.fixedSelectedRows.indexOf(k) < 0
     );
     this.onSelectedTableRowChanged(selectedRows);
     this.setState({ drugGridData: data });
@@ -971,12 +971,14 @@ class TierReplace extends React.Component<any, tabsState> {
   render() {
     const searchProps = {
       lobCode: this.props.lobCode,
-      pageType: pageTypes.TYPE_TIER
+      pageType: pageTypes.TYPE_TIER,
     };
     let columns =
       this.props.lobCode === "MCR" ? tierColumns() : tierColumnsNonMcr();
     if (this.state.hiddenColumns.length > 0) {
-      columns = columns.filter(key => !this.state.hiddenColumns.includes(key));
+      columns = columns.filter(
+        (key) => !this.state.hiddenColumns.includes(key)
+      );
     }
     return (
       <>
@@ -1017,7 +1019,7 @@ class TierReplace extends React.Component<any, tabsState> {
                       display: "flex",
                       flexDirection: "row",
                       alignItems: "center",
-                      justifyContent: "space-between"
+                      justifyContent: "space-between",
                     }}
                   >
                     <span style={{ marginRight: 10 }}>Select Drugs From</span>
