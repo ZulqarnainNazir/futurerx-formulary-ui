@@ -48,7 +48,7 @@ const defaultListPayload = {
 const columnFilterMapping = {
   freeFirstFill: "is_fff",
   tier: "tier_value",
-  labelNamae: "drug_label_name",
+  labelName: "drug_label_name",
   ddid: "drug_descriptor_identifier",
   gpi: "generic_product_identifier",
   trademark: "trademark_code",
@@ -60,8 +60,33 @@ const columnFilterMapping = {
   modifiedOn: "modified_date",
 };
 
+interface fffState {
+  isSearchOpen: boolean,
+  panelGridTitle1: any[],
+  panelTitleAlignment1: any[],
+  panelGridValue1: any[],
+  isNotesOpen: boolean,
+  activeTabIndex: any,
+  columns: any,
+  data: any[],
+  tabs: any[],
+  listCount: any,
+  selectedDrugs: any[],
+  drugData: any[],
+  sort_by: any[],
+  hiddenColumns: any[],
+  selectedRowKeys: any[],
+  fixedSelectedRows: any[],
+  gridSingleSortInfo: any,
+  isGridSingleSorted: boolean,
+  gridMultiSortedInfo: any[],
+  isGridMultiSorted: boolean,
+  filter: any[],
+  quickFilter: any[],
+};
+
 class DrugDetailFFF extends React.Component<any, any> {
-  state = {
+  state: fffState = {
     isSearchOpen: false,
     panelGridTitle1: ["", "NUMBER OF DRUGS", "ADDED DRUGS", "REMOVED DRUGS"],
     panelTitleAlignment1: ["center", "center", "center", "center"],
@@ -78,6 +103,16 @@ class DrugDetailFFF extends React.Component<any, any> {
     listCount: 0,
     selectedDrugs: Array(),
     drugData: Array(),
+    sort_by: Array(),
+    hiddenColumns: Array(),
+    selectedRowKeys: [],
+    fixedSelectedRows: [],
+    gridSingleSortInfo: null,
+    isGridSingleSorted: false,
+    gridMultiSortedInfo: [],
+    isGridMultiSorted: false,
+    filter: Array(),
+    quickFilter: Array(),
   };
 
   listPayload: any = {
@@ -156,7 +191,9 @@ class DrugDetailFFF extends React.Component<any, any> {
           if (json.payload && json.payload.code && json.payload.code === "200") {
             showMessage("Success", "success");
             this.getFFFSummary();
-            this.getFFFDrugsList();
+            this.listPayload.selected_criteria_ids = ["Y"];
+            this.getFFFDrugsList({ listPayload: this.listPayload });
+            // this.getFFFDrugsList();
           } else {
             showMessage("Failure", "error");
           }
@@ -164,6 +201,12 @@ class DrugDetailFFF extends React.Component<any, any> {
       }
     }
   };
+
+  arraysEqual = (a, b) => {
+    if(a.length !== b.length) return false;
+    
+    return a.sort().toString() == b.sort().toString();
+  }
   
   onApplyFilterHandler = (filters) => {
     this.listPayload.filter = Array();
@@ -274,10 +317,29 @@ class DrugDetailFFF extends React.Component<any, any> {
       );
     }
 
+    if (this.state.sort_by && this.state.sort_by.length > 0) {
+      let keys = Array();
+      let values = Array();
+
+      this.state.sort_by.map(keyPair => {
+        keys.push(keyPair["key"]);
+        values.push(keyPair["value"]);
+      });
+
+      let tempKeys: any[] = [];
+      keys.forEach(e => {
+        tempKeys.push(columnFilterMapping[e]);
+      })
+
+      apiDetails["messageBody"]["sort_by"] = tempKeys;
+      apiDetails["messageBody"]["sort_order"] = values;
+    }
+
     console.log("The FFF List Payload = ", listPayload);
     console.log("The FFF List Api Details = ", apiDetails);
 
     let listCount = 0;
+    const thisRef = this;
     this.props.getDrugDetailsFFFList(apiDetails).then((json) => {
       let tmpData = json.payload && json.payload.result ? json.payload.result : [];
       listCount = json.payload?.count;
@@ -290,8 +352,18 @@ class DrugDetailFFF extends React.Component<any, any> {
         gridItem["id"] = count;
         gridItem["key"] = count;
         gridItem["freeFirstFill"] = element.is_fff && element.is_fff === true ? "Y" : "";
+        // for preseelct items with selected tier value
+
+        if(this.state.activeTabIndex !== 2) {
+          if(element.is_fff) {
+            gridItem["isChecked"] = true;
+            gridItem["isDisabled"] = true;
+            gridItem["rowStyle"] = "table-row--blue-font";
+          }
+        }
+
         gridItem["tier"] = element.tier_value ? "" + element.tier_value : "";
-        gridItem["labelNamae"] = element.drug_label_name ? "" + element.drug_label_name : "";
+        gridItem["labelName"] = element.drug_label_name ? "" + element.drug_label_name : "";
         gridItem["ddid"] = element.drug_descriptor_identifier ? "" + element.drug_descriptor_identifier : "";
         gridItem["gpi"] = element.generic_product_identifier ? "" + element.generic_product_identifier : "";
         gridItem["trademark"] = element.trademark_code ? "" + element.trademark_code : "";
@@ -309,6 +381,12 @@ class DrugDetailFFF extends React.Component<any, any> {
         drugData: data,
         data: gridData,
         listCount: listCount,
+        fixedSelectedRows: gridData
+          .filter(item => item.isChecked)
+          .map(item => item.key),
+        selectedRowKeys: gridData
+          .filter(item => item.isChecked)
+          .map(item => item.key)
       });
     });
   }
@@ -411,41 +489,255 @@ class DrugDetailFFF extends React.Component<any, any> {
     }
   }
 
+  onSelectAllRows = (isSelected: boolean) => {
+    const selectedRowKeys: number[] = [];
+    const data = this.state.data.map((d: any) => {
+      if (!d["isDisabled"]) {
+        d["isChecked"] = isSelected;
+        if (isSelected) {
+          selectedRowKeys.push(d["key"]);
+          d["rowStyle"] = this.state.activeTabIndex === 2 ? "table-row--red-font" : "table-row--green-font";
+        } else {
+          if (d["rowStyle"])
+            delete d["rowStyle"]
+        }
+      }
+      
+      return d;
+    });
+    const selectedRows: number[] = selectedRowKeys.filter(
+      k => this.state.fixedSelectedRows.indexOf(k) < 0
+    );
+    this.onSelectedTableRowChanged(selectedRows);
+    this.setState({ data: data });
+  };
+
+  onSettingsIconHandler = (hiddenColumn, visibleColumn) => {
+    console.log(
+      "Settings icon handler: Hidden" +
+      JSON.stringify(hiddenColumn) +
+      " Visible:" +
+      JSON.stringify(visibleColumn)
+    );
+    if (hiddenColumn && hiddenColumn.length > 0) {
+      let hiddenColumnKeys = hiddenColumn.map(column => column["key"]);
+      this.setState({
+        hiddenColumns: hiddenColumnKeys
+      });
+    }
+  };
+
+  rowSelectionChangeFromCell = (
+    key: string,
+    selectedRow: any,
+    isSelected: boolean
+  ) => {
+    console.log("data row ", selectedRow, isSelected);
+    if (!selectedRow["isDisabled"]) {
+      if (isSelected) {
+        const data = this.state.data.map((d: any) => {
+          if (d.key === selectedRow.key) {
+            d["isChecked"] = true;
+            d["rowStyle"] = this.state.activeTabIndex === 2 ? "table-row--red-font" : "table-row--green-font";
+          }
+          // else d["isChecked"] = false;
+          return d;
+        });
+        const selectedRowKeys = [
+          ...this.state.selectedRowKeys,
+          selectedRow.key
+        ];
+        console.log("selected row keys ", selectedRowKeys);
+        const selectedRows: number[] = selectedRowKeys.filter(
+          k => this.state.fixedSelectedRows.indexOf(k) < 0
+        );
+        this.onSelectedTableRowChanged(selectedRowKeys);
+
+        this.setState({ data: data });
+      } else {
+        const data = this.state.data.map((d: any) => {
+          if (d.key === selectedRow.key) {
+            d["isChecked"] = false;
+            if (d["rowStyle"])
+              delete d["rowStyle"];
+          }
+          // else d["isChecked"] = false;
+          return d;
+        });
+
+        const selectedRowKeys: number[] = this.state.selectedRowKeys.filter(
+          k => k !== selectedRow.key
+        );
+        const selectedRows = selectedRowKeys.filter(
+          k => this.state.fixedSelectedRows.indexOf(k) < 0
+        );
+
+        this.onSelectedTableRowChanged(selectedRows);
+        this.setState({
+          data: data
+        });
+      }
+    }
+  };
+  
+
+  /**
+   * the selected sorter details will be availbale here to mak api call
+   * @param key the column key
+   * @param order the sorting order : 'ascend' | 'descend'
+   */
+  onApplySortHandler = (key, order, sortedInfo) => {
+    console.log("sort details ", key, order);
+    this.state.sort_by = Array();
+    if (order) {
+      let sortOrder = order === 'ascend' ? 'asc' : 'desc';
+      this.state.sort_by = this.state.sort_by.filter(keyPair => keyPair['key'] !== key);
+      this.state.sort_by.push({ key: key, value: sortOrder });
+    }
+
+    this.setState({
+      gridSingleSortInfo: sortedInfo,
+      isGridSingleSorted: true,
+      isGridMultiSorted: false,
+      gridMultiSortedInfo: []
+    });
+    if (this.props.advancedSearchBody) {
+      this.getFFFDrugsList({ searchBody: this.props.advancedSearchBody });
+    } else {
+      this.getFFFDrugsList();
+    }
+  };
+
+  onMultiSortToggle = (isMultiSortOn: boolean) => {
+    console.log("is Multi sort on ", isMultiSortOn);
+    this.state.sort_by = Array();
+    this.state.gridSingleSortInfo = null;
+    this.state.gridMultiSortedInfo = [];
+    this.state.isGridMultiSorted = isMultiSortOn;
+    this.state.isGridSingleSorted = false;
+
+    if (this.props.advancedSearchBody) {
+      // this.populateGridData(this.props.advancedSearchBody);
+      this.getFFFDrugsList({ searchBody: this.props.advancedSearchBody });
+    } else {
+      this.getFFFDrugsList();
+    }
+  };
+
+  applyMultiSortHandler = (sorter, multiSortedInfo) => {
+    console.log("Multisort info:" + JSON.stringify(sorter));
+		
+		this.setState(  {
+			isGridMultiSorted: true,
+			isGridSingleSorted: false,
+			gridMultiSortedInfo: multiSortedInfo,
+			gridSingleSortInfo: null,
+		})
+
+    if (sorter && sorter.length > 0) {
+      let uniqueKeys = Array();
+      let filteredSorter = Array();
+      sorter.map(sortInfo => {
+        if (uniqueKeys.includes(sortInfo["columnKey"])) {
+        } else {
+          filteredSorter.push(sortInfo);
+          uniqueKeys.push(sortInfo["columnKey"]);
+        }
+      });
+      filteredSorter.map(sortInfo => {
+        let sortOrder = sortInfo["order"] === "ascend" ? "asc" : "desc";
+        this.state.sort_by = this.state.sort_by.filter(
+          keyPair => keyPair["key"] !== sortInfo["columnKey"]
+        );
+        this.state.sort_by.push({
+          key: sortInfo["columnKey"],
+          value: sortOrder
+        });
+      });
+    }
+
+    if (this.props.advancedSearchBody) {
+      this.getFFFDrugsList({ searchBody: this.props.advancedSearchBody });
+    } else {
+      this.getFFFDrugsList();
+    }
+  };
+
   render() {
     const searchProps = {
       lobCode: this.props.lobCode,
       pageType: 0,
     };
+    let columns = getDrugDetailsColumnFFFCOMM();
+    if (this.state.hiddenColumns.length > 0) {
+      columns = columns.filter(key => !this.state.hiddenColumns.includes(key));
+    }
     let dataGrid = <FrxLoader />;
     if (this.state.data) {
       dataGrid = (
+        // <FrxDrugGridContainer
+        //   isPinningEnabled={false}
+        //   enableSearch={false}
+        //   enableColumnDrag
+        //   onSearch={() => {}}
+        //   fixedColumnKeys={[]}
+        //   pagintionPosition="topRight"
+        //   gridName="DRUGSDETAILS"
+        //   enableSettings={false}
+        //   columns={getDrugDetailsColumnFFFCOMM()}
+        //   scroll={{ x: 2500, y: 377 }}
+        //   isFetchingData={false}
+        //   enableResizingOfColumns
+        //   data={this.state.data}
+        //   getPerPageItemSize={this.onPageSize}
+        //   selectedCurrentPage={(this.listPayload.index/this.listPayload.limit + 1)}
+        //   pageSize={this.listPayload.limit}
+        //   onGridPageChangeHandler={this.onGridPageChangeHandler}
+        //   totalRowsCount={this.state.listCount}
+        //   clearFilterHandler={this.onClearFilterHandler}
+        //   applyFilter={this.onApplyFilterHandler}
+        //   rowSelection={{
+        //     columnWidth: 50,
+        //     fixed: true,
+        //     type: "checkbox",
+        //     onChange: this.onSelectedTableRowChanged,
+        //   }}
+        // />
         <FrxDrugGridContainer
           isPinningEnabled={false}
           enableSearch={false}
           enableColumnDrag
-          onSearch={() => {}}
+          settingsWidth={50}
+          onSearch={() => { }}
           fixedColumnKeys={[]}
           pagintionPosition="topRight"
-          gridName="DRUGSDETAILS"
-          enableSettings={false}
-          columns={getDrugDetailsColumnFFFCOMM()}
-          scroll={{ x: 2500, y: 377 }}
+          gridName="TIER"
+          enableSettings
+          columns={columns}
+          scroll={{ x: 3000, y: 377 }}
           isFetchingData={false}
           enableResizingOfColumns
           data={this.state.data}
-          getPerPageItemSize={this.onPageSize}
-          selectedCurrentPage={(this.listPayload.index/this.listPayload.limit + 1)}
-          pageSize={this.listPayload.limit}
-          onGridPageChangeHandler={this.onGridPageChangeHandler}
+          rowSelectionChangeFromCell={this.rowSelectionChangeFromCell}
+          onSelectAllRows={this.onSelectAllRows}
+          customSettingIcon={"FILL-DOT"}
           totalRowsCount={this.state.listCount}
+          getPerPageItemSize={this.onPageSize}
+          onGridPageChangeHandler={this.onGridPageChangeHandler}
           clearFilterHandler={this.onClearFilterHandler}
           applyFilter={this.onApplyFilterHandler}
-          rowSelection={{
-            columnWidth: 50,
-            fixed: true,
-            type: "checkbox",
-            onChange: this.onSelectedTableRowChanged,
-          }}
+          applySort={this.onApplySortHandler}
+          isSingleSorted={this.state.isGridSingleSorted}
+          sortedInfo={this.state.gridSingleSortInfo}
+          applyMultiSort={this.applyMultiSortHandler}
+          isMultiSorted={this.state.isGridMultiSorted}
+          multiSortedInfo={this.state.gridMultiSortedInfo}
+          onMultiSortToggle={this.onMultiSortToggle}
+          getColumnSettings={this.onSettingsIconHandler}
+          pageSize={this.listPayload.limit}
+          selectedCurrentPage={
+            this.listPayload.index / this.listPayload.limit + 1
+          }
         />
       );
     }
