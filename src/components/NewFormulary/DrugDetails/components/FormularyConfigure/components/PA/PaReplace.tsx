@@ -581,6 +581,12 @@ class PaReplace extends React.Component<any, any> {
           drugGridData: gridData,
           dataCount: json.payload.count,
         });
+      }else{
+        this.setState({
+          drugData: Array(),
+          drugGridData: Array(),
+          dataCount: 0
+        });
       }
     }
   }
