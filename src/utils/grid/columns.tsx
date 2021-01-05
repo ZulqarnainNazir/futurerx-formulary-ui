@@ -809,7 +809,7 @@ export const marketingColumns: () => Column<any>[] = () => {
 
 export const tierColumns: () => Column<any>[] = () => {
   return [
-		{
+    {
       position: 1,
       textCase: "upper",
       pixelWidth: 50,
@@ -818,7 +818,7 @@ export const tierColumns: () => Column<any>[] = () => {
       fixed: "left",
       displayTitle: "",
       headerCellSelection: true,
-      hidden: false
+      hidden: false,
     },
     {
       position: 2,
@@ -943,7 +943,7 @@ export const tierColumns: () => Column<any>[] = () => {
 
 export const tierColumnsNonMcr: () => Column<any>[] = () => {
   return [
-		{
+    {
       position: 1,
       textCase: "upper",
       pixelWidth: 50,
@@ -952,7 +952,7 @@ export const tierColumnsNonMcr: () => Column<any>[] = () => {
       fixed: "left",
       displayTitle: "",
       headerCellSelection: true,
-      hidden: false
+      hidden: false,
     },
     {
       position: 2,
@@ -1086,7 +1086,7 @@ export const PaColumns: () => Column<any>[] = () => {
       fixed: "left",
       displayTitle: "",
       headerCellSelection: true,
-      hidden: false
+      hidden: false,
     },
     {
       position: 2,
@@ -1207,7 +1207,7 @@ export const stColumns: () => Column<any>[] = () => {
       fixed: "left",
       displayTitle: "",
       headerCellSelection: true,
-      hidden: false
+      hidden: false,
     },
     {
       position: 2,
@@ -1337,6 +1337,17 @@ export const QlColumns: () => Column<any>[] = () => {
   return [
     {
       position: 1,
+      textCase: "upper",
+      pixelWidth: 20,
+      isFilterable: false,
+      key: "checkbox",
+      fixed: "left",
+      displayTitle: "",
+      headerCellSelection: true,
+      hidden: false,
+    },
+    {
+      position: 2,
       sorter: {},
       textCase: "upper",
       pixelWidth: 100,
@@ -1349,7 +1360,7 @@ export const QlColumns: () => Column<any>[] = () => {
       sortDirections: ["ascend", "descend"],
     },
     {
-      position: 2,
+      position: 3,
       sorter: {},
       textCase: "upper",
       pixelWidth: 100,
@@ -1362,7 +1373,7 @@ export const QlColumns: () => Column<any>[] = () => {
       sortDirections: ["ascend", "descend"],
     },
     {
-      position: 3,
+      position: 4,
       sorter: {},
       textCase: "upper",
       pixelWidth: 100,
@@ -1375,7 +1386,7 @@ export const QlColumns: () => Column<any>[] = () => {
       sortDirections: ["ascend", "descend"],
     },
     {
-      position: 4,
+      position: 5,
       sorter: {},
       textCase: "upper",
       pixelWidth: 100,
@@ -1388,7 +1399,7 @@ export const QlColumns: () => Column<any>[] = () => {
       sortDirections: ["ascend", "descend"],
     },
     {
-      position: 5,
+      position: 6,
       sorter: {},
       textCase: "upper",
       pixelWidth: 100,
@@ -1401,7 +1412,7 @@ export const QlColumns: () => Column<any>[] = () => {
       sortDirections: ["ascend", "descend"],
     },
     {
-      position: 6,
+      position: 7,
       sorter: {},
       textCase: "upper",
       pixelWidth: 100,
@@ -1414,7 +1425,7 @@ export const QlColumns: () => Column<any>[] = () => {
       sortDirections: ["ascend", "descend"],
     },
     {
-      position: 7,
+      position: 8,
       sorter: {},
       textCase: "upper",
       pixelWidth: 100,
@@ -1427,7 +1438,7 @@ export const QlColumns: () => Column<any>[] = () => {
       sortDirections: ["ascend", "descend"],
     },
     {
-      position: 8,
+      position: 9,
       sorter: {},
       textCase: "upper",
       pixelWidth: 100,
@@ -1440,7 +1451,7 @@ export const QlColumns: () => Column<any>[] = () => {
       sortDirections: ["ascend", "descend"],
     },
     {
-      position: 9,
+      position: 10,
       sorter: {},
       textCase: "upper",
       pixelWidth: 100,
@@ -1454,7 +1465,7 @@ export const QlColumns: () => Column<any>[] = () => {
     },
 
     {
-      position: 10,
+      position: 11,
       sorter: {},
       textCase: "upper",
       pixelWidth: 100,
@@ -1467,7 +1478,7 @@ export const QlColumns: () => Column<any>[] = () => {
       sortDirections: ["ascend", "descend"],
     },
     {
-      position: 11,
+      position: 12,
       sorter: {},
       textCase: "upper",
       pixelWidth: 100,
@@ -1480,7 +1491,7 @@ export const QlColumns: () => Column<any>[] = () => {
       sortDirections: ["ascend", "descend"],
     },
     {
-      position: 12,
+      position: 13,
       sorter: {},
       textCase: "upper",
       pixelWidth: 100,
@@ -1494,7 +1505,7 @@ export const QlColumns: () => Column<any>[] = () => {
     },
 
     {
-      position: 13,
+      position: 14,
       sorter: {},
       textCase: "upper",
       pixelWidth: 100,
@@ -1507,7 +1518,7 @@ export const QlColumns: () => Column<any>[] = () => {
       sortDirections: ["ascend", "descend"],
     },
     {
-      position: 14,
+      position: 15,
       sorter: {},
       textCase: "upper",
       pixelWidth: 100,
@@ -1520,7 +1531,7 @@ export const QlColumns: () => Column<any>[] = () => {
       sortDirections: ["ascend", "descend"],
     },
     {
-      position: 15,
+      position: 16,
       sorter: {},
       textCase: "upper",
       pixelWidth: 100,
@@ -1533,7 +1544,7 @@ export const QlColumns: () => Column<any>[] = () => {
       sortDirections: ["ascend", "descend"],
     },
     {
-      position: 16,
+      position: 17,
       sorter: {},
       textCase: "upper",
       pixelWidth: 100,
@@ -1547,7 +1558,7 @@ export const QlColumns: () => Column<any>[] = () => {
     },
 
     {
-      position: 17,
+      position: 18,
       sorter: {},
       textCase: "upper",
       pixelWidth: 100,
@@ -1560,7 +1571,7 @@ export const QlColumns: () => Column<any>[] = () => {
       sortDirections: ["ascend", "descend"],
     },
     {
-      position: 18,
+      position: 19,
       sorter: {},
       textCase: "upper",
       pixelWidth: 100,
@@ -1574,7 +1585,7 @@ export const QlColumns: () => Column<any>[] = () => {
     },
 
     {
-      position: 19,
+      position: 20,
       sorter: {},
       textCase: "upper",
       pixelWidth: 100,
@@ -1587,7 +1598,7 @@ export const QlColumns: () => Column<any>[] = () => {
       sortDirections: ["ascend", "descend"],
     },
     {
-      position: 20,
+      position: 21,
       sorter: {},
       textCase: "upper",
       pixelWidth: 100,
@@ -1600,7 +1611,7 @@ export const QlColumns: () => Column<any>[] = () => {
       sortDirections: ["ascend", "descend"],
     },
     {
-      position: 21,
+      position: 22,
       sorter: {},
       textCase: "upper",
       pixelWidth: 100,
@@ -1613,7 +1624,7 @@ export const QlColumns: () => Column<any>[] = () => {
       sortDirections: ["ascend", "descend"],
     },
     {
-      position: 22,
+      position: 23,
       sorter: {},
       textCase: "upper",
       pixelWidth: 100,
@@ -1626,7 +1637,7 @@ export const QlColumns: () => Column<any>[] = () => {
       sortDirections: ["ascend", "descend"],
     },
     {
-      position: 23,
+      position: 24,
       sorter: {},
       textCase: "upper",
       pixelWidth: 100,
@@ -1639,7 +1650,7 @@ export const QlColumns: () => Column<any>[] = () => {
       sortDirections: ["ascend", "descend"],
     },
     {
-      position: 24,
+      position: 25,
       sorter: {},
       textCase: "upper",
       pixelWidth: 100,
@@ -1652,7 +1663,7 @@ export const QlColumns: () => Column<any>[] = () => {
       sortDirections: ["ascend", "descend"],
     },
     {
-      position: 25,
+      position: 26,
       sorter: {},
       textCase: "upper",
       pixelWidth: 100,
@@ -1666,7 +1677,7 @@ export const QlColumns: () => Column<any>[] = () => {
     },
 
     {
-      position: 26,
+      position: 27,
       sorter: {},
       textCase: "upper",
       // pixelWidth: 163,
@@ -1680,7 +1691,7 @@ export const QlColumns: () => Column<any>[] = () => {
     },
 
     {
-      position: 27,
+      position: 28,
       sorter: {},
       textCase: "upper",
       pixelWidth: 163,
@@ -1693,7 +1704,7 @@ export const QlColumns: () => Column<any>[] = () => {
       sortDirections: ["ascend", "descend"],
     },
     {
-      position: 28,
+      position: 29,
       sorter: {},
       textCase: "upper",
       pixelWidth: 163,
@@ -1706,7 +1717,7 @@ export const QlColumns: () => Column<any>[] = () => {
       sortDirections: ["ascend", "descend"],
     },
     {
-      position: 29,
+      position: 30,
       sorter: {},
       textCase: "upper",
       pixelWidth: 163,
@@ -1719,7 +1730,7 @@ export const QlColumns: () => Column<any>[] = () => {
       sortDirections: ["ascend", "descend"],
     },
     {
-      position: 30,
+      position: 31,
       sorter: {},
       textCase: "upper",
       pixelWidth: 100,
@@ -1733,7 +1744,7 @@ export const QlColumns: () => Column<any>[] = () => {
     },
 
     {
-      position: 31,
+      position: 32,
       sorter: {},
       textCase: "upper",
       pixelWidth: 122,
@@ -1746,7 +1757,7 @@ export const QlColumns: () => Column<any>[] = () => {
       sortDirections: ["ascend", "descend"],
     },
     {
-      position: 32,
+      position: 33,
       sorter: {},
       textCase: "upper",
       pixelWidth: 137,
@@ -1759,7 +1770,7 @@ export const QlColumns: () => Column<any>[] = () => {
       sortDirections: ["ascend", "descend"],
     },
     {
-      position: 33,
+      position: 34,
       sorter: {},
       textCase: "upper",
       pixelWidth: 100,
@@ -1772,7 +1783,7 @@ export const QlColumns: () => Column<any>[] = () => {
       sortDirections: ["ascend", "descend"],
     },
     {
-      position: 34,
+      position: 35,
       sorter: {},
       textCase: "upper",
       pixelWidth: 100,
@@ -1785,7 +1796,7 @@ export const QlColumns: () => Column<any>[] = () => {
       sortDirections: ["ascend", "descend"],
     },
     {
-      position: 35,
+      position: 36,
       sorter: {},
       textCase: "upper",
       pixelWidth: 100,
@@ -1798,7 +1809,7 @@ export const QlColumns: () => Column<any>[] = () => {
       sortDirections: ["ascend", "descend"],
     },
     {
-      position: 36,
+      position: 37,
       sorter: {},
       textCase: "upper",
       pixelWidth: 100,
@@ -1812,7 +1823,7 @@ export const QlColumns: () => Column<any>[] = () => {
     },
 
     {
-      position: 37,
+      position: 38,
       sorter: {},
       textCase: "upper",
       pixelWidth: 100,
@@ -1825,7 +1836,7 @@ export const QlColumns: () => Column<any>[] = () => {
       sortDirections: ["ascend", "descend"],
     },
     {
-      position: 38,
+      position: 39,
       sorter: {},
       textCase: "upper",
       pixelWidth: 100,
@@ -1838,7 +1849,7 @@ export const QlColumns: () => Column<any>[] = () => {
       sortDirections: ["ascend", "descend"],
     },
     {
-      position: 39,
+      position: 40,
       sorter: {},
       textCase: "upper",
       pixelWidth: 100,
@@ -1851,7 +1862,7 @@ export const QlColumns: () => Column<any>[] = () => {
       sortDirections: ["ascend", "descend"],
     },
     {
-      position: 40,
+      position: 41,
       sorter: {},
       textCase: "upper",
       pixelWidth: 100,
@@ -1864,7 +1875,7 @@ export const QlColumns: () => Column<any>[] = () => {
       sortDirections: ["ascend", "descend"],
     },
     {
-      position: 41,
+      position: 42,
       sorter: {},
       textCase: "upper",
       pixelWidth: 100,
@@ -1877,7 +1888,7 @@ export const QlColumns: () => Column<any>[] = () => {
       sortDirections: ["ascend", "descend"],
     },
     {
-      position: 42,
+      position: 43,
       sorter: {},
       textCase: "upper",
       pixelWidth: 100,
@@ -1890,7 +1901,7 @@ export const QlColumns: () => Column<any>[] = () => {
       sortDirections: ["ascend", "descend"],
     },
     {
-      position: 43,
+      position: 44,
       sorter: {},
       textCase: "upper",
       pixelWidth: 100,
@@ -1903,7 +1914,7 @@ export const QlColumns: () => Column<any>[] = () => {
       sortDirections: ["ascend", "descend"],
     },
     {
-      position: 44,
+      position: 45,
       sorter: {},
       textCase: "upper",
       pixelWidth: 100,
@@ -1916,7 +1927,7 @@ export const QlColumns: () => Column<any>[] = () => {
       sortDirections: ["ascend", "descend"],
     },
     {
-      position: 45,
+      position: 46,
       sorter: {},
       textCase: "upper",
       pixelWidth: 100,
@@ -1930,7 +1941,7 @@ export const QlColumns: () => Column<any>[] = () => {
     },
 
     {
-      position: 46,
+      position: 47,
       sorter: {},
       textCase: "upper",
       pixelWidth: 100,
@@ -1943,7 +1954,7 @@ export const QlColumns: () => Column<any>[] = () => {
       sortDirections: ["ascend", "descend"],
     },
     {
-      position: 47,
+      position: 48,
       sorter: {},
       textCase: "upper",
       pixelWidth: 100,
@@ -1956,7 +1967,7 @@ export const QlColumns: () => Column<any>[] = () => {
       sortDirections: ["ascend", "descend"],
     },
     {
-      position: 48,
+      position: 49,
       sorter: {},
       textCase: "upper",
       pixelWidth: 100,
@@ -1969,7 +1980,7 @@ export const QlColumns: () => Column<any>[] = () => {
       sortDirections: ["ascend", "descend"],
     },
     {
-      position: 49,
+      position: 50,
       sorter: {},
       textCase: "upper",
       pixelWidth: 100,
@@ -1982,7 +1993,7 @@ export const QlColumns: () => Column<any>[] = () => {
       sortDirections: ["ascend", "descend"],
     },
     {
-      position: 50,
+      position: 51,
       sorter: {},
       textCase: "upper",
       pixelWidth: 100,
@@ -1996,7 +2007,7 @@ export const QlColumns: () => Column<any>[] = () => {
     },
 
     {
-      position: 51,
+      position: 52,
       sorter: {},
       textCase: "upper",
       pixelWidth: 100,
@@ -2010,7 +2021,7 @@ export const QlColumns: () => Column<any>[] = () => {
     },
 
     {
-      position: 52,
+      position: 53,
       sorter: {},
       textCase: "upper",
       pixelWidth: 100,
@@ -2024,7 +2035,7 @@ export const QlColumns: () => Column<any>[] = () => {
     },
 
     {
-      position: 53,
+      position: 54,
       sorter: {},
       textCase: "upper",
       pixelWidth: 100,
@@ -2038,7 +2049,7 @@ export const QlColumns: () => Column<any>[] = () => {
     },
 
     {
-      position: 54,
+      position: 55,
       sorter: {},
       textCase: "upper",
       pixelWidth: 100,
@@ -2051,7 +2062,7 @@ export const QlColumns: () => Column<any>[] = () => {
       sortDirections: ["ascend", "descend"],
     },
     {
-      position: 55,
+      position: 56,
       sorter: {},
       textCase: "upper",
       pixelWidth: 100,
@@ -2064,7 +2075,7 @@ export const QlColumns: () => Column<any>[] = () => {
       sortDirections: ["ascend", "descend"],
     },
     {
-      position: 56,
+      position: 57,
       sorter: {},
       textCase: "upper",
       pixelWidth: 100,
@@ -2077,7 +2088,7 @@ export const QlColumns: () => Column<any>[] = () => {
       sortDirections: ["ascend", "descend"],
     },
     {
-      position: 57,
+      position: 58,
       sorter: {},
       textCase: "upper",
       pixelWidth: 100,
@@ -2090,7 +2101,7 @@ export const QlColumns: () => Column<any>[] = () => {
       sortDirections: ["ascend", "descend"],
     },
     {
-      position: 58,
+      position: 59,
       sorter: {},
       textCase: "upper",
       pixelWidth: 100,
@@ -2103,7 +2114,7 @@ export const QlColumns: () => Column<any>[] = () => {
       sortDirections: ["ascend", "descend"],
     },
     {
-      position: 59,
+      position: 60,
       sorter: {},
       textCase: "upper",
       pixelWidth: 100,
@@ -2116,7 +2127,7 @@ export const QlColumns: () => Column<any>[] = () => {
       sortDirections: ["ascend", "descend"],
     },
     {
-      position: 60,
+      position: 61,
       sorter: {},
       textCase: "upper",
       pixelWidth: 100,
@@ -2129,7 +2140,7 @@ export const QlColumns: () => Column<any>[] = () => {
       sortDirections: ["ascend", "descend"],
     },
     {
-      position: 61,
+      position: 62,
       sorter: {},
       textCase: "upper",
       pixelWidth: 100,
@@ -2143,7 +2154,7 @@ export const QlColumns: () => Column<any>[] = () => {
     },
 
     {
-      position: 62,
+      position: 63,
       sorter: {},
       textCase: "upper",
       pixelWidth: 100,
@@ -2156,7 +2167,7 @@ export const QlColumns: () => Column<any>[] = () => {
       sortDirections: ["ascend", "descend"],
     },
     {
-      position: 63,
+      position: 64,
       sorter: {},
       textCase: "upper",
       pixelWidth: 100,
@@ -2170,7 +2181,7 @@ export const QlColumns: () => Column<any>[] = () => {
     },
 
     {
-      position: 64,
+      position: 65,
       sorter: {},
       textCase: "upper",
       pixelWidth: 100,
@@ -2183,7 +2194,7 @@ export const QlColumns: () => Column<any>[] = () => {
       sortDirections: ["ascend", "descend"],
     },
     {
-      position: 65,
+      position: 66,
       sorter: {},
       textCase: "upper",
       pixelWidth: 100,
@@ -2197,7 +2208,7 @@ export const QlColumns: () => Column<any>[] = () => {
     },
 
     {
-      position: 66,
+      position: 67,
       sorter: {},
       textCase: "upper",
       pixelWidth: 100,
