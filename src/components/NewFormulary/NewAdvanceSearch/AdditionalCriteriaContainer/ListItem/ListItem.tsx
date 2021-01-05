@@ -475,11 +475,14 @@ class ListItem extends Component<any, any> {
 
   serviceSettingsCheckedGL = (e) => {
     const glSettings = [...this.state.glSettings];
-    const { nodeId } = this.props;
+    const { nodeId, additionalCriteriaSequenceId } = this.props;
     const payload: string[] = [];
 
     glSettings.forEach((s: any) => {
-      if (s.id + "" + nodeId === e.target.id) {
+      if (
+        s.id + "" + nodeId + "" + additionalCriteriaSequenceId ===
+        e.target.id
+      ) {
         s.isChecked = e.target.checked;
       }
     });
@@ -685,11 +688,18 @@ class ListItem extends Component<any, any> {
 
   serviceSettingsCheckedPOS = (e) => {
     const posSettings = [...this.state.posSettings];
-    const { nodeId } = this.props;
+    const { nodeId, additionalCriteriaSequenceId } = this.props;
     const payload: string[] = [];
 
     posSettings.forEach((s: any) => {
-      if (s.id_place_of_service_type + "" + nodeId === e.target.id) {
+      if (
+        s.id_place_of_service_type +
+          "" +
+          nodeId +
+          "" +
+          additionalCriteriaSequenceId ===
+        e.target.id
+      ) {
         s.isChecked = e.target.checked;
       }
     });
@@ -742,11 +752,18 @@ class ListItem extends Component<any, any> {
 
   serviceSettingsCheckedPR = (e) => {
     const prSettings = [...this.state.prSettings];
-    const { nodeId } = this.props;
+    const { nodeId, additionalCriteriaSequenceId } = this.props;
     const payload: string[] = [];
 
     prSettings.forEach((s: any) => {
-      if (s.id_patient_residence_type + "" + nodeId === e.target.id) {
+      if (
+        s.id_patient_residence_type +
+          "" +
+          nodeId +
+          "" +
+          additionalCriteriaSequenceId ===
+        e.target.id
+      ) {
         s.isChecked = e.target.checked;
       }
     });
@@ -909,6 +926,7 @@ class ListItem extends Component<any, any> {
       pchlResults,
     } = this.state;
     const {
+      additionalCriteriaSequenceId,
       card: { cardCode },
       deleteIconHandler,
     } = this.props;
@@ -945,6 +963,7 @@ class ListItem extends Component<any, any> {
             }
             isAdditionalCriteria={true}
             nodeId={nodeId}
+            additionalCriteriaSequenceId={additionalCriteriaSequenceId}
           />
         );
       case 3:
@@ -1018,6 +1037,7 @@ class ListItem extends Component<any, any> {
             }
             isAdditionalCriteria={true}
             nodeId={nodeId}
+            additionalCriteriaSequenceId={additionalCriteriaSequenceId}
           />
         );
       case 7:
@@ -1038,6 +1058,7 @@ class ListItem extends Component<any, any> {
             }
             isAdditionalCriteria={true}
             nodeId={nodeId}
+            additionalCriteriaSequenceId={additionalCriteriaSequenceId}
           />
         );
       case 8:
