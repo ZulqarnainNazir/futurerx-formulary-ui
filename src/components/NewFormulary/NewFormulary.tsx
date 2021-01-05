@@ -136,7 +136,7 @@ class Formulary extends React.Component<any, any> {
     sort_order: ["desc"],
   };
 
-  componentDidMount() {
+  componentDidMount() {   
     this.props.fetchFormularies(this.listPayload);
   }
 
@@ -176,7 +176,7 @@ class Formulary extends React.Component<any, any> {
 
   onClickTab = (selectedTabIndex: number) => {
     let activeTabIndex = 0;
-
+   
     const tabs = this.state.tabs.map((tab: TabInfo, index: number) => {
       if (index === selectedTabIndex) {
         activeTabIndex = index;
@@ -184,8 +184,8 @@ class Formulary extends React.Component<any, any> {
       return tab;
     });
     this.setState({ tabs, activeTabIndex }, () => {
-      this.updateGrid(this.state.activeTabIndex);
-    });
+      this.updateGrid(this.state.activeTabIndex);     
+    });    
   };
   updateGrid = (currentTabIndex) => {
     // let lob_id = 1;
@@ -242,11 +242,13 @@ class Formulary extends React.Component<any, any> {
     }
   };
 
-  massMaintenanceCLickHandler = () => {
-    this.setState({
-      showTabs: !this.state.showTabs,
-      showMassMaintenance: !this.state.showMassMaintenance,
-    });
+  massMaintenanceCLickHandler = (id: any) => {
+       if (id !== undefined) {
+      this.setState({
+        showTabs: !this.state.showTabs,
+        showMassMaintenance: !this.state.showMassMaintenance,
+      });
+    }   
   };
 
   onSettingsIconHandler = (hiddenColumn, visibleColumn) => {
@@ -374,6 +376,7 @@ class Formulary extends React.Component<any, any> {
                 getColumnSettings={this.onSettingsIconHandler}
                 addNewFormulary={this.addNewFormulary}
                 formularyListSearch={this.formularyListSearch}
+                lob_type={this.state.tabs.find(p=>p.id == (this.state.activeTabIndex +1))?.text.toLowerCase()}
               />
             </div>
           </>
@@ -385,7 +388,7 @@ class Formulary extends React.Component<any, any> {
           </DrugDetailsContext.Provider>
         ) : this.state.showMassMaintenance ? (
           <MassMaintenanceContext.Provider
-            value={{ showDetailHandler: this.massMaintenanceCLickHandler }}
+            value={{ showDetailHandler:() => this.massMaintenanceCLickHandler }}
           >
             <MassMaintenance data={getFormularyDetails()} />
           </MassMaintenanceContext.Provider>
