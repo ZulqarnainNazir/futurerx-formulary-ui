@@ -428,3 +428,15 @@
     }
   }
 }
+.class-category
+  .frx-grid-container
+  .frx-grid
+  .frx-grid__grid-block
+  .frx-grid__grid-block__table-block
+  .ant-table
+  .ant-table-header
+  .ant-table-thead
+  > tr
+  > th {
+  line-height: 50px !important;
+}

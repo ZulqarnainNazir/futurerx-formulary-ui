@@ -849,7 +849,7 @@ class Tier extends React.Component<any, tabsState> {
     };
     const dataLength = this.state.drugGridData.length > 0 ? true : false;
     return (
-      <div className="drug-detail-LA-root">
+      <div className="drug-detail-LA-root QL-root">
         <div className="drug-detail-la-container">
           <div className="drug-detail-la-inner">
             <Grid container spacing={2}>

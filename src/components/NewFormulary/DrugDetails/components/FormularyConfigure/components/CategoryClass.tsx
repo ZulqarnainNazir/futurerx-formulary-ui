@@ -582,7 +582,7 @@ class CategoryClass extends React.Component<any, any> {
   }
   render() {
     return (
-      <div className="drug-detail-LA-root">
+      <div className="drug-detail-LA-root class-category">
         <div className="drug-detail-la-container">
           <div className="drug-detail-la-inner">
             <Grid container spacing={2}>
@@ -636,7 +636,8 @@ class CategoryClass extends React.Component<any, any> {
                       </div>
                     </div>
                   </div>
-                  <FrxDrugGridContainer
+                  <FrxGridContainer
+                    className="umair"
                     enableSearch={false}
                     enableColumnDrag={false}
                     onSearch={this.handleSearch}
@@ -647,7 +648,7 @@ class CategoryClass extends React.Component<any, any> {
                     isFetchingData={this.state.isFetchingData}
                     columns={this.state.columns}
                     isPinningEnabled={false}
-                    scroll={{ x: 0, y: 377 }}
+                    scroll={{ x: 1500, y: 377 }}
                     enableResizingOfColumns={false}
                     data={this.state.filteredData}
                     rowSelection={{
