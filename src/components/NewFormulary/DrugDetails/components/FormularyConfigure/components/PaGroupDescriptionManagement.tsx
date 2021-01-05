@@ -176,6 +176,7 @@ class PaGroupDescriptionManagement extends React.Component<any, any> {
   };
 
   componentDidMount() {
+    debugger;
     let apiDetails = {};
     apiDetails["lob_type"] = this.props.formulary_lob_id;
     apiDetails["pathParams"] =
@@ -212,6 +213,14 @@ class PaGroupDescriptionManagement extends React.Component<any, any> {
       this.setState({
         groupsData: result,
       });
+      let completed_groups = result.filter((obj) => {
+        if (!obj.is_archived){
+          return obj;
+        }
+      });
+      if (completed_groups.length>0){
+        this.selectGroup(completed_groups[0].id,completed_groups[0].statusType);
+      }
     });
 
     this.props.getPaTypes(this.props.formulary_id).then((json) => {
@@ -254,6 +263,14 @@ class PaGroupDescriptionManagement extends React.Component<any, any> {
         groupProp = "id_mcr_base_pa_group_description";
       } else if (this.props.formulary_lob_id == 4) {
         groupProp = "id_base_pa_group_description";
+      }
+      let isPopUpView = this.props.isPopUpView;
+      if (isPopUpView){
+        tmpData = tmpData.filter((obj)=>{
+          if (obj.is_setup_complete){
+            return obj;
+          }
+        })
       }
       var result = tmpData.map(function (el) {
         var element = {};
