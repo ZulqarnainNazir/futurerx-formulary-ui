@@ -821,11 +821,12 @@ function NewGroup(props: any) {
                       onClick={() =>
                         updateFormData({
                           ...formData,
-                          id_pa_type: true,
+                          id_pa_type: 8,
                         })
                       }
                       disabled={props.editable}
-                    />
+                      checked={formData.id_pa_type===8?true:false}
+                    /> 
                     <RadioButton
                       label="New Starts Only"
                       name="add-filter-1"
@@ -833,10 +834,11 @@ function NewGroup(props: any) {
                       onClick={() =>
                         updateFormData({
                           ...formData,
-                          id_pa_type: false,
+                          id_pa_type: 9,
                         })
                       }
                       disabled={props.editable}
+                      checked={formData.id_pa_type===9?true:false}
                     />
                   </div>
                 </Space>
