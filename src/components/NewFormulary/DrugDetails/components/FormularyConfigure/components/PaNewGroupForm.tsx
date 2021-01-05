@@ -25,6 +25,11 @@ import { ToastContainer } from "react-toastify";
 import showMessage from "../../../../Utils/Toast";
 import Tags from "./Tags";
 
+import {
+  getCategoryList,
+  getAdditionalCriteriaSectionList,
+} from "../../../../NewAdvanceSearch/advanceSearchMock";
+import AdditionalCriteriaContainer from "../../../../NewAdvanceSearch/AdditionalCriteriaContainer/AdditionalCriteriaContainer";
 
 import RadioButton from "../../../../../shared/Frx-components/radio-button/RadioButton";
 import {
@@ -979,6 +984,16 @@ function NewGroup(props: any) {
               </Grid>
             </Grid>
           </div>
+          
+
+          {(props.isPopUpView) && (
+            <div>
+                  <AdditionalCriteriaContainer criteriaList={getAdditionalCriteriaSectionList()}
+              handleChildDataSave={()=>{}} />
+            </div>
+
+          )}
+          {(!props.isPopUpView) && (
           <div className="button-wrapper">
             {!props.isReadOnly ? (
               <>
@@ -995,6 +1010,7 @@ function NewGroup(props: any) {
               </>
             ) : null}
           </div>
+          )}
         </div>
       ) : null}
       <ToastContainer />
