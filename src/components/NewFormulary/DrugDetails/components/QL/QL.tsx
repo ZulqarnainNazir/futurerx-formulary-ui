@@ -317,12 +317,12 @@ class Tier extends React.Component<any, tabsState> {
       // showMessage("something went wrong", "error");
       // }
       this.setState({
-        filter: [],
-        sort_by: [],
-        gridSingleSortInfo: null,
-        gridMultiSortedInfo: [],
-        isGridMultiSorted: false,
-        isGridSingleSorted: false,
+        // filter: [],
+        // sort_by: [],
+        // gridSingleSortInfo: null,
+        // gridMultiSortedInfo: [],
+        // isGridMultiSorted: false,
+        // isGridSingleSorted: false,
       });
     });
     // }

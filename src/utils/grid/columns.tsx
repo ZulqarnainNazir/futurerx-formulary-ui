@@ -1472,7 +1472,7 @@ export const QlColumns: () => Column<any>[] = () => {
       key: "drug_descriptor_identifier",
       displayTitle: "DDID",
       isFilterable: true,
-      dataType: "string",
+      dataType: "number",
       filters: textFilters,
       hidden: false,
       sortDirections: ["ascend", "descend"],
