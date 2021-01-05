@@ -29,6 +29,9 @@ class ViewFormularies extends React.Component<any, any> {
     return true;
   };
   handleIconClick = () => {
+    if(this.props.handleViewClear){
+      this.props.handleViewClear();
+    }
     this.setState({ selectFormulary: true });
   };
 
@@ -54,7 +57,7 @@ class ViewFormularies extends React.Component<any, any> {
                 <div className="input-element">
                   <div className="bordered pointer">
                     <span onClick={(e) => this.handleIconClick()}>
-                    {this.state.baseFormulary["formulary_name"]
+                      {this.state.baseFormulary["formulary_name"]
                         ? this.state.baseFormulary["formulary_name"]
                         : "Select Formulary"}
                     </span>
@@ -72,7 +75,12 @@ class ViewFormularies extends React.Component<any, any> {
                 justifyContent="center"
                 className="view-formulary-btn"
               >
-                <Button label="View" onClick={(event) => this.props.handleViewBtn(this.state.baseFormulary)} />
+                <Button
+                  label="View"
+                  onClick={(event) =>
+                    this.props.handleViewBtn(this.state.baseFormulary)
+                  }
+                />
               </Box>
             </Grid>
           </Grid>
@@ -91,7 +99,7 @@ class ViewFormularies extends React.Component<any, any> {
                 selectFormulary: !this.state.selectFormulary,
               });
             }}
-            handleAction={() => { }}
+            handleAction={() => {}}
             open={this.state.selectFormulary}
             showActions={false}
             className=""

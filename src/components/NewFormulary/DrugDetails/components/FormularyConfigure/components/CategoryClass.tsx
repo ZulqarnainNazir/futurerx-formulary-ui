@@ -9,7 +9,7 @@ import "./categoryclass.scss";
 import DialogPopup from "../../../../../shared/FrxDialogPopup/FrxDialogPopup";
 import {
   getTapList,
-  getMiniTabs,
+  getMiniTabs
 } from "../../../../../../mocks/formulary/mock-data";
 import PanelHeader from "./PanelHeader";
 import PanelGrid from "./panelGrid";
@@ -21,11 +21,11 @@ import { setAdvancedSearch } from "../../../../../../redux/slices/formulary/adva
 import FrxDrugGridContainer from "../../../../../shared/FrxGrid/FrxDrugGridContainer";
 import {
   categoryCommercialClassColumns,
-  categoryClassColumns,
+  categoryClassColumns
 } from "../../../../../../utils/grid/columns";
 import {
   categoryClassMock,
-  categoryCommercialClassMock,
+  categoryCommercialClassMock
 } from "../../../../../../mocks/categoryClassMock";
 import STPopup from "./STPopup/STpopup";
 import FormularyDetailsContext from "../../../../FormularyDetailsContext";
@@ -36,7 +36,7 @@ import {
   getClassificationSystems,
   postDrugsCategory,
   getIntelliscenseSearch,
-  postDrugsClassCategoryOverride,
+  postDrugsClassCategoryOverride
 } from "../../../../../../redux/slices/formulary/categoryClass/categoryClassActionCreation";
 import * as tierConstants from "../../../../../../api/http-tier";
 import * as commonConstants from "../../../../../../api/http-commons";
@@ -47,17 +47,17 @@ import { ToastContainer } from "react-toastify";
 
 function mapDispatchToProps(dispatch) {
   return {
-    getTier: (a) => dispatch(getTier(a)),
-    getClassificationSystems: (a) => dispatch(getClassificationSystems(a)),
-    postDrugsCategory: (a) => dispatch(postDrugsCategory(a)),
-    getIntelliscenseSearch: (a) => dispatch(getIntelliscenseSearch(a)),
-    postDrugsClassCategoryOverride: (a) =>
+    getTier: a => dispatch(getTier(a)),
+    getClassificationSystems: a => dispatch(getClassificationSystems(a)),
+    postDrugsCategory: a => dispatch(postDrugsCategory(a)),
+    getIntelliscenseSearch: a => dispatch(getIntelliscenseSearch(a)),
+    postDrugsClassCategoryOverride: a =>
       dispatch(postDrugsClassCategoryOverride(a)),
-    setAdvancedSearch: (a) => dispatch(setAdvancedSearch(a)),
+    setAdvancedSearch: a => dispatch(setAdvancedSearch(a))
   };
 }
 
-const mapStateToProps = (state) => {
+const mapStateToProps = state => {
   return {
     formulary_id: state?.application?.formulary_id,
     formulary: state?.application?.formulary,
@@ -65,7 +65,7 @@ const mapStateToProps = (state) => {
     formulary_type_id: state?.application?.formulary_type_id,
     advancedSearchBody: state?.advancedSearch?.advancedSearchBody,
     populateGrid: state?.advancedSearch?.populateGrid,
-    closeDialog: state?.advancedSearch?.closeDialog,
+    closeDialog: state?.advancedSearch?.closeDialog
   };
 };
 
@@ -87,6 +87,8 @@ interface State {
   searchNames: any[];
   searchValue: any;
   addedFormularyDrugs: any[];
+  fixedSelectedRows: number[];
+  selectedRowKeys: number[];
 }
 
 class CategoryClass extends React.Component<any, any> {
@@ -118,6 +120,18 @@ class CategoryClass extends React.Component<any, any> {
     addedFormularyDrugs: Array(),
     customCategory: false,
     customClass: false,
+    selectedRowKeys: Array(),
+    index: 0,
+    limit: 10,
+    sort_by: Array(),
+    hiddenColumns: Array(),
+    dataCount: 0,
+    gridSingleSortInfo: null,
+    isGridSingleSorted: false,
+    gridMultiSortedInfo: [],
+    isGridMultiSorted: false,
+    quickFilter: Array(),
+    fixedSelectedRows: [] as number[]
   };
 
   static contextType = FormularyDetailsContext;
@@ -127,13 +141,13 @@ class CategoryClass extends React.Component<any, any> {
     apiDetails["apiPart"] = tierConstants.FORMULARY_TIERS;
     apiDetails["pathParams"] = this.props?.formulary_id;
     apiDetails["keyVals"] = [
-      { key: commonConstants.KEY_ENTITY_ID, value: this.props?.formulary_id },
+      { key: commonConstants.KEY_ENTITY_ID, value: this.props?.formulary_id }
     ];
     const thisRef = this;
 
-    const TierDefinationData = this.props.getTier(apiDetails).then((json) => {
+    const TierDefinationData = this.props.getTier(apiDetails).then(json => {
       let tmpData = json.payload.data;
-      tmpData.map(function (el) {
+      tmpData.map(function(el) {
         var element = Object.assign({}, el);
         thisRef.state.tierOption.push(element);
       });
@@ -147,15 +161,170 @@ class CategoryClass extends React.Component<any, any> {
       this.props?.formulary_type_id + "/" + this.props?.formulary_id;
     const thisRef = this;
 
-    const data = this.props
-      .getClassificationSystems(apiDetails)
-      .then((json) => {
-        let tmpData = json.payload.data;
-        tmpData.map(function (el) {
-          var element = Object.assign({}, el);
-          thisRef.state.classificationSystems.push(element);
+    const data = this.props.getClassificationSystems(apiDetails).then(json => {
+      let tmpData = json.payload.data;
+      tmpData.map(function(el) {
+        var element = Object.assign({}, el);
+        thisRef.state.classificationSystems.push(element);
+      });
+    });
+  };
+
+  onSettingsIconHandler = (hiddenColumn, visibleColumn) => {
+    console.log(
+      "Settings icon handler: Hidden" +
+        JSON.stringify(hiddenColumn) +
+        " Visible:" +
+        JSON.stringify(visibleColumn)
+    );
+    if (hiddenColumn && hiddenColumn.length > 0) {
+      let hiddenColumnKeys = hiddenColumn.map(column => column["key"]);
+      this.setState({
+        hiddenColumns: hiddenColumnKeys
+      });
+    }
+  };
+  onApplyFilterHandler = filters => {
+    console.log("filtering from be:" + JSON.stringify(filters));
+    //this.state.filter = Array();
+    const fetchedKeys = Object.keys(filters);
+    if (fetchedKeys && fetchedKeys.length > 0) {
+      fetchedKeys.map(fetchedProps => {
+        if (filters[fetchedProps]) {
+          const fetchedOperator =
+            filters[fetchedProps][0].condition === "is like"
+              ? "is_like"
+              : filters[fetchedProps][0].condition === "is not"
+              ? "is_not"
+              : filters[fetchedProps][0].condition === "is not like"
+              ? "is_not_like"
+              : filters[fetchedProps][0].condition === "does not exist"
+              ? "does_not_exist"
+              : filters[fetchedProps][0].condition;
+          const fetchedValues =
+            filters[fetchedProps][0].value !== ""
+              ? [filters[fetchedProps][0].value.toString()]
+              : [];
+          this.state.filter.push({
+            prop: fetchedProps,
+            operator: fetchedOperator,
+            values: fetchedValues
+          });
+        }
+      });
+      console.log("Filters:" + JSON.stringify(this.state.filter));
+      if (this.props.advancedSearchBody) {
+        this.populateGridData(this.props.advancedSearchBody);
+      } else {
+        this.populateGridData();
+      }
+    }
+  };
+
+  /**
+   * the selected sorter details will be availbale here to mak api call
+   * @param key the column key
+   * @param order the sorting order : 'ascend' | 'descend'
+   */
+  onApplySortHandler = (key, order, sortedInfo) => {
+    console.log("sort details ", key, order);
+    this.state.sort_by = Array();
+    if (order) {
+      let sortOrder = order === "ascend" ? "asc" : "desc";
+      this.state.sort_by = this.state.sort_by.filter(
+        keyPair => keyPair["key"] !== key
+      );
+      this.state.sort_by.push({ key: key, value: sortOrder });
+    }
+    this.setState({
+      gridSingleSortInfo: sortedInfo,
+      isGridSingleSorted: true,
+      isGridMultiSorted: false,
+      gridMultiSortedInfo: []
+    });
+    if (this.props.advancedSearchBody) {
+      this.populateGridData(this.props.advancedSearchBody);
+    } else {
+      this.populateGridData();
+    }
+  };
+  applyMultiSortHandler = (sorter, multiSortedInfo) => {
+    console.log("Multisort info:" + JSON.stringify(sorter));
+    this.setState({
+      isGridMultiSorted: true,
+      isGridSingleSorted: false,
+      gridMultiSortedInfo: multiSortedInfo,
+      gridSingleSortInfo: null
+    });
+
+    if (sorter && sorter.length > 0) {
+      let uniqueKeys = Array();
+      let filteredSorter = Array();
+      sorter.map(sortInfo => {
+        if (uniqueKeys.includes(sortInfo["columnKey"])) {
+        } else {
+          filteredSorter.push(sortInfo);
+          uniqueKeys.push(sortInfo["columnKey"]);
+        }
+      });
+      filteredSorter.map(sortInfo => {
+        let sortOrder = sortInfo["order"] === "ascend" ? "asc" : "desc";
+        this.state.sort_by = this.state.sort_by.filter(
+          keyPair => keyPair["key"] !== sortInfo["columnKey"]
+        );
+        this.state.sort_by.push({
+          key: sortInfo["columnKey"],
+          value: sortOrder
         });
       });
+    }
+
+    if (this.props.advancedSearchBody) {
+      this.populateGridData(this.props.advancedSearchBody);
+    } else {
+      this.populateGridData();
+    }
+  };
+
+  onMultiSortToggle = (isMultiSortOn: boolean) => {
+    console.log("is Multi sort on ", isMultiSortOn);
+    this.state.sort_by = Array();
+    this.state.gridSingleSortInfo = null;
+    this.state.gridMultiSortedInfo = [];
+    this.state.isGridMultiSorted = isMultiSortOn;
+    this.state.isGridSingleSorted = false;
+
+    if (this.props.advancedSearchBody) {
+      this.populateGridData(this.props.advancedSearchBody);
+    } else {
+      this.populateGridData();
+    }
+  };
+  onPageSize = pageSize => {
+    console.log("Page size load");
+    this.state.limit = pageSize;
+    if (this.props.advancedSearchBody) {
+      this.populateGridData(this.props.advancedSearchBody);
+    } else {
+      this.populateGridData();
+    }
+  };
+  onGridPageChangeHandler = (pageNumber: any) => {
+    console.log("Page change load");
+    this.state.index = (pageNumber - 1) * this.state.limit;
+    if (this.props.advancedSearchBody) {
+      this.populateGridData(this.props.advancedSearchBody);
+    } else {
+      this.populateGridData();
+    }
+  };
+  onClearFilterHandler = () => {
+    this.state.filter = Array();
+    if (this.props.advancedSearchBody) {
+      this.populateGridData(this.props.advancedSearchBody);
+    } else {
+      this.populateGridData();
+    }
   };
 
   populateGridData = (searchBody = null) => {
@@ -166,10 +335,10 @@ class CategoryClass extends React.Component<any, any> {
       this.props?.formulary_id + "/" + this.state.lobCode;
     apiDetails["keyVals"] = [
       { key: commonConstants.KEY_ENTITY_ID, value: this.props?.formulary_id },
-      { key: commonConstants.KEY_INDEX, value: 0 },
-      { key: commonConstants.KEY_LIMIT, value: 10 },
+      { key: commonConstants.KEY_INDEX, value: this.state.index },
+      { key: commonConstants.KEY_LIMIT, value: this.state.limit }
     ];
-    apiDetails["messageBody"] = { filter: this.state.filter };
+    apiDetails["messageBody"] = {};
 
     if (searchBody) {
       apiDetails["messageBody"] = Object.assign(
@@ -177,68 +346,115 @@ class CategoryClass extends React.Component<any, any> {
         searchBody
       );
     }
+
+    let allFilters = Array();
+    let filterProps = Array();
+    this.state.filter.map(filterInfo => {
+      allFilters.push(filterInfo);
+      filterProps.push(filterInfo["prop"]);
+    });
+
+    this.state.quickFilter.map(filterInfo => {
+      if (!filterProps.includes(filterInfo["prop"]))
+        allFilters.push(filterInfo);
+    });
+
+    apiDetails["messageBody"]["filter"] = allFilters;
+
+    if (this.state.sort_by && this.state.sort_by.length > 0) {
+      let keys = Array();
+      let values = Array();
+
+      this.state.sort_by.map(keyPair => {
+        keys.push(keyPair["key"]);
+        values.push(keyPair["value"]);
+      });
+
+      apiDetails["messageBody"]["sort_by"] = keys;
+      apiDetails["messageBody"]["sort_order"] = values;
+    }
+
     const thisRef = this;
 
-    const drugGridData = this.props
-      .postDrugsCategory(apiDetails)
-      .then((json) => {
-        //debugger;
-        if (json.payload && json.payload.result) {
-          let tmpData = json.payload.result;
-          var data: any[] = [];
-          let count = 1;
-          var gridData = tmpData.map(function (el) {
-            var element = Object.assign({}, el);
-            data.push(element);
-            let gridItem = {};
-            gridItem["id"] = count;
-            gridItem["key"] = count;
-            gridItem["fileType"] = element.file_type
-              ? "" + element.file_type
+    const drugGridData = this.props.postDrugsCategory(apiDetails).then(json => {
+      //debugger;
+      if (json.payload && json.payload.result) {
+        let tmpData = json.payload.result;
+        var data: any[] = [];
+        let count = 1;
+        var gridData = tmpData.map(function(el) {
+          var element = Object.assign({}, el);
+          data.push(element);
+          let gridItem = {};
+          gridItem["id"] = count;
+          gridItem["key"] = count;
+          gridItem["file_type"] = element.file_type
+            ? "" + element.file_type
+            : "";
+          gridItem["drug_label_name"] = element.drug_label_name
+            ? "" + element.drug_label_name
+            : "";
+          gridItem["ndc"] = "";
+          if (thisRef.props.formulary_lob_id == 1) {
+            gridItem["rxcui"] = element.rxcui ? "" + element.rxcui : "";
+          } else {
+            gridItem[
+              "drug_descriptor_identifier"
+            ] = element.drug_descriptor_identifier
+              ? "" + element.drug_descriptor_identifier
               : "";
-            gridItem["labelName"] = element.drug_label_name
-              ? "" + element.drug_label_name
-              : "";
-            gridItem["ndc"] = "";
-            if (thisRef.props.formulary_lob_id == 1) {
-              gridItem["rxcui"] = element.rxcui ? "" + element.rxcui : "";
-            } else {
-              gridItem["ddid"] = element.drug_descriptor_identifier
-                ? "" + element.drug_descriptor_identifier
-                : "";
-            }
-            gridItem["gpi"] = element.generic_product_identifier
-              ? "" + element.generic_product_identifier
-              : "";
-            gridItem["databaseCategory"] = element.database_category
-              ? "" + element.database_category
-              : "";
-            gridItem["databaseClass"] = element.database_class
-              ? "" + element.database_class
-              : "";
-            gridItem["overrideCategory"] = element.override_category
-              ? "" + element.override_category
-              : "";
-            gridItem["overRideClass"] = element.override_class
-              ? "" + element.override_class
-              : "";
-            count++;
-            return gridItem;
-          });
-          const columns = this.getColumns();
-          this.setState({
-            columns: columns,
-            data: data,
-            filteredData: gridData,
-          });
-        }
-      });
+          }
+          gridItem[
+            "generic_product_identifier"
+          ] = element.generic_product_identifier
+            ? "" + element.generic_product_identifier
+            : "";
+          gridItem["database_category"] = element.database_category
+            ? "" + element.database_category
+            : "";
+          gridItem["database_class"] = element.database_class
+            ? "" + element.database_class
+            : "";
+          gridItem["override_category"] = element.override_category
+            ? "" + element.override_category
+            : "";
+          gridItem["override_class"] = element.override_class
+            ? "" + element.override_class
+            : "";
+          count++;
+          return gridItem;
+        });
+        const columns = this.getColumns();
+        this.setState({
+          columns: columns,
+          data: data,
+          filteredData: gridData,
+          dataCount: json.payload.count,
+          fixedSelectedRows: gridData
+            .filter(item => item.isChecked)
+            .map(item => item.key),
+          selectedRowKeys: gridData
+            .filter(item => item.isChecked)
+            .map(item => item.key)
+        });
+      } else {
+        const columns = this.getColumns();
+        this.setState({
+          columns: columns,
+          data: Array(),
+          filteredData: Array(),
+          dataCount: 0,
+          fixedSelectedRows: Array(),
+          selectedRowKeys: Array()
+        });
+      }
+    });
   };
 
   onSearchValueChanges = (value, event) => {
     console.log("Search value changed:" + event.value + " " + event.key);
     this.state.searchValue = value;
-    this.state.filter = [];
+    this.state.quickFilter = [];
     if (
       this.state.searchData &&
       Array.isArray(this.state.searchData) &&
@@ -248,58 +464,58 @@ class CategoryClass extends React.Component<any, any> {
         let propData = this.state.searchData[event.key];
         switch (propData.key) {
           case "drug_descriptor_identifier":
-            this.state.filter.push({
+            this.state.quickFilter.push({
               prop: "drug_descriptor_identifier",
               operator: "is_like",
-              values: [propData.value],
+              values: [propData.value]
             });
             break;
 
           case "rxcui":
-            this.state.filter.push({
+            this.state.quickFilter.push({
               prop: "rxcui",
               operator: "is_like",
-              values: [propData.value],
+              values: [propData.value]
             });
             break;
 
           case "ndc":
-            this.state.filter.push({
+            this.state.quickFilter.push({
               prop: "ndc",
               operator: "is_like",
-              values: [propData.value],
+              values: [propData.value]
             });
             break;
 
           case "generic_product_identifier":
-            this.state.filter.push({
+            this.state.quickFilter.push({
               prop: "generic_product_identifier",
               operator: "is_like",
-              values: [propData.value],
+              values: [propData.value]
             });
             break;
 
           case "drug_label_name":
-            this.state.filter.push({
+            this.state.quickFilter.push({
               prop: "drug_label_name",
               operator: "is_like",
-              values: [propData.value],
+              values: [propData.value]
             });
             break;
 
           case "database_class":
-            this.state.filter.push({
+            this.state.quickFilter.push({
               prop: "database_class",
               operator: "is_like",
-              values: [propData.value],
+              values: [propData.value]
             });
             break;
 
           case "database_category":
-            this.state.filter.push({
+            this.state.quickFilter.push({
               prop: "database_category",
               operator: "is_like",
-              values: [propData.value],
+              values: [propData.value]
             });
             break;
         }
@@ -308,8 +524,8 @@ class CategoryClass extends React.Component<any, any> {
     }
   };
 
-  clearSearchFilter = (e) => {
-    this.state.filter = Array();
+  clearSearchFilter = e => {
+    this.state.quickFilter = Array();
     this.state.searchData = Array();
     this.state.searchNames = Array();
     this.state.filterPlaceholder = "Search";
@@ -317,7 +533,7 @@ class CategoryClass extends React.Component<any, any> {
     this.populateGridData();
   };
 
-  onInputValueChanged = (value) => {
+  onInputValueChanged = value => {
     if (value) {
       let requests = Array();
       let apiDetails = {};
@@ -334,11 +550,11 @@ class CategoryClass extends React.Component<any, any> {
           apiDetails["pathParams"] + "/" + this.state.lobCode;
       }
       apiDetails["keyVals"] = [
-        { key: commonConstants.KEY_SEARCH_VALUE, value: value },
+        { key: commonConstants.KEY_SEARCH_VALUE, value: value }
       ];
       requests.push({
         key: "generic_product_identifier",
-        apiDetails: apiDetails,
+        apiDetails: apiDetails
       });
 
       apiDetails = Object.assign({}, apiDetails);
@@ -366,13 +582,13 @@ class CategoryClass extends React.Component<any, any> {
         apiDetails["apiPart"] = commonConstants.SEARCH_DDID;
         requests.push({
           key: "drug_descriptor_identifier",
-          apiDetails: apiDetails,
+          apiDetails: apiDetails
         });
       }
 
       const drugGridData = this.props
         .getIntelliscenseSearch(requests)
-        .then((json) => {
+        .then(json => {
           //debugger;
           if (
             json.payload &&
@@ -382,7 +598,7 @@ class CategoryClass extends React.Component<any, any> {
           ) {
             let tmpData = json.payload.data;
             var data: any[] = [];
-            var gridData = tmpData.map(function (el) {
+            var gridData = tmpData.map(function(el) {
               var element = Object.assign({}, el);
               data.push(element);
               let gridItem = element["value"];
@@ -390,7 +606,7 @@ class CategoryClass extends React.Component<any, any> {
             });
             this.setState({
               searchData: data,
-              searchNames: gridData,
+              searchNames: gridData
             });
           }
         });
@@ -430,7 +646,7 @@ class CategoryClass extends React.Component<any, any> {
 
   onClickMiniTab = (num: number) => {
     this.setState({
-      activeMiniTabIndex: num,
+      activeMiniTabIndex: num
     });
   };
 
@@ -448,11 +664,11 @@ class CategoryClass extends React.Component<any, any> {
         this.setState({
           materialPopupInd: true,
           popupName: popupName,
-          title: title,
+          title: title
         });
 
         this.setState({
-          showActionsInd: true,
+          showActionsInd: true
         });
       } else {
         showMessage("Choose Drugs to Override Category/Class", "error");
@@ -461,15 +677,15 @@ class CategoryClass extends React.Component<any, any> {
       this.setState({
         materialPopupInd: true,
         popupName: popupName,
-        title: title,
+        title: title
       });
 
       this.setState({
-        showActionsInd: false,
+        showActionsInd: false
       });
     }
   };
-  processCloseActions = (type) => {
+  processCloseActions = type => {
     //this.setState({ show: true });
     if (type === "positive") {
       if (
@@ -484,8 +700,8 @@ class CategoryClass extends React.Component<any, any> {
         apiDetails["keyVals"] = [
           {
             key: commonConstants.KEY_ENTITY_ID,
-            value: this.props?.formulary_id,
-          },
+            value: this.props?.formulary_id
+          }
         ];
         apiDetails["messageBody"] = {
           category_name: this.state.overriddenCategory,
@@ -499,11 +715,11 @@ class CategoryClass extends React.Component<any, any> {
           removedformulary_drug_ids: [],
           search_key: "",
           is_custom_category: this.state.customCategory,
-          is_custom_class: this.state.customClass,
+          is_custom_class: this.state.customClass
         };
         const postData = this.props
           .postDrugsClassCategoryOverride(apiDetails)
-          .then((json) => {
+          .then(json => {
             //debugger;
             if (
               json.payload &&
@@ -521,17 +737,17 @@ class CategoryClass extends React.Component<any, any> {
       this.state.addedFormularyDrugs = Array();
     }
     this.setState({
-      materialPopupInd: false,
+      materialPopupInd: false
     });
   };
-  handleSearch = (searchObject) => {
+  handleSearch = searchObject => {
     console.log("search");
   };
-  rowSelectionChange = (record) => {
+  rowSelectionChange = record => {
     console.log("Records:" + record);
     this.state.addedFormularyDrugs = Array();
     if (record && record.length > 0) {
-      record.map((row) => {
+      record.map(row => {
         let checkedIndex = row - 1;
         if (checkedIndex < this.state.data.length) {
           let drug = this.state.data[checkedIndex];
@@ -540,6 +756,145 @@ class CategoryClass extends React.Component<any, any> {
       });
     }
   };
+
+  // rowSelectionChangeFromCell = (
+  //   key: string,
+  //   selectedRow: any,
+  //   isSelected: boolean
+  // ) => {
+  //   console.log(
+  //     "data row ",
+  //     selectedRow,
+  //     isSelected,
+  //     selectedRow["isDisabled"]
+  //   );
+  //   if (!selectedRow["isDisabled"]) {
+  //     if (isSelected) {
+  //       const data = this.state.filteredData.map((d: any) => {
+  //         if (!d["isDisabled"]) {
+  //           d["isChecked"] = true;
+  //         }
+  //         return d;
+  //       });
+  //       if (!this.state.selectedRowKeys.includes(selectedRow.key)) {
+  //         this.state.selectedRowKeys.push(selectedRow.key);
+  //       }
+  //       this.rowSelectionChange(this.state.selectedRowKeys);
+  //       this.setState({ filteredData: data });
+  //     } else {
+  //       const data = this.state.filteredData.map((d: any) => {
+  //         if (!d["isDisabled"]) {
+  //           d["isChecked"] = false;
+  //         }
+  //         return d;
+  //       });
+  //       // this.state.selectedRowKeys = this.state.selectedRowKeys.filter(rowKey => rowKey !== selectedRow.key);
+
+  //       this.rowSelectionChange(this.state.selectedRowKeys);
+  //       this.setState({
+  //         filteredData: data,
+  //         selectedRowKeys: this.state.selectedRowKeys.filter(
+  //           rowKey => rowKey !== selectedRow.key
+  //         )
+  //       });
+  //     }
+  //   }
+  // };
+
+  rowSelectionChangeFromCell = (
+    key: string,
+    selectedRow: any,
+    isSelected: boolean
+  ) => {
+    console.log("data row ", selectedRow, isSelected);
+    if (!selectedRow["isDisabled"]) {
+      if (isSelected) {
+        const data = this.state.filteredData.map((d: any) => {
+          if (d.key === selectedRow.key) {
+            d["isChecked"] = true;
+            // d["rowStyle"] = "table-row--green-font";
+          }
+          // else d["isChecked"] = false;
+          return d;
+        });
+        const selectedRowKeys = [
+          ...this.state.selectedRowKeys,
+          selectedRow.key
+        ];
+        console.log("selected row keys ", selectedRowKeys);
+        const selectedRows: number[] = selectedRowKeys.filter(
+          k => this.state.fixedSelectedRows.indexOf(k) < 0
+        );
+        this.rowSelectionChange(selectedRows);
+
+        this.setState({ drugGridData: data });
+      } else {
+        const data = this.state.filteredData.map((d: any) => {
+          if (d.key === selectedRow.key) {
+            d["isChecked"] = false;
+            if (d["rowStyle"]) delete d["rowStyle"];
+          }
+          // else d["isChecked"] = false;
+          return d;
+        });
+
+        const selectedRowKeys: number[] = this.state.selectedRowKeys.filter(
+          k => k !== selectedRow.key
+        );
+        const selectedRows = selectedRowKeys.filter(
+          k => this.state.fixedSelectedRows.indexOf(k) < 0
+        );
+
+        this.rowSelectionChange(selectedRows);
+        this.setState({
+          filteredData: data
+        });
+      }
+    }
+  };
+
+  // onSelectAllRows = (isSelected: boolean) => {
+  //   const selectedRowKeys: number[] = [];
+  //   this.state.selectedRowKeys = Array();
+  //   const data = this.state.filteredData.map((d: any) => {
+  //     if (!d["isDisabled"]) {
+  //       d["isChecked"] = isSelected;
+  //       if (isSelected) {
+  //         selectedRowKeys.push(d["key"]);
+  //         this.state.selectedRowKeys.push(d["key"]);
+  //       } else {
+
+  //       }
+  //     }
+  //     return d;
+  //   });
+  //   this.rowSelectionChange(selectedRowKeys);
+  //   this.setState({filteredData: data});
+  // };
+
+  onSelectAllRows = (isSelected: boolean) => {
+    const selectedRowKeys: number[] = [];
+    const data = this.state.filteredData.map((d: any) => {
+      if (!d["isDisabled"]) {
+        d["isChecked"] = isSelected;
+        if (isSelected) {
+          selectedRowKeys.push(d["key"]);
+          // d["rowStyle"] = "table-row--green-font";
+        } else {
+          if (d["rowStyle"]) delete d["rowStyle"];
+        }
+      }
+
+      // else d["isSelected"] = false;
+      return d;
+    });
+    const selectedRows: number[] = selectedRowKeys.filter(
+      k => this.state.fixedSelectedRows.indexOf(k) < 0
+    );
+    this.rowSelectionChange(selectedRows);
+    this.setState({ drugGridData: data });
+  };
+
   onOverrideCategoryClass = (category, classValue) => {
     this.state.overriddenCategory = category;
     this.state.overriddenClass = classValue;
@@ -553,14 +908,14 @@ class CategoryClass extends React.Component<any, any> {
     this.state.overriddenCategory = category;
     this.state.customCategory = isCustom;
   };
-  onOverrideClass = (classValue) => {
+  onOverrideClass = classValue => {
     this.state.overriddenClass = classValue;
     this.state.customClass = true;
   };
   advanceSearchClosekHandler = () => {
     this.setState({ isSearchOpen: !this.state.isSearchOpen });
   };
-  advanceSearchClickHandler = (event) => {
+  advanceSearchClickHandler = event => {
     event.stopPropagation();
     this.setState({ isSearchOpen: !this.state.isSearchOpen });
   };
@@ -571,7 +926,7 @@ class CategoryClass extends React.Component<any, any> {
         advancedSearchBody: nextProps.advancedSearchBody,
         populateGrid: false,
         closeDialog: nextProps.closeDialog,
-        listItemStatus: nextProps.listItemStatus,
+        listItemStatus: nextProps.listItemStatus
       };
       if (nextProps.closeDialog) {
         this.state.isSearchOpen = false;
@@ -582,7 +937,7 @@ class CategoryClass extends React.Component<any, any> {
   }
   render() {
     return (
-      <div className="drug-detail-LA-root">
+      <div className="drug-detail-LA-root class-category">
         <div className="drug-detail-la-container">
           <div className="drug-detail-la-inner">
             <Grid container spacing={2}>
@@ -595,76 +950,92 @@ class CategoryClass extends React.Component<any, any> {
                     />
                   </div>
                 </div>
-                <div className="bordered">
-                  <div className="header pr-10 category-class-header">
-                    <div className="header-dropdown"
-                      // style={{
-                      //   display: "flex",
-                      //   flexDirection: "row",
-                      //   alignItems: "center",
-                      //   justifyContent: "space-between",
-                      // }}
-                    >
-                      <DropDown
-                        value={this.state.searchValue}
-                        options={this.state.searchNames}
-                        placeholder={this.state.filterPlaceholder}
-                        showSearch={true}
-                        onSearch={this.onInputValueChanged}
-                        onSelect={this.onSearchValueChanges}
-                      />
-                      {this.state.filter.length > 0 && (
-                        <span
-                          style={{ marginLeft: 10 }}
-                          onClick={this.clearSearchFilter}
-                        >
-                          Clear
-                        </span>
-                      )}
-                    </div>
-                    <div
-                      className="add-file-button"
-                      onClick={(e) =>
-                        this.handlePopupButtonClick(
-                          "override",
-                          "CATEGORY AND CLASS ASSIGNMENT"
-                        )
-                      }
-                    >
-                      Override
-                    </div>
-                    <div
-                      className="advance-search-button advance-search-btn"
-                      onClick={(e) => this.advanceSearchClickHandler(e)}
-                    >
-                      Advanced Search
+                <div className="bordered category-class-root">
+                  <div className="header pr-10 category-class-wrapper">
+                    <p>Select Drugs From</p>
+                    <div className="category-class-button-wrapper">
+                      <div className="header-dropdown">
+                        <DropDown
+                          value={this.state.searchValue}
+                          options={this.state.searchNames}
+                          placeholder={this.state.filterPlaceholder}
+                          showSearch={true}
+                          onSearch={this.onInputValueChanged}
+                          onSelect={this.onSearchValueChanges}
+                        />
+                        {this.state.quickFilter.length > 0 && (
+                          <span
+                            style={{ marginLeft: 10 }}
+                            onClick={this.clearSearchFilter}
+                          >
+                            Clear
+                          </span>
+                        )}
+                      </div>
+                      <div
+                        className="add-file-button"
+                        onClick={e =>
+                          this.handlePopupButtonClick(
+                            "override",
+                            "CATEGORY AND CLASS ASSIGNMENT"
+                          )
+                        }
+                      >
+                        Override
+                      </div>
+                      <div
+                        className="advance-search-button advance-search-btn"
+                        onClick={e => this.advanceSearchClickHandler(e)}
+                      >
+                        Advanced Search
+                      </div>
                     </div>
                   </div>
                   <FrxDrugGridContainer
+                    className="umair"
+                    enableSettings
+                    settingsWidth={50}
                     enableSearch={false}
                     enableColumnDrag={false}
                     onSearch={this.handleSearch}
                     fixedColumnKeys={[]}
                     pagintionPosition="topRight"
                     gridName=""
-                    enableSettings={false}
                     isFetchingData={this.state.isFetchingData}
                     columns={this.state.columns}
                     isPinningEnabled={false}
-                    scroll={{ x: 0, y: 377 }}
-                    enableResizingOfColumns={false}
+                    scroll={{ x: 2000, y: 377 }}
+                    enableResizingOfColumns
                     data={this.state.filteredData}
-                    /*isCustomCheckboxEnabled={true}
-                    handleCustomRowSelectionChange={this.rowSelectionChange}*/
-                    rowSelection={{
-                      columnWidth: 50,
-                      fixed: true,
-                      type: "checkbox",
-                      onChange: this.rowSelectionChange,
-                    }}
-                    settingsTriDotClick={() => {
-                      console.log("object");
-                    }}
+                    rowSelectionChangeFromCell={this.rowSelectionChangeFromCell}
+                    onSelectAllRows={this.onSelectAllRows}
+                    customSettingIcon={"FILL-DOT"}
+                    totalRowsCount={this.state.dataCount}
+                    getPerPageItemSize={this.onPageSize}
+                    onGridPageChangeHandler={this.onGridPageChangeHandler}
+                    clearFilterHandler={this.onClearFilterHandler}
+                    applyFilter={this.onApplyFilterHandler}
+                    applySort={this.onApplySortHandler}
+                    isSingleSorted={this.state.isGridSingleSorted}
+                    sortedInfo={this.state.gridSingleSortInfo}
+                    applyMultiSort={this.applyMultiSortHandler}
+                    isMultiSorted={this.state.isGridMultiSorted}
+                    multiSortedInfo={this.state.gridMultiSortedInfo}
+                    onMultiSortToggle={this.onMultiSortToggle}
+                    getColumnSettings={this.onSettingsIconHandler}
+                    pageSize={this.state.limit}
+                    selectedCurrentPage={
+                      this.state.index / this.state.limit + 1
+                    }
+                    /*rowSelection={{
+                    columnWidth: 50,
+                    fixed: true,
+                    type: "checkbox",
+                    onChange: this.rowSelectionChange,
+                  }}
+                  settingsTriDotClick={() => {
+                    console.log("object");
+                  }}*/
                   />
                 </div>
               </Grid>
@@ -680,7 +1051,7 @@ class CategoryClass extends React.Component<any, any> {
           handleClose={() => {
             this.onClose();
           }}
-          handleAction={(type) => {
+          handleAction={type => {
             this.processCloseActions(type);
           }}
           showActions={this.state.showActionsInd}

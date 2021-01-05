@@ -19,6 +19,7 @@ import {
 import { setAdvancedSearch } from "../../../../../../redux/slices/formulary/advancedSearch/advancedSearchSlice";
 import showMessage from "../../../../Utils/Toast";
 import { getIntelliscenseSearch } from "../../../../../../redux/slices/formulary/categoryClass/categoryClassActionCreation";
+import "./TierReplace.scss";
 
 interface tabsState {
   tierGridContainer: boolean;
@@ -192,10 +193,12 @@ class TierRemove extends React.Component<any, tabsState> {
       this.state.sort_by = this.state.sort_by.filter(keyPair => keyPair['key'] !== key);
       this.state.sort_by.push({ key: key, value: sortOrder });
     }
-    this.state.gridSingleSortInfo = sortedInfo;
-    this.state.gridMultiSortedInfo = [];
-    this.state.isGridMultiSorted = false;
-    this.state.isGridSingleSorted = true;
+    this.setState({
+      gridSingleSortInfo: sortedInfo,
+      isGridSingleSorted: true,
+      isGridMultiSorted: false,
+      gridMultiSortedInfo: []
+    });
     if (this.props.advancedSearchBody) {
       this.populateGridData(this.props.advancedSearchBody);
     } else {
@@ -204,10 +207,12 @@ class TierRemove extends React.Component<any, tabsState> {
   };
   applyMultiSortHandler = (sorter, multiSortedInfo) => {
     console.log('Multisort info:' + JSON.stringify(sorter));
-    this.state.gridSingleSortInfo = null;
-    this.state.gridMultiSortedInfo = multiSortedInfo;
-    this.state.isGridMultiSorted = true;
-    this.state.isGridSingleSorted = false;
+    this.setState(  {
+			isGridMultiSorted: true,
+			isGridSingleSorted: false,
+			gridMultiSortedInfo: multiSortedInfo,
+			gridSingleSortInfo: null,
+		})
 
     if (sorter && sorter.length > 0) {
       let uniqueKeys = Array();
@@ -843,7 +848,7 @@ class TierRemove extends React.Component<any, tabsState> {
                 </div>
               </div>
 
-              <div className="tier-grid-container">
+              <div className="tier-grid-container tier-replace-root">
                 <FrxDrugGridContainer
                   isPinningEnabled={false}
                   enableSearch={false}
