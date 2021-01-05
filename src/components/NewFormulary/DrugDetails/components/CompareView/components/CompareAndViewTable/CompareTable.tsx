@@ -2060,13 +2060,14 @@ class CompareTable extends Component<any, any> {
                   </div>
                   <div
                     className="header-first-child-container-child"
-                    onClick={() => {
+                    onClick={(event) => {
+                      // event.stopPropagation();
                       this.setState({
                         toggleAllAccordion: !toggleAllAccordion,
                       });
                     }}
                   >
-                    <p>{!toggleAllAccordion ? "Collapse All" : "Expand All"}</p>
+                    <p>{!toggleAllAccordion ? "Expand All" : "Collapse All"}</p>
                   </div>
                 </div>
               </div>
@@ -2101,6 +2102,8 @@ class CompareTable extends Component<any, any> {
                   fileType={accordionHeader.file_type}
                   formularyLobId={this.props.formulary_lob_id}
                   sectionSelected={this.props.sectionSelected}
+                  headerData={accordionHeader.headDrugsCount}
+                  toggleAllAccordion={toggleAllAccordion}
                   content={() => {
                     return (
                       <InnerGrid
@@ -2115,8 +2118,6 @@ class CompareTable extends Component<any, any> {
                       />
                     );
                   }}
-                  headerData={accordionHeader.headDrugsCount}
-                  toggleAllAccordion={toggleAllAccordion}
                 />
               </div>
             ))}

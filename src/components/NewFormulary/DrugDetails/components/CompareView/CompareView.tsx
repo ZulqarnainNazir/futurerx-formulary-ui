@@ -85,7 +85,6 @@ export default class CompareView extends React.Component<
       showMessage("Choose formulary to view", "error");
     }
   };
-
   sectionSelected = (sectionName, checked) => {
     console.log("Section selection:" + sectionName + " " + checked);
     if (checked) {

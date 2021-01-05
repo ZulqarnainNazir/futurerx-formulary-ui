@@ -46,7 +46,7 @@ class PureAccordion extends Component<PureAccordionProps, any> {
     openDrugsList: false,
     drugGridHeaderName: "",
     rejectedDrug: Array(),
-    toggleAll: true,
+    toggleAll: false,
     drugGridData: Array(),
     drugData: Array(),
     gridColumns: Array(),
@@ -285,11 +285,11 @@ class PureAccordion extends Component<PureAccordionProps, any> {
     });
   };
 
-  toggleAccordionAll = () => {
+  toggleAccordionAll = (toggleAllAccordion) => {
     let active = "";
     let height = "0px";
     let rotate = "accordion__icon";
-    if (this.props.toggleAllAccordion) {
+    if (toggleAllAccordion) {
       active = "active";
       rotate = "accordion__icon rotate";
       if (null !== this.elementContent.current) {
@@ -314,15 +314,36 @@ class PureAccordion extends Component<PureAccordionProps, any> {
     console.log(this.state.rejectedDrug);
   };
 
-  componentWillReceiveProps(nextProps) {
-    // if (nextProps.toggleAllAccordion !== this.state.toggleAll) {
-    //   this.toggleAccordionAll();
-    //   this.setState({
-    //     toggleAll: nextProps.toggleAllAccordion,
-    //   });
-    // }
-    this.toggleAccordionAll();
+  componentDidMount() {
+    let active = "";
+    let height = "0px";
+    let rotate = "accordion__icon";
+    active = "active";
+    rotate = "accordion__icon rotate";
+    if (null !== this.elementContent.current) {
+      height = `${this.elementContent.current.scrollHeight}px`;
+    }
+    this.setState({
+      active,
+      height,
+      rotate,
+    });
   }
+
+  componentDidUpdate(prevProps, prevState) {
+    if (prevProps.toggleAllAccordion !== this.props.toggleAllAccordion) {
+      debugger;
+      this.toggleAccordionAll(this.props.toggleAllAccordion);
+      // this.setState({
+      //   toggleAll: prevProps.toggleAllAccordion,
+      // });
+    }
+  }
+
+  // componentWillReceiveProps(nextProps) {
+  //   debugger;
+  //   if (nextProps.toggleAllAccordion) this.toggleAccordionAll();
+  // }
 
   render() {
     let gridColumns = [...this.state.gridColumns];
@@ -356,7 +377,9 @@ class PureAccordion extends Component<PureAccordionProps, any> {
                       }
                     }}
                     disabled={false}
-                    onClick={(e) => {}}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                    }}
                   />
                 ) : null}
                 <p className="accordion__title">{this.props.title}</p>
