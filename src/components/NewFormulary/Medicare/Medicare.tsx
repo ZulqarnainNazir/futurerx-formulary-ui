@@ -201,6 +201,10 @@ class Medicare extends React.Component<any, any> {
 
     const tabs = this.state.miniTabs.map((tab: TabInfo, index: number) => {
       if (index === selectedTabIndex) {
+        if (selectedTabIndex === 3) {
+          // window.location.href = "http://localhost:3001";
+          window.open("http://localhost:3001", "_blank");
+        }
         activeMiniTabIndex = index;
       }
       return tab;
@@ -250,17 +254,7 @@ class Medicare extends React.Component<any, any> {
       case 2:
         return <Alternatives />;
       case 3:
-        return (
-          <div>
-            <a
-              href="http://localhost:3001"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Decision Tree
-            </a>
-          </div>
-        );
+        break;
       case 4:
         return <div>Group Description Management</div>;
     }
