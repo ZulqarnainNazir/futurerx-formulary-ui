@@ -279,7 +279,7 @@ function PAGroupHeader(props: any) {
           if(param==='delete-version' && versionListLength>0){
             id_pa_group_description = props.saveGdm.current_group_id;
           }else{
-            id_pa_group_description = groupListLength>0?groupList.filter(val=>val.is_archived===false)[0].id_st_group_description:0;
+            id_pa_group_description = groupListLength>0?groupList.filter(val=>val.is_archived===false)[0].id_base_pa_group_description:0;
           }
           apiDetails["pathParams"] = "/" + id_pa_group_description;
           props.getPaGrouptDescriptionVersions(apiDetails).then((json) => {
