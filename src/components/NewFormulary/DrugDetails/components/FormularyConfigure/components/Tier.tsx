@@ -195,6 +195,9 @@ class Tier extends React.Component<any, tabsState> {
         } else {
           showMessage("Error: Failed to delete tier", "error");
         }
+        this.setState({
+          addNewTierPopup: false
+        });
       });
   }
 
@@ -205,7 +208,7 @@ class Tier extends React.Component<any, tabsState> {
     apiDetails["pathParams"] = this.props?.formulary_id + '/' + lobCode;
     apiDetails["messageBody"] = payload;
     const tierData = this.props
-      .deleteTier(apiDetails)
+      .reassignTier(apiDetails)
       .then((json) => {
         if (
           json.payload &&
@@ -218,6 +221,10 @@ class Tier extends React.Component<any, tabsState> {
         } else {
           showMessage("Error: Failed to reassign tier/s", "error");
         }
+        this.setState({
+          addNewTierPopup: false,
+          deleteTierReplacePopup: false
+        });
       });
   }
 
@@ -532,10 +539,7 @@ class Tier extends React.Component<any, tabsState> {
       const indexOfDeletedTier = this.props.tierData.findIndex(e => e.tier_name === this.state.selectedTierToDelete) + 1;
       if(tierDataLength === indexOfDeletedTier){
         const deletedTierId = parseInt(this.state.selectedTierToDelete.split(" ")[1]);
-        // Make api call here for Delete request
-        this.setState({
-          addNewTierPopup: false
-        });
+        this.deleteTier(deletedTierId);
       }else{
         const restofTiers = this.props.tierData.filter(e => e.tier_name !== this.state.selectedTierToDelete);
         const fetchTierName = restofTiers.map(e => e.tier_name);
@@ -553,8 +557,7 @@ class Tier extends React.Component<any, tabsState> {
   };
   onChangeTierOptions = (e,tiername) => {
     const updateData:any = [...this.state.afterDeleteRemainigTiers];
-    const indexOfSelect = updateData.findIndex(el => el.tier_name === tiername)
-    const removeDataTier = this.props.tierData.filter(el => el.tier_name === e)[0].id_tier;
+    const indexOfSelect = updateData.findIndex(el => el.id_tier_label === tiername)
     const newCol:any = {...updateData[indexOfSelect]};
     newCol.tier_name = e;
     updateData[indexOfSelect] = newCol;
@@ -570,6 +573,7 @@ class Tier extends React.Component<any, tabsState> {
         current_tier_value: current_id,
         file_type: 'COMM',
         id_tier: current_id,
+        id_tier_label: el.id_tier_label,
         old_tier_id: el.id_tier,
         old_tier_value: el.id_tier
       }
@@ -578,7 +582,7 @@ class Tier extends React.Component<any, tabsState> {
       removed_tier_value: parseInt(this.state.selectedTierToDelete.split(" ")[1]),
       tiers: [...createdData]
     }
-    debugger;
+    this.reassignTier(sendingData)
     // Make api call here for put request
   }
   onDeleteTierReplaceActionClose = () => {

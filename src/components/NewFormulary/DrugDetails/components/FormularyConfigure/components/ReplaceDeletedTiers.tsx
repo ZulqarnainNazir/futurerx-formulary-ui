@@ -12,7 +12,7 @@ const ReplaceDeletedTiers = (props:any) => {
                     placeholder="Select"
                     options={props.options}
                     value={props.options.indexOf(e.tier_name) !== -1 ? e.tier_name : ''}
-                    onSelect={(event) => props.updateTierOption(event,e.tier_name)}
+                    onSelect={(event) => props.updateTierOption(event,e.id_tier_label)}
                     />
                 </div>
                 <div className="tiername-col">{props.tierNames[index]}</div>
