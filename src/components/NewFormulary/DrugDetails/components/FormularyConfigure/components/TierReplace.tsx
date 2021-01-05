@@ -52,7 +52,7 @@ interface tabsState {
 const mapStateToProps = state => {
   return {
     configureSwitch: state.switchReducer.configureSwitch,
-    applyData: state.tierSliceReducer.applyData,
+    //applyData: state.tierSliceReducer.applyData,
     formulary_id: state?.application?.formulary_id,
     formulary: state?.application?.formulary,
     formulary_lob_id: state?.application?.formulary_lob_id,
@@ -682,7 +682,6 @@ class TierReplace extends React.Component<any, tabsState> {
 
   componentWillReceiveProps(nextProps) {
     console.log('TIER REPLACE: componentWillReceiveProps');
-    this.initialize(nextProps, true);
     if (nextProps.advancedSearchBody && nextProps.populateGrid) {
       this.populateGridData(nextProps.advancedSearchBody);
       let payload = {
@@ -698,6 +697,7 @@ class TierReplace extends React.Component<any, tabsState> {
       this.props.setAdvancedSearch(payload);
     }
     if (this.props.configureSwitch !== nextProps.configureSwitch) {
+      this.initialize(nextProps, true);
       let payload = { advancedSearchBody: {}, populateGrid: false, closeDialog: false, listItemStatus: {} };
       this.props.setAdvancedSearch(payload);
       this.state.filter = Array();
@@ -741,6 +741,8 @@ class TierReplace extends React.Component<any, tabsState> {
           });
         }
       }
+    }else{
+      this.initialize(nextProps, false);
     }
   }
 

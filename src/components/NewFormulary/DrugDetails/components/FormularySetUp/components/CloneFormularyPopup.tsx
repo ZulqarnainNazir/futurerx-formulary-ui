@@ -55,7 +55,12 @@ class CloneFormularyPopup extends React.Component<any, any> {
     formularyData: Array(),
     formularyGridData: Array(),
     hiddenColumns: Array(),
-    dataCount: 0
+    dataCount: 0,
+    gridSingleSortInfo: null,
+    isGridSingleSorted: false,
+    gridMultiSortedInfo: [],
+    isGridMultiSorted: false,
+    sort_by: Array(),
   };
   listPayload: any = {
     index: 0,
@@ -72,9 +77,9 @@ class CloneFormularyPopup extends React.Component<any, any> {
   onSettingsIconHandler = (hiddenColumn, visibleColumn) => {
     console.log(
       "Settings icon handler: Hidden" +
-        JSON.stringify(hiddenColumn) +
-        " Visible:" +
-        JSON.stringify(visibleColumn)
+      JSON.stringify(hiddenColumn) +
+      " Visible:" +
+      JSON.stringify(visibleColumn)
     );
     if (hiddenColumn && hiddenColumn.length > 0) {
       let hiddenColumnKeys = hiddenColumn.map(column => column["key"]);
@@ -85,7 +90,7 @@ class CloneFormularyPopup extends React.Component<any, any> {
   };
   onApplyFilterHandler = filters => {
     console.log("filtering from be");
-    this.listPayload.filter = Array();
+    //this.listPayload.filter = Array();
     if (filters && filter.length > 0) {
       const fetchedKeys = Object.keys(filters);
       fetchedKeys.map(fetchedProps => {
@@ -94,12 +99,12 @@ class CloneFormularyPopup extends React.Component<any, any> {
             filters[fetchedProps][0].condition === "is like"
               ? "is_like"
               : filters[fetchedProps][0].condition === "is not"
-              ? "is_not"
-              : filters[fetchedProps][0].condition === "is not like"
-              ? "is_not_like"
-              : filters[fetchedProps][0].condition === "does not exist"
-              ? "does_not_exist"
-              : filters[fetchedProps][0].condition;
+                ? "is_not"
+                : filters[fetchedProps][0].condition === "is not like"
+                  ? "is_not_like"
+                  : filters[fetchedProps][0].condition === "does not exist"
+                    ? "does_not_exist"
+                    : filters[fetchedProps][0].condition;
           const fetchedValues =
             filters[fetchedProps][0].value !== ""
               ? [filters[fetchedProps][0].value.toString()]
@@ -122,8 +127,56 @@ class CloneFormularyPopup extends React.Component<any, any> {
    * // Call api to do multi sorting if data is not pre loaded
    *
    */
-  onMultiSort = sorter => {
-    console.log("multi sort handler ", sorter);
+  applyMultiSortHandler = (sorter, multiSortedInfo) => {
+    console.log('Multisort info:' + JSON.stringify(sorter));
+    this.state.gridSingleSortInfo = null;
+    this.state.gridMultiSortedInfo = multiSortedInfo;
+    this.state.isGridMultiSorted = true;
+    this.state.isGridSingleSorted = false;
+
+    if (sorter && sorter.length > 0) {
+      let uniqueKeys = Array();
+      let filteredSorter = Array();
+      sorter.map(sortInfo => {
+        if (uniqueKeys.includes(sortInfo['columnKey'])) {
+
+        } else {
+          filteredSorter.push(sortInfo);
+          uniqueKeys.push(sortInfo['columnKey']);
+        }
+      });
+      filteredSorter.map(sortInfo => {
+        let sortOrder = sortInfo['order'] === 'ascend' ? 'asc' : 'desc';
+        this.state.sort_by = this.state.sort_by.filter(keyPair => keyPair['key'] !== columnFilterMapping[sortInfo['columnKey']]);
+        this.state.sort_by.push({ key: columnFilterMapping[sortInfo['columnKey']], value: sortOrder });
+      })
+
+      let keys = Array();
+      let values = Array();
+
+      this.state.sort_by.map(keyPair => {
+        keys.push(keyPair['key']);
+        values.push(keyPair['value']);
+      });
+
+      this.listPayload.sort_by = keys;
+      this.listPayload.sort_order = values;
+    }
+
+    this.fetchFormularies(this.listPayload);
+  };
+
+  onMultiSortToggle = (isMultiSortOn: boolean) => {
+    console.log("is Multi sort on ", isMultiSortOn);
+    this.state.sort_by = Array();
+    this.listPayload.sort_by = Array();
+    this.listPayload.sort_order = Array();
+    this.state.gridSingleSortInfo = null;
+    this.state.gridMultiSortedInfo = [];
+    this.state.isGridMultiSorted = isMultiSortOn;
+    this.state.isGridSingleSorted = false;
+
+    this.fetchFormularies(this.listPayload);
   };
 
   /**
@@ -131,9 +184,33 @@ class CloneFormularyPopup extends React.Component<any, any> {
    * @param key the column key
    * @param order the sorting order : 'ascend' | 'descend'
    */
-  onApplySortHandler = (key, order) => {
+  onApplySortHandler = (key, order, sortedInfo) => {
     console.log("sort details ", key, order);
-    //call api
+    this.state.sort_by = Array();
+    this.listPayload.sort_by = Array();
+    this.listPayload.sort_order = Array();
+    if (order) {
+      let sortOrder = order === 'ascend' ? 'asc' : 'desc';
+      this.state.sort_by = this.state.sort_by.filter(keyPair => keyPair['key'] !== columnFilterMapping[key]);
+      this.state.sort_by.push({ key: columnFilterMapping[key], value: sortOrder });
+    }
+    this.state.gridSingleSortInfo = sortedInfo;
+    this.state.gridMultiSortedInfo = [];
+    this.state.isGridMultiSorted = false;
+    this.state.isGridSingleSorted = true;
+
+    let keys = Array();
+    let values = Array();
+
+    this.state.sort_by.map(keyPair => {
+      keys.push(keyPair['key']);
+      values.push(keyPair['value']);
+    });
+
+    this.listPayload.sort_by = keys;
+    this.listPayload.sort_order = values;
+
+    this.fetchFormularies(this.listPayload);
   };
   onPageSize = pageSize => {
     console.log("Page size load");
@@ -268,7 +345,7 @@ class CloneFormularyPopup extends React.Component<any, any> {
           onSettingsClick="grid-menu"
           enableSearch={false}
           enableColumnDrag
-          onSearch={() => {}}
+          onSearch={() => { }}
           settingsWidth={50}
           //give the keys of columns that should be fixed . At least the key of first column
           fixedColumnKeys={["serviceYear"]}
@@ -291,7 +368,12 @@ class CloneFormularyPopup extends React.Component<any, any> {
           applyFilter={this.onApplyFilterHandler}
           //the call back for sorting to fetch data from server if data is not preloaded on front end
           applySort={this.onApplySortHandler}
-          applyMultiSort={this.onMultiSort}
+          isSingleSorted={this.state.isGridSingleSorted}
+          sortedInfo={this.state.gridSingleSortInfo}
+          applyMultiSort={this.applyMultiSortHandler}
+          isMultiSorted={this.state.isGridMultiSorted}
+          multiSortedInfo={this.state.gridMultiSortedInfo}
+          onMultiSortToggle={this.onMultiSortToggle}
           getColumnSettings={this.onSettingsIconHandler}
           pageSize={this.listPayload.limit}
           isPinningEnabled
@@ -348,7 +430,7 @@ class CloneFormularyPopup extends React.Component<any, any> {
           onSettingsClick="grid-menu"
           enableSearch={false}
           enableColumnDrag
-          onSearch={() => {}}
+          onSearch={() => { }}
           // pass the prop isDataLoaded if data is preloaded on front end
           // isDataLoaded
           settingsWidth={50}
@@ -369,7 +451,12 @@ class CloneFormularyPopup extends React.Component<any, any> {
           clearFilterHandler={this.onClearFilterHandler}
           applyFilter={this.onApplyFilterHandler}
           applySort={this.onApplySortHandler}
-          applyMultiSort={this.onMultiSort}
+          isSingleSorted={this.state.isGridSingleSorted}
+          sortedInfo={this.state.gridSingleSortInfo}
+          applyMultiSort={this.applyMultiSortHandler}
+          isMultiSorted={this.state.isGridMultiSorted}
+          multiSortedInfo={this.state.gridMultiSortedInfo}
+          onMultiSortToggle={this.onMultiSortToggle}
           getColumnSettings={this.onSettingsIconHandler}
           pageSize={this.listPayload.limit}
           isPinningEnabled
