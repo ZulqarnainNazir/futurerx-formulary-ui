@@ -78,7 +78,9 @@ class DrugGrid extends React.Component<any, any> {
     searchNames: Array(),
     filterPlaceholder: "Search",
     searchValue: "",
-    searchData: Array()
+    searchData: Array(),
+    fixedSelectedRows: [] as number[],
+    selectedRowKeys: [] as number[],
   };
 
   onSelectedRowKeysChange = (selectedRowKeys) => {
@@ -304,8 +306,7 @@ class DrugGrid extends React.Component<any, any> {
     console.log("Populate grid data is called");
     let apiDetails = {};
 
-    apiDetails["pathParams"] =
-      this.props?.formulary_id + "/" + getLobCode(this.props?.formulary_lob_id);
+    apiDetails["pathParams"] = this.props?.formulary_id + "/" + getLobCode(this.props?.formulary_lob_id);
     apiDetails["keyVals"] = [
       { key: constants.KEY_ENTITY_ID, value: this.props?.formulary_id },
       { key: constants.KEY_INDEX, value: this.state.index },
@@ -342,7 +343,7 @@ class DrugGrid extends React.Component<any, any> {
       apiDetails["messageBody"]["sort_order"] = values;
     }
 
-    apiDetails["pathParams"] = this.props?.formulary_id + "/" + tmp_fileType + "/";
+    //apiDetails["pathParams"] = this.props?.formulary_id + "/" + tmp_fileType + "/";
     apiDetails["keyVals"] = [
       { key: constants.KEY_ENTITY_ID, value: this.props?.formulary_id },
       { key: constants.KEY_INDEX, value: this.state.index },
@@ -382,6 +383,7 @@ class DrugGrid extends React.Component<any, any> {
           let gridItem = {};
           gridItem["id"] = count;
           gridItem["key"] = count;
+          gridItem["is_um_criteria"] = element.is_um_criteria;
           gridItem["st_group_description"] = element.st_group_description;
           gridItem["st_type"] = element.st_type;
           gridItem["st_value"] = element.st_value;
@@ -514,6 +516,51 @@ class DrugGrid extends React.Component<any, any> {
       this.setState({ isFetchingData: false });
     }
   };
+  rowSelectionChangeFromCell = (
+    key: string,
+    selectedRow: any,
+    isSelected: boolean
+  ) => {
+    console.log("data row ", selectedRow, isSelected);
+    if (!selectedRow["isDisabled"]) {
+      if (isSelected) {
+        const data = this.state.drugGridData.map((d: any) => {
+          if (d.key === selectedRow.key) d["isChecked"] = true;
+          // else d["isChecked"] = false;
+          return d;
+        });
+        const selectedRowKeys = [
+          ...this.state.selectedRowKeys,
+          selectedRow.key,
+        ];
+        console.log("selected row keys ", selectedRowKeys);
+        const selectedRows: number[] = selectedRowKeys.filter(
+          (k) => this.state.fixedSelectedRows.indexOf(k) < 0
+        );
+        this.onSelectedTableRowChanged(selectedRowKeys);
+
+        this.setState({ drugGridData: data });
+      } else {
+        const data = this.state.drugGridData.map((d: any) => {
+          if (d.key === selectedRow.key) d["isChecked"] = false;
+          // else d["isChecked"] = false;
+          return d;
+        });
+
+        const selectedRowKeys: number[] = this.state.selectedRowKeys.filter(
+          (k) => k !== selectedRow.key
+        );
+        const selectedRows = selectedRowKeys.filter(
+          (k) => this.state.fixedSelectedRows.indexOf(k) < 0
+        );
+
+        this.onSelectedTableRowChanged(selectedRows);
+        this.setState({
+          drugGridData: data,
+        });
+      }
+    }
+  };
   render() {
     const columns = [
       {
@@ -588,12 +635,12 @@ class DrugGrid extends React.Component<any, any> {
                   isFetchingData={false}
                   enableResizingOfColumns
                   data={this.state.drugGridData}
-                  rowSelection={{
-                    columnWidth: 50,
-                    fixed: true,
-                    type: "checkbox",
-                    onChange: this.onSelectedTableRowChanged,
-                  }}
+                  // rowSelection={{
+                  //   columnWidth: 50,
+                  //   fixed: true,
+                  //   type: "checkbox",
+                  //   onChange: this.onSelectedTableRowChanged,
+                  // }}
                   pageSize={this.state.limit}
                   selectedCurrentPage={this.state.index / this.state.limit + 1}
                   totalRowsCount={this.state.dataCount}
@@ -609,6 +656,7 @@ class DrugGrid extends React.Component<any, any> {
                   multiSortedInfo={this.state.gridMultiSortedInfo}
                   onMultiSortToggle={this.onMultiSortToggle}
                   getColumnSettings={this.onSettingsIconHandler}
+                  rowSelectionChangeFromCell={this.rowSelectionChangeFromCell}
                 />
               </div>
             </div>
