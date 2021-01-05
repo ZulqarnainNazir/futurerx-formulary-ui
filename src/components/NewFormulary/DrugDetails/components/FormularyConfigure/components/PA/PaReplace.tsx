@@ -134,7 +134,10 @@ class PaReplace extends React.Component<any, any> {
     if (!selectedRow["isDisabled"]) {
       if (isSelected) {
         const data = this.state.drugGridData.map((d: any) => {
-          if (d.key === selectedRow.key) d["isChecked"] = true;
+          if (d.key === selectedRow.key) {
+            d["isChecked"] = true;
+            d["rowStyle"] = "table-row--green-font";
+          }
           // else d["isChecked"] = false;
           return d;
         });
@@ -151,7 +154,10 @@ class PaReplace extends React.Component<any, any> {
         this.setState({ drugGridData: data });
       } else {
         const data = this.state.drugGridData.map((d: any) => {
-          if (d.key === selectedRow.key) d["isChecked"] = false;
+          if (d.key === selectedRow.key) {
+            d["isChecked"] = false;
+            if (d["rowStyle"]) delete d["rowStyle"];
+          }
           // else d["isChecked"] = false;
           return d;
         });
@@ -172,13 +178,52 @@ class PaReplace extends React.Component<any, any> {
   };
 
   onSelectedTableRowChanged = (selectedRowKeys) => {
+    console.log("selected row ", selectedRowKeys);
+
     this.state.selectedDrugs = [];
+    this.setState({
+      selectedRowKeys: [...selectedRowKeys],
+    });
     if (selectedRowKeys && selectedRowKeys.length > 0) {
-      this.state.selectedDrugs = selectedRowKeys.map(
-        (tierId) => this.state.drugData[tierId - 1]["md5_id"]
-      );
+      this.state.selectedDrugs = selectedRowKeys.map((tierId) => {
+        let item = {};
+        if (
+          this.state.drugData[tierId - 1]["formulary_drug_id"] &&
+          this.state.drugData[tierId - 1]["md5_id"]
+        ) {
+          item = {
+            formulary_drug_id: this.state.drugData[tierId - 1][
+              "formulary_drug_id"
+            ],
+            drug_id: this.state.drugData[tierId - 1]["md5_id"],
+          };
+        } else if (this.state.drugData[tierId - 1]["formulary_drug_id"]) {
+          item = {
+            formulary_drug_id: this.state.drugData[tierId - 1][
+              "formulary_drug_id"
+            ],
+          };
+        } else if (this.state.drugData[tierId - 1]["md5_id"]) {
+          item = {
+            drug_id: this.state.drugData[tierId - 1]["md5_id"],
+            formulary_drug_id: this.state.drugData[tierId - 1][
+              "formulary_drug_id"
+            ],
+          };
+        }
+        return this.state.drugData[tierId - 1]["md5_id"];
+      });
     }
   };
+  // onSelectedTableRowChanged = (selectedRowKeys) => {
+  //   debugger;
+  //   this.state.selectedDrugs = [];
+  //   if (selectedRowKeys && selectedRowKeys.length > 0) {
+  //     this.state.selectedDrugs = selectedRowKeys.map(
+  //       (tierId) => this.state.drugData[tierId - 1]["md5_id"]
+  //     );
+  //   }
+  // };
 
   openTierGridContainer = () => {
     this.state.drugData = [];
