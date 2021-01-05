@@ -105,7 +105,11 @@ class STF extends React.Component<any, any> {
     additionalCriteriaState: null,
     is_additional_criteria_defined:false,
     selectedRowKeys: [] as number[],
-    fixedSelectedRows: [] as number[]
+    fixedSelectedRows: [] as number[],
+    index: 0,
+    limit: 10,
+    filter: Array(),
+    dataCount: 0
   };
 
   onSelectedTableRowChanged = (selectedRowKeys) => {
@@ -159,6 +163,33 @@ class STF extends React.Component<any, any> {
   };
   handleIconClick = () => {
     this.setState({ selectFormulary: true });
+  };
+
+  onPageSize = pageSize => {
+    console.log("Page size load");
+    this.state.limit = pageSize;
+    if (this.props.advancedSearchBody) {
+      this.populateGridData(this.props.advancedSearchBody);
+    } else {
+      this.populateGridData();
+    }
+  };
+  onGridPageChangeHandler = (pageNumber: any) => {
+    console.log("Page change load");
+    this.state.index = (pageNumber - 1) * this.state.limit;
+    if (this.props.advancedSearchBody) {
+      this.populateGridData(this.props.advancedSearchBody);
+    } else {
+      this.populateGridData();
+    }
+  };
+  onClearFilterHandler = () => {
+    this.state.filter = Array();
+    if (this.props.advancedSearchBody) {
+      this.populateGridData(this.props.advancedSearchBody);
+    } else {
+      this.populateGridData();
+    }
   };
 
   selectFormularyClick = (dataRow) => {
@@ -391,8 +422,8 @@ class STF extends React.Component<any, any> {
       this.props?.formulary_id + "/" + tmp_fileType + "/";
     apiDetails["keyVals"] = [
       { key: constants.KEY_ENTITY_ID, value: this.props?.formulary_id },
-      { key: constants.KEY_INDEX, value: 0 },
-      { key: constants.KEY_LIMIT, value: 10 },
+      { key: constants.KEY_INDEX, value: this.state.index },
+      { key: constants.KEY_LIMIT, value: this.state.limit },
     ];
     apiDetails["messageBody"] = {};
 
@@ -797,6 +828,14 @@ class STF extends React.Component<any, any> {
                     onSelectAllRows={this.onSelectAllRows}
                     customSettingIcon={"FILL-DOT"}
                     settingsWidth={30}
+                    pageSize={this.state.limit}
+                    selectedCurrentPage={
+                      this.state.index / this.state.limit + 1
+                    }
+                    totalRowsCount={this.state.dataCount}
+                    getPerPageItemSize={this.onPageSize}
+                    onGridPageChangeHandler={this.onGridPageChangeHandler}
+                    clearFilterHandler={this.onClearFilterHandler}
                     // rowSelection={{
                     //   columnWidth: 50,
                     //   fixed: true,
