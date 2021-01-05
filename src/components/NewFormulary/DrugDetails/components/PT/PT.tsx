@@ -78,10 +78,18 @@ interface ptState {
   ptRemoveCheckedList: any[];
   ptRemoveSettingsStatus: any;
   showGrid: boolean;
-  sort_by: any[],
-  hiddenColumns: any[],
+  sort_by: any[];
+  hiddenColumns: any[];
   selectedRowKeys: number[];
   fixedSelectedRows: number[];
+
+  // sorting & filtering api callbacks
+  gridSingleSortInfo: any;
+  isGridSingleSorted: boolean;
+  gridMultiSortedInfo: any[];
+  isGridMultiSorted: boolean;
+  filter: any[];
+  quickFilter: any[];
 }
 
 const columnFilterMapping = {
@@ -138,6 +146,14 @@ class DrugDetailPT extends React.Component<any, any> {
     hiddenColumns: Array(),
     selectedRowKeys: [],
     fixedSelectedRows: [],
+
+    // sorting & filtering api callbacks
+    gridSingleSortInfo: null,
+    isGridSingleSorted: false,
+    gridMultiSortedInfo: [],
+    isGridMultiSorted: false,
+    filter: Array(),
+    quickFilter: Array(),
   };
 
   listPayload: any = {
@@ -276,21 +292,20 @@ class DrugDetailPT extends React.Component<any, any> {
   };
 
   validateGLForm = () => {
-    if(this.state.activeTabIndex === 0) {
+    if (this.state.activeTabIndex === 0) {
       return !(this.state.selectedList.length === 0);
-
-    } else if(this.state.activeTabIndex === 2) {
+    } else if (this.state.activeTabIndex === 2) {
       return !(this.state.ptRemoveCheckedList.length === 0);
     }
 
     return true;
-  }
+  };
 
   showGridHandler = () => {
     // this.getPTDrugsList();
     console.log("The State of the PT Tab = ", this.state);
 
-    if(this.validateGLForm()) {
+    if (this.validateGLForm()) {
       this.getPTDrugsList();
     } else {
       showMessage("Please Select atleast one PT", "info");
@@ -309,37 +324,51 @@ class DrugDetailPT extends React.Component<any, any> {
   };
 
   refreshSelections = ({ activeTabIndex = 0 }) => {
-    if(activeTabIndex === 0 || activeTabIndex === 1) {
+    if (activeTabIndex === 0 || activeTabIndex === 1) {
       this.setState({ selectedList: [] });
     } else if (activeTabIndex === 2) {
       this.getPTCriteriaList(true);
     }
-  }
-  
+  };
+
   onApplyFilterHandler = (filters) => {
     this.listPayload.filter = Array();
     if (filters && filter.length > 0) {
       const fetchedKeys = Object.keys(filters);
-      fetchedKeys.map(fetchedProps => {
+      fetchedKeys.map((fetchedProps) => {
         if (filters[fetchedProps] && columnFilterMapping[fetchedProps]) {
-          const fetchedOperator = filters[fetchedProps][0].condition === 'is like' ? 'is_like' :
-            filters[fetchedProps][0].condition === 'is not' ? 'is_not' :
-              filters[fetchedProps][0].condition === 'is not like' ? 'is_not_like' :
-                filters[fetchedProps][0].condition === 'does not exist' ? 'does_not_exist' :
-                  filters[fetchedProps][0].condition;
-          
+          const fetchedOperator =
+            filters[fetchedProps][0].condition === "is like"
+              ? "is_like"
+              : filters[fetchedProps][0].condition === "is not"
+              ? "is_not"
+              : filters[fetchedProps][0].condition === "is not like"
+              ? "is_not_like"
+              : filters[fetchedProps][0].condition === "does not exist"
+              ? "does_not_exist"
+              : filters[fetchedProps][0].condition;
+
           let fetchedPropsValue;
-          if(filters[fetchedProps][0].value !== '') {
-            const fetchedPropsValueNum = Number(filters[fetchedProps][0].value.toString());
-            fetchedPropsValue = isNaN(fetchedPropsValueNum) ? filters[fetchedProps][0].value.toString() : fetchedPropsValueNum
+          if (filters[fetchedProps][0].value !== "") {
+            const fetchedPropsValueNum = Number(
+              filters[fetchedProps][0].value.toString()
+            );
+            fetchedPropsValue = isNaN(fetchedPropsValueNum)
+              ? filters[fetchedProps][0].value.toString()
+              : fetchedPropsValueNum;
           }
-          const fetchedValues = filters[fetchedProps][0].value !== '' ? [fetchedPropsValue] : [];
-          this.listPayload.filter.push({ prop: columnFilterMapping[fetchedProps], operator: fetchedOperator, values: fetchedValues });
+          const fetchedValues =
+            filters[fetchedProps][0].value !== "" ? [fetchedPropsValue] : [];
+          this.listPayload.filter.push({
+            prop: columnFilterMapping[fetchedProps],
+            operator: fetchedOperator,
+            values: fetchedValues,
+          });
         }
       });
       this.getPTDrugsList({ listPayload: this.listPayload });
     }
-  }
+  };
 
   onPageSize = (pageSize) => {
     this.listPayload.limit = pageSize;
@@ -422,10 +451,10 @@ class DrugDetailPT extends React.Component<any, any> {
   };
 
   arraysEqual = (a, b) => {
-    if(a.length !== b.length) return false;
-    
+    if (a.length !== b.length) return false;
+
     return a.sort().toString() == b.sort().toString();
-  }
+  };
 
   getPTSummary = () => {
     let apiDetails = {};
@@ -458,7 +487,12 @@ class DrugDetailPT extends React.Component<any, any> {
     });
   };
 
-  getPTDrugsList = ({ index = 0, limit = 10, listPayload = {}, searchBody = {}} = {}) => {
+  getPTDrugsList = ({
+    index = 0,
+    limit = 10,
+    listPayload = {},
+    searchBody = {},
+  } = {}) => {
     let apiDetails = {};
     apiDetails["apiPart"] = ptConstants.GET_PT_DRUGS;
     apiDetails["pathParams"] =
@@ -485,10 +519,15 @@ class DrugDetailPT extends React.Component<any, any> {
     }
 
     apiDetails["messageBody"] = listPayload;
-    
+
     if (searchBody) {
-      console.log("THe Search Body = ", searchBody, " and List Payload = ", listPayload);
-      let merged = {...listPayload, ...searchBody};
+      console.log(
+        "THe Search Body = ",
+        searchBody,
+        " and List Payload = ",
+        listPayload
+      );
+      let merged = { ...listPayload, ...searchBody };
       console.log("Merged Body = ", merged);
       apiDetails["messageBody"] = Object.assign(
         apiDetails["messageBody"],
@@ -496,10 +535,30 @@ class DrugDetailPT extends React.Component<any, any> {
       );
     }
 
+    ////////////////////////////////////////////////////////////////////// sorting & filtering
+    if (this.state.sort_by && this.state.sort_by.length > 0) {
+      let keys = Array();
+      let values = Array();
+
+      this.state.sort_by.map((keyPair) => {
+        keys.push(keyPair["key"]);
+        values.push(keyPair["value"]);
+      });
+
+      let tempKeys: any[] = [];
+      keys.forEach((e) => {
+        tempKeys.push(columnFilterMapping[e]);
+      });
+
+      apiDetails["messageBody"]["sort_by"] = tempKeys;
+      apiDetails["messageBody"]["sort_order"] = values;
+    }
+    ////////////////////////////////////////////////////////////////////// sorting & filtering
     let listCount = 0;
     const thisRef = this;
     this.props.getPTDrugList(apiDetails).then((json) => {
-      let tmpData = json.payload && json.payload.result ? json.payload.result : [];
+      let tmpData =
+        json.payload && json.payload.result ? json.payload.result : [];
       listCount = json.payload?.count;
       var data: any[] = [];
       let count = 1;
@@ -511,17 +570,26 @@ class DrugDetailPT extends React.Component<any, any> {
         gridItem["key"] = count;
         // for preseelct items with selected tier value
 
-        if(this.state.activeTabIndex !== 2) {
-          if(this.state.ptSettingsStatus.covered) {
-            if(element.covered_prescriber_taxonomies) {
-              let cprsArray = element.covered_prescriber_taxonomies.split(",").map(e => e.trim().toLowerCase());
-    
-              let chFilterSettings = this.state.selectedList.map(e => e.text.toLowerCase());
-              console.log("THe 2 Arrays To Match = ", cprsArray, "  2nd Array = ", chFilterSettings)
-    
-              if(chFilterSettings.length === cprsArray.length) {
+        if (this.state.activeTabIndex !== 2) {
+          if (this.state.ptSettingsStatus.covered) {
+            if (element.covered_prescriber_taxonomies) {
+              let cprsArray = element.covered_prescriber_taxonomies
+                .split(",")
+                .map((e) => e.trim().toLowerCase());
+
+              let chFilterSettings = this.state.selectedList.map((e) =>
+                e.text.toLowerCase()
+              );
+              console.log(
+                "THe 2 Arrays To Match = ",
+                cprsArray,
+                "  2nd Array = ",
+                chFilterSettings
+              );
+
+              if (chFilterSettings.length === cprsArray.length) {
                 let arrEqRes = thisRef.arraysEqual(chFilterSettings, cprsArray);
-                if(arrEqRes) {
+                if (arrEqRes) {
                   gridItem["isChecked"] = true;
                   gridItem["isDisabled"] = true;
                   gridItem["rowStyle"] = "table-row--blue-font";
@@ -529,15 +597,27 @@ class DrugDetailPT extends React.Component<any, any> {
               }
             }
           } else if (!this.state.ptSettingsStatus.covered) {
-            if(element.not_covered_prescriber_taxonomies) {
-              let ncgendersArray = element.not_covered_prescriber_taxonomies.split(",").map(e => e.trim().toLowerCase());
-    
-              let chFilterSettings = this.state.selectedList.map(e => e.text.toLowerCase());
-              console.log("THe 2 Arrays To Match = ", ncgendersArray, "  2nd Array = ", chFilterSettings);
-    
-              if(chFilterSettings.length === ncgendersArray.length) {
-                let arrEqRes = thisRef.arraysEqual(chFilterSettings, ncgendersArray);
-                if(arrEqRes) {
+            if (element.not_covered_prescriber_taxonomies) {
+              let ncgendersArray = element.not_covered_prescriber_taxonomies
+                .split(",")
+                .map((e) => e.trim().toLowerCase());
+
+              let chFilterSettings = this.state.selectedList.map((e) =>
+                e.text.toLowerCase()
+              );
+              console.log(
+                "THe 2 Arrays To Match = ",
+                ncgendersArray,
+                "  2nd Array = ",
+                chFilterSettings
+              );
+
+              if (chFilterSettings.length === ncgendersArray.length) {
+                let arrEqRes = thisRef.arraysEqual(
+                  chFilterSettings,
+                  ncgendersArray
+                );
+                if (arrEqRes) {
                   gridItem["isChecked"] = true;
                   gridItem["isDisabled"] = true;
                   gridItem["rowStyle"] = "table-row--blue-font";
@@ -599,11 +679,11 @@ class DrugDetailPT extends React.Component<any, any> {
         listCount: listCount,
         showGrid: true,
         fixedSelectedRows: gridData
-          .filter(item => item.isChecked)
-          .map(item => item.key),
+          .filter((item) => item.isChecked)
+          .map((item) => item.key),
         selectedRowKeys: gridData
-          .filter(item => item.isChecked)
-          .map(item => item.key)
+          .filter((item) => item.isChecked)
+          .map((item) => item.key),
       });
     });
   };
@@ -648,7 +728,7 @@ class DrugDetailPT extends React.Component<any, any> {
     //   this.getPTCriteriaList(true);
     // }
 
-    if(this.props.configureSwitch) {
+    if (this.props.configureSwitch) {
       this.getPTDrugsList();
     }
 
@@ -660,9 +740,14 @@ class DrugDetailPT extends React.Component<any, any> {
   };
 
   clearSearch = () => {
-    let payload = { advancedSearchBody: {}, populateGrid: false, closeDialog: false, listItemStatus: {} };
+    let payload = {
+      advancedSearchBody: {},
+      populateGrid: false,
+      closeDialog: false,
+      listItemStatus: {},
+    };
     this.props.setAdvancedSearch(payload);
-  }
+  };
 
   componentWillUnmount() {
     this.clearSearch();
@@ -694,26 +779,40 @@ class DrugDetailPT extends React.Component<any, any> {
     //   this.getPTDrugsList();
     // }
 
-    if (nextProps.configureSwitch){
-      this.setState({tabs:[
-        { id: 1, text: "Replace", disabled: true },
-        { id: 2, text: "Append", disabled: true },
-        { id: 3, text: "Remove", disabled: true },
-      ], activeTabIndex:0});
+    if (nextProps.configureSwitch) {
+      this.setState({
+        tabs: [
+          { id: 1, text: "Replace", disabled: true },
+          { id: 2, text: "Append", disabled: true },
+          { id: 3, text: "Remove", disabled: true },
+        ],
+        activeTabIndex: 0,
+      });
 
       this.getPTDrugsList();
     } else {
-      this.setState({tabs:[
-        { id: 1, text: "Replace", disabled:false },
-        { id: 2, text: "Append", disabled:false },
-        { id: 3, text: "Remove", disabled:false },
-      ]});
+      this.setState({
+        tabs: [
+          { id: 1, text: "Replace", disabled: false },
+          { id: 2, text: "Append", disabled: false },
+          { id: 3, text: "Remove", disabled: false },
+        ],
+      });
     }
 
     if (nextProps.advancedSearchBody && nextProps.populateGrid) {
-      console.log("-----Inside Advance search Body if Condition-----advancedSearchBody ", nextProps.advancedSearchBody);
-      console.log("-----Inside Advance search Body if Condition-----populateGrid ", nextProps.advancedSearchBody);
-      this.getPTDrugsList({ listPayload: this.listPayload, searchBody: nextProps.advancedSearchBody});
+      console.log(
+        "-----Inside Advance search Body if Condition-----advancedSearchBody ",
+        nextProps.advancedSearchBody
+      );
+      console.log(
+        "-----Inside Advance search Body if Condition-----populateGrid ",
+        nextProps.advancedSearchBody
+      );
+      this.getPTDrugsList({
+        listPayload: this.listPayload,
+        searchBody: nextProps.advancedSearchBody,
+      });
       let payload = {
         advancedSearchBody: nextProps.advancedSearchBody,
         populateGrid: false,
@@ -733,14 +832,14 @@ class DrugDetailPT extends React.Component<any, any> {
   onSettingsIconHandler = (hiddenColumn, visibleColumn) => {
     console.log(
       "Settings icon handler: Hidden" +
-      JSON.stringify(hiddenColumn) +
-      " Visible:" +
-      JSON.stringify(visibleColumn)
+        JSON.stringify(hiddenColumn) +
+        " Visible:" +
+        JSON.stringify(visibleColumn)
     );
     if (hiddenColumn && hiddenColumn.length > 0) {
-      let hiddenColumnKeys = hiddenColumn.map(column => column["key"]);
+      let hiddenColumnKeys = hiddenColumn.map((column) => column["key"]);
       this.setState({
-        hiddenColumns: hiddenColumnKeys
+        hiddenColumns: hiddenColumnKeys,
       });
     }
   };
@@ -756,18 +855,21 @@ class DrugDetailPT extends React.Component<any, any> {
         const data = this.state.data.map((d: any) => {
           if (d.key === selectedRow.key) {
             d["isChecked"] = true;
-            d["rowStyle"] = this.state.activeTabIndex === 2 ? "table-row--red-font" : "table-row--green-font";
+            d["rowStyle"] =
+              this.state.activeTabIndex === 2
+                ? "table-row--red-font"
+                : "table-row--green-font";
           }
           // else d["isChecked"] = false;
           return d;
         });
         const selectedRowKeys = [
           ...this.state.selectedRowKeys,
-          selectedRow.key
+          selectedRow.key,
         ];
         console.log("selected row keys ", selectedRowKeys);
         const selectedRows: number[] = selectedRowKeys.filter(
-          k => this.state.fixedSelectedRows.indexOf(k) < 0
+          (k) => this.state.fixedSelectedRows.indexOf(k) < 0
         );
         this.onSelectedTableRowChanged(selectedRowKeys);
 
@@ -776,23 +878,22 @@ class DrugDetailPT extends React.Component<any, any> {
         const data = this.state.data.map((d: any) => {
           if (d.key === selectedRow.key) {
             d["isChecked"] = false;
-            if (d["rowStyle"])
-              delete d["rowStyle"];
+            if (d["rowStyle"]) delete d["rowStyle"];
           }
           // else d["isChecked"] = false;
           return d;
         });
 
         const selectedRowKeys: number[] = this.state.selectedRowKeys.filter(
-          k => k !== selectedRow.key
+          (k) => k !== selectedRow.key
         );
         const selectedRows = selectedRowKeys.filter(
-          k => this.state.fixedSelectedRows.indexOf(k) < 0
+          (k) => this.state.fixedSelectedRows.indexOf(k) < 0
         );
 
         this.onSelectedTableRowChanged(selectedRows);
         this.setState({
-          data: data
+          data: data,
         });
       }
     }
@@ -805,30 +906,96 @@ class DrugDetailPT extends React.Component<any, any> {
         d["isChecked"] = isSelected;
         if (isSelected) {
           selectedRowKeys.push(d["key"]);
-          d["rowStyle"] = this.state.activeTabIndex === 2 ? "table-row--red-font" : "table-row--green-font";
+          d["rowStyle"] =
+            this.state.activeTabIndex === 2
+              ? "table-row--red-font"
+              : "table-row--green-font";
         } else {
-          if (d["rowStyle"])
-            delete d["rowStyle"]
+          if (d["rowStyle"]) delete d["rowStyle"];
         }
       }
-      
+
       return d;
     });
     const selectedRows: number[] = selectedRowKeys.filter(
-      k => this.state.fixedSelectedRows.indexOf(k) < 0
+      (k) => this.state.fixedSelectedRows.indexOf(k) < 0
     );
     this.onSelectedTableRowChanged(selectedRows);
     this.setState({ data: data });
   };
-  
-  onApplySortHandler = (key, order) => {
+  onMultiSortToggle = (isMultiSortOn: boolean) => {
+    console.log("is Multi sort on ", isMultiSortOn);
+    this.state.sort_by = Array();
+    this.state.gridSingleSortInfo = null;
+    this.state.gridMultiSortedInfo = [];
+    this.state.isGridMultiSorted = isMultiSortOn;
+    this.state.isGridSingleSorted = false;
+
+    if (this.props.advancedSearchBody) {
+      // this.populateGridData(this.props.advancedSearchBody);
+      this.getPTDrugsList({ searchBody: this.props.advancedSearchBody });
+    } else {
+      this.getPTDrugsList();
+    }
+  };
+
+  applyMultiSortHandler = (sorter, multiSortedInfo) => {
+    console.log("Multisort info:" + JSON.stringify(sorter));
+
+    this.setState({
+      isGridMultiSorted: true,
+      isGridSingleSorted: false,
+      gridMultiSortedInfo: multiSortedInfo,
+      gridSingleSortInfo: null,
+    });
+
+    if (sorter && sorter.length > 0) {
+      let uniqueKeys = Array();
+      let filteredSorter = Array();
+      sorter.map((sortInfo) => {
+        if (uniqueKeys.includes(sortInfo["columnKey"])) {
+        } else {
+          filteredSorter.push(sortInfo);
+          uniqueKeys.push(sortInfo["columnKey"]);
+        }
+      });
+      filteredSorter.map((sortInfo) => {
+        let sortOrder = sortInfo["order"] === "ascend" ? "asc" : "desc";
+        this.state.sort_by = this.state.sort_by.filter(
+          (keyPair) => keyPair["key"] !== sortInfo["columnKey"]
+        );
+        this.state.sort_by.push({
+          key: sortInfo["columnKey"],
+          value: sortOrder,
+        });
+      });
+    }
+
+    if (this.props.advancedSearchBody) {
+      this.getPTDrugsList({ searchBody: this.props.advancedSearchBody });
+      // this.populateGridData(this.props.advancedSearchBody);
+    } else {
+      this.getPTDrugsList();
+    }
+  };
+
+  onApplySortHandler = (key, order, sortedInfo) => {
     console.log("sort details ", key, order);
     this.state.sort_by = Array();
     if (order) {
-      let sortOrder = order === 'ascend' ? 'asc' : 'desc';
-      this.state.sort_by = this.state.sort_by.filter(keyPair => keyPair['key'] !== key);
+      let sortOrder = order === "ascend" ? "asc" : "desc";
+      this.state.sort_by = this.state.sort_by.filter(
+        (keyPair) => keyPair["key"] !== key
+      );
       this.state.sort_by.push({ key: key, value: sortOrder });
     }
+
+    this.setState({
+      gridSingleSortInfo: sortedInfo,
+      isGridSingleSorted: true,
+      isGridMultiSorted: false,
+      gridMultiSortedInfo: [],
+    });
     if (this.props.advancedSearchBody) {
       this.getPTDrugsList({ searchBody: this.props.advancedSearchBody });
     } else {
@@ -843,7 +1010,9 @@ class DrugDetailPT extends React.Component<any, any> {
     };
     let columns = getDrugDetailsColumnPT();
     if (this.state.hiddenColumns.length > 0) {
-      columns = columns.filter(key => !this.state.hiddenColumns.includes(key));
+      columns = columns.filter(
+        (key) => !this.state.hiddenColumns.includes(key)
+      );
     }
     let dataGrid = <FrxLoader />;
     if (this.state.data) {
@@ -884,7 +1053,7 @@ class DrugDetailPT extends React.Component<any, any> {
             enableSearch={false}
             enableColumnDrag
             settingsWidth={50}
-            onSearch={() => { }}
+            onSearch={() => {}}
             fixedColumnKeys={[]}
             pagintionPosition="topRight"
             gridName="TIER"
@@ -903,6 +1072,14 @@ class DrugDetailPT extends React.Component<any, any> {
             clearFilterHandler={this.onClearFilterHandler}
             applyFilter={this.onApplyFilterHandler}
             applySort={this.onApplySortHandler}
+            ///////////////////////
+            isSingleSorted={this.state.isGridSingleSorted}
+            sortedInfo={this.state.gridSingleSortInfo}
+            applyMultiSort={this.applyMultiSortHandler}
+            isMultiSorted={this.state.isGridMultiSorted}
+            multiSortedInfo={this.state.gridMultiSortedInfo}
+            onMultiSortToggle={this.onMultiSortToggle}
+            ///////////////////////
             getColumnSettings={this.onSettingsIconHandler}
             pageSize={this.listPayload.limit}
             selectedCurrentPage={
@@ -982,11 +1159,13 @@ class DrugDetailPT extends React.Component<any, any> {
                   label="Advance Search"
                   onClick={this.advanceSearchClickHandler}
                 />
-                {!this.props.configureSwitch ? <Button
-                  label="Save"
-                  onClick={this.saveClickHandler}
-                  disabled={!(this.state.selectedDrugs.length > 0)}
-                /> : null}
+                {!this.props.configureSwitch ? (
+                  <Button
+                    label="Save"
+                    onClick={this.saveClickHandler}
+                    disabled={!(this.state.selectedDrugs.length > 0)}
+                  />
+                ) : null}
               </div>
             </div>
             {dataGrid}

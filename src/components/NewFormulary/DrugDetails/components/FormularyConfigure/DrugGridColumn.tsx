@@ -19,7 +19,7 @@ import { dateFilters, textFilters } from "../../../../../utils/grid/filters";
 
 export const getDrugDetailsColumnPOS: () => Column<any>[] = () => {
   return [
-		{
+    {
       position: 1,
       textCase: "upper",
       pixelWidth: 50,
@@ -28,7 +28,7 @@ export const getDrugDetailsColumnPOS: () => Column<any>[] = () => {
       fixed: "left",
       displayTitle: "",
       headerCellSelection: true,
-      hidden: false
+      hidden: false,
     },
     {
       position: 2,
@@ -41,7 +41,7 @@ export const getDrugDetailsColumnPOS: () => Column<any>[] = () => {
       dataType: "string",
       filters: textFilters,
       hidden: false,
-      sortDirections: [],
+      sortDirections: ["ascend", "descend"],
     },
     {
       position: 3,
@@ -54,7 +54,7 @@ export const getDrugDetailsColumnPOS: () => Column<any>[] = () => {
       dataType: "string",
       filters: textFilters,
       hidden: false,
-      sortDirections: [],
+      sortDirections: ["ascend", "descend"],
     },
     {
       position: 4,
@@ -67,7 +67,7 @@ export const getDrugDetailsColumnPOS: () => Column<any>[] = () => {
       dataType: "string",
       filters: textFilters,
       hidden: false,
-      sortDirections: [],
+      sortDirections: ["ascend", "descend"],
     },
     {
       position: 5,
@@ -80,7 +80,7 @@ export const getDrugDetailsColumnPOS: () => Column<any>[] = () => {
       dataType: "string",
       filters: textFilters,
       hidden: false,
-      sortDirections: [],
+      sortDirections: ["ascend", "descend"],
     },
     {
       position: 6,
@@ -93,7 +93,7 @@ export const getDrugDetailsColumnPOS: () => Column<any>[] = () => {
       dataType: "string",
       filters: textFilters,
       hidden: false,
-      sortDirections: [],
+      sortDirections: ["ascend", "descend"],
     },
     {
       position: 7,
@@ -106,7 +106,7 @@ export const getDrugDetailsColumnPOS: () => Column<any>[] = () => {
       dataType: "string",
       filters: textFilters,
       hidden: false,
-      sortDirections: [],
+      sortDirections: ["ascend", "descend"],
     },
     {
       position: 8,
@@ -119,7 +119,7 @@ export const getDrugDetailsColumnPOS: () => Column<any>[] = () => {
       dataType: "string",
       filters: textFilters,
       hidden: false,
-      sortDirections: [],
+      sortDirections: ["ascend", "descend"],
     },
     {
       position: 9,
@@ -132,7 +132,7 @@ export const getDrugDetailsColumnPOS: () => Column<any>[] = () => {
       dataType: "string",
       filters: textFilters,
       hidden: false,
-      sortDirections: [],
+      sortDirections: ["ascend", "descend"],
     },
     {
       position: 10,
@@ -145,7 +145,7 @@ export const getDrugDetailsColumnPOS: () => Column<any>[] = () => {
       dataType: "string",
       filters: textFilters,
       hidden: false,
-      sortDirections: [],
+      sortDirections: ["ascend", "descend"],
     },
     {
       position: 11,
@@ -158,7 +158,7 @@ export const getDrugDetailsColumnPOS: () => Column<any>[] = () => {
       dataType: "string",
       filters: textFilters,
       hidden: false,
-      sortDirections: [],
+      sortDirections: ["ascend", "descend"],
     },
 
     {
@@ -172,7 +172,7 @@ export const getDrugDetailsColumnPOS: () => Column<any>[] = () => {
       dataType: "string",
       filters: textFilters,
       hidden: false,
-      sortDirections: [],
+      sortDirections: ["ascend", "descend"],
     },
 
     {
@@ -186,7 +186,7 @@ export const getDrugDetailsColumnPOS: () => Column<any>[] = () => {
       dataType: "string",
       filters: textFilters,
       hidden: false,
-      sortDirections: [],
+      sortDirections: ["ascend", "descend"],
     },
     {
       position: 14,
@@ -199,7 +199,7 @@ export const getDrugDetailsColumnPOS: () => Column<any>[] = () => {
       dataType: "string",
       filters: textFilters,
       hidden: false,
-      sortDirections: [],
+      sortDirections: ["ascend", "descend"],
     },
     {
       position: 15,
@@ -212,7 +212,7 @@ export const getDrugDetailsColumnPOS: () => Column<any>[] = () => {
       dataType: "string",
       filters: textFilters,
       hidden: false,
-      sortDirections: [],
+      sortDirections: ["ascend", "descend"],
     },
   ];
 };
@@ -381,6 +381,17 @@ export const getDrugDetailsColumnFFFCOMM: () => Column<any>[] = () => {
   return [
     {
       position: 1,
+      textCase: "upper",
+      pixelWidth: 50,
+      isFilterable: false,
+      key: "checkbox",
+      fixed: "left",
+      displayTitle: "",
+      headerCellSelection: true,
+      hidden: false,
+    },
+    {
+      position: 2,
       sorter: {},
       textCase: "upper",
       pixelWidth: 150,
@@ -390,10 +401,10 @@ export const getDrugDetailsColumnFFFCOMM: () => Column<any>[] = () => {
       dataType: "string",
       filters: textFilters,
       hidden: false,
-      sortDirections: [],
+      sortDirections: ["ascend", "descend"],
     },
     {
-      position: 2,
+      position: 3,
       sorter: {},
       textCase: "upper",
       pixelWidth: 150,
@@ -403,10 +414,10 @@ export const getDrugDetailsColumnFFFCOMM: () => Column<any>[] = () => {
       dataType: "string",
       filters: textFilters,
       hidden: false,
-      sortDirections: [],
+      sortDirections: ["ascend", "descend"],
     },
     {
-      position: 3,
+      position: 4,
       sorter: {},
       textCase: "upper",
       pixelWidth: 150,
@@ -416,10 +427,10 @@ export const getDrugDetailsColumnFFFCOMM: () => Column<any>[] = () => {
       dataType: "string",
       filters: textFilters,
       hidden: false,
-      sortDirections: [],
+      sortDirections: ["ascend", "descend"],
     },
     {
-      position: 4,
+      position: 5,
       sorter: {},
       textCase: "upper",
       pixelWidth: 150,
@@ -429,10 +440,10 @@ export const getDrugDetailsColumnFFFCOMM: () => Column<any>[] = () => {
       dataType: "string",
       filters: textFilters,
       hidden: false,
-      sortDirections: [],
+      sortDirections: ["ascend", "descend"],
     },
     {
-      position: 5,
+      position: 6,
       sorter: {},
       textCase: "upper",
       pixelWidth: 150,
@@ -442,10 +453,10 @@ export const getDrugDetailsColumnFFFCOMM: () => Column<any>[] = () => {
       dataType: "string",
       filters: textFilters,
       hidden: false,
-      sortDirections: [],
+      sortDirections: ["ascend", "descend"],
     },
     {
-      position: 6,
+      position: 7,
       sorter: {},
       textCase: "upper",
       pixelWidth: 150,
@@ -455,10 +466,10 @@ export const getDrugDetailsColumnFFFCOMM: () => Column<any>[] = () => {
       dataType: "string",
       filters: textFilters,
       hidden: false,
-      sortDirections: [],
+      sortDirections: ["ascend", "descend"],
     },
     {
-      position: 7,
+      position: 8,
       sorter: {},
       textCase: "upper",
       pixelWidth: 150,
@@ -468,10 +479,10 @@ export const getDrugDetailsColumnFFFCOMM: () => Column<any>[] = () => {
       dataType: "string",
       filters: textFilters,
       hidden: false,
-      sortDirections: [],
+      sortDirections: ["ascend", "descend"],
     },
     {
-      position: 8,
+      position: 9,
       sorter: {},
       textCase: "upper",
       pixelWidth: 150,
@@ -481,10 +492,10 @@ export const getDrugDetailsColumnFFFCOMM: () => Column<any>[] = () => {
       dataType: "string",
       filters: textFilters,
       hidden: false,
-      sortDirections: [],
+      sortDirections: ["ascend", "descend"],
     },
     {
-      position: 9,
+      position: 10,
       sorter: {},
       textCase: "upper",
       pixelWidth: 150,
@@ -494,10 +505,10 @@ export const getDrugDetailsColumnFFFCOMM: () => Column<any>[] = () => {
       dataType: "string",
       filters: textFilters,
       hidden: false,
-      sortDirections: [],
+      sortDirections: ["ascend", "descend"],
     },
     {
-      position: 10,
+      position: 11,
       sorter: {},
       pixelWidth: 150,
       key: "createdOn",
@@ -506,10 +517,10 @@ export const getDrugDetailsColumnFFFCOMM: () => Column<any>[] = () => {
       dataType: "string",
       filters: textFilters,
       hidden: false,
-      sortDirections: [],
+      sortDirections: ["ascend", "descend"],
     },
     {
-      position: 11,
+      position: 12,
       sorter: {},
       pixelWidth: 150,
       key: "modifiedBy",
@@ -518,10 +529,10 @@ export const getDrugDetailsColumnFFFCOMM: () => Column<any>[] = () => {
       dataType: "string",
       filters: textFilters,
       hidden: false,
-      sortDirections: [],
+      sortDirections: ["ascend", "descend"],
     },
     {
-      position: 12,
+      position: 13,
       sorter: {},
       pixelWidth: 150,
       key: "modifiedOn",
@@ -530,14 +541,14 @@ export const getDrugDetailsColumnFFFCOMM: () => Column<any>[] = () => {
       dataType: "string",
       filters: textFilters,
       hidden: false,
-      sortDirections: [],
+      sortDirections: ["ascend", "descend"],
     },
   ];
 };
 
 export const getDrugDetailsColumnPT: () => Column<any>[] = () => {
   return [
-		{
+    {
       position: 1,
       textCase: "upper",
       pixelWidth: 50,
@@ -546,7 +557,7 @@ export const getDrugDetailsColumnPT: () => Column<any>[] = () => {
       fixed: "left",
       displayTitle: "",
       headerCellSelection: true,
-      hidden: false
+      hidden: false,
     },
     {
       position: 2,
@@ -559,7 +570,7 @@ export const getDrugDetailsColumnPT: () => Column<any>[] = () => {
       dataType: "string",
       filters: textFilters,
       hidden: false,
-      sortDirections: [],
+      sortDirections: ["ascend", "descend"],
     },
     {
       position: 3,
@@ -572,7 +583,7 @@ export const getDrugDetailsColumnPT: () => Column<any>[] = () => {
       dataType: "string",
       filters: textFilters,
       hidden: false,
-      sortDirections: [],
+      sortDirections: ["ascend", "descend"],
     },
     {
       position: 4,
@@ -585,7 +596,7 @@ export const getDrugDetailsColumnPT: () => Column<any>[] = () => {
       dataType: "string",
       filters: textFilters,
       hidden: false,
-      sortDirections: [],
+      sortDirections: ["ascend", "descend"],
     },
     {
       position: 5,
@@ -598,7 +609,7 @@ export const getDrugDetailsColumnPT: () => Column<any>[] = () => {
       dataType: "string",
       filters: textFilters,
       hidden: false,
-      sortDirections: [],
+      sortDirections: ["ascend", "descend"],
     },
     {
       position: 6,
@@ -611,7 +622,7 @@ export const getDrugDetailsColumnPT: () => Column<any>[] = () => {
       dataType: "string",
       filters: textFilters,
       hidden: false,
-      sortDirections: [],
+      sortDirections: ["ascend", "descend"],
     },
     {
       position: 7,
@@ -624,7 +635,7 @@ export const getDrugDetailsColumnPT: () => Column<any>[] = () => {
       dataType: "string",
       filters: textFilters,
       hidden: false,
-      sortDirections: [],
+      sortDirections: ["ascend", "descend"],
     },
     {
       position: 8,
@@ -637,7 +648,7 @@ export const getDrugDetailsColumnPT: () => Column<any>[] = () => {
       dataType: "string",
       filters: textFilters,
       hidden: false,
-      sortDirections: [],
+      sortDirections: ["ascend", "descend"],
     },
     {
       position: 9,
@@ -650,7 +661,7 @@ export const getDrugDetailsColumnPT: () => Column<any>[] = () => {
       dataType: "string",
       filters: textFilters,
       hidden: false,
-      sortDirections: [],
+      sortDirections: ["ascend", "descend"],
     },
     {
       position: 10,
@@ -663,7 +674,7 @@ export const getDrugDetailsColumnPT: () => Column<any>[] = () => {
       dataType: "string",
       filters: textFilters,
       hidden: false,
-      sortDirections: [],
+      sortDirections: ["ascend", "descend"],
     },
     {
       position: 11,
@@ -676,7 +687,7 @@ export const getDrugDetailsColumnPT: () => Column<any>[] = () => {
       dataType: "string",
       filters: textFilters,
       hidden: false,
-      sortDirections: [],
+      sortDirections: ["ascend", "descend"],
     },
     {
       position: 12,
@@ -689,7 +700,7 @@ export const getDrugDetailsColumnPT: () => Column<any>[] = () => {
       dataType: "string",
       filters: textFilters,
       hidden: false,
-      sortDirections: [],
+      sortDirections: ["ascend", "descend"],
     },
     {
       position: 13,
@@ -701,7 +712,7 @@ export const getDrugDetailsColumnPT: () => Column<any>[] = () => {
       dataType: "string",
       filters: textFilters,
       hidden: false,
-      sortDirections: [],
+      sortDirections: ["ascend", "descend"],
     },
     {
       position: 14,
@@ -713,7 +724,7 @@ export const getDrugDetailsColumnPT: () => Column<any>[] = () => {
       dataType: "string",
       filters: textFilters,
       hidden: false,
-      sortDirections: [],
+      sortDirections: ["ascend", "descend"],
     },
     {
       position: 15,
@@ -725,7 +736,7 @@ export const getDrugDetailsColumnPT: () => Column<any>[] = () => {
       dataType: "string",
       filters: textFilters,
       hidden: false,
-      sortDirections: [],
+      sortDirections: ["ascend", "descend"],
     },
   ];
 };
@@ -734,6 +745,17 @@ export const getDrugDetailsColumnOTHER: () => Column<any>[] = () => {
   return [
     {
       position: 1,
+      textCase: "upper",
+      pixelWidth: 50,
+      isFilterable: false,
+      key: "checkbox",
+      fixed: "left",
+      displayTitle: "",
+      headerCellSelection: true,
+      hidden: false,
+    },
+    {
+      position: 2,
       sorter: {},
       textCase: "upper",
       pixelWidth: 150,
@@ -743,10 +765,10 @@ export const getDrugDetailsColumnOTHER: () => Column<any>[] = () => {
       dataType: "string",
       filters: textFilters,
       hidden: false,
-      sortDirections: [],
+      sortDirections: ["ascend", "descend"],
     },
     {
-      position: 2,
+      position: 3,
       sorter: {},
       textCase: "upper",
       pixelWidth: 150,
@@ -756,10 +778,10 @@ export const getDrugDetailsColumnOTHER: () => Column<any>[] = () => {
       dataType: "string",
       filters: textFilters,
       hidden: false,
-      sortDirections: [],
+      sortDirections: ["ascend", "descend"],
     },
     {
-      position: 3,
+      position: 4,
       sorter: {},
       textCase: "upper",
       pixelWidth: 150,
@@ -769,10 +791,10 @@ export const getDrugDetailsColumnOTHER: () => Column<any>[] = () => {
       dataType: "string",
       filters: textFilters,
       hidden: false,
-      sortDirections: [],
+      sortDirections: ["ascend", "descend"],
     },
     {
-      position: 4,
+      position: 5,
       sorter: {},
       textCase: "upper",
       pixelWidth: 150,
@@ -782,10 +804,10 @@ export const getDrugDetailsColumnOTHER: () => Column<any>[] = () => {
       dataType: "string",
       filters: textFilters,
       hidden: false,
-      sortDirections: [],
+      sortDirections: ["ascend", "descend"],
     },
     {
-      position: 5,
+      position: 6,
       sorter: {},
       textCase: "upper",
       pixelWidth: 150,
@@ -795,10 +817,10 @@ export const getDrugDetailsColumnOTHER: () => Column<any>[] = () => {
       dataType: "string",
       filters: textFilters,
       hidden: false,
-      sortDirections: [],
+      sortDirections: ["ascend", "descend"],
     },
     {
-      position: 6,
+      position: 7,
       sorter: {},
       textCase: "upper",
       pixelWidth: 150,
@@ -808,10 +830,10 @@ export const getDrugDetailsColumnOTHER: () => Column<any>[] = () => {
       dataType: "string",
       filters: textFilters,
       hidden: false,
-      sortDirections: [],
+      sortDirections: ["ascend", "descend"],
     },
     {
-      position: 7,
+      position: 8,
       sorter: {},
       textCase: "upper",
       pixelWidth: 150,
@@ -821,10 +843,10 @@ export const getDrugDetailsColumnOTHER: () => Column<any>[] = () => {
       dataType: "string",
       filters: textFilters,
       hidden: false,
-      sortDirections: [],
+      sortDirections: ["ascend", "descend"],
     },
     {
-      position: 8,
+      position: 9,
       sorter: {},
       textCase: "upper",
       pixelWidth: 150,
@@ -834,10 +856,10 @@ export const getDrugDetailsColumnOTHER: () => Column<any>[] = () => {
       dataType: "string",
       filters: textFilters,
       hidden: false,
-      sortDirections: [],
+      sortDirections: ["ascend", "descend"],
     },
     {
-      position: 9,
+      position: 10,
       sorter: {},
       textCase: "upper",
       pixelWidth: 150,
@@ -847,10 +869,10 @@ export const getDrugDetailsColumnOTHER: () => Column<any>[] = () => {
       dataType: "string",
       filters: textFilters,
       hidden: false,
-      sortDirections: [],
+      sortDirections: ["ascend", "descend"],
     },
     {
-      position: 10,
+      position: 11,
       sorter: {},
       pixelWidth: 150,
       key: "createdOn",
@@ -859,10 +881,10 @@ export const getDrugDetailsColumnOTHER: () => Column<any>[] = () => {
       dataType: "string",
       filters: textFilters,
       hidden: false,
-      sortDirections: [],
+      sortDirections: ["ascend", "descend"],
     },
     {
-      position: 11,
+      position: 12,
       sorter: {},
       pixelWidth: 150,
       key: "modifiedBy",
@@ -871,10 +893,10 @@ export const getDrugDetailsColumnOTHER: () => Column<any>[] = () => {
       dataType: "string",
       filters: textFilters,
       hidden: false,
-      sortDirections: [],
+      sortDirections: ["ascend", "descend"],
     },
     {
-      position: 12,
+      position: 13,
       sorter: {},
       pixelWidth: 150,
       key: "modifiedOn",
@@ -883,14 +905,14 @@ export const getDrugDetailsColumnOTHER: () => Column<any>[] = () => {
       dataType: "string",
       filters: textFilters,
       hidden: false,
-      sortDirections: [],
+      sortDirections: ["ascend", "descend"],
     },
   ];
 };
 
 export const getDrugDetailsColumnPR: () => Column<any>[] = () => {
   return [
-		{
+    {
       position: 1,
       textCase: "upper",
       pixelWidth: 50,
@@ -899,7 +921,7 @@ export const getDrugDetailsColumnPR: () => Column<any>[] = () => {
       fixed: "left",
       displayTitle: "",
       headerCellSelection: true,
-      hidden: false
+      hidden: false,
     },
     {
       position: 2,
@@ -912,7 +934,7 @@ export const getDrugDetailsColumnPR: () => Column<any>[] = () => {
       dataType: "string",
       filters: textFilters,
       hidden: false,
-      sortDirections: [],
+      sortDirections: ["ascend", "descend"],
     },
     {
       position: 3,
@@ -925,7 +947,7 @@ export const getDrugDetailsColumnPR: () => Column<any>[] = () => {
       dataType: "string",
       filters: textFilters,
       hidden: false,
-      sortDirections: [],
+      sortDirections: ["ascend", "descend"],
     },
     {
       position: 4,
@@ -938,7 +960,7 @@ export const getDrugDetailsColumnPR: () => Column<any>[] = () => {
       dataType: "string",
       filters: textFilters,
       hidden: false,
-      sortDirections: [],
+      sortDirections: ["ascend", "descend"],
     },
     {
       position: 5,
@@ -951,7 +973,7 @@ export const getDrugDetailsColumnPR: () => Column<any>[] = () => {
       dataType: "string",
       filters: textFilters,
       hidden: false,
-      sortDirections: [],
+      sortDirections: ["ascend", "descend"],
     },
     {
       position: 6,
@@ -964,7 +986,7 @@ export const getDrugDetailsColumnPR: () => Column<any>[] = () => {
       dataType: "string",
       filters: textFilters,
       hidden: false,
-      sortDirections: [],
+      sortDirections: ["ascend", "descend"],
     },
     {
       position: 7,
@@ -977,7 +999,7 @@ export const getDrugDetailsColumnPR: () => Column<any>[] = () => {
       dataType: "string",
       filters: textFilters,
       hidden: false,
-      sortDirections: [],
+      sortDirections: ["ascend", "descend"],
     },
     {
       position: 8,
@@ -990,7 +1012,7 @@ export const getDrugDetailsColumnPR: () => Column<any>[] = () => {
       dataType: "string",
       filters: textFilters,
       hidden: false,
-      sortDirections: [],
+      sortDirections: ["ascend", "descend"],
     },
     {
       position: 9,
@@ -1003,7 +1025,7 @@ export const getDrugDetailsColumnPR: () => Column<any>[] = () => {
       dataType: "string",
       filters: textFilters,
       hidden: false,
-      sortDirections: [],
+      sortDirections: ["ascend", "descend"],
     },
     {
       position: 10,
@@ -1016,7 +1038,7 @@ export const getDrugDetailsColumnPR: () => Column<any>[] = () => {
       dataType: "string",
       filters: textFilters,
       hidden: false,
-      sortDirections: [],
+      sortDirections: ["ascend", "descend"],
     },
     {
       position: 11,
@@ -1029,7 +1051,7 @@ export const getDrugDetailsColumnPR: () => Column<any>[] = () => {
       dataType: "string",
       filters: textFilters,
       hidden: false,
-      sortDirections: [],
+      sortDirections: ["ascend", "descend"],
     },
     {
       position: 12,
@@ -1042,7 +1064,7 @@ export const getDrugDetailsColumnPR: () => Column<any>[] = () => {
       dataType: "string",
       filters: textFilters,
       hidden: false,
-      sortDirections: [],
+      sortDirections: ["ascend", "descend"],
     },
     {
       position: 13,
@@ -1054,7 +1076,7 @@ export const getDrugDetailsColumnPR: () => Column<any>[] = () => {
       dataType: "string",
       filters: textFilters,
       hidden: false,
-      sortDirections: [],
+      sortDirections: ["ascend", "descend"],
     },
     {
       position: 14,
@@ -1066,7 +1088,7 @@ export const getDrugDetailsColumnPR: () => Column<any>[] = () => {
       dataType: "string",
       filters: textFilters,
       hidden: false,
-      sortDirections: [],
+      sortDirections: ["ascend", "descend"],
     },
     {
       position: 15,
@@ -1078,14 +1100,14 @@ export const getDrugDetailsColumnPR: () => Column<any>[] = () => {
       dataType: "string",
       filters: textFilters,
       hidden: false,
-      sortDirections: [],
+      sortDirections: ["ascend", "descend"],
     },
   ];
 };
 
 export const getDrugDetailsColumnPN: () => Column<any>[] = () => {
   return [
-		{
+    {
       position: 1,
       textCase: "upper",
       pixelWidth: 50,
@@ -1094,7 +1116,7 @@ export const getDrugDetailsColumnPN: () => Column<any>[] = () => {
       fixed: "left",
       displayTitle: "",
       headerCellSelection: true,
-      hidden: false
+      hidden: false,
     },
     {
       position: 2,
@@ -1107,7 +1129,7 @@ export const getDrugDetailsColumnPN: () => Column<any>[] = () => {
       dataType: "string",
       filters: textFilters,
       hidden: false,
-      sortDirections: [],
+      sortDirections: ["ascend", "descend"],
     },
     {
       position: 3,
@@ -1120,7 +1142,7 @@ export const getDrugDetailsColumnPN: () => Column<any>[] = () => {
       dataType: "string",
       filters: textFilters,
       hidden: false,
-      sortDirections: [],
+      sortDirections: ["ascend", "descend"],
     },
     {
       position: 4,
@@ -1133,7 +1155,7 @@ export const getDrugDetailsColumnPN: () => Column<any>[] = () => {
       dataType: "string",
       filters: textFilters,
       hidden: false,
-      sortDirections: [],
+      sortDirections: ["ascend", "descend"],
     },
     {
       position: 5,
@@ -1146,7 +1168,7 @@ export const getDrugDetailsColumnPN: () => Column<any>[] = () => {
       dataType: "string",
       filters: textFilters,
       hidden: false,
-      sortDirections: [],
+      sortDirections: ["ascend", "descend"],
     },
     {
       position: 6,
@@ -1159,7 +1181,7 @@ export const getDrugDetailsColumnPN: () => Column<any>[] = () => {
       dataType: "string",
       filters: textFilters,
       hidden: false,
-      sortDirections: [],
+      sortDirections: ["ascend", "descend"],
     },
     {
       position: 7,
@@ -1172,7 +1194,7 @@ export const getDrugDetailsColumnPN: () => Column<any>[] = () => {
       dataType: "string",
       filters: textFilters,
       hidden: false,
-      sortDirections: [],
+      sortDirections: ["ascend", "descend"],
     },
     {
       position: 8,
@@ -1185,7 +1207,7 @@ export const getDrugDetailsColumnPN: () => Column<any>[] = () => {
       dataType: "string",
       filters: textFilters,
       hidden: false,
-      sortDirections: [],
+      sortDirections: ["ascend", "descend"],
     },
     {
       position: 9,
@@ -1198,7 +1220,7 @@ export const getDrugDetailsColumnPN: () => Column<any>[] = () => {
       dataType: "string",
       filters: textFilters,
       hidden: false,
-      sortDirections: [],
+      sortDirections: ["ascend", "descend"],
     },
     {
       position: 10,
@@ -1211,7 +1233,7 @@ export const getDrugDetailsColumnPN: () => Column<any>[] = () => {
       dataType: "string",
       filters: textFilters,
       hidden: false,
-      sortDirections: [],
+      sortDirections: ["ascend", "descend"],
     },
     {
       position: 11,
@@ -1224,7 +1246,7 @@ export const getDrugDetailsColumnPN: () => Column<any>[] = () => {
       dataType: "string",
       filters: textFilters,
       hidden: false,
-      sortDirections: [],
+      sortDirections: ["ascend", "descend"],
     },
     {
       position: 12,
@@ -1237,7 +1259,7 @@ export const getDrugDetailsColumnPN: () => Column<any>[] = () => {
       dataType: "string",
       filters: textFilters,
       hidden: false,
-      sortDirections: [],
+      sortDirections: ["ascend", "descend"],
     },
     {
       position: 13,
@@ -1249,7 +1271,7 @@ export const getDrugDetailsColumnPN: () => Column<any>[] = () => {
       dataType: "string",
       filters: textFilters,
       hidden: false,
-      sortDirections: [],
+      sortDirections: ["ascend", "descend"],
     },
     {
       position: 14,
@@ -1261,7 +1283,7 @@ export const getDrugDetailsColumnPN: () => Column<any>[] = () => {
       dataType: "string",
       filters: textFilters,
       hidden: false,
-      sortDirections: [],
+      sortDirections: ["ascend", "descend"],
     },
     {
       position: 15,
@@ -1273,14 +1295,14 @@ export const getDrugDetailsColumnPN: () => Column<any>[] = () => {
       dataType: "string",
       filters: textFilters,
       hidden: false,
-      sortDirections: [],
+      sortDirections: ["ascend", "descend"],
     },
   ];
 };
 
 export const getDrugDetailsColumnICD: () => Column<any>[] = () => {
   return [
-		{
+    {
       position: 1,
       textCase: "upper",
       pixelWidth: 50,
@@ -1289,7 +1311,7 @@ export const getDrugDetailsColumnICD: () => Column<any>[] = () => {
       fixed: "left",
       displayTitle: "",
       headerCellSelection: true,
-      hidden: false
+      hidden: false,
     },
     {
       position: 2,
@@ -1302,7 +1324,7 @@ export const getDrugDetailsColumnICD: () => Column<any>[] = () => {
       dataType: "string",
       filters: textFilters,
       hidden: false,
-      sortDirections: [],
+      sortDirections: ["ascend", "descend"],
     },
     {
       position: 3,
@@ -1315,7 +1337,7 @@ export const getDrugDetailsColumnICD: () => Column<any>[] = () => {
       dataType: "string",
       filters: textFilters,
       hidden: false,
-      sortDirections: [],
+      sortDirections: ["ascend", "descend"],
     },
     {
       position: 4,
@@ -1328,7 +1350,7 @@ export const getDrugDetailsColumnICD: () => Column<any>[] = () => {
       dataType: "string",
       filters: textFilters,
       hidden: false,
-      sortDirections: [],
+      sortDirections: ["ascend", "descend"],
     },
     {
       position: 5,
@@ -1341,7 +1363,7 @@ export const getDrugDetailsColumnICD: () => Column<any>[] = () => {
       dataType: "string",
       filters: textFilters,
       hidden: false,
-      sortDirections: [],
+      sortDirections: ["ascend", "descend"],
     },
     {
       position: 6,
@@ -1354,7 +1376,7 @@ export const getDrugDetailsColumnICD: () => Column<any>[] = () => {
       dataType: "string",
       filters: textFilters,
       hidden: false,
-      sortDirections: [],
+      sortDirections: ["ascend", "descend"],
     },
     {
       position: 7,
@@ -1367,7 +1389,7 @@ export const getDrugDetailsColumnICD: () => Column<any>[] = () => {
       dataType: "string",
       filters: textFilters,
       hidden: false,
-      sortDirections: [],
+      sortDirections: ["ascend", "descend"],
     },
     {
       position: 8,
@@ -1380,7 +1402,7 @@ export const getDrugDetailsColumnICD: () => Column<any>[] = () => {
       dataType: "string",
       filters: textFilters,
       hidden: false,
-      sortDirections: [],
+      sortDirections: ["ascend", "descend"],
     },
     {
       position: 9,
@@ -1393,7 +1415,7 @@ export const getDrugDetailsColumnICD: () => Column<any>[] = () => {
       dataType: "string",
       filters: textFilters,
       hidden: false,
-      sortDirections: [],
+      sortDirections: ["ascend", "descend"],
     },
     {
       position: 10,
@@ -1406,7 +1428,7 @@ export const getDrugDetailsColumnICD: () => Column<any>[] = () => {
       dataType: "string",
       filters: textFilters,
       hidden: false,
-      sortDirections: [],
+      sortDirections: ["ascend", "descend"],
     },
     {
       position: 11,
@@ -1419,7 +1441,7 @@ export const getDrugDetailsColumnICD: () => Column<any>[] = () => {
       dataType: "string",
       filters: textFilters,
       hidden: false,
-      sortDirections: [],
+      sortDirections: ["ascend", "descend"],
     },
     {
       position: 12,
@@ -1432,7 +1454,7 @@ export const getDrugDetailsColumnICD: () => Column<any>[] = () => {
       dataType: "string",
       filters: textFilters,
       hidden: false,
-      sortDirections: [],
+      sortDirections: ["ascend", "descend"],
     },
     {
       position: 13,
@@ -1445,7 +1467,7 @@ export const getDrugDetailsColumnICD: () => Column<any>[] = () => {
       dataType: "string",
       filters: textFilters,
       hidden: false,
-      sortDirections: [],
+      sortDirections: ["ascend", "descend"],
     },
     {
       position: 14,
@@ -1457,7 +1479,7 @@ export const getDrugDetailsColumnICD: () => Column<any>[] = () => {
       dataType: "string",
       filters: textFilters,
       hidden: false,
-      sortDirections: [],
+      sortDirections: ["ascend", "descend"],
     },
     {
       position: 15,
@@ -1469,7 +1491,7 @@ export const getDrugDetailsColumnICD: () => Column<any>[] = () => {
       dataType: "string",
       filters: textFilters,
       hidden: false,
-      sortDirections: [],
+      sortDirections: ["ascend", "descend"],
     },
     {
       position: 16,
@@ -1481,14 +1503,14 @@ export const getDrugDetailsColumnICD: () => Column<any>[] = () => {
       dataType: "string",
       filters: textFilters,
       hidden: false,
-      sortDirections: [],
+      sortDirections: ["ascend", "descend"],
     },
   ];
 };
 
 export const getDrugDetailsColumnGL: () => Column<any>[] = () => {
   return [
-		{
+    {
       position: 1,
       textCase: "upper",
       pixelWidth: 50,
@@ -1497,7 +1519,7 @@ export const getDrugDetailsColumnGL: () => Column<any>[] = () => {
       fixed: "left",
       displayTitle: "",
       headerCellSelection: true,
-      hidden: false
+      hidden: false,
     },
     {
       position: 2,
@@ -1509,7 +1531,7 @@ export const getDrugDetailsColumnGL: () => Column<any>[] = () => {
       dataType: "string",
       filters: textFilters,
       hidden: false,
-      sortDirections: [],
+      sortDirections: ["ascend", "descend"],
     },
     {
       position: 3,
@@ -1521,7 +1543,7 @@ export const getDrugDetailsColumnGL: () => Column<any>[] = () => {
       dataType: "string",
       filters: textFilters,
       hidden: false,
-      sortDirections: [],
+      sortDirections: ["ascend", "descend"],
     },
     {
       position: 4,
@@ -1533,7 +1555,7 @@ export const getDrugDetailsColumnGL: () => Column<any>[] = () => {
       dataType: "string",
       filters: textFilters,
       hidden: false,
-      sortDirections: [],
+      sortDirections: ["ascend", "descend"],
     },
     {
       position: 5,
@@ -1545,7 +1567,7 @@ export const getDrugDetailsColumnGL: () => Column<any>[] = () => {
       dataType: "string",
       filters: textFilters,
       hidden: false,
-      sortDirections: [],
+      sortDirections: ["ascend", "descend"],
     },
     {
       position: 6,
@@ -1557,7 +1579,7 @@ export const getDrugDetailsColumnGL: () => Column<any>[] = () => {
       dataType: "string",
       filters: textFilters,
       hidden: false,
-      sortDirections: [],
+      sortDirections: ["ascend", "descend"],
     },
     {
       position: 7,
@@ -1569,7 +1591,7 @@ export const getDrugDetailsColumnGL: () => Column<any>[] = () => {
       dataType: "string",
       filters: textFilters,
       hidden: false,
-      sortDirections: [],
+      sortDirections: ["ascend", "descend"],
     },
     {
       position: 8,
@@ -1581,7 +1603,7 @@ export const getDrugDetailsColumnGL: () => Column<any>[] = () => {
       dataType: "string",
       filters: textFilters,
       hidden: false,
-      sortDirections: [],
+      sortDirections: ["ascend", "descend"],
     },
     {
       position: 9,
@@ -1593,7 +1615,7 @@ export const getDrugDetailsColumnGL: () => Column<any>[] = () => {
       dataType: "string",
       filters: textFilters,
       hidden: false,
-      sortDirections: [],
+      sortDirections: ["ascend", "descend"],
     },
     {
       position: 10,
@@ -1605,7 +1627,7 @@ export const getDrugDetailsColumnGL: () => Column<any>[] = () => {
       dataType: "string",
       filters: textFilters,
       hidden: false,
-      sortDirections: [],
+      sortDirections: ["ascend", "descend"],
     },
     {
       position: 11,
@@ -1617,7 +1639,7 @@ export const getDrugDetailsColumnGL: () => Column<any>[] = () => {
       dataType: "string",
       filters: textFilters,
       hidden: false,
-      sortDirections: [],
+      sortDirections: ["ascend", "descend"],
     },
     {
       position: 12,
@@ -1629,7 +1651,7 @@ export const getDrugDetailsColumnGL: () => Column<any>[] = () => {
       dataType: "string",
       filters: textFilters,
       hidden: false,
-      sortDirections: [],
+      sortDirections: ["ascend", "descend"],
     },
     {
       position: 13,
@@ -1641,7 +1663,7 @@ export const getDrugDetailsColumnGL: () => Column<any>[] = () => {
       dataType: "string",
       filters: textFilters,
       hidden: false,
-      sortDirections: [],
+      sortDirections: ["ascend", "descend"],
     },
     {
       position: 14,
@@ -1653,7 +1675,7 @@ export const getDrugDetailsColumnGL: () => Column<any>[] = () => {
       dataType: "string",
       filters: textFilters,
       hidden: false,
-      sortDirections: [],
+      sortDirections: ["ascend", "descend"],
     },
     {
       position: 15,
@@ -1665,14 +1687,14 @@ export const getDrugDetailsColumnGL: () => Column<any>[] = () => {
       dataType: "string",
       filters: textFilters,
       hidden: false,
-      sortDirections: [],
+      sortDirections: ["ascend", "descend"],
     },
   ];
 };
 
 export const getDrugDetailsColumnAL: () => Column<any>[] = () => {
   return [
-		{
+    {
       position: 1,
       textCase: "upper",
       pixelWidth: 50,
@@ -1681,7 +1703,7 @@ export const getDrugDetailsColumnAL: () => Column<any>[] = () => {
       fixed: "left",
       displayTitle: "",
       headerCellSelection: true,
-      hidden: false
+      hidden: false,
     },
     {
       position: 2,
@@ -1693,7 +1715,7 @@ export const getDrugDetailsColumnAL: () => Column<any>[] = () => {
       dataType: "string",
       filters: textFilters,
       hidden: false,
-      sortDirections: [],
+      sortDirections: ["ascend", "descend"],
     },
     {
       position: 3,
@@ -1705,7 +1727,7 @@ export const getDrugDetailsColumnAL: () => Column<any>[] = () => {
       dataType: "string",
       filters: textFilters,
       hidden: false,
-      sortDirections: [],
+      sortDirections: ["ascend", "descend"],
     },
     {
       position: 4,
@@ -1717,7 +1739,7 @@ export const getDrugDetailsColumnAL: () => Column<any>[] = () => {
       dataType: "string",
       filters: textFilters,
       hidden: false,
-      sortDirections: [],
+      sortDirections: ["ascend", "descend"],
     },
     {
       position: 5,
@@ -1729,7 +1751,7 @@ export const getDrugDetailsColumnAL: () => Column<any>[] = () => {
       dataType: "string",
       filters: textFilters,
       hidden: false,
-      sortDirections: [],
+      sortDirections: ["ascend", "descend"],
     },
     {
       position: 6,
@@ -1741,7 +1763,7 @@ export const getDrugDetailsColumnAL: () => Column<any>[] = () => {
       dataType: "string",
       filters: textFilters,
       hidden: false,
-      sortDirections: [],
+      sortDirections: ["ascend", "descend"],
     },
     {
       position: 7,
@@ -1753,7 +1775,7 @@ export const getDrugDetailsColumnAL: () => Column<any>[] = () => {
       dataType: "string",
       filters: textFilters,
       hidden: false,
-      sortDirections: [],
+      sortDirections: ["ascend", "descend"],
     },
     {
       position: 8,
@@ -1765,7 +1787,7 @@ export const getDrugDetailsColumnAL: () => Column<any>[] = () => {
       dataType: "string",
       filters: textFilters,
       hidden: false,
-      sortDirections: [],
+      sortDirections: ["ascend", "descend"],
     },
     {
       position: 9,
@@ -1777,7 +1799,7 @@ export const getDrugDetailsColumnAL: () => Column<any>[] = () => {
       dataType: "string",
       filters: textFilters,
       hidden: false,
-      sortDirections: [],
+      sortDirections: ["ascend", "descend"],
     },
     {
       position: 10,
@@ -1789,7 +1811,7 @@ export const getDrugDetailsColumnAL: () => Column<any>[] = () => {
       dataType: "string",
       filters: textFilters,
       hidden: false,
-      sortDirections: [],
+      sortDirections: ["ascend", "descend"],
     },
     {
       position: 11,
@@ -1801,7 +1823,7 @@ export const getDrugDetailsColumnAL: () => Column<any>[] = () => {
       dataType: "string",
       filters: textFilters,
       hidden: false,
-      sortDirections: [],
+      sortDirections: ["ascend", "descend"],
     },
     {
       position: 12,
@@ -1813,7 +1835,7 @@ export const getDrugDetailsColumnAL: () => Column<any>[] = () => {
       dataType: "string",
       filters: textFilters,
       hidden: false,
-      sortDirections: [],
+      sortDirections: ["ascend", "descend"],
     },
     {
       position: 13,
@@ -1825,7 +1847,7 @@ export const getDrugDetailsColumnAL: () => Column<any>[] = () => {
       dataType: "string",
       filters: textFilters,
       hidden: false,
-      sortDirections: [],
+      sortDirections: ["ascend", "descend"],
     },
     {
       position: 14,
@@ -1837,7 +1859,7 @@ export const getDrugDetailsColumnAL: () => Column<any>[] = () => {
       dataType: "string",
       filters: textFilters,
       hidden: false,
-      sortDirections: [],
+      sortDirections: ["ascend", "descend"],
     },
     {
       position: 15,
@@ -1849,7 +1871,7 @@ export const getDrugDetailsColumnAL: () => Column<any>[] = () => {
       dataType: "string",
       filters: textFilters,
       hidden: false,
-      sortDirections: [],
+      sortDirections: ["ascend", "descend"],
     },
     {
       position: 16,
@@ -1861,7 +1883,7 @@ export const getDrugDetailsColumnAL: () => Column<any>[] = () => {
       dataType: "string",
       filters: textFilters,
       hidden: false,
-      sortDirections: [],
+      sortDirections: ["ascend", "descend"],
     },
     {
       position: 17,
@@ -1873,7 +1895,7 @@ export const getDrugDetailsColumnAL: () => Column<any>[] = () => {
       dataType: "string",
       filters: textFilters,
       hidden: false,
-      sortDirections: [],
+      sortDirections: ["ascend", "descend"],
     },
     {
       position: 18,
@@ -1885,7 +1907,7 @@ export const getDrugDetailsColumnAL: () => Column<any>[] = () => {
       dataType: "string",
       filters: textFilters,
       hidden: false,
-      sortDirections: [],
+      sortDirections: ["ascend", "descend"],
     },
     {
       position: 19,
@@ -1897,7 +1919,7 @@ export const getDrugDetailsColumnAL: () => Column<any>[] = () => {
       dataType: "string",
       filters: textFilters,
       hidden: false,
-      sortDirections: [],
+      sortDirections: ["ascend", "descend"],
     },
     {
       position: 20,
@@ -1909,7 +1931,7 @@ export const getDrugDetailsColumnAL: () => Column<any>[] = () => {
       dataType: "string",
       filters: textFilters,
       hidden: false,
-      sortDirections: [],
+      sortDirections: ["ascend", "descend"],
     },
     {
       position: 21,
@@ -1921,7 +1943,7 @@ export const getDrugDetailsColumnAL: () => Column<any>[] = () => {
       dataType: "string",
       filters: textFilters,
       hidden: false,
-      sortDirections: [],
+      sortDirections: ["ascend", "descend"],
     },
   ];
 };

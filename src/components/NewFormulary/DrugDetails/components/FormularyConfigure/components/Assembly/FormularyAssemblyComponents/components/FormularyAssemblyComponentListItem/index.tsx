@@ -44,6 +44,7 @@ interface FormularyAssemblyComponentListItemProps {
   description?: string;
   onAdd?: any;
   onRemove?: any;
+  onView?: any
   type?: string;
 }
 
@@ -53,6 +54,7 @@ class FormularyAssemblyComponentListItem extends Component<
   FormularyAssemblyComponentListItemProps,
   FormularyAssemblyComponentListItemState
 > {
+  
   handleOnAddClick = () => {
     const { index, onAdd } = this.props;
 
@@ -63,13 +65,17 @@ class FormularyAssemblyComponentListItem extends Component<
 
   handleOnRemoveClick = () => {
     const { id, onRemove } = this.props;
-    console.log(
-      "🚀 ~ file: index.tsx ~ line 49 ~ FormularyAssemblyComponentListItem ~ id",
-      id
-    );
 
     if (typeof onRemove === "function") {
       onRemove(id);
+    }
+  };
+  
+  handleOnViewClick = () => {
+    const { id, onView } = this.props;
+
+    if (typeof onView === "function") {
+      onView(id);
     }
   };
 
@@ -87,7 +93,7 @@ class FormularyAssemblyComponentListItem extends Component<
           </div>
 
           <div className="formulary-assembly-component-list-item__actions-container">
-            <div className="formulary-assembly-component-list-item__action">
+            <div className="formulary-assembly-component-list-item__action" onClick={this.handleOnViewClick}>
               <EyeIcon />
             </div>
 

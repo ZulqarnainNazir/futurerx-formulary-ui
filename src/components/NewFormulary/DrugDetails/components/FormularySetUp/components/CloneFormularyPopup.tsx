@@ -236,6 +236,7 @@ class CloneFormularyPopup extends React.Component<any, any> {
   };
   onClearFilterHandler = () => {
     this.listPayload = { ...defaultListPayload };
+    this.listPayload.filter = Array();
     this.listPayload.id_lob = this.props.formulary_lob_id;
     if (this.props.lobID > 0) {
       this.listPayload.id_lob = parseInt(this.props.lobID);
