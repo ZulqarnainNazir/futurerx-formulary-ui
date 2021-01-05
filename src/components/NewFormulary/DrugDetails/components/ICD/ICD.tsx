@@ -79,6 +79,10 @@ interface icdState {
   icdRemoveCheckedList: any[];
   icdRemoveSettingsStatus: any;
   showGrid: boolean;
+  sort_by: any[],
+  hiddenColumns: any[],
+  selectedRowKeys: number[];
+  fixedSelectedRows: number[];
 }
 
 const columnFilterMapping = {
@@ -133,6 +137,10 @@ class DrugDetailICD extends React.Component<any, any> {
       covered: true,
     },
     showGrid: false,
+    sort_by: Array(),
+    hiddenColumns: Array(),
+    selectedRowKeys: [],
+    fixedSelectedRows: [],
   };
 
   listPayload: any = {
@@ -401,7 +409,9 @@ class DrugDetailICD extends React.Component<any, any> {
     }
 
     let listCount = 0;
+    const thisRef = this;
     this.props.getDrugDetailsICDList(apiDetails).then((json) => {
+      console.log("THe State of the Tab = ", this.state);
       let tmpData =
         json.payload && json.payload.result ? json.payload.result : [];
       console.log("The GEt ICd LIst Resp = ", tmpData);
@@ -414,6 +424,50 @@ class DrugDetailICD extends React.Component<any, any> {
         let gridItem = {};
         gridItem["id"] = count;
         gridItem["key"] = count;
+        // for preseelct items with selected tier value
+
+        if(this.state.activeTabIndex !== 2) {
+          if(this.state.icdSettingsStatus.covered) {
+            if(element.covered_icds) {
+              let cprsArray = element.covered_icds.split(",").map(e => e.trim().toLowerCase());
+    
+              let chFilterSettings = this.state.selectedList.map(e => e.text.substring(0, e.text.indexOf('-')).toLowerCase());
+              console.log("THe 2 Arrays To Match = ", cprsArray, "  2nd Array = ", chFilterSettings);
+              console.log("The Look back Days Check =  state = ", this.state.lookBackDays, " --- API lookback days = ", element.lookback_days);
+    
+              if(chFilterSettings.length === cprsArray.length) {
+                let arrEqRes = thisRef.arraysEqual(chFilterSettings, cprsArray);
+                let elLkbkDays = element.lookback_days ? element.lookback_days : 0;
+                let lkbkDays = this.state.lookBackDays ? this.state.lookBackDays : 0;
+                if(arrEqRes && (lkbkDays === elLkbkDays)) {
+                  gridItem["isChecked"] = true;
+                  gridItem["isDisabled"] = true;
+                  gridItem["rowStyle"] = "table-row--blue-font";
+                }
+              }
+            }
+          } else if (!this.state.icdSettingsStatus.covered) {
+            if(element.not_covered_icds) {
+              let ncgendersArray = element.not_covered_icds.split(",").map(e => e.trim().toLowerCase());
+    
+              let chFilterSettings = this.state.selectedList.map(e => e.text.substring(0, e.text.indexOf('-')).toLowerCase());
+              console.log("THe 2 Arrays To Match = ", ncgendersArray, "  2nd Array = ", chFilterSettings);
+              console.log("The Look back Days Check =  state = ", this.state.lookBackDays, " --- API lookback days = ", element.lookback_days);
+    
+              if(chFilterSettings.length === ncgendersArray.length) {
+                let arrEqRes = thisRef.arraysEqual(chFilterSettings, ncgendersArray);
+                let elLkbkDays = element.lookback_days ? element.lookback_days : 0;
+                let lkbkDays = this.state.lookBackDays ? this.state.lookBackDays : 0;
+                if(arrEqRes && (lkbkDays === elLkbkDays)) {
+                  gridItem["isChecked"] = true;
+                  gridItem["isDisabled"] = true;
+                  gridItem["rowStyle"] = "table-row--blue-font";
+                }
+              }
+            }
+          }
+        }
+
         gridItem["icdLimit"] = element.is_icdl ? "" + element.is_icdl : "";
         gridItem["coveredIcd"] = element.covered_icds
           ? "" + element.covered_icds
@@ -579,6 +633,9 @@ class DrugDetailICD extends React.Component<any, any> {
 
   onSelectedTableRowChanged = (selectedRowKeys) => {
     this.state.selectedDrugs = [];
+    this.setState({
+      selectedRowKeys: [...selectedRowKeys]
+    });
     if (selectedRowKeys && selectedRowKeys.length > 0) {
       let selDrugs = selectedRowKeys.map((ele) => {
         return this.state.drugData[ele - 1]["md5_id"]
@@ -586,13 +643,21 @@ class DrugDetailICD extends React.Component<any, any> {
           : "";
       });
 
-      this.setState({ selectedDrugs: selDrugs }, () =>
+      let selStateTmpDrugs = [...this.state.selectedDrugs, ...selDrugs];
+
+      this.setState({ selectedDrugs: selStateTmpDrugs }, () =>
         console.log("The Selected Drugs = ", this.state.selectedDrugs)
       );
     } else {
       this.setState({ selectedDrugs: [] });
     }
   };
+
+  arraysEqual = (a, b) => {
+    if(a.length !== b.length) return false;
+    
+    return a.sort().toString() == b.sort().toString();
+  }
 
   handleNoteClick = (event: React.ChangeEvent<{}>) => {
     event.stopPropagation();
@@ -747,16 +812,126 @@ class DrugDetailICD extends React.Component<any, any> {
     }
   }
 
+  onSettingsIconHandler = (hiddenColumn, visibleColumn) => {
+    console.log(
+      "Settings icon handler: Hidden" +
+      JSON.stringify(hiddenColumn) +
+      " Visible:" +
+      JSON.stringify(visibleColumn)
+    );
+    if (hiddenColumn && hiddenColumn.length > 0) {
+      let hiddenColumnKeys = hiddenColumn.map(column => column["key"]);
+      this.setState({
+        hiddenColumns: hiddenColumnKeys
+      });
+    }
+  };
+
+  rowSelectionChangeFromCell = (
+    key: string,
+    selectedRow: any,
+    isSelected: boolean
+  ) => {
+    console.log("data row ", selectedRow, isSelected);
+    if (!selectedRow["isDisabled"]) {
+      if (isSelected) {
+        const data = this.state.data.map((d: any) => {
+          if (d.key === selectedRow.key) {
+            d["isChecked"] = true;
+            d["rowStyle"] = this.state.activeTabIndex === 2 ? "table-row--red-font" : "table-row--green-font";
+          }
+          // else d["isChecked"] = false;
+          return d;
+        });
+        const selectedRowKeys = [
+          ...this.state.selectedRowKeys,
+          selectedRow.key
+        ];
+        console.log("selected row keys ", selectedRowKeys);
+        const selectedRows: number[] = selectedRowKeys.filter(
+          k => this.state.fixedSelectedRows.indexOf(k) < 0
+        );
+        this.onSelectedTableRowChanged(selectedRowKeys);
+
+        this.setState({ data: data });
+      } else {
+        const data = this.state.data.map((d: any) => {
+          if (d.key === selectedRow.key) {
+            d["isChecked"] = false;
+            if (d["rowStyle"])
+              delete d["rowStyle"];
+          }
+          // else d["isChecked"] = false;
+          return d;
+        });
+
+        const selectedRowKeys: number[] = this.state.selectedRowKeys.filter(
+          k => k !== selectedRow.key
+        );
+        const selectedRows = selectedRowKeys.filter(
+          k => this.state.fixedSelectedRows.indexOf(k) < 0
+        );
+
+        this.onSelectedTableRowChanged(selectedRows);
+        this.setState({
+          data: data
+        });
+      }
+    }
+  };
+
+  onSelectAllRows = (isSelected: boolean) => {
+    const selectedRowKeys: number[] = [];
+    const data = this.state.data.map((d: any) => {
+      if (!d["isDisabled"]) {
+        d["isChecked"] = isSelected;
+        if (isSelected) {
+          selectedRowKeys.push(d["key"]);
+          d["rowStyle"] = this.state.activeTabIndex === 2 ? "table-row--red-font" : "table-row--green-font";
+        } else {
+          if (d["rowStyle"])
+            delete d["rowStyle"]
+        }
+      }
+      
+      return d;
+    });
+    const selectedRows: number[] = selectedRowKeys.filter(
+      k => this.state.fixedSelectedRows.indexOf(k) < 0
+    );
+    this.onSelectedTableRowChanged(selectedRows);
+    this.setState({ data: data });
+  };
+  
+  onApplySortHandler = (key, order) => {
+    console.log("sort details ", key, order);
+    this.state.sort_by = Array();
+    if (order) {
+      let sortOrder = order === 'ascend' ? 'asc' : 'desc';
+      this.state.sort_by = this.state.sort_by.filter(keyPair => keyPair['key'] !== key);
+      this.state.sort_by.push({ key: key, value: sortOrder });
+    }
+    if (this.props.advancedSearchBody) {
+      this.getICDDrugsList({ searchBody: this.props.advancedSearchBody });
+    } else {
+      this.getICDDrugsList();
+    }
+  };
+
   render() {
     const searchProps = {
       lobCode: this.props.lobCode,
       pageType: 0,
     };
+    let columns = getDrugDetailsColumnICD();
+    if (this.state.hiddenColumns.length > 0) {
+      columns = columns.filter(key => !this.state.hiddenColumns.includes(key));
+    }
     let dataGrid = <FrxLoader />;
     if (this.state.data) {
       dataGrid = (
         <div className="tier-grid-container">
-          <FrxDrugGridContainer
+          {/* <FrxDrugGridContainer
             isPinningEnabled={false}
             enableSearch={false}
             enableColumnDrag
@@ -785,6 +960,36 @@ class DrugDetailICD extends React.Component<any, any> {
               type: "checkbox",
               onChange: this.onSelectedTableRowChanged,
             }}
+          /> */}
+          <FrxDrugGridContainer
+            isPinningEnabled={false}
+            enableSearch={false}
+            enableColumnDrag
+            settingsWidth={50}
+            onSearch={() => { }}
+            fixedColumnKeys={[]}
+            pagintionPosition="topRight"
+            gridName="TIER"
+            enableSettings
+            columns={columns}
+            scroll={{ x: 3600, y: 377 }}
+            isFetchingData={false}
+            enableResizingOfColumns
+            data={this.state.data}
+            rowSelectionChangeFromCell={this.rowSelectionChangeFromCell}
+            onSelectAllRows={this.onSelectAllRows}
+            customSettingIcon={"FILL-DOT"}
+            totalRowsCount={this.state.listCount}
+            getPerPageItemSize={this.onPageSize}
+            onGridPageChangeHandler={this.onGridPageChangeHandler}
+            clearFilterHandler={this.onClearFilterHandler}
+            applyFilter={this.onApplyFilterHandler}
+            applySort={this.onApplySortHandler}
+            getColumnSettings={this.onSettingsIconHandler}
+            pageSize={this.listPayload.limit}
+            selectedCurrentPage={
+              this.listPayload.index / this.listPayload.limit + 1
+            }
           />
         </div>
       );

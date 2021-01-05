@@ -9,11 +9,12 @@ import { ReactComponent as DownloadIcon } from "../../../../../assets/icons/Down
 import "./CompareView.scss";
 import ViewFormularies from "./components/ViewFormularies";
 import showMessage from "../../../Utils/Toast";
-import { ToastContainer } from 'react-toastify';
-import { saveAs } from 'file-saver';
+import { ToastContainer } from "react-toastify";
+import { saveAs } from "file-saver";
 import { exportReport } from "../../../../../redux/slices/formulary/compareView/compareViewService";
 import * as commonConstants from "../../../../../api/http-commons";
 import uuid from "react-uuid";
+import FrxLoader from "../../../../shared/FrxLoader/FrxLoader";
 
 const tabs = [
   { id: 1, text: "COMPARE FORMUARIES" },
@@ -28,6 +29,7 @@ interface configureState {
   isViewClicked: boolean;
   baseformulary: any;
   referenceformulary: any;
+  isRequestFinished: any;
 }
 interface configureProps { }
 
@@ -43,6 +45,7 @@ export default class CompareView extends React.Component<
     baseformulary: {},
     referenceformulary: {},
     exportSections: Array(),
+    isRequestFinished: true,
   };
   onClickTab = (selectedTabIndex: number) => {
     let activeTabIndex = 0;
@@ -53,73 +56,122 @@ export default class CompareView extends React.Component<
       }
       return tab;
     });
+    this.state.isCompareClicked = false;
+    this.state.isViewClicked = false;
     this.setState({ tabs, activeTabIndex });
   };
 
-  handleCompareBtn = (baseFormulary, referenceFromulary) => {
-    if (baseFormulary && referenceFromulary && baseFormulary['id_formulary'] && referenceFromulary['id_formulary']) {
+  handleCompareClear = () => {
+    if (this.state.isCompareClicked) {
       this.setState({
-        isCompareClicked: !this.state.isCompareClicked,
-        baseformulary: baseFormulary,
-        referenceformulary: referenceFromulary,
+        isCompareClicked: false,
+      });
+    }
+  }
+
+  handleViewClear = () => {
+    if (this.state.isViewClicked) {
+      this.setState({
+        isViewClicked: false,
+      });
+    }
+  }
+
+  handleCompareBtn = (baseFormulary, referenceFromulary) => {
+    if (
+      baseFormulary &&
+      referenceFromulary &&
+      baseFormulary["id_formulary"] &&
+      referenceFromulary["id_formulary"]
+    ) {
+      this.state.baseformulary = baseFormulary;
+      this.state.referenceformulary = referenceFromulary;
+
+      this.setState({
+        isCompareClicked: false,
+      }, () => {
+        this.setState({
+          isCompareClicked: true,
+        })
       });
     } else {
-      showMessage('Choose formularies to compare', 'error');
+      showMessage("Choose formularies to compare", "error");
     }
   };
 
   handleViewBtn = (baseFormulary) => {
-    if (baseFormulary && baseFormulary['id_formulary']) {
+    if (baseFormulary && baseFormulary["id_formulary"]) {
+      this.state.baseformulary = baseFormulary;
       this.setState({
-        isViewClicked: !this.state.isViewClicked,
-        baseformulary: baseFormulary,
+        isViewClicked: false,
+      }, () => {
+        this.setState({
+          isViewClicked: true,
+        })
       });
     } else {
-      showMessage('Choose formulary to view', 'error');
+      showMessage("Choose formulary to view", "error");
     }
   };
-
   sectionSelected = (sectionName, checked) => {
-    console.log('Section selection:'+sectionName+' '+checked);
+    console.log("Section selection:" + sectionName + " " + checked);
     if (checked) {
       if (!this.state.exportSections.includes(sectionName))
         this.state.exportSections.push(sectionName);
     } else {
-      this.state.exportSections = this.state.exportSections.filter(section => section !== sectionName);
+      this.state.exportSections = this.state.exportSections.filter(
+        (section) => section !== sectionName
+      );
     }
-  }
+  };
 
   handeReportDownload = async (type) => {
-    let param = type === 'summary' ? 'COMPAREEXC' : 'COMPAREEXCDET';
+    this.setState({
+      isRequestFinished: false
+    });
+    let param = type === "summary" ? "COMPAREEXC" : "COMPAREEXCDET";
     let apiDetails = {};
     apiDetails["apiPart"] = commonConstants.COMPARE_FORMULARY_EXPORT_EXCEL;
     apiDetails["pathParams"] =
-      this.state.baseformulary["id_formulary"] + 
+      this.state.baseformulary["id_formulary"] +
       "/" +
-      this.state.referenceformulary["id_formulary"] + "/" + param;
+      this.state.referenceformulary["id_formulary"] +
+      "/" +
+      param;
 
-    apiDetails['messageBody'] = { selected_sections: this.state.exportSections };
+    apiDetails["messageBody"] = {
+      selected_sections: this.state.exportSections,
+    };
     try {
       const data = await exportReport(apiDetails);
       if (data) {
-        const file = new Blob([data], { type: 'application/vnd.ms.excel' });
-        saveAs(file, 'User_Export_' + uuid() + '.xlsx');
+        const file = new Blob([data], { type: "application/vnd.ms.excel" });
+        saveAs(file, "User_Export_" + uuid() + ".xlsx");
+        this.setState({
+          isRequestFinished: true
+        });
       } else {
         showMessage("Error while exporting", "error");
+        this.setState({
+          isRequestFinished: true
+        });
       }
     } catch (err) {
       console.log(err);
       showMessage("Error while exporting", "error");
+      this.setState({
+        isRequestFinished: true
+      });
     }
-  }
+  };
 
   renderActiveTabContent = () => {
     const tabIndex = this.state.activeTabIndex;
     switch (tabIndex) {
       case 0:
-        return <CompareFormularies handleCompareBtn={this.handleCompareBtn} />;
+        return <CompareFormularies handleCompareBtn={this.handleCompareBtn} handleCompareClear={this.handleCompareClear} />;
       case 1:
-        return <ViewFormularies handleViewBtn={this.handleViewBtn} />;
+        return <ViewFormularies handleViewBtn={this.handleViewBtn} handleViewClear={this.handleViewClear} />;
       case 2:
         return <div>HPMS SUMMARY</div>;
       default:
@@ -128,6 +180,9 @@ export default class CompareView extends React.Component<
   };
   render() {
     const { activeTabIndex, isCompareClicked, isViewClicked } = this.state;
+    if(!this.state.isRequestFinished){
+      return <FrxLoader />;
+    }
     return (
       <>
         <div className="bordered">
@@ -143,14 +198,38 @@ export default class CompareView extends React.Component<
         </div>
         {activeTabIndex === 0 && isCompareClicked ? (
           <div className="bordered m-t-10 compare-table-root">
-            <div className="header white-bg flex-container">
-              <label>Summary</label>
-              <DownloadIcon onClick={() => {this.handeReportDownload('summary')}} style={{marginLeft: 5}}/>
-              <label style={{marginLeft: 10}}>Details</label>
-              <DownloadIcon onClick={() => {this.handeReportDownload('detials')}} style={{marginLeft: 5}}/>
+            <div className="header white-bg flex-container compare-grid-header-download">
+              <h4 className="formulary-assembly-components__container-header-title">COMPARISON OF FORMULARIES</h4>
+              <div className="action-wrapper">
+                <div className="item-download">
+                  <label>Summary</label>
+                  <DownloadIcon
+                    onClick={() => {
+                      this.handeReportDownload("summary");
+                    }}
+                    style={{ marginLeft: 5 }}
+                  />
+                </div>
+                <div className="item-download">
+                  <label style={{ marginLeft: 10 }}>Details</label>
+                  <DownloadIcon
+                    onClick={() => {
+                      this.handeReportDownload("detials");
+                    }}
+                    style={{ marginLeft: 5 }}
+                  />
+                </div>
+              </div>
             </div>
             <div className="inner-container white-bg p-10">
-              <CompareTable baseformulary={Object.assign({}, this.state.baseformulary)} referenceformulary={Object.assign({}, this.state.referenceformulary)} sectionSelected={this.sectionSelected}/>
+              <CompareTable
+                baseformulary={Object.assign({}, this.state.baseformulary)}
+                referenceformulary={Object.assign(
+                  {},
+                  this.state.referenceformulary
+                )}
+                sectionSelected={this.sectionSelected}
+              />
             </div>
           </div>
         ) : null}
@@ -160,7 +239,9 @@ export default class CompareView extends React.Component<
               <label>summary of rxcui count</label>
             </div>
             <div className="inner-container white-bg p-10">
-              <ViewTable baseformulary={Object.assign({}, this.state.baseformulary)} />
+              <ViewTable
+                baseformulary={Object.assign({}, this.state.baseformulary)}
+              />
             </div>
           </div>
         ) : null}

@@ -391,3 +391,52 @@
 .tier-mini-tabs {
   border-right: none !important;
 }
+
+.delete-replace-popup {
+  .gridRow {
+    display: flex;
+    margin-bottom: 0;
+    &.header {
+      background: #2055b5;
+      color: white;
+      border-radius: 3px 3px 0 0;
+      overflow: hidden;
+      border: none;
+      padding: 0;
+    }
+    border: 1px solid #e5e5e5;
+    border-bottom: none;
+    padding: 8px 0;
+    > div {
+      text-align: center;
+    }
+    .dropdown-col {
+      width: 285px;
+      .ant-select {
+        text-align: left;
+      }
+    }
+    .tiername-col {
+      width: 240px;
+    }
+    .tierdesc-col {
+      width: 240px;
+    }
+    &:last-child {
+      border-bottom: 1px solid #e5e5e5;
+      border-radius: 0 0 3px 3px;
+    }
+  }
+}
+.class-category
+  .frx-grid-container
+  .frx-grid
+  .frx-grid__grid-block
+  .frx-grid__grid-block__table-block
+  .ant-table
+  .ant-table-header
+  .ant-table-thead
+  > tr
+  > th {
+  line-height: 50px !important;
+}

@@ -929,12 +929,13 @@ function NewGroup(props: any) {
                       label="Yes"
                       name="add-filter-2"
                       // checked={isAdditionalCriteriaOpen}
-                      onClick={() =>
+                      onClick={() => {
                         updateFormData({
                           ...formData,
                           is_additional_criteria_defined: true,
-                        })
-                      }
+                        });
+                        openAdditionalCriteria();
+                      }}
                       disabled={props.editable}
                     />
                     <RadioButton

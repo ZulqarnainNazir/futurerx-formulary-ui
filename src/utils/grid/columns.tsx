@@ -2506,7 +2506,7 @@ export const formularyDetailsGridColumns: (
       key: "step",
       displayTitle: "step",
       customContent: (props) => (
-        <div className="formulary-step">{props.data.step}</div>
+        <div className="formulary-step" title={props.data.step.step_name}>{props.data.step.step}</div>
       ),
       isFilterable: true,
       dataType: "string",

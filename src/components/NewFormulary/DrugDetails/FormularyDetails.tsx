@@ -10,7 +10,7 @@ import Validation from "../../Validation/Validation";
 import { connect } from "react-redux";
 import { setAdvancedSearch } from "../../../redux/slices/formulary/advancedSearch/advancedSearchSlice";
 import { setLocation } from "../../../redux/slices/formulary/application/applicationSlice";
-
+import EntityOwnershipContainer from "../EntityOwnership/EntityOwnershipContainer";
 const tabs = [
   { id: 1, text: "Setup" },
   { id: 2, text: "Configure" },
@@ -28,10 +28,8 @@ function mapDispatchToProps(dispatch) {
 }
 
 const mapStateToProps = (state) => {
-  //console.log(state)
   return {
     current_formulary: state.application.formulary,
-    setupComplete: state.application.setupComplete,
     location: state.application.location,
   };
 };
@@ -63,9 +61,6 @@ class FormularyDetails extends React.Component<any, any> {
   };
 
   componentDidMount() {
-    // console.log("====== Reeta's code ========")
-    // console.log(this.props)
-    // console.log("====== Reeta's code ========")
   }
 
   renderActiveTabContent = () => {
@@ -88,21 +83,23 @@ class FormularyDetails extends React.Component<any, any> {
           </div>
         );
       case 4:
-        return <div>Complete</div>;
+        return <EntityOwnershipContainer />;
       case 5:
         return <div>Bazaar</div>;
     }
   };
 
   getTabs(list: TabInfo[]): TabInfo[] {
-    // console.log(" ^^^^^^^^^^^^^^: " + this.props?.setupComplete)
+    console.log("+++++ " + this.props.location);
     list.forEach((t) => {
-      if (t && t?.text === "Configure") {
-        if (this.props?.setupComplete === true) {
+      if (this.props.location === 0) {
+        if (t && t?.text === "Setup") {
           t.disable = false;
         } else {
           t.disable = true;
         }
+      } else {
+        t.disable = false;
       }
     });
 
@@ -110,7 +107,6 @@ class FormularyDetails extends React.Component<any, any> {
   }
 
   render() {
-    // console.log("=============",this.props)
     const fData = this.props.data;
     return (
       <>
