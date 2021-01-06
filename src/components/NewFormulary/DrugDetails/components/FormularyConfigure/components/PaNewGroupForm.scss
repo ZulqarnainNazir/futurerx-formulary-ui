@@ -1,0 +1,14 @@
+@import "../../../../../../assets/style.scss";
+
+.__root-pa-gd-popup {
+  .panel,
+  .header {
+    display: flex;
+    justify-content: space-between;
+    .button-flex-container {
+      .auto-width {
+        width: auto;
+      }
+    }
+  }
+}
