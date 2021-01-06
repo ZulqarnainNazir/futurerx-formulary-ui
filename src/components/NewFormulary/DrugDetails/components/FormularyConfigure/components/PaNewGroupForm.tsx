@@ -51,7 +51,7 @@ import "./GroupDescriptionStyles.scss";
 interface Props {
   tooltip?: string;
   formType?: number;
-  editable?: boolean;
+  editMode?: boolean;
   drugList?: any;
 }
 interface initialFormData {
@@ -585,8 +585,8 @@ function NewGroup(props: any) {
   }, [props.additionalCriteriaObject]);
 
   useEffect(() => {
-    //debugger;
-    //setPanelColor(props.editable ? '-green' : '')
+    debugger;
+    //setPanelColor(editable ? '-green' : '')
     //setLatestId(props.latestVerion)
     isSetUpComplete(props.isSetUpComplete);
     updateFormData(initialFormData);
@@ -685,7 +685,7 @@ function NewGroup(props: any) {
                     />
                   }
                   label="Formulary/OTC"
-                  disabled={props.editable}
+                  disabled={editable}
                 />
                 <FormControlLabel
                   value="ExD"
@@ -695,7 +695,7 @@ function NewGroup(props: any) {
                     />
                   }
                   label="Excluded"
-                  disabled={props.editable}
+                  disabled={editable}
                 />
                 <FormControlLabel
                   value="ADD"
@@ -705,7 +705,7 @@ function NewGroup(props: any) {
                     />
                   }
                   label="ADD"
-                  disabled={props.editable}
+                  disabled={editable}
                 />
               </RadioGroup>
             </div>
@@ -721,7 +721,7 @@ function NewGroup(props: any) {
                       name="pa_group_description_name"
                       onChange={handleChange}
                       defaultValue={formData.pa_group_description_name}
-                      disabled={props.editable}
+                      disabled={editable}
                       className={errorClass}
                     />
                   </div>
@@ -745,7 +745,7 @@ function NewGroup(props: any) {
                       valueProp="key"
                       dispProp="value"
                       onChange={handleChange_1}
-                      disabled={props.editable}
+                      disabled={editable}
                     />
                   </div>
                 </Grid>
@@ -768,7 +768,7 @@ function NewGroup(props: any) {
                       valueProp="key"
                       dispProp="value"
                       onChange={handleChange_2}
-                      disabled={props.editable}
+                      disabled={editable}
                     />
                   </div>
                 </Grid>
@@ -787,7 +787,7 @@ function NewGroup(props: any) {
                     name="off_label_uses"
                     defaultValue={formData.off_label_uses}
                     onChange={handleChange}
-                    disabled={props.editable}
+                    disabled={editable}
                   />
                 </div>
               </Grid>
@@ -800,7 +800,7 @@ function NewGroup(props: any) {
                     name="exclusion_criteria"
                     defaultValue={formData.exclusion_criteria}
                     onChange={handleChange}
-                    disabled={props.editable}
+                    disabled={editable}
                   />
                 </div>
               </Grid>
@@ -813,7 +813,7 @@ function NewGroup(props: any) {
                     name="required_medical_info"
                     defaultValue={formData.required_medical_info}
                     onChange={handleChange}
-                    disabled={props.editable}
+                    disabled={editable}
                   />
                 </div>
               </Grid>
@@ -826,7 +826,7 @@ function NewGroup(props: any) {
                     name="age_restrictions"
                     defaultValue={formData.age_restrictions}
                     onChange={handleChange}
-                    disabled={props.editable}
+                    disabled={editable}
                   />
                 </div>
               </Grid>
@@ -839,7 +839,7 @@ function NewGroup(props: any) {
                     className="setup-input-fields"
                     defaultValue={formData.prescriber_restrictions}
                     onChange={handleChange}
-                    disabled={props.editable}
+                    disabled={editable}
                   />
                 </div>
               </Grid>
@@ -854,7 +854,7 @@ function NewGroup(props: any) {
                     className="setup-input-fields"
                     defaultValue={formData.coverage_restrictions}
                     onChange={handleChange}
-                    disabled={props.editable}
+                    disabled={editable}
                   />
                 </div>
               </Grid>
@@ -867,7 +867,7 @@ function NewGroup(props: any) {
                     className="setup-input-fields"
                     defaultValue={formData.other_criteria}
                     onChange={handleChange}
-                    disabled={props.editable}
+                    disabled={editable}
                   />
                 </div>
               </Grid>
@@ -880,7 +880,7 @@ function NewGroup(props: any) {
                 <Checkbox
                   checked={formData.is_suppress_criteria_dispaly_cms_approval}
                   onChange={handleCheckBox}
-                  disabled={props.editable}
+                  disabled={editable}
                   name="is_suppress_criteria_dispaly_cms_approval"
                   inputProps={{ "aria-label": "secondary checkbox" }}
                 />
@@ -890,14 +890,14 @@ function NewGroup(props: any) {
                 <Checkbox
                   checked={formData.is_display_criteria_drugs_not_frf}
                   onChange={handleCheckBox}
-                  disabled={props.editable}
+                  disabled={editable}
                   name="is_display_criteria_drugs_not_frf"
                   inputProps={{ "aria-label": "secondary checkbox" }}
                 />
                 <span>Display Criteria for Drugs not on FRF</span>
               </div>
-              {/* <FormControlLabel control={<Checkbox value="true" name="is_suppress_criteria_dispaly_cms_approval" color="primary" checked={formData.is_suppress_criteria_dispaly_cms_approval } disabled={props.editable} />} label='Supress Criteria and Display: Pending CMS Approval' />
-                        <FormControlLabel control={<Checkbox value="true" name="is_display_criteria_drugs_not_frf" color="primary" checked={formData.is_display_criteria_drugs_not_frf } disabled={props.editable}/>} label='Display Criteria for Drugs not on FRF' /> */}
+              {/* <FormControlLabel control={<Checkbox value="true" name="is_suppress_criteria_dispaly_cms_approval" color="primary" checked={formData.is_suppress_criteria_dispaly_cms_approval } disabled={editable} />} label='Supress Criteria and Display: Pending CMS Approval' />
+                        <FormControlLabel control={<Checkbox value="true" name="is_display_criteria_drugs_not_frf" color="primary" checked={formData.is_display_criteria_drugs_not_frf } disabled={editable}/>} label='Display Criteria for Drugs not on FRF' /> */}
             </div>
             <span>
               do you want to add additional criteria?
@@ -915,14 +915,14 @@ function NewGroup(props: any) {
                   value={true}
                   control={<Radio />}
                   label="Yes"
-                  disabled={props.editable}
+                  disabled={editable}
                   onClick={openAdditionalCriteria}
                 />
                 <FormControlLabel
                   value={false}
                   control={<Radio />}
                   label="No"
-                  disabled={props.editable}
+                  disabled={editable}
                 />
               </RadioGroup>
             </div>
@@ -976,7 +976,7 @@ function NewGroup(props: any) {
                           id_pa_type: 8,
                         })
                       }
-                      disabled={props.editable}
+                      disabled={editable}
                       checked={formData.id_pa_type === 8 ? true : false}
                     />
                     <RadioButton
@@ -989,7 +989,7 @@ function NewGroup(props: any) {
                           id_pa_type: 9,
                         })
                       }
-                      disabled={props.editable}
+                      disabled={editable}
                       checked={formData.id_pa_type === 9 ? true : false}
                     />
                   </div>
@@ -1007,13 +1007,13 @@ function NewGroup(props: any) {
                   value="8"
                   control={<Radio checked={formData.id_pa_type == "8" ? true : false} />}
                   label="Always Applies"
-                  disabled={props.editable}
+                  disabled={editable}
                 />
                 <FormControlLabel
                   value="9"
                   control={<Radio checked={formData.id_pa_type == "9" ? true : false} />}
                   label="New Starts Only"
-                  disabled={props.editable}
+                  disabled={editable}
                 />
               </RadioGroup>
             </div> */}
@@ -1029,7 +1029,7 @@ function NewGroup(props: any) {
                     name="pa_group_description_name"
                     onChange={handleChange}
                     value={formData.pa_group_description_name}
-                    disabled={props.editable}
+                    disabled={editable}
                   />
                 </div>
                 <br />
@@ -1045,7 +1045,7 @@ function NewGroup(props: any) {
                     name="pa_criteria"
                     onChange={handleChange}
                     value={formData.pa_criteria}
-                    disabled={props.editable}
+                    disabled={editable}
                   />
                 </div>
                 <br />
@@ -1061,7 +1061,7 @@ function NewGroup(props: any) {
                         options={props.drugList}
                         getAutoCompleteChange={getAutoCompleteChangeHandler}
                         autoSelected={drug_list_ids}
-                        disabled={props.editable}
+                        disabled={editable}
                       />
                       {/* <Tags options={drug_list} getAutoCompleteChange={getAutoCompleteChangeHandler}
                        autoSelected={formData.drug_list_ids}/> */}
@@ -1089,7 +1089,7 @@ function NewGroup(props: any) {
                           is_additional_criteria_defined: true,
                         });
                       }}
-                      // disabled={props.editable}
+                      // disabled={editable}
                       checked={formData.is_additional_criteria_defined}
                     />
                     <RadioButton
@@ -1102,7 +1102,7 @@ function NewGroup(props: any) {
                           is_additional_criteria_defined: false,
                         })
                       }
-                      disabled={props.editable}
+                      disabled={editable}
                       checked={!formData.is_additional_criteria_defined}
                     />
                   </div>
@@ -1121,16 +1121,16 @@ function NewGroup(props: any) {
                   >
                     <FormControlLabel
                       value={true}
-                      control={<Radio disabled={props.editable}/>}
+                      control={<Radio disabled={editable}/>}
                       label="Yes"
-                      disabled={props.editable}
+                      disabled={editable}
                       onClick={openAdditionalCriteria}
                     />
                     <FormControlLabel
                       value={false}
-                      control={<Radio disabled={props.editable}/>}
+                      control={<Radio disabled={editable}/>}
                       label="No"
-                      disabled={props.editable}
+                      disabled={editable}
                     />
                   </RadioGroup>
                 </div> */}
