@@ -226,8 +226,8 @@ class Remove extends Component<any, State> {
 
   render() {
     return (
-      <div className="ql-remove">
-        <div className="tier-grid-container-ql-remvoe">
+      <div>
+        <div className="tier-grid-container ql-remove-grid">
           <FrxDrugGridContainer
             isDataLoaded
             isPinningEnabled={false}
@@ -236,7 +236,7 @@ class Remove extends Component<any, State> {
             onSearch={() => {}}
             fixedColumnKeys={[]}
             pagintionPosition="topRight"
-            hidePagination
+            // hidePagination
             gridName="DRUG GRID"
             enableSettings={false}
             columns={QlRemoveColumns()}

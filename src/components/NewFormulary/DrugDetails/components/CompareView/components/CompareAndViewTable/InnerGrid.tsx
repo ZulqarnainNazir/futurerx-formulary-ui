@@ -150,10 +150,11 @@ class InnerGrid extends Component<InnerGridProps, any>{
     }
   }
   onApplyFilterHandler = (filters) => {
-    if (filters) {
-      const fetchedKeys = Object.keys(filters);
+    const fetchedKeys = Object.keys(filters);
+    if (fetchedKeys.length > 0) {
       fetchedKeys.map(fetchedProps => {
         if (filters[fetchedProps]) {
+          this.listPayload.filter = this.listPayload.filter.filter(element => element['prop'] !== fetchedProps);
           const fetchedOperator =
             filters[fetchedProps][0].condition === "is like"
               ? "is_like"
@@ -176,6 +177,8 @@ class InnerGrid extends Component<InnerGridProps, any>{
         }
       });
       console.log("Filters:" + JSON.stringify(this.listPayload.filter));
+    }else{
+      this.listPayload.filter = Array();
     }
     this.populateGridData(this.state.rowData, this.state.baseFormularyId, this.state.refFormularyId, this.listPayload, this.state.isLastColumn);
   }

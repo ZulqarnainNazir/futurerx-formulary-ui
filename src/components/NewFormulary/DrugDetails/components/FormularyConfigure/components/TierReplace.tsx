@@ -102,7 +102,7 @@ class TierReplace extends React.Component<any, tabsState> {
     limit: 10,
     filter: Array(),
     quickFilter: Array(),
-    sort_by: Array(),
+    sort_by: [{ key: 'drug_label_name', value: 'asc' }],
     hiddenColumns: Array(),
     dataCount: 0,
     gridSingleSortInfo: null,
@@ -127,9 +127,9 @@ class TierReplace extends React.Component<any, tabsState> {
   onSettingsIconHandler = (hiddenColumn, visibleColumn) => {
     console.log(
       "Settings icon handler: Hidden" +
-        JSON.stringify(hiddenColumn) +
-        " Visible:" +
-        JSON.stringify(visibleColumn)
+      JSON.stringify(hiddenColumn) +
+      " Visible:" +
+      JSON.stringify(visibleColumn)
     );
     if (hiddenColumn && hiddenColumn.length > 0) {
       let hiddenColumnKeys = hiddenColumn.map((column) => column["key"]);
@@ -145,16 +145,17 @@ class TierReplace extends React.Component<any, tabsState> {
     if (fetchedKeys && fetchedKeys.length > 0) {
       fetchedKeys.map((fetchedProps) => {
         if (filters[fetchedProps]) {
+          this.state.filter = this.state.filter.filter(element => element['prop'] !== fetchedProps);
           const fetchedOperator =
             filters[fetchedProps][0].condition === "is like"
               ? "is_like"
               : filters[fetchedProps][0].condition === "is not"
-              ? "is_not"
-              : filters[fetchedProps][0].condition === "is not like"
-              ? "is_not_like"
-              : filters[fetchedProps][0].condition === "does not exist"
-              ? "does_not_exist"
-              : filters[fetchedProps][0].condition;
+                ? "is_not"
+                : filters[fetchedProps][0].condition === "is not like"
+                  ? "is_not_like"
+                  : filters[fetchedProps][0].condition === "does not exist"
+                    ? "does_not_exist"
+                    : filters[fetchedProps][0].condition;
           const fetchedValues =
             filters[fetchedProps][0].value !== ""
               ? [filters[fetchedProps][0].value.toString()]
@@ -166,12 +167,14 @@ class TierReplace extends React.Component<any, tabsState> {
           });
         }
       });
-      console.log("Filters:" + JSON.stringify(this.state.filter));
-      if (this.props.advancedSearchBody) {
-        this.populateGridData(this.props.advancedSearchBody);
-      } else {
-        this.populateGridData();
-      }
+    } else {
+      this.state.filter = Array();
+    }
+    console.log("Filters:" + JSON.stringify(this.state.filter));
+    if (this.props.advancedSearchBody) {
+      this.populateGridData(this.props.advancedSearchBody);
+    } else {
+      this.populateGridData();
     }
   };
 
@@ -189,6 +192,8 @@ class TierReplace extends React.Component<any, tabsState> {
         keyPair => keyPair["key"] !== key
       );
       this.state.sort_by.push({ key: key, value: sortOrder });
+    } else {
+      this.state.sort_by.push({ key: 'drug_label_name', value: 'asc' });
     }
 
     this.setState({
@@ -232,14 +237,14 @@ class TierReplace extends React.Component<any, tabsState> {
 
   applyMultiSortHandler = (sorter, multiSortedInfo) => {
     console.log("Multisort info:" + JSON.stringify(sorter));
-    
-		
-		this.setState(  {
-			isGridMultiSorted: true,
-			isGridSingleSorted: false,
-			gridMultiSortedInfo: multiSortedInfo,
-			gridSingleSortInfo: null,
-		})
+
+
+    this.setState({
+      isGridMultiSorted: true,
+      isGridSingleSorted: false,
+      gridMultiSortedInfo: multiSortedInfo,
+      gridSingleSortInfo: null,
+    })
 
     if (sorter && sorter.length > 0) {
       let uniqueKeys = Array();
@@ -273,6 +278,8 @@ class TierReplace extends React.Component<any, tabsState> {
   onMultiSortToggle = (isMultiSortOn: boolean) => {
     console.log("is Multi sort on ", isMultiSortOn);
     this.state.sort_by = Array();
+    if (!isMultiSortOn)
+      this.state.sort_by.push({ key: 'drug_label_name', value: 'asc' });
     this.state.gridSingleSortInfo = null;
     this.state.gridMultiSortedInfo = [];
     this.state.isGridMultiSorted = isMultiSortOn;
@@ -289,6 +296,8 @@ class TierReplace extends React.Component<any, tabsState> {
     console.log("componentDidMount");
     this.initialize(this.props, true);
     if (this.props.configureSwitch) {
+      this.state.selectedFileKey = getLobCode(this.props.formulary_lob_id);
+      this.state.selectedFileType = "Full Formulary";
       this.state.tierGridContainer = true;
       if (this.props.advancedSearchBody) {
         this.populateGridData(this.props.advancedSearchBody);
@@ -338,8 +347,13 @@ class TierReplace extends React.Component<any, tabsState> {
     }
     this.state.tierValues = tierOptions;
     if (initFileKey) {
-      this.state.selectedFileKey = lobCode;
-      this.state.selectedFileType = "Full Formulary";
+      if (lobCode === "COMM") {
+        this.state.selectedFileKey = "COMMDF";
+        this.state.selectedFileType = "Drug Table";
+      } else {
+        this.state.selectedFileKey = lobCode;
+        this.state.selectedFileType = "Full Formulary";
+      }
     }
   };
 
@@ -438,9 +452,9 @@ class TierReplace extends React.Component<any, tabsState> {
       let lobCode = getLobCode(this.props.formulary_lob_id);
       let requests = Array();
       let apiDetails = {};
-      apiDetails["apiPart"] = commonConstants.SEARCH_GPI;
+      apiDetails["apiPart"] = this.state.selectedFileKey === 'COMMDF' ? commonConstants.SEARCH_GPI_FULL : commonConstants.SEARCH_GPI;
       apiDetails["pathParams"] =
-        this.props?.formulary_id + "/" + lobCode + "/" + "F";
+        this.props?.formulary_id + "/" + this.state.selectedFileKey + "/" + "F";
       if (lobCode === "MCR") {
         apiDetails["pathParams"] =
           apiDetails["pathParams"] +
@@ -462,24 +476,24 @@ class TierReplace extends React.Component<any, tabsState> {
       requests.push({ key: "ndc", apiDetails: apiDetails });
 
       apiDetails = Object.assign({}, apiDetails);
-      apiDetails["apiPart"] = commonConstants.SEARCH_LABEL_NAME;
+      apiDetails["apiPart"] = this.state.selectedFileKey === 'COMMDF' ? commonConstants.SEARCH_LABEL_NAME_FULL : commonConstants.SEARCH_LABEL_NAME;
       requests.push({ key: "drug_label_name", apiDetails: apiDetails });
 
       apiDetails = Object.assign({}, apiDetails);
-      apiDetails["apiPart"] = commonConstants.SEARCH_CLASS;
+      apiDetails["apiPart"] = this.state.selectedFileKey === 'COMMDF' ? commonConstants.SEARCH_CLASS_FULL : commonConstants.SEARCH_CLASS;
       requests.push({ key: "database_class", apiDetails: apiDetails });
 
       apiDetails = Object.assign({}, apiDetails);
-      apiDetails["apiPart"] = commonConstants.SEARCH_CATEGORY;
+      apiDetails["apiPart"] = this.state.selectedFileKey === 'COMMDF' ? commonConstants.SEARCH_CATEGORY_FULL : commonConstants.SEARCH_CATEGORY;
       requests.push({ key: "database_category", apiDetails: apiDetails });
 
       if (this.props.formulary_lob_id == 1) {
         apiDetails = Object.assign({}, apiDetails);
-        apiDetails["apiPart"] = commonConstants.SEARCH_RXCUI;
+        apiDetails["apiPart"] = this.state.selectedFileKey === 'COMMDF' ? commonConstants.SEARCH_RXCUI_FULL : commonConstants.SEARCH_RXCUI;
         requests.push({ key: "rxcui", apiDetails: apiDetails });
       } else {
         apiDetails = Object.assign({}, apiDetails);
-        apiDetails["apiPart"] = commonConstants.SEARCH_DDID;
+        apiDetails["apiPart"] = this.state.selectedFileKey === 'COMMDF' ? commonConstants.SEARCH_DDID_FULL : commonConstants.SEARCH_DDID;
         requests.push({
           key: "drug_descriptor_identifier",
           apiDetails: apiDetails
@@ -498,7 +512,7 @@ class TierReplace extends React.Component<any, tabsState> {
           ) {
             let tmpData = json.payload.data;
             var data: any[] = [];
-            var gridData = tmpData.map(function(el) {
+            var gridData = tmpData.map(function (el) {
               var element = Object.assign({}, el);
               data.push(element);
               let gridItem = element["value"];
@@ -575,7 +589,7 @@ class TierReplace extends React.Component<any, tabsState> {
         let tmpData = json.payload.result;
         var data: any[] = [];
         let count = 1;
-        var gridData = tmpData.map(function(el, idx) {
+        var gridData = tmpData.map(function (el, idx) {
           var element = Object.assign({}, el);
           data.push(element);
           let gridItem = {};
@@ -617,14 +631,14 @@ class TierReplace extends React.Component<any, tabsState> {
             gridItem[
               "drug_descriptor_identifier"
             ] = element.drug_descriptor_identifier
-              ? "" + element.drug_descriptor_identifier
-              : "";
+                ? "" + element.drug_descriptor_identifier
+                : "";
           }
           gridItem[
             "generic_product_identifier"
           ] = element.generic_product_identifier
-            ? "" + element.generic_product_identifier
-            : "";
+              ? "" + element.generic_product_identifier
+              : "";
           gridItem["trademark_code"] = element.trademark_code
             ? "" + element.trademark_code
             : "";
@@ -737,6 +751,7 @@ class TierReplace extends React.Component<any, tabsState> {
       this.state.filter = Array();
       this.state.quickFilter = Array();
       this.state.sort_by = Array();
+      this.state.sort_by.push({ key: 'drug_label_name', value: 'asc' });
       this.state.index = 0;
       this.state.limit = 10;
       this.state.hiddenColumns = Array();
@@ -1014,23 +1029,23 @@ class TierReplace extends React.Component<any, tabsState> {
               <div className="header remove-btn-wrapper pr-10">
                 {(this.props.lobCode === "MCR" ||
                   this.props.lobCode === "COMM") && (
-                  <div
-                    style={{
-                      display: "flex",
-                      flexDirection: "row",
-                      alignItems: "center",
-                      justifyContent: "space-between",
-                    }}
-                  >
-                    <span style={{ marginRight: 10 }}>Select Drugs From</span>
-                    <DropDown
-                      options={this.state.fileValues}
-                      disabled={this.props.configureSwitch}
-                      onSelect={this.fileTypeDropDownSelectHandler}
-                      defaultValue={this.state.selectedFileType}
-                    />
-                  </div>
-                )}
+                    <div
+                      style={{
+                        display: "flex",
+                        flexDirection: "row",
+                        alignItems: "center",
+                        justifyContent: "space-between",
+                      }}
+                    >
+                      <span style={{ marginRight: 10 }}>Select Drugs From</span>
+                      <DropDown
+                        options={this.state.fileValues}
+                        disabled={this.props.configureSwitch}
+                        onSelect={this.fileTypeDropDownSelectHandler}
+                        defaultValue={this.state.selectedFileType}
+                      />
+                    </div>
+                  )}
                 <div className="header remove-btn-wrapper pr-10">
                   <div className="header pr-10">
                     <div className="header-dropdown">
@@ -1071,7 +1086,7 @@ class TierReplace extends React.Component<any, tabsState> {
                   enableSearch={false}
                   enableColumnDrag
                   settingsWidth={50}
-                  onSearch={() => {}}
+                  onSearch={() => { }}
                   fixedColumnKeys={[]}
                   pagintionPosition="topRight"
                   gridName="TIER"
@@ -1099,14 +1114,14 @@ class TierReplace extends React.Component<any, tabsState> {
                   getColumnSettings={this.onSettingsIconHandler}
                   pageSize={this.state.limit}
                   selectedCurrentPage={this.state.index / this.state.limit + 1}
-                  // rowSelection={{
-                  //   columnWidth: 50,
-                  //   selectedRowKeys: this.state.selectedRowKeys,
-                  // 	fixed: true,
+                // rowSelection={{
+                //   columnWidth: 50,
+                //   selectedRowKeys: this.state.selectedRowKeys,
+                // 	fixed: true,
 
-                  //   type: "checkbox",
-                  //   onChange: this.onSelectedTableRowChanged
-                  // }}
+                //   type: "checkbox",
+                //   onChange: this.onSelectedTableRowChanged
+                // }}
                 />
               </div>
             </div>
