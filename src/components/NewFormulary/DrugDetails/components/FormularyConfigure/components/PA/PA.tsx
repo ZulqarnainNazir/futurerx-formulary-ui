@@ -8,7 +8,7 @@ import CustomizedSwitches from "../CustomizedSwitches";
 import FrxMiniTabs from "../../../../../../shared/FrxMiniTabs/FrxMiniTabs";
 import {
   getTapList,
-  getMiniTabs,
+  getMiniTabs
 } from "../../../../../../../mocks/formulary/mock-data";
 import DropDown from "../../../../../../shared/Frx-components/dropdown/DropDownMap";
 import { Grid } from "@material-ui/core";
@@ -22,17 +22,18 @@ import {
   getPaSummary,
   getPaGrouptDescriptions,
   getPaTypes,
-  getDrugLists,
+  getDrugLists
 } from "../../../../../../../redux/slices/formulary/pa/paActionCreation";
 import "../Tier.scss";
 import "./PA.scss";
+import CustomPanelGrid from "../../../../../../shared/Frx-components/custom-panel-grid/CustomPanelGrid";
 
 function mapDispatchToProps(dispatch) {
   return {
-    getPaSummary: (a) => dispatch(getPaSummary(a)),
-    getPaGrouptDescriptions: (a) => dispatch(getPaGrouptDescriptions(a)),
-    getPaTypes: (a) => dispatch(getPaTypes(a)),
-    getDrugLists: (a) => dispatch(getDrugLists(a)),
+    getPaSummary: a => dispatch(getPaSummary(a)),
+    getPaGrouptDescriptions: a => dispatch(getPaGrouptDescriptions(a)),
+    getPaTypes: a => dispatch(getPaTypes(a)),
+    getDrugLists: a => dispatch(getDrugLists(a))
   };
 }
 function mapStateToProps(state) {
@@ -40,7 +41,7 @@ function mapStateToProps(state) {
     current_formulary: state.application.formulary,
     paData: state.paReducer.data,
     formulary_lob_id: state?.application?.formulary_lob_id,
-    configureSwitch: state.switchReducer.configureSwitch,
+    configureSwitch: state.switchReducer.configureSwitch
   };
 }
 
@@ -56,9 +57,9 @@ class PA extends React.Component<any, any> {
       {
         id: 2,
         text: "Append",
-        disabled: this.props.formulary_lob_id == 1 ? true : false,
+        disabled: this.props.formulary_lob_id == 1 ? true : false
       },
-      { id: 3, text: "Remove", disabled: false },
+      { id: 3, text: "Remove", disabled: false }
     ],
     panelGridTitle: [
       "Type",
@@ -67,10 +68,10 @@ class PA extends React.Component<any, any> {
       "Removed Groups",
       "NUMBER OF Drugs",
       "Added Drugs",
-      "Removed Drugs",
+      "Removed Drugs"
     ],
     panelGridValue: [],
-    paList: [],
+    paList: []
   };
 
   onClickTab = (selectedTabIndex: number) => {
@@ -118,9 +119,9 @@ class PA extends React.Component<any, any> {
         tabs: [
           { id: 1, text: "Replace", disabled: true },
           { id: 2, text: "Append", disabled: true },
-          { id: 3, text: "Remove", disabled: true },
+          { id: 3, text: "Remove", disabled: true }
         ],
-        activeTabIndex: 0,
+        activeTabIndex: 0
       });
     } else {
       this.setState({
@@ -129,16 +130,16 @@ class PA extends React.Component<any, any> {
           {
             id: 2,
             text: "Append",
-            disabled: this.props.formulary_lob_id == 1 ? true : false,
+            disabled: this.props.formulary_lob_id == 1 ? true : false
           },
-          { id: 3, text: "Remove", disabled: false },
-        ],
+          { id: 3, text: "Remove", disabled: false }
+        ]
       });
     }
     let tmpData = nextProps.paData;
     if (tmpData && Array.isArray(tmpData) && tmpData.length > 0) {
       var tierOption: any[] = [];
-      var result = tmpData.map(function (el) {
+      var result = tmpData.map(function(el) {
         var curRow = [
           el["pa_type_name"],
           el["total_group_description_count"],
@@ -146,7 +147,7 @@ class PA extends React.Component<any, any> {
           el["removed_group_description_count"],
           el["total_drug_count"],
           el["added_drug_count"],
-          el["removed_drug_count"],
+          el["removed_drug_count"]
         ];
         return curRow;
       });
@@ -156,7 +157,7 @@ class PA extends React.Component<any, any> {
       // }
       this.setState({
         // tierDefinationColumns: TierColumns,
-        panelGridValue: result,
+        panelGridValue: result
         //tierOption: tierOption
       });
     }
@@ -165,13 +166,13 @@ class PA extends React.Component<any, any> {
   componentDidMount() {
     this.props
       .getPaSummary(this.props.current_formulary.id_formulary)
-      .then((json) => {
+      .then(json => {
         //
 
         let tmpData =
           json.payload && json.payload.result ? json.payload.result : [];
 
-        var rows = tmpData.map(function (el) {
+        var rows = tmpData.map(function(el) {
           var curRow = [
             el["pa_type_name"],
             el["total_group_description_count"],
@@ -179,22 +180,22 @@ class PA extends React.Component<any, any> {
             el["removed_group_description_count"],
             el["total_drug_count"],
             el["added_drug_count"],
-            el["removed_drug_count"],
+            el["removed_drug_count"]
           ];
           return curRow;
         });
 
         console.log(rows);
         this.setState({
-          panelGridValue: rows,
+          panelGridValue: rows
         });
       });
 
-    this.props.getDrugLists("0").then((json) => {
+    this.props.getDrugLists("0").then(json => {
       //
       let tmpData = json.payload.data;
       this.setState({
-        paList: tmpData,
+        paList: tmpData
       });
     });
   }
@@ -213,7 +214,7 @@ class PA extends React.Component<any, any> {
                         <PanelGrid
                           panelGridTitle={this.state.panelGridTitle}
                           panelGridValue={this.state.panelGridValue}
-                        />
+                        /> 
                       </div>
                     </div>
                   </div>

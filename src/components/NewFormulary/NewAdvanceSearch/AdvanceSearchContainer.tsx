@@ -1232,15 +1232,15 @@ class AdvanceSearchContainer extends Component<Props, State> {
 
   handleChildDataSave = (additionalCriteria) => {
     console.log(additionalCriteria);
-    const additionalCriteriaArray: any[] = [
-      ...this.state.additionalCriteriaArray,
-      additionalCriteria,
-    ];
+    // const additionalCriteriaArray: any[] = [
+    //   ...this.state.additionalCriteriaArray,
+    //   additionalCriteria,
+    // ];
 
-    for (let index = 0; index < additionalCriteriaArray.length; index++) {
-      const criteria = additionalCriteriaArray[index];
-      console.log(criteria, index);
-    }
+    // for (let index = 0; index < additionalCriteriaArray.length; index++) {
+    //   const criteria = additionalCriteriaArray[index];
+    //   console.log(criteria, index);
+    // }
 
     // let arrayIndex: number = 0;
     // this.state.additionalCriteriaArray.forEach((criteria, index) => {
@@ -1251,8 +1251,35 @@ class AdvanceSearchContainer extends Component<Props, State> {
     // });
     // additionalCriteriaArray[arrayIndex] = additionalCriteria;
     // console.log(additionalCriteriaArray);
+
+    let tempAddCriteriaArr: any[] = [...this.state.additionalCriteriaArray];
+    if (this.state.additionalCriteriaArray.length > 0) {
+      let replaceCriteria = false;
+      let rIndex = 0;
+      tempAddCriteriaArr.forEach((e, i) => {
+        if (e.sequence === additionalCriteria.sequence) {
+          replaceCriteria = true;
+          rIndex = i;
+        }
+      });
+
+      if (replaceCriteria) {
+        tempAddCriteriaArr[rIndex] = additionalCriteria;
+      } else {
+        tempAddCriteriaArr = [
+          ...this.state.additionalCriteriaArray,
+          additionalCriteria,
+        ];
+      }
+    } else {
+      tempAddCriteriaArr = [
+        ...this.state.additionalCriteriaArray,
+        additionalCriteria,
+      ];
+    }
+
     this.setState({
-      additionalCriteriaArray,
+      additionalCriteriaArray: tempAddCriteriaArr,
     });
   };
 

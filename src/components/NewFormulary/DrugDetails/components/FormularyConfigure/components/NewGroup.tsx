@@ -38,7 +38,7 @@ import {
   getAdditionalCriteriaSectionList,
 } from "../../../../NewAdvanceSearch/advanceSearchMock";
 import AdditionalCriteriaContainer from "../../../../NewAdvanceSearch/AdditionalCriteriaContainer/AdditionalCriteriaContainer";
-import "./PaNewGroupForm.scss";
+import "./GroupDescriptionStyles.scss";
 
 interface Props {
   tooltip?: string;
@@ -374,7 +374,8 @@ function NewGroup(props: any) {
           apiDetails["pathParams"] =
             "/" + json.payload.success.data.id_base_st_group_description;
 
-          let id_base_st_group_description = json.payload.success.data.id_base_st_group_description
+          let id_base_st_group_description =
+            json.payload.success.data.id_base_st_group_description;
           props.getStGrouptDescriptionVersions(apiDetails).then((json) => {
             const isEditable =
               json.payload.data.length > 0 &&
