@@ -950,7 +950,7 @@ class InnerGrid extends Component<InnerGridProps, any>{
                   gridName="MEDICARE"
                   isFetchingData={false}
                   columns={gridColumns}
-                  scroll={{ x: 1000, y: 500 }}
+                  scroll={{ x: 4600, y: 500 }}
                   enableResizingOfColumns={false}
                   data={this.state.drugGridData}
                   // pinning columns
@@ -1037,7 +1037,7 @@ class InnerGrid extends Component<InnerGridProps, any>{
                   gridName="MEDICARE"
                   isFetchingData={false}
                   columns={gridColumns}
-                  scroll={{ x: 1000, y: 500 }}
+                  scroll={{ x: 4600, y: 500 }}
                   enableResizingOfColumns={false}
                   data={this.state.drugGridData}
                   // pinning columns
