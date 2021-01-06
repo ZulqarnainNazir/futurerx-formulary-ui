@@ -185,7 +185,16 @@ function GroupHeader(props: any) {
             : 0;
       }
 
-      setPanelColor(isEditable ? "-green" : "");
+      
+      setPanelColor(
+        isEditable
+          ? props.isPopUpView
+            ? "-grey"
+            : "-green"
+          : props.isPopUpView
+          ? "-grey"
+          : "-orange"
+      );
       setPlaceHolder(selectedVersion);
 
       let apiDetails = {};
