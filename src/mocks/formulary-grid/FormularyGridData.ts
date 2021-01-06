@@ -157,11 +157,9 @@ export const getTierAssignmentGridData = (): any => {
     {
       id: 1,
       key: 1,
-      fileType: "FRF",
       datasource: "FRF",
       labelName: "Abacavir Sulfate SOLN 20 MG/ML",
       ddid: 58633,
-      rxcui: 242680,
       gpi: 12341234123,
       trademark: "G",
     },
@@ -169,22 +167,18 @@ export const getTierAssignmentGridData = (): any => {
     {
       id: 2,
       key: 2,
-      fileType: "FRF",
       datasource: "FRF",
       labelName: "Abacair Sulfate Tabs 300 MG",
       ddid: 58634,
-      rxcui: 242690,
       gpi: 12341234345,
       trademark: "G",
     },
     {
       id: 3,
       key: 3,
-      fileType: "FRF",
       datasource: "FRF",
       labelName: "Abacavir Sulfate SOLN 20 MG/ML",
       ddid: 58635,
-      rxcui: 242620,
       gpi: 12341234657,
       trademark: "G",
     },
@@ -192,11 +186,9 @@ export const getTierAssignmentGridData = (): any => {
     {
       id: 4,
       key: 4,
-      fileType: "FRF",
       datasource: "FRF",
       labelName: "Abacair Sulfate Tabs 300 MG",
       ddid: 58636,
-      rxcui: 242928,
       gpi: 12341234987,
       trademark: "G",
     },
@@ -204,11 +196,9 @@ export const getTierAssignmentGridData = (): any => {
     {
       id: 5,
       key: 5,
-      fileType: "FRF",
       datasource: "FRF",
       labelName: "Abacavir Sulfate SOLN 20 MG/ML",
       ddid: 58637,
-      rxcui: 242652,
       gpi: 123412346792,
       trademark: "G",
     },
@@ -216,11 +206,9 @@ export const getTierAssignmentGridData = (): any => {
     {
       id: 6,
       key: 6,
-      fileType: "FRF",
       datasource: "FRF",
       labelName: "Abacair Sulfate Tabs 300 MG",
       ddid: 58635,
-      rxcui: 242694,
       gpi: 12341234927,
       trademark: "G",
     },
@@ -228,11 +216,9 @@ export const getTierAssignmentGridData = (): any => {
     {
       id: 7,
       key: 7,
-      fileType: "FRF",
       datasource: "FRF",
       labelName: "Abacavir Sulfate SOLN 20 MG/ML",
       ddid: 58637,
-      rxcui: 242688,
       gpi: 12341234802,
       trademark: "G",
     },
@@ -240,11 +226,9 @@ export const getTierAssignmentGridData = (): any => {
     {
       id: 8,
       key: 8,
-      fileType: "FRF",
       datasource: "FRF",
       labelName: "Abacair Sulfate Tabs 300 MG",
       ddid: 58638,
-      rxcui: 242659,
       gpi: 12341234937,
       trademark: "G",
     },
@@ -252,66 +236,202 @@ export const getTierAssignmentGridData = (): any => {
     {
       id: 9,
       key: 9,
-      fileType: "FRF",
       datasource: "FRF",
       labelName: "Abacavir Sulfate SOLN 20 MG/ML",
       ddid: 58639,
-      rxcui: 242682,
       gpi: 12341234838,
       trademark: "G",
     },
   ];
 };
 
+export const getTierAssignmentCommercialGridData = (): any => {
+  return [
+    {
+      id: 1,
+      key: 1,
+      datasource: "Medispan",
+      labelName: "Abacavir Sulfate SOLN 20 MG/ML",
+      ddid: 58633,
+      gpi: 12341234123,
+      trademark: "G",
+    },
+
+    {
+      id: 2,
+      key: 2,
+      datasource: "Medispan",
+      labelName: "Abacair Sulfate Tabs 300 MG",
+      ddid: 58634,
+      gpi: 12341234345,
+      trademark: "G",
+    },
+    {
+      id: 3,
+      key: 3,
+      datasource: "Medispan",
+      labelName: "Abacavir Sulfate SOLN 20 MG/ML",
+      ddid: 58635,
+      gpi: 12341234657,
+      trademark: "G",
+    },
+
+    {
+      id: 4,
+      key: 4,
+      datasource: "Medispan",
+      labelName: "Abacair Sulfate Tabs 300 MG",
+      ddid: 58636,
+      gpi: 12341234987,
+      trademark: "G",
+    },
+
+    {
+      id: 5,
+      key: 5,
+      datasource: "Medispan",
+      labelName: "Abacavir Sulfate SOLN 20 MG/ML",
+      ddid: 58637,
+      gpi: 123412346792,
+      trademark: "G",
+    },
+
+    {
+      id: 6,
+      key: 6,
+      datasource: "Medispan",
+      labelName: "Abacair Sulfate Tabs 300 MG",
+      ddid: 58635,
+      gpi: 12341234927,
+      trademark: "G",
+    },
+
+    {
+      id: 7,
+      key: 7,
+      datasource: "Medispan",
+      labelName: "Abacavir Sulfate SOLN 20 MG/ML",
+      ddid: 58637,
+      gpi: 12341234802,
+      trademark: "G",
+    },
+
+    {
+      id: 8,
+      key: 8,
+      datasource: "Medispan",
+      labelName: "Abacair Sulfate Tabs 300 MG",
+      ddid: 58638,
+      gpi: 12341234937,
+      trademark: "G",
+    },
+
+    {
+      id: 9,
+      key: 9,
+      datasource: "Medispan",
+      labelName: "Abacavir Sulfate SOLN 20 MG/ML",
+      ddid: 58639,
+      gpi: 12341234838,
+      trademark: "G",
+    },
+  ];
+};
+
+
 export const getDrugsPAGridData = (): any => {
   return [
     {
       id: 1,
       key: 1,
-      labelName: "FRF",
-      rxcui: 1234,
-      ddid: 12443,
-      datasource: "OTC",
-      trademark: "B",
+      datasource: "FRF",
+      labelName: "Abacavir Sulfate SOLN 20 MG/ML",
+      ddid: 58633,
+      gpi: 12341234123,
+      trademark: "G",
     },
+
     {
       id: 2,
       key: 2,
-      labelName: "FRF",
-      rxcui: 1234,
-      ddid: 12444,
-      datasource: "Excluded",
-      trademark: "T",
+      datasource: "FRF",
+      labelName: "Abacair Sulfate Tabs 300 MG",
+      ddid: 58634,
+      gpi: 12341234345,
+      trademark: "G",
     },
     {
       id: 3,
       key: 3,
-      labelName: "FRF",
-      rxcui: 1234,
-      ddid: 12445,
       datasource: "FRF",
+      labelName: "Abacavir Sulfate SOLN 20 MG/ML",
+      ddid: 58635,
+      gpi: 12341234657,
       trademark: "G",
     },
+
     {
       id: 4,
       key: 4,
-      labelName: "FRF",
-      rxcui: 1234,
-      ddid: 12446,
-      datasource: "ADD",
-      trademark: "B",
+      datasource: "FRF",
+      labelName: "Abacair Sulfate Tabs 300 MG",
+      ddid: 58636,
+      gpi: 12341234987,
+      trademark: "G",
     },
+
     {
       id: 5,
       key: 5,
-      labelName: "FRF",
-      rxcui: 1234,
-      ddid: 12447,
-      datasource: "OTC",
-      trademark: "T",
+      datasource: "FRF",
+      labelName: "Abacavir Sulfate SOLN 20 MG/ML",
+      ddid: 58637,
+      gpi: 123412346792,
+      trademark: "G",
+    },
+
+    {
+      id: 6,
+      key: 6,
+      datasource: "FRF",
+      labelName: "Abacair Sulfate Tabs 300 MG",
+      ddid: 58635,
+      gpi: 12341234927,
+      trademark: "G",
+    },
+
+    {
+      id: 7,
+      key: 7,
+      datasource: "FRF",
+      labelName: "Abacavir Sulfate SOLN 20 MG/ML",
+      ddid: 58637,
+      gpi: 12341234802,
+      trademark: "G",
+    },
+
+    {
+      id: 8,
+      key: 8,
+      datasource: "FRF",
+      labelName: "Abacair Sulfate Tabs 300 MG",
+      ddid: 58638,
+      gpi: 12341234937,
+      trademark: "G",
+    },
+
+    {
+      id: 9,
+      key: 9,
+      datasource: "FRF",
+      labelName: "Abacavir Sulfate SOLN 20 MG/ML",
+      ddid: 58639,
+      gpi: 12341234838,
+      trademark: "G",
     },
   ];
 };
+
 
 export const getFormularyGridData = (): any => {
   return [

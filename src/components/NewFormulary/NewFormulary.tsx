@@ -402,15 +402,15 @@ class Formulary extends React.Component<any, any> {
           </>
         ) : this.state.showDrugDetails ? (
           <DrugDetailsContext.Provider
-            value={{ showDetailHandler: () => this.drugDetailsClickHandler }}
+            value={{ showDetailHandler: () => this.drugDetailsClickHandler, selectedLOBType:this.state.lob_type }}
           >
             <DrugDetails data={getFormularyDetails()} />
           </DrugDetailsContext.Provider>
         ) : this.state.showMassMaintenance ? (
           <MassMaintenanceContext.Provider
-            value={{ showDetailHandler:() => this.massMaintenanceCLickHandler }}
+              value={{ showDetailHandler:() => this.massMaintenanceCLickHandler, selectedLOBType:this.state.lob_type }}
           >
-            <MassMaintenance data={getFormularyDetails()} lob_type={this.state.lob_type} />
+            <MassMaintenance data={getFormularyDetails()} />
           </MassMaintenanceContext.Provider>
         ) : null}
       </div>

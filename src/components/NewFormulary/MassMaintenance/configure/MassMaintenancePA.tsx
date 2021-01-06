@@ -7,6 +7,7 @@ import EditIcon from "../../../../assets/icons/EditIcon.svg";
 import {
   getColumns,
   getData,
+  getPACommercialData,
   getDrugsList,
 } from "../../../../mocks/formulary-grid/FormularySimpleGridMock";
 import DropDown from "../../../shared/Frx-components/dropdown/DropDown";
@@ -20,7 +21,7 @@ import RadioButton from "../../../shared/Frx-components/radio-button/RadioButton
 import CustomDatePicker from "../../../shared/Frx-components/date-picker/CustomDatePicker";
 import { Input } from "antd";
 import FrxLoader from "../../../shared/FrxLoader/FrxLoader";
-
+import formularyDetailsContext from "../../FormularyDetailsContext";
 import {
   getFormularyGridData,
   getDrugsPAGridData,
@@ -30,8 +31,12 @@ import DrugGrid from "../../DrugDetails/components/DrugGrid";
 import {
   getFormularyGridColumns,
   getDrugsPAGridColumns,
+  getTPACommercialGridData,
+  getTPAtGridData,
 } from "../../../../mocks/formulary-grid/FormularyGridColumn";
 import DialogPopup from "../../../shared/FrxDialogPopup/FrxDialogPopup";
+import PanelHeader from "../../../shared/Frx-components/panel-header/PanelHeader";
+import FrxGridContainer from "../../../shared/FrxGrid/FrxGridContainer";
 
 export interface FormularyGridDS {
   key: string;
@@ -69,7 +74,7 @@ class MassMaintenancePA extends Component<any, MassMaintenancePAState> {
     drugsList: getDrugsList(),
     isFormularyGridShown: false,
     columns: null,
-    data: null,
+    data: [],
     pinData: {
       value: false,
     },
@@ -93,32 +98,9 @@ class MassMaintenancePA extends Component<any, MassMaintenancePAState> {
     ],
     activeMiniTabIndex: 0,
   };
-
+  static contextType = formularyDetailsContext;
   addNew = () => {
-    // this.setState((prevState) => ({
-    //   ...prevState,
-    //   gridData: prevState.gridData.concat({
-    //     key: "4",
-    //     formularyName: "Care987",
-    //     formularyId: "192039483745",
-    //     formularyVersion: 5,
-    //     contractYeat: "2021",
-    //     formularyType: "Medicare",
-    //     effectiveDate: "01/01/2021",
-    //   }),
-    // }));
-    // ###############################
-    // this.setState({
-    //   gridData: this.state.gridData.concat({
-    //     key: "4",
-    //     formularyName: "Care987",
-    //     formularyId: "192039483745",
-    //     formularyVersion: 5,
-    //     contractYeat: "2021",
-    //     formularyType: "Medicare",
-    //     effectiveDate: "01/01/2021",
-    //   }),
-    // });
+   
   };
   advanceSearchClickHandler = (event) => {
     event.stopPropagation();
@@ -133,12 +115,35 @@ class MassMaintenancePA extends Component<any, MassMaintenancePAState> {
   rowSelectionChange = (r) => {
     console.log(r);
   };
+
+  getPAAssignmentGridData(){
+    if(this.context.selectedLOBType == "medicare"){
+      return getTPAtGridData();
+    }
+    else if (this.context.selectedLOBType == "commercial"){
+      return getTPACommercialGridData();
+    }   
+    return getTPACommercialGridData(); 
+  }
+
+  getPAGridData(){
+    if(this.context.selectedLOBType == "medicare"){
+      return getData();
+    }
+    else if (this.context.selectedLOBType == "commercial"){
+      return getPACommercialData();
+    }    
+    return getPACommercialData();
+  }
+  
   componentDidMount() {
-    this.setState({
-      columns: getDrugsPAGridColumns(),
-      data: getDrugsPAGridData(),
+    debugger;
+    this.setState({     
+      data: this.getPAAssignmentGridData(),
+      gridData: this.getPAGridData(),
     });
   }
+ 
   onClickMiniTab = (selectedTabIndex: number) => {
     let activeTabIndex = 0;
 
@@ -163,6 +168,9 @@ class MassMaintenancePA extends Component<any, MassMaintenancePAState> {
       isGroupDescPopupEnabled: !this.state.isGroupDescPopupEnabled,
     });
   };
+  handleSearch = (searchObject: any) => {
+   
+  };
   render() {
     const {
       gridData,
@@ -173,37 +181,15 @@ class MassMaintenancePA extends Component<any, MassMaintenancePAState> {
       activeMiniTabIndex,
       isGroupDescPopupEnabled,
     } = this.state;
-    const { isFormularyGridShown, columns, data, scroll, pinData } = this.state;
-    let dataGrid = <FrxLoader />;
-    if (data) {
-      // dataGrid = (
-      //   <FormularyGrid
-      //     columns={columns}
-      //     data={data}
-      //     bordered={false}
-      //     rowSelectionChange={this.rowSelectionChange}
-      //     enableSettings={false}
-      //     isPinningEnabled={false}
-      //   />
-      // );
-      dataGrid = (
-        <DrugGrid
-          columns={columns}
-          data={data}
-          scroll={scroll}
-          pinData={pinData}
-        />
-      );
-    }
+   
     return (
       <div className="mm-pa-root">
         <div className="bordered details-top">
-          <div className="header">
-            SELECTED FORMULARIES
-            <span>
-              &nbsp; &nbsp;
-              <img src={IconInfo} alt="info" />
-            </span>
+          <div>
+          <PanelHeader
+                      title="SELECTED FORMULARIES"
+                      tooltip="SELECTED FORMULARIES"
+                    /> 
           </div>
           <div className="inner-container p-20">
             <div>
@@ -252,7 +238,26 @@ class MassMaintenancePA extends Component<any, MassMaintenancePAState> {
             </div>
           </div>
           <div className="inner-container mm-configure-grid p-20">
-            {dataGrid}
+          <FrxGridContainer
+              enableSearch={false}
+              enableColumnDrag={false}
+              onSearch={this.handleSearch}
+              fixedColumnKeys={[]}
+              pagintionPosition="topRight"
+              gridName=""
+              enableSettings={true}
+              isFetchingData={false}
+              columns={getDrugsPAGridColumns()}
+              isPinningEnabled={false}
+              scroll={{ x: 0, y: 377 }}
+              enableResizingOfColumns={false}
+              data={this.state.data}
+              isCustomCheckboxEnabled={true}
+              handleCustomRowSelectionChange={this.rowSelectionChange}
+              settingsTriDotClick={() => {
+                console.log("object");
+              }}
+            />
             {isSearchOpen ? (
               <AdvancedSearch
                 category="Grievances"
