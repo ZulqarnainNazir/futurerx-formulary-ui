@@ -102,7 +102,7 @@ class TierReplace extends React.Component<any, tabsState> {
     limit: 10,
     filter: Array(),
     quickFilter: Array(),
-    sort_by: Array(),
+    sort_by: [{ key: 'drug_label_name', value: 'asc' }],
     hiddenColumns: Array(),
     dataCount: 0,
     gridSingleSortInfo: null,
@@ -192,6 +192,8 @@ class TierReplace extends React.Component<any, tabsState> {
         keyPair => keyPair["key"] !== key
       );
       this.state.sort_by.push({ key: key, value: sortOrder });
+    } else {
+      this.state.sort_by.push({ key: 'drug_label_name', value: 'asc' });
     }
 
     this.setState({
@@ -276,6 +278,8 @@ class TierReplace extends React.Component<any, tabsState> {
   onMultiSortToggle = (isMultiSortOn: boolean) => {
     console.log("is Multi sort on ", isMultiSortOn);
     this.state.sort_by = Array();
+    if (!isMultiSortOn)
+      this.state.sort_by.push({ key: 'drug_label_name', value: 'asc' });
     this.state.gridSingleSortInfo = null;
     this.state.gridMultiSortedInfo = [];
     this.state.isGridMultiSorted = isMultiSortOn;
@@ -745,6 +749,7 @@ class TierReplace extends React.Component<any, tabsState> {
       this.state.filter = Array();
       this.state.quickFilter = Array();
       this.state.sort_by = Array();
+      this.state.sort_by.push({ key: 'drug_label_name', value: 'asc' });
       this.state.index = 0;
       this.state.limit = 10;
       this.state.hiddenColumns = Array();

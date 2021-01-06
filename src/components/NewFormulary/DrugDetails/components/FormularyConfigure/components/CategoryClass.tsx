@@ -123,7 +123,7 @@ class CategoryClass extends React.Component<any, any> {
     selectedRowKeys: Array(),
     index: 0,
     limit: 10,
-    sort_by: Array(),
+    sort_by: [{ key: 'drug_label_name', value: 'asc' }],
     hiddenColumns: Array(),
     dataCount: 0,
     gridSingleSortInfo: null,
@@ -238,6 +238,8 @@ class CategoryClass extends React.Component<any, any> {
         keyPair => keyPair["key"] !== key
       );
       this.state.sort_by.push({ key: key, value: sortOrder });
+    } else {
+      this.state.sort_by.push({ key: 'drug_label_name', value: 'asc' });
     }
     this.setState({
       gridSingleSortInfo: sortedInfo,
@@ -292,6 +294,8 @@ class CategoryClass extends React.Component<any, any> {
   onMultiSortToggle = (isMultiSortOn: boolean) => {
     console.log("is Multi sort on ", isMultiSortOn);
     this.state.sort_by = Array();
+    if (!isMultiSortOn)
+      this.state.sort_by.push({ key: 'drug_label_name', value: 'asc' });
     this.state.gridSingleSortInfo = null;
     this.state.gridMultiSortedInfo = [];
     this.state.isGridMultiSorted = isMultiSortOn;
