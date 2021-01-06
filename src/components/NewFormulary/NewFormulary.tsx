@@ -125,7 +125,8 @@ class Formulary extends React.Component<any, any> {
     showTabs: true,
     showMassMaintenance: false,
     showDrugDetails: false,
-    pageSize: 10
+    pageSize: 10,
+    lob_type:"",
   };
 
   listPayload: any = {
