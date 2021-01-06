@@ -25,7 +25,7 @@ const mapStateToProps = (state) => {
     formulary: state?.setup?.formulary,
     formulary_mode: state?.setup?.mode,
     general_options: state?.setupOptions?.generalOptions,
-    lob:state?.application?.mode_lob
+    mode_lob: state?.application?.mode_lob,
   };
 };
 interface TagModule {
@@ -240,9 +240,31 @@ class GeneralInformation extends React.Component<any, GeneralInformationState> {
     return current.isBefore(moment(), "day");
   };
   getFormularyTypeOptions = (opt) => {
-    const options = this.props.lob === 4 ? opt.formularyType.filter(e => e.formulary_type === 'Commercial').map(e => e.formulary_type) : opt.formularyType.map(e => e.formulary_type);
+    // const options = this.props.lob === 4 ? opt.formularyType.filter(e => e.formulary_type === 'Commercial').map(e => e.formulary_type) : opt.formularyType.map(e => e.formulary_type);
+    console.log(" >>>>>> "+ this.props.mode_lob);
+    let options: any[] = opt.formularyType.map((e) => e.formulary_type);
+    // console.log(options);
+
+     if (this.props.mode_lob === 1) {
+      options =  opt.formularyType
+        .filter((e) => e.formulary_type === "Medicare" || e.formulary_type === "Medicare-Medicaid Plan (MMP)")
+        .map((e) => e.formulary_type);
+    } else if (this.props.mode_lob === 2) {
+      options =  opt.formularyType
+        .filter((e) => e.formulary_type === "Managed Medicaid" || e.formulary_type === "State Medicaid")
+        .map((e) => e.formulary_type);
+    } else if (this.props.mode_lob === 3) {
+      options = opt.formularyType
+        .filter((e) => e.formulary_type === "Exchange")
+        .map((e) => e.formulary_type);
+    } else if (this.props.mode_lob === 4) {
+      options = opt.formularyType
+        .filter((e) => e.formulary_type === "Commercial")
+        .map((e) => e.formulary_type);
+    }
+
     return options;
-  }
+  };
   render() {
     const { Option } = Select;
     const {
@@ -293,7 +315,9 @@ class GeneralInformation extends React.Component<any, GeneralInformationState> {
                 <DropDown
                   className="formulary-type-dropdown"
                   placeholder="Select"
-                  options={this.getFormularyTypeOptions(this.props.general_options)}
+                  options={this.getFormularyTypeOptions(
+                    this.props.general_options
+                  )}
                   value={this.props.generalInfo.type}
                   disabled={disabled}
                   onChange={this.props.formularyTypeChanged}
