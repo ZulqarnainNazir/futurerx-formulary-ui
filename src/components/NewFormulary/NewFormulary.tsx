@@ -314,6 +314,9 @@ class Formulary extends React.Component<any, any> {
 
   componentDidUpdate(prevProps) {
     console.log(this.props.location_home + " / " + prevProps.location_home);
+    if(this.state.activeTabIndex === 0){
+      this.props.setModeLob(4);
+    }
     if (
       this.props.location_home !== prevProps.location_home &&
       this.props.location_home > 0
