@@ -116,14 +116,14 @@ class PaRemove extends React.Component<any, any> {
     this.populateGridData();
   };
 
-  onSelectedTableRowChanged = (selectedRowKeys) => {
-    this.state.selectedDrugs = [];
-    if (selectedRowKeys && selectedRowKeys.length > 0) {
-      this.state.selectedDrugs = selectedRowKeys.map(
-        (tierId) => this.state.drugData[tierId - 1]["md5_id"]
-      );
-    }
-  };
+  // onSelectedTableRowChanged = (selectedRowKeys) => {
+  //   this.state.selectedDrugs = [];
+  //   if (selectedRowKeys && selectedRowKeys.length > 0) {
+  //     this.state.selectedDrugs = selectedRowKeys.map(
+  //       (tierId) => this.state.drugData[tierId - 1]["md5_id"]
+  //     );
+  //   }
+  // };
 
   populateGridData = (searchBody = null) => {
     console.log("Populate grid data is called");
@@ -163,6 +163,9 @@ class PaRemove extends React.Component<any, any> {
  });
 
  apiDetails["messageBody"]["filter"] = allFilters;
+ if (this.state.sort_by && this.state.sort_by.length ==0){
+  this.state.sort_by.push({ key: 'drug_label_name', value: 'asc' });
+}
  if (this.state.sort_by && this.state.sort_by.length > 0) {
    let keys = Array();
    let values = Array();
@@ -356,16 +359,17 @@ class PaRemove extends React.Component<any, any> {
     if (fetchedKeys && fetchedKeys.length > 0) {
       fetchedKeys.map((fetchedProps) => {
         if (filters[fetchedProps]) {
+          this.state.filter = this.state.filter.filter(element => element['prop'] !== fetchedProps);
           const fetchedOperator =
             filters[fetchedProps][0].condition === "is like"
               ? "is_like"
               : filters[fetchedProps][0].condition === "is not"
-              ? "is_not"
-              : filters[fetchedProps][0].condition === "is not like"
-              ? "is_not_like"
-              : filters[fetchedProps][0].condition === "does not exist"
-              ? "does_not_exist"
-              : filters[fetchedProps][0].condition;
+                ? "is_not"
+                : filters[fetchedProps][0].condition === "is not like"
+                  ? "is_not_like"
+                  : filters[fetchedProps][0].condition === "does not exist"
+                    ? "does_not_exist"
+                    : filters[fetchedProps][0].condition;
           const fetchedValues =
             filters[fetchedProps][0].value !== ""
               ? [filters[fetchedProps][0].value.toString()]
@@ -377,14 +381,17 @@ class PaRemove extends React.Component<any, any> {
           });
         }
       });
-      console.log("Filters:" + JSON.stringify(this.state.filter));
-      if (this.props.advancedSearchBody) {
-        this.populateGridData(this.props.advancedSearchBody);
-      } else {
-        this.populateGridData();
-      }
+    } else {
+      this.state.filter = Array();
+    }
+    console.log("Filters:" + JSON.stringify(this.state.filter));
+    if (this.props.advancedSearchBody) {
+      this.populateGridData(this.props.advancedSearchBody);
+    } else {
+      this.populateGridData();
     }
   };
+
 
   onApplySortHandler = (key, order, sortedInfo) => {
     console.log("sort details ", key, order);
@@ -474,7 +481,10 @@ class PaRemove extends React.Component<any, any> {
     if (!selectedRow["isDisabled"]) {
       if (isSelected) {
         const data = this.state.drugGridData.map((d: any) => {
-          if (d.key === selectedRow.key) d["isChecked"] = true;
+          if (d.key === selectedRow.key) {
+            d["isChecked"] = true;
+            d["rowStyle"] = "table-row--green-font";
+          }
           // else d["isChecked"] = false;
           return d;
         });
@@ -491,7 +501,10 @@ class PaRemove extends React.Component<any, any> {
         this.setState({ drugGridData: data });
       } else {
         const data = this.state.drugGridData.map((d: any) => {
-          if (d.key === selectedRow.key) d["isChecked"] = false;
+          if (d.key === selectedRow.key) {
+            d["isChecked"] = false;
+            if (d["rowStyle"]) delete d["rowStyle"];
+          }
           // else d["isChecked"] = false;
           return d;
         });
@@ -510,6 +523,21 @@ class PaRemove extends React.Component<any, any> {
       }
     }
   };
+
+  onSelectedTableRowChanged = (selectedRowKeys) => {
+    console.log("selected row ", selectedRowKeys);
+
+    this.state.selectedDrugs = [];
+    this.setState({
+      selectedRowKeys: [...selectedRowKeys],
+    });
+    if (selectedRowKeys && selectedRowKeys.length > 0) {
+      this.state.selectedDrugs = selectedRowKeys.map((tierId) => {
+        return this.state.drugData[tierId - 1]["md5_id"];
+      });
+    }
+  };
+
   render() {
     const columns = [
       {
@@ -576,12 +604,16 @@ class PaRemove extends React.Component<any, any> {
                   fixedColumnKeys={[]}
                   pagintionPosition="topRight"
                   gridName="DRUG GRID"
-                  enableSettings={false}
+                  enableSettings
                   columns={PaColumns()}
                   scroll={{ x: 2000, y: 377 }}
                   isFetchingData={false}
                   enableResizingOfColumns
                   data={this.state.drugGridData}
+                  rowSelectionChangeFromCell={this.rowSelectionChangeFromCell}
+                  onSelectAllRows={this.onSelectAllRows}
+                  customSettingIcon={"FILL-DOT"}
+                  settingsWidth={30}
                   // rowSelection={{
                   //   columnWidth: 50,
                   //   fixed: true,
@@ -602,10 +634,6 @@ class PaRemove extends React.Component<any, any> {
                   isMultiSorted={this.state.isGridMultiSorted}
                   multiSortedInfo={this.state.gridMultiSortedInfo}
                   onMultiSortToggle={this.onMultiSortToggle}
-                  rowSelectionChangeFromCell={this.rowSelectionChangeFromCell}
-                  onSelectAllRows={this.onSelectAllRows}
-                  customSettingIcon={"FILL-DOT"}
-                  settingsWidth={30}
                 />
               </div>
             </div>

@@ -20,6 +20,7 @@ interface TabProps {
   msgCount?: number;
   disabledIndex?: number;
   disabled?: boolean;
+  position?: boolean;
 }
 
 interface TabState {}
@@ -35,7 +36,10 @@ class FrxMiniTabs extends React.Component<TabProps, TabState> {
 
   render() {
     return (
-      <AppBar className="frx-mini-tabs-root">
+      <AppBar
+        className="frx-mini-tabs-root"
+        position={this.props.position ? "sticky" : "fixed"}
+      >
         <Tabs
           value={this.props.activeTabIndex}
           indicatorColor="primary"
