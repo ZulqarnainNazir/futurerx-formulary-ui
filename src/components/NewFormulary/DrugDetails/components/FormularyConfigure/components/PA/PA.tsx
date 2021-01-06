@@ -211,28 +211,10 @@ class PA extends React.Component<any, any> {
                     <div className="limited-access">
                       <PanelHeader title="Prior Authorization - DRUG SELECTION" />
                       <div className="inner-container">
-                        {/* <PanelGrid
+                        <PanelGrid
                           panelGridTitle={this.state.panelGridTitle}
                           panelGridValue={this.state.panelGridValue}
-                        /> */}
-                        <CustomPanelGrid
-                          onMenuClick={(item, data) => {
-                            console.log(item);
-                            console.log(data);
-                          }}
-                          menuItems={[
-                            {
-                              id: 21,
-                              key: 21,
-                              title: "Menu 1"
-                            },
-                            {
-                              id: 22,
-                              key: 22,
-                              title: "Menu 2"
-                            }
-                          ]}
-                        />
+                        /> 
                       </div>
                     </div>
                   </div>
