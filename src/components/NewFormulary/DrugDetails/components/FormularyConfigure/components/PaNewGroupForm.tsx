@@ -379,7 +379,7 @@ function NewGroup(props: any) {
         formData["coverage_restrictions"];
       requestData["messageBody"]["other_criteria"] = formData["other_criteria"];
 
-      if (formType == 1 && props.formType == 1) {
+      if (formType == 1 ) {
         requestData["apiPart"] = "api/1/mcr-pa-group-description";
         requestData["pathParams"] =
           "/" +
@@ -441,7 +441,7 @@ function NewGroup(props: any) {
       requestData["messageBody"]["is_additional_criteria_defined"] =
         formData["is_additional_criteria_defined"];
       requestData["messageBody"]["drug_list_ids"] = drug_list_ids;
-      if (formType == 1 && props.formType == 1) {
+      if (formType == 1 ) {
         requestData["pathParams"] =
           "/" +
           formData["id_pa_group_description"] +
@@ -577,6 +577,15 @@ function NewGroup(props: any) {
     toggleAdditionalCriteriaOpen(true);
   };
   const closeAddiionalCriteria = () => toggleAdditionalCriteriaOpen(false);
+
+  useEffect(()=>{
+    setFormType(props.formType);
+  },[])
+
+  useEffect(()=>{
+    setFormType(props.formType);
+  },[props.formType])
+  
   useEffect(() => {
 
     // debugger;
@@ -609,7 +618,7 @@ function NewGroup(props: any) {
     if (!props.editMode) {
       setEditable(false);
     }
-    setFormType(props.formType);
+    
     setShowHeader(0);
     setErrorClass("");
   }, [
@@ -632,7 +641,7 @@ function NewGroup(props: any) {
       onChange={onChange} />  */}
       <div className="panel header">
         <span>
-          {(props.formType > 0 || showHeader > 0) &&
+          {(formType > 0 || showHeader > 0) &&
           formData.pa_group_description_name
             ? formData.pa_group_description_name
             : props.title}
@@ -652,7 +661,7 @@ function NewGroup(props: any) {
           </div>
         )}
       </div>
-      {(props.formType > 0 || showHeader > 0) && (
+      {(formType > 0 || showHeader > 0) && (
         <PAGroupHeader
           popuptitle={
             formData.pa_group_description_name
