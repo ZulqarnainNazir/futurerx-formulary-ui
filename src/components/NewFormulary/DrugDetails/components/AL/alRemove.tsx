@@ -12,6 +12,7 @@ class ALRemove extends React.Component<any, any> {
   state = {
     selectedRowKeys: [],
     dataToRemove: [],
+    selType: '',
   };
 
   onSelectChange = (selectedRowKeys) => {
@@ -19,6 +20,7 @@ class ALRemove extends React.Component<any, any> {
   };
 
   getSelectedVal = (e) => {
+    this.setState({ selType: e.target.value })
     this.props.handleChangeEvent(e.target.value);
   };
 
@@ -65,6 +67,7 @@ class ALRemove extends React.Component<any, any> {
               <option value="non-covered">NonCovered</option>
             </select>
             <Table
+              key={this.state.selType}
               rowSelection={rowSelection}
               columns={columns}
               dataSource={this.state.dataToRemove}
