@@ -373,6 +373,8 @@ function NewGroup(props: any) {
           props.getStGrouptDescriptions(apiDetails);
           apiDetails["pathParams"] =
             "/" + json.payload.success.data.id_base_st_group_description;
+
+          let id_base_st_group_description = json.payload.success.data.id_base_st_group_description
           props.getStGrouptDescriptionVersions(apiDetails).then((json) => {
             const isEditable =
               json.payload.data.length > 0 &&
@@ -381,6 +383,10 @@ function NewGroup(props: any) {
                   val.id_st_group_description ===
                   formData["id_st_group_description"]
               );
+            props.selectGroup(
+              id_base_st_group_description,
+              isEditable.is_setup_complete
+            );
             isSetUpComplete(isEditable.is_setup_complete);
           });
         } else if (json?.payload?.status && json?.payload?.status != 200) {
