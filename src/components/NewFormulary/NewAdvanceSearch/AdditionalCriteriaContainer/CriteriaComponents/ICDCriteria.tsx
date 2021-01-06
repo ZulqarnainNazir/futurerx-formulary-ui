@@ -23,7 +23,7 @@ const ICDCriteria = (props) => {
   ));
 
   return (
-    <div className="root-icd-limit-settings bordered mb-10">
+    <div className="root-icd-limit-settings mb-10">
       <div className="inner-container">
         <StatusContentFormPanel
           title="ICD"

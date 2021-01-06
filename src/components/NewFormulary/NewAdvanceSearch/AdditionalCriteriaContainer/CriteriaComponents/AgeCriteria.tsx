@@ -16,7 +16,7 @@ const AgeCriteria = (props) => {
   } = props;
 
   return (
-    <div className="root-age-limit-settings bordered mb-10">
+    <div className="root-age-limit-settings mb-10">
       <div className="inner-container">
         <StatusContentFormPanel
           title="Age"

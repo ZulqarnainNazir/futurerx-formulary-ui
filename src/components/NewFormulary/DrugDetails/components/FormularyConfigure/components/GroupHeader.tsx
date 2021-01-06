@@ -185,7 +185,15 @@ function GroupHeader(props: any) {
             : 0;
       }
 
-      setPanelColor(isEditable ? "-green" : "");
+      setPanelColor(
+        isEditable
+          ? props.isPopUpView
+            ? "-grey"
+            : "-green"
+          : props.isPopUpView
+          ? "-grey"
+          : "-orange"
+      );
       setPlaceHolder(selectedVersion);
 
       let apiDetails = {};
@@ -506,7 +514,12 @@ function GroupHeader(props: any) {
       });
   };
   return (
-    <div className={`version-wrapper${panelColor}`}>
+    <div
+      className={`version-wrapper${
+        props.isSetupComplete === true ? "-green" : panelColor
+      }`}
+    >
+      {/* <div className={`version-wrapper${panelColor}`}> */}
       <select
         name="group-description"
         id="group-description"

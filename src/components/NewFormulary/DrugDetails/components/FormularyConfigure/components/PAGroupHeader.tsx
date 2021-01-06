@@ -146,8 +146,8 @@ function PAGroupHeader(props: any) {
         });
       }
       const verLength = Object.keys(versions).length;
-      const isEditable = versions[verLength - 1].is_setup_complete;
-      const value = versions[verLength - 1].value;
+      const isEditable = versions[verLength - 1]?.is_setup_complete;
+      const value = versions[verLength - 1]?.value;
       setPanelColor(
         isEditable
           ? props.isPopUpView
@@ -210,7 +210,15 @@ function PAGroupHeader(props: any) {
             : 0;
       }
 
-      setPanelColor(isEditable ? "-green" : "-orange");
+      setPanelColor(
+        isEditable
+          ? props.isPopUpView
+            ? "-grey"
+            : "-green"
+          : props.isPopUpView
+          ? "-grey"
+          : "-orange"
+      );
       setPlaceHolder(selectedVersion);
       let apiDetails = {};
       apiDetails["lob_type"] = props.formulary_lob_id;
