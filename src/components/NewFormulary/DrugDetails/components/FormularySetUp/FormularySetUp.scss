@@ -486,3 +486,29 @@
   margin-left: 20px;
   padding:0 20px;
 }
+.error-true{
+  .ant-select-selector{
+    border-color: red !important;
+  }
+}
+.clone-div{
+  .inner-div{
+    display: inline-block;
+    padding: 0 10px 0 0;
+    span.input-link{
+      display: inline-block;
+    }
+  }
+  &.error-true{
+    .inner-div{
+      padding: 3px 5px;
+      background: rgba(255,0,0,0.1);
+    }
+  }
+}
+.Mui-checked + span{
+  font-weight: 500;
+}
+.ant-checkbox-checked + span{
+  font-weight: 500;
+}

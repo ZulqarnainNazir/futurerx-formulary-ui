@@ -77,6 +77,14 @@ class FormularySetUp extends React.Component<any, any> {
       removed_formulary_edits: [],
     },
     setupOptions: {},
+    errorObj: {
+      formularyType: false,
+      formularyName: false,
+      effectiveDate: false,
+      bildMethod: false,
+      serviceYear: false,
+      classificaton: false,
+    }
   };
 
   componentDidMount() {
@@ -534,7 +542,10 @@ class FormularySetUp extends React.Component<any, any> {
       generalInformation: newObj,
     });
   };
-
+  scrollToError = () => {
+    const errorElement = document.querySelector('.error-true')
+    errorElement?.scrollIntoView();
+  }
   onSave = (e) => {
     console.log(
       "  SAVE - (" +
@@ -545,16 +556,41 @@ class FormularySetUp extends React.Component<any, any> {
         this.state.generalInformation.method
     );
     let msg: string[] = [];
-
+    const errorObj = {
+      formularyType: false,
+      formularyName: false,
+      effectiveDate: false,
+      bildMethod: false,
+      serviceYear: false,
+      classificaton: false,
+    };
     if (this.props.mode === "NEW") {
       if (this.state.generalInformation.method === "C") {
         msg.push("Formulary Build Method is Clone. Selected Formulary Type, Enter Name, Effective Date and click Clone Formulary link to select clone source. ");
+        errorObj.bildMethod = true;
+        this.setState({
+          errorObj: errorObj
+        },() => {
+          this.scrollToError()
+        })
       }
       if (this.state.generalInformation.type_id === "") {
         msg.push("Formulary Type is required.");
+        // errorObj.formularyType = true;
+        // this.setState({
+        //   errorObj: errorObj
+        // },() => {
+        //   this.scrollToError()
+        // })
       }
       if (trim(this.state.generalInformation.name) === "") {
         msg.push("Formulary Name is required.");
+        // errorObj.formularyName = true;
+        // this.setState({
+        //   errorObj: errorObj
+        // },() => {
+        //   this.scrollToError()
+        // })
       }
       if (this.state.generalInformation.method === "") {
         msg.push("Formulary Build Method is required.");
@@ -719,6 +755,7 @@ class FormularySetUp extends React.Component<any, any> {
               formularyTypeChanged={this.formularyTypeChanged}
               datePickerChange={this.onDatePickerChangeHandler}
               cloneFormularyClick={this.handleCloneSource}
+              errorObj={this.state.errorObj}
             />
             {this.state.generalInformation.type !== "" ? (
               <>
