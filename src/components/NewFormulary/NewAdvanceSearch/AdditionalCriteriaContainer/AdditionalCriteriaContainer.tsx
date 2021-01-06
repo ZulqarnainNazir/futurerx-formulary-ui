@@ -141,6 +141,7 @@ class AdditionalCriteriaContainer extends Component<
                       criteriaList={criteriaList}
                       additionalCriteria={additionalCriteria}
                       handleChildDataSave={this.handleChildDataSave}
+                      isReadOnly={this.props.isReadOnly}
                     />
                   </div>
                   {!this.props.isReadOnly && (

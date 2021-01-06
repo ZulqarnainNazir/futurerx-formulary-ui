@@ -15,14 +15,17 @@ const DragBox = (props) => {
       isDragging: monitor.isDragging(),
     }),
   });
-
-  const { criteria, onCriteriaSelect } = props;
+  const { criteria, onCriteriaSelect, isReadOnly } = props;
   return (
     <div
       ref={drag}
       key={criteria.id}
       id={criteria.id}
-      className="__root-additional-criteria-child-accordion-section-content-left-inner-spacing-flex"
+      className={
+        isReadOnly
+          ? "__root-additional-criteria-read-only-child-accordion-section-content-left-inner-spacing-flex"
+          : "__root-additional-criteria-child-accordion-section-content-left-inner-spacing-flex"
+      }
       onClick={() => onCriteriaSelect(criteria.id)}
     >
       <TiltCrossIcon />
