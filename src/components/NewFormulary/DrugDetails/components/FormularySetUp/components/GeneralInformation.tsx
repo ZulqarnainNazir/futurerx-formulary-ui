@@ -308,7 +308,7 @@ class GeneralInformation extends React.Component<any, GeneralInformationState> {
         <div className="general-information-fields-wrapper setup-label">
           <Grid container>
             <Grid item xs={4}>
-              <div className="group">
+              <div className={`group error-${this.props.errorObj.formularyType}`}>
                 <label>
                   FORMULARY TYPE <span className="astrict">*</span>
                 </label>
@@ -325,7 +325,7 @@ class GeneralInformation extends React.Component<any, GeneralInformationState> {
               </div>
             </Grid>
             <Grid item xs={4}>
-              <div className="group">
+              <div className={`group error-${this.props.errorObj.formularyName}`}>
                 <label>
                   FORMULARY NAME <span className="astrict">*</span>
                 </label>
@@ -439,8 +439,9 @@ class GeneralInformation extends React.Component<any, GeneralInformationState> {
 
             {this.props.generalInfo.method === "C" && (
               <Grid item xs={4}>
-                {this.props.formulary_mode === "NEW" && (
-                  <div className="group">
+                 {this.props.formulary_mode === "NEW" && (
+                <div className={`group clone-div error-${this.props.errorObj.bildMethod}`}>
+                  <div className="inner-div">
                     <label>
                       CLONE FORMULARY <span className="astrict">*</span>
                     </label>
@@ -451,7 +452,8 @@ class GeneralInformation extends React.Component<any, GeneralInformationState> {
                       Clone Formulary
                     </span>
                   </div>
-                )}
+                </div>
+                 )}
               </Grid>
             )}
             <Grid item xs={4}>
