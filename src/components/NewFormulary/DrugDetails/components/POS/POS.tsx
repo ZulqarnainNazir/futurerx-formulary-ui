@@ -246,6 +246,40 @@ class DrugDetailPOS extends React.Component<any, any> {
           posConstants.TYPE_REPLACE;
         console.log("The API Details - ", apiDetails);
 
+        // Adding Append Condition 
+        if(this.state.activeTabIndex === 1) {
+          let selDrugs = this.state.selectedDrugs;
+          let setpos = new Set();
+
+          posRows.forEach(el => setpos.add(el));
+
+          for(let i=0; i<this.state.selectedDrugs.length; i++) {
+            let tmpSelDrg = this.state.selectedDrugs[i];
+
+            for(let j=0; j<this.state.data.length; j++) {
+              if(tmpSelDrg === this.state.data[j].md5_id){
+                let covGens = [];
+                if(this.state.posSettingsStatus.covered) {
+                  covGens = this.state.data[j]?.coveredPlaceOfService.split(",").map(e => e.trim().toLowerCase());
+
+                } else if(!this.state.posSettingsStatus.covered) {
+                  covGens = this.state.data[j]?.notCoveredPlaceOfService.split(",").map(e => e.trim().toLowerCase());
+                }
+
+                covGens.forEach(element => {
+                  let tmpGCode = this.state.posSettings.filter(e => e.place_of_service_type_name.toLowerCase() === element).map(a => a.id_place_of_service_type);
+                  tmpGCode.forEach(el => setpos.add(el));
+                });
+
+                console.log("The Covered POS = ", setpos);
+              }
+            }
+          }
+
+          let covArray = Array.from(setpos);
+          this.rpSavePayload.place_of_services = covArray;
+        }
+
         this.props.postReplacePOSDrug(apiDetails).then((json) => {
           if (
             json.payload &&
