@@ -328,7 +328,7 @@ function GroupHeader(props: any) {
                 const latestVerion =
                   response[verLength - 1].id_st_group_description;
                 const value = response[verLength - 1].value;
-                setPanelColor(isEditable ? "-green" : "");
+                setIsSetupComplete(isEditable);
                 setVersion(response);
                 setPlaceHolder(value);
 
@@ -433,7 +433,7 @@ function GroupHeader(props: any) {
             const latestVerion =
               response[verLength - 1].id_st_group_description;
             const value = response[verLength - 1].value;
-            setPanelColor(isEditable ? "-green" : "");
+            setIsSetupComplete(isEditable);
             setVersion(response);
             setPlaceHolder(value);
 
@@ -452,7 +452,7 @@ function GroupHeader(props: any) {
           json?.payload?.success?.status &&
           json?.payload?.success?.status == 200
         ) {
-          showMessage(SUCCESS_MSG["newVersion"], "success");
+          showMessage(SUCCESS_MSG["archive"], "success");
         }
         setOpen(false);
       });
@@ -489,7 +489,7 @@ function GroupHeader(props: any) {
             const latestVerion =
               response[verLength - 1].id_st_group_description;
             const value = response[verLength - 1].value;
-            setPanelColor(isEditable ? "-green" : "");
+            setIsSetupComplete(isEditable);
             setVersion(response);
             setPlaceHolder(value);
 
@@ -520,7 +520,7 @@ function GroupHeader(props: any) {
           json?.payload?.success?.status &&
           json?.payload?.success?.status == 200
         ) {
-          showMessage(SUCCESS_MSG["archive"], "success");
+          showMessage(SUCCESS_MSG["newVersion"], "success");
         }
         setOpen(false);
       });

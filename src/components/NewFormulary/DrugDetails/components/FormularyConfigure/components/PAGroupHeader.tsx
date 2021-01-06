@@ -350,7 +350,7 @@ function PAGroupHeader(props: any) {
             const latestVerion =
               response[verLength - 1].id_pa_group_description;
             const value = response[verLength - 1].value;
-            setPanelColor(isEditable ? "-green" : "-orange");
+            setIsSetupComplete(isEditable);
             setVersion(response);
             setPlaceHolder(value);
 
@@ -452,7 +452,7 @@ function PAGroupHeader(props: any) {
           json?.payload?.success?.status &&
           json?.payload?.success?.status == 200
         ) {
-          showMessage(SUCCESS_MSG["newVersion"], "success");
+          showMessage(SUCCESS_MSG["archive"], "success");
         }
         setOpen(false);
       });
@@ -479,7 +479,7 @@ function PAGroupHeader(props: any) {
           const isEditable = response[verLength - 1].is_setup_complete;
           const latestVerion = response[verLength - 1].id_pa_group_description;
           const value = response[verLength - 1].value;
-          setPanelColor(isEditable ? "-green" : "-orange");
+          setIsSetupComplete(isEditable);
           setVersion(response);
           setPlaceHolder(value);
 
@@ -512,7 +512,7 @@ function PAGroupHeader(props: any) {
           json?.payload?.success?.status &&
           json?.payload?.success?.status == 200
         ) {
-          showMessage(SUCCESS_MSG["archive"], "success");
+          showMessage(SUCCESS_MSG["newVersion"], "success");
         }
         setOpen(false);
       });

@@ -79,14 +79,7 @@ class GPM extends React.Component<any, any> {
         text: "Archived",
       },
     ],
-    groupsData: [
-      {
-        id: 1,
-        label: "Group 1",
-        status: "warning",
-        is_archived: false,
-      },
-    ],
+    groupsData: [],
     searchInput: "",
     selectedGroup: -1,
     isSetUpComplete: false,
@@ -329,7 +322,7 @@ class GPM extends React.Component<any, any> {
                   }
                 >
                   {this.state.groupsData.length > 0 &&
-                    this.state.groupsData.map((group, key) =>
+                    this.state.groupsData.map((group:any, key) =>
                       this.state.searchInput == "" ||
                       (this.state.searchInput != "" &&
                         group.label.indexOf(this.state.searchInput) > -1) ? (
