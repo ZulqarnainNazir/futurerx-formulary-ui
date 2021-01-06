@@ -31,6 +31,9 @@ class Remove extends Component<any, State> {
   state = {
     drugGridData: [],
     drugData: [],
+    filter: Array(),
+    selectedRowKeys: Array(),
+    fixedSelectedRows: Array(),
   };
 
   onSelectedTableRowChanged = (selectedRowKeys) => {
@@ -49,9 +52,8 @@ class Remove extends Component<any, State> {
     // alert("in remvove" + selectedRowKeys);
     this.props.onUpdateSelectedCriteria(currentSelectedCriteriaIds);
   };
-  componentDidMount() {
-    // /api/1/criteria-list-ql/3302/COMM?entity_id=3302
-    // :scheme: https
+
+  getDrugCriteria = () => {
     let apiDetails = {};
 
     apiDetails["pathParams"] =
@@ -69,12 +71,123 @@ class Remove extends Component<any, State> {
       console.log("[postCriterial]:", json);
       this.loadGridData(json);
     });
+  };
+
+  onClearFilterHandler = () => {
+    this.state.filter = Array();
+
+    this.getDrugCriteria();
+  };
+
+  onApplyFilterHandler = (filters) => {
+    // debugger;
+    console.log("filtering from be:" + JSON.stringify(filters));
+    //this.state.filter = Array();
+    const fetchedKeys = Object.keys(filters);
+    if (fetchedKeys && fetchedKeys.length > 0) {
+      fetchedKeys.map((fetchedProps) => {
+        if (filters[fetchedProps]) {
+          const fetchedOperator =
+            filters[fetchedProps][0].condition === "is like"
+              ? "is_like"
+              : filters[fetchedProps][0].condition === "is not"
+              ? "is_not"
+              : filters[fetchedProps][0].condition === "is not like"
+              ? "is_not_like"
+              : filters[fetchedProps][0].condition === "does not exist"
+              ? "does_not_exist"
+              : filters[fetchedProps][0].condition;
+          const fetchedValues =
+            filters[fetchedProps][0].value !== ""
+              ? [filters[fetchedProps][0].value.toString()]
+              : [];
+          this.state.filter.push({
+            prop: fetchedProps,
+            operator: fetchedOperator,
+            values: fetchedValues,
+          });
+        }
+      });
+      console.log("Filters:" + JSON.stringify(this.state.filter));
+
+      this.getDrugCriteria();
+    }
+  };
+
+  componentDidMount() {
+    // /api/1/criteria-list-ql/3302/COMM?entity_id=3302
+    // :scheme: https
+    this.getDrugCriteria();
+
     this.props.onUpdateSelectedCriteria([]);
   }
 
   componentDidUpdate() {
     console.log("update remove compoenent");
   }
+
+  // rowSelectionChangeFromCell = (
+  //   key: string,
+  //   selectedRow: any,
+  //   isSelected: boolean
+  // ) => {
+  //   this.onSelectedTableRowChanged(selectedRow.key);
+  // };
+
+  rowSelectionChangeFromCell = (
+    key: string,
+    selectedRow: any,
+    isSelected: boolean
+  ) => {
+    // debugger;
+    console.log("data row ", selectedRow, isSelected, key);
+    // this.state.selectedRowKeys = [
+    //   ...this.state.selectedRowKeys,
+    //   selectedRow.key,
+    // ];
+    if (!selectedRow["isDisabled"]) {
+      if (isSelected) {
+        const data = this.state.drugGridData.map((d: any) => {
+          if (d.key === selectedRow.key) d["isChecked"] = true;
+          // else d["isChecked"] = false;
+          return d;
+        });
+        const selectedRowKeys = [
+          ...this.state.selectedRowKeys,
+          selectedRow.key,
+        ];
+        console.log("selected row keys ", selectedRowKeys);
+        const selectedRows: number[] = selectedRowKeys.filter(
+          (k) => this.state.fixedSelectedRows.indexOf(k) < 0
+        );
+        this.onSelectedTableRowChanged(selectedRowKeys);
+
+        this.setState({ drugGridData: data });
+      } else {
+        const data = this.state.drugGridData.map((d: any) => {
+          if (d.key === selectedRow.key) d["isChecked"] = false;
+          // else d["isChecked"] = false;
+          return d;
+        });
+
+        const selectedRowKeys: number[] = this.state.selectedRowKeys.filter(
+          (k) => k !== selectedRow.key
+        );
+        const selectedRows = selectedRowKeys.filter(
+          (k) => this.state.fixedSelectedRows.indexOf(k) < 0
+        );
+        const removeSelectedCriteria = this.props.selectedCriteria.filter(
+          (drugId) =>
+            drugId !== this.props.selectedCriteria[selectedRow.key - 1]
+        );
+        // this.onSelectedTableRowChanged(selectedRows);
+        this.props.onUpdateSelectedCriteria(removeSelectedCriteria);
+        this.setState({
+          drugGridData: data,
+        });
+      }
+    }
+  };
 
   loadGridData(json: any) {
     {
@@ -111,18 +224,28 @@ class Remove extends Component<any, State> {
     }
   }
 
+  // componen(nextProps) {
+  //   alert("UNSAFE_componentWillReceiveProps");
+  //   this.getDrugCriteria();
+  // }
+  // UNSAFE_componentWillReceiveProps(nextProps) {
+  //   if (nextProps.qlData) {
+  //     this.getDrugCriteria();
+  //   }
+  // }
+
   render() {
     return (
       <div>
-        <div className="tier-grid-container">
+        <div className="tier-grid-container ql-remove-grid">
           <FrxDrugGridContainer
+            isDataLoaded={true}
             isPinningEnabled={false}
             enableSearch={false}
             enableColumnDrag
             onSearch={() => {}}
             fixedColumnKeys={[]}
             pagintionPosition="topRight"
-            hidePagination
             gridName="DRUG GRID"
             enableSettings={false}
             columns={QlRemoveColumns()}
@@ -131,9 +254,22 @@ class Remove extends Component<any, State> {
             enableResizingOfColumns
             data={this.state.drugGridData}
             settingsWidth={10}
+            hideItemsPerPage
+            hidePageJumper
+            hideResults
+            // clearFilterHandler={this.onClearFilterHandler}
+            // applyFilter={this.onApplyFilterHandler}
+            // applySort={this.onApplySortHandler}
+            // isSingleSorted={this.state.isGridSingleSorted}
+            // sortedInfo={this.state.gridSingleSortInfo}
+            // applyMultiSort={this.applyMultiSortHandler}
+            // isMultiSorted={this.state.isGridMultiSorted}
+            // multiSortedInfo={this.state.gridMultiSortedInfo}
+            // onMultiSortToggle={this.onMultiSortToggle}
+            // getColumnSettings={this.onSettingsIconHandler}
             rowSelection={{
-              // columnWidth: 50,
-              // fixed: true,
+              columnWidth: 50,
+              fixed: true,
               type: "checkbox",
               onChange: this.onSelectedTableRowChanged,
             }}

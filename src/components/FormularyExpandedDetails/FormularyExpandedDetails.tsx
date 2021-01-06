@@ -131,7 +131,7 @@ class FormularyExpandedDetails extends React.Component<any,any>{
           <Paper elevation={0}>
             <div className="formulary-expanded-details__container">
               {/* Left Container Starting*/}
-              <div className="formulary-expanded-details-left">
+              {/* <div className="formulary-expanded-details-left">
                 <div className="formulary-expanded-details-left__container">
                   <div className="formulary-expanded-details-left__title">Versions</div>
                   <div className="formulary-expanded-details-left__list">
@@ -149,7 +149,7 @@ class FormularyExpandedDetails extends React.Component<any,any>{
                     
                   </div>
                 </div>
-              </div>
+              </div> */}
               {/* Left Container Ending*/}
               
               {/* Right Container Starting*/}

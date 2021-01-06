@@ -367,7 +367,7 @@ class DrugDetailICD extends React.Component<any, any> {
 
       this.setState({
         panelGridValue1: rows,
-        showGrid: false,
+        // showGrid: false,
       });
     });
   };
@@ -468,7 +468,7 @@ class DrugDetailICD extends React.Component<any, any> {
               if(chFilterSettings.length === cprsArray.length) {
                 let arrEqRes = thisRef.arraysEqual(chFilterSettings, cprsArray);
                 let elLkbkDays = element.lookback_days ? element.lookback_days : 0;
-                let lkbkDays = this.state.lookBackDays ? this.state.lookBackDays : 0;
+                let lkbkDays = this.state.lookBackDays ? +this.state.lookBackDays : 0;
                 if(arrEqRes && (lkbkDays === elLkbkDays)) {
                   gridItem["isChecked"] = true;
                   gridItem["isDisabled"] = true;
@@ -487,7 +487,7 @@ class DrugDetailICD extends React.Component<any, any> {
               if(chFilterSettings.length === ncgendersArray.length) {
                 let arrEqRes = thisRef.arraysEqual(chFilterSettings, ncgendersArray);
                 let elLkbkDays = element.lookback_days ? element.lookback_days : 0;
-                let lkbkDays = this.state.lookBackDays ? this.state.lookBackDays : 0;
+                let lkbkDays = this.state.lookBackDays ? +this.state.lookBackDays : 0;
                 if(arrEqRes && (lkbkDays === elLkbkDays)) {
                   gridItem["isChecked"] = true;
                   gridItem["isDisabled"] = true;
@@ -498,13 +498,31 @@ class DrugDetailICD extends React.Component<any, any> {
           }
         }
 
+        let modIcdLimits: any[] = [];
+        if(element.covered_icds) {
+          let cprsArray = element.covered_icds.split(",").map(e => e.trim().toLowerCase());
+          modIcdLimits = element.lookback_days ? ("" + element.lookback_days).split(",") : [];
+          if(cprsArray.length !== modIcdLimits.length) {
+            modIcdLimits = Array(cprsArray.length).fill(+element.lookback_days);
+          }
+        }
+
+        if(element.not_covered_icds) {
+          let ncgendersArray = element.not_covered_icds.split(",").map(e => e.trim().toLowerCase());
+          modIcdLimits = element.lookback_days ? ("" + element.lookback_days).split(",") : [];
+          if(ncgendersArray.length !== modIcdLimits.length) {
+            modIcdLimits = Array(ncgendersArray.length).fill(+element.lookback_days);
+          }
+        }
+
         gridItem["icdLimit"] = element.is_icdl ? "" + element.is_icdl : "";
+        gridItem["icdLookBack"] = modIcdLimits + "";
         gridItem["coveredIcd"] = element.covered_icds
           ? "" + element.covered_icds
           : "";
-        gridItem["icdLookBack"] = element.lookback_days
-          ? "" + element.lookback_days
-          : "";
+        // gridItem["icdLookBack"] = element.lookback_days
+        //   ? "" + element.lookback_days
+        //   : "";
         gridItem["not_covered_icds"] = element.not_covered_icds
           ? "" + element.not_covered_icds
           : "";

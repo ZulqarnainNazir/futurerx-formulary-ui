@@ -17,6 +17,8 @@ import FrxLoader from "../../../../shared/FrxLoader/FrxLoader";
 import AdvancedSearch from "../../../DrugDetails/components/FormularyConfigure/components/search/AdvancedSearch";
 import { getDrugDetailsOTHERSummary, getOTHERCriteriaList, getDrugDetailsOtherList, postRemoveOtherDrug, postReplaceOtherDrug } from "../../../../../redux/slices/formulary/drugDetails/other/otherActionCreation";
 import * as otConstants from "../../../../../api/http-drug-details";
+import "./Other.scss";
+import DropDown from "../../../../shared/Frx-components/dropdown/DropDown";
 import getLobCode from "../../../Utils/LobUtils";
 import FrxDrugGridContainer from "../../../../shared/FrxGrid/FrxDrugGridContainer";
 import showMessage from "../../../Utils/Toast";
@@ -218,6 +220,7 @@ class DrugDetailOther extends React.Component<any, any> {
         this.props.postRemoveOtherDrug(apiDetails).then((json) => {
           if (json.payload && json.payload.code && json.payload.code === "200") {
             showMessage("Success", "success");
+            this.getOTHERSummary();
             this.getOTHERCriteriaList();
             this.getOtherList();
           } else {
@@ -273,6 +276,9 @@ class DrugDetailOther extends React.Component<any, any> {
 
   onSelectedTableRowChanged = (selectedRowKeys) => {
     this.state.selectedDrugs = [];
+    this.setState({
+      selectedRowKeys: [...selectedRowKeys]
+    });
     if (selectedRowKeys && selectedRowKeys.length > 0) {
       let selDrugs = selectedRowKeys.map((ele) => {
         return this.state.drugData[ele - 1]["md5_id"]
@@ -280,7 +286,9 @@ class DrugDetailOther extends React.Component<any, any> {
           : "";
       });
 
-      this.setState({ selectedDrugs: selDrugs });
+      let selStateTmpDrugs = [...this.state.selectedDrugs, ...selDrugs];
+
+      this.setState({ selectedDrugs: selStateTmpDrugs });
     } else {
       this.setState({ selectedDrugs: [] });
     }
@@ -320,7 +328,7 @@ class DrugDetailOther extends React.Component<any, any> {
       this.setState({
         panelGridValue1: rows,
         otherData: settingsRows,
-        showGrid: false,
+        // showGrid: false,
       });
     });
   };
@@ -422,7 +430,7 @@ class DrugDetailOther extends React.Component<any, any> {
             let userDefinedList = userDefinedVals.split(',').map(e => e.trim());
             for(let i=0; i<gridSel.length; i++) {
               if(this.state.otherData.length > 0) {
-                let tempValue = gridSel[i];
+                let tempValue = gridSel[i].key;
                 
                 for(let j=0; j<this.state.otherData.length; j++) {
                   if(tempValue === this.state.otherData[j].key) {
@@ -564,7 +572,7 @@ class DrugDetailOther extends React.Component<any, any> {
           this.rpSavePayload.id_edit = "";
           console.log("The criteriaIds = ", criteriaIds, "---THe REMOVE Save Payload = ", this.rmSavePayload);
         }
-  
+        
         this.setState({selectedCriteria: selectedRowKeys.map(otId => otId)});
         selectedRowKeys = [];
       }
@@ -804,6 +812,17 @@ class DrugDetailOther extends React.Component<any, any> {
     }
   };
 
+  onDropdownChange = (e) => {
+    console.log(e);
+    let selDrpdwn: any = this.state.otherData.filter(a => a.udf === e);
+  
+    this.rpSavePayload.breadcrumb_code_value = selDrpdwn[0].code_value;
+    this.rpSavePayload.id_edit = selDrpdwn[0].key;
+    this.rmSavePayload.selected_criteria_ids = [];
+    console.log("The Codevalue = ", this.rpSavePayload.breadcrumb_code_value, "---THe REPLACE Save Payload = ", this.rpSavePayload);
+    this.setState({selectedCriteria: selDrpdwn, showGrid: false});
+  };
+
   render() {
     const searchProps = {
       lobCode: this.props.lobCode,
@@ -893,6 +912,9 @@ class DrugDetailOther extends React.Component<any, any> {
       onChange: this.onSelectedRowKeysChange,
     }
 
+    let drpdwnoptions = this.state.otherData.map(e => e.udf);
+    // let drpdwnoptions = []
+
     return (
       <>
         <div className="bordered mb-10">
@@ -933,22 +955,39 @@ class DrugDetailOther extends React.Component<any, any> {
 
         
         <div className="white-bg">
-          <Grid item xs={5}>
-            <div className="tier-grid-remove-container">
-              <Table
-                columns={this.state.otherColumns}
-                dataSource={this.state.otherData}
-                pagination={false}
-                rowSelection={rowSelection}
-                // rowSelection={{
-                //   columnWidth: 20,
-                //   fixed: true,
-                //   type: "checkbox",
-                //   onChange: this.onSelectedRowKeysChange,
-                // }}
-              />
-            </div>
-          </Grid>
+          {this.state.activeTabIndex === 2 ? (
+            <Grid item xs={5}>
+              <div className="tier-grid-remove-container">
+                <Table
+                  columns={this.state.otherColumns}
+                  dataSource={this.state.otherData}
+                  pagination={false}
+                  rowSelection={rowSelection}
+                  // rowSelection={{
+                  //   columnWidth: 20,
+                  //   fixed: true,
+                  //   type: "checkbox",
+                  //   onChange: this.onSelectedRowKeysChange,
+                  // }}
+                />
+              </div>
+            </Grid>
+          ) : (
+            <Grid item xs={5}>
+              <div className="group other-label">
+                <label>
+                  USER DEFINED FIELD <span className="astrict">*</span>
+                </label>
+                <DropDown
+                  className="formulary-type-dropdown"
+                  placeholder="Select"
+                  options={drpdwnoptions}
+                  key={this.state.activeTabIndex}
+                  onChange={this.onDropdownChange}
+                />
+              </div>
+            </Grid>
+          )}
           {!this.props.configureSwitch ? (
             <Row justify="end">
               <Col>

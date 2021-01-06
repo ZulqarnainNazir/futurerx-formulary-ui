@@ -82,10 +82,11 @@ class PureAccordion extends Component<PureAccordionProps, any> {
     }
   };
   onApplyFilterHandler = (filters) => {
-    if (filters) {
-      const fetchedKeys = Object.keys(filters);
+    const fetchedKeys = Object.keys(filters);
+    if (fetchedKeys.length > 0) {
       fetchedKeys.map(fetchedProps => {
         if (filters[fetchedProps]) {
+          this.listPayload.filter = this.listPayload.filter.filter(element => element['prop'] !== fetchedProps);
           const fetchedOperator =
             filters[fetchedProps][0].condition === "is like"
               ? "is_like"
@@ -108,6 +109,8 @@ class PureAccordion extends Component<PureAccordionProps, any> {
         }
       });
       console.log("Filters:" + JSON.stringify(this.listPayload.filter));
+    }else{
+      this.listPayload.filter = Array();
     }
     this.populateGridData(this.state.baseFormularyId, this.listPayload);
   };
@@ -479,7 +482,7 @@ class PureAccordion extends Component<PureAccordionProps, any> {
 
   componentDidUpdate(prevProps, prevState) {
     if (prevProps.toggleAllAccordion !== this.props.toggleAllAccordion) {
-      debugger;
+      // debugger;
       this.toggleAccordionAll(this.props.toggleAllAccordion);
       // this.setState({
       //   toggleAll: prevProps.toggleAllAccordion,

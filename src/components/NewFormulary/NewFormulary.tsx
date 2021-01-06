@@ -12,12 +12,14 @@ import FormularyDashboardStats from "./../FormularyDashboardStats/FormularyDashb
 import { getFormularyDetails } from "../../mocks/formulary/formularyDetails";
 import { fetchFormularies } from "../.././redux/slices/formulary/dashboard/dashboardSlice";
 import _ from 'lodash';
+import FormularyMessaging from "./DrugDetails/components/FormularyDetailsTop/FormularyMessaging";
 
 import {
   setFormulary,
   setLocation,
   setLocationHome,
   clearApplication,
+  setModeLob
 } from "../.././redux/slices/formulary/application/applicationSlice";
 
 import {
@@ -84,6 +86,7 @@ function mapDispatchToProps(dispatch) {
     clearApplication: (a) => dispatch(clearApplication(a)),
     clearSetup: (a) => dispatch(clearSetup(a)),
     clearSetupOptions: (a) => dispatch(clearSetupOptions(a)),
+    setModeLob: (a) => dispatch(setModeLob(a)),
   };
 }
 
@@ -113,7 +116,7 @@ const defaultListPayload = {
 
 class Formulary extends React.Component<any, any> {
   //TODO Remove
-  snow: boolean = true;
+  snow: boolean = false;
 
   state = {
     activeTabIndex: 0,
@@ -144,10 +147,10 @@ class Formulary extends React.Component<any, any> {
     console.log("key and order ", key, order);
     const listPayload = { ...this.listPayload };
     listPayload.sort_by = [key];
-    const sortorder = order && order === "ascend" ? "asc" : "dsc";
+    const sortorder = order && order === "ascend" ? "asc" : "desc";
     listPayload.sort_order = [sortorder];
-
-    this.props.fetchFormularies(listPayload);
+    this.listPayload = listPayload;
+    this.props.fetchFormularies(this.listPayload);
   };
   uniqByKeepLast = (data) => {
     const result = Array.from(new Set(data.map(s => s.columnKey)))
@@ -168,7 +171,8 @@ class Formulary extends React.Component<any, any> {
     const sort_order = updatedSorter.map(e=>e.order);
     listPayload.sort_by = sort_by;
     listPayload.sort_order = sort_order
-    this.props.fetchFormularies(listPayload);
+    this.listPayload = listPayload;
+    this.props.fetchFormularies(this.listPayload);
 		//remove duplicates from sorter
 		//api integration
 	};
@@ -200,7 +204,7 @@ class Formulary extends React.Component<any, any> {
     } else if (currentTabIndex === 3) {
       lob_id = 3;
     }
-
+    this.props.setModeLob(lob_id);
     this.listPayload = { ...defaultListPayload };
     this.listPayload.id_lob = lob_id;
     this.props.fetchFormularies(this.listPayload);
@@ -253,27 +257,34 @@ class Formulary extends React.Component<any, any> {
     //console.log(hiddenColumn,visibleColumn);
     this.props.setHiddenColumn(hiddenColumn);
   };
-  onApplyFilterHandler = (filters) => {
-    const fetchedProps = Object.keys(filters)[0];
-    const fetchedOperator =
-      filters[fetchedProps][0].condition === "is like"
-        ? "is_like"
-        : filters[fetchedProps][0].condition === "is not"
-        ? "is_not"
-        : filters[fetchedProps][0].condition === "is not like"
-        ? "is_not_like"
-        : filters[fetchedProps][0].condition === "does not exist"
-        ? "does_not_exist"
-        : filters[fetchedProps][0].condition;
-    const fetchedValues =
-      filters[fetchedProps][0].value !== ""
-        ? [filters[fetchedProps][0].value.toString()]
-        : [];
-    const newFilters = [
-      { prop: fetchedProps, operator: fetchedOperator, values: fetchedValues },
-    ];
-    this.listPayload.filter = newFilters;
-    this.props.fetchFormularies(this.listPayload);
+  
+  onApplyFilterHandler = filters => {
+    const fetchObjectKeys = Object.keys(filters);
+    if (fetchObjectKeys && fetchObjectKeys.length > 0) {
+      const fetchedProps = Object.keys(filters)[0];
+      const fetchedOperator =
+        filters[fetchedProps][0].condition === "is like"
+          ? "is_like"
+          : filters[fetchedProps][0].condition === "is not"
+          ? "is_not"
+          : filters[fetchedProps][0].condition === "is not like"
+          ? "is_not_like"
+          : filters[fetchedProps][0].condition === "does not exist"
+          ? "does_not_exist"
+          : filters[fetchedProps][0].condition;
+      const fetchedValues =
+        filters[fetchedProps][0].value !== ""
+          ? [filters[fetchedProps][0].value.toString()]
+          : [];
+      const newFilters = [
+        { prop: fetchedProps, operator: fetchedOperator, values: fetchedValues }
+      ];
+      this.listPayload.filter = newFilters;
+      this.props.fetchFormularies(this.listPayload);
+    } else {
+      this.listPayload.filter = [];
+      this.props.fetchFormularies(this.listPayload);
+    }
   };
   onPageSize = (pageSize) => {
     let id_lob = this.listPayload.id_lob;
@@ -304,6 +315,9 @@ class Formulary extends React.Component<any, any> {
 
   componentDidUpdate(prevProps) {
     console.log(this.props.location_home + " / " + prevProps.location_home);
+    if(this.state.activeTabIndex === 0){
+      this.props.setModeLob(4);
+    }
     if (
       this.props.location_home !== prevProps.location_home &&
       this.props.location_home > 0
@@ -325,6 +339,8 @@ class Formulary extends React.Component<any, any> {
   render() {
     return (
       <div className="newformulary-container">
+                <FormularyMessaging activeTabIndex={this.props.location} />
+
         {this.state.showTabs ? (
           <>
             {this.snow === true ? (

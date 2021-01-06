@@ -20,6 +20,7 @@
 
 .input-group {
   margin-bottom: 20px;
+  // margin-right: 5px;
   .select-box {
     margin-top: 6px;
     .ant-select {
@@ -37,7 +38,7 @@
     // }
   }
   .formulary-list-search {
-    width: 373px !important;
+    width: 100%;
     margin-top: 6px;
     border: 1px solid #c4c4c4;
     border-radius: 5px;

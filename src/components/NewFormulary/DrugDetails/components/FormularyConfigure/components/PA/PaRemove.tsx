@@ -55,6 +55,23 @@ class PaRemove extends React.Component<any, any> {
     selectedCriteria: Array(),
     selectedDrugs: Array(),
     tierGridContainer: false,
+    index: 0,
+    limit: 10,
+    filter: Array(),
+    dataCount: 0,
+    quickFilter: Array(),
+    sort_by: Array(),
+    hiddenColumns: Array(),
+    gridSingleSortInfo: null,
+    isGridSingleSorted: false,
+    gridMultiSortedInfo: [],
+    isGridMultiSorted: false,
+    searchNames: Array(),
+    filterPlaceholder: "Search",
+    searchValue: "",
+    searchData: Array(),
+    fixedSelectedRows: [] as number[],
+    selectedRowKeys: [] as number[],
   };
 
   onSelectedRowKeysChange = (selectedRowKeys) => {
@@ -99,14 +116,14 @@ class PaRemove extends React.Component<any, any> {
     this.populateGridData();
   };
 
-  onSelectedTableRowChanged = (selectedRowKeys) => {
-    this.state.selectedDrugs = [];
-    if (selectedRowKeys && selectedRowKeys.length > 0) {
-      this.state.selectedDrugs = selectedRowKeys.map(
-        (tierId) => this.state.drugData[tierId - 1]["md5_id"]
-      );
-    }
-  };
+  // onSelectedTableRowChanged = (selectedRowKeys) => {
+  //   this.state.selectedDrugs = [];
+  //   if (selectedRowKeys && selectedRowKeys.length > 0) {
+  //     this.state.selectedDrugs = selectedRowKeys.map(
+  //       (tierId) => this.state.drugData[tierId - 1]["md5_id"]
+  //     );
+  //   }
+  // };
 
   populateGridData = (searchBody = null) => {
     console.log("Populate grid data is called");
@@ -116,8 +133,8 @@ class PaRemove extends React.Component<any, any> {
       this.props?.formulary_id + "/" + getLobCode(this.props?.formulary_lob_id);
     apiDetails["keyVals"] = [
       { key: constants.KEY_ENTITY_ID, value: this.props?.formulary_id },
-      { key: constants.KEY_INDEX, value: 0 },
-      { key: constants.KEY_LIMIT, value: 10 },
+      { key: constants.KEY_INDEX, value: this.state.index },
+      { key: constants.KEY_LIMIT, value: this.state.limit },
     ];
     apiDetails["messageBody"] = {};
 
@@ -132,7 +149,35 @@ class PaRemove extends React.Component<any, any> {
       showMessage("Select criteria to remove Drugs", "info");
       return;
     }
+ // debugger;
+ let allFilters = Array();
+ let filterProps = Array();
+ this.state.filter.map(filterInfo => {
+   allFilters.push(filterInfo);
+   filterProps.push(filterInfo["prop"]);
+ });
 
+ this.state.quickFilter.map(filterInfo => {
+   if (!filterProps.includes(filterInfo["prop"]))
+     allFilters.push(filterInfo);
+ });
+
+ apiDetails["messageBody"]["filter"] = allFilters;
+//  if (this.state.sort_by && this.state.sort_by.length ==0){
+//   this.state.sort_by.push({ key: 'drug_label_name', value: 'asc' });
+// }
+ if (this.state.sort_by && this.state.sort_by.length > 0) {
+   let keys = Array();
+   let values = Array();
+
+   this.state.sort_by.map(keyPair => {
+     keys.push(keyPair["key"]);
+     values.push(keyPair["value"]);
+   });
+
+   apiDetails["messageBody"]["sort_by"] = keys;
+   apiDetails["messageBody"]["sort_order"] = values;
+ }
     apiDetails["messageBody"][
       "selected_criteria_ids"
     ] = this.state.selectedCriteria;
@@ -149,26 +194,27 @@ class PaRemove extends React.Component<any, any> {
           gridItem["id"] = count;
           gridItem["key"] = count;
           gridItem["tier"] = element.tier_value;
-          gridItem["paGroupDescription"] = element.pa_group_description;
-          gridItem["paType"] = element.pa_type;
-          gridItem["fileType"] = element.file_type
+          gridItem["is_um_criteria"] = element.is_um_criteria;
+          gridItem["pa_group_description"] = element.pa_group_description;
+          gridItem["pa_type"] = element.pa_type;
+          gridItem["file_type"] = element.file_type
             ? "" + element.file_type
             : "";
-          gridItem["dataSource"] = element.data_source
+          gridItem["data_source"] = element.data_source
             ? "" + element.data_source
             : "";
-          gridItem["labelName"] = element.drug_label_name
+          gridItem["drug_label_name"] = element.drug_label_name
             ? "" + element.drug_label_name
             : "";
           gridItem["ndc"] = "";
           gridItem["rxcui"] = element.rxcui ? "" + element.rxcui : "";
-          gridItem["gpi"] = element.generic_product_identifier
+          gridItem["generic_product_identifier"] = element.generic_product_identifier
             ? "" + element.generic_product_identifier
             : "";
-          gridItem["trademark"] = element.trademark_code
+          gridItem["trademark_code"] = element.trademark_code
             ? "" + element.trademark_code
             : "";
-          gridItem["databaseCategory"] = element.database_category
+          gridItem["database_category"] = element.database_category
             ? "" + element.database_category
             : "";
           count++;
@@ -177,9 +223,37 @@ class PaRemove extends React.Component<any, any> {
         this.setState({
           drugData: data,
           drugGridData: gridData,
+          dataCount: json.payload.count,
         });
         this.setState({ tierGridContainer: true });
       });
+  };
+
+  onPageSize = (pageSize) => {
+    console.log("Page size load");
+    this.state.limit = pageSize;
+    if (this.props.advancedSearchBody) {
+      this.populateGridData(this.props.advancedSearchBody);
+    } else {
+      this.populateGridData();
+    }
+  };
+  onGridPageChangeHandler = (pageNumber: any) => {
+    console.log("Page change load");
+    this.state.index = (pageNumber - 1) * this.state.limit;
+    if (this.props.advancedSearchBody) {
+      this.populateGridData(this.props.advancedSearchBody);
+    } else {
+      this.populateGridData();
+    }
+  };
+  onClearFilterHandler = () => {
+    this.state.filter = Array();
+    if (this.props.advancedSearchBody) {
+      this.populateGridData(this.props.advancedSearchBody);
+    } else {
+      this.populateGridData();
+    }
   };
 
   handleSave = () => {
@@ -224,7 +298,7 @@ class PaRemove extends React.Component<any, any> {
             this.props
               .getPaSummary(this.props.current_formulary.id_formulary)
               .then((json) => {
-                debugger;
+                // debugger;
                 this.setState({ tierGridContainer: true });
               });
           } else {
@@ -258,6 +332,211 @@ class PaRemove extends React.Component<any, any> {
       this.props.setAdvancedSearch(payload);
     }
   }
+
+  onSelectAllRows = (isSelected: boolean) => {
+    const selectedRowKeys: number[] = [];
+    const data = this.state.drugGridData.map((d: any) => {
+      if (!d["isDisabled"]) {
+        d["isChecked"] = isSelected;
+        if (isSelected) selectedRowKeys.push(d["key"]);
+      }
+
+      // else d["isSelected"] = false;
+      return d;
+    });
+    const selectedRows: number[] = selectedRowKeys.filter(
+      (k) => this.state.fixedSelectedRows.indexOf(k) < 0
+    );
+    this.onSelectedTableRowChanged(selectedRows);
+    this.setState({ drugGridData: data });
+  };
+  // additional criteria toggle
+
+  onApplyFilterHandler = filters => {
+    console.log("filtering from be:" + JSON.stringify(filters));
+    //this.state.filter = Array();
+    const fetchedKeys = Object.keys(filters);
+    if (fetchedKeys && fetchedKeys.length > 0) {
+      fetchedKeys.map((fetchedProps) => {
+        if (filters[fetchedProps]) {
+          this.state.filter = this.state.filter.filter(element => element['prop'] !== fetchedProps);
+          const fetchedOperator =
+            filters[fetchedProps][0].condition === "is like"
+              ? "is_like"
+              : filters[fetchedProps][0].condition === "is not"
+                ? "is_not"
+                : filters[fetchedProps][0].condition === "is not like"
+                  ? "is_not_like"
+                  : filters[fetchedProps][0].condition === "does not exist"
+                    ? "does_not_exist"
+                    : filters[fetchedProps][0].condition;
+          const fetchedValues =
+            filters[fetchedProps][0].value !== ""
+              ? [filters[fetchedProps][0].value.toString()]
+              : [];
+          this.state.filter.push({
+            prop: fetchedProps,
+            operator: fetchedOperator,
+            values: fetchedValues,
+          });
+        }
+      });
+    } else {
+      this.state.filter = Array();
+    }
+    console.log("Filters:" + JSON.stringify(this.state.filter));
+    if (this.props.advancedSearchBody) {
+      this.populateGridData(this.props.advancedSearchBody);
+    } else {
+      this.populateGridData();
+    }
+  };
+
+
+  onApplySortHandler = (key, order, sortedInfo) => {
+    console.log("sort details ", key, order);
+    this.state.sort_by = Array();
+    if (order) {
+      let sortOrder = order === "ascend" ? "asc" : "desc";
+      this.state.sort_by = this.state.sort_by.filter(
+        keyPair => keyPair["key"] !== key
+      );
+      this.state.sort_by.push({ key: key, value: sortOrder });
+    }
+
+    this.setState({
+      gridSingleSortInfo: sortedInfo,
+      isGridSingleSorted: true,
+      isGridMultiSorted: false,
+      gridMultiSortedInfo: []
+    });
+    if (this.props.advancedSearchBody) {
+      this.populateGridData(this.props.advancedSearchBody);
+    } else {
+      this.populateGridData();
+    }
+  };
+
+  applyMultiSortHandler = (sorter, multiSortedInfo) => {
+    console.log("Multisort info:" + JSON.stringify(sorter));
+    
+		
+		this.setState(  {
+			isGridMultiSorted: true,
+			isGridSingleSorted: false,
+			gridMultiSortedInfo: multiSortedInfo,
+			gridSingleSortInfo: null,
+		})
+
+    if (sorter && sorter.length > 0) {
+      let uniqueKeys = Array();
+      let filteredSorter = Array();
+      sorter.map(sortInfo => {
+        if (uniqueKeys.includes(sortInfo["columnKey"])) {
+        } else {
+          filteredSorter.push(sortInfo);
+          uniqueKeys.push(sortInfo["columnKey"]);
+        }
+      });
+      filteredSorter.map(sortInfo => {
+        let sortOrder = sortInfo["order"] === "ascend" ? "asc" : "desc";
+        this.state.sort_by = this.state.sort_by.filter(
+          keyPair => keyPair["key"] !== sortInfo["columnKey"]
+        );
+        this.state.sort_by.push({
+          key: sortInfo["columnKey"],
+          value: sortOrder
+        });
+      });
+    }
+
+    if (this.props.advancedSearchBody) {
+      this.populateGridData(this.props.advancedSearchBody);
+    } else {
+      this.populateGridData();
+    }
+  };
+
+  onMultiSortToggle = (isMultiSortOn: boolean) => {
+    console.log("is Multi sort on ", isMultiSortOn);
+    this.state.sort_by = Array();
+    this.state.gridSingleSortInfo = null;
+    this.state.gridMultiSortedInfo = [];
+    this.state.isGridMultiSorted = isMultiSortOn;
+    this.state.isGridSingleSorted = false;
+
+    if (this.props.advancedSearchBody) {
+      this.populateGridData(this.props.advancedSearchBody);
+    } else {
+      this.populateGridData();
+    }
+  };
+
+  rowSelectionChangeFromCell = (
+    key: string,
+    selectedRow: any,
+    isSelected: boolean
+  ) => {
+    console.log("data row ", selectedRow, isSelected);
+    if (!selectedRow["isDisabled"]) {
+      if (isSelected) {
+        const data = this.state.drugGridData.map((d: any) => {
+          if (d.key === selectedRow.key) {
+            d["isChecked"] = true;
+            d["rowStyle"] = "table-row--red-font";
+          }
+          // else d["isChecked"] = false;
+          return d;
+        });
+        const selectedRowKeys = [
+          ...this.state.selectedRowKeys,
+          selectedRow.key,
+        ];
+        console.log("selected row keys ", selectedRowKeys);
+        const selectedRows: number[] = selectedRowKeys.filter(
+          (k) => this.state.fixedSelectedRows.indexOf(k) < 0
+        );
+        this.onSelectedTableRowChanged(selectedRowKeys);
+
+        this.setState({ drugGridData: data });
+      } else {
+        const data = this.state.drugGridData.map((d: any) => {
+          if (d.key === selectedRow.key) {
+            d["isChecked"] = false;
+            if (d["rowStyle"]) delete d["rowStyle"];
+          }
+          // else d["isChecked"] = false;
+          return d;
+        });
+
+        const selectedRowKeys: number[] = this.state.selectedRowKeys.filter(
+          (k) => k !== selectedRow.key
+        );
+        const selectedRows = selectedRowKeys.filter(
+          (k) => this.state.fixedSelectedRows.indexOf(k) < 0
+        );
+
+        this.onSelectedTableRowChanged(selectedRows);
+        this.setState({
+          drugGridData: data,
+        });
+      }
+    }
+  };
+
+  onSelectedTableRowChanged = (selectedRowKeys) => {
+    console.log("selected row ", selectedRowKeys);
+
+    this.state.selectedDrugs = [];
+    this.setState({
+      selectedRowKeys: [...selectedRowKeys],
+    });
+    if (selectedRowKeys && selectedRowKeys.length > 0) {
+      this.state.selectedDrugs = selectedRowKeys.map((tierId) => {
+        return this.state.drugData[tierId - 1]["md5_id"];
+      });
+    }
+  };
 
   render() {
     const columns = [
@@ -325,18 +604,36 @@ class PaRemove extends React.Component<any, any> {
                   fixedColumnKeys={[]}
                   pagintionPosition="topRight"
                   gridName="DRUG GRID"
-                  enableSettings={false}
+                  enableSettings
                   columns={PaColumns()}
                   scroll={{ x: 2000, y: 377 }}
                   isFetchingData={false}
                   enableResizingOfColumns
                   data={this.state.drugGridData}
-                  rowSelection={{
-                    columnWidth: 50,
-                    fixed: true,
-                    type: "checkbox",
-                    onChange: this.onSelectedTableRowChanged,
-                  }}
+                  rowSelectionChangeFromCell={this.rowSelectionChangeFromCell}
+                  onSelectAllRows={this.onSelectAllRows}
+                  customSettingIcon={"FILL-DOT"}
+                  settingsWidth={30}
+                  // rowSelection={{
+                  //   columnWidth: 50,
+                  //   fixed: true,
+                  //   type: "checkbox",
+                  //   onChange: this.onSelectedTableRowChanged,
+                  // }}
+                  pageSize={this.state.limit}
+                  selectedCurrentPage={this.state.index / this.state.limit + 1}
+                  totalRowsCount={this.state.dataCount}
+                  getPerPageItemSize={this.onPageSize}
+                  onGridPageChangeHandler={this.onGridPageChangeHandler}
+                  clearFilterHandler={this.onClearFilterHandler}
+                  applyFilter={this.onApplyFilterHandler}
+                  applySort={this.onApplySortHandler}
+                  isSingleSorted={this.state.isGridSingleSorted}
+                  sortedInfo={this.state.gridSingleSortInfo}
+                  applyMultiSort={this.applyMultiSortHandler}
+                  isMultiSorted={this.state.isGridMultiSorted}
+                  multiSortedInfo={this.state.gridMultiSortedInfo}
+                  onMultiSortToggle={this.onMultiSortToggle}
                 />
               </div>
             </div>
