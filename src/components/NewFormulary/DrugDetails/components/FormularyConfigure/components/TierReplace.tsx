@@ -1051,7 +1051,7 @@ class TierReplace extends React.Component<any, tabsState> {
                 onSelect={this.tierDropDownSelectHandler}
               />
             </Grid>
-            <Grid item xs={1}>
+            <Grid item xs={8}>
               <Box display="flex" justifyContent="flex-end">
                 <Button
                   label="Apply"
