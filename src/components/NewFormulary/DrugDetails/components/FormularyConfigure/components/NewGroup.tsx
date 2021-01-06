@@ -39,6 +39,7 @@ import {
 } from "../../../../NewAdvanceSearch/advanceSearchMock";
 import AdditionalCriteriaContainer from "../../../../NewAdvanceSearch/AdditionalCriteriaContainer/AdditionalCriteriaContainer";
 import "./GroupDescriptionStyles.scss";
+import { debug } from "console";
 
 interface Props {
   tooltip?: string;
@@ -177,6 +178,15 @@ function NewGroup(props: any) {
     }
   };
 
+  useEffect(()=>{
+    setFormType(props.formType);
+  },[])
+
+  useEffect(()=>{
+    setFormType(props.formType);
+  },[props.formType])
+
+
   useEffect(() => {
     // debugger;
     console.log(props.additionalCriteriaObject);
@@ -226,7 +236,7 @@ function NewGroup(props: any) {
 
   const handleSubmit = (e, is_validation: boolean) => {
     e.preventDefault();
-    if (props.formType === 0 && props.formulary_lob_id === 1) {
+    if (formType === 0 && props.formulary_lob_id === 1) {
       let msg: string[] = [];
       if (formData.st_group_description_name === "") {
         //msg.push("Formulary Description Name is required.");
@@ -289,7 +299,8 @@ function NewGroup(props: any) {
     formData["drug_list_ids"] = drug_list_ids;
     formData["removed_drug_list_ids"] = [2];
     let requestData = {};
-    if (formType == 1 && props.formType == 1) {
+    debugger;
+    if (formType == 1 ) {
       requestData["messageBody"] = { ...formData };
       if (additionalCriteria != null) {
         requestData["messageBody"]["um_criteria"] = additionalCriteria;
@@ -430,7 +441,7 @@ function NewGroup(props: any) {
         )}
       </div>
 
-      {(props.formType > 0 || showHeader > 0) && (
+      {(formType > 0 || showHeader > 0) && (
         <GroupHeader
           popuptitle={
             formData.st_group_description_name
@@ -503,7 +514,7 @@ function NewGroup(props: any) {
                 </div>
               </Grid>
             </Grid>
-            {props.formType > 0 && (
+            {formType > 0 && (
               <Grid container className="mb-20">
                 <Grid item xs={6}>
                   <div className="group">
@@ -520,7 +531,7 @@ function NewGroup(props: any) {
               </Grid>
             )}
           </div>
-          {props.formType === 0 && (
+          {formType === 0 && (
             <div className="setting-1 mb-20">
               <span>
                 What type of drugs will this group contain? Select all that
