@@ -282,6 +282,40 @@ class DrugDetailGL extends React.Component<any, any> {
           glConstants.TYPE_REPLACE;
         console.log("The API Details - ", apiDetails);
 
+        console.log("The State of the app = ", this.state);
+        if(this.state.activeTabIndex === 1) {
+          let selDrugs = this.state.selectedDrugs;
+          let setCoveredGenders = new Set();
+
+          glRows.forEach(el => setCoveredGenders.add(el));
+
+          for(let i=0; i<this.state.selectedDrugs.length; i++) {
+            let tmpSelDrg = this.state.selectedDrugs[i];
+
+            for(let j=0; j<this.state.data.length; j++) {
+              if(tmpSelDrg === this.state.data[j].md5_id){
+                let covGens = [];
+                if(this.state.glSettingsStatus.covered) {
+                  covGens = this.state.data[j]?.coveredGender.split(",").map(e => e.trim().toLowerCase());
+
+                } else if(!this.state.glSettingsStatus.covered) {
+                  covGens = this.state.data[j]?.noCoveredGender.split(",").map(e => e.trim().toLowerCase());//noCoveredGender ++ ADD
+                }
+
+                covGens.forEach(element => {
+                  let tmpGCode = this.state.glSettings.filter(e => e.gl_type_name === element).map(a => a.gl_code);
+                  tmpGCode.forEach(el => setCoveredGenders.add(el));
+                });
+
+                console.log("The COvered Genders = ", setCoveredGenders);
+              }
+            }
+          }
+
+          let covArray = Array.from(setCoveredGenders);
+          this.rpSavePayload.gender_limits = covArray;
+        }
+
         // Replace and Append Drug method call
         this.props.postReplaceGLDrug(apiDetails).then((json) => {
           if (

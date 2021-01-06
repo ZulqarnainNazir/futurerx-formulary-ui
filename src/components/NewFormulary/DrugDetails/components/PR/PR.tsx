@@ -193,11 +193,6 @@ class DrugDetailPR extends React.Component<any, any> {
       apiDetails["messageBody"] = {};
 
       if (this.state.activeTabIndex === 0 || this.state.activeTabIndex === 1) {
-        // let patientResidences: any[] = [];
-        // if(this.state.prSettings.length > 0) {
-        //   patientResidences = this.state.prSettings.map(e => e?.key);
-        // }
-
         let patientResidences = this.state.prSettings.filter((f) => f.isChecked).map((e) => {
           if (e.isChecked && e.isChecked !== undefined) {
             return e.id_patient_residence_type;
@@ -212,7 +207,43 @@ class DrugDetailPR extends React.Component<any, any> {
         apiDetails["pathParams"] = this.props?.formulary_id + "/" +  getLobCode(this.props.formulary_lob_id) + "/" + prConstants.TYPE_REPLACE;
         console.log("The API Details - ", apiDetails);
 
-        // Replace and Append Drug method call
+
+        // Adding Append Condition 
+        if(this.state.activeTabIndex === 1) {
+          let selDrugs = this.state.selectedDrugs;
+          let setprs = new Set();
+
+          patientResidences.forEach(el => setprs.add(el));
+
+          for(let i=0; i<this.state.selectedDrugs.length; i++) {
+            let tmpSelDrg = this.state.selectedDrugs[i];
+
+            for(let j=0; j<this.state.data.length; j++) {
+              if(tmpSelDrg === this.state.data[j].md5_id){
+                let covGens = [];
+                if(this.state.prSettingsStatus.covered) {
+                  covGens = this.state.data[j]?.coveredpatientResidence.split(",").map(e => e.trim().toLowerCase());
+
+                } else if(!this.state.prSettingsStatus.covered) {
+                  covGens = this.state.data[j]?.notCoveredpatientResidence.split(",").map(e => e.trim().toLowerCase());
+                }
+
+                covGens.forEach(element => {
+                  let tmpGCode = this.state.prSettings.filter(e => e.patient_residence_type_name.toLowerCase() === element).map(a => a.id_patient_residence_type);
+                  tmpGCode.forEach(el => setprs.add(el));
+                });
+
+                console.log("The Covered PRS = ", setprs);
+              }
+            }
+          }
+
+          let covArray = Array.from(setprs);
+          this.rpSavePayload.patient_residences = covArray;
+        }
+
+
+        // // Replace and Append Drug method call
         this.props.postReplacePRDrug(apiDetails).then((json) => {
           if (json.payload && json.payload.code && json.payload.code === "200") {
             showMessage("Success", "success");
