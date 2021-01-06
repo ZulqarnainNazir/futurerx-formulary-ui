@@ -78,6 +78,7 @@ class GPM extends React.Component<any, any>{
         ],
         searchInput: "",
         selectedGroup:-1,
+        isSetUpComplete:false
 
     }
     onClickTab = (selectedTabIndex: number) => {
@@ -111,6 +112,10 @@ class GPM extends React.Component<any, any>{
               }
             let dataLength = tmpData&&tmpData.length?tmpData.length:0
             let latestVerion = dataLength>0 ? tmpData[dataLength - 1].id_st_group_description : 0
+            let is_setup_complete = dataLength>0 ? tmpData[dataLength - 1].is_setup_complete : 0
+            this.setState({
+                isSetUpComplete:is_setup_complete
+            })
             
             let apiDetails= {};
             apiDetails["lob_type"] = this.props.formulary_lob_id;
@@ -307,10 +312,10 @@ class GPM extends React.Component<any, any>{
                         </div>
                         {this.state.newGroup ? <NewGroup 
                         tooltip={this.state.tooltip} formType={1} 
-                        editMode={true} isPopUpView={this.props.isPopUpView} selectGroupDescriptionClick={this.props.selectGroupDescriptionClick} /> : (
+                        editMode={true} isPopUpView={this.props.isPopUpView} selectGroupDescriptionClick={this.props.selectGroupDescriptionClick} selectGroup={this.selectGroup} isSetUpComplete={this.state.isSetUpComplete}/> : (
                             <NewGroup tooltip={this.state.tooltip} formType={0} 
                             title={'NEW GROUP DESCRIPTION'} editMode={false} 
-                            isPopUpView={this.props.isPopUpView} selectGroupDescriptionClick={this.props.selectGroupDescriptionClick} />
+                            isPopUpView={this.props.isPopUpView} selectGroupDescriptionClick={this.props.selectGroupDescriptionClick}  selectGroup={this.selectGroup} isSetUpComplete={this.state.isSetUpComplete}/>
                         )}
                     </div>
 

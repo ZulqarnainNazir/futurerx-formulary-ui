@@ -16,7 +16,7 @@ import { scrollPage } from "../../../../../../utils/formulary";
 import { Tag, Space } from "antd";
 import Tags from "./Tags";
 import { ReactComponent as CrossCircleWhiteBGIcon } from "../../../../../../assets/icons/crosscirclewhitebg.svg";
-import { saveGDM, editGDM } from "../../../../../../redux/slices/formulary/gdm/gdmSlice";
+import { saveGDM, editGDM,getSTGroupDetails } from "../../../../../../redux/slices/formulary/gdm/gdmSlice";
 import {
   getStGrouptDescription,
   getDrugLists,
@@ -109,7 +109,7 @@ function mapDispatchToProps(dispatch) {
     getDrugLists: (a) => dispatch(getDrugLists(a)),
     getStGrouptDescriptions: (arg) => dispatch(getStGrouptDescriptions(arg)),
     getStGrouptDescriptionVersions: (arg) => dispatch(getStGrouptDescriptionVersions(arg)),
-    
+    getSTGroupDetails:(arg)=>dispatch(getSTGroupDetails(arg)),
   };
 }
 
@@ -122,6 +122,7 @@ function NewGroup(props: any) {
   const [drug_list_ids, setDrug_list_ids] = React.useState([]);
   const [drug_list, setDrug_list] = React.useState([]);
   const [isAdditionalCriteriaOpen, toggleAdditionalCriteriaOpen] = useState(false);
+  const [isSetupComplete, isSetUpComplete] = React.useState(false);
 
   const [additionalCriteria, setAdditionalCriteria] = useState(null);
   const handleChange = (e) => {
@@ -172,6 +173,7 @@ function NewGroup(props: any) {
 
   useEffect(() => {
     updateFormData(initialFormData);
+    isSetUpComplete(props.isSetUpComplete)
     setDrug_list_ids([]);
     if (Object.keys(props.StGDData).length > 0) {
       if (!changeEvent) {
@@ -273,7 +275,7 @@ function NewGroup(props: any) {
     formData["drug_list_ids"] = drug_list_ids;
     formData["removed_drug_list_ids"] = [2];
     let requestData = {};
-    if (formType == 1) {
+    if (formType == 1 && props.formType==1) {
       requestData["messageBody"] = { ...formData };
       if (additionalCriteria != null) {
         requestData["messageBody"]["um_criteria"] = additionalCriteria;
@@ -289,11 +291,17 @@ function NewGroup(props: any) {
           apiDetails["lob_type"] = props.formulary_lob_id;
           apiDetails["pathParams"] = "/" + props?.client_id + "?entity_id=" + props?.formulary_id;
           props.getStGrouptDescriptions(apiDetails);
-
-          apiDetails["pathParams"] = "/" + json.payload.id_base_st_group_description;
-          props.getStGrouptDescriptionVersions(apiDetails);
-
+          
+          let id_base_st_group_description = json.payload.id_base_st_group_description?json.payload.id_base_st_group_description:props.saveGdm.current_group_id
+          apiDetails["pathParams"] = "/" + id_base_st_group_description;
+          props.getStGrouptDescriptionVersions(apiDetails).then(json=>{
+            const isEditable = json.payload.data.length>0&&json.payload.data.find(val=>val.id_st_group_description===id_st_group_description);
+            props.selectGroup(id_base_st_group_description,isEditable.is_setup_complete)
+            isSetUpComplete(isEditable.is_setup_complete)
+          });
         } else if (json?.payload?.status && json?.payload?.status != 200) {
+          isSetUpComplete(false)
+          setShowHeader(0);
           showMessage(json.payload.data.message, "error");
         } else {
           showMessage("Failure", "error");
@@ -313,6 +321,14 @@ function NewGroup(props: any) {
           showMessage("Saved Successfully", "success");
           let apiDetails = {};
           setFormType(1);
+
+
+          props.getSTGroupDetails({
+            formulary_id: props.formulary_id,
+            current_group_id: json.payload.success.data.id_base_st_group_description,
+            current_group_des_id: json.payload.success.data.id_st_group_description
+          })
+
           formData["id_st_group_description"] = json.payload.success.data.id_st_group_description;
 
           apiDetails["lob_type"] = props.formulary_lob_id;
@@ -320,8 +336,13 @@ function NewGroup(props: any) {
           
           props.getStGrouptDescriptions(apiDetails);
           apiDetails["pathParams"] = "/" + json.payload.success.data.id_base_st_group_description;
-          props.getStGrouptDescriptionVersions(apiDetails);
+          props.getStGrouptDescriptionVersions(apiDetails).then(json=>{
+            const isEditable = json.payload.data.length>0&&json.payload.data.find(val=>val.id_st_group_description===formData["id_st_group_description"]);
+            isSetUpComplete(isEditable.is_setup_complete)
+          })
         } else if (json?.payload?.status && json?.payload?.status != 200) {
+          isSetUpComplete(false)
+          setShowHeader(0);
           showMessage(json.payload.data.message, "error");
         } else {
           showMessage("Failure", "error");
@@ -358,7 +379,7 @@ function NewGroup(props: any) {
         <GroupHeader
           popuptitle={formData.st_group_description_name ? formData.st_group_description_name : props.title}
           onChange={onChange} isPopUpView={props.isPopUpView}
-        />
+          isSetupComplete={isSetupComplete}/>
       )}
       {props.formulary_lob_id === 1 && (
         <div className="inner-container">

@@ -390,7 +390,7 @@ function GroupHeader(props: any) {
         });
     }
     return (
-        <div className={`version-wrapper${panelColor}`}>
+        <div className={`version-wrapper${(props.isSetupComplete===true)?'-green':panelColor}`}>
             <select name="group-description" id="group-description" className="formulary-type-dropdown formulary-versions" onChange={onChange}>
                 <option value=""></option>
                 {
