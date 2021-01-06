@@ -949,6 +949,7 @@ function NewGroup(props: any) {
                         openAdditionalCriteria();
                       }}
                       disabled={props.editable}
+                      checked={formData.is_additional_criteria_defined}
                     />
                     <RadioButton
                       label="No"
@@ -961,6 +962,7 @@ function NewGroup(props: any) {
                         })
                       }
                       disabled={props.editable}
+                      checked={!formData.is_additional_criteria_defined}
                     />
                   </div>
                 </Space>

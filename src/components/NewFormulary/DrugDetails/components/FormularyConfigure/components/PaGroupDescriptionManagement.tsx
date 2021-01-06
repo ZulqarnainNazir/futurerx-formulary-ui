@@ -202,7 +202,7 @@ class PaGroupDescriptionManagement extends React.Component<any, any> {
         element["id"] = el[groupProp];
         element["label"] = el.pa_group_description_name;
         element["status"] = el.is_setup_complete ? "completed" : "warning";
-        element["is_archived"] = el.is_archived;
+        element["is_archived"] = el.is_archived==null?false:el.is_archived;
         //console.log(element);
 
         return element;
@@ -277,7 +277,7 @@ class PaGroupDescriptionManagement extends React.Component<any, any> {
         element["id"] = el[groupProp];
         element["label"] = el.pa_group_description_name;
         element["status"] = el.is_setup_complete ? "completed" : "warning";
-        element["is_archived"] = el.is_archived;
+        element["is_archived"] = el.is_archived==null?false:el.is_archived;
         console.log(element);
 
         return element;
