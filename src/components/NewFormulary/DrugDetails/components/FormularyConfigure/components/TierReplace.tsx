@@ -296,6 +296,8 @@ class TierReplace extends React.Component<any, tabsState> {
     console.log("componentDidMount");
     this.initialize(this.props, true);
     if (this.props.configureSwitch) {
+      this.state.selectedFileKey = getLobCode(this.props.formulary_lob_id);
+      this.state.selectedFileType = "Full Formulary";
       this.state.tierGridContainer = true;
       if (this.props.advancedSearchBody) {
         this.populateGridData(this.props.advancedSearchBody);
@@ -450,9 +452,9 @@ class TierReplace extends React.Component<any, tabsState> {
       let lobCode = getLobCode(this.props.formulary_lob_id);
       let requests = Array();
       let apiDetails = {};
-      apiDetails["apiPart"] = commonConstants.SEARCH_GPI;
+      apiDetails["apiPart"] = this.state.selectedFileKey === 'COMMDF' ? commonConstants.SEARCH_GPI_FULL : commonConstants.SEARCH_GPI;
       apiDetails["pathParams"] =
-        this.props?.formulary_id + "/" + lobCode + "/" + "F";
+        this.props?.formulary_id + "/" + this.state.selectedFileKey + "/" + "F";
       if (lobCode === "MCR") {
         apiDetails["pathParams"] =
           apiDetails["pathParams"] +
@@ -474,24 +476,24 @@ class TierReplace extends React.Component<any, tabsState> {
       requests.push({ key: "ndc", apiDetails: apiDetails });
 
       apiDetails = Object.assign({}, apiDetails);
-      apiDetails["apiPart"] = commonConstants.SEARCH_LABEL_NAME;
+      apiDetails["apiPart"] = this.state.selectedFileKey === 'COMMDF' ? commonConstants.SEARCH_LABEL_NAME_FULL : commonConstants.SEARCH_LABEL_NAME;
       requests.push({ key: "drug_label_name", apiDetails: apiDetails });
 
       apiDetails = Object.assign({}, apiDetails);
-      apiDetails["apiPart"] = commonConstants.SEARCH_CLASS;
+      apiDetails["apiPart"] = this.state.selectedFileKey === 'COMMDF' ? commonConstants.SEARCH_CLASS_FULL : commonConstants.SEARCH_CLASS;
       requests.push({ key: "database_class", apiDetails: apiDetails });
 
       apiDetails = Object.assign({}, apiDetails);
-      apiDetails["apiPart"] = commonConstants.SEARCH_CATEGORY;
+      apiDetails["apiPart"] = this.state.selectedFileKey === 'COMMDF' ? commonConstants.SEARCH_CATEGORY_FULL : commonConstants.SEARCH_CATEGORY;
       requests.push({ key: "database_category", apiDetails: apiDetails });
 
       if (this.props.formulary_lob_id == 1) {
         apiDetails = Object.assign({}, apiDetails);
-        apiDetails["apiPart"] = commonConstants.SEARCH_RXCUI;
+        apiDetails["apiPart"] = this.state.selectedFileKey === 'COMMDF' ? commonConstants.SEARCH_RXCUI_FULL : commonConstants.SEARCH_RXCUI;
         requests.push({ key: "rxcui", apiDetails: apiDetails });
       } else {
         apiDetails = Object.assign({}, apiDetails);
-        apiDetails["apiPart"] = commonConstants.SEARCH_DDID;
+        apiDetails["apiPart"] = this.state.selectedFileKey === 'COMMDF' ? commonConstants.SEARCH_DDID_FULL : commonConstants.SEARCH_DDID;
         requests.push({
           key: "drug_descriptor_identifier",
           apiDetails: apiDetails
