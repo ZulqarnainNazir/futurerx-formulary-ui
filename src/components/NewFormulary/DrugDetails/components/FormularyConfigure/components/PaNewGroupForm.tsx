@@ -516,7 +516,10 @@ function NewGroup(props: any) {
     setAdditionalCriteriaPopup(!isAdditionalCriteriaPopupOpen);
   };
 
-  const openAdditionalCriteria = () => toggleAdditionalCriteriaOpen(true);
+  const openAdditionalCriteria = () => {
+    console.log(isAdditionalCriteriaOpen);
+    toggleAdditionalCriteriaOpen(true);
+  };
   const closeAddiionalCriteria = () => toggleAdditionalCriteriaOpen(false);
   useEffect(() => {
     // debugger;
@@ -1021,13 +1024,13 @@ function NewGroup(props: any) {
                       name="add-filter-2"
                       // checked={isAdditionalCriteriaOpen}
                       onClick={() => {
+                        openAdditionalCriteria();
                         updateFormData({
                           ...formData,
                           is_additional_criteria_defined: true,
                         });
-                        openAdditionalCriteria();
                       }}
-                      disabled={props.editable}
+                      // disabled={props.editable}
                       checked={formData.is_additional_criteria_defined}
                     />
                     <RadioButton
@@ -1072,7 +1075,7 @@ function NewGroup(props: any) {
                     />
                   </RadioGroup>
                 </div> */}
-                {isAdditionalCriteriaOpen && props.formulary_lob_id == 4 ? (
+                {isAdditionalCriteriaOpen ? (
                   <AdvanceSearchContainer
                     openPopup={isAdditionalCriteriaOpen}
                     onClose={closeAddiionalCriteria}
