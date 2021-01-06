@@ -45,8 +45,8 @@
       }
       .ant-table-body {
         & > table {
-          border-collapse: separate;
-          border-spacing: 0;
+          border-collapse: separate !important;
+          border-spacing: 0 !important;
           .ant-table-tbody,
           .ant-table-row {
             .ant-table-cell {

@@ -25,7 +25,7 @@ class FrxImageCell extends React.Component<
           }
           alt={"image"}
         />
-        {this.props.data ? this.props.data : "Mock data"}
+        {/* {this.props.data ? this.props.data : "Mock data"} */}
       </Fragment>
     );
   }
