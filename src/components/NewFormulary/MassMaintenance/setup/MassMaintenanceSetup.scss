@@ -7,6 +7,17 @@
 // }
 
 ._mass-maintainance-setup-root {
+  .ant-table-cell .ant-checkbox-wrapper .ant-checkbox-checked .ant-checkbox-inner {
+    background-color: #1890ff !important; 
+}
+label{
+  font-size: 12px;
+    color: #707683;
+    line-height: 20px;
+    margin-bottom: 5px;
+    text-transform: uppercase;
+    font-weight: normal;
+}
   // ####### START TABLE ##########
   .frx-grid-container {
     .frx-grid {
@@ -106,12 +117,15 @@
   }
   .flex-container-row {
     display: flex;
-    flex-direction: row;
-    justify-content: space-between;
+    //flex-direction: row;
+    //justify-content: space-between;
     // .reset {
     //   margin: 0 !important;
     //   padding: 0 !important;
     // }
+    .margin-right-10{
+      margin-left: 20px;
+    }
     .__effective-date {
       .ant-picker-input {
         margin-top: 0 !important;
@@ -119,7 +133,7 @@
       padding-top: 0 !important;
       width: 355px !important;
       border-radius: 3px !important;
-      height: 30px !important;
+      height: 35px !important;
       background: #ffffff !important;
       //   margin-bottom: 20px !important;
     }

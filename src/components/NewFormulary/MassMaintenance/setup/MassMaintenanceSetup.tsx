@@ -18,8 +18,8 @@ import FormularyGrid from "./FormularyGrid";
 import DrugGrid from "../../DrugDetails/components/DrugGrid";
 import { getFormularyGridColumns } from "../../../../mocks/formulary-grid/FormularyGridColumn";
 import FrxGridContainer from "../../../shared/FrxGrid/FrxGridContainer";
-
-class MassMaintenanceSetup extends Component {
+import formularyDetailsContext from "../../FormularyDetailsContext";
+class MassMaintenanceSetup extends Component<any,any> {
   state = {
     isFormularyGridShown: false,
     columns: [],
@@ -33,6 +33,7 @@ class MassMaintenanceSetup extends Component {
     },
   };
 
+  static contextType = formularyDetailsContext;
   showFormularyGrid = () => {
     this.setState({
       isFormularyGridShown: !this.state.isFormularyGridShown,
@@ -52,25 +53,7 @@ class MassMaintenanceSetup extends Component {
     const { isFormularyGridShown, columns, data, scroll, pinData } = this.state;
     let dataGrid = <FrxLoader />;
     if (data) {
-      // dataGrid = (
-      //   <FormularyGrid
-      //     columns={columns}
-      //     data={data}
-      //     bordered={false}
-      //     rowSelectionChange={this.rowSelectionChange}
-      //     enableSettings={false}
-      //     isPinningEnabled={false}
-      //   />
-      // );
-      // dataGrid = (
-      //   <DrugGrid
-      //     columns={columns}
-      //     data={data}
-      //     scroll={scroll}
-      //     pinData={pinData}
-      //   />
-      // );
-
+     
       dataGrid = (
         <FrxGridContainer
           enableSearch={false}
@@ -109,12 +92,13 @@ class MassMaintenanceSetup extends Component {
               <div>
                 <DropDown
                   className="w-80"
-                  placeholder="Medicare"
+                  placeholder="Select LOB"
+                  defaultValue={this.context.selectedLOBType === "medicare" ? "Medicare" : "Commercial"}
                   options={["Medicare", "Medicaid", "Commercial", "Exchange"]}
                 />
               </div>
             </div>
-            <div className="flex-container m-t-30">
+            {/* <div className="flex-container m-t-30">
               <label className="uppercase">
                 what type of maintenance do you want to perform &nbsp;
                 <span className="asterisk">*</span>
@@ -130,7 +114,7 @@ class MassMaintenanceSetup extends Component {
                   name="mass-maintenance-setup"
                 />
               </div>
-            </div>
+            </div> */}
             <div className="flex-container-row m-t-30">
               <div>
                 <label className="uppercase">
@@ -141,6 +125,7 @@ class MassMaintenanceSetup extends Component {
                   <DropDown
                     className="w-80"
                     placeholder=""
+                    defaultValue="2021  "
                     options={[
                       "2010",
                       "2011",
@@ -150,25 +135,23 @@ class MassMaintenanceSetup extends Component {
                       "2015",
                       "2016",
                       "2017",
+                      "2018",
+                      "2019",
+                      "2020",
+                      "2021",
                     ]}
                   />
                 </div>
               </div>
-              <div>
+              {/* <div>
                 <label className="uppercase">submission month</label>
-                {/* <div className="submission-month-input"> */}
-                {/* <input
-                  type="text"
-                  placeholder=""
-                  value=""
-                  className="submission-month-input"
-                /> */}
+               
                 <div>
                   <Input placeholder="" className="submission-month-input" />
                 </div>
-                {/* </div> */}
-              </div>
-              <div>
+                
+              </div> */}
+              <div className="margin-right-10">
                 <label className="uppercase">
                   EFFECTIVE DATE of change &nbsp;
                   <span className="asterisk">*</span>

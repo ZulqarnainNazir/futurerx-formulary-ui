@@ -1,23 +1,26 @@
 import React from "react";
 import MassMaintenanceContext from "../FormularyDetailsContext";
 
-export default function FormularyDetailsTop(props: any) {
+export default class FormularyDetailsTop extends React.Component<any,any> {
   debugger;
-  const MassMaintenance = React.useContext(MassMaintenanceContext);
-  console.log(props);
+   static contextType = MassMaintenanceContext;
+ 
+  render()
+    {
+  
   return (
     <div className="drug-detail-top">
       <div className="breadcrum-sec">
         <div className="breadcrum">
           <span
             className="color-blue"
-            onClick={MassMaintenance.showDetailHandler}
+            onClick={this.context.showDetailHandler()}
           >
             Mass Maintenance Grid
           </span>
           <span>&gt;</span>
           <span className="active-state">
-            {props.formularyTopData.formularyName}
+            {this.props.formularyTopData.formularyName}
           </span>
         </div>
         <div className="version-wrapper">
@@ -102,7 +105,7 @@ export default function FormularyDetailsTop(props: any) {
         </div>
       </div>
       <div className="durationInfo d-flex">
-        {props.lob_type == "medicare" ?
+        { this.context.selectedLOBType== "medicare" ?
           <div className="item">
           <span className="tag purple">Medicare</span>
         </div>
@@ -114,17 +117,18 @@ export default function FormularyDetailsTop(props: any) {
         
         <div className="item">
           <span className="label">Formulary ID:</span>{" "}
-          {props.formularyTopData.formularyID}
+          {this.props.formularyTopData.formularyID}
         </div>
         <div className="item">
           <span className="label">Effective Date:</span>{" "}
-          {props.formularyTopData.effectiveDate}
+          {this.props.formularyTopData.effectiveDate}
         </div>
         <div className="item">
           <span className="label">Termination Date:</span>{" "}
-          {props.formularyTopData.terminationDate}
+          {this.props.formularyTopData.terminationDate}
         </div>
       </div>
     </div>
   );
+}
 }

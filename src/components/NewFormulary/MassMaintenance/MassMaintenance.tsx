@@ -35,7 +35,7 @@ export default class MassMaintenance extends React.Component<any, any> {
       case 0:
         return <MassMaintenanceSetup />;
       case 1:
-        return <MassMaintenanceConfigure />;
+        return <MassMaintenanceConfigure  />;
       case 2:
         return <div>Compare/View</div>;
       case 3:
@@ -50,7 +50,7 @@ export default class MassMaintenance extends React.Component<any, any> {
     const fData = this.props.data;
     return (
       <>
-        <MassMaintenanceTop formularyTopData={fData} lob_type={this.props.lob_type} />
+        <MassMaintenanceTop formularyTopData={fData}  />
         <div className="drug-details-bottom">
           <FrxTabs
             tabList={this.state.tabs}

@@ -13,12 +13,8 @@ export const getDrugsList = () => [
   { drug: "Lipitor 40mg" },
   { drug: "Lipitor 60mg" },
   { drug: "Lipitor 80mg" },
-  { drug: "Lipitor 120mg" },
-  { drug: "Lipitor 20mg" },
-  { drug: "Lipitor 40mg" },
-  { drug: "Lipitor 60mg" },
-  { drug: "Lipitor 80mg" },
-  { drug: "Lipitor 120mg" },
+  
+  
 ];
 
 export const getColumns = () => [
@@ -60,6 +56,67 @@ export const getColumns = () => [
     className: "table-head-center",
   },
 ];
+
+export const getPACommercialData = () => {
+  return [
+    {
+      key: "1",
+      formularyName: "2021Care1234",
+      formularyId: "123456789123",
+      formularyVersion: 2,
+      contractYeat: "2021",
+      formularyType: "Commercial",
+      effectiveDate: "01/01/2021",
+      tier: {
+        tierId: "1",
+        tierNumber: "Tier 1",
+        tierDescription: "Generic Brand",
+      },
+    },
+    {
+      key: "2",
+      formularyName: "Medicare12",
+      formularyId: "123456789124",
+      formularyVersion: 3,
+      contractYeat: "2021",
+      formularyType: "Commercial",
+      effectiveDate: "01/01/2021",
+      tier: {
+        tierId: "1",
+        tierNumber: "Tier 1",
+        tierDescription: "Generic Brand",
+      },
+    },
+    {
+      key: "3",
+      formularyName: "2021Care4321",
+      formularyId: "980765854321",
+      formularyVersion: 4,
+      contractYeat: "2021",
+      formularyType: "Commercial",
+      effectiveDate: "01/01/2021",
+      tier: {
+        tierId: "1",
+        tierNumber: "Tier 1",
+        tierDescription: "Generic Brand",
+      },
+    },
+    {
+      key: "4",
+      formularyName: "Care987",
+      formularyId: "192039483745",
+      formularyVersion: 5,
+      contractYeat: "2021",
+      formularyType: "Commercial",
+      effectiveDate: "01/01/2021",
+      tier: {
+        tierId: "1",
+        tierNumber: "Tier 1",
+        tierDescription: "Generic Brand",
+      },
+    },
+  ];
+};
 
 export const getData = () => {
   return [
@@ -112,6 +169,67 @@ export const getData = () => {
       formularyVersion: 5,
       contractYeat: "2021",
       formularyType: "Medicare",
+      effectiveDate: "01/01/2021",
+      tier: {
+        tierId: "1",
+        tierNumber: "Tier 1",
+        tierDescription: "Generic Brand",
+      },
+    },
+  ];
+};
+
+export const getCommercialData = () => {
+  return [
+    {
+      key: "1",
+      formularyName: "2021Care1234",
+      formularyId: "123456789123",
+      formularyVersion: 2,
+      contractYeat: "2021",
+      formularyType: "Commercial",
+      effectiveDate: "01/01/2021",
+      tier: {
+        tierId: "1",
+        tierNumber: "Tier 1",
+        tierDescription: "Generic Brand",
+      },
+    },
+    {
+      key: "2",
+      formularyName: "Medicare12",
+      formularyId: "123456789124",
+      formularyVersion: 3,
+      contractYeat: "2021",
+      formularyType: "Commercial",
+      effectiveDate: "01/01/2021",
+      tier: {
+        tierId: "1",
+        tierNumber: "Tier 1",
+        tierDescription: "Generic Brand",
+      },
+    },
+    {
+      key: "3",
+      formularyName: "2021Care4321",
+      formularyId: "980765854321",
+      formularyVersion: 4,
+      contractYeat: "2021",
+      formularyType: "Commercial",
+      effectiveDate: "01/01/2021",
+      tier: {
+        tierId: "1",
+        tierNumber: "Tier 1",
+        tierDescription: "Generic Brand",
+      },
+    },
+    {
+      key: "4",
+      formularyName: "Care987",
+      formularyId: "192039483745",
+      formularyVersion: 5,
+      contractYeat: "2021",
+      formularyType: "Commercial",
       effectiveDate: "01/01/2021",
       tier: {
         tierId: "1",
