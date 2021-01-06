@@ -253,6 +253,7 @@ interface Props {
   initialValues: any;
   getIntelliscenseSearch: (a) => any;
   onChildDataUpdated: (nodeId, childData) => void;
+  fileKey?: any;
 }
 interface State {
   searchValue: string;
@@ -307,11 +308,12 @@ class GpiLableSearch extends Component<Props, State> {
 
   onSearch = (e) => {
     if (e.target.value) {
+      let fileKey = this.props.fileKey ? this.props.fileKey : this.state.lobCode;
       this.state.treeClosed = false;
       let requests = Array();
       let apiDetails = {};
-      apiDetails['apiPart'] = commonConstants.SEARCH_GPI;
-      apiDetails['pathParams'] = this.props?.formulary_id + "/" + this.state.lobCode + "/" + "F";
+      apiDetails['apiPart'] = fileKey === 'COMMDF' ? commonConstants.SEARCH_GPI_FULL : commonConstants.SEARCH_GPI;
+      apiDetails['pathParams'] = this.props?.formulary_id + "/" + fileKey + "/" + "F";
       if (this.state.lobCode === 'MCR') {
         apiDetails['pathParams'] = apiDetails['pathParams'] + "/" + (this.props.formulary_type_id === 1 ? 'MC' : 'MMP');
       } else {
@@ -321,16 +323,16 @@ class GpiLableSearch extends Component<Props, State> {
       requests.push({ key: 'gpi', apiDetails: apiDetails });
 
       apiDetails = Object.assign({}, apiDetails);
-      apiDetails['apiPart'] = commonConstants.SEARCH_LABEL_NAME;
+      apiDetails['apiPart'] = fileKey === 'COMMDF' ? commonConstants.SEARCH_LABEL_NAME_FULL : commonConstants.SEARCH_LABEL_NAME;
       requests.push({ key: 'drug_label', apiDetails: apiDetails });
 
       if (this.props.formulary_lob_id == 1) {
         apiDetails = Object.assign({}, apiDetails);
-        apiDetails['apiPart'] = commonConstants.SEARCH_RXCUI;
+        apiDetails['apiPart'] = fileKey === 'COMMDF' ? commonConstants.SEARCH_RXCUI_FULL : commonConstants.SEARCH_RXCUI;
         requests.push({ key: 'rxcui', apiDetails: apiDetails });
       } else {
         apiDetails = Object.assign({}, apiDetails);
-        apiDetails['apiPart'] = commonConstants.SEARCH_DDID;
+        apiDetails['apiPart'] = fileKey === 'COMMDF' ? commonConstants.SEARCH_DDID_FULL : commonConstants.SEARCH_DDID;
         requests.push({ key: 'ddid', apiDetails: apiDetails });
       }
 
@@ -475,7 +477,7 @@ class GpiLableSearch extends Component<Props, State> {
             iconPosition="left"
             onChange={this.onSearch}
             value={this.state.searchValue}
-            placeholder="Search by alternative drug"
+            placeholder="Search by gpi/generic name/label name/ddid"
             style={{ paddingLeft: "30px" }}
           />
           <ClearIcon

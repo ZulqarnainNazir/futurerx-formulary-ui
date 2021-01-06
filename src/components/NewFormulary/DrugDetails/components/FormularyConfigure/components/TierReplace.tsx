@@ -1155,6 +1155,7 @@ class TierReplace extends React.Component<any, tabsState> {
                 openPopup={this.state.isSearchOpen}
                 onClose={this.advanceSearchClosekHandler}
                 isAdvanceSearch={true}
+                fileType={this.state.selectedFileKey}
               />
             ) : null}
           </div>

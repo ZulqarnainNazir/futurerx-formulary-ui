@@ -144,7 +144,7 @@ class ListItemContainer extends Component<Props, State> {
 
   render() {
     const { selectedOpt } = this.state;
-    const borderColor: BorderType = this.addColor(selectedOpt);
+    const borderColor: BorderType = this.state.generalTitles.includes(this.props.title) ? this.addColor("include") : this.addColor(selectedOpt);
     console.log(borderColor);
     return (
       <div className="ListItemContianer__root">
