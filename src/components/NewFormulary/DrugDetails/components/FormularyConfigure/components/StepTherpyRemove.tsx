@@ -334,9 +334,9 @@ class DrugGrid extends React.Component<any, any> {
 
     apiDetails["messageBody"]["filter"] = allFilters;
 
-    if (this.state.sort_by && this.state.sort_by.length ==0){
-      this.state.sort_by.push({ key: 'drug_label_name', value: 'asc' });
-    }
+    // if (this.state.sort_by && this.state.sort_by.length ==0){
+    //   this.state.sort_by.push({ key: 'drug_label_name', value: 'asc' });
+    // }
     
     if (this.state.sort_by && this.state.sort_by.length > 0) {
       let keys = Array();
