@@ -43,6 +43,7 @@ import * as tierConstants from "../../../../../../api/http-tier";
 import * as commonConstants from "../../../../../../api/http-commons";
 import { setAdvancedSearch } from "../../../../../../redux/slices/formulary/advancedSearch/advancedSearchSlice";
 import { AnyMxRecord, AnyNaptrRecord } from "dns";
+import CustomPanelGrid from "../../../../../shared/Frx-components/custom-panel-grid/CustomPanelGrid";
 
 function mapDispatchToProps(dispatch) {
   return {
@@ -638,6 +639,24 @@ class Tier extends React.Component<any, tabsState> {
                         onGridPageChangeHandler={(page) => { }}
                         getPerPageItemSize={(size) => { }}
                       />
+                      <CustomPanelGrid
+                          onMenuClick={(item, data) => {
+                            console.log(item);
+                            console.log(data);
+                          }}
+                          menuItems={[
+                            {
+                              id: 21,
+                              key: 21,
+                              title: "Menu 1"
+                            },
+                            {
+                              id: 22,
+                              key: 22,
+                              title: "Menu 2"
+                            }
+                          ]}
+                        />
                       <div className="tier-popup-btn">
                         <svg
                           onClick={(e) => this.onAddNewTierHandler(this.state.newTierId, '', MODE_ADD_NEW)}

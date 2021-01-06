@@ -262,6 +262,9 @@ class DrugCategory extends Component<Props, State> {
         }
       }))
     }
+    else{
+      this.setState({searchValue: ""});
+    }
   };
 
   onClearSearch = () => {
@@ -315,7 +318,7 @@ class DrugCategory extends Component<Props, State> {
             iconPosition="left"
             onChange={this.onSearch}
             value={this.state.searchValue}
-            placeholder="Search by alternative drug"
+            placeholder="Search by drug category"
             style={{ paddingLeft: "30px" }}
           />
           <ClearIcon
