@@ -32,6 +32,7 @@ import { ToastContainer } from "react-toastify";
 import showMessage from "../../../Utils/Toast";
 import { trim, throttle } from "lodash";
 import { Save } from "@material-ui/icons";
+import { postMessage } from "../../../../.././redux/slices/formulary/messaging/messagingSlice";
 
 class FormularySetUp extends React.Component<any, any> {
   state = {
@@ -535,9 +536,14 @@ class FormularySetUp extends React.Component<any, any> {
   };
 
   onSave = (e) => {
-    console.log("  SAVE - ", e);
-    console.log("MODE : " + this.props.mode);
-    console.log("METHOD : " + this.state.generalInformation.method);
+    console.log(
+      "  SAVE - (" +
+        e +
+        ") Mode: " +
+        this.props.mode +
+        ", Method : " +
+        this.state.generalInformation.method
+    );
     let msg: string[] = [];
 
     if (this.props.mode === "NEW") {
@@ -567,6 +573,9 @@ class FormularySetUp extends React.Component<any, any> {
         msg.forEach((m) => {
           showMessage(m, "info");
         });
+        // this.props.postMessage({ message: msg[0], type: "warning" });
+        // this.props.postMessage({message:msg[0], type:"error"});
+
         return;
       }
     }
@@ -741,7 +750,7 @@ class FormularySetUp extends React.Component<any, any> {
                   customTierChange={this.handleCustomTierChange}
                   deleteCustomTier={this.deleteCustomTier}
                 />
-                {this.state.generalInformation.type === "Medicare"  ? (
+                {this.state.generalInformation.type === "Medicare" ? (
                   <SupplementalModels
                     supplemental={this.state.supplemental_benefit_info}
                     supplementalCheck={this.supplementalCheck}
@@ -832,6 +841,7 @@ function mapDispatchToProps(dispatch) {
     saveFormulary: (a) => dispatch(saveFormulary(a)),
     initCreateUsingClone: (a) => dispatch(initCreateUsingClone(a)),
     setLocation: (a) => dispatch(setLocation(a)),
+    postMessage: (a) => dispatch(postMessage(a)),
   };
 }
 

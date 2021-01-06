@@ -2,6 +2,9 @@ import React from "react";
 import { TabInfo } from "../../../models/tab.model";
 import FrxTabs from "../../shared/FrxTabs/FrxTabs";
 import FormularyDetailsTop from "./components/FormularyDetailsTop/FormularyDetailsTop";
+import FormularyMessaging from "./components/FormularyDetailsTop/FormularyMessaging";
+
+
 import FormularyConfigure from "./components/FormularyConfigure/FormularyConfigure";
 import CompareView from "./components/CompareView/CompareView";
 import "./FormularyDetails.scss";
@@ -11,6 +14,8 @@ import { connect } from "react-redux";
 import { setAdvancedSearch } from "../../../redux/slices/formulary/advancedSearch/advancedSearchSlice";
 import { setLocation } from "../../../redux/slices/formulary/application/applicationSlice";
 import EntityOwnershipContainer from "../EntityOwnership/EntityOwnershipContainer";
+import { MessagingView } from "../../../redux/slices/formulary/messaging/MessagingView";
+
 const tabs = [
   { id: 1, text: "Setup" },
   { id: 2, text: "Configure" },
@@ -110,6 +115,7 @@ class FormularyDetails extends React.Component<any, any> {
     const fData = this.props.data;
     return (
       <>
+        <FormularyMessaging activeTabIndex={this.props.location} />
         <FormularyDetailsTop activeTabIndex={this.props.location} />
         <div className="drug-details-bottom">
           <FrxTabs
