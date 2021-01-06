@@ -88,6 +88,7 @@ class GPM extends React.Component<any, any> {
     ],
     searchInput: "",
     selectedGroup: -1,
+    isSetUpComplete: false,
   };
   onClickTab = (selectedTabIndex: number) => {
     let activeTabIndex = 0;
@@ -121,6 +122,11 @@ class GPM extends React.Component<any, any> {
       let dataLength = tmpData && tmpData.length ? tmpData.length : 0;
       let latestVerion =
         dataLength > 0 ? tmpData[dataLength - 1].id_st_group_description : 0;
+      let is_setup_complete =
+        dataLength > 0 ? tmpData[dataLength - 1].is_setup_complete : 0;
+      this.setState({
+        isSetUpComplete: is_setup_complete,
+      });
 
       let apiDetails = {};
       apiDetails["lob_type"] = this.props.formulary_lob_id;
@@ -359,6 +365,8 @@ class GPM extends React.Component<any, any> {
                 selectGroupDescriptionClick={
                   this.props.selectGroupDescriptionClick
                 }
+                isSetUpComplete={this.state.isSetUpComplete}
+                selectGroup={this.selectGroup}
               />
             ) : (
               <NewGroup
@@ -370,6 +378,8 @@ class GPM extends React.Component<any, any> {
                 selectGroupDescriptionClick={
                   this.props.selectGroupDescriptionClick
                 }
+                isSetUpComplete={this.state.isSetUpComplete}
+                selectGroup={this.selectGroup}
               />
             )}
           </div>

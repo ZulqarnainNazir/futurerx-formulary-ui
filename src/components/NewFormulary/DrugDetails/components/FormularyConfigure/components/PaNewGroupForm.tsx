@@ -82,7 +82,7 @@ interface initialFormData {
 const initialFormData: initialFormData = {
   is_validation_required: true,
   pa_group_description: "",
-  pa_criteria: null,
+  pa_criteria: "",
   file_type: "FAOTC",
   id_pa_type: null,
   is_rx_drug_type: false,
@@ -319,7 +319,7 @@ function NewGroup(props: any) {
         return;
       }
 
-      if (formData.pa_criteria === null) {
+      if (formData.pa_criteria === "") {
         showMessage("PA Criteria is required.", "error");
         return;
       }
@@ -977,14 +977,13 @@ function NewGroup(props: any) {
               <Grid item xs={12}>
                 <div className="group">
                   <label className="required-field">
-                    PA Criteria <span className="astrict">*</span>
+                    PA Criteria2 <span className="astrict">*</span>
                   </label>
                   <input
                     className="custom-textfield"
                     type="text"
                     name="pa_criteria"
                     onChange={handleChange}
-                    defaultValue={formData.pa_criteria}
                     value={formData.pa_criteria}
                     disabled={props.editable}
                   />

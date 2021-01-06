@@ -19,7 +19,12 @@ import { ReactComponent as CrossCircleWhiteBGIcon } from "../../../../../../asse
 import {
   saveGDM,
   editGDM,
+  getSTGroupDetails,
 } from "../../../../../../redux/slices/formulary/gdm/gdmSlice";
+// import {
+//   saveGDM,
+//   editGDM,
+// } from "../../../../../../redux/slices/formulary/gdm/gdmSlice";
 import {
   getStGrouptDescription,
   getDrugLists,
@@ -114,6 +119,7 @@ function mapDispatchToProps(dispatch) {
     getStGrouptDescriptions: (arg) => dispatch(getStGrouptDescriptions(arg)),
     getStGrouptDescriptionVersions: (arg) =>
       dispatch(getStGrouptDescriptionVersions(arg)),
+    getSTGroupDetails: (arg) => dispatch(getSTGroupDetails(arg)),
   };
 }
 
@@ -128,6 +134,7 @@ function NewGroup(props: any) {
   const [isAdditionalCriteriaOpen, toggleAdditionalCriteriaOpen] = useState(
     false
   );
+  const [isSetupComplete, isSetUpComplete] = React.useState(false);
 
   const [additionalCriteria, setAdditionalCriteria] = useState(null);
   const handleChange = (e) => {
@@ -178,6 +185,7 @@ function NewGroup(props: any) {
 
   useEffect(() => {
     updateFormData(initialFormData);
+    isSetUpComplete(props.isSetUpComplete);
     setDrug_list_ids([]);
     if (Object.keys(props.StGDData).length > 0) {
       if (!changeEvent) {
@@ -281,7 +289,7 @@ function NewGroup(props: any) {
     formData["drug_list_ids"] = drug_list_ids;
     formData["removed_drug_list_ids"] = [2];
     let requestData = {};
-    if (formType == 1) {
+    if (formType == 1 && props.formType == 1) {
       requestData["messageBody"] = { ...formData };
       if (additionalCriteria != null) {
         requestData["messageBody"]["um_criteria"] = additionalCriteria;
@@ -306,10 +314,26 @@ function NewGroup(props: any) {
             "/" + props?.client_id + "?entity_id=" + props?.formulary_id;
           props.getStGrouptDescriptions(apiDetails);
 
-          apiDetails["pathParams"] =
-            "/" + json.payload.id_base_st_group_description;
-          props.getStGrouptDescriptionVersions(apiDetails);
+          let id_base_st_group_description = json.payload
+            .id_base_st_group_description
+            ? json.payload.id_base_st_group_description
+            : props.saveGdm.current_group_id;
+          apiDetails["pathParams"] = "/" + id_base_st_group_description;
+          props.getStGrouptDescriptionVersions(apiDetails).then((json) => {
+            const isEditable =
+              json.payload.data.length > 0 &&
+              json.payload.data.find(
+                (val) => val.id_st_group_description === id_st_group_description
+              );
+            props.selectGroup(
+              id_base_st_group_description,
+              isEditable.is_setup_complete
+            );
+            isSetUpComplete(isEditable.is_setup_complete);
+          });
         } else if (json?.payload?.status && json?.payload?.status != 200) {
+          isSetUpComplete(false);
+          setShowHeader(0);
           showMessage(json.payload.data.message, "error");
         } else {
           showMessage("Failure", "error");
@@ -330,6 +354,15 @@ function NewGroup(props: any) {
           showMessage("Saved Successfully", "success");
           let apiDetails = {};
           setFormType(1);
+
+          props.getSTGroupDetails({
+            formulary_id: props.formulary_id,
+            current_group_id:
+              json.payload.success.data.id_base_st_group_description,
+            current_group_des_id:
+              json.payload.success.data.id_st_group_description,
+          });
+
           formData["id_st_group_description"] =
             json.payload.success.data.id_st_group_description;
 
@@ -340,8 +373,19 @@ function NewGroup(props: any) {
           props.getStGrouptDescriptions(apiDetails);
           apiDetails["pathParams"] =
             "/" + json.payload.success.data.id_base_st_group_description;
-          props.getStGrouptDescriptionVersions(apiDetails);
+          props.getStGrouptDescriptionVersions(apiDetails).then((json) => {
+            const isEditable =
+              json.payload.data.length > 0 &&
+              json.payload.data.find(
+                (val) =>
+                  val.id_st_group_description ===
+                  formData["id_st_group_description"]
+              );
+            isSetUpComplete(isEditable.is_setup_complete);
+          });
         } else if (json?.payload?.status && json?.payload?.status != 200) {
+          isSetUpComplete(false);
+          setShowHeader(0);
           showMessage(json.payload.data.message, "error");
         } else {
           showMessage("Failure", "error");
@@ -388,6 +432,7 @@ function NewGroup(props: any) {
           }
           onChange={onChange}
           isPopUpView={props.isPopUpView}
+          isSetupComplete={isSetupComplete}
         />
       )}
       {props.formulary_lob_id === 1 && (

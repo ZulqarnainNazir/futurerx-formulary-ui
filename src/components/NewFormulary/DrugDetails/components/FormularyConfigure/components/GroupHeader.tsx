@@ -185,7 +185,6 @@ function GroupHeader(props: any) {
             : 0;
       }
 
-      
       setPanelColor(
         isEditable
           ? props.isPopUpView
@@ -515,7 +514,12 @@ function GroupHeader(props: any) {
       });
   };
   return (
-    <div className={`version-wrapper${panelColor}`}>
+    <div
+      className={`version-wrapper${
+        props.isSetupComplete === true ? "-green" : panelColor
+      }`}
+    >
+      {/* <div className={`version-wrapper${panelColor}`}> */}
       <select
         name="group-description"
         id="group-description"
