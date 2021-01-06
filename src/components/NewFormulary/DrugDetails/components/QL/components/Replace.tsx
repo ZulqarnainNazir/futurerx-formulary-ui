@@ -22,7 +22,7 @@ class Replace extends Component<any, any> {
           indicating Quantity Limit over Time. Populate ‘Quantity’ and ‘Days’ to
           create Type 1 QL indicating Daily Quantity Limit.
         </div>
-        <Grid container>
+        <Grid container spacing={2}>
           <Grid item xs={4}>
             <div className="input-group">
               <Label required={true}>QUANTITY</Label>

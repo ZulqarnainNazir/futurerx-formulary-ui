@@ -207,7 +207,9 @@ class ReferenceNdc extends Component<Props, State> {
         }
       }))
     }
-
+    else{
+      this.setState({searchValue: ""});
+    }
   };
 
   onCheck = (checkedKeys) => {
@@ -273,7 +275,7 @@ class ReferenceNdc extends Component<Props, State> {
             iconPosition="left"
             onChange={this.onSearch}
             value={this.state.searchValue}
-            placeholder="Search by alternative drug"
+            placeholder="Search by reference ndc"
             style={{ paddingLeft: "30px" }}
           />
           <ClearIcon
