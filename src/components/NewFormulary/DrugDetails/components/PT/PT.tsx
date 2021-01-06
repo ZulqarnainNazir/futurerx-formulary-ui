@@ -229,13 +229,11 @@ class DrugDetailPT extends React.Component<any, any> {
         this.rpSavePayload.prescriber_taxonomies = this.state.selectedList;
         this.rpSavePayload.breadcrumb_code_value = "PRTX";
         this.rpSavePayload.is_covered = this.state.ptSettingsStatus.covered;
+
+        let triggerType = (this.state.activeTabIndex === 0) ? ptConstants.TYPE_REPLACE : ptConstants.TYPE_APPEND
+
         apiDetails["messageBody"] = this.rpSavePayload;
-        apiDetails["pathParams"] =
-          this.props?.formulary_id +
-          "/" +
-          getLobCode(this.props.formulary_lob_id) +
-          "/" +
-          ptConstants.TYPE_REPLACE;
+        apiDetails["pathParams"] = this.props?.formulary_id + "/" + getLobCode(this.props.formulary_lob_id) + "/" + triggerType;
         console.log("The API Details - ", apiDetails);
 
         // Replace Drug method call

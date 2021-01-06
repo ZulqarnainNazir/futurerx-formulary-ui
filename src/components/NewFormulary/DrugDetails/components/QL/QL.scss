@@ -17,6 +17,11 @@
                         padding: 0 18px !important;
                         vertical-align: middle;
                     }
+                    .frx-grid-pagination{
+                        .frx-grid-pagination__page-numbers{
+                            display: none;
+                        }
+                    }
                 }
             }
         }
