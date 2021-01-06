@@ -41,6 +41,11 @@ class CustomPanelGrid extends React.Component<
   };
 
   componentDidMount() {
+    // this.setState({
+    //   data: customPanelGridMockData,
+    //   filteredData: customPanelGridMockData
+
+    // });
     this.setState({
       data: customPanelGridMockData.map(d => {
         d["items"] = this.props.menuItems;
@@ -84,25 +89,29 @@ class CustomPanelGrid extends React.Component<
           settingsTriDotMenuClick={(item: any, data?: any) => {
             // console.log(item);
             console.log(data);
-            this.props.onMenuClick(item, data);
+            this.props.onMenuClick(item, this.state.selectedRow);
           }}
           // actionItems={props => this.props.menuItems}
-          actionItems={(props: any) => {
-            return [
-              {
-                id: 21,
-                key: 21,
-                title: "Menu 1"
-              },
-              {
-                id: 22,
-                key: 22,
-                title: "AMenu 2"
-              }
-            ];
-          }}
+          // overrideActionItems
+          // actionItems={(props: any) => {
+          //   return [
+          //     {
+          //       id: 21,
+          //       key: 21,
+          //       title: "Menu 1"
+          //     },
+          //     {
+          //       id: 22,
+          //       key: 22,
+          //       title: "Menu 2"
+          //     }
+          //   ];
+          // }}
           settingsTriDotClick={(item: any) => {
             console.log(item);
+            this.setState({
+              selectedRow: item
+            });
           }}
           onSettingsClick={"grid-menu"}
         />
