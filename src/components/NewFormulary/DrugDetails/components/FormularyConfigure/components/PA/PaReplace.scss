@@ -278,10 +278,10 @@
           span {
             font-family: Roboto;
             font-style: normal;
-            font-weight: normal;
+            font-weight: bold !important;
             font-size: 12px;
             line-height: 20px;
-            text-transform: uppercase;
+            text-transform: capitalize !important;
             color: #707683;
           }
           .MuiGrid-container {
