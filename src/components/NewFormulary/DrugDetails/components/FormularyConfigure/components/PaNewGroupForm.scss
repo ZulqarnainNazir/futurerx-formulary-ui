@@ -47,3 +47,23 @@
     }
   }
 }
+
+//css for mini tabs
+.inner-container {
+  .mini-tabs {
+    header {
+      box-shadow: none;
+    }
+  }
+  .frx-mini-tabs-root {
+    background: none;
+    &__tabs {
+      min-height: 30px;
+      &__tab {
+        min-height: 24px;
+        min-width: auto;
+      }
+    }
+    margin: 0 0 20px 0;
+  }
+}
