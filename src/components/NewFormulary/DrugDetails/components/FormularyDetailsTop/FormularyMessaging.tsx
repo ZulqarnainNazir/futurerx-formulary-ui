@@ -55,7 +55,7 @@ class FormularyMessaging extends React.Component<any, any> {
   render() {
     let dropDown: any;
     return (
-      <div className="drug-detail-top">
+      <div>
         <Snackbar
           open={this.state.showMsg}
           autoHideDuration={5000}

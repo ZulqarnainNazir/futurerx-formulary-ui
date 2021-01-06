@@ -52,6 +52,9 @@ interface tabsState {
   filterPlaceholder: any;
   searchValue: any;
   searchData: any[];
+  isFiltered: boolean;
+  filteredInfo: any;
+  filter: any[];
 }
 
 const mapStateToProps = (state) => {
@@ -112,7 +115,9 @@ class TierReplace extends React.Component<any, tabsState> {
     searchNames: Array(),
     filterPlaceholder: "Search",
     searchValue: "",
-    searchData: Array()
+    searchData: Array(),
+    isFiltered: false,
+    filteredInfo: null,
   };
 
   constructor(props) {
@@ -138,7 +143,7 @@ class TierReplace extends React.Component<any, tabsState> {
       });
     }
   };
-  onApplyFilterHandler = filters => {
+  onApplyFilterHandler = (filters, filteredInfo) => {
     console.log("filtering from be:" + JSON.stringify(filters));
     //this.state.filter = Array();
     const fetchedKeys = Object.keys(filters);
@@ -167,14 +172,28 @@ class TierReplace extends React.Component<any, tabsState> {
           });
         }
       });
+      this.setState({
+        isFiltered: true,
+        filteredInfo: filteredInfo
+      }, () => {
+        if (this.props.advancedSearchBody) {
+          this.populateGridData(this.props.advancedSearchBody);
+        } else {
+          this.populateGridData();
+        }
+      });
     } else {
-      this.state.filter = Array();
-    }
-    console.log("Filters:" + JSON.stringify(this.state.filter));
-    if (this.props.advancedSearchBody) {
-      this.populateGridData(this.props.advancedSearchBody);
-    } else {
-      this.populateGridData();
+      this.setState({
+        filter: Array(),
+        isFiltered: false,
+        filteredInfo: filteredInfo
+      }, () => {
+        if (this.props.advancedSearchBody) {
+          this.populateGridData(this.props.advancedSearchBody);
+        } else {
+          this.populateGridData();
+        }
+      });
     }
   };
 
@@ -227,12 +246,17 @@ class TierReplace extends React.Component<any, tabsState> {
     }
   };
   onClearFilterHandler = () => {
-    this.state.filter = Array();
-    if (this.props.advancedSearchBody) {
-      this.populateGridData(this.props.advancedSearchBody);
-    } else {
-      this.populateGridData();
-    }
+    this.setState({
+      filter: Array(),
+      isFiltered: false,
+      filteredInfo: null
+    }, () => {
+      if (this.props.advancedSearchBody) {
+        this.populateGridData(this.props.advancedSearchBody);
+      } else {
+        this.populateGridData();
+      }
+    });
   };
 
   applyMultiSortHandler = (sorter, multiSortedInfo) => {
@@ -742,6 +766,14 @@ class TierReplace extends React.Component<any, tabsState> {
     this.state.filterPlaceholder = "Search";
     this.state.searchValue = "";
     this.state.searchData = Array();
+
+    this.state.gridSingleSortInfo = null;
+    this.state.gridMultiSortedInfo = [];
+    this.state.isGridMultiSorted = false;
+    this.state.isGridSingleSorted = false;
+
+    this.state.filteredInfo = null;
+    this.state.isFiltered = false;
   }
 
   componentWillReceiveProps(nextProps) {
@@ -762,24 +794,6 @@ class TierReplace extends React.Component<any, tabsState> {
     }
     if (this.props.configureSwitch !== nextProps.configureSwitch) {
       this.initialize(nextProps, true);
-      /*let payload = {
-        advancedSearchBody: {},
-        populateGrid: false,
-        closeDialog: false,
-        listItemStatus: {}
-      };
-      this.props.setAdvancedSearch(payload);
-      this.state.filter = Array();
-      this.state.quickFilter = Array();
-      this.state.sort_by = Array();
-      this.state.sort_by.push({ key: 'drug_label_name', value: 'asc' });
-      this.state.index = 0;
-      this.state.limit = 10;
-      this.state.hiddenColumns = Array();
-      this.state.searchNames = Array();
-      this.state.filterPlaceholder = "Search";
-      this.state.searchValue = "";
-      this.state.searchData = Array();*/
       this.resetData();
 
       if (nextProps.configureSwitch) {
@@ -885,6 +899,7 @@ class TierReplace extends React.Component<any, tabsState> {
         }
       }
     }
+    this.resetData();
     this.setState({ selectedTier: tierValue });
   };
 
@@ -1138,6 +1153,8 @@ class TierReplace extends React.Component<any, tabsState> {
                   getColumnSettings={this.onSettingsIconHandler}
                   pageSize={this.state.limit}
                   selectedCurrentPage={this.state.index / this.state.limit + 1}
+                  isFiltered={this.state.isFiltered}
+                  filteredInfo={this.state.filteredInfo}
                 // rowSelection={{
                 //   columnWidth: 50,
                 //   selectedRowKeys: this.state.selectedRowKeys,

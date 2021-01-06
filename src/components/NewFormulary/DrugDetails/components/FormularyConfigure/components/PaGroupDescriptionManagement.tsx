@@ -59,7 +59,7 @@ class PaGroupDescriptionManagement extends React.Component<any, any> {
     stGroupDescriptions: [],
     paTypes: [],
     paGroupDescriptionVersion: null,
-    selectedGrp: "",
+    selectedGrp: false,
     versionList: [{ value: "Version 1" }],
     versionTitle: "Group Description Version 1",
     latestVerion: 0,
@@ -411,7 +411,7 @@ class PaGroupDescriptionManagement extends React.Component<any, any> {
               <PaNewGroupForm
                 tooltip={this.state.tooltip}
                 formType={1}
-                editable={this.state.selectedGrp}
+                editMode={true}
                 versionList={this.state.versionList}
                 drugList={this.state.drugList}
                 versionTitle={this.state.versionTitle}
@@ -428,7 +428,7 @@ class PaGroupDescriptionManagement extends React.Component<any, any> {
               <PaNewGroupForm
                 tooltip={this.state.tooltip}
                 formType={0}
-                editable={this.state.selectedGrp}
+                editMode={false}
                 drugList={this.state.drugList}
                 versionList={this.state.versionList}
                 title={"NEW GROUP DESCRIPTION"}

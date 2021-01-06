@@ -42,6 +42,9 @@ interface tabsState {
   isGridMultiSorted: boolean;
   searchData: any[];
   searchNames: any[];
+  isFiltered: boolean;
+  filteredInfo: any;
+  filter: any[];
 }
 
 const mapStateToProps = (state) => {
@@ -104,6 +107,8 @@ class TierRemove extends React.Component<any, tabsState> {
     searchValue: "",
     searchData: Array(),
     quickFilter: Array(),
+    isFiltered: false,
+    filteredInfo: null,
   };
 
   constructor(props) {
@@ -143,7 +148,7 @@ class TierRemove extends React.Component<any, tabsState> {
       });
     }
   };
-  onApplyFilterHandler = filters => {
+  onApplyFilterHandler = (filters, filteredInfo) => {
     console.log("filtering from be:" + (JSON.stringify(filters)));
     //this.state.filter = Array();
     const fetchedKeys = Object.keys(filters);
@@ -172,14 +177,28 @@ class TierRemove extends React.Component<any, tabsState> {
           });
         }
       });
+      this.setState({
+        isFiltered: true,
+        filteredInfo: filteredInfo
+      }, () => {
+        if (this.props.advancedSearchBody) {
+          this.populateGridData(this.props.advancedSearchBody);
+        } else {
+          this.populateGridData();
+        }
+      });
     } else {
-      this.state.filter = Array();
-    }
-    console.log("Filters:" + JSON.stringify(this.state.filter));
-    if (this.props.advancedSearchBody) {
-      this.populateGridData(this.props.advancedSearchBody);
-    } else {
-      this.populateGridData();
+      this.setState({
+        filter: Array(),
+        isFiltered: false,
+        filteredInfo: filteredInfo
+      }, () => {
+        if (this.props.advancedSearchBody) {
+          this.populateGridData(this.props.advancedSearchBody);
+        } else {
+          this.populateGridData();
+        }
+      });
     }
   };
 
@@ -279,12 +298,17 @@ class TierRemove extends React.Component<any, tabsState> {
     }
   };
   onClearFilterHandler = () => {
-    this.state.filter = Array();
-    if (this.props.advancedSearchBody) {
-      this.populateGridData(this.props.advancedSearchBody);
-    } else {
-      this.populateGridData();
-    }
+    this.setState({
+      filter: Array(),
+      isFiltered: false,
+      filteredInfo: null
+    }, () => {
+      if (this.props.advancedSearchBody) {
+        this.populateGridData(this.props.advancedSearchBody);
+      } else {
+        this.populateGridData();
+      }
+    });
   };
 
   onSearchValueChanges = (value, event) => {
@@ -653,6 +677,7 @@ class TierRemove extends React.Component<any, tabsState> {
     if (selectedRowKeys && selectedRowKeys.length > 0) {
       this.state.selectedCriteria = selectedRowKeys.map((tierId) => tierId);
     }
+    this.resetData();
   };
 
   onSelectedTableRowChanged = (selectedRowKeys) => {
@@ -771,6 +796,36 @@ class TierRemove extends React.Component<any, tabsState> {
   advanceSearchClosekHandler = () => {
     this.setState({ isSearchOpen: !this.state.isSearchOpen });
   };
+
+  resetData = () => {
+    let payload = {
+      advancedSearchBody: {},
+      populateGrid: false,
+      closeDialog: false,
+      listItemStatus: {}
+    };
+    this.props.setAdvancedSearch(payload);
+    this.state.filter = Array();
+    this.state.quickFilter = Array();
+    this.state.sort_by = Array();
+    this.state.sort_by.push({ key: 'drug_label_name', value: 'asc' });
+    this.state.index = 0;
+    this.state.limit = 10;
+    this.state.hiddenColumns = Array();
+    this.state.searchNames = Array();
+    this.state.filterPlaceholder = "Search";
+    this.state.searchValue = "";
+    this.state.searchData = Array();
+
+    this.state.gridSingleSortInfo = null;
+    this.state.gridMultiSortedInfo = [];
+    this.state.isGridMultiSorted = false;
+    this.state.isGridSingleSorted = false;
+
+    this.state.filteredInfo = null;
+    this.state.isFiltered = false;
+    this.state.selectedRowKeys = Array();
+  }
 
   render() {
     const dataSource: any[] = [];
@@ -891,6 +946,8 @@ class TierRemove extends React.Component<any, tabsState> {
                   selectedCurrentPage={
                     this.state.index / this.state.limit + 1
                   }
+                  isFiltered={this.state.isFiltered}
+                  filteredInfo={this.state.filteredInfo}
                 />
               </div>
             </div>
