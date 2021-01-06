@@ -8,7 +8,8 @@ export const customPanelGridMockData = [
     removed_groups: 9,
     no_of_drugs: 9,
     added_drugs: 9,
-    removed_drugs: 9
+    removed_drugs: 9,
+    image: 'tierWarning'
   },
   {
     id: 2,
@@ -19,6 +20,7 @@ export const customPanelGridMockData = [
     removed_groups: 9,
     no_of_drugs: 9,
     added_drugs: 9,
-    removed_drugs: 9
+    removed_drugs: 9,
+    image: 'tierChecked'
   }
 ];

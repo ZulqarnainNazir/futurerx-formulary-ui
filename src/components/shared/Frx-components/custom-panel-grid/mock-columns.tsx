@@ -9,8 +9,8 @@ export const cutomPanelGridMockColumns: () => Column<any>[] = () => {
       sorter: {},
       textCase: "upper",
       pixelWidth: 100,
-      key: "type",
-      displayTitle: "TYPE",
+      key: "tier_name",
+      displayTitle: "TIER NAME",
 
       dataType: "string",
 
@@ -22,8 +22,8 @@ export const cutomPanelGridMockColumns: () => Column<any>[] = () => {
       sorter: {},
       textCase: "upper",
       pixelWidth: 150,
-      key: "no_of_groups",
-      displayTitle: "NUMBER OF GROUPS",
+      key: "tier_label",
+      displayTitle: "TIER DESCRIPTION",
 
       dataType: "string",
 
@@ -35,8 +35,8 @@ export const cutomPanelGridMockColumns: () => Column<any>[] = () => {
       sorter: {},
       textCase: "upper",
       pixelWidth: 137,
-      key: "added_groups",
-      displayTitle: "ADDED GROUPS",
+      key: "current_count",
+      displayTitle: "CURRENT COUNT",
 
       dataType: "string",
 
@@ -48,8 +48,8 @@ export const cutomPanelGridMockColumns: () => Column<any>[] = () => {
       sorter: {},
       textCase: "upper",
       pixelWidth: 163,
-      key: "removed_groups",
-      displayTitle: "REMOVED GROUPS",
+      key: "added_count",
+      displayTitle: "ADDED",
 
       dataType: "string",
 
@@ -62,8 +62,8 @@ export const cutomPanelGridMockColumns: () => Column<any>[] = () => {
       sorter: {},
       textCase: "upper",
       pixelWidth: 150,
-      key: "no_of_drugs",
-      displayTitle: "NUMBER OF DRUGS",
+      key: "removed_count",
+      displayTitle: "REMOVED",
 
       dataType: "string",
 
@@ -75,28 +75,16 @@ export const cutomPanelGridMockColumns: () => Column<any>[] = () => {
       sorter: {},
       textCase: "upper",
       pixelWidth: 109,
-      key: "added_drugs",
-      displayTitle: "ADDED DRUGS",
-
-      dataType: "string",
-
-      hidden: false,
-      sortDirections: ["ascend", "descend"]
-    },
-    {
-      position: 8,
-      sorter: {},
-      textCase: "upper",
-      pixelWidth: 109,
-      key: "removed_drugs",
-      displayTitle: "REMOVED DRUGS",
-      cellWrapper: (props: any) => (
-        <FrxImageCell
-          data={props.data ? props.data : ""}
-          // img={require("./../../mocks/sample.svg")}
-          img=""
-        />
-      ),
+      key: "image",
+      displayTitle: "VALIDATION",
+      cellWrapper: (props: any) => {
+        console.log("Image props:",props);
+        return <FrxImageCell
+        data={props.data ? props.data : ""}
+        // img={require("./../../mocks/sample.svg")}
+        img={require('./'+props?.children?.props?.dataRow?.image+'.png')}
+      />
+      },
       dataType: "string",
 
       hidden: false,

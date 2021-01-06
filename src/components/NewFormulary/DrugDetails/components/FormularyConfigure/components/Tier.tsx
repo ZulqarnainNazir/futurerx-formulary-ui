@@ -158,9 +158,9 @@ class Tier extends React.Component<any, tabsState> {
         var result = tmpData.map(function (el) {
           var element = Object.assign({}, el);
           tierOption.push(element);
-          element.is_validated = "false";
+          element.image = "tierWarning";
           if (element.added_count > 0) {
-            element.is_validated = "true";
+            element.image = "tierChecked";
           }
           return element;
         });
@@ -262,9 +262,9 @@ class Tier extends React.Component<any, tabsState> {
       var result = tmpData.map(function (el) {
         var element = Object.assign({}, el);
         tierOption.push(element);
-        element.is_validated = "false";
+        element.image = "tierWarning";
         if (element.added_count > 0) {
-          element.is_validated = "true";
+          element.image = "tierChecked";
         }
         return element;
       });
@@ -317,7 +317,16 @@ class Tier extends React.Component<any, tabsState> {
     this.setState({
       settingsTriDotDropDownItems: [
         ...this.state.settingsTriDotDropDownItems,
-        ...["Replace Tier", "Delete Tier"],
+        ...[{
+          id: 21,
+          key: 21,
+          title: "Replace Tier"
+        },
+        {
+          id: 22,
+          key: 22,
+          title: "Delete Tier"
+        }],
       ],
     });
     const TierColumns = tierDefinationColumns();
@@ -394,9 +403,10 @@ class Tier extends React.Component<any, tabsState> {
   };
 
   settingsTriDotDropDownItemClick = (data: any, item: any) => {
-    if (item === "Replace Tier") {
+    if (item.title === "Replace Tier") {
+      console.log('Replace tier id is:'+data.id_tier);
       this.onAddNewTierHandler(data.id_tier, data.tier_label, MODE_REPLACE);
-    } else if (item === "Delete Tier") {
+    } else if (item.title === "Delete Tier") {
       this.setState({ selectedTierToDelete: data.tier_name });
       this.onDeleteTierHandler();
     }
@@ -538,10 +548,10 @@ class Tier extends React.Component<any, tabsState> {
     if (action === "positive") {
       const tierDataLength = this.props.tierData.length;
       const indexOfDeletedTier = this.props.tierData.findIndex(e => e.tier_name === this.state.selectedTierToDelete) + 1;
-      if(tierDataLength === indexOfDeletedTier){
+      if (tierDataLength === indexOfDeletedTier) {
         const deletedTierId = parseInt(this.state.selectedTierToDelete.split(" ")[1]);
         this.deleteTier(deletedTierId);
-      }else{
+      } else {
         const restofTiers = this.props.tierData.filter(e => e.tier_name !== this.state.selectedTierToDelete);
         const fetchTierName = restofTiers.map(e => e.tier_name);
         const dropdownoptions = this.props.tierData.map(e => e.tier_name);
@@ -556,10 +566,10 @@ class Tier extends React.Component<any, tabsState> {
       }
     }
   };
-  onChangeTierOptions = (e,tiername) => {
-    const updateData:any = [...this.state.afterDeleteRemainigTiers];
+  onChangeTierOptions = (e, tiername) => {
+    const updateData: any = [...this.state.afterDeleteRemainigTiers];
     const indexOfSelect = updateData.findIndex(el => el.id_tier_label === tiername)
-    const newCol:any = {...updateData[indexOfSelect]};
+    const newCol: any = { ...updateData[indexOfSelect] };
     newCol.tier_name = e;
     updateData[indexOfSelect] = newCol;
     this.setState({
@@ -568,7 +578,7 @@ class Tier extends React.Component<any, tabsState> {
   }
   onDeleteTierReplaceAction = () => {
     const data = [...this.state.afterDeleteRemainigTiers];
-    const createdData:any = data.map((el:any) => {
+    const createdData: any = data.map((el: any) => {
       const current_id = parseInt(el.tier_name.split(" ")[1])
       return {
         current_tier_value: current_id,
@@ -608,7 +618,7 @@ class Tier extends React.Component<any, tabsState> {
                       tooltip="This section allows for Addition or Removal of product only. To define coverage for all Medicare covered and/or Supplemental products, go to Drug Details"
                     />
                     <div className="inner-container tier-defination-grid white-bg">
-                      <FrxGridContainer
+                      {/*<FrxGridContainer
                         enableSearch={false}
                         enableColumnDrag={false}
                         onSearch={() => { }}
@@ -638,25 +648,14 @@ class Tier extends React.Component<any, tabsState> {
                         pageSize={tierDefinationData.length}
                         onGridPageChangeHandler={(page) => { }}
                         getPerPageItemSize={(size) => { }}
-                      />
+                      />*/}
                       <CustomPanelGrid
-                          onMenuClick={(item, data) => {
-                            console.log(item);
-                            console.log(data);
-                          }}
-                          menuItems={[
-                            {
-                              id: 21,
-                              key: 21,
-                              title: "Menu 1"
-                            },
-                            {
-                              id: 22,
-                              key: 22,
-                              title: "Menu 2"
-                            }
-                          ]}
-                        />
+                        gridData={[...this.state.tierDefinationData]}
+                        onMenuClick={(item, data) => {
+                          this.settingsTriDotDropDownItemClick(data, item);
+                        }}
+                        menuItems={this.state.settingsTriDotDropDownItems}
+                      />
                       <div className="tier-popup-btn">
                         <svg
                           onClick={(e) => this.onAddNewTierHandler(this.state.newTierId, '', MODE_ADD_NEW)}
@@ -701,13 +700,13 @@ class Tier extends React.Component<any, tabsState> {
                         showActions={true}
                         open={this.state.deleteTierReplacePopup}
                       >
-                        <ReplaceDeletedTiers 
+                        <ReplaceDeletedTiers
                           data={this.state.afterDeleteRemainigTiers}
                           options={this.state.afterDeleteTierOptions}
                           removedTier={this.state.selectedTierToDelete}
                           updateTierOption={this.onChangeTierOptions}
                           tierNames={this.state.tierNames} />
-                      {/* {this.state.afterDeleteRemainigTiers?.map(el => {
+                        {/* {this.state.afterDeleteRemainigTiers?.map(el => {
                         return (
                           <div className="gridRow">
                             <div>

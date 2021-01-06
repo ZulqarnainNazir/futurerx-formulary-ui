@@ -13,6 +13,7 @@ import "./CustomPanelGrid.scss";
 export interface CustomPanelGridProps {
   menuItems: { id: number; key: number; title: string }[];
   onMenuClick: (item, data?: any) => void;
+  gridData: any[];
 }
 
 export interface CustomPanelGridState {
@@ -41,18 +42,26 @@ class CustomPanelGrid extends React.Component<
   };
 
   componentDidMount() {
-    // this.setState({
-    //   data: customPanelGridMockData,
-    //   filteredData: customPanelGridMockData
-
-    // });
     this.setState({
-      data: customPanelGridMockData.map(d => {
+      data: this.props.gridData.map(d => {
         d["items"] = this.props.menuItems;
         return d;
       }),
-      filteredData: customPanelGridMockData.map(d => {
+      filteredData: this.props.gridData.map(d => {
         d["items"] = this.props.menuItems;
+        return d;
+      })
+    });
+  }
+  componentWillReceiveProps(nextProps) {
+    console.log("Custom Panel Grid:Grid data is:", nextProps);
+    this.setState({
+      data: nextProps.gridData.map(d => {
+        d["items"] = nextProps.menuItems;
+        return d;
+      }),
+      filteredData: nextProps.gridData.map(d => {
+        d["items"] = nextProps.menuItems;
         return d;
       })
     });
