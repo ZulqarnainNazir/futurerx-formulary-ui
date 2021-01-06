@@ -358,7 +358,14 @@ class PaGroupDescriptionManagement extends React.Component<any, any> {
                     position={this.props.isPopUpView}
                   />
                 </div>
-                <div className="group-wrapper scrollbar scrollbar-primary mx-auto view-com-sec">
+
+                <div
+                  className={
+                    this.props.isPopUpView
+                      ? "group-wrapper scrollbar scrollbar-primary mx-auto view-com-sec"
+                      : "group-wrapper new-scroll-bar mx-auto view-com-sec"
+                  }
+                >
                   {this.state.groupsData.length > 0 &&
                     this.state.groupsData.map((group: any, key: any) =>
                       this.state.searchInput == "" ||

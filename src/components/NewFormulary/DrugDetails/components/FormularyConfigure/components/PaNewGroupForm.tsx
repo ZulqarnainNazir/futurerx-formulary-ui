@@ -47,7 +47,7 @@ import SearchableDropdown from "../../../../../shared/Frx-components/SearchableD
 import { Tag, Space } from "antd";
 import { ReactComponent as CrossCircleWhiteBGIcon } from "../../../../../../assets/icons/crosscirclewhitebg.svg";
 import AdvanceSearchContainer from "../../../../NewAdvanceSearch/AdvanceSearchContainer";
-import "./PaNewGroupForm.scss";
+import "./GroupDescriptionStyles.scss";
 interface Props {
   tooltip?: string;
   formType?: number;
