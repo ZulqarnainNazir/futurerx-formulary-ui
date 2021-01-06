@@ -199,7 +199,6 @@ function GroupHeader(props: any) {
     }
     props.onChange(selectedVersion);
   };
-<<<<<<< HEAD
 
   const handleClose = () => {
     setOpen(false);
@@ -209,17 +208,6 @@ function GroupHeader(props: any) {
     });
   };
 
-=======
-
-  const handleClose = () => {
-    setOpen(false);
-    props.cleanMessages({
-      error: "",
-      success: "",
-    });
-  };
-
->>>>>>> 8925390bee779d7e85b50ad6f02b271317723c5f
   const validation = (current_group_des_id) => {
     if (current_group_des_id === 0) {
       showMessage("ST group description ID is missing or invalid", "error");
