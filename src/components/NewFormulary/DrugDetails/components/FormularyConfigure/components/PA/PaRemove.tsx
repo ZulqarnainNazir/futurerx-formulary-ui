@@ -163,9 +163,9 @@ class PaRemove extends React.Component<any, any> {
  });
 
  apiDetails["messageBody"]["filter"] = allFilters;
- if (this.state.sort_by && this.state.sort_by.length ==0){
-  this.state.sort_by.push({ key: 'drug_label_name', value: 'asc' });
-}
+//  if (this.state.sort_by && this.state.sort_by.length ==0){
+//   this.state.sort_by.push({ key: 'drug_label_name', value: 'asc' });
+// }
  if (this.state.sort_by && this.state.sort_by.length > 0) {
    let keys = Array();
    let values = Array();
@@ -483,7 +483,7 @@ class PaRemove extends React.Component<any, any> {
         const data = this.state.drugGridData.map((d: any) => {
           if (d.key === selectedRow.key) {
             d["isChecked"] = true;
-            d["rowStyle"] = "table-row--green-font";
+            d["rowStyle"] = "table-row--red-font";
           }
           // else d["isChecked"] = false;
           return d;

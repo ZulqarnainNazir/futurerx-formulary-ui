@@ -892,7 +892,7 @@ function NewGroup(props: any) {
         </div>
       ) : null}
       {props.formulary_lob_id == 4 ? (
-        <div className="inner-container pa-new-group-form">
+        <div className="inner-container pa-new-group-form input-border-none">
           <div className="setting-1">
             <Grid container>
               <Grid className="additional-criteria" item xs={12}>
@@ -989,7 +989,7 @@ function NewGroup(props: any) {
                 <br />
               </Grid>
               <Grid item xs={12}>
-                <div className="group">
+                <div className="group tags-input-border-none">
                   <Fragment>
                     <Grid item xs={6}>
                       <label className="st-label">
@@ -1085,13 +1085,11 @@ function NewGroup(props: any) {
           </div>
 
           {props.isPopUpView && (
-            <div>
-              <AdditionalCriteriaContainer
-                criteriaList={getAdditionalCriteriaSectionList()}
-                handleChildDataSave={() => {}}
-                isReadOnly={true}
-              />
-            </div>
+            <AdditionalCriteriaContainer
+              criteriaList={getAdditionalCriteriaSectionList()}
+              handleChildDataSave={() => {}}
+              isReadOnly={props.isPopUpView}
+            />
           )}
           {!props.isPopUpView && (
             <div className="button-wrapper">

@@ -18,7 +18,7 @@ const GenderCriteria = (props) => {
   } = props;
 
   return (
-    <div className="root-gender-limit-settings bordered mb-10">
+    <div className="root-gender-limit-settings mb-10">
       <div className="inner-container">
         <StatusContentFormPanel
           title="Gender"

@@ -275,7 +275,7 @@ class PaReplace extends React.Component<any, any> {
         selectedPaType: null,
         is_additional_criteria_defined: false,
       });
-      this.populateGridData();
+      this.populateGridData(null,nextProps.configureSwitch );
     } else {
       this.setState({ tierGridContainer: false });
     }
@@ -492,7 +492,7 @@ class PaReplace extends React.Component<any, any> {
     this.setState({ [tmp_key]: tmp_value });
   };
 
-  populateGridData = (searchBody = null) => {
+  populateGridData = (searchBody = null, switchState=false) => {
     console.log("Populate grid data is called");
     let apiDetails = {};
 
@@ -510,7 +510,7 @@ class PaReplace extends React.Component<any, any> {
         searchBody
       );
     }
-    // debugger;
+    debugger;
     let allFilters = Array();
     let filterProps = Array();
     this.state.filter.map(filterInfo => {
@@ -524,9 +524,9 @@ class PaReplace extends React.Component<any, any> {
     });
 
     apiDetails["messageBody"]["filter"] = allFilters;
-    if (this.state.sort_by && this.state.sort_by.length ==0){
-      this.state.sort_by.push({ key: 'drug_label_name', value: 'asc' });
-    }
+    // if (this.state.sort_by && this.state.sort_by.length ==0){
+    //   this.state.sort_by.push({ key: 'drug_label_name', value: 'asc' });
+    // }
     
     if (this.state.sort_by && this.state.sort_by.length > 0) {
       let keys = Array();
@@ -542,7 +542,7 @@ class PaReplace extends React.Component<any, any> {
     }
     let tmp_fileType: any = "";
 
-    if (this.props.configureSwitch) {
+    if (!(this.props.configureSwitch || switchState)) {
       apiDetails["messageBody"][
         "base_pa_group_description_id"
       ] = this.state.selectedGroupDescription;
