@@ -146,8 +146,8 @@ function PAGroupHeader(props: any) {
         });
       }
       const verLength = Object.keys(versions).length;
-      const isEditable = versions[verLength - 1].is_setup_complete;
-      const value = versions[verLength - 1].value;
+      const isEditable = versions[verLength - 1]?.is_setup_complete;
+      const value = versions[verLength - 1]?.value;
       setPanelColor(
         isEditable
           ? props.isPopUpView

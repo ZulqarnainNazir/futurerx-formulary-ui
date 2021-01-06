@@ -7,7 +7,42 @@
     justify-content: space-between;
     .button-flex-container {
       .auto-width {
-        width: auto;
+        width: 130px;
+        height: 35px;
+        background: #ffffff;
+        border-radius: 5px;
+        color: #2055b5;
+        border: 2px solid #2055b5;
+      }
+    }
+  }
+  .inner-container,
+  .input-border-none {
+    .setting-1 {
+      .tags-input-border-none {
+        .MuiGrid-root,
+        .MuiGrid-item,
+        .MuiGrid-grid-xs-6 {
+          .MuiAutocomplete-root,
+          .MuiAutocomplete-hasClearIcon,
+          .MuiAutocomplete-hasPopupIcon {
+            .MuiFormControl-root,
+            .MuiTextField-root,
+            .MuiFormControl-fullWidth {
+              .MuiInputBase-root,
+              .MuiOutlinedInput-root,
+              .MuiAutocomplete-inputRoot,
+              .MuiInputBase-fullWidth,
+              .MuiInputBase-formControl,
+              .MuiInputBase-adornedEnd,
+              .MuiOutlinedInput-adornedEnd {
+                .MuiInputBase-input {
+                  border: none;
+                }
+              }
+            }
+          }
+        }
       }
     }
   }
