@@ -6,10 +6,7 @@ import { connect } from "react-redux";
 
 import CustomizedSwitches from "../CustomizedSwitches";
 import FrxMiniTabs from "../../../../../../shared/FrxMiniTabs/FrxMiniTabs";
-import {
-  getTapList,
-  getMiniTabs,
-} from "../../../../../../../mocks/formulary/mock-data";
+import { getTapList, getMiniTabs } from "../../../../../../../mocks/formulary/mock-data";
 import DropDown from "../../../../../../shared/Frx-components/dropdown/DropDownMap";
 import { Grid } from "@material-ui/core";
 import { Row, Col, Space } from "antd";
@@ -163,32 +160,29 @@ class PA extends React.Component<any, any> {
   }
 
   componentDidMount() {
-    this.props
-      .getPaSummary(this.props.current_formulary.id_formulary)
-      .then((json) => {
-        //
+    this.props.getPaSummary(this.props.current_formulary.id_formulary).then((json) => {
+      //
 
-        let tmpData =
-          json.payload && json.payload.result ? json.payload.result : [];
+      let tmpData = json.payload && json.payload.result ? json.payload.result : [];
 
-        var rows = tmpData.map(function (el) {
-          var curRow = [
-            el["pa_type_name"],
-            el["total_group_description_count"],
-            el["added_group_description_count"],
-            el["removed_group_description_count"],
-            el["total_drug_count"],
-            el["added_drug_count"],
-            el["removed_drug_count"],
-          ];
-          return curRow;
-        });
-
-        console.log(rows);
-        this.setState({
-          panelGridValue: rows,
-        });
+      var rows = tmpData.map(function (el) {
+        var curRow = [
+          el["pa_type_name"],
+          el["total_group_description_count"],
+          el["added_group_description_count"],
+          el["removed_group_description_count"],
+          el["total_drug_count"],
+          el["added_drug_count"],
+          el["removed_drug_count"],
+        ];
+        return curRow;
       });
+
+      console.log(rows);
+      this.setState({
+        panelGridValue: rows,
+      });
+    });
 
     this.props.getDrugLists("0").then((json) => {
       //
@@ -214,44 +208,36 @@ class PA extends React.Component<any, any> {
                           panelGridTitle={this.state.panelGridTitle}
                           panelGridValue={this.state.panelGridValue}
                         />
-                      </div>
-                    </div>
-                  </div>
-                  <div className="limited-access">
-                    <PanelHeader title="Prior Authorization Settings" />
-                    <div className="modify-wrapper white-bg">
-                      <div className="modify-panel">
-                        <div className="icon">
-                          <span>R</span>
-                        </div>
-                        <div className="switch-box">
-                          <CustomizedSwitches
-                            leftTitle="Modify"
-                            rightTitle="view all"
-                          />
-                        </div>
-                        <div className="mini-tabs">
-                          <FrxMiniTabs
-                            tabList={this.state.tabs}
-                            activeTabIndex={this.state.activeTabIndex}
-                            onClickTab={this.onClickTab}
-                            disabled={this.props.configureSwitch}
-                          />
-                        </div>
-                        <div>
-                          <div className="PA-list">
-                            <span className="list-label">LIST</span>
-                            <DropDown
-                              options={this.state.paList}
-                              valueProp="text"
-                              dispProp="text"
-                            />
+                        <br />
+                        <div className="limited-access">
+                          <PanelHeader title="Prior Authorization Settings" />
+                          <div className="modify-wrapper white-bg">
+                            <div className="modify-panel">
+                              <div className="icon">
+                                <span>R</span>
+                              </div>
+                              <div className="switch-box">
+                                <CustomizedSwitches leftTitle="Modify" rightTitle="view all" />
+                              </div>
+                              <div className="mini-tabs">
+                                <FrxMiniTabs
+                                  tabList={this.state.tabs}
+                                  activeTabIndex={this.state.activeTabIndex}
+                                  onClickTab={this.onClickTab}
+                                  disabled={this.props.configureSwitch}
+                                />
+                              </div>
+                              <div>
+                                <div className="PA-list">
+                                  <span className="list-label">LIST</span>
+                                  <DropDown options={this.state.paList} valueProp="text" dispProp="text" />
+                                </div>
+                              </div>
+                            </div>
                           </div>
+                          <div className="pa-tab-content">{this.renderTabContent()}</div>
                         </div>
                       </div>
-                    </div>
-                    <div className="pa-tab-content">
-                      {this.renderTabContent()}
                     </div>
                   </div>
                 </Grid>
