@@ -32,6 +32,7 @@ import {
   getStGrouptDescription,
 } from "../../../../../../redux/slices/formulary/stepTherapy/stepTherapyActionCreation";
 import { setAdditionalCriteria } from "../../../../../../redux/slices/formulary/advancedSearch/additionalCriteriaSlice";
+import "./GroupDescriptionStyles.scss";
 
 function mapStateToProps(state) {
   return {
@@ -320,7 +321,13 @@ class GPM extends React.Component<any, any> {
                     position={this.props.isPopUpView}
                   />
                 </div>
-                <div className="group-wrapper scrollbar scrollbar-primary  mx-auto view-com-sec">
+                <div
+                  className={
+                    this.props.isPopUpView
+                      ? "group-wrapper scrollbar scrollbar-primary mx-auto view-com-sec"
+                      : "group-wrapper new-scroll-bar mx-auto view-com-sec"
+                  }
+                >
                   {this.state.groupsData.length > 0 &&
                     this.state.groupsData.map((group, key) =>
                       this.state.searchInput == "" ||
