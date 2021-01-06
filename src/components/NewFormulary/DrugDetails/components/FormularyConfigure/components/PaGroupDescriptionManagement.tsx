@@ -77,6 +77,7 @@ class PaGroupDescriptionManagement extends React.Component<any, any> {
     searchInput: "",
     selectedGroup: -1,
     drugList: [],
+    isSetUpComplete: false,
   };
   onClickTab = (selectedTabIndex: number) => {
     let activeTabIndex = 0;
@@ -118,7 +119,11 @@ class PaGroupDescriptionManagement extends React.Component<any, any> {
         tmpData.length > 0
           ? tmpData[dataLength - 1].id_pa_group_description
           : 0;
-
+      let is_setup_complete =
+          dataLength > 0 ? tmpData[dataLength - 1].is_setup_complete : 0;
+      this.setState({
+            isSetUpComplete: is_setup_complete,
+      });
       let apiDetails = {};
       apiDetails["lob_type"] = this.props.formulary_lob_id;
       apiDetails["pathParams"] = "/" + latestVerion;
@@ -415,6 +420,8 @@ class PaGroupDescriptionManagement extends React.Component<any, any> {
                 selectGroupDescriptionClick={
                   this.props.selectGroupDescriptionClick
                 }
+                selectGroup={this.selectGroup}
+                isSetUpComplete={this.state.isSetUpComplete}
                 isPopUpView={this.props.isPopUpView}
               />
             ) : (
@@ -431,6 +438,8 @@ class PaGroupDescriptionManagement extends React.Component<any, any> {
                 selectGroupDescriptionClick={
                   this.props.selectGroupDescriptionClick
                 }
+                selectGroup={this.selectGroup}
+                isSetUpComplete={this.state.isSetUpComplete}
                 isPopUpView={this.props.isPopUpView}
               />
             )}
