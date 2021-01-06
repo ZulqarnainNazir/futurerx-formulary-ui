@@ -20,7 +20,7 @@ const PRCriteria = (props) => {
   } = props;
 
   return (
-    <div className="root-pr-limit-settings bordered mb-10">
+    <div className="root-pr-limit-settings mb-10">
       {showGridHandler ? (
         <PanelHeader
           title="patient residence settings"

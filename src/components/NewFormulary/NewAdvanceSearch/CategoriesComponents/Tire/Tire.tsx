@@ -1,13 +1,17 @@
 import React, { Component } from "react";
 import { Checkbox, Button, Grid } from "@material-ui/core";
 import { setAdvancedSearch } from "../../../../../redux/slices/formulary/advancedSearch/advancedSearchSlice";
+import { getTier } from "../../../../../redux/slices/formulary/tier/tierActionCreation";
+import * as tierConstants from "../../../../../api/http-tier";
+import * as commonConstants from "../../../../../api/http-commons";
 import { connect } from "react-redux";
 
 import "./Tire.scss";
 
 function mapDispatchToProps(dispatch) {
   return {
-    setAdvancedSearch: (a) => dispatch(setAdvancedSearch(a))
+    setAdvancedSearch: (a) => dispatch(setAdvancedSearch(a)),
+    getTier: (a) => dispatch(getTier(a)),
   };
 }
 
@@ -28,6 +32,7 @@ interface Props {
   advancedSearchBody: any;
   formulary_lob_id: any;
   formulary: any;
+  getTier: (a) => any;
 }
 interface State { }
 const tires = [
@@ -280,8 +285,17 @@ class Tire extends Component<Props, State> {
 
   onSelectAll = () => {
     const currentTires: any = [...this.state.tireList];
-    currentTires.map((tire) => { 
+    currentTires.map((tire) => {
       tire["isChecked"] = tire["isDisabled"] ? false : true;
+    });
+    this.props.tierChanged(currentTires);
+    this.setState({ tireList: currentTires, selectedTire: currentTires });
+  };
+
+  onUnselectAll = () => {
+    const currentTires: any = [...this.state.tireList];
+    currentTires.map((tire) => {
+      tire["isChecked"] = false;
     });
     this.props.tierChanged(currentTires);
     this.setState({ tireList: currentTires, selectedTire: currentTires });
@@ -299,21 +313,44 @@ class Tire extends Component<Props, State> {
       this.props.tierChanged(tires);
       this.setState({ tireList: tires });
     } else {
-      if (this.props.formulary && this.props.formulary.tiers && this.props.formulary.tiers.length > 0) {
-        let formularyTiers = this.props.formulary.tiers.map(option => option.id_tier);
-        tiresNonMcr.map(tierItem => {
-          if (formularyTiers.includes(tierItem.key)) {
-            tierItem.isDisabled = false;
+      if (this.props.formulary) {
+        let apiDetails = {};
+        apiDetails["apiPart"] = tierConstants.FORMULARY_TIERS;
+        apiDetails["pathParams"] = this.props.formulary.id_formulary;
+        apiDetails["keyVals"] = [
+          { key: commonConstants.KEY_ENTITY_ID, value: this.props.formulary.id_formulary },
+        ];
+
+        const TierDefinationData = this.props.getTier(apiDetails).then((json) => {
+          if (json.payload && json.payload.data) {
+            let tmpData = json.payload.data;
+            let formularyTiers = Array();
+            tmpData.map(function (el) {
+              formularyTiers.push(el['id_tier']);
+            });
+            tiresNonMcr.map(tierItem => {
+              if (formularyTiers.includes(tierItem.key)) {
+                tierItem.isDisabled = false;
+              } else {
+                if (tierItem.key != -1) {
+                  tierItem.isDisabled = true;
+                }
+              }
+            })
+            tiresNonMcr.map((tire) => (tire["isChecked"] = (setTiers.includes(tire['key']) || (noTier && tire['key'] == -1) ? true : false)));
+            this.props.tierChanged(tiresNonMcr);
+            this.setState({ tireList: tiresNonMcr });
           } else {
-            if (tierItem.key != -1) {
-              tierItem.isDisabled = true;
-            }
+            tiresNonMcr.map((tire) => (tire["isChecked"] = (setTiers.includes(tire['key']) || (noTier && tire['key'] == -1) ? true : false)));
+            this.props.tierChanged(tiresNonMcr);
+            this.setState({ tireList: tiresNonMcr });
           }
-        })
+        });
+      } else {
+        tiresNonMcr.map((tire) => (tire["isChecked"] = (setTiers.includes(tire['key']) || (noTier && tire['key'] == -1) ? true : false)));
+        this.props.tierChanged(tiresNonMcr);
+        this.setState({ tireList: tiresNonMcr });
       }
-      tiresNonMcr.map((tire) => (tire["isChecked"] = (setTiers.includes(tire['key']) || (noTier && tire['key'] == -1) ? true : false)));
-      this.props.tierChanged(tiresNonMcr);
-      this.setState({ tireList: tiresNonMcr });
     }
   };
 
@@ -357,9 +394,14 @@ class Tire extends Component<Props, State> {
           style={{ display: "flex", justifyContent: "space-between" }}
         >
           <span className="heading">Select the Tier:</span>
-          <Button className="select_all_button" onClick={this.onSelectAll}>
-            Select All
+          <div>
+            <Button className="select_all_button" onClick={this.onSelectAll} style={{marginRight:5}}>
+              Select All
           </Button>
+            <Button className="select_all_button" onClick={this.onUnselectAll}>
+              Unselect All
+          </Button>
+          </div>
         </div>
         <div className="tire-list-contianer">{renderElement}</div>
       </div>

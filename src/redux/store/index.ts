@@ -4,7 +4,10 @@ import { userPrefsSlice } from "../slices/users/UserPrefsSlice";
 import { formularySummarySlice } from "../slices/formulary/formularySummarySlice";
 import { combineReducers } from "redux";
 import applicationReducer from "../slices/formulary/application/applicationSlice";
+import setupReducer from "../slices/formulary/setup/setupSlice";
+import setupOptionsReducer from "../slices/formulary/setup/setupOptionsSlice";
 import dashboardReducer from "../slices/formulary/dashboard/dashboardSlice";
+import messagingReducer from "../slices/formulary/messaging/messagingSlice";
 import { gridSettingsSlice } from "../slices/formulary/gridHandler/gridSettingsSlice";
 import { tierSlice } from "../slices/formulary/tier/tierSlice";
 import { categoryClassSlice } from "../slices/formulary/categoryClass/categoryClassSlice";
@@ -12,27 +15,23 @@ import { switchSlice } from "../slices/formulary/switch/switchSlice";
 import { validationList } from "../slices/formulary/validation/validationSlice";
 import advancedSearchReducer from "../slices/formulary/advancedSearch/advancedSearchSlice";
 import additionalCriteriaReducer from "../slices/formulary/advancedSearch/additionalCriteriaSlice";
-import setupReducer from "../slices/formulary/setup/setupSlice";
-import setupOptionsReducer from "../slices/formulary/setup/setupOptionsSlice";
 import headerReducer from "../slices/formulary/header/headerSlice";
 import gdmReducer from "../slices/formulary/gdm/gdmSlice";
 import gdmPaReducer from "../slices/formulary/pagdm/pagdmSlice";
 import {
   stepTherapySlice,
-  stVersionSlice
+  stVersionSlice,
 } from "../slices/formulary/stepTherapy/stepTherapySlice";
 import { paSlice, paVersionSlice } from "../slices/formulary/pa/paSlice";
 import { qlSlice } from "../slices/formulary/ql/qlSlice";
 import { formularyVersionHistorySlice } from "../slices/formulary/version-history/version-history.slice";
 
-const reducer = combineReducers(
-  {
-    // here we will be adding reducers
-  }
-);
+const reducer = combineReducers({
+  // here we will be adding reducers
+});
 
 const middleware = [
-  ...getDefaultMiddleware()
+  ...getDefaultMiddleware(),
   /*YOUR CUSTOM MIDDLEWARES HERE*/
 ];
 
@@ -60,9 +59,10 @@ const store = configureStore({
     application: applicationReducer,
     setup: setupReducer,
     setupOptions: setupOptionsReducer,
+    dashboard: dashboardReducer,
+    messaging: messagingReducer,
     member_summary: memberSummaryReducer,
     user_prefs: userPrefsReducer,
-    dashboard: dashboardReducer,
     tierSliceReducer: tierSliceReducer,
     switchReducer: switchReducer,
     validationReducer: validationReducer,
@@ -78,9 +78,9 @@ const store = configureStore({
     paVersion: paVersion,
     categoryClass: categoryClass,
     additionalCriteria: additionalCriteriaReducer,
-    formularyVersionHistory: formularyVersionHistoryReducer
+    formularyVersionHistory: formularyVersionHistoryReducer,
   },
-  middleware
+  middleware,
 });
 
 export default store;

@@ -225,13 +225,11 @@ class DrugDetailPN extends React.Component<any, any> {
         this.rpSavePayload.pharmacy_networks = this.state.selectedList;
         this.rpSavePayload.breadcrumb_code_value = "PHNW";
         this.rpSavePayload.is_covered = this.state.pnSettingsStatus.covered;
+
+        let triggerType = (this.state.activeTabIndex === 0) ? pnConstants.TYPE_REPLACE : pnConstants.TYPE_APPEND
+
         apiDetails["messageBody"] = this.rpSavePayload;
-        apiDetails["pathParams"] =
-          this.props?.formulary_id +
-          "/" +
-          getLobCode(this.props.formulary_lob_id) +
-          "/" +
-          pnConstants.TYPE_REPLACE;
+        apiDetails["pathParams"] = this.props?.formulary_id + "/" + getLobCode(this.props.formulary_lob_id) + "/" + triggerType;
         console.log("The API Details - ", apiDetails);
 
         // Replace Drug method call

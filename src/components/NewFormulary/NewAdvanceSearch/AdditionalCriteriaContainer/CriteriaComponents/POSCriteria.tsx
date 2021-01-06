@@ -19,7 +19,7 @@ const POSCriteria = (props) => {
   } = props;
 
   return (
-    <div className="pos-limit-settings bordered mb-10">
+    <div className="pos-limit-settings mb-10">
       {showGridHandler ? (
         <PanelHeader
           title="place of service settings"

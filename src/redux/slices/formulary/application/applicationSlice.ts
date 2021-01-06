@@ -6,6 +6,7 @@ import { Formulary } from "../setup/formulary";
 
 interface ApplicationState {
   mode: string;
+  mode_lob: number;
   formulary_id: number;
   formulary: any;
   formulary_lob_id: number;
@@ -20,6 +21,7 @@ interface ApplicationState {
 
 const applicationInitialState: ApplicationState = {
   mode: "",
+  mode_lob: 0,
   formulary_id: 0,
   formulary: null,
   formulary_lob_id: NaN,
@@ -99,6 +101,11 @@ const application = createSlice({
       state.isLoading = false;
       state.error = null;
     },
+
+    setModeLob(state, { payload }: PayloadAction<number>) {
+      console.log(" SET MODE LOB : " + payload);
+      state.mode_lob = payload;
+    },
   },
 });
 
@@ -106,7 +113,8 @@ export const {
   setFormularyDetails,
   setLocation,
   setLocationHome,
-  clearApplication
+  clearApplication,
+  setModeLob
 } = application.actions;
 
 export default application.reducer;
