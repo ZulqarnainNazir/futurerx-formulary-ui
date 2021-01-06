@@ -161,7 +161,7 @@ class Tier extends React.Component<any, tabsState> {
       tabs,
       activeTabIndex,
       drugGridContainer: false,
-      // quantityAndFillLimitObject: {},
+      quantityAndFillLimitObject: {},
       errorObject: {},
       filter: [],
       sort_by: [],
@@ -366,6 +366,7 @@ class Tier extends React.Component<any, tabsState> {
 
       if (switchState) {
         gridItem["isDisabled"] = true;
+        gridItem["rowStyle"] = "table-row--disabled-font";
       }
       if (selectedDrugs.length > 0) {
         if (selectedDrugs.includes(element.md5_id)) {
@@ -374,7 +375,7 @@ class Tier extends React.Component<any, tabsState> {
           // decide on class names based on data properties conditionally
           // the required styles are added under each classNames in FrxGrid.scss (towards the end)
           //table-row--red-font (for red) table-row--green-font (for green) table-row--blue-font for default (for blue)
-          gridItem["rowStyle"] = "table-row--disabled-font";
+          gridItem["rowStyle"] = "table-row--blue-font";
         }
       }
       gridItem["covered_min_ages"] = element.covered_min_ages
@@ -731,7 +732,7 @@ class Tier extends React.Component<any, tabsState> {
 
           this.props.setAdditionalCriteria(payload);
           // this.setState({ quantityAndFillLimitObject: {} });
-          // this.goToSettingSection();
+          this.goToSettingSection();
           this.showDrugGrid();
 
           this.props
@@ -861,53 +862,6 @@ class Tier extends React.Component<any, tabsState> {
     }
   };
 
-  // rowSelectionChangeFromCell = (
-  //   key: string,
-  //   selectedRow: any,
-  //   isSelected: boolean
-  // ) => {
-  //   debugger;
-  //   console.log("data row ", selectedRow, isSelected);
-  //   if (!selectedRow["isDisabled"]) {
-  //     if (isSelected) {
-  //       const data = this.state.drugGridData.map((d: any) => {
-  //         if (d.key === selectedRow.key) d["isChecked"] = true;
-  //         // else d["isChecked"] = false;
-  //         return d;
-  //       });
-  //       const selectedRowKeys = [
-  //         ...this.state.selectedRowKeys,
-  //         selectedRow.key,
-  //       ];
-  //       console.log("selected row keys ", selectedRowKeys);
-  //       const selectedRows: number[] = selectedRowKeys.filter(
-  //         (k) => this.state.fixedSelectedRows.indexOf(k) < 0
-  //       );
-  //       this.onSelectedTableRowChanged(selectedRowKeys);
-
-  //       this.setState({ drugGridData: data });
-  //     } else {
-  //       const data = this.state.drugGridData.map((d: any) => {
-  //         if (d.key === selectedRow.key) d["isChecked"] = false;
-  //         // else d["isChecked"] = false;
-  //         return d;
-  //       });
-
-  //       const selectedRowKeys: number[] = this.state.selectedRowKeys.filter(
-  //         (k) => k !== selectedRow.key
-  //       );
-  //       const selectedRows = selectedRowKeys.filter(
-  //         (k) => this.state.fixedSelectedRows.indexOf(k) < 0
-  //       );
-
-  //       this.onSelectedTableRowChanged(selectedRows);
-  //       this.setState({
-  //         drugGridData: data,
-  //       });
-  //     }
-  //   }
-  // };
-
   onSelectAllRows = (isSelected: boolean) => {
     const selectedRowKeys: number[] = [];
     const data = this.state.drugGridData.map((d: any) => {
@@ -948,7 +902,7 @@ class Tier extends React.Component<any, tabsState> {
 
   onClearFilterHandler = () => {
     this.state.filter = Array();
-    if (this.props.advancedSearchBody) {
+    if (Object.keys(this.props.advancedSearchBody).length > 0) {
       this.showDrugGrid(this.props.advancedSearchBody);
     } else {
       this.showDrugGrid();
@@ -984,12 +938,14 @@ class Tier extends React.Component<any, tabsState> {
           });
         }
       });
-      console.log("Filters:" + JSON.stringify(this.state.filter));
-      if (Object.keys(this.props.advancedSearchBody).length > 0) {
-        this.showDrugGrid(this.props.advancedSearchBody);
-      } else {
-        this.showDrugGrid();
-      }
+    } else {
+      this.state.filter = Array();
+    }
+    console.log("Filters:" + JSON.stringify(this.state.filter));
+    if (Object.keys(this.props.advancedSearchBody).length > 0) {
+      this.showDrugGrid(this.props.advancedSearchBody);
+    } else {
+      this.showDrugGrid();
     }
   };
 
@@ -1082,7 +1038,7 @@ class Tier extends React.Component<any, tabsState> {
   };
 
   componentDidUpdate = (prevState) => {
-    debugger;
+    // debugger;
     console.log("component update");
 
     // if (
@@ -1097,7 +1053,7 @@ class Tier extends React.Component<any, tabsState> {
     // }
   };
   UNSAFE_componentWillReceiveProps(nextProps) {
-    debugger;
+    // debugger;
     if (nextProps.switchState) {
       this.showDrugGrid({ ...nextProps.advancedSearchBody });
       this.setState({
@@ -1297,6 +1253,7 @@ class Tier extends React.Component<any, tabsState> {
                       multiSortedInfo={this.state.gridMultiSortedInfo}
                       onMultiSortToggle={this.onMultiSortToggle}
                       getColumnSettings={this.onSettingsIconHandler}
+                      // clearFilterHandler={this.onClearFilterHandler}
                       pageSize={this.state.limit}
                       selectedCurrentPage={
                         this.state.index / this.state.limit + 1

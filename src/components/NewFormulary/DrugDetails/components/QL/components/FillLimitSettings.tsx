@@ -15,7 +15,7 @@ const FillLimitSettings = (props) => {
 
   return (
     <div className="fill-limit-settings-container">
-      <Grid container>
+      <Grid container spacing={2}>
         <Grid item xs={4}>
           <div className="input-group">
             <Label required={true}>fills allowed</Label>
