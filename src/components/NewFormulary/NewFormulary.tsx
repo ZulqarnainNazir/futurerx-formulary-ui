@@ -12,6 +12,7 @@ import FormularyDashboardStats from "./../FormularyDashboardStats/FormularyDashb
 import { getFormularyDetails } from "../../mocks/formulary/formularyDetails";
 import { fetchFormularies } from "../.././redux/slices/formulary/dashboard/dashboardSlice";
 import _ from 'lodash';
+import FormularyMessaging from "./DrugDetails/components/FormularyDetailsTop/FormularyMessaging";
 
 import {
   setFormulary,
@@ -338,6 +339,8 @@ class Formulary extends React.Component<any, any> {
   render() {
     return (
       <div className="newformulary-container">
+                <FormularyMessaging activeTabIndex={this.props.location} />
+
         {this.state.showTabs ? (
           <>
             {this.snow === true ? (

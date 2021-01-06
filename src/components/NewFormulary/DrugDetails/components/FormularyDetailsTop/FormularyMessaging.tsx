@@ -10,6 +10,10 @@ const mapStateToProps = (state) => {
     uniqueID: state?.messaging?.uuid,
     type: state?.messaging?.type,
     message: state?.messaging?.message,
+    other_message: state?.setup?.message,
+    other_type: state?.setup?.messageType,
+
+
   };
 };
 
@@ -40,8 +44,9 @@ class FormularyMessaging extends React.Component<any, any> {
 
   componentDidUpdate(prevProps) {
     console.log("MSG : " + this.props.uniqueID);
-    console.log(prevProps.message + " > " + this.props.message);
+    //console.log(prevProps.message + " > " + this.props.message);
     if (prevProps.uniqueID !== this.props.uniqueID) {
+      if(this.props?.type === "success" || this.props?.type === "info" || this.props?.type === "warning" || this.props?.type === "error")
       console.log("->");
       this.setState({ showMsg: true });
     }
@@ -53,7 +58,7 @@ class FormularyMessaging extends React.Component<any, any> {
       <div className="drug-detail-top">
         <Snackbar
           open={this.state.showMsg}
-          autoHideDuration={4000}
+          autoHideDuration={5000}
           anchorOrigin={{ vertical: "top", horizontal: "right" }}
           onClose={this.handleClose}
         >

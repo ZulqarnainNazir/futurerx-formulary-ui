@@ -548,7 +548,7 @@ class FormularySetUp extends React.Component<any, any> {
 
     if (this.props.mode === "NEW") {
       if (this.state.generalInformation.method === "C") {
-        msg.push("Selected Formulary Build Method is Clone.");
+        msg.push("Formulary Build Method is Clone. Selected Formulary Type, Enter Name, Effective Date and click Clone Formulary link to select clone source. ");
       }
       if (this.state.generalInformation.type_id === "") {
         msg.push("Formulary Type is required.");
@@ -571,11 +571,9 @@ class FormularySetUp extends React.Component<any, any> {
 
       if (msg.length > 0) {
         msg.forEach((m) => {
-          showMessage(m, "info");
+          // showMessage(m, "info");
         });
-        // this.props.postMessage({ message: msg[0], type: "warning" });
-        // this.props.postMessage({message:msg[0], type:"error"});
-
+        this.props.postMessage({ message: msg[0], type: "warning" });
         return;
       }
     }
@@ -619,11 +617,16 @@ class FormularySetUp extends React.Component<any, any> {
         );
         this.manageFormularyType(arg?.payload?.type, arg?.payload?.id);
         this.props.fetchSelectedFormulary(arg?.payload?.id);
+        let msgStr="";
         if (arg?.payload?.earlier_mode === "NEW") {
-          showMessage(`Formulary Created. ID:${arg?.payload?.id}`, "success");
+          // showMessage(`Formulary Created. ID:${arg?.payload?.id}`, "success");=
+          msgStr = `Formulary Created ID: ${arg?.payload?.id}`;
         } else if (arg?.payload?.earlier_mode === "EXISTING") {
-          showMessage(`Formulary Updated. ID: ${arg?.payload?.id}`, "success");
+          // showMessage(`Formulary Updated. ID: ${arg?.payload?.id}`, "success");
+          msgStr = `Formulary Updated ID: ${arg?.payload?.id}`;
         }
+        this.props.postMessage({ message:msgStr, type: "success" });
+
         if (arg?.payload?.continue) {
           //this.props.saveAndContinue(1);
           this.props.setLocation(1);
@@ -648,6 +651,7 @@ class FormularySetUp extends React.Component<any, any> {
     if (this.props.mode === "NEW") {
       let msg: string[] = [];
       if (this.state.generalInformation.method !== "C") {
+        // msg.push("Formulary Build Method is Clone. Selected Formulary Type, Enter Name, Effective Date and click Clone Formulary link to select clone source. ");
         msg.push("Formulary Build Method should be Clone.");
       }
       if (this.state.generalInformation.type_id === "") {
@@ -660,9 +664,11 @@ class FormularySetUp extends React.Component<any, any> {
         msg.push("Formulary Effective Date is required.");
       }
       if (msg.length > 0) {
-        msg.forEach((m) => {
-          showMessage(m, "info");
-        });
+        // msg.forEach((m) => {
+        //   showMessage(m, "info");
+        // });
+        console.log("MSG LIST ", msg);
+        this.props.postMessage({ message: msg[0], type: "warning" });
         return;
       }
       const input = {
@@ -685,7 +691,9 @@ class FormularySetUp extends React.Component<any, any> {
           );
           this.manageFormularyType(arg?.payload?.type, arg?.payload?.id);
           this.props.fetchSelectedFormulary(arg?.payload?.id);
-          showMessage(`Formulary Created. ID:${arg?.payload?.id}`, "success");
+          // showMessage(`Formulary Created. ID:${arg?.payload?.id}`, "success");
+          let msgStr = `Formulary Created ID: ${arg?.payload?.id}`
+          this.props.postMessage({ message:msgStr, type: "success" });
         }
       });
     }
@@ -803,7 +811,8 @@ class FormularySetUp extends React.Component<any, any> {
 var throt_fun = throttle(
   function (message, messageType) {
     //console.log(">>>>>>>>...");
-    showMessage(message, messageType);
+    //showMessage(message, messageType);
+    // postMessage({ message: message, type: messageType });
   },
   800,
   { leading: true, trailing: false }
@@ -813,10 +822,12 @@ const mapStateToProps = (state) => {
   //  console.log("SP  -  -  -  -  -  -  -  -  -  -  -  - STATE");
   //  console.log(state?.setup?.messageType +" - "+ state?.setup?.message  );
   if (state?.setup?.messageType !== "" && state?.setup?.message !== "") {
-    // console.log(">>>>>>>>>>> " + state?.setup?.messageType +" | "+state?.setup?.message);
+    console.log(">>>>>>>>>>> # " + state?.setup?.messageType +" | "+state?.setup?.message);
     // showMessage(state?.setup?.message, state?.setup?.messageType);
     // console.log("--------");
-    throt_fun(state?.setup?.message, state?.setup?.messageType);
+    // throt_fun(state?.setup?.message, state?.setup?.messageType);
+    //postMessage({ message: state?.setup?.message, type: state?.setup?.messageType });
+
   }
   return {
     mode: state?.application?.mode,

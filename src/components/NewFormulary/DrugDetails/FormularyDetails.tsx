@@ -115,7 +115,6 @@ class FormularyDetails extends React.Component<any, any> {
     const fData = this.props.data;
     return (
       <>
-        <FormularyMessaging activeTabIndex={this.props.location} />
         <FormularyDetailsTop activeTabIndex={this.props.location} />
         <div className="drug-details-bottom">
           <FrxTabs
