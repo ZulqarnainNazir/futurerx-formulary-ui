@@ -273,21 +273,42 @@ class DrugDetailAL extends React.Component<any, any> {
           getLobCode(this.props.formulary_lob_id) +
           "/" +
           alConstants.TYPE_REPLACE;
-          console.log("The API Details - ", apiDetails);
+					console.log("The API Details - ", apiDetails);
+					
+					//For APPEND ie. activeTabIndex === 1 
+					if(this.state.activeTabIndex === 1){
+						const existingData = this.state.data.filter(d => {
+return this.rpSavePayload.selected_drug_ids &&  this.rpSavePayload.selected_drug_ids.includes(d["md5_id"])
+							
+							
+						}).map(d => {
+							let obj = {}
+							obj["min_age_condition"]= d["covered_min_operators"];
+							obj["min_age_limit"]=d["covered_min_ages"];
+							obj["max_age_condition"]= d["covered_max_operators"];
+							obj["max_age_limit"] = d["covered_max_ages"];
+							return obj;
+						})
+
+						console.log(" existing data ", existingData)
+						apiDetails["age_limits"] = [...	apiDetails["age_limits"], ...existingData]
+					}
+
+					console.log("The API Details - ", apiDetails);
 
         // Replace and Append Drug method call
-        this.props.postReplaceALDrug(apiDetails).then((json) => {
-          console.log("The Replace AL Json Response = ", json);
-          if (json.payload && json.payload.code && json.payload.code === "200") {
-            showMessage("Success", "success");
-            this.getALSummary();
-            this.getALDrugsList();
-            this.refreshSelections({ activeTabIndex: this.state.activeTabIndex });
-          } else {
-            showMessage("Failure", "error");
-            this.refreshSelections({ activeTabIndex: this.state.activeTabIndex });
-          }
-        });
+        // this.props.postReplaceALDrug(apiDetails).then((json) => {
+        //   console.log("The Replace AL Json Response = ", json);
+        //   if (json.payload && json.payload.code && json.payload.code === "200") {
+        //     showMessage("Success", "success");
+        //     this.getALSummary();
+        //     this.getALDrugsList();
+        //     this.refreshSelections({ activeTabIndex: this.state.activeTabIndex });
+        //   } else {
+        //     showMessage("Failure", "error");
+        //     this.refreshSelections({ activeTabIndex: this.state.activeTabIndex });
+        //   }
+        // });
       } else if(this.state.activeTabIndex === 2) {
         let alCheckedList: any[] = [];
         if(this.state.alRemoveCheckedList.length > 0) {
