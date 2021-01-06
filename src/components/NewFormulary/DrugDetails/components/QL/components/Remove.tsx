@@ -164,14 +164,13 @@ class Remove extends Component<any, State> {
       <div>
         <div className="tier-grid-container ql-remove-grid">
           <FrxDrugGridContainer
-            isDataLoaded
+            isDataLoaded={true}
             isPinningEnabled={false}
             enableSearch={false}
             enableColumnDrag
             onSearch={() => {}}
             fixedColumnKeys={[]}
             pagintionPosition="topRight"
-            // hidePagination
             gridName="DRUG GRID"
             enableSettings={false}
             columns={QlRemoveColumns()}
@@ -180,6 +179,9 @@ class Remove extends Component<any, State> {
             enableResizingOfColumns
             data={this.state.drugGridData}
             settingsWidth={10}
+            hideItemsPerPage
+            hidePageJumper
+            hideResults
             // clearFilterHandler={this.onClearFilterHandler}
             // applyFilter={this.onApplyFilterHandler}
             // applySort={this.onApplySortHandler}
@@ -192,7 +194,7 @@ class Remove extends Component<any, State> {
             // getColumnSettings={this.onSettingsIconHandler}
             rowSelection={{
               // columnWidth: 50,
-              // fixed: true,
+              fixed: true,
               type: "checkbox",
               onChange: this.onSelectedTableRowChanged,
             }}
