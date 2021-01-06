@@ -49,7 +49,7 @@ export interface Grid<RecordType = unknown> {
   enableColumnDrag?: boolean;
   enableResizingOfColumns?: boolean;
   summary?: (data: RecordType[]) => React.ReactNode; // to add a summary row in grid
-  settingsTriDotMenuClick?: (item: GridMenu) => void;
+  settingsTriDotMenuClick?: (item: GridMenu, data?: any) => void;
   rowSelectionChange?: (data: any, isMultiple?: boolean) => void;
   settingsTriDotClick?: (data: RecordType) => void;
   onColumnCellClick?: (record, key) => void;
@@ -66,6 +66,7 @@ export interface Grid<RecordType = unknown> {
     isSelected: boolean
   ) => void;
   onSelectAllRows?: (isSelected: boolean) => void;
+  actionItems?: (record, key) => any;
   hideResults?: boolean;
   hideItemsPerPage?: boolean;
   hidePageJumper?: boolean;
