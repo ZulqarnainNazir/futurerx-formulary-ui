@@ -137,6 +137,7 @@ class AdditionalCriteria extends Component<any, any> {
 
   loadSavedSettings = (additionalCriteriaBody) => {
     const additionalCriteriaSequenceId = this.props.additionalCriteria.sequence;
+    const isReadOnly = this.props.isReadOnly;
     let savedCriteriaList: any[] = [];
     let globalCardCount = 0;
 
@@ -194,6 +195,7 @@ class AdditionalCriteria extends Component<any, any> {
                     }}
                     payload={covered["age"]}
                     handleGlobalState={this.handleAllNodesState}
+                    isReadOnly={isReadOnly}
                   />
                 ),
               };
@@ -222,6 +224,7 @@ class AdditionalCriteria extends Component<any, any> {
                     }}
                     payload={covered["gender"]}
                     handleGlobalState={this.handleAllNodesState}
+                    isReadOnly={isReadOnly}
                   />
                 ),
               };
@@ -251,6 +254,7 @@ class AdditionalCriteria extends Component<any, any> {
                     }}
                     payload={covered["icd"]}
                     handleGlobalState={this.handleAllNodesState}
+                    isReadOnly={isReadOnly}
                   />
                 ),
               };
@@ -280,6 +284,7 @@ class AdditionalCriteria extends Component<any, any> {
                     }}
                     payload={covered["pharmacy_networks"]}
                     handleGlobalState={this.handleAllNodesState}
+                    isReadOnly={isReadOnly}
                   />
                 ),
               };
@@ -311,6 +316,7 @@ class AdditionalCriteria extends Component<any, any> {
                     }}
                     payload={covered["prescriber_taxonomies"]}
                     handleGlobalState={this.handleAllNodesState}
+                    isReadOnly={isReadOnly}
                   />
                 ),
               };
@@ -341,6 +347,7 @@ class AdditionalCriteria extends Component<any, any> {
                     }}
                     payload={covered["place_of_services"]}
                     handleGlobalState={this.handleAllNodesState}
+                    isReadOnly={isReadOnly}
                   />
                 ),
               };
@@ -370,6 +377,7 @@ class AdditionalCriteria extends Component<any, any> {
                     }}
                     payload={covered["patient_residences"]}
                     handleGlobalState={this.handleAllNodesState}
+                    isReadOnly={isReadOnly}
                   />
                 ),
               };
@@ -406,6 +414,7 @@ class AdditionalCriteria extends Component<any, any> {
                       covered["prerequisite_claims_history_lookbacks"][0]
                     }
                     handleGlobalState={this.handleAllNodesState}
+                    isReadOnly={isReadOnly}
                   />
                 ),
               };
@@ -446,6 +455,7 @@ class AdditionalCriteria extends Component<any, any> {
                     }}
                     payload={not_covered["age"]}
                     handleGlobalState={this.handleAllNodesState}
+                    isReadOnly={isReadOnly}
                   />
                 ),
               };
@@ -473,6 +483,7 @@ class AdditionalCriteria extends Component<any, any> {
                     }}
                     payload={not_covered["gender"]}
                     handleGlobalState={this.handleAllNodesState}
+                    isReadOnly={isReadOnly}
                   />
                 ),
               };
@@ -503,6 +514,7 @@ class AdditionalCriteria extends Component<any, any> {
                     }}
                     payload={not_covered["icd"]}
                     handleGlobalState={this.handleAllNodesState}
+                    isReadOnly={isReadOnly}
                   />
                 ),
               };
@@ -534,6 +546,7 @@ class AdditionalCriteria extends Component<any, any> {
                     }}
                     payload={not_covered["pharmacy_networks"]}
                     handleGlobalState={this.handleAllNodesState}
+                    isReadOnly={isReadOnly}
                   />
                 ),
               };
@@ -565,6 +578,7 @@ class AdditionalCriteria extends Component<any, any> {
                     }}
                     payload={not_covered["prescriber_taxonomies"]}
                     handleGlobalState={this.handleAllNodesState}
+                    isReadOnly={isReadOnly}
                   />
                 ),
               };
@@ -598,6 +612,7 @@ class AdditionalCriteria extends Component<any, any> {
                     }}
                     payload={not_covered["place_of_services"]}
                     handleGlobalState={this.handleAllNodesState}
+                    isReadOnly={isReadOnly}
                   />
                 ),
               };
@@ -631,6 +646,7 @@ class AdditionalCriteria extends Component<any, any> {
                     }}
                     payload={not_covered["patient_residences"]}
                     handleGlobalState={this.handleAllNodesState}
+                    isReadOnly={isReadOnly}
                   />
                 ),
               };
@@ -667,6 +683,7 @@ class AdditionalCriteria extends Component<any, any> {
                       not_covered["prerequisite_claims_history_lookbacks"][0]
                     }
                     handleGlobalState={this.handleAllNodesState}
+                    isReadOnly={isReadOnly}
                   />
                 ),
               };
@@ -690,6 +707,7 @@ class AdditionalCriteria extends Component<any, any> {
 
   setNodes = (cardName, cardCode, filteredList) => {
     const additionalCriteriaSequenceId = this.props.additionalCriteria.sequence;
+    const isReadOnly = this.props.isReadOnly;
     let globalCardCount = this.state.globalCardCount;
     let isIncluded = true;
     globalCardCount++;
@@ -719,6 +737,7 @@ class AdditionalCriteria extends Component<any, any> {
                 deleteIconHandler={this.deleteIconHandler}
                 payload={null}
                 handleGlobalState={this.handleAllNodesState}
+                isReadOnly={isReadOnly}
               />
             ),
           },
@@ -913,7 +932,6 @@ class AdditionalCriteria extends Component<any, any> {
         break;
     }
   };
-
   render() {
     const { selectedCriteriaList } = this.state;
     const {
@@ -922,23 +940,60 @@ class AdditionalCriteria extends Component<any, any> {
     } = this.props;
 
     return (
-      <div className="__root-additional-criteria-child-accordion-section">
+      <div
+        className={
+          this.props.isReadOnly
+            ? "__root-additional-criteria-read-only-child-accordion-section"
+            : "__root-additional-criteria-child-accordion-section"
+        }
+      >
         <CustomAccordion name={`ADDITIONAL CRITERIA ${sequence}`}>
-          <div className="__root-additional-criteria-child-accordion-section-content">
+          <div
+            className={
+              this.props.isReadOnly
+                ? "__root-additional-criteria-read-only-child-accordion-section-content"
+                : "__root-additional-criteria-child-accordion-section-content"
+            }
+          >
             <DndProvider backend={HTML5Backend}>
-              <div className="__root-additional-criteria-child-accordion-section-content-left">
-                <div className="__root-additional-criteria-child-accordion-section-content-left-inner-spacing">
+              <div
+                className={
+                  this.props.isReadOnly
+                    ? "__root-additional-criteria-read-only-child-accordion-section-content-left"
+                    : "__root-additional-criteria-child-accordion-section-content-left"
+                }
+              >
+                <div
+                  className={
+                    this.props.isReadOnly
+                      ? "__root-additional-criteria-read-only-child-accordion-section-content-left-inner-spacing"
+                      : "__root-additional-criteria-child-accordion-section-content-left-inner-spacing"
+                  }
+                >
                   {criteriaList.map((c) => (
                     <DragBox
                       key={c.id}
                       criteria={c}
                       onCriteriaSelect={this.onCriteriaSelect}
+                      isReadOnly={this.props.isReadOnly}
                     />
                   ))}
                 </div>
               </div>
-              <div className="__root-additional-criteria-child-accordion-section-content-right">
-                <div className="__root-additional-criteria-child-accordion-section-content-right-top scroll-bar">
+              <div
+                className={
+                  this.props.isReadOnly
+                    ? "__root-additional-criteria-read-only-child-accordion-section-content-right"
+                    : "__root-additional-criteria-child-accordion-section-content-right"
+                }
+              >
+                <div
+                  className={
+                    this.props.isReadOnly
+                      ? "__root-additional-criteria-read-only-child-accordion-section-content-right-top scroll-bar"
+                      : "__root-additional-criteria-child-accordion-section-content-right-top scroll-bar"
+                  }
+                >
                   {selectedCriteriaList.length === 0 ? (
                     <div className="text-center">
                       <p>
@@ -954,7 +1009,13 @@ class AdditionalCriteria extends Component<any, any> {
                     ))
                   )}
                 </div>
-                <div className="__root-additional-criteria-child-accordion-section-content-right-bottom">
+                <div
+                  className={
+                    this.props.isReadOnly
+                      ? "__root-additional-criteria-read-only-child-accordion-section-content-right-bottom"
+                      : "__root-additional-criteria-child-accordion-section-content-right-bottom"
+                  }
+                >
                   <Button
                     onClick={this.clearCurrentCriteriaState}
                     className="clear-btn"

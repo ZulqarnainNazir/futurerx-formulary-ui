@@ -39,7 +39,7 @@ const PrLimitSettings = (props) => {
   } = props;
 
   return (
-    <div className="pr-limit-settings bordered mb-10">
+    <div className="pr-limit-settings bordered mb-10 white-bg">
       <PanelHeader
         title="patient residence settings"
         tooltip="patient residence settings"

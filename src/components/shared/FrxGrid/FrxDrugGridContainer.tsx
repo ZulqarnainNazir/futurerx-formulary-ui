@@ -37,7 +37,7 @@ interface FrxDrugGridContainerProps<T> extends Grid<T> {
   // summary?: (data: any[]) => React.ReactNode;
   enableSearch: boolean;
   isFetchingData: boolean;
-  onSearch: (searchObject: any) => void;
+  onSearch?: (searchObject: any) => void;
   searchOptions?: any;
   isPinningEnabled?: boolean;
   getPerPageItemSize?: any;
@@ -104,7 +104,8 @@ class FrxDrugGridContainer extends Component<FrxDrugGridContainerProps<any>> {
    * @author Deepak_T
    */
   handleSearch = (searchObject) => {
-    this.props.onSearch(searchObject);
+		if(this.props.onSearch)
+    	this.props.onSearch(searchObject);
   };
 
   render() {
@@ -119,6 +120,8 @@ class FrxDrugGridContainer extends Component<FrxDrugGridContainerProps<any>> {
 					isMultiSorted={this.props.isMultiSorted}
 					multiSortedInfo={this.props.multiSortedInfo}
 					onMultiSortToggle={this.props.onMultiSortToggle}
+					isFiltered={this.props.isFiltered}
+					filteredInfo={this.props.filteredInfo}
           isDataLoaded={this.props.isDataLoaded}
           bordered={false}
           columns={this.props.columns}
