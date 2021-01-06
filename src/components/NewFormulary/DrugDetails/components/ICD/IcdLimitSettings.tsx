@@ -38,7 +38,7 @@ class IcdLimitSettings extends React.Component<any, any> {
   render() {
     const { showGridHandler, handleStatus, icdSettingsStatus } = this.props;
     return (
-      <div className="icd-limit-settings bordered mb-10">
+      <div className="icd-limit-settings bordered mb-10 white-bg">
         <PanelHeader title="ICD Limit Settings" tooltip="ICD Limit Settings" />
 
         <div className="inner-container">

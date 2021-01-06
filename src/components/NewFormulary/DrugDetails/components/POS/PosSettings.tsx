@@ -31,7 +31,7 @@ const PosLimitSettings = (props) => {
   // place_of_service_type_name: "Community/Retail Pharmacy services",
   // checked: false
   return (
-    <div className="pos-limit-settings bordered mb-10">
+    <div className="pos-limit-settings bordered mb-10 white-bg">
       {showGridHandler ? (
         <PanelHeader
           title="place of service settings"

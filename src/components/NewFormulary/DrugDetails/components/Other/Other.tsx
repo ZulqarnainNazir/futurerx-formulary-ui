@@ -917,88 +917,89 @@ class DrugDetailOther extends React.Component<any, any> {
 
     return (
       <>
-        <div className="bordered mb-10">
-          <PanelHeader title="user defined" tooltip="user defined" />
-          <div className="inner-container bg-light-grey">
-            <div className="mb-10">
-              <PanelGrid
-                panelGridTitle={this.state.panelGridTitle1}
-                panelGridValue={this.state.panelGridValue1}
-                panelTitleAlignment={this.state.panelTitleAlignment1}
-              />
-            </div>
-            <div className="modify-wrapper bordered white-bg">
-              <div className="modify-panel">
-                <div className="icon">
-                  <span>R</span>
-                </div>
-                <div className="switch-box">
-                  <CustomizedSwitches
-                    leftTitle="Modify"
-                    rightTitle="view all"
-                  />
-                </div>
-                <div className="mini-tabs">
-                  <FrxMiniTabs
-                    tabList={this.state.tabs}
-                    activeTabIndex={this.state.activeTabIndex}
-                    onClickTab={this.onClickTab}
-                    disabled={this.props.configureSwitch}
-                  />
+        <div className="p-10 pt-0 bordered bt-none mb-10 white-bg">
+          <div className="bordered">
+            <PanelHeader title="user defined" tooltip="user defined" />
+            <div className="inner-container bg-light-grey">
+              <div className="mb-10">
+                <PanelGrid
+                  panelGridTitle={this.state.panelGridTitle1}
+                  panelGridValue={this.state.panelGridValue1}
+                  panelTitleAlignment={this.state.panelTitleAlignment1}
+                />
+              </div>
+              <div className="modify-wrapper bordered white-bg">
+                <div className="modify-panel">
+                  <div className="icon">
+                    <span>R</span>
+                  </div>
+                  <div className="switch-box">
+                    <CustomizedSwitches
+                      leftTitle="Modify"
+                      rightTitle="view all"
+                    />
+                  </div>
+                  <div className="mini-tabs">
+                    <FrxMiniTabs
+                      tabList={this.state.tabs}
+                      activeTabIndex={this.state.activeTabIndex}
+                      onClickTab={this.onClickTab}
+                      disabled={this.props.configureSwitch}
+                    />
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
 
-        {/* <Table rowSelection={rowSelection} columns={columns} dataSource={paymentsHistory} /> */}
+          {/* <Table rowSelection={rowSelection} columns={columns} dataSource={paymentsHistory} /> */}
 
         
-        <div className="white-bg">
-          {this.state.activeTabIndex === 2 ? (
-            <Grid item xs={5}>
-              <div className="tier-grid-remove-container">
-                <Table
-                  columns={this.state.otherColumns}
-                  dataSource={this.state.otherData}
-                  pagination={false}
-                  rowSelection={rowSelection}
-                  // rowSelection={{
-                  //   columnWidth: 20,
-                  //   fixed: true,
-                  //   type: "checkbox",
-                  //   onChange: this.onSelectedRowKeysChange,
-                  // }}
-                />
-              </div>
-            </Grid>
-          ) : (
-            <Grid item xs={5}>
-              <div className="group other-label">
-                <label>
-                  USER DEFINED FIELD <span className="astrict">*</span>
-                </label>
-                <DropDown
-                  className="formulary-type-dropdown"
-                  placeholder="Select"
-                  options={drpdwnoptions}
-                  key={this.state.activeTabIndex}
-                  onChange={this.onDropdownChange}
-                />
-              </div>
-            </Grid>
-          )}
-          {!this.props.configureSwitch ? (
-            <Row justify="end">
-              <Col>
-                <Button label="Apply" onClick={this.openOtherGridContainer} disabled={!(this.state.selectedCriteria.length > 0)}></Button>
-              </Col>
-            </Row>
-          ) : null}
+          <div className="white-bg">
+            {this.state.activeTabIndex === 2 ? (
+              <Grid item xs={5}>
+                <div className="tier-grid-remove-container other-removed-sec">
+                  <Table
+                    columns={this.state.otherColumns}
+                    dataSource={this.state.otherData}
+                    pagination={false}
+                    rowSelection={rowSelection}
+                    // rowSelection={{
+                    //   columnWidth: 20,
+                    //   fixed: true,
+                    //   type: "checkbox",
+                    //   onChange: this.onSelectedRowKeysChange,
+                    // }}
+                  />
+                </div>
+              </Grid>
+            ) : (
+              <Grid item xs={5}>
+                <div className="group other-label">
+                  <label>
+                    USER DEFINED FIELD <span className="astrict">*</span>
+                  </label>
+                  <DropDown
+                    className="formulary-type-dropdown"
+                    placeholder="Select"
+                    options={drpdwnoptions}
+                    key={this.state.activeTabIndex}
+                    onChange={this.onDropdownChange}
+                  />
+                </div>
+              </Grid>
+            )}
+            {!this.props.configureSwitch ? (
+              <Row justify="end">
+                <Col>
+                  <Button label="Apply" onClick={this.openOtherGridContainer} disabled={!(this.state.selectedCriteria.length > 0)}></Button>
+                </Col>
+              </Row>
+            ) : null}
+          </div>
         </div>
-
         { this.state.showGrid ? (
-        <div className="bordered">
+        <div className="bordered white-bg">
           <div className="header space-between pr-10">
             Drug Grid
             <div className="button-wrapper">

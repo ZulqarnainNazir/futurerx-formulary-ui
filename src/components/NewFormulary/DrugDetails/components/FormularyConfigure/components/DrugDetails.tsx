@@ -254,7 +254,7 @@ class DrugDetails extends React.Component<any, drugDetailsState> {
 
     return (
       <>
-        <div className="bordered details-top">
+        <div className="bordered details-top white-bg details-tab-top">
           <div className="header">Drug Details</div>
           <div className="inner-container">
             <div className="configure-mini-tabs">
@@ -264,9 +264,9 @@ class DrugDetails extends React.Component<any, drugDetailsState> {
                 onClickTab={this.onClickTab}
               />
             </div>
-            <div className="tabs-info">{this.renderActiveTabContent()}</div>
           </div>
         </div>
+        <div className="tabs-info details-tab-bottom-info">{this.renderActiveTabContent()}</div>
       </>
     );
   }
