@@ -273,49 +273,21 @@ class DrugDetailAL extends React.Component<any, any> {
           getLobCode(this.props.formulary_lob_id) +
           "/" +
           alConstants.TYPE_REPLACE;
-					console.log("The API Details - ", apiDetails);
-					
-					//For APPEND ie. activeTabIndex === 1 
-					if(this.state.activeTabIndex === 1){
-						let existingData = this.state.data.filter(d => {
-return this.rpSavePayload.selected_drug_ids &&  this.rpSavePayload.selected_drug_ids.includes(d["md5_id"])
-							
-							
-						}).map(d => {
-							let obj = {}
-							obj["min_age_condition"]= d["covered_min_operators"];
-							obj["min_age_limit"]=d["covered_min_ages"];
-							obj["max_age_condition"]= d["covered_max_operators"];
-							obj["max_age_limit"] = d["covered_max_ages"];
-							return obj;
-						})
-
-						console.log(" existing data ", existingData)
-						let newData = [...	this.rpSavePayload["age_limits"]];
-						existingData = existingData.filter(item => {
-							if((item["min_age_condition"] && item["min_age_limit"]) || item["max_age_condition"] &&  item["max_age_limit"]){
-								return true
-							}
-						})
-						this.rpSavePayload["age_limits"] = [...	newData, ...existingData]
-						apiDetails["messageBody"] = this.rpSavePayload;
-					}
-
-					console.log("The API Details - ", apiDetails);
+          console.log("The API Details - ", apiDetails);
 
         // Replace and Append Drug method call
-        // this.props.postReplaceALDrug(apiDetails).then((json) => {
-        //   console.log("The Replace AL Json Response = ", json);
-        //   if (json.payload && json.payload.code && json.payload.code === "200") {
-        //     showMessage("Success", "success");
-        //     this.getALSummary();
-        //     this.getALDrugsList();
-        //     this.refreshSelections({ activeTabIndex: this.state.activeTabIndex });
-        //   } else {
-        //     showMessage("Failure", "error");
-        //     this.refreshSelections({ activeTabIndex: this.state.activeTabIndex });
-        //   }
-        // });
+        this.props.postReplaceALDrug(apiDetails).then((json) => {
+          console.log("The Replace AL Json Response = ", json);
+          if (json.payload && json.payload.code && json.payload.code === "200") {
+            showMessage("Success", "success");
+            this.getALSummary();
+            this.getALDrugsList();
+            // this.refreshSelections({ activeTabIndex: this.state.activeTabIndex });
+          } else {
+            showMessage("Failure", "error");
+            // this.refreshSelections({ activeTabIndex: this.state.activeTabIndex });
+          }
+        });
       } else if(this.state.activeTabIndex === 2) {
         let alCheckedList: any[] = [];
         if(this.state.alRemoveCheckedList.length > 0) {
@@ -412,7 +384,7 @@ return this.rpSavePayload.selected_drug_ids &&  this.rpSavePayload.selected_drug
   };
 
   refreshSelections = ({ activeTabIndex = 0 }) => {
-    console.log("----Inside refresh Selection-------")
+    console.log("----Inside refresh Selection-------");
     if(activeTabIndex === 0 || activeTabIndex === 1) {
       
       let alSettings = [
@@ -738,12 +710,16 @@ return this.rpSavePayload.selected_drug_ids &&  this.rpSavePayload.selected_drug
 
   validateGLForm = () => {
     let formValid = false;
-    for(let i=0; i<this.formData2.length; i++) {
-      if(this.formData2[i].minimumType && this.formData2[i].maximumType && this.formData2[i].maximumVal && this.formData2[i].maximumVal) {
-        formValid = true;
-      } else {
-        formValid = false;
+    if(this.state.activeTabIndex === 0 || this.state.activeTabIndex === 1) {
+      for(let i=0; i<this.formData2.length; i++) {
+        if(this.formData2[i].minimumType && this.formData2[i].maximumType && this.formData2[i].maximumVal && this.formData2[i].maximumVal) {
+          formValid = true;
+        } else {
+          formValid = false;
+        }
       }
+    } else if(this.state.activeTabIndex === 2) {
+      formValid = !(this.state.alRemoveCheckedList.length === 0);
     }
 
     return formValid;
