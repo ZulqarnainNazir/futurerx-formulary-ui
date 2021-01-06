@@ -100,7 +100,7 @@ interface FrxDrugGridState<T> {
   isMultiSort?: boolean;
   sortedInfo: any;
   multiSortedInfo: any;
-
+	isFiltered?:boolean;
   isSingleSort?: boolean;
   columns: Column<T>[];
   visibleColumns: Column<T>[];
@@ -137,7 +137,7 @@ class FrxDrugGrid extends Component<
     sortedInfo: null,
     multiSortedInfo: [],
     isSingleSort: false,
-
+		isFiltered:false,
     suggestions: {},
     columns: [],
     visibleColumns: [],
@@ -273,6 +273,8 @@ class FrxDrugGrid extends Component<
 	// }
 	
 	componentDidUpdate(previousProps, previousState) {
+
+
 		if(this.props.isMultiSorted !== undefined && !this.props.isDataLoaded){
 			if(this.props.isMultiSorted !== previousState.isMultiSort || 
 				!this.isGridGridMultiSortedInfoSame(this.props.multiSortedInfo, previousState.multiSortedInfo)){
@@ -302,22 +304,36 @@ class FrxDrugGrid extends Component<
 			}
 		}
 
+		if(this.props.isFiltered !== undefined && !this.props.isDataLoaded){
+			if(this.props.isFiltered !== previousState.isFiltered){
+				const sortedInfo = {...this.props.sortedInfo}
+				
+				this.setState({
+					filteredInfo:this.props.filteredInfo,
+					isFiltered:this.props.isFiltered
+				
+				}, () => {
+					this.updateFilters();
+				})
+			}
+		}
 
-    if (this.props.isSingleSorted !== undefined && !this.props.isDataLoaded) {
-      if (this.props.isSingleSorted !== previousState.isSingleSort) {
-        const sortedInfo = { ...this.props.sortedInfo };
 
-        this.setState(
-          {
-            sortedInfo: this.props.sortedInfo,
-            isSingleSort: this.props.isSingleSorted,
-          },
-          () => {
-            this.updateFilters();
-          }
-        );
-      }
-    }
+    // if (this.props.isSingleSorted !== undefined && !this.props.isDataLoaded) {
+    //   if (this.props.isSingleSorted !== previousState.isSingleSort) {
+    //     const sortedInfo = { ...this.props.sortedInfo };
+
+    //     this.setState(
+    //       {
+    //         sortedInfo: this.props.sortedInfo,
+    //         isSingleSort: this.props.isSingleSorted,
+    //       },
+    //       () => {
+    //         this.updateFilters();
+    //       }
+    //     );
+    //   }
+    // }
 
     if (previousProps.columns && this.props.columns) {
       if (previousProps.columns.length !== this.props.columns.length) {
@@ -594,9 +610,10 @@ class FrxDrugGrid extends Component<
           c["width"] = width;
           if (c.isFilterable) {
             c["filterIcon"] = (filtered) => {
+					
               return (
                 <>
-                  <FrxGridFilterIcon {...filtered} />
+                  <FrxGridFilterIcon {...filtered} filtered={filtered} />
                 </>
               );
             };
@@ -922,7 +939,8 @@ class FrxDrugGrid extends Component<
         {
           filteredInfo: isFilterApplied ? filters : null,
           sortedInfo: isSorterApplied ? sorter : null,
-          isSingleSort: isSorterApplied,
+					isSingleSort: isSorterApplied,
+					isFiltered:isFilterApplied,
           isMultiSort: isSorterApplied && this.state.isMultiSort,
         },
         () => {
@@ -937,7 +955,8 @@ class FrxDrugGrid extends Component<
 				this.getDataOnFilter(filters);
 			}else{
 				const appliedFilters = _.pickBy(filters, _.identity);
-				this.props.applyFilter(appliedFilters)
+				
+				this.props.applyFilter(appliedFilters, appliedFilters)
 			}
     
       

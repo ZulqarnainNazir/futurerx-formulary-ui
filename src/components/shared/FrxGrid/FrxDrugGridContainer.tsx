@@ -120,6 +120,8 @@ class FrxDrugGridContainer extends Component<FrxDrugGridContainerProps<any>> {
 					isMultiSorted={this.props.isMultiSorted}
 					multiSortedInfo={this.props.multiSortedInfo}
 					onMultiSortToggle={this.props.onMultiSortToggle}
+					isFiltered={this.props.isFiltered}
+					filteredInfo={this.props.filteredInfo}
           isDataLoaded={this.props.isDataLoaded}
           bordered={false}
           columns={this.props.columns}
