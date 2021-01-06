@@ -277,7 +277,7 @@ class DrugDetailAL extends React.Component<any, any> {
 					
 					//For APPEND ie. activeTabIndex === 1 
 					if(this.state.activeTabIndex === 1){
-						const existingData = this.state.data.filter(d => {
+						let existingData = this.state.data.filter(d => {
 return this.rpSavePayload.selected_drug_ids &&  this.rpSavePayload.selected_drug_ids.includes(d["md5_id"])
 							
 							
@@ -291,7 +291,14 @@ return this.rpSavePayload.selected_drug_ids &&  this.rpSavePayload.selected_drug
 						})
 
 						console.log(" existing data ", existingData)
-						apiDetails["age_limits"] = [...	apiDetails["age_limits"], ...existingData]
+						let newData = [...	this.rpSavePayload["age_limits"]];
+						existingData = existingData.filter(item => {
+							if((item["min_age_condition"] && item["min_age_limit"]) || item["max_age_condition"] &&  item["max_age_limit"]){
+								return true
+							}
+						})
+						this.rpSavePayload["age_limits"] = [...	newData, ...existingData]
+						apiDetails["messageBody"] = this.rpSavePayload;
 					}
 
 					console.log("The API Details - ", apiDetails);
@@ -1048,7 +1055,7 @@ return this.rpSavePayload.selected_drug_ids &&  this.rpSavePayload.selected_drug
             isPinningEnabled={false}
             enableSearch={false}
             enableColumnDrag
-            settingsWidth={50}
+            settingsWidth={30}
             onSearch={() => { }}
             fixedColumnKeys={[]}
             pagintionPosition="topRight"
