@@ -50,7 +50,7 @@ export default class MassMaintenance extends React.Component<any, any> {
     const fData = this.props.data;
     return (
       <>
-        <MassMaintenanceTop formularyTopData={fData} />
+        <MassMaintenanceTop formularyTopData={fData} lob_type={this.props.lob_type} />
         <div className="drug-details-bottom">
           <FrxTabs
             tabList={this.state.tabs}

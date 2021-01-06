@@ -2,6 +2,7 @@ import React from "react";
 import MassMaintenanceContext from "../FormularyDetailsContext";
 
 export default function FormularyDetailsTop(props: any) {
+  debugger;
   const MassMaintenance = React.useContext(MassMaintenanceContext);
   console.log(props);
   return (
@@ -101,9 +102,16 @@ export default function FormularyDetailsTop(props: any) {
         </div>
       </div>
       <div className="durationInfo d-flex">
-        <div className="item">
+        {props.lob_type == "medicare" ?
+          <div className="item">
           <span className="tag purple">Medicare</span>
         </div>
+        :
+        <div className="item">
+          <span className="tag" style={{background: "#5f80b9"}}>Commercial</span>
+        </div>        
+      }
+        
         <div className="item">
           <span className="label">Formulary ID:</span>{" "}
           {props.formularyTopData.formularyID}

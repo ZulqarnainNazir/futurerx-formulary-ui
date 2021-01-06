@@ -57,6 +57,7 @@ interface State {
   showTabs: boolean;
   showMassMaintenance: boolean;
   showDrugDetails: boolean;
+  lob_type:string,
 }
 
 const mapStateToProps = (state) => {
@@ -125,6 +126,7 @@ class Formulary extends React.Component<any, any> {
     showMassMaintenance: false,
     showDrugDetails: false,
     pageSize: 10,
+    lob_type:"",
   };
 
   listPayload: any = {
@@ -141,6 +143,7 @@ class Formulary extends React.Component<any, any> {
 
   componentDidMount() {   
     this.props.fetchFormularies(this.listPayload);
+    this.setSelectedLOB();
   }
 
   applySortHandler = (key, order) => {
@@ -188,9 +191,11 @@ class Formulary extends React.Component<any, any> {
       return tab;
     });
     this.setState({ tabs, activeTabIndex }, () => {
-      this.updateGrid(this.state.activeTabIndex);     
+      this.updateGrid(this.state.activeTabIndex);   
+      this.setSelectedLOB();  
     });    
   };
+  
   updateGrid = (currentTabIndex) => {
     // let lob_id = 1;
     // if(currentTabIndex === 2){
@@ -210,6 +215,9 @@ class Formulary extends React.Component<any, any> {
     this.props.fetchFormularies(this.listPayload);
   };
 
+  setSelectedLOB = () => {
+    this.setState({lob_type: this.state.tabs.find(p=>p.id == (this.state.activeTabIndex +1))?.text.toLowerCase()});
+  }
   addNewFormulary = (id: any) => {
     console.log("***** ADD NEW");
     this.props.addNewFormulary();
@@ -246,8 +254,8 @@ class Formulary extends React.Component<any, any> {
     }
   };
 
-  massMaintenanceCLickHandler = (id: any) => {
-       if (id !== undefined) {
+  massMaintenanceCLickHandler = () => {
+       if (true) {
       this.setState({
         showTabs: !this.state.showTabs,
         showMassMaintenance: !this.state.showMassMaintenance,
@@ -386,7 +394,7 @@ class Formulary extends React.Component<any, any> {
                 getColumnSettings={this.onSettingsIconHandler}
                 addNewFormulary={this.addNewFormulary}
                 formularyListSearch={this.formularyListSearch}
-                lob_type={this.state.tabs.find(p=>p.id == (this.state.activeTabIndex +1))?.text.toLowerCase()}
+                lob_type={this.state.lob_type}
               />
             </div>
           </>
@@ -400,7 +408,7 @@ class Formulary extends React.Component<any, any> {
           <MassMaintenanceContext.Provider
             value={{ showDetailHandler:() => this.massMaintenanceCLickHandler }}
           >
-            <MassMaintenance data={getFormularyDetails()} />
+            <MassMaintenance data={getFormularyDetails()} lob_type={this.state.lob_type} />
           </MassMaintenanceContext.Provider>
         ) : null}
       </div>
