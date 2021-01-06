@@ -5,6 +5,25 @@
   padding: 0 10px;
   border: 1px solid #e5e5e5;
 
+  .ant-table-cell .ant-checkbox-wrapper .ant-checkbox-checked .ant-checkbox-inner {
+     background-color: #1890ff !important; 
+}
+
+.SearchBox {  
+  height: 35px !important;
+}
+.SearchBox > input{
+  border-radius: 3px !important;
+  padding-left: 23px !important;
+  border-color: #e5e5e5 !important;
+}
+.SearchBox > .SearchBox-Icon { 
+  top: 8px !important;
+}
+.field-container{
+  margin-right: 10px;
+  width: 170px !important;
+}
   .mass-maintenance-update-grid {
     // ####### START TABLE ##########
     .frx-grid-container {

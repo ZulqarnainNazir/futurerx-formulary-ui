@@ -16,6 +16,7 @@ import DropDown from "../../../shared/Frx-components/dropdown/DropDown";
 import AdvancedSearch from "../../DrugDetails/components/FormularyConfigure/components/search/AdvancedSearch";
 // "../DrugDetails/components/FormularyConfigure/components/search/AdvancedSearch";
 import "./MaintenanceMassUpdate.scss";
+import SearchBox from "../../../shared/Frx-components/search-box/SearchBox";
 interface Props {
   onClickAddNew: (id:any) => any;
   lob_type:any;
@@ -78,6 +79,9 @@ class MaintenanceMassUpdate extends Component<Props, State> {
           <div className="header-container ">
             <span className="header">MAINTENANCE MASS UPDATE</span>
             <div className="dropdown-button-container ">
+            <div className="field-container">
+                <SearchBox iconPosition="left"/>
+              </div>
               <DropDown
                 options={["Active", "Archive"]}
                 defaultValue="Active"
