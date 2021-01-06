@@ -34,7 +34,7 @@ class Replace extends Component<any, any> {
                   `}
                   // placeholder="Search"
 
-                  type="number"
+                  type="text"
                   name="quantity"
                   disableUnderline={true}
                   onChange={this.props.handleOnChange}
@@ -55,7 +55,7 @@ class Replace extends Component<any, any> {
                     this.props.errors?.days ? "error_class" : null
                   }`}
                   // placeholder="Search"
-                  type="number"
+                  type="text"
                   name="days"
                   value={days}
                   onChange={this.props.handleOnChange}
@@ -73,7 +73,7 @@ class Replace extends Component<any, any> {
                 <Input
                   className="formulary-list-search"
                   // placeholder="Search"
-                  type="number"
+                  type="text"
                   name="periodOfTime"
                   value={periodOfTime}
                   onChange={this.props.handleOnChange}

@@ -19,7 +19,7 @@ import FrxLoader from "../../../../shared/FrxLoader/FrxLoader";
 const tabs = [
   { id: 1, text: "COMPARE FORMUARIES" },
   { id: 2, text: "VIEW FORMULARIES" },
-  { id: 3, text: "HPMS SUMMMARY" },
+  /*{ id: 3, text: "HPMS SUMMMARY" },*/
 ];
 
 interface configureState {
@@ -58,6 +58,8 @@ export default class CompareView extends React.Component<
     });
     this.state.isCompareClicked = false;
     this.state.isViewClicked = false;
+    this.state.baseformulary = {};
+    this.state.referenceformulary = {};
     this.setState({ tabs, activeTabIndex });
   };
 
@@ -169,11 +171,11 @@ export default class CompareView extends React.Component<
     const tabIndex = this.state.activeTabIndex;
     switch (tabIndex) {
       case 0:
-        return <CompareFormularies handleCompareBtn={this.handleCompareBtn} handleCompareClear={this.handleCompareClear} />;
+        return <CompareFormularies handleCompareBtn={this.handleCompareBtn} handleCompareClear={this.handleCompareClear} baseFormulary={this.state.baseformulary} refFormulary={this.state.referenceformulary}/>;
       case 1:
-        return <ViewFormularies handleViewBtn={this.handleViewBtn} handleViewClear={this.handleViewClear} />;
-      case 2:
-        return <div>HPMS SUMMARY</div>;
+        return <ViewFormularies handleViewBtn={this.handleViewBtn} handleViewClear={this.handleViewClear}/>;
+      /*case 2:
+        return <div>HPMS SUMMARY</div>;*/
       default:
         return null;
     }

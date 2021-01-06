@@ -286,6 +286,40 @@ class DrugDetailGL extends React.Component<any, any> {
           glConstants.TYPE_REPLACE;
         console.log("The API Details - ", apiDetails);
 
+        console.log("The State of the app = ", this.state);
+        if(this.state.activeTabIndex === 1) {
+          let selDrugs = this.state.selectedDrugs;
+          let setCoveredGenders = new Set();
+
+          glRows.forEach(el => setCoveredGenders.add(el));
+
+          for(let i=0; i<this.state.selectedDrugs.length; i++) {
+            let tmpSelDrg = this.state.selectedDrugs[i];
+
+            for(let j=0; j<this.state.data.length; j++) {
+              if(tmpSelDrg === this.state.data[j].md5_id){
+                let covGens = [];
+                if(this.state.glSettingsStatus.covered) {
+                  covGens = this.state.data[j]?.coveredGender.split(",").map(e => e.trim().toLowerCase());
+
+                } else if(!this.state.glSettingsStatus.covered) {
+                  covGens = this.state.data[j]?.noCoveredGender.split(",").map(e => e.trim().toLowerCase());//noCoveredGender ++ ADD
+                }
+
+                covGens.forEach(element => {
+                  let tmpGCode = this.state.glSettings.filter(e => e.gl_type_name === element).map(a => a.gl_code);
+                  tmpGCode.forEach(el => setCoveredGenders.add(el));
+                });
+
+                console.log("The COvered Genders = ", setCoveredGenders);
+              }
+            }
+          }
+
+          let covArray = Array.from(setCoveredGenders);
+          this.rpSavePayload.gender_limits = covArray;
+        }
+
         // Replace and Append Drug method call
         this.props.postReplaceGLDrug(apiDetails).then((json) => {
           if (
@@ -1142,34 +1176,36 @@ class DrugDetailGL extends React.Component<any, any> {
 
     return (
       <>
-        <div className="bordered mb-10">
-          <PanelHeader title="Gender Limit" tooltip="Gender Limit" />
-          <div className="inner-container bg-light-grey">
-            <div className="mb-10">
-              <PanelGrid
-                panelGridTitle={this.state.panelGridTitle1}
-                panelGridValue={this.state.panelGridValue1}
-                panelTitleAlignment={this.state.panelTitleAlignment1}
-              />
-            </div>
-            <div className="modify-wrapper bordered white-bg">
-              <div className="modify-panel">
-                <div className="icon">
-                  <span>R</span>
-                </div>
-                <div className="switch-box">
-                  <CustomizedSwitches
-                    leftTitle="Modify"
-                    rightTitle="view all"
-                  />
-                </div>
-                <div className="mini-tabs">
-                  <FrxMiniTabs
-                    tabList={this.state.tabs}
-                    activeTabIndex={this.state.activeTabIndex}
-                    onClickTab={this.onClickTab}
-                    disabled={this.props.configureSwitch}
-                  />
+        <div className="p-10 pt-0 bordered bt-none mb-10 white-bg">
+          <div className="bordered">
+            <PanelHeader title="Gender Limit" tooltip="Gender Limit" />
+            <div className="inner-container bg-light-grey">
+              <div className="mb-10">
+                <PanelGrid
+                  panelGridTitle={this.state.panelGridTitle1}
+                  panelGridValue={this.state.panelGridValue1}
+                  panelTitleAlignment={this.state.panelTitleAlignment1}
+                />
+              </div>
+              <div className="modify-wrapper bordered white-bg">
+                <div className="modify-panel">
+                  <div className="icon">
+                    <span>R</span>
+                  </div>
+                  <div className="switch-box">
+                    <CustomizedSwitches
+                      leftTitle="Modify"
+                      rightTitle="view all"
+                    />
+                  </div>
+                  <div className="mini-tabs">
+                    <FrxMiniTabs
+                      tabList={this.state.tabs}
+                      activeTabIndex={this.state.activeTabIndex}
+                      onClickTab={this.onClickTab}
+                      disabled={this.props.configureSwitch}
+                    />
+                  </div>
                 </div>
               </div>
             </div>
@@ -1197,7 +1233,7 @@ class DrugDetailGL extends React.Component<any, any> {
         )}
 
         {showGrid ? (
-          <div className="bordered">
+          <div className="bordered white-bg">
             <div className="header space-between pr-10">
               Drug Grid
               <div className="button-wrapper">

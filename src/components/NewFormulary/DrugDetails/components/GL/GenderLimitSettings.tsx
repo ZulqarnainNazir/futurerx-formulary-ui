@@ -38,7 +38,7 @@ const GenderLimitSettings = (props) => {
   } = props;
 
   return (
-    <div className="gender-limit-settings bordered mb-10">
+    <div className="gender-limit-settings bordered mb-10 white-bg">
       <PanelHeader
         title="Gender Limit Settings"
         tooltip="Gender Limit Settings"
