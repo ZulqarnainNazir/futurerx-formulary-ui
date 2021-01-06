@@ -41,7 +41,7 @@ export default class StepTherpayDetails extends React.Component<any, drugDetails
   render() {
     return (
       <>
-        <div className=" details-top">
+        <div className="details-top">
           <div className="configure-mini-tabs">
             <FrxMiniTabs
               tabList={this.state.tabs}
@@ -49,7 +49,7 @@ export default class StepTherpayDetails extends React.Component<any, drugDetails
               onClickTab={this.onClickTab}
             />
           </div>
-          <div className=" bordered tabs-info">{this.renderActiveTabContent()}</div>
+          <div className="tabs-info">{this.renderActiveTabContent()}</div>
         </div>
       </>
     );
