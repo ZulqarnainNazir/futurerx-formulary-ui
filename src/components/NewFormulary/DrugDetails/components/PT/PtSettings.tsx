@@ -40,7 +40,7 @@ class PrLimitSettings extends React.Component<any, any> {
       isDisabled,
     } = this.props;
     return (
-      <div className="pt-limit-settings bordered mb-10">
+      <div className="pt-limit-settings bordered mb-10 white-bg">
         <PanelHeader
           title="prescriber taxonomy settings"
           tooltip="prescriber taxonomy settings"

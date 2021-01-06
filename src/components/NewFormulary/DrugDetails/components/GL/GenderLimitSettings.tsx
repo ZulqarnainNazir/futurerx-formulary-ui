@@ -37,7 +37,7 @@ const GenderLimitSettings = (props) => {
   } = props;
 
   return (
-    <div className="gender-limit-settings bordered mb-10">
+    <div className="gender-limit-settings bordered mb-10 white-bg">
       <PanelHeader
         title="Gender Limit Settings"
         tooltip="Gender Limit Settings"
@@ -88,7 +88,9 @@ const GenderLimitSettings = (props) => {
           <AddIcon/>
           <span className="gender-limit-settings__add-new-form-action-text">Add Gender Age Limit Criteria</span>
         </div> */}
-        <Button label="Apply" onClick={showGridHandler} disabled={isDisabled} />
+        <div className="content-right-align">
+          <Button label="Apply" onClick={showGridHandler} disabled={isDisabled} />
+        </div>
       </div>
     </div>
   );

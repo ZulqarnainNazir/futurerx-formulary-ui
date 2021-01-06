@@ -46,7 +46,7 @@ class ALRemove extends React.Component<any, any> {
     const hasSelected = selectedRowKeys.length > 0;
 
     return (
-      <div className="tab-prremove pr-limit-settings bordered mb-10">
+      <div className="tab-prremove pr-limit-settings bordered mb-10 white-bg">
         <PanelHeader
           title="patient residence settings"
           tooltip="patient residence settings"

@@ -33,7 +33,7 @@ class AgeLimitSettings extends React.Component<any, any> {
   render() {
     return (
       <>
-        <div className="age-limit-settings bordered mb-10">
+        <div className="age-limit-settings bordered mb-10 white-bg">
           <PanelHeader
             title="Age Limit Settings"
             tooltip="Age Limit Settings"

@@ -979,34 +979,36 @@ class DrugDetailPR extends React.Component<any, any> {
 
     return (
       <>
-        <div className="bordered mb-10">
-          <PanelHeader title="patient residence" tooltip="patient residence" />
-          <div className="inner-container bg-light-grey">
-            <div className="mb-10">
-              <PanelGrid
-                panelGridTitle={this.state.panelGridTitle1}
-                panelGridValue={this.state.panelGridValue1}
-                panelTitleAlignment={this.state.panelTitleAlignment1}
-              />
-            </div>
-            <div className="modify-wrapper bordered white-bg">
-              <div className="modify-panel">
-                <div className="icon">
-                  <span>R</span>
-                </div>
-                <div className="switch-box">
-                  <CustomizedSwitches
-                    leftTitle="Modify"
-                    rightTitle="view all"
-                  />
-                </div>
-                <div className="mini-tabs">
-                  <FrxMiniTabs
-                    tabList={this.state.tabs}
-                    activeTabIndex={this.state.activeTabIndex}
-                    onClickTab={this.onClickTab}
-                    disabled={this.props.configureSwitch}
-                  />
+        <div className="p-10 pt-0 bordered bt-none mb-10 white-bg">
+          <div className="bordered">
+            <PanelHeader title="patient residence" tooltip="patient residence" />
+            <div className="inner-container bg-light-grey">
+              <div className="mb-10">
+                <PanelGrid
+                  panelGridTitle={this.state.panelGridTitle1}
+                  panelGridValue={this.state.panelGridValue1}
+                  panelTitleAlignment={this.state.panelTitleAlignment1}
+                />
+              </div>
+              <div className="modify-wrapper bordered white-bg">
+                <div className="modify-panel">
+                  <div className="icon">
+                    <span>R</span>
+                  </div>
+                  <div className="switch-box">
+                    <CustomizedSwitches
+                      leftTitle="Modify"
+                      rightTitle="view all"
+                    />
+                  </div>
+                  <div className="mini-tabs">
+                    <FrxMiniTabs
+                      tabList={this.state.tabs}
+                      activeTabIndex={this.state.activeTabIndex}
+                      onClickTab={this.onClickTab}
+                      disabled={this.props.configureSwitch}
+                    />
+                  </div>
                 </div>
               </div>
             </div>
@@ -1032,7 +1034,7 @@ class DrugDetailPR extends React.Component<any, any> {
         />}
 
         {this.state.showGrid ? (
-          <div className="bordered">
+          <div className="bordered white-bg">
             <div className="header space-between pr-10">
               Drug Grid
               <div className="button-wrapper">
