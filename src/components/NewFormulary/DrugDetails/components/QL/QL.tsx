@@ -555,15 +555,19 @@ class Tier extends React.Component<any, tabsState> {
   }
 
   handleOnChange = (e) => {
-    let tempObject = {
-      ...this.state.quantityAndFillLimitObject,
-      [e.target.name]: Number(e.target.value),
-    };
-    let temError = {
-      ...this.state.errorObject,
-      [e.target.name]: false,
-    };
-
+    var numbers = /^[0-9]+$/;
+    let tempObject = {};
+    let temError = {};
+    if (e.target.value.match(numbers)) {
+      tempObject = {
+        ...this.state.quantityAndFillLimitObject,
+        [e.target.name]: Number(e.target.value),
+      };
+      temError = {
+        ...this.state.errorObject,
+        [e.target.name]: false,
+      };
+    }
     this.setState({
       quantityAndFillLimitObject: tempObject,
       errorObject: temError,
@@ -732,7 +736,7 @@ class Tier extends React.Component<any, tabsState> {
 
           this.props.setAdditionalCriteria(payload);
           // this.setState({ quantityAndFillLimitObject: {} });
-          this.goToSettingSection();
+          // this.goToSettingSection();
           this.showDrugGrid();
 
           this.props
