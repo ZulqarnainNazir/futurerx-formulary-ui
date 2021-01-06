@@ -90,11 +90,11 @@ class CloneFormularyPopup extends React.Component<any, any> {
   };
   onApplyFilterHandler = filters => {
     console.log("filtering from be");
-    //this.listPayload.filter = Array();
-    if (filters && filter.length > 0) {
-      const fetchedKeys = Object.keys(filters);
+    const fetchedKeys = Object.keys(filters);
+    if (fetchedKeys.length > 0) {
       fetchedKeys.map(fetchedProps => {
         if (filters[fetchedProps] && columnFilterMapping[fetchedProps]) {
+          this.listPayload.filter = this.listPayload.filter.filter(element => element['prop'] !== columnFilterMapping[fetchedProps]);
           const fetchedOperator =
             filters[fetchedProps][0].condition === "is like"
               ? "is_like"
@@ -116,9 +116,11 @@ class CloneFormularyPopup extends React.Component<any, any> {
           });
         }
       });
-      console.log("Filters:" + JSON.stringify(this.listPayload.filter));
-      this.fetchFormularies(this.listPayload);
+    } else {
+      this.listPayload.filter = Array();
     }
+    console.log("Filters:" + JSON.stringify(this.listPayload.filter));
+    this.fetchFormularies(this.listPayload);
   };
 
   /**
@@ -129,12 +131,12 @@ class CloneFormularyPopup extends React.Component<any, any> {
    */
   applyMultiSortHandler = (sorter, multiSortedInfo) => {
     console.log('Multisort info:' + JSON.stringify(sorter));
-    this.setState(  {
-			isGridMultiSorted: true,
-			isGridSingleSorted: false,
-			gridMultiSortedInfo: multiSortedInfo,
-			gridSingleSortInfo: null,
-		})
+    this.setState({
+      isGridMultiSorted: true,
+      isGridSingleSorted: false,
+      gridMultiSortedInfo: multiSortedInfo,
+      gridSingleSortInfo: null,
+    })
 
     if (sorter && sorter.length > 0) {
       let uniqueKeys = Array();

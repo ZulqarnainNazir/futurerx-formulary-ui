@@ -16,7 +16,15 @@ import { scrollPage } from "../../../../../../utils/formulary";
 import { Tag, Space } from "antd";
 import Tags from "./Tags";
 import { ReactComponent as CrossCircleWhiteBGIcon } from "../../../../../../assets/icons/crosscirclewhitebg.svg";
-import { saveGDM, editGDM,getSTGroupDetails } from "../../../../../../redux/slices/formulary/gdm/gdmSlice";
+import {
+  saveGDM,
+  editGDM,
+  getSTGroupDetails,
+} from "../../../../../../redux/slices/formulary/gdm/gdmSlice";
+// import {
+//   saveGDM,
+//   editGDM,
+// } from "../../../../../../redux/slices/formulary/gdm/gdmSlice";
 import {
   getStGrouptDescription,
   getDrugLists,
@@ -30,6 +38,7 @@ import {
   getAdditionalCriteriaSectionList,
 } from "../../../../NewAdvanceSearch/advanceSearchMock";
 import AdditionalCriteriaContainer from "../../../../NewAdvanceSearch/AdditionalCriteriaContainer/AdditionalCriteriaContainer";
+import "./PaNewGroupForm.scss";
 
 interface Props {
   tooltip?: string;
@@ -108,8 +117,9 @@ function mapDispatchToProps(dispatch) {
     getStGrouptDescription: (a) => dispatch(getStGrouptDescription(a)),
     getDrugLists: (a) => dispatch(getDrugLists(a)),
     getStGrouptDescriptions: (arg) => dispatch(getStGrouptDescriptions(arg)),
-    getStGrouptDescriptionVersions: (arg) => dispatch(getStGrouptDescriptionVersions(arg)),
-    getSTGroupDetails:(arg)=>dispatch(getSTGroupDetails(arg)),
+    getStGrouptDescriptionVersions: (arg) =>
+      dispatch(getStGrouptDescriptionVersions(arg)),
+    getSTGroupDetails: (arg) => dispatch(getSTGroupDetails(arg)),
   };
 }
 
@@ -121,7 +131,9 @@ function NewGroup(props: any) {
   const [errorClass, setErrorClass] = React.useState("");
   const [drug_list_ids, setDrug_list_ids] = React.useState([]);
   const [drug_list, setDrug_list] = React.useState([]);
-  const [isAdditionalCriteriaOpen, toggleAdditionalCriteriaOpen] = useState(false);
+  const [isAdditionalCriteriaOpen, toggleAdditionalCriteriaOpen] = useState(
+    false
+  );
   const [isSetupComplete, isSetUpComplete] = React.useState(false);
 
   const [additionalCriteria, setAdditionalCriteria] = useState(null);
@@ -173,12 +185,14 @@ function NewGroup(props: any) {
 
   useEffect(() => {
     updateFormData(initialFormData);
-    isSetUpComplete(props.isSetUpComplete)
+    isSetUpComplete(props.isSetUpComplete);
     setDrug_list_ids([]);
     if (Object.keys(props.StGDData).length > 0) {
       if (!changeEvent) {
         const verLength = Object.keys(props.version).length;
-        const isEditable = props.version[verLength - 1] ? props.version[verLength - 1].is_setup_complete : false;
+        const isEditable = props.version[verLength - 1]
+          ? props.version[verLength - 1].is_setup_complete
+          : false;
         setEditable(isEditable);
       }
       updateFormData({
@@ -275,32 +289,50 @@ function NewGroup(props: any) {
     formData["drug_list_ids"] = drug_list_ids;
     formData["removed_drug_list_ids"] = [2];
     let requestData = {};
-    if (formType == 1 && props.formType==1) {
+    if (formType == 1 && props.formType == 1) {
       requestData["messageBody"] = { ...formData };
       if (additionalCriteria != null) {
         requestData["messageBody"]["um_criteria"] = additionalCriteria;
       }
       requestData["lob_type"] = props.formulary_lob_id;
       requestData["apiPart"] = "api/1/mcr-st-group-description";
-      let id_st_group_description = formData["id_st_group_description"] ? formData["id_st_group_description"] : 0;
-      requestData["pathParams"] = "/" + id_st_group_description + "/" + props?.formulary_id + "?entity_id=0";
+      let id_st_group_description = formData["id_st_group_description"]
+        ? formData["id_st_group_description"]
+        : 0;
+      requestData["pathParams"] =
+        "/" +
+        id_st_group_description +
+        "/" +
+        props?.formulary_id +
+        "?entity_id=0";
       props.editGDM(requestData).then((json) => {
         if (json?.payload && json?.payload?.success?.data?.code === "200") {
           showMessage("Saved Successfully", "success");
           let apiDetails = {};
           apiDetails["lob_type"] = props.formulary_lob_id;
-          apiDetails["pathParams"] = "/" + props?.client_id + "?entity_id=" + props?.formulary_id;
+          apiDetails["pathParams"] =
+            "/" + props?.client_id + "?entity_id=" + props?.formulary_id;
           props.getStGrouptDescriptions(apiDetails);
-          
-          let id_base_st_group_description = json.payload.id_base_st_group_description?json.payload.id_base_st_group_description:props.saveGdm.current_group_id
+
+          let id_base_st_group_description = json.payload
+            .id_base_st_group_description
+            ? json.payload.id_base_st_group_description
+            : props.saveGdm.current_group_id;
           apiDetails["pathParams"] = "/" + id_base_st_group_description;
-          props.getStGrouptDescriptionVersions(apiDetails).then(json=>{
-            const isEditable = json.payload.data.length>0&&json.payload.data.find(val=>val.id_st_group_description===id_st_group_description);
-            props.selectGroup(id_base_st_group_description,isEditable.is_setup_complete)
-            isSetUpComplete(isEditable.is_setup_complete)
+          props.getStGrouptDescriptionVersions(apiDetails).then((json) => {
+            const isEditable =
+              json.payload.data.length > 0 &&
+              json.payload.data.find(
+                (val) => val.id_st_group_description === id_st_group_description
+              );
+            props.selectGroup(
+              id_base_st_group_description,
+              isEditable.is_setup_complete
+            );
+            isSetUpComplete(isEditable.is_setup_complete);
           });
         } else if (json?.payload?.status && json?.payload?.status != 200) {
-          isSetUpComplete(false)
+          isSetUpComplete(false);
           setShowHeader(0);
           showMessage(json.payload.data.message, "error");
         } else {
@@ -314,7 +346,8 @@ function NewGroup(props: any) {
         requestData["messageBody"]["um_criteria"] = additionalCriteria;
       }
       requestData["lob_type"] = props.formulary_lob_id;
-      requestData["apiPart"] = "api/1/mcr-st-group-description/" + props.client_id;
+      requestData["apiPart"] =
+        "api/1/mcr-st-group-description/" + props.client_id;
       requestData["pathParams"] = "/" + props?.formulary_id + "?entity_id=0";
       props.saveGDM(requestData).then((json) => {
         if (json?.payload && json?.payload?.success?.data?.code === "200") {
@@ -322,26 +355,36 @@ function NewGroup(props: any) {
           let apiDetails = {};
           setFormType(1);
 
-
           props.getSTGroupDetails({
             formulary_id: props.formulary_id,
-            current_group_id: json.payload.success.data.id_base_st_group_description,
-            current_group_des_id: json.payload.success.data.id_st_group_description
-          })
+            current_group_id:
+              json.payload.success.data.id_base_st_group_description,
+            current_group_des_id:
+              json.payload.success.data.id_st_group_description,
+          });
 
-          formData["id_st_group_description"] = json.payload.success.data.id_st_group_description;
+          formData["id_st_group_description"] =
+            json.payload.success.data.id_st_group_description;
 
           apiDetails["lob_type"] = props.formulary_lob_id;
-          apiDetails["pathParams"] = "/" + props?.client_id + "?entity_id=" + props?.formulary_id;
-          
+          apiDetails["pathParams"] =
+            "/" + props?.client_id + "?entity_id=" + props?.formulary_id;
+
           props.getStGrouptDescriptions(apiDetails);
-          apiDetails["pathParams"] = "/" + json.payload.success.data.id_base_st_group_description;
-          props.getStGrouptDescriptionVersions(apiDetails).then(json=>{
-            const isEditable = json.payload.data.length>0&&json.payload.data.find(val=>val.id_st_group_description===formData["id_st_group_description"]);
-            isSetUpComplete(isEditable.is_setup_complete)
-          })
+          apiDetails["pathParams"] =
+            "/" + json.payload.success.data.id_base_st_group_description;
+          props.getStGrouptDescriptionVersions(apiDetails).then((json) => {
+            const isEditable =
+              json.payload.data.length > 0 &&
+              json.payload.data.find(
+                (val) =>
+                  val.id_st_group_description ===
+                  formData["id_st_group_description"]
+              );
+            isSetUpComplete(isEditable.is_setup_complete);
+          });
         } else if (json?.payload?.status && json?.payload?.status != 200) {
-          isSetUpComplete(false)
+          isSetUpComplete(false);
           setShowHeader(0);
           showMessage(json.payload.data.message, "error");
         } else {
@@ -356,30 +399,41 @@ function NewGroup(props: any) {
     setDrug_list_ids(val);
   };
   return (
-    <div className="new-group-des">
+    <div className="new-group-des __root-pa-gd-popup">
       <div className="panel header">
         <span>
-          {(props.formType > 0 || showHeader > 0) && formData.st_group_description_name
+          {(props.formType > 0 || showHeader > 0) &&
+          formData.st_group_description_name
             ? formData.st_group_description_name
             : props.title}
         </span>
         {props.isPopUpView}
-        {(props.isPopUpView) && (
-          <div className="button-wrapper">
-          <Button
-            label="Select This Group"
-            className="Button"
-            onClick={( event) => props.selectGroupDescriptionClick(props.saveGdm.current_group_id)}
-          />
+        {props.isPopUpView && (
+          <div className="button-wrapper button-flex-container">
+            <Button
+              label="Select This Group"
+              className="Button auto-width"
+              onClick={(event) =>
+                props.selectGroupDescriptionClick(
+                  props.saveGdm.current_group_id
+                )
+              }
+            />
           </div>
         )}
       </div>
-      
+
       {(props.formType > 0 || showHeader > 0) && (
         <GroupHeader
-          popuptitle={formData.st_group_description_name ? formData.st_group_description_name : props.title}
-          onChange={onChange} isPopUpView={props.isPopUpView}
-          isSetupComplete={isSetupComplete}/>
+          popuptitle={
+            formData.st_group_description_name
+              ? formData.st_group_description_name
+              : props.title
+          }
+          onChange={onChange}
+          isPopUpView={props.isPopUpView}
+          isSetupComplete={isSetupComplete}
+        />
       )}
       {props.formulary_lob_id === 1 && (
         <div className="inner-container">
@@ -395,19 +449,31 @@ function NewGroup(props: any) {
               >
                 <FormControlLabel
                   value="FAOTC"
-                  control={<Radio checked={formData.file_type === "FAOTC" ? true : false} />}
+                  control={
+                    <Radio
+                      checked={formData.file_type === "FAOTC" ? true : false}
+                    />
+                  }
                   label="Formulary/OTC"
                   disabled={editable}
                 />
                 <FormControlLabel
                   value="ExD"
-                  control={<Radio checked={formData.file_type === "ExD" ? true : false} />}
+                  control={
+                    <Radio
+                      checked={formData.file_type === "ExD" ? true : false}
+                    />
+                  }
                   label="Excluded"
                   disabled={editable}
                 />
                 <FormControlLabel
                   value="ADD"
-                  control={<Radio checked={formData.file_type === "ADD" ? true : false} />}
+                  control={
+                    <Radio
+                      checked={formData.file_type === "ADD" ? true : false}
+                    />
+                  }
                   label="ADD"
                   disabled={editable}
                 />
@@ -449,7 +515,10 @@ function NewGroup(props: any) {
           </div>
           {props.formType === 0 && (
             <div className="setting-1 mb-20">
-              <span>What type of drugs will this group contain? Select all that apply.</span>
+              <span>
+                What type of drugs will this group contain? Select all that
+                apply.
+              </span>
               <div className="marketing-material-chks checkbox-group">
                 <div className="checkbox">
                   <Checkbox
@@ -517,7 +586,8 @@ function NewGroup(props: any) {
                 <Grid item xs={6}>
                   <div className="group">
                     <label>
-                      ST CRITERIA CHANGE INDICATOR<span className="astrict">*</span>
+                      ST CRITERIA CHANGE INDICATOR
+                      <span className="astrict">*</span>
                     </label>
                     <input
                       type="text"
@@ -558,7 +628,8 @@ function NewGroup(props: any) {
             </div>
 
             <span>
-              do you want to add additional criteria?<span className="astrict">*</span>
+              do you want to add additional criteria?
+              <span className="astrict">*</span>
             </span>
             <div className="marketing-material radio-group">
               <RadioGroup
@@ -575,7 +646,12 @@ function NewGroup(props: any) {
                   disabled={editable}
                   onClick={openAdditionalCriteria}
                 />
-                <FormControlLabel value={false} control={<Radio />} label="No" disabled={editable} />
+                <FormControlLabel
+                  value={false}
+                  control={<Radio />}
+                  label="No"
+                  disabled={editable}
+                />
               </RadioGroup>
               {isAdditionalCriteriaOpen && props.formulary_lob_id == 1 ? (
                 <AdvanceSearchContainer
@@ -587,38 +663,45 @@ function NewGroup(props: any) {
             </div>
           </div>
 
-          {(props.isPopUpView) && (
+          {props.isPopUpView && (
             <div>
-                  <AdditionalCriteriaContainer criteriaList={getAdditionalCriteriaSectionList()}
-              handleChildDataSave={()=>{}}  isReadOnly={true}/>
+              <AdditionalCriteriaContainer
+                criteriaList={getAdditionalCriteriaSectionList()}
+                handleChildDataSave={() => {}}
+                isReadOnly={true}
+              />
             </div>
-
           )}
-           {(!props.isPopUpView) && (
-          <div className="button-wrapper">
-            <Button label="Save Version Progress" className="Button" onClick={(event) => handleSubmit(event, false)} />
-            <Button
-              label="Version to Initiate Change Request"
-              className="Button"
-              onClick={(event) => handleSubmit(event, false)}
-            />
-            <Button
-              label="Version Submitted to CMS"
-              className="Button"
-              onClick={(event) => handleSubmit(event, true)}
-            />
-          </div>
-           )}
+          {!props.isPopUpView && (
+            <div className="button-wrapper">
+              <Button
+                label="Save Version Progress"
+                className="Button"
+                onClick={(event) => handleSubmit(event, false)}
+              />
+              <Button
+                label="Version to Initiate Change Request"
+                className="Button"
+                onClick={(event) => handleSubmit(event, false)}
+              />
+              <Button
+                label="Version Submitted to CMS"
+                className="Button"
+                onClick={(event) => handleSubmit(event, true)}
+              />
+            </div>
+          )}
         </div>
       )}
       {props.formulary_lob_id === 4 && (
-        <div className="inner-container">
+        <div className="inner-container input-border-none">
           <div className="setting-1">
             <Grid container className="mb-20">
               <Grid className="additional-criteria" item xs={12}>
                 <br />
                 <label>
-                  What is the default pa type for this description? <span className="astrict">*</span>
+                  What is the default pa type for this description?{" "}
+                  <span className="astrict">*</span>
                 </label>{" "}
                 <Space size="large">
                   <div className="marketing-material radio-group">
@@ -629,11 +712,11 @@ function NewGroup(props: any) {
                       onClick={() =>
                         updateFormData({
                           ...formData,
-                          id_st_type: 7
+                          id_st_type: 7,
                         })
                       }
                       disabled={props.editable}
-                      checked={formData.id_st_type===7}
+                      checked={formData.id_st_type === 7}
                     />
                     <RadioButton
                       label="New Starts Only"
@@ -646,7 +729,7 @@ function NewGroup(props: any) {
                         })
                       }
                       disabled={props.editable}
-                      checked={formData.id_st_type===8}
+                      checked={formData.id_st_type === 8}
                     />
                   </div>
                 </Space>
@@ -685,7 +768,7 @@ function NewGroup(props: any) {
               </Grid>
 
               <Grid item xs={12}>
-                <div className="group">
+                <div className="group tags-input-border-none">
                   <Fragment>
                     <Grid item xs={6}>
                       <label className="st-label">
@@ -705,7 +788,8 @@ function NewGroup(props: any) {
 
               <Grid className="additional-criteria" item xs={12}>
                 <label>
-                  do you want to add additional criteria? <span className="astrict">*</span>
+                  do you want to add additional criteria?{" "}
+                  <span className="astrict">*</span>
                 </label>
                 <Space size="large">
                   <div className="marketing-material radio-group">
@@ -757,23 +841,27 @@ function NewGroup(props: any) {
                         </Grid>
                     </Grid>
                 </div>)} */}
-          {(props.isPopUpView) && (
-            <div>
-                  <AdditionalCriteriaContainer criteriaList={getAdditionalCriteriaSectionList()}
-              handleChildDataSave={()=>{}}  isReadOnly={true}/>
-            </div>
-
-          )}
-           {(!props.isPopUpView) && (
-          <div className="button-wrapper st-button-wrapper">
-            <Button label="Save Version Progress" className="Button" onClick={(event) => handleSubmit(event, false)} />
-            <Button
-              label="Save Final Version And Continue"
-              className="Button"
-              onClick={(event) => handleSubmit(event, true)}
+          {props.isPopUpView && (
+            <AdditionalCriteriaContainer
+              criteriaList={getAdditionalCriteriaSectionList()}
+              handleChildDataSave={() => {}}
+              isReadOnly={props.isPopUpView}
             />
-          </div>
-           )}
+          )}
+          {!props.isPopUpView && (
+            <div className="button-wrapper st-button-wrapper">
+              <Button
+                label="Save Version Progress"
+                className="Button"
+                onClick={(event) => handleSubmit(event, false)}
+              />
+              <Button
+                label="Save Final Version And Continue"
+                className="Button"
+                onClick={(event) => handleSubmit(event, true)}
+              />
+            </div>
+          )}
         </div>
       )}
       <ToastContainer />

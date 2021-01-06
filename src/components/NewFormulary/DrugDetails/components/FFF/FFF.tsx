@@ -97,7 +97,7 @@ class DrugDetailFFF extends React.Component<any, any> {
     data: [],
     tabs: [
       { id: 1, text: "Replace", disabled: false  },
-      { id: 2, text: "Append", disabled: false  },
+      { id: 2, text: "Append", disabled: true  },
       { id: 3, text: "Remove", disabled: false  },
     ],
     listCount: 0,
@@ -469,7 +469,7 @@ class DrugDetailFFF extends React.Component<any, any> {
     } else {
       this.setState({tabs:[
         { id: 1, text: "Replace", disabled: false },
-        { id: 2, text: "Append", disabled: false },
+        { id: 2, text: "Append", disabled: true },
         { id: 3, text: "Remove", disabled: false },
       ]});
     }

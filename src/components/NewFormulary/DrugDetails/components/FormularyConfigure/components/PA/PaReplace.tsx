@@ -275,7 +275,7 @@ class PaReplace extends React.Component<any, any> {
         selectedPaType: null,
         is_additional_criteria_defined: false,
       });
-      this.populateGridData();
+      this.populateGridData(null,nextProps.configureSwitch );
     } else {
       this.setState({ tierGridContainer: false });
     }
@@ -492,7 +492,7 @@ class PaReplace extends React.Component<any, any> {
     this.setState({ [tmp_key]: tmp_value });
   };
 
-  populateGridData = (searchBody = null) => {
+  populateGridData = (searchBody = null, switchState=false) => {
     console.log("Populate grid data is called");
     let apiDetails = {};
 
@@ -510,7 +510,7 @@ class PaReplace extends React.Component<any, any> {
         searchBody
       );
     }
-    // debugger;
+    debugger;
     let allFilters = Array();
     let filterProps = Array();
     this.state.filter.map(filterInfo => {
@@ -524,6 +524,10 @@ class PaReplace extends React.Component<any, any> {
     });
 
     apiDetails["messageBody"]["filter"] = allFilters;
+    // if (this.state.sort_by && this.state.sort_by.length ==0){
+    //   this.state.sort_by.push({ key: 'drug_label_name', value: 'asc' });
+    // }
+    
     if (this.state.sort_by && this.state.sort_by.length > 0) {
       let keys = Array();
       let values = Array();
@@ -538,7 +542,7 @@ class PaReplace extends React.Component<any, any> {
     }
     let tmp_fileType: any = "";
 
-    if (this.props.configureSwitch) {
+    if (!(this.props.configureSwitch || switchState)) {
       apiDetails["messageBody"][
         "base_pa_group_description_id"
       ] = this.state.selectedGroupDescription;
@@ -737,16 +741,17 @@ class PaReplace extends React.Component<any, any> {
     if (fetchedKeys && fetchedKeys.length > 0) {
       fetchedKeys.map((fetchedProps) => {
         if (filters[fetchedProps]) {
+          this.state.filter = this.state.filter.filter(element => element['prop'] !== fetchedProps);
           const fetchedOperator =
             filters[fetchedProps][0].condition === "is like"
               ? "is_like"
               : filters[fetchedProps][0].condition === "is not"
-              ? "is_not"
-              : filters[fetchedProps][0].condition === "is not like"
-              ? "is_not_like"
-              : filters[fetchedProps][0].condition === "does not exist"
-              ? "does_not_exist"
-              : filters[fetchedProps][0].condition;
+                ? "is_not"
+                : filters[fetchedProps][0].condition === "is not like"
+                  ? "is_not_like"
+                  : filters[fetchedProps][0].condition === "does not exist"
+                    ? "does_not_exist"
+                    : filters[fetchedProps][0].condition;
           const fetchedValues =
             filters[fetchedProps][0].value !== ""
               ? [filters[fetchedProps][0].value.toString()]
@@ -758,14 +763,17 @@ class PaReplace extends React.Component<any, any> {
           });
         }
       });
-      console.log("Filters:" + JSON.stringify(this.state.filter));
-      if (this.props.advancedSearchBody) {
-        this.populateGridData(this.props.advancedSearchBody);
-      } else {
-        this.populateGridData();
-      }
+    } else {
+      this.state.filter = Array();
+    }
+    console.log("Filters:" + JSON.stringify(this.state.filter));
+    if (this.props.advancedSearchBody) {
+      this.populateGridData(this.props.advancedSearchBody);
+    } else {
+      this.populateGridData();
     }
   };
+
 
   onApplySortHandler = (key, order, sortedInfo) => {
     console.log("sort details ", key, order);

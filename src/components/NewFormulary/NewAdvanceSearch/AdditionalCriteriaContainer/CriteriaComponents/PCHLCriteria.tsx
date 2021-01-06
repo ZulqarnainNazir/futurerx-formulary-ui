@@ -25,7 +25,7 @@ const PCHLCriteria = (props) => {
   ));
 
   return (
-    <div className="root-pchl-limit-settings bordered mb-10">
+    <div className="root-pchl-limit-settings mb-10">
       <div className="inner-container">
         <StatusContentFormPanel
           title="Prerequisite Claims History & Lookback"

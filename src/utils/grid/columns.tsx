@@ -2236,6 +2236,17 @@ export const QlColumns: () => Column<any>[] = () => {
 
 export const QlRemoveColumns: () => Column<any>[] = () => {
   return [
+    // {
+    //   position: 1,
+    //   textCase: "upper",
+    //   // pixelWidth: 20,
+    //   isFilterable: false,
+    //   key: "checkbox",
+    //   fixed: "left",
+    //   displayTitle: "",
+    //   headerCellSelection: true,
+    //   hidden: false,
+    // },
     {
       position: 1,
       sorter: {},
@@ -2244,8 +2255,8 @@ export const QlRemoveColumns: () => Column<any>[] = () => {
       key: "quantity",
       displayTitle: "Quantity",
       isFilterable: true,
-      dataType: "string",
-      filters: textFilters,
+      dataType: "number",
+      filters: numberFilters,
       hidden: false,
       sortDirections: ["ascend", "descend"],
     },
@@ -2257,8 +2268,8 @@ export const QlRemoveColumns: () => Column<any>[] = () => {
       key: "quantity_limit_days",
       displayTitle: "Days",
       isFilterable: true,
-      dataType: "string",
-      filters: textFilters,
+      dataType: "number",
+      filters: numberFilters,
       hidden: false,
       sortDirections: ["ascend", "descend"],
     },
@@ -2270,8 +2281,8 @@ export const QlRemoveColumns: () => Column<any>[] = () => {
       key: "quantity_limit_period_of_time",
       displayTitle: "Period of Time in Days",
       isFilterable: true,
-      dataType: "string",
-      filters: textFilters,
+      dataType: "number",
+      filters: numberFilters,
       hidden: false,
       sortDirections: ["ascend", "descend"],
     },
@@ -2284,8 +2295,8 @@ export const QlRemoveColumns: () => Column<any>[] = () => {
       key: "fills_allowed",
       displayTitle: "Fills Allowed",
       isFilterable: true,
-      dataType: "string",
-      filters: textFilters,
+      dataType: "number",
+      filters: numberFilters,
       hidden: false,
       sortDirections: ["ascend", "descend"],
     },
@@ -2297,8 +2308,8 @@ export const QlRemoveColumns: () => Column<any>[] = () => {
       key: "full_limit_period_of_time",
       displayTitle: "Fills Limit Period of Time in Days",
       isFilterable: true,
-      dataType: "string",
-      filters: textFilters,
+      dataType: "number",
+      filters: numberFilters,
       hidden: false,
       sortDirections: ["ascend", "descend"],
     },
@@ -2517,7 +2528,9 @@ export const formularyDetailsGridColumns: (
       key: "step",
       displayTitle: "step",
       customContent: (props) => (
-        <div className="formulary-step" title={props.data.step.step_name}>{props.data.step.step}</div>
+        <div className="formulary-step" title={props.data.step.step_name}>
+          {props.data.step.step}
+        </div>
       ),
       isFilterable: true,
       dataType: "string",
