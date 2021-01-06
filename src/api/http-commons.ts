@@ -14,6 +14,13 @@ export const SEARCH_DDID = "api/1/formulary-ddids/";
 export const SEARCH_LABEL_NAME = "api/1/formulary-drug-label-names/";
 export const SEARCH_RXCUI = "api/1/formulary-rxcuis/";
 
+export const SEARCH_DDID_FULL = "api/1/ddids/";
+export const SEARCH_GPI_FULL = "api/1/gpis/";
+export const SEARCH_LABEL_NAME_FULL = "api/1/drug-label-names/";
+export const SEARCH_CLASS_FULL = "api/1/classes/";
+export const SEARCH_CATEGORY_FULL = "api/1/categories/";
+export const SEARCH_RXCUI_FULL = "api/1/rxcuis/";
+
 export const COMPARE_FORMULARY_EXPORT_EXCEL = "api/1/compare-activity-export/";
 
 // additional criteria commom uri
