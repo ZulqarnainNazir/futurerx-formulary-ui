@@ -1338,7 +1338,7 @@ export const QlColumns: () => Column<any>[] = () => {
     {
       position: 1,
       textCase: "upper",
-      pixelWidth: 20,
+      // pixelWidth: 20,
       isFilterable: false,
       key: "checkbox",
       fixed: "left",
@@ -2227,6 +2227,17 @@ export const QlRemoveColumns: () => Column<any>[] = () => {
   return [
     {
       position: 1,
+      textCase: "upper",
+      // pixelWidth: 20,
+      isFilterable: false,
+      key: "checkbox",
+      fixed: "left",
+      displayTitle: "",
+      headerCellSelection: true,
+      hidden: false,
+    },
+    {
+      position: 2,
       sorter: {},
       textCase: "upper",
       pixelWidth: 100,
@@ -2239,7 +2250,7 @@ export const QlRemoveColumns: () => Column<any>[] = () => {
       sortDirections: ["ascend", "descend"],
     },
     {
-      position: 2,
+      position: 3,
       sorter: {},
       textCase: "upper",
       pixelWidth: 100,
@@ -2252,7 +2263,7 @@ export const QlRemoveColumns: () => Column<any>[] = () => {
       sortDirections: ["ascend", "descend"],
     },
     {
-      position: 3,
+      position: 4,
       sorter: {},
       textCase: "upper",
       pixelWidth: 100,
@@ -2266,7 +2277,7 @@ export const QlRemoveColumns: () => Column<any>[] = () => {
     },
 
     {
-      position: 4,
+      position: 5,
       sorter: {},
       textCase: "upper",
       pixelWidth: 100,
@@ -2279,7 +2290,7 @@ export const QlRemoveColumns: () => Column<any>[] = () => {
       sortDirections: ["ascend", "descend"],
     },
     {
-      position: 5,
+      position: 6,
       sorter: {},
       textCase: "upper",
       pixelWidth: 100,
@@ -2506,7 +2517,9 @@ export const formularyDetailsGridColumns: (
       key: "step",
       displayTitle: "step",
       customContent: (props) => (
-        <div className="formulary-step" title={props.data.step.step_name}>{props.data.step.step}</div>
+        <div className="formulary-step" title={props.data.step.step_name}>
+          {props.data.step.step}
+        </div>
       ),
       isFilterable: true,
       dataType: "string",

@@ -79,6 +79,7 @@ interface tabsState {
   drugGridData: any;
   quantityAndFillLimitObject: any; //newParamterType;
   selectedDrugs: any;
+  prevSelectedDrugs: any;
   drugData: any;
   drugCount: number;
   selectedCriteria: any;
@@ -98,6 +99,7 @@ interface tabsState {
   hiddenColumns: any;
   filter: any;
   sort_by: any;
+  isSettingsApplied: boolean;
 }
 
 class Tier extends React.Component<any, tabsState> {
@@ -117,6 +119,7 @@ class Tier extends React.Component<any, tabsState> {
     drugGridData: [],
     quantityAndFillLimitObject: {},
     selectedDrugs: Array(),
+    prevSelectedDrugs: Array(),
     drugData: [],
     selectedCriteria: [],
     selectedTab: constants.TYPE_REPLACE,
@@ -140,6 +143,7 @@ class Tier extends React.Component<any, tabsState> {
     isGridSingleSorted: false,
     gridMultiSortedInfo: [],
     isGridMultiSorted: false,
+    isSettingsApplied: false,
   };
 
   onClickTab = (selectedTabIndex: number) => {
@@ -149,13 +153,14 @@ class Tier extends React.Component<any, tabsState> {
       if (index === selectedTabIndex) {
         activeTabIndex = index;
       }
+      console.log(activeTabIndex);
       return tab;
     });
     this.setState({
       tabs,
       activeTabIndex,
       drugGridContainer: false,
-      quantityAndFillLimitObject: {},
+      // quantityAndFillLimitObject: {},
       errorObject: {},
       filter: [],
       sort_by: [],
@@ -163,6 +168,8 @@ class Tier extends React.Component<any, tabsState> {
       gridMultiSortedInfo: [],
       isGridMultiSorted: false,
       isGridSingleSorted: false,
+      selectedDrugs: Array(),
+      prevSelectedDrugs: Array(),
     });
   };
 
@@ -340,7 +347,7 @@ class Tier extends React.Component<any, tabsState> {
     let tmpData = json.payload.result;
     var data: any[] = [];
     var switchState = this.props.switchState;
-    let selectedDrugs: any = [...this.state.selectedDrugs];
+    let selectedDrugs: any = [...this.state.prevSelectedDrugs];
     let count = 1;
     var gridData: any = tmpData.map(function (el) {
       var element = Object.assign({}, el);
@@ -366,7 +373,7 @@ class Tier extends React.Component<any, tabsState> {
           // decide on class names based on data properties conditionally
           // the required styles are added under each classNames in FrxGrid.scss (towards the end)
           //table-row--red-font (for red) table-row--green-font (for green) table-row--blue-font for default (for blue)
-          gridItem["rowStyle"] = "table-row--blue-font";
+          gridItem["rowStyle"] = "table-row--disabled-font";
         }
       }
       gridItem["covered_min_ages"] = element.covered_min_ages
@@ -723,7 +730,7 @@ class Tier extends React.Component<any, tabsState> {
 
           this.props.setAdditionalCriteria(payload);
           // this.setState({ quantityAndFillLimitObject: {} });
-          this.goToSettingSection();
+          // this.goToSettingSection();
           this.showDrugGrid();
 
           this.props
@@ -732,6 +739,12 @@ class Tier extends React.Component<any, tabsState> {
               console.log("[new ql summary]", json);
               this.initailizeQlSummary(json);
             });
+          this.state.isSettingsApplied = true;
+          this.state.prevSelectedDrugs = [
+            ...this.state.prevSelectedDrugs,
+            ...this.state.selectedDrugs,
+          ];
+          this.state.selectedDrugs = Array();
           // window.scrollTo(0, 50);
         } else {
           showMessage("Failure", "error");
@@ -799,7 +812,7 @@ class Tier extends React.Component<any, tabsState> {
     isSelected: boolean
   ) => {
     // debugger;
-    console.log("data row ", selectedRow, isSelected);
+    console.log("data row ", selectedRow, isSelected, key);
     // this.state.selectedRowKeys = [
     //   ...this.state.selectedRowKeys,
     //   selectedRow.key,
@@ -1068,7 +1081,9 @@ class Tier extends React.Component<any, tabsState> {
   };
 
   componentDidUpdate = (prevState) => {
-    // debugger;
+    debugger;
+    console.log("component update");
+
     // if (
     //   this.state.drugGridContainer &&
     //   Object.keys(this.state.quantityAndFillLimitObject).length > 0
@@ -1081,7 +1096,7 @@ class Tier extends React.Component<any, tabsState> {
     // }
   };
   UNSAFE_componentWillReceiveProps(nextProps) {
-    // debugger;
+    debugger;
     if (nextProps.switchState) {
       this.showDrugGrid({ ...nextProps.advancedSearchBody });
       this.setState({
@@ -1090,6 +1105,7 @@ class Tier extends React.Component<any, tabsState> {
           return tab;
         }),
         is_additional_criteria_defined: false,
+        isSettingsApplied: false,
       });
       this.onClickTab(0);
     } else {
@@ -1099,8 +1115,9 @@ class Tier extends React.Component<any, tabsState> {
           { id: 2, text: "Append" },
           { id: 3, text: "Remove" },
         ],
-        drugGridContainer: false,
       });
+      if (this.state.isSettingsApplied) return;
+      this.state.drugGridContainer = false;
     }
 
     if (nextProps.advancedSearchBody && nextProps.populateGrid) {
@@ -1145,7 +1162,7 @@ class Tier extends React.Component<any, tabsState> {
                       title="SELECT Quantity Limit CRITERIA"
                       tooltip="This section allows for Addition or Removal of product only. To define coverage for all Medicare covered and/or Supplemental products, go to Drug Details"
                     />
-                    <div className="inner-container tier-checkbox">
+                    <div className="inner-container ">
                       <div className="mb-10">
                         <PanelGrid
                           panelGridTitle={this.state.panelGridTitle}
@@ -1225,7 +1242,7 @@ class Tier extends React.Component<any, tabsState> {
                 ></Button>
               </div>
             </Grid>
-            {this.state.drugGridContainer && dataLength && (
+            {this.state.drugGridContainer && (
               <div className="select-drug-from-table">
                 <div className="bordered white-bg">
                   {/* {!this.props.switchState && ( */}

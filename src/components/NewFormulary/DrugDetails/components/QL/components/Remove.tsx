@@ -32,6 +32,8 @@ class Remove extends Component<any, State> {
     drugGridData: [],
     drugData: [],
     filter: Array(),
+    selectedRowKeys: Array(),
+    fixedSelectedRows: Array(),
   };
 
   onSelectedTableRowChanged = (selectedRowKeys) => {
@@ -124,6 +126,69 @@ class Remove extends Component<any, State> {
     console.log("update remove compoenent");
   }
 
+  // rowSelectionChangeFromCell = (
+  //   key: string,
+  //   selectedRow: any,
+  //   isSelected: boolean
+  // ) => {
+  //   this.onSelectedTableRowChanged(selectedRow.key);
+  // };
+
+  rowSelectionChangeFromCell = (
+    key: string,
+    selectedRow: any,
+    isSelected: boolean
+  ) => {
+    // debugger;
+    console.log("data row ", selectedRow, isSelected, key);
+    // this.state.selectedRowKeys = [
+    //   ...this.state.selectedRowKeys,
+    //   selectedRow.key,
+    // ];
+    if (!selectedRow["isDisabled"]) {
+      if (isSelected) {
+        const data = this.state.drugGridData.map((d: any) => {
+          if (d.key === selectedRow.key) d["isChecked"] = true;
+          // else d["isChecked"] = false;
+          return d;
+        });
+        const selectedRowKeys = [
+          ...this.state.selectedRowKeys,
+          selectedRow.key,
+        ];
+        console.log("selected row keys ", selectedRowKeys);
+        const selectedRows: number[] = selectedRowKeys.filter(
+          (k) => this.state.fixedSelectedRows.indexOf(k) < 0
+        );
+        this.onSelectedTableRowChanged(selectedRowKeys);
+
+        this.setState({ drugGridData: data });
+      } else {
+        const data = this.state.drugGridData.map((d: any) => {
+          if (d.key === selectedRow.key) d["isChecked"] = false;
+          // else d["isChecked"] = false;
+          return d;
+        });
+
+        const selectedRowKeys: number[] = this.state.selectedRowKeys.filter(
+          (k) => k !== selectedRow.key
+        );
+        const selectedRows = selectedRowKeys.filter(
+          (k) => this.state.fixedSelectedRows.indexOf(k) < 0
+        );
+        const removeSelectedCriteria = this.props.selectedCriteria.filter(
+          (drugId) =>
+            drugId !== this.props.selectedCriteria[selectedRow.key - 1]
+        );
+        // this.onSelectedTableRowChanged(selectedRows);
+        this.props.onUpdateSelectedCriteria(removeSelectedCriteria);
+        this.setState({
+          drugGridData: data,
+        });
+      }
+    }
+  };
+
   loadGridData(json: any) {
     {
       // this.props.onUpdateSelectedCriteria([]);
@@ -161,8 +226,8 @@ class Remove extends Component<any, State> {
 
   render() {
     return (
-      <div>
-        <div className="tier-grid-container">
+      <div className="ql-remove">
+        <div className="tier-grid-container-ql-remvoe">
           <FrxDrugGridContainer
             isDataLoaded
             isPinningEnabled={false}
@@ -180,6 +245,7 @@ class Remove extends Component<any, State> {
             enableResizingOfColumns
             data={this.state.drugGridData}
             settingsWidth={10}
+            rowSelectionChangeFromCell={this.rowSelectionChangeFromCell}
             // clearFilterHandler={this.onClearFilterHandler}
             // applyFilter={this.onApplyFilterHandler}
             // applySort={this.onApplySortHandler}
@@ -190,12 +256,12 @@ class Remove extends Component<any, State> {
             // multiSortedInfo={this.state.gridMultiSortedInfo}
             // onMultiSortToggle={this.onMultiSortToggle}
             // getColumnSettings={this.onSettingsIconHandler}
-            rowSelection={{
-              // columnWidth: 50,
-              // fixed: true,
-              type: "checkbox",
-              onChange: this.onSelectedTableRowChanged,
-            }}
+            // rowSelection={{
+            //   // columnWidth: 50,
+            //   // fixed: true,
+            //   // type: "checkbox",
+            //   onChange: this.onSelectedTableRowChanged,
+            // }}
           />
         </div>
       </div>
