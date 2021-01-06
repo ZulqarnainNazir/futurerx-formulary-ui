@@ -118,7 +118,7 @@ class AdditionalCriteriaContainer extends Component<
                 <div
                   className={
                     this.props.isReadOnly
-                      ? "__root-additional-criteria-child-read-only"
+                      ? "__root-additional-criteria-read-only-child"
                       : "__root-additional-criteria-child"
                   }
                   key={additionalCriteria.sequence}
@@ -126,14 +126,14 @@ class AdditionalCriteriaContainer extends Component<
                   <SwapIcon
                     className={
                       this.props.isReadOnly
-                        ? "isReadOnly"
+                        ? "__root-additional-criteria-read-only-child-swapper"
                         : "__root-additional-criteria-child-swapper"
                     }
                   />
                   <div
                     className={
                       this.props.isReadOnly
-                        ? "isReadOnly"
+                        ? "__root-additional-criteria-read-only-child-accordion"
                         : "__root-additional-criteria-child-accordion"
                     }
                   >

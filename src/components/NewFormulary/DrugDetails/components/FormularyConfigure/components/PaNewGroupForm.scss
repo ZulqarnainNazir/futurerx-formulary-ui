@@ -18,6 +18,14 @@
   }
   .inner-container,
   .input-border-none {
+    .__root-additional-criteria-read-only {
+      .__root-additional-criteria-read-only-child {
+        display: flex;
+        // justify-content: space-between;
+        .__root-additional-criteria-read-only-child-swapper {
+        }
+      }
+    }
     .setting-1 {
       .tags-input-border-none {
         .MuiGrid-root,
