@@ -147,7 +147,7 @@ class CategoryClass extends React.Component<any, any> {
 
     const TierDefinationData = this.props.getTier(apiDetails).then(json => {
       let tmpData = json.payload.data;
-      tmpData.map(function(el) {
+      tmpData.map(function (el) {
         var element = Object.assign({}, el);
         thisRef.state.tierOption.push(element);
       });
@@ -163,7 +163,7 @@ class CategoryClass extends React.Component<any, any> {
 
     const data = this.props.getClassificationSystems(apiDetails).then(json => {
       let tmpData = json.payload.data;
-      tmpData.map(function(el) {
+      tmpData.map(function (el) {
         var element = Object.assign({}, el);
         thisRef.state.classificationSystems.push(element);
       });
@@ -173,9 +173,9 @@ class CategoryClass extends React.Component<any, any> {
   onSettingsIconHandler = (hiddenColumn, visibleColumn) => {
     console.log(
       "Settings icon handler: Hidden" +
-        JSON.stringify(hiddenColumn) +
-        " Visible:" +
-        JSON.stringify(visibleColumn)
+      JSON.stringify(hiddenColumn) +
+      " Visible:" +
+      JSON.stringify(visibleColumn)
     );
     if (hiddenColumn && hiddenColumn.length > 0) {
       let hiddenColumnKeys = hiddenColumn.map(column => column["key"]);
@@ -191,16 +191,17 @@ class CategoryClass extends React.Component<any, any> {
     if (fetchedKeys && fetchedKeys.length > 0) {
       fetchedKeys.map(fetchedProps => {
         if (filters[fetchedProps]) {
+          this.state.filter = this.state.filter.filter(element => element['prop'] !== fetchedProps);
           const fetchedOperator =
             filters[fetchedProps][0].condition === "is like"
               ? "is_like"
               : filters[fetchedProps][0].condition === "is not"
-              ? "is_not"
-              : filters[fetchedProps][0].condition === "is not like"
-              ? "is_not_like"
-              : filters[fetchedProps][0].condition === "does not exist"
-              ? "does_not_exist"
-              : filters[fetchedProps][0].condition;
+                ? "is_not"
+                : filters[fetchedProps][0].condition === "is not like"
+                  ? "is_not_like"
+                  : filters[fetchedProps][0].condition === "does not exist"
+                    ? "does_not_exist"
+                    : filters[fetchedProps][0].condition;
           const fetchedValues =
             filters[fetchedProps][0].value !== ""
               ? [filters[fetchedProps][0].value.toString()]
@@ -212,12 +213,14 @@ class CategoryClass extends React.Component<any, any> {
           });
         }
       });
-      console.log("Filters:" + JSON.stringify(this.state.filter));
-      if (this.props.advancedSearchBody) {
-        this.populateGridData(this.props.advancedSearchBody);
-      } else {
-        this.populateGridData();
-      }
+    } else {
+      this.state.filter = Array();
+    }
+    console.log("Filters:" + JSON.stringify(this.state.filter));
+    if (this.props.advancedSearchBody) {
+      this.populateGridData(this.props.advancedSearchBody);
+    } else {
+      this.populateGridData();
     }
   };
 
@@ -382,7 +385,7 @@ class CategoryClass extends React.Component<any, any> {
         let tmpData = json.payload.result;
         var data: any[] = [];
         let count = 1;
-        var gridData = tmpData.map(function(el) {
+        var gridData = tmpData.map(function (el) {
           var element = Object.assign({}, el);
           data.push(element);
           let gridItem = {};
@@ -401,14 +404,14 @@ class CategoryClass extends React.Component<any, any> {
             gridItem[
               "drug_descriptor_identifier"
             ] = element.drug_descriptor_identifier
-              ? "" + element.drug_descriptor_identifier
-              : "";
+                ? "" + element.drug_descriptor_identifier
+                : "";
           }
           gridItem[
             "generic_product_identifier"
           ] = element.generic_product_identifier
-            ? "" + element.generic_product_identifier
-            : "";
+              ? "" + element.generic_product_identifier
+              : "";
           gridItem["database_category"] = element.database_category
             ? "" + element.database_category
             : "";
@@ -598,7 +601,7 @@ class CategoryClass extends React.Component<any, any> {
           ) {
             let tmpData = json.payload.data;
             var data: any[] = [];
-            var gridData = tmpData.map(function(el) {
+            var gridData = tmpData.map(function (el) {
               var element = Object.assign({}, el);
               data.push(element);
               let gridItem = element["value"];
@@ -656,7 +659,7 @@ class CategoryClass extends React.Component<any, any> {
     this.setState({ materialPopupInd: false });
     return true;
   };
-  handleAddFileClick = () => {};
+  handleAddFileClick = () => { };
 
   handlePopupButtonClick = (popupName, title) => {
     if (popupName === "override") {
@@ -1027,15 +1030,15 @@ class CategoryClass extends React.Component<any, any> {
                     selectedCurrentPage={
                       this.state.index / this.state.limit + 1
                     }
-                    /*rowSelection={{
-                    columnWidth: 50,
-                    fixed: true,
-                    type: "checkbox",
-                    onChange: this.rowSelectionChange,
-                  }}
-                  settingsTriDotClick={() => {
-                    console.log("object");
-                  }}*/
+                  /*rowSelection={{
+                  columnWidth: 50,
+                  fixed: true,
+                  type: "checkbox",
+                  onChange: this.rowSelectionChange,
+                }}
+                settingsTriDotClick={() => {
+                  console.log("object");
+                }}*/
                   />
                 </div>
               </Grid>
@@ -1064,8 +1067,8 @@ class CategoryClass extends React.Component<any, any> {
               onOverrideClass={this.onOverrideClass}
             />
           ) : (
-            ""
-          )}
+              ""
+            )}
         </DialogPopup>
         {this.state.isSearchOpen ? (
           <AdvanceSearchContainer

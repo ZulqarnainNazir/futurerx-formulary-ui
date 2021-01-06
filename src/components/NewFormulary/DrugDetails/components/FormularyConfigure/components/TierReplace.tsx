@@ -127,9 +127,9 @@ class TierReplace extends React.Component<any, tabsState> {
   onSettingsIconHandler = (hiddenColumn, visibleColumn) => {
     console.log(
       "Settings icon handler: Hidden" +
-        JSON.stringify(hiddenColumn) +
-        " Visible:" +
-        JSON.stringify(visibleColumn)
+      JSON.stringify(hiddenColumn) +
+      " Visible:" +
+      JSON.stringify(visibleColumn)
     );
     if (hiddenColumn && hiddenColumn.length > 0) {
       let hiddenColumnKeys = hiddenColumn.map((column) => column["key"]);
@@ -145,16 +145,17 @@ class TierReplace extends React.Component<any, tabsState> {
     if (fetchedKeys && fetchedKeys.length > 0) {
       fetchedKeys.map((fetchedProps) => {
         if (filters[fetchedProps]) {
+          this.state.filter = this.state.filter.filter(element => element['prop'] !== fetchedProps);
           const fetchedOperator =
             filters[fetchedProps][0].condition === "is like"
               ? "is_like"
               : filters[fetchedProps][0].condition === "is not"
-              ? "is_not"
-              : filters[fetchedProps][0].condition === "is not like"
-              ? "is_not_like"
-              : filters[fetchedProps][0].condition === "does not exist"
-              ? "does_not_exist"
-              : filters[fetchedProps][0].condition;
+                ? "is_not"
+                : filters[fetchedProps][0].condition === "is not like"
+                  ? "is_not_like"
+                  : filters[fetchedProps][0].condition === "does not exist"
+                    ? "does_not_exist"
+                    : filters[fetchedProps][0].condition;
           const fetchedValues =
             filters[fetchedProps][0].value !== ""
               ? [filters[fetchedProps][0].value.toString()]
@@ -166,12 +167,14 @@ class TierReplace extends React.Component<any, tabsState> {
           });
         }
       });
-      console.log("Filters:" + JSON.stringify(this.state.filter));
-      if (this.props.advancedSearchBody) {
-        this.populateGridData(this.props.advancedSearchBody);
-      } else {
-        this.populateGridData();
-      }
+    } else {
+      this.state.filter = Array();
+    }
+    console.log("Filters:" + JSON.stringify(this.state.filter));
+    if (this.props.advancedSearchBody) {
+      this.populateGridData(this.props.advancedSearchBody);
+    } else {
+      this.populateGridData();
     }
   };
 
@@ -232,14 +235,14 @@ class TierReplace extends React.Component<any, tabsState> {
 
   applyMultiSortHandler = (sorter, multiSortedInfo) => {
     console.log("Multisort info:" + JSON.stringify(sorter));
-    
-		
-		this.setState(  {
-			isGridMultiSorted: true,
-			isGridSingleSorted: false,
-			gridMultiSortedInfo: multiSortedInfo,
-			gridSingleSortInfo: null,
-		})
+
+
+    this.setState({
+      isGridMultiSorted: true,
+      isGridSingleSorted: false,
+      gridMultiSortedInfo: multiSortedInfo,
+      gridSingleSortInfo: null,
+    })
 
     if (sorter && sorter.length > 0) {
       let uniqueKeys = Array();
@@ -338,8 +341,13 @@ class TierReplace extends React.Component<any, tabsState> {
     }
     this.state.tierValues = tierOptions;
     if (initFileKey) {
-      this.state.selectedFileKey = lobCode;
-      this.state.selectedFileType = "Full Formulary";
+      if (lobCode === "COMM") {
+        this.state.selectedFileKey = "COMMDF";
+        this.state.selectedFileType = "Drug Table";
+      } else {
+        this.state.selectedFileKey = lobCode;
+        this.state.selectedFileType = "Full Formulary";
+      }
     }
   };
 
@@ -498,7 +506,7 @@ class TierReplace extends React.Component<any, tabsState> {
           ) {
             let tmpData = json.payload.data;
             var data: any[] = [];
-            var gridData = tmpData.map(function(el) {
+            var gridData = tmpData.map(function (el) {
               var element = Object.assign({}, el);
               data.push(element);
               let gridItem = element["value"];
@@ -575,7 +583,7 @@ class TierReplace extends React.Component<any, tabsState> {
         let tmpData = json.payload.result;
         var data: any[] = [];
         let count = 1;
-        var gridData = tmpData.map(function(el, idx) {
+        var gridData = tmpData.map(function (el, idx) {
           var element = Object.assign({}, el);
           data.push(element);
           let gridItem = {};
@@ -617,14 +625,14 @@ class TierReplace extends React.Component<any, tabsState> {
             gridItem[
               "drug_descriptor_identifier"
             ] = element.drug_descriptor_identifier
-              ? "" + element.drug_descriptor_identifier
-              : "";
+                ? "" + element.drug_descriptor_identifier
+                : "";
           }
           gridItem[
             "generic_product_identifier"
           ] = element.generic_product_identifier
-            ? "" + element.generic_product_identifier
-            : "";
+              ? "" + element.generic_product_identifier
+              : "";
           gridItem["trademark_code"] = element.trademark_code
             ? "" + element.trademark_code
             : "";
@@ -1014,23 +1022,23 @@ class TierReplace extends React.Component<any, tabsState> {
               <div className="header remove-btn-wrapper pr-10">
                 {(this.props.lobCode === "MCR" ||
                   this.props.lobCode === "COMM") && (
-                  <div
-                    style={{
-                      display: "flex",
-                      flexDirection: "row",
-                      alignItems: "center",
-                      justifyContent: "space-between",
-                    }}
-                  >
-                    <span style={{ marginRight: 10 }}>Select Drugs From</span>
-                    <DropDown
-                      options={this.state.fileValues}
-                      disabled={this.props.configureSwitch}
-                      onSelect={this.fileTypeDropDownSelectHandler}
-                      defaultValue={this.state.selectedFileType}
-                    />
-                  </div>
-                )}
+                    <div
+                      style={{
+                        display: "flex",
+                        flexDirection: "row",
+                        alignItems: "center",
+                        justifyContent: "space-between",
+                      }}
+                    >
+                      <span style={{ marginRight: 10 }}>Select Drugs From</span>
+                      <DropDown
+                        options={this.state.fileValues}
+                        disabled={this.props.configureSwitch}
+                        onSelect={this.fileTypeDropDownSelectHandler}
+                        defaultValue={this.state.selectedFileType}
+                      />
+                    </div>
+                  )}
                 <div className="header remove-btn-wrapper pr-10">
                   <div className="header pr-10">
                     <div className="header-dropdown">
@@ -1071,7 +1079,7 @@ class TierReplace extends React.Component<any, tabsState> {
                   enableSearch={false}
                   enableColumnDrag
                   settingsWidth={50}
-                  onSearch={() => {}}
+                  onSearch={() => { }}
                   fixedColumnKeys={[]}
                   pagintionPosition="topRight"
                   gridName="TIER"
@@ -1099,14 +1107,14 @@ class TierReplace extends React.Component<any, tabsState> {
                   getColumnSettings={this.onSettingsIconHandler}
                   pageSize={this.state.limit}
                   selectedCurrentPage={this.state.index / this.state.limit + 1}
-                  // rowSelection={{
-                  //   columnWidth: 50,
-                  //   selectedRowKeys: this.state.selectedRowKeys,
-                  // 	fixed: true,
+                // rowSelection={{
+                //   columnWidth: 50,
+                //   selectedRowKeys: this.state.selectedRowKeys,
+                // 	fixed: true,
 
-                  //   type: "checkbox",
-                  //   onChange: this.onSelectedTableRowChanged
-                  // }}
+                //   type: "checkbox",
+                //   onChange: this.onSelectedTableRowChanged
+                // }}
                 />
               </div>
             </div>
