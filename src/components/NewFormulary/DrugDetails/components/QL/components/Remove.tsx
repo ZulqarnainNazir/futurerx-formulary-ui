@@ -31,6 +31,7 @@ class Remove extends Component<any, State> {
   state = {
     drugGridData: [],
     drugData: [],
+    filter: Array(),
   };
 
   onSelectedTableRowChanged = (selectedRowKeys) => {
@@ -49,9 +50,8 @@ class Remove extends Component<any, State> {
     // alert("in remvove" + selectedRowKeys);
     this.props.onUpdateSelectedCriteria(currentSelectedCriteriaIds);
   };
-  componentDidMount() {
-    // /api/1/criteria-list-ql/3302/COMM?entity_id=3302
-    // :scheme: https
+
+  getDrugCriteria = () => {
     let apiDetails = {};
 
     apiDetails["pathParams"] =
@@ -69,6 +69,54 @@ class Remove extends Component<any, State> {
       console.log("[postCriterial]:", json);
       this.loadGridData(json);
     });
+  };
+
+  onClearFilterHandler = () => {
+    this.state.filter = Array();
+
+    this.getDrugCriteria();
+  };
+
+  onApplyFilterHandler = (filters) => {
+    // debugger;
+    console.log("filtering from be:" + JSON.stringify(filters));
+    //this.state.filter = Array();
+    const fetchedKeys = Object.keys(filters);
+    if (fetchedKeys && fetchedKeys.length > 0) {
+      fetchedKeys.map((fetchedProps) => {
+        if (filters[fetchedProps]) {
+          const fetchedOperator =
+            filters[fetchedProps][0].condition === "is like"
+              ? "is_like"
+              : filters[fetchedProps][0].condition === "is not"
+              ? "is_not"
+              : filters[fetchedProps][0].condition === "is not like"
+              ? "is_not_like"
+              : filters[fetchedProps][0].condition === "does not exist"
+              ? "does_not_exist"
+              : filters[fetchedProps][0].condition;
+          const fetchedValues =
+            filters[fetchedProps][0].value !== ""
+              ? [filters[fetchedProps][0].value.toString()]
+              : [];
+          this.state.filter.push({
+            prop: fetchedProps,
+            operator: fetchedOperator,
+            values: fetchedValues,
+          });
+        }
+      });
+      console.log("Filters:" + JSON.stringify(this.state.filter));
+
+      this.getDrugCriteria();
+    }
+  };
+
+  componentDidMount() {
+    // /api/1/criteria-list-ql/3302/COMM?entity_id=3302
+    // :scheme: https
+    this.getDrugCriteria();
+
     this.props.onUpdateSelectedCriteria([]);
   }
 
@@ -114,15 +162,16 @@ class Remove extends Component<any, State> {
   render() {
     return (
       <div>
-        <div className="tier-grid-container">
+        <div className="tier-grid-container ql-remove-grid">
           <FrxDrugGridContainer
+            isDataLoaded
             isPinningEnabled={false}
             enableSearch={false}
             enableColumnDrag
             onSearch={() => {}}
             fixedColumnKeys={[]}
             pagintionPosition="topRight"
-            hidePagination
+            // hidePagination
             gridName="DRUG GRID"
             enableSettings={false}
             columns={QlRemoveColumns()}
@@ -131,6 +180,16 @@ class Remove extends Component<any, State> {
             enableResizingOfColumns
             data={this.state.drugGridData}
             settingsWidth={10}
+            // clearFilterHandler={this.onClearFilterHandler}
+            // applyFilter={this.onApplyFilterHandler}
+            // applySort={this.onApplySortHandler}
+            // isSingleSorted={this.state.isGridSingleSorted}
+            // sortedInfo={this.state.gridSingleSortInfo}
+            // applyMultiSort={this.applyMultiSortHandler}
+            // isMultiSorted={this.state.isGridMultiSorted}
+            // multiSortedInfo={this.state.gridMultiSortedInfo}
+            // onMultiSortToggle={this.onMultiSortToggle}
+            // getColumnSettings={this.onSettingsIconHandler}
             rowSelection={{
               // columnWidth: 50,
               // fixed: true,

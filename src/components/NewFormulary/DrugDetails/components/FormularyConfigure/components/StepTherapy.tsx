@@ -65,9 +65,9 @@ class StepTherapy extends React.Component<any, tabsState> {
   };
 
   componentWillReceiveProps(nextProps) {
-    debugger;
-    console.log("TIER: componentWillReceiveProps", nextProps);
-
+    // debugger;
+    console.log('TIER: componentWillReceiveProps', nextProps);
+    
     let tmpData = nextProps.stData;
     if (tmpData && Array.isArray(tmpData) && tmpData.length > 0) {
       var tierOption: any[] = [];
@@ -95,8 +95,9 @@ class StepTherapy extends React.Component<any, tabsState> {
     }
   }
   componentDidMount() {
-    const TierDefinationData = this.props.getStSummary(this.props?.formulary_id).then((json) => {
-      debugger;
+    
+    const TierDefinationData = this.props.getStSummary(this.props?.formulary_id).then((json => {
+      // debugger;
       let tmpData = json.payload.result;
       var rows = tmpData.map(function (el) {
         var curRow = [
@@ -115,7 +116,7 @@ class StepTherapy extends React.Component<any, tabsState> {
       this.setState({
         panelGridValue: rows,
       });
-    });
+    }));
   }
   render() {
     return (

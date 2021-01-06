@@ -70,7 +70,7 @@ class STS extends React.Component<any, any> {
   };
 
   componentWillReceiveProps(nextProps) {
-    debugger;
+    // debugger;
     console.log("TIER: componentWillReceiveProps", nextProps);
 
     if (nextProps.configureSwitch) {
@@ -86,7 +86,11 @@ class STS extends React.Component<any, any> {
       this.setState({
         tabs: [
           { id: 1, text: "Replace", disabled: false },
-          { id: 2, text: "Append", disabled: this.props.formulary_lob_id == 1 ? true : false },
+          {
+            id: 2,
+            text: "Append",
+            disabled: this.props.formulary_lob_id == 1 ? true : false,
+          },
           { id: 3, text: "Remove", disabled: false },
         ],
       });
@@ -141,14 +145,17 @@ class STS extends React.Component<any, any> {
       <>
         <div className="bordered">
           <PanelHeader title="STEP THERAPY SETTING" />
-          <div className="inner-container bg-light-grey" style={{ padding: "0px" }}>
-            <div className="modify-wrapper  white-bg">
+          <div className="inner-container bg-light-grey">
+            <div className="modify-wrapper bordered white-bg">
               <div className="modify-panel">
                 <div className="icon">
                   <span>R</span>
                 </div>
                 <div className="switch-box">
-                  <CustomizedSwitches leftTitle="Modify" rightTitle="view all" />
+                  <CustomizedSwitches
+                    leftTitle="Modify"
+                    rightTitle="view all"
+                  />
                 </div>
                 <div className="mini-tabs">
                   <FrxMiniTabs

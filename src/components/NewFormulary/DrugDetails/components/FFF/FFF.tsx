@@ -97,7 +97,7 @@ class DrugDetailFFF extends React.Component<any, any> {
     data: [],
     tabs: [
       { id: 1, text: "Replace", disabled: false  },
-      { id: 2, text: "Append", disabled: false  },
+      { id: 2, text: "Append", disabled: true  },
       { id: 3, text: "Remove", disabled: false  },
     ],
     listCount: 0,
@@ -252,21 +252,26 @@ class DrugDetailFFF extends React.Component<any, any> {
 
   onSelectedTableRowChanged = (selectedRowKeys) => {
     this.state.selectedDrugs = [];
+    this.setState({
+      selectedRowKeys: [...selectedRowKeys]
+    });
     if (selectedRowKeys && selectedRowKeys.length > 0) {
       let selDrugs = selectedRowKeys.map(ele => {
         return this.state.drugData[ele - 1]['md5_id'] ? this.state.drugData[ele - 1]['md5_id'] : ""
       });
 
+      let selStateTmpDrugs = [...this.state.selectedDrugs, ...selDrugs];
+
       
       if(this.state.activeTabIndex === 0) {
-        this.rpSavePayload.selected_drug_ids = selDrugs;
+        this.rpSavePayload.selected_drug_ids = selStateTmpDrugs;
         this.rmSavePayload.selected_drug_ids = [];
       } else if(this.state.activeTabIndex === 2) {
-        this.rmSavePayload.selected_drug_ids = selDrugs;
+        this.rmSavePayload.selected_drug_ids = selStateTmpDrugs;
         this.rpSavePayload.selected_drug_ids = [];
       }
 
-      this.setState({ selectedDrugs: selDrugs })
+      this.setState({ selectedDrugs: selStateTmpDrugs })
     } else {
       this.setState({ selectedDrugs: [] })
     }
@@ -464,7 +469,7 @@ class DrugDetailFFF extends React.Component<any, any> {
     } else {
       this.setState({tabs:[
         { id: 1, text: "Replace", disabled: false },
-        { id: 2, text: "Append", disabled: false },
+        { id: 2, text: "Append", disabled: true },
         { id: 3, text: "Remove", disabled: false },
       ]});
     }
@@ -675,7 +680,8 @@ class DrugDetailFFF extends React.Component<any, any> {
     let dataGrid = <FrxLoader />;
     if (this.state.data) {
       dataGrid = (
-        // <FrxDrugGridContainer
+        <div className="tier-grid-container">
+        {/* // <FrxDrugGridContainer
         //   isPinningEnabled={false}
         //   enableSearch={false}
         //   enableColumnDrag
@@ -702,43 +708,44 @@ class DrugDetailFFF extends React.Component<any, any> {
         //     type: "checkbox",
         //     onChange: this.onSelectedTableRowChanged,
         //   }}
-        // />
-        <FrxDrugGridContainer
-          isPinningEnabled={false}
-          enableSearch={false}
-          enableColumnDrag
-          settingsWidth={50}
-          onSearch={() => { }}
-          fixedColumnKeys={[]}
-          pagintionPosition="topRight"
-          gridName="TIER"
-          enableSettings
-          columns={columns}
-          scroll={{ x: 3000, y: 377 }}
-          isFetchingData={false}
-          enableResizingOfColumns
-          data={this.state.data}
-          rowSelectionChangeFromCell={this.rowSelectionChangeFromCell}
-          onSelectAllRows={this.onSelectAllRows}
-          customSettingIcon={"FILL-DOT"}
-          totalRowsCount={this.state.listCount}
-          getPerPageItemSize={this.onPageSize}
-          onGridPageChangeHandler={this.onGridPageChangeHandler}
-          clearFilterHandler={this.onClearFilterHandler}
-          applyFilter={this.onApplyFilterHandler}
-          applySort={this.onApplySortHandler}
-          isSingleSorted={this.state.isGridSingleSorted}
-          sortedInfo={this.state.gridSingleSortInfo}
-          applyMultiSort={this.applyMultiSortHandler}
-          isMultiSorted={this.state.isGridMultiSorted}
-          multiSortedInfo={this.state.gridMultiSortedInfo}
-          onMultiSortToggle={this.onMultiSortToggle}
-          getColumnSettings={this.onSettingsIconHandler}
-          pageSize={this.listPayload.limit}
-          selectedCurrentPage={
-            this.listPayload.index / this.listPayload.limit + 1
-          }
-        />
+        // /> */}
+          <FrxDrugGridContainer
+            isPinningEnabled={false}
+            enableSearch={false}
+            enableColumnDrag
+            settingsWidth={50}
+            onSearch={() => { }}
+            fixedColumnKeys={[]}
+            pagintionPosition="topRight"
+            gridName="TIER"
+            enableSettings
+            columns={columns}
+            scroll={{ x: 3000, y: 377 }}
+            isFetchingData={false}
+            enableResizingOfColumns
+            data={this.state.data}
+            rowSelectionChangeFromCell={this.rowSelectionChangeFromCell}
+            onSelectAllRows={this.onSelectAllRows}
+            customSettingIcon={"FILL-DOT"}
+            totalRowsCount={this.state.listCount}
+            getPerPageItemSize={this.onPageSize}
+            onGridPageChangeHandler={this.onGridPageChangeHandler}
+            clearFilterHandler={this.onClearFilterHandler}
+            applyFilter={this.onApplyFilterHandler}
+            applySort={this.onApplySortHandler}
+            isSingleSorted={this.state.isGridSingleSorted}
+            sortedInfo={this.state.gridSingleSortInfo}
+            applyMultiSort={this.applyMultiSortHandler}
+            isMultiSorted={this.state.isGridMultiSorted}
+            multiSortedInfo={this.state.gridMultiSortedInfo}
+            onMultiSortToggle={this.onMultiSortToggle}
+            getColumnSettings={this.onSettingsIconHandler}
+            pageSize={this.listPayload.limit}
+            selectedCurrentPage={
+              this.listPayload.index / this.listPayload.limit + 1
+            }
+          />
+        </div>
       );
     }
 

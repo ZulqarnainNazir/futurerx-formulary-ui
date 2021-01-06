@@ -4,7 +4,11 @@ import {Column} from "../../../../../models/grid.model";
 import {dateFilters, textFilters} from "../../../../../utils/grid/filters";
 // "../../../../../utils/grid/filters";
 import FrxStatusField from "../../../../shared/FrxStatusField/FrxStatusField";
-export const getMaintenacneMassUpdateColumns: () => Column<any>[] = () => {
+export const getMaintenacneMassUpdateColumns:
+(
+  data?,
+  hiddenColumns?
+) => Column<any>[] = (data, hiddenColumns) => {
   return [
     {
       id: 1,
@@ -58,18 +62,28 @@ export const getMaintenacneMassUpdateColumns: () => Column<any>[] = () => {
       //   render: (lob) => <span style={{color: "red"}}>{lob}</span>,
     },
     {
-      id: 4,
       position: 4,
       sorter: {},
       textCase: "upper",
-      pixelWidth: 20,
+      pixelWidth: 163,
       key: "formularyName",
-      displayTitle: "formulary Name(s)",
+      displayTitle: "formulary name",
+      customContent: (props) => (
+        <div
+          className="input-link"
+          onClick={() => data.onFormularyNameClick(props.data.key)}
+        >
+          {props.data.formularyName}
+        </div>
+      ),
       isFilterable: true,
       dataType: "string",
       filters: textFilters,
-      hidden: false,
-      sortDirections: [],
+      hidden:
+        hiddenColumns && hiddenColumns.indexOf("formulary_name") !== -1
+          ? true
+          : false,
+      sortDirections: ["ascend", "descend"],
     },
     {
       id: 5,
