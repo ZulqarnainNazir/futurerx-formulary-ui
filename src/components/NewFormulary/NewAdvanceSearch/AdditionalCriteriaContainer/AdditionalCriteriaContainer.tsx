@@ -57,6 +57,13 @@ class AdditionalCriteriaContainer extends Component<
       });
   }
 
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.additionalCriteriaBody)
+      this.setState({
+        additionalCriteriaArray: this.props.additionalCriteriaBody,
+      });
+  }
+
   handleAddNewClick = () => {
     let sequence = this.state.sequence;
     sequence++;
@@ -93,44 +100,75 @@ class AdditionalCriteriaContainer extends Component<
   render() {
     const { criteriaList } = this.props;
     return (
-      <div className="__root-additional-criteria">
-        {this.state.additionalCriteriaArray.length <= 0 ? (
-          <div className="__root-additional-criteria-child-msg">
-            <p>Click Add New to create Additional Criteria</p>
-          </div>
-        ) : (
-          this.state.additionalCriteriaArray.map((additionalCriteria: any) => (
-            <div
-              className="__root-additional-criteria-child"
-              key={additionalCriteria.sequence}
-            >
-              <SwapIcon className="__root-additional-criteria-child-swapper" />
-              <div className="__root-additional-criteria-child-accordion">
-                <AdditionalCriteria
-                  criteriaList={criteriaList}
-                  additionalCriteria={additionalCriteria}
-                  handleChildDataSave={this.handleChildDataSave}
-                />
+      <div
+        className={
+          this.props.isReadOnly
+            ? "__root-additional-criteria-read-only"
+            : "__root-additional-criteria"
+        }
+      >
+        {this.state?.additionalCriteriaArray?.length <= 0
+          ? !this.props.isReadOnly && (
+              <div className="__root-additional-criteria-child-msg">
+                <p>Click Add New to create Additional Criteria</p>
               </div>
-              <DeleteIcon
-                className="__root-additional-criteria-child-delete"
-                onClick={() =>
-                  this.deleteAdditionalCriteria(additionalCriteria.sequence)
-                }
-              />
-            </div>
-          ))
+            )
+          : this.state?.additionalCriteriaArray?.map(
+              (additionalCriteria: any) => (
+                <div
+                  className={
+                    this.props.isReadOnly
+                      ? "__root-additional-criteria-read-only-child"
+                      : "__root-additional-criteria-child"
+                  }
+                  key={additionalCriteria.sequence}
+                >
+                  <SwapIcon
+                    className={
+                      this.props.isReadOnly
+                        ? "__root-additional-criteria-read-only-child-swapper"
+                        : "__root-additional-criteria-child-swapper"
+                    }
+                  />
+                  <div
+                    className={
+                      this.props.isReadOnly
+                        ? "__root-additional-criteria-read-only-child-accordion"
+                        : "__root-additional-criteria-child-accordion"
+                    }
+                  >
+                    <AdditionalCriteria
+                      criteriaList={criteriaList}
+                      additionalCriteria={additionalCriteria}
+                      handleChildDataSave={this.handleChildDataSave}
+                      isReadOnly={this.props.isReadOnly}
+                    />
+                  </div>
+                  {!this.props.isReadOnly && (
+                    <DeleteIcon
+                      className="__root-additional-criteria-child-delete"
+                      onClick={() =>
+                        this.deleteAdditionalCriteria(
+                          additionalCriteria.sequence
+                        )
+                      }
+                    />
+                  )}
+                </div>
+              )
+            )}
+        {!this.props.isReadOnly && (
+          <div className="__root-additional-criteria-add-new">
+            <Button
+              // disabled={this.state.additionalCriteriaArray.length > 5}
+              className={"Button advanced-grid-search__btn-clear"}
+              onClick={() => this.handleAddNewClick()}
+            >
+              <AddCircleIcon />
+              <span>Add New</span>
+            </Button>
+          </div>
         )}
-        <div className="__root-additional-criteria-add-new">
-          <Button
-            // disabled={this.state.additionalCriteriaArray.length > 5}
-            className={"Button advanced-grid-search__btn-clear"}
-            onClick={() => this.handleAddNewClick()}
-          >
-            <AddCircleIcon />
-            <span>Add New</span>
-          </Button>
-        </div>
       </div>
     );
   }

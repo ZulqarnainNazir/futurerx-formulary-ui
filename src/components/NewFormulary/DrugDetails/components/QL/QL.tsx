@@ -35,6 +35,7 @@ import AdvanceSearchContainer from "../../../NewAdvanceSearch/AdvanceSearchConta
 import { setAdvancedSearch } from "../../../../../redux/slices/formulary/advancedSearch/advancedSearchSlice";
 import { setAdditionalCriteria } from "../../../../../redux/slices/formulary/advancedSearch/additionalCriteriaSlice";
 import "./components/common.scss";
+import "./QL.scss";
 
 function mapDispatchToProps(dispatch) {
   return {
@@ -79,6 +80,7 @@ interface tabsState {
   drugGridData: any;
   quantityAndFillLimitObject: any; //newParamterType;
   selectedDrugs: any;
+  prevSelectedDrugs: any;
   drugData: any;
   drugCount: number;
   selectedCriteria: any;
@@ -98,6 +100,7 @@ interface tabsState {
   hiddenColumns: any;
   filter: any;
   sort_by: any;
+  isSettingsApplied: boolean;
 }
 
 class Tier extends React.Component<any, tabsState> {
@@ -117,6 +120,7 @@ class Tier extends React.Component<any, tabsState> {
     drugGridData: [],
     quantityAndFillLimitObject: {},
     selectedDrugs: Array(),
+    prevSelectedDrugs: Array(),
     drugData: [],
     selectedCriteria: [],
     selectedTab: constants.TYPE_REPLACE,
@@ -140,6 +144,7 @@ class Tier extends React.Component<any, tabsState> {
     isGridSingleSorted: false,
     gridMultiSortedInfo: [],
     isGridMultiSorted: false,
+    isSettingsApplied: false,
   };
 
   onClickTab = (selectedTabIndex: number) => {
@@ -149,6 +154,7 @@ class Tier extends React.Component<any, tabsState> {
       if (index === selectedTabIndex) {
         activeTabIndex = index;
       }
+      console.log(activeTabIndex);
       return tab;
     });
     this.setState({
@@ -163,6 +169,8 @@ class Tier extends React.Component<any, tabsState> {
       gridMultiSortedInfo: [],
       isGridMultiSorted: false,
       isGridSingleSorted: false,
+      selectedDrugs: Array(),
+      prevSelectedDrugs: Array(),
     });
   };
 
@@ -340,7 +348,7 @@ class Tier extends React.Component<any, tabsState> {
     let tmpData = json.payload.result;
     var data: any[] = [];
     var switchState = this.props.switchState;
-    let selectedDrugs: any = [...this.state.selectedDrugs];
+    let selectedDrugs: any = [...this.state.prevSelectedDrugs];
     let count = 1;
     var gridData: any = tmpData.map(function (el) {
       var element = Object.assign({}, el);
@@ -358,6 +366,7 @@ class Tier extends React.Component<any, tabsState> {
 
       if (switchState) {
         gridItem["isDisabled"] = true;
+        gridItem["rowStyle"] = "table-row--disabled-font";
       }
       if (selectedDrugs.length > 0) {
         if (selectedDrugs.includes(element.md5_id)) {
@@ -732,6 +741,12 @@ class Tier extends React.Component<any, tabsState> {
               console.log("[new ql summary]", json);
               this.initailizeQlSummary(json);
             });
+          this.state.isSettingsApplied = true;
+          this.state.prevSelectedDrugs = [
+            ...this.state.prevSelectedDrugs,
+            ...this.state.selectedDrugs,
+          ];
+          this.state.selectedDrugs = Array();
           // window.scrollTo(0, 50);
         } else {
           showMessage("Failure", "error");
@@ -799,7 +814,7 @@ class Tier extends React.Component<any, tabsState> {
     isSelected: boolean
   ) => {
     // debugger;
-    console.log("data row ", selectedRow, isSelected);
+    console.log("data row ", selectedRow, isSelected, key);
     // this.state.selectedRowKeys = [
     //   ...this.state.selectedRowKeys,
     //   selectedRow.key,
@@ -847,53 +862,6 @@ class Tier extends React.Component<any, tabsState> {
     }
   };
 
-  // rowSelectionChangeFromCell = (
-  //   key: string,
-  //   selectedRow: any,
-  //   isSelected: boolean
-  // ) => {
-  //   debugger;
-  //   console.log("data row ", selectedRow, isSelected);
-  //   if (!selectedRow["isDisabled"]) {
-  //     if (isSelected) {
-  //       const data = this.state.drugGridData.map((d: any) => {
-  //         if (d.key === selectedRow.key) d["isChecked"] = true;
-  //         // else d["isChecked"] = false;
-  //         return d;
-  //       });
-  //       const selectedRowKeys = [
-  //         ...this.state.selectedRowKeys,
-  //         selectedRow.key,
-  //       ];
-  //       console.log("selected row keys ", selectedRowKeys);
-  //       const selectedRows: number[] = selectedRowKeys.filter(
-  //         (k) => this.state.fixedSelectedRows.indexOf(k) < 0
-  //       );
-  //       this.onSelectedTableRowChanged(selectedRowKeys);
-
-  //       this.setState({ drugGridData: data });
-  //     } else {
-  //       const data = this.state.drugGridData.map((d: any) => {
-  //         if (d.key === selectedRow.key) d["isChecked"] = false;
-  //         // else d["isChecked"] = false;
-  //         return d;
-  //       });
-
-  //       const selectedRowKeys: number[] = this.state.selectedRowKeys.filter(
-  //         (k) => k !== selectedRow.key
-  //       );
-  //       const selectedRows = selectedRowKeys.filter(
-  //         (k) => this.state.fixedSelectedRows.indexOf(k) < 0
-  //       );
-
-  //       this.onSelectedTableRowChanged(selectedRows);
-  //       this.setState({
-  //         drugGridData: data,
-  //       });
-  //     }
-  //   }
-  // };
-
   onSelectAllRows = (isSelected: boolean) => {
     const selectedRowKeys: number[] = [];
     const data = this.state.drugGridData.map((d: any) => {
@@ -934,7 +902,7 @@ class Tier extends React.Component<any, tabsState> {
 
   onClearFilterHandler = () => {
     this.state.filter = Array();
-    if (this.props.advancedSearchBody) {
+    if (Object.keys(this.props.advancedSearchBody).length > 0) {
       this.showDrugGrid(this.props.advancedSearchBody);
     } else {
       this.showDrugGrid();
@@ -970,12 +938,14 @@ class Tier extends React.Component<any, tabsState> {
           });
         }
       });
-      console.log("Filters:" + JSON.stringify(this.state.filter));
-      if (Object.keys(this.props.advancedSearchBody).length > 0) {
-        this.showDrugGrid(this.props.advancedSearchBody);
-      } else {
-        this.showDrugGrid();
-      }
+    } else {
+      this.state.filter = Array();
+    }
+    console.log("Filters:" + JSON.stringify(this.state.filter));
+    if (Object.keys(this.props.advancedSearchBody).length > 0) {
+      this.showDrugGrid(this.props.advancedSearchBody);
+    } else {
+      this.showDrugGrid();
     }
   };
 
@@ -1069,6 +1039,8 @@ class Tier extends React.Component<any, tabsState> {
 
   componentDidUpdate = (prevState) => {
     // debugger;
+    console.log("component update");
+
     // if (
     //   this.state.drugGridContainer &&
     //   Object.keys(this.state.quantityAndFillLimitObject).length > 0
@@ -1090,6 +1062,7 @@ class Tier extends React.Component<any, tabsState> {
           return tab;
         }),
         is_additional_criteria_defined: false,
+        isSettingsApplied: false,
       });
       this.onClickTab(0);
     } else {
@@ -1099,8 +1072,9 @@ class Tier extends React.Component<any, tabsState> {
           { id: 2, text: "Append" },
           { id: 3, text: "Remove" },
         ],
-        drugGridContainer: false,
       });
+      if (this.state.isSettingsApplied) return;
+      this.state.drugGridContainer = false;
     }
 
     if (nextProps.advancedSearchBody && nextProps.populateGrid) {
@@ -1145,14 +1119,14 @@ class Tier extends React.Component<any, tabsState> {
                       title="SELECT Quantity Limit CRITERIA"
                       tooltip="This section allows for Addition or Removal of product only. To define coverage for all Medicare covered and/or Supplemental products, go to Drug Details"
                     />
-                    <div className="inner-container tier-checkbox">
+                    <div className="inner-container">
                       <div className="mb-10">
                         <PanelGrid
                           panelGridTitle={this.state.panelGridTitle}
                           panelGridValue={this.state.panelGridValue}
                         />
                       </div>
-                      <div className="mb-10">
+                      <div className="quntity-limits-sec">
                         <div className="limited-access">
                           <PanelHeader title="QUANTITY LIMIT SETTINGS" />
                           <div className="modify-wrapper white-bg tier-modify-panel">
@@ -1181,8 +1155,8 @@ class Tier extends React.Component<any, tabsState> {
                           </div>
                         </div>
                       </div>
-                      <div>
-                        {this.state.activeTabIndex !== 2 && (
+                      {this.state.activeTabIndex !== 2 && (
+                        <div className="pt-10">
                           <div className="limited-access">
                             <PanelHeader title="FILL LIMIT SETTINGS" />
                             <FillLimitSettings
@@ -1204,8 +1178,8 @@ class Tier extends React.Component<any, tabsState> {
                               />
                             )}
                           </div>
-                        )}
-                      </div>
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -1225,7 +1199,7 @@ class Tier extends React.Component<any, tabsState> {
                 ></Button>
               </div>
             </Grid>
-            {this.state.drugGridContainer && dataLength && (
+            {this.state.drugGridContainer && (
               <div className="select-drug-from-table">
                 <div className="bordered white-bg">
                   {/* {!this.props.switchState && ( */}
@@ -1279,6 +1253,7 @@ class Tier extends React.Component<any, tabsState> {
                       multiSortedInfo={this.state.gridMultiSortedInfo}
                       onMultiSortToggle={this.onMultiSortToggle}
                       getColumnSettings={this.onSettingsIconHandler}
+                      // clearFilterHandler={this.onClearFilterHandler}
                       pageSize={this.state.limit}
                       selectedCurrentPage={
                         this.state.index / this.state.limit + 1

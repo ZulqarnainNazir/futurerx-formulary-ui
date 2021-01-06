@@ -22,7 +22,7 @@ const PNCriteria = (props) => {
   ));
 
   return (
-    <div className="root-pt-limit-settings bordered mb-10">
+    <div className="root-pt-limit-settings mb-10">
       <div className="inner-container">
         <StatusContentFormPanel
           title="Pharmacy Network"

@@ -1220,6 +1220,7 @@ class FrxDrugGrid extends Component<
     data: any,
     eventTarget: EventTarget & HTMLButtonElement
   ) => {
+		console.log("data on settings cell ", data )
     const settingsAnchor = eventTarget;
     const settingsMenuItems = data.items ? data.items : [];
     const keys = this.state.expandedKeys;
@@ -1248,10 +1249,10 @@ class FrxDrugGrid extends Component<
    * @param menuItem item in the menu which was clicked
    * @author Deepak_T
    */
-  settingsTriDotMenuClick = (menuItem: GridMenu) => {
+  settingsTriDotMenuClick = (menuItem: GridMenu, data?:any) => {
     console.log(menuItem);
     if (this.props.settingsTriDotMenuClick)
-      this.props.settingsTriDotMenuClick(menuItem);
+      this.props.settingsTriDotMenuClick(menuItem,data);
   };
 
   /**

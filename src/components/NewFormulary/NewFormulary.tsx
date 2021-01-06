@@ -11,13 +11,15 @@ import MassMaintenance from "./MassMaintenance/MassMaintenance";
 import FormularyDashboardStats from "./../FormularyDashboardStats/FormularyDashboardStats";
 import { getFormularyDetails } from "../../mocks/formulary/formularyDetails";
 import { fetchFormularies } from "../.././redux/slices/formulary/dashboard/dashboardSlice";
-import _ from "lodash";
+import _ from 'lodash';
+import FormularyMessaging from "./DrugDetails/components/FormularyDetailsTop/FormularyMessaging";
 
 import {
   setFormulary,
   setLocation,
   setLocationHome,
-  clearApplication
+  clearApplication,
+  setModeLob
 } from "../.././redux/slices/formulary/application/applicationSlice";
 
 import {
@@ -76,14 +78,15 @@ function mapDispatchToProps(dispatch) {
       dispatch(gridSettingsSlice.actions.setHiddenColum(hiddenColumns)),
     clearHiddenColumns: () =>
       dispatch(gridSettingsSlice.actions.clearHiddenColumns(true)),
-    addNewFormulary: arg => dispatch(addNewFormulary(arg)),
-    setLocation: arg => dispatch(setLocation(arg)),
-    fetchSelectedFormulary: a => dispatch(fetchSelectedFormulary(a)),
-    fetchDesignOptions: a => dispatch(fetchDesignOptions(a)),
-    setLocationHome: a => dispatch(setLocationHome(a)),
-    clearApplication: a => dispatch(clearApplication(a)),
-    clearSetup: a => dispatch(clearSetup(a)),
-    clearSetupOptions: a => dispatch(clearSetupOptions(a))
+    addNewFormulary: (arg) => dispatch(addNewFormulary(arg)),
+    setLocation: (arg) => dispatch(setLocation(arg)),
+    fetchSelectedFormulary: (a) => dispatch(fetchSelectedFormulary(a)),
+    fetchDesignOptions: (a) => dispatch(fetchDesignOptions(a)),
+    setLocationHome: (a) => dispatch(setLocationHome(a)),
+    clearApplication: (a) => dispatch(clearApplication(a)),
+    clearSetup: (a) => dispatch(clearSetup(a)),
+    clearSetupOptions: (a) => dispatch(clearSetupOptions(a)),
+    setModeLob: (a) => dispatch(setModeLob(a)),
   };
 }
 
@@ -113,7 +116,7 @@ const defaultListPayload = {
 
 class Formulary extends React.Component<any, any> {
   //TODO Remove
-  snow: boolean = true;
+  snow: boolean = false;
 
   state = {
     activeTabIndex: 0,
@@ -144,10 +147,10 @@ class Formulary extends React.Component<any, any> {
     console.log("key and order ", key, order);
     const listPayload = { ...this.listPayload };
     listPayload.sort_by = [key];
-    const sortorder = order && order === "ascend" ? "asc" : "dsc";
+    const sortorder = order && order === "ascend" ? "asc" : "desc";
     listPayload.sort_order = [sortorder];
-
-    this.props.fetchFormularies(listPayload);
+    this.listPayload = listPayload;
+    this.props.fetchFormularies(this.listPayload);
   };
   uniqByKeepLast = data => {
     const result = Array.from(new Set(data.map(s => s.columnKey))).map(
@@ -171,11 +174,13 @@ class Formulary extends React.Component<any, any> {
     const sort_by = updatedSorter.map(e => e.columnKey);
     const sort_order = updatedSorter.map(e => e.order);
     listPayload.sort_by = sort_by;
-    listPayload.sort_order = sort_order;
-    this.props.fetchFormularies(listPayload);
-    //remove duplicates from sorter
-    //api integration
-  };
+    listPayload.sort_order = sort_order
+    this.listPayload = listPayload;
+    this.props.fetchFormularies(this.listPayload);
+		//remove duplicates from sorter
+		//api integration
+	};
+	
 
   onClickTab = (selectedTabIndex: number) => {
     let activeTabIndex = 0;
@@ -203,7 +208,7 @@ class Formulary extends React.Component<any, any> {
     } else if (currentTabIndex === 3) {
       lob_id = 3;
     }
-
+    this.props.setModeLob(lob_id);
     this.listPayload = { ...defaultListPayload };
     this.listPayload.id_lob = lob_id;
     this.props.fetchFormularies(this.listPayload);
@@ -256,9 +261,9 @@ class Formulary extends React.Component<any, any> {
     //console.log(hiddenColumn,visibleColumn);
     this.props.setHiddenColumn(hiddenColumn);
   };
+  
   onApplyFilterHandler = filters => {
     const fetchObjectKeys = Object.keys(filters);
-    //NOTE: is only first filter required ? . Looks like a BUG in request body
     if (fetchObjectKeys && fetchObjectKeys.length > 0) {
       const fetchedProps = Object.keys(filters)[0];
       const fetchedOperator =
@@ -303,7 +308,8 @@ class Formulary extends React.Component<any, any> {
   onGridPageChangeHandler = (pageNumber: any) => {
     this.listPayload.index = (pageNumber - 1) * this.listPayload.limit;
     this.props.fetchFormularies(this.listPayload);
-  };
+	};
+	
   onClearFilterHandler = () => {
     console.log("Clear Filter");
     let id_lob = this.listPayload.id_lob;
@@ -314,6 +320,9 @@ class Formulary extends React.Component<any, any> {
 
   componentDidUpdate(prevProps) {
     console.log(this.props.location_home + " / " + prevProps.location_home);
+    if(this.state.activeTabIndex === 0){
+      this.props.setModeLob(4);
+    }
     if (
       this.props.location_home !== prevProps.location_home &&
       this.props.location_home > 0
@@ -335,6 +344,8 @@ class Formulary extends React.Component<any, any> {
   render() {
     return (
       <div className="newformulary-container">
+                <FormularyMessaging activeTabIndex={this.props.location} />
+
         {this.state.showTabs ? (
           <>
             {this.snow === true ? (

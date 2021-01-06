@@ -7,17 +7,7 @@ import Box from "@material-ui/core/Box";
 import Button from "../../../../../shared/Frx-components/button/Button";
 import DropDown from "../../../../../shared/Frx-components/dropdown/DropDownMap";
 import RadioButton from "../../../../../shared/Frx-components/radio-button/RadioButton";
-import {
-  getStSummary,
-  getStGrouptDescriptions,
-  getStGrouptDescription,
-  getStTypes,
-  getDrugLists,
-  postFormularyDrugST,
-  getStGrouptDescriptionVersions,
-  postApplyFormularyDrugST,
-  getLobFormularies,
-} from "../../../../../../redux/slices/formulary/stepTherapy/stepTherapyActionCreation";
+
 import "./STF.scss";
 import * as constants from "../../../../../../api/http-commons";
 import FrxDrugGridContainer from "../../../../../shared/FrxGrid/FrxDrugGridContainer";
@@ -34,6 +24,18 @@ import DialogPopup from "../../../../../shared/FrxDialogPopup/FrxDialogPopup";
 import CloneFormularyPopup from "../../FormularySetUp/components/CloneFormularyPopup";
 import { ReactComponent as EditIcon } from "../../../../../../assets/icons/EditIcon.svg";
 import { setAdditionalCriteria } from "../../../../../../redux/slices/formulary/advancedSearch/additionalCriteriaSlice";
+import {
+  getStSummary,
+  getStGrouptDescriptions,
+  getStGrouptDescription,
+  getStTypes,
+  getDrugLists,
+  postFormularyDrugST,
+  getStGrouptDescriptionVersions,
+  postApplyFormularyDrugST,
+  getLobFormularies,
+} from "../../../../../../redux/slices/formulary/stepTherapy/stepTherapyActionCreation";
+import GPM from "./GPM";
 
 function mapDispatchToProps(dispatch) {
   return {
@@ -104,14 +106,27 @@ class STF extends React.Component<any, any> {
     limit: 10,
     filter: Array(),
     dataCount: 0,
+    quickFilter: Array(),
+    sort_by: Array(),
+    hiddenColumns: Array(),
+    gridSingleSortInfo: null,
+    isGridSingleSorted: false,
+    gridMultiSortedInfo: [],
+    isGridMultiSorted: false,
+    searchNames: Array(),
+    filterPlaceholder: "Search",
+    searchValue: "",
+    searchData: Array(),
+    showStGroupDescription: false,
+    selectedGroupDescriptionObj:{},
   };
 
-  onSelectedTableRowChanged = (selectedRowKeys) => {
-    this.state.selectedDrugs = [];
-    if (selectedRowKeys && selectedRowKeys.length > 0) {
-      this.state.selectedDrugs = selectedRowKeys.map((tierId) => this.state.drugData[tierId - 1]["md5_id"]);
-    }
-  };
+  // onSelectedTableRowChanged = (selectedRowKeys) => {
+  //   this.state.selectedDrugs = [];
+  //   if (selectedRowKeys && selectedRowKeys.length > 0) {
+  //     this.state.selectedDrugs = selectedRowKeys.map((tierId) => this.state.drugData[tierId - 1]["md5_id"]);
+  //   }
+  // };
 
   openTierGridContainer = () => {
     this.state.drugData = [];
@@ -271,14 +286,21 @@ class STF extends React.Component<any, any> {
       this.setState({ tierGridContainer: false });
     }
   }
-  dropDownSelectHandlerGroupDescription = (value, event) => {
-    let tmp_index = event.key;
-    let tmp_value = event.value;
+  dropDownSelectHandlerGroupDescription = (tmp_value, event) => {
+    // let tmp_index = event.key;
+    // let tmp_value = event.value;
 
     this.setState({ selectedGroupDescription: tmp_value });
     let apiDetails = {};
     apiDetails["lob_type"] = this.props.formulary_lob_id;
     apiDetails["pathParams"] = "/" + tmp_value;
+    this.state.showStGroupDescription=false;
+    let selected = this.state.stGroupDescription.filter(
+      (obj) => obj[this.state.groupDescriptionProp] == tmp_value
+    )[0];
+    this.setState({
+      selectedGroupDescriptionObj : selected
+    });
     this.props.getStGrouptDescriptionVersions(apiDetails).then((json) => {
       let data = json.payload.data;
       let ftype = "";
@@ -363,6 +385,7 @@ class STF extends React.Component<any, any> {
   populateGridData = (searchBody = null) => {
     console.log("Populate grid data is called");
     let apiDetails = {};
+    apiDetails['messageBody']={};
     apiDetails["lob_type"] = this.props.formulary_lob_id;
     // let tmpGroup :any = this.state.paGroupDescriptions.filter(obj  => obj.id_mcr_base_pa_group_description === this.state.selectedGroupDescription);
     let tmp_fileType: any = "";
@@ -383,14 +406,45 @@ class STF extends React.Component<any, any> {
           break;
       }
     }
+
+    let allFilters = Array();
+    let filterProps = Array();
+    this.state.filter.map(filterInfo => {
+      allFilters.push(filterInfo);
+      filterProps.push(filterInfo["prop"]);
+    });
+
+    this.state.quickFilter.map(filterInfo => {
+      if (!filterProps.includes(filterInfo["prop"]))
+        allFilters.push(filterInfo);
+    });
+
+    apiDetails["messageBody"]["filter"] = allFilters;
+
+    // if (this.state.sort_by && this.state.sort_by.length ==0){
+    //   this.state.sort_by.push({ key: 'drug_label_name', value: 'asc' });
+    // }
+    
+    if (this.state.sort_by && this.state.sort_by.length > 0) {
+      let keys = Array();
+      let values = Array();
+
+      this.state.sort_by.map(keyPair => {
+        keys.push(keyPair["key"]);
+        values.push(keyPair["value"]);
+      });
+
+      apiDetails["messageBody"]["sort_by"] = keys;
+      apiDetails["messageBody"]["sort_order"] = values;
+    }
+
     apiDetails["pathParams"] = this.props?.formulary_id + "/" + tmp_fileType + "/";
     apiDetails["keyVals"] = [
       { key: constants.KEY_ENTITY_ID, value: this.props?.formulary_id },
       { key: constants.KEY_INDEX, value: this.state.index },
       { key: constants.KEY_LIMIT, value: this.state.limit },
     ];
-    apiDetails["messageBody"] = {};
-
+   
     if (searchBody) {
       apiDetails["messageBody"] = Object.assign(apiDetails["messageBody"], searchBody);
     }
@@ -403,13 +457,15 @@ class STF extends React.Component<any, any> {
         let selected = this.state.stGroupDescription.filter(
           (obj) => obj[this.state.groupDescriptionProp] == this.state.selectedGroupDescription
         )[0];
+        debugger;
         var gridData = tmpData.map(function (el) {
           var element = Object.assign({}, el);
           data.push(element);
           let gridItem = {};
           gridItem["id"] = count;
           gridItem["key"] = count;
-          if (selected && ["st_group_description_name"] === element.st_group_description) {
+          debugger;
+          if (selected && selected["st_group_description_name"] === element.st_group_description) {
             //console.log("element value tier ", selectedGroup, element.pa_group_description);
             gridItem["isChecked"] = true;
             gridItem["isDisabled"] = true;
@@ -419,18 +475,18 @@ class STF extends React.Component<any, any> {
             gridItem["rowStyle"] = "table-row--blue-font";
           }
           gridItem["tier"] = element.tier_value;
-          gridItem["isUmCriteria"] = element.is_um_criteria;
-          gridItem["stGroupDescription"] = element.st_group_description;
-          gridItem["stType"] = element.st_type;
-          gridItem["stValue"] = element.st_value;
-          gridItem["fileType"] = element.file_type ? "" + element.file_type : "";
-          gridItem["dataSource"] = element.data_source ? "" + element.data_source : "";
-          gridItem["labelName"] = element.drug_label_name ? "" + element.drug_label_name : "";
+          gridItem["is_um_criteria"] = element.is_um_criteria;
+          gridItem["st_group_description"] = element.st_group_description;
+          gridItem["st_type"] = element.st_type;
+          gridItem["st_value"] = element.st_value;
+          gridItem["file_type"] = element.file_type ? "" + element.file_type : "";
+          gridItem["data_source"] = element.data_source ? "" + element.data_source : "";
+          gridItem["drug_label_name"] = element.drug_label_name ? "" + element.drug_label_name : "";
           gridItem["ndc"] = "";
           gridItem["rxcui"] = element.rxcui ? "" + element.rxcui : "";
-          gridItem["gpi"] = element.generic_product_identifier ? "" + element.generic_product_identifier : "";
-          gridItem["trademark"] = element.trademark_code ? "" + element.trademark_code : "";
-          gridItem["databaseCategory"] = element.database_category ? "" + element.database_category : "";
+          gridItem["generic_product_identifier"] = element.generic_product_identifier ? "" + element.generic_product_identifier : "";
+          gridItem["trademark_code"] = element.trademark_code ? "" + element.trademark_code : "";
+          gridItem["database_category"] = element.database_category ? "" + element.database_category : "";
           count++;
           return gridItem;
         });
@@ -449,6 +505,77 @@ class STF extends React.Component<any, any> {
     });
     this.setState({ tierGridContainer: true });
   };
+
+  /**
+   * the selected sorter details will be availbale here to mak api call
+   * @param key the column key
+   * @param order the sorting order : 'ascend' | 'descend'
+   */
+  onApplySortHandler = (key, order, sortedInfo) => {
+    console.log("sort details ", key, order);
+    this.state.sort_by = Array();
+    if (order) {
+      let sortOrder = order === "ascend" ? "asc" : "desc";
+      this.state.sort_by = this.state.sort_by.filter(
+        keyPair => keyPair["key"] !== key
+      );
+      this.state.sort_by.push({ key: key, value: sortOrder });
+    }
+
+    this.setState({
+      gridSingleSortInfo: sortedInfo,
+      isGridSingleSorted: true,
+      isGridMultiSorted: false,
+      gridMultiSortedInfo: []
+    });
+    if (this.props.advancedSearchBody) {
+      this.populateGridData(this.props.advancedSearchBody);
+    } else {
+      this.populateGridData();
+    }
+  };
+
+  onApplyFilterHandler = filters => {
+    console.log("filtering from be:" + JSON.stringify(filters));
+    //this.state.filter = Array();
+    const fetchedKeys = Object.keys(filters);
+    if (fetchedKeys && fetchedKeys.length > 0) {
+      fetchedKeys.map((fetchedProps) => {
+        if (filters[fetchedProps]) {
+          this.state.filter = this.state.filter.filter(element => element['prop'] !== fetchedProps);
+          const fetchedOperator =
+            filters[fetchedProps][0].condition === "is like"
+              ? "is_like"
+              : filters[fetchedProps][0].condition === "is not"
+                ? "is_not"
+                : filters[fetchedProps][0].condition === "is not like"
+                  ? "is_not_like"
+                  : filters[fetchedProps][0].condition === "does not exist"
+                    ? "does_not_exist"
+                    : filters[fetchedProps][0].condition;
+          const fetchedValues =
+            filters[fetchedProps][0].value !== ""
+              ? [filters[fetchedProps][0].value.toString()]
+              : [];
+          this.state.filter.push({
+            prop: fetchedProps,
+            operator: fetchedOperator,
+            values: fetchedValues,
+          });
+        }
+      });
+    } else {
+      this.state.filter = Array();
+    }
+    console.log("Filters:" + JSON.stringify(this.state.filter));
+    if (this.props.advancedSearchBody) {
+      this.populateGridData(this.props.advancedSearchBody);
+    } else {
+      this.populateGridData();
+    }
+  };
+
+
 
   onClickTab = (selectedTabIndex: number) => {
     let activeTabIndex = 0;
@@ -522,36 +649,139 @@ class STF extends React.Component<any, any> {
     this.setState({ isAdditionalCriteriaOpen: true });
   };
 
-  rowSelectionChangeFromCell = (key: string, selectedRow: any, isSelected: boolean) => {
+  applyMultiSortHandler = (sorter, multiSortedInfo) => {
+    console.log("Multisort info:" + JSON.stringify(sorter));
+    
+		
+		this.setState(  {
+			isGridMultiSorted: true,
+			isGridSingleSorted: false,
+			gridMultiSortedInfo: multiSortedInfo,
+			gridSingleSortInfo: null,
+		})
+
+    if (sorter && sorter.length > 0) {
+      let uniqueKeys = Array();
+      let filteredSorter = Array();
+      sorter.map(sortInfo => {
+        if (uniqueKeys.includes(sortInfo["columnKey"])) {
+        } else {
+          filteredSorter.push(sortInfo);
+          uniqueKeys.push(sortInfo["columnKey"]);
+        }
+      });
+      filteredSorter.map(sortInfo => {
+        let sortOrder = sortInfo["order"] === "ascend" ? "asc" : "desc";
+        this.state.sort_by = this.state.sort_by.filter(
+          keyPair => keyPair["key"] !== sortInfo["columnKey"]
+        );
+        this.state.sort_by.push({
+          key: sortInfo["columnKey"],
+          value: sortOrder
+        });
+      });
+    }
+
+    if (this.props.advancedSearchBody) {
+      this.populateGridData(this.props.advancedSearchBody);
+    } else {
+      this.populateGridData();
+    }
+  };
+
+  onMultiSortToggle = (isMultiSortOn: boolean) => {
+    console.log("is Multi sort on ", isMultiSortOn);
+    this.state.sort_by = Array();
+    this.state.gridSingleSortInfo = null;
+    this.state.gridMultiSortedInfo = [];
+    this.state.isGridMultiSorted = isMultiSortOn;
+    this.state.isGridSingleSorted = false;
+
+    if (this.props.advancedSearchBody) {
+      this.populateGridData(this.props.advancedSearchBody);
+    } else {
+      this.populateGridData();
+    }
+  };
+
+  onSettingsIconHandler = (hiddenColumn, visibleColumn) => {
+    console.log(
+      "Settings icon handler: Hidden" +
+        JSON.stringify(hiddenColumn) +
+        " Visible:" +
+        JSON.stringify(visibleColumn)
+    );
+    if (hiddenColumn && hiddenColumn.length > 0) {
+      let hiddenColumnKeys = hiddenColumn.map((column) => column["key"]);
+      this.setState({
+        hiddenColumns: hiddenColumnKeys,
+      });
+    }
+  };
+
+  rowSelectionChangeFromCell = (
+    key: string,
+    selectedRow: any,
+    isSelected: boolean
+  ) => {
     console.log("data row ", selectedRow, isSelected);
     if (!selectedRow["isDisabled"]) {
       if (isSelected) {
         const data = this.state.drugGridData.map((d: any) => {
-          if (d.key === selectedRow.key) d["isChecked"] = true;
+          if (d.key === selectedRow.key) {
+            d["isChecked"] = true;
+            d["rowStyle"] = "table-row--green-font";
+          }
           // else d["isChecked"] = false;
           return d;
         });
-        const selectedRowKeys = [...this.state.selectedRowKeys, selectedRow.key];
+        const selectedRowKeys = [
+          ...this.state.selectedRowKeys,
+          selectedRow.key,
+        ];
         console.log("selected row keys ", selectedRowKeys);
-        const selectedRows: number[] = selectedRowKeys.filter((k) => this.state.fixedSelectedRows.indexOf(k) < 0);
+        const selectedRows: number[] = selectedRowKeys.filter(
+          (k) => this.state.fixedSelectedRows.indexOf(k) < 0
+        );
         this.onSelectedTableRowChanged(selectedRowKeys);
 
         this.setState({ drugGridData: data });
       } else {
         const data = this.state.drugGridData.map((d: any) => {
-          if (d.key === selectedRow.key) d["isChecked"] = false;
+          if (d.key === selectedRow.key) {
+            d["isChecked"] = false;
+            if (d["rowStyle"]) delete d["rowStyle"];
+          }
           // else d["isChecked"] = false;
           return d;
         });
 
-        const selectedRowKeys: number[] = this.state.selectedRowKeys.filter((k) => k !== selectedRow.key);
-        const selectedRows = selectedRowKeys.filter((k) => this.state.fixedSelectedRows.indexOf(k) < 0);
+        const selectedRowKeys: number[] = this.state.selectedRowKeys.filter(
+          (k) => k !== selectedRow.key
+        );
+        const selectedRows = selectedRowKeys.filter(
+          (k) => this.state.fixedSelectedRows.indexOf(k) < 0
+        );
 
         this.onSelectedTableRowChanged(selectedRows);
         this.setState({
           drugGridData: data,
         });
       }
+    }
+  };
+
+  onSelectedTableRowChanged = (selectedRowKeys) => {
+    console.log("selected row ", selectedRowKeys);
+
+    this.state.selectedDrugs = [];
+    this.setState({
+      selectedRowKeys: [...selectedRowKeys],
+    });
+    if (selectedRowKeys && selectedRowKeys.length > 0) {
+      this.state.selectedDrugs = selectedRowKeys.map((tierId) => {
+        return this.state.drugData[tierId - 1]["md5_id"];
+      });
     }
   };
 
@@ -586,14 +816,25 @@ class STF extends React.Component<any, any> {
                   <label>
                     ST GROUP DESCRIPTION<span className="astrict">*</span>
                   </label>
-                  <DropDown
+                  {/* <DropDown
                     options={this.state.stGroupDescription}
                     valueProp={this.state.groupDescriptionProp}
                     dispProp="text"
                     onSelect={this.dropDownSelectHandlerGroupDescription}
                     disabled={this.props.configureSwitch}
                     value={this.state.selectedGroupDescription}
-                  />
+                  /> */}
+
+                  <div className="input-element">
+                    <div className="bordered pointer bg-green">
+                      <span onClick={(e) => {this.setState({ showStGroupDescription: true });}} className="inner-font">
+                        {this.state.selectedGroupDescriptionObj["st_group_description_name"]
+                          ? this.state.selectedGroupDescriptionObj["st_group_description_name"]
+                          : "Select Group Description"}
+                      </span>
+                      <EditIcon onClick={(e) =>{this.setState({ showStGroupDescription: true });}} className={"hide-edit-icon"} />
+                    </div>
+                  </div>
                 </div>
 
                 <div className="group mt-10">
@@ -753,6 +994,15 @@ class STF extends React.Component<any, any> {
                     getPerPageItemSize={this.onPageSize}
                     onGridPageChangeHandler={this.onGridPageChangeHandler}
                     clearFilterHandler={this.onClearFilterHandler}
+                    applyFilter={this.onApplyFilterHandler}
+                    applySort={this.onApplySortHandler}
+                    isSingleSorted={this.state.isGridSingleSorted}
+                    sortedInfo={this.state.gridSingleSortInfo}
+                    applyMultiSort={this.applyMultiSortHandler}
+                    isMultiSorted={this.state.isGridMultiSorted}
+                    multiSortedInfo={this.state.gridMultiSortedInfo}
+                    onMultiSortToggle={this.onMultiSortToggle}
+                    getColumnSettings={this.onSettingsIconHandler}
                     // rowSelection={{
                     //   columnWidth: 50,
                     //   fixed: true,
@@ -798,7 +1048,28 @@ class STF extends React.Component<any, any> {
             />
           </DialogPopup>
         ) : null}
-
+        {this.state.showStGroupDescription && (
+          <DialogPopup
+            positiveActionText=""
+            negativeActionText="Close"
+            title={"Select Group Description"}
+            handleClose={() => {
+              this.setState({
+                showStGroupDescription: !this.state.showStGroupDescription,
+              });
+            }}
+            handleAction={() => {}}
+            open={this.state.showStGroupDescription}
+            showActions={false}
+            className=""
+            height="80%"
+            width="90%"
+          >
+            {/* <SelectFormularyPopUp formularyToggle={this.formularyToggle} /> */}
+            {/* <CloneFormularyPopup type="medicare" /> */}
+            <GPM isPopUpView={true} selectGroupDescriptionClick={this.dropDownSelectHandlerGroupDescription} />
+          </DialogPopup>
+        )}
         <ToastContainer />
       </div>
     );

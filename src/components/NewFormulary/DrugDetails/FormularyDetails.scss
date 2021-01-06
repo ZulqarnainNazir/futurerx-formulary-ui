@@ -279,6 +279,93 @@
 }
 //End Green
 
+//Grey
+.version-wrapper-grey {
+  border: 1px solid #80c483;
+  height: 37px;
+  max-width: 890px;
+  width: 100%;
+  background: #d5ffd7;
+  border-radius: 3px;
+  display: flex;
+  justify-content: space-around;
+
+  .formulary-type-dropdown {
+    background: transparent !important;
+  }
+
+  .version-dd {
+    width: 295px;
+    border-right: 1px solid #80c483;
+    height: 35px;
+    margin-right: 10px;
+    padding-left: 20px;
+    display: flex;
+    justify-content: space-between;
+    padding-right: 6px;
+  }
+
+  .item-text {
+    font-family: Roboto;
+    font-style: normal;
+    font-weight: 500;
+    font-size: 13px;
+    line-height: 20px;
+    display: flex;
+    align-items: center;
+    text-decoration-line: underline;
+    color: #9eb5a4;
+  }
+
+  .item {
+    display: flex;
+    line-height: 35px;
+    font-size: 12px;
+    color: #9eb5a4;
+    text-decoration-line: underline;
+    font-weight: $font-weight-500;
+    align-items: center;
+    svg {
+      margin-right: 5px;
+    }
+    &:last-child {
+      margin-right: 0;
+    }
+  }
+  .ant-select-selector {
+    background: #d5ffd7 !important;
+    .ant-select-selection-placeholder {
+      color: #219653 !important;
+    }
+    .ant-select-selection-item {
+      color: #219653 !important;
+    }
+  }
+  .formulary-versions .ant-select-selector {
+    border-right: 1px solid #80c483 !important;
+  }
+  .formulary-type-dropdown {
+    width: 205px !important;
+  }
+
+  #group-description {
+    border: none;
+    height: 37px;
+    max-width: 890px;
+    width: 100%;
+    background: #fff5f0;
+    border-radius: 3px;
+    color: #219653;
+    text-decoration-line: underline;
+    font-weight: $font-weight-500;
+    align-items: center;
+    font-family: Roboto;
+    font-style: normal;
+    font-size: 12px;
+  }
+}
+//End Grey
+
 .drug-detail-top {
   background: white;
   padding: 22px 20px 30px 30px;
@@ -540,6 +627,13 @@
             border-radius: 3px;
             color: #ffffff;
           }
+          &.orange-fill {
+            background: #f65a1c;
+            border: 1px solid #f65a1c;
+            box-sizing: border-box;
+            border-radius: 3px;
+            color: #ffffff;
+          }
           &.green {
             background: #d5ffd7;
             border: 1px solid #80c483;
@@ -553,7 +647,8 @@
             box-sizing: border-box;
             border-radius: 3px;
             color: #ffffff;
-          }&.orange-fill {
+          }
+          &.orange-fill {
             background: #f65a1c;
             border: 1px solid #f65a1c;
             box-sizing: border-box;
@@ -576,6 +671,35 @@
         }
       }
 
+      /* SCROLL-BAR */
+      .new-scroll-bar {
+        overflow-y: scroll;
+        max-height: 400px;
+        overflow-x: hidden;
+        border: 1px solid #e5e5e5;
+        box-sizing: border-box;
+        border-radius: 5px;
+      }
+
+      .new-scroll-bar::-webkit-scrollbar {
+        width: 6px;
+        height: 6px;
+      }
+      /* Track */
+      .new-scroll-bar::-webkit-scrollbar-track {
+        box-shadow: inset 0 0 0px #999999;
+        border-radius: 3px;
+      }
+      /* Handle */
+      .new-scroll-bar::-webkit-scrollbar-thumb {
+        background: #999999;
+        border-radius: 3px;
+      }
+      /* Handle on hover */
+      .new-scroll-bar::-webkit-scrollbar-thumb:hover {
+        background: #999999;
+      }
+      /* SCROLL-BAR */
       .scrollbar {
         overflow-y: scroll;
         max-height: 340px;

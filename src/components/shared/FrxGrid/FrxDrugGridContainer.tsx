@@ -37,7 +37,7 @@ interface FrxDrugGridContainerProps<T> extends Grid<T> {
   // summary?: (data: any[]) => React.ReactNode;
   enableSearch: boolean;
   isFetchingData: boolean;
-  onSearch: (searchObject: any) => void;
+  onSearch?: (searchObject: any) => void;
   searchOptions?: any;
   isPinningEnabled?: boolean;
   getPerPageItemSize?: any;
@@ -104,7 +104,8 @@ class FrxDrugGridContainer extends Component<FrxDrugGridContainerProps<any>> {
    * @author Deepak_T
    */
   handleSearch = (searchObject) => {
-    this.props.onSearch(searchObject);
+		if(this.props.onSearch)
+    	this.props.onSearch(searchObject);
   };
 
   render() {

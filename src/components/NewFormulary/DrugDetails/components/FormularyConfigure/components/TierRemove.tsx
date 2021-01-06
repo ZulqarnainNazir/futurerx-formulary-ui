@@ -91,7 +91,7 @@ class TierRemove extends React.Component<any, tabsState> {
     index: 0,
     limit: 10,
     filter: Array(),
-    sort_by: Array(),
+    sort_by: [{ key: 'drug_label_name', value: 'asc' }],
     hiddenColumns: Array(),
     dataCount: 0,
     selectedRowKeys: Array(),
@@ -150,6 +150,7 @@ class TierRemove extends React.Component<any, tabsState> {
     if (fetchedKeys && fetchedKeys.length > 0) {
       fetchedKeys.map(fetchedProps => {
         if (filters[fetchedProps]) {
+          this.state.filter = this.state.filter.filter(element => element['prop'] !== fetchedProps);
           const fetchedOperator =
             filters[fetchedProps][0].condition === "is like"
               ? "is_like"
@@ -171,12 +172,14 @@ class TierRemove extends React.Component<any, tabsState> {
           });
         }
       });
-      console.log("Filters:" + JSON.stringify(this.state.filter));
-      if (this.props.advancedSearchBody) {
-        this.populateGridData(this.props.advancedSearchBody);
-      } else {
-        this.populateGridData();
-      }
+    } else {
+      this.state.filter = Array();
+    }
+    console.log("Filters:" + JSON.stringify(this.state.filter));
+    if (this.props.advancedSearchBody) {
+      this.populateGridData(this.props.advancedSearchBody);
+    } else {
+      this.populateGridData();
     }
   };
 
@@ -192,6 +195,8 @@ class TierRemove extends React.Component<any, tabsState> {
       let sortOrder = order === 'ascend' ? 'asc' : 'desc';
       this.state.sort_by = this.state.sort_by.filter(keyPair => keyPair['key'] !== key);
       this.state.sort_by.push({ key: key, value: sortOrder });
+    } else {
+      this.state.sort_by.push({ key: 'drug_label_name', value: 'asc' });
     }
     this.setState({
       gridSingleSortInfo: sortedInfo,
@@ -207,12 +212,12 @@ class TierRemove extends React.Component<any, tabsState> {
   };
   applyMultiSortHandler = (sorter, multiSortedInfo) => {
     console.log('Multisort info:' + JSON.stringify(sorter));
-    this.setState(  {
-			isGridMultiSorted: true,
-			isGridSingleSorted: false,
-			gridMultiSortedInfo: multiSortedInfo,
-			gridSingleSortInfo: null,
-		})
+    this.setState({
+      isGridMultiSorted: true,
+      isGridSingleSorted: false,
+      gridMultiSortedInfo: multiSortedInfo,
+      gridSingleSortInfo: null,
+    })
 
     if (sorter && sorter.length > 0) {
       let uniqueKeys = Array();
@@ -242,6 +247,8 @@ class TierRemove extends React.Component<any, tabsState> {
   onMultiSortToggle = (isMultiSortOn: boolean) => {
     console.log("is Multi sort on ", isMultiSortOn);
     this.state.sort_by = Array();
+    if (!isMultiSortOn)
+      this.state.sort_by.push({ key: 'drug_label_name', value: 'asc' });
     this.state.gridSingleSortInfo = null;
     this.state.gridMultiSortedInfo = [];
     this.state.isGridMultiSorted = isMultiSortOn;
@@ -871,6 +878,7 @@ class TierRemove extends React.Component<any, tabsState> {
                   getPerPageItemSize={this.onPageSize}
                   onGridPageChangeHandler={this.onGridPageChangeHandler}
                   clearFilterHandler={this.onClearFilterHandler}
+                  applyFilter={this.onApplyFilterHandler}
                   applySort={this.onApplySortHandler}
                   isSingleSorted={this.state.isGridSingleSorted}
                   sortedInfo={this.state.gridSingleSortInfo}

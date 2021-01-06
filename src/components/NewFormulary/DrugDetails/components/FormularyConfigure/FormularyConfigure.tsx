@@ -113,13 +113,15 @@ class FormularyConfigure extends React.Component<any, any> {
         console.log(e);
         if (e && e.id_edit) {
           if (e.id_edit === 68) {
-            isNA = true;
+            //isNA = true;
           } else if (e.id_edit === 58) {
             isPA = true;
           } else if (e.id_edit === 59) {
             isQL = true;
           } else if (e.id_edit === 60) {
             isST = true;
+          } else {
+            isNA = true;
           }
         }
       });
@@ -144,7 +146,7 @@ class FormularyConfigure extends React.Component<any, any> {
       } else if (t && t.text === "QL") {
         t.disable = isQL ? false : true;
       } else if (t && t.text === "OTHER UM EDITS") {
-        t.disable = isNA ? true : false;
+        t.disable = isNA ? false : true;
       }
     });
     return list;

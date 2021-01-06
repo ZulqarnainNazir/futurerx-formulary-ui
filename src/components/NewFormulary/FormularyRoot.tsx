@@ -20,6 +20,11 @@ state = {
 
     const tabs = this.state.tabs.map((tab: TabInfo, index: number) => {
       if (index === selectedTabIndex) {
+        if (selectedTabIndex === 1) {
+          window.open("http://vertx-dev-staging-01.ap.futurerx.com:8000/", "_blank");
+        }else if(selectedTabIndex === 2){
+          window.open("http://vertx-dev-staging-01.ap.futurerx.com:5000", "_blank");
+        }
         activeTabIndex = index;
       }
       return tab;
