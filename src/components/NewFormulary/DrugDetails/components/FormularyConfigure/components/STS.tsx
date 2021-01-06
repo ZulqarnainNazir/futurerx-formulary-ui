@@ -145,17 +145,14 @@ class STS extends React.Component<any, any> {
       <>
         <div className="bordered">
           <PanelHeader title="STEP THERAPY SETTING" />
-          <div className="inner-container bg-light-grey">
-            <div className="modify-wrapper bordered white-bg">
+          <div className="inner-container bg-light-grey" style={{ padding: "0px" }}>
+            <div className="modify-wrapper  white-bg">
               <div className="modify-panel">
                 <div className="icon">
                   <span>R</span>
                 </div>
                 <div className="switch-box">
-                  <CustomizedSwitches
-                    leftTitle="Modify"
-                    rightTitle="view all"
-                  />
+                  <CustomizedSwitches leftTitle="Modify" rightTitle="view all" />
                 </div>
                 <div className="mini-tabs">
                   <FrxMiniTabs
