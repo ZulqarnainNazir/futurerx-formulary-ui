@@ -8,6 +8,7 @@ import DropDown from "../../../../../../shared/Frx-components/dropdown/DropDown"
 import "../CommercialPopup.scss";
 import showMessage from "../../../../../Utils/Toast";
 import { initNewVersion } from "../../../../../../../redux/slices/formulary/setup/setupSlice";
+import { postMessage  } from "../../../../../../../redux/slices/formulary/messaging/messagingSlice";
 
 class NewVersionPopup extends React.Component<any, any> {
   state = {
@@ -36,7 +37,9 @@ class NewVersionPopup extends React.Component<any, any> {
   evokeNewVersion = () => {
     console.log(" evokeNewVersion ");
     if (this.state.effectiveDate === "") {
-      showMessage("Please enter Effective Date", "error");
+      // showMessage("Please enter Effective Date", "error");
+      this.props.postMessage({ message: "Please enter Effective Date", type: "warning" });
+
       return;
     }
     this.props
@@ -141,6 +144,8 @@ class NewVersionPopup extends React.Component<any, any> {
 function mapDispatchToProps(dispatch) {
   return {
     initNewVersion: (a) => dispatch(initNewVersion(a)),
+    postMessage: (a) => dispatch(postMessage(a)),
+
   };
 }
 

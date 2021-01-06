@@ -660,7 +660,9 @@ class CategoryClass extends React.Component<any, any> {
   onClose = () => {
     console.log("close");
     this.state.addedFormularyDrugs = Array();
-    this.setState({ materialPopupInd: false });
+    this.setState({ materialPopupInd: false }, () => {
+      this.onSelectAllRows(false);
+    });
     return true;
   };
   handleAddFileClick = () => { };
@@ -745,6 +747,8 @@ class CategoryClass extends React.Component<any, any> {
     }
     this.setState({
       materialPopupInd: false
+    }, () => {
+      this.onSelectAllRows(false);
     });
   };
   handleSearch = searchObject => {
@@ -834,7 +838,7 @@ class CategoryClass extends React.Component<any, any> {
         );
         this.rowSelectionChange(selectedRows);
 
-        this.setState({ drugGridData: data });
+        this.setState({ filteredData: data });
       } else {
         const data = this.state.filteredData.map((d: any) => {
           if (d.key === selectedRow.key) {
@@ -899,7 +903,7 @@ class CategoryClass extends React.Component<any, any> {
       k => this.state.fixedSelectedRows.indexOf(k) < 0
     );
     this.rowSelectionChange(selectedRows);
-    this.setState({ drugGridData: data });
+    this.setState({ filteredData: data });
   };
 
   onOverrideCategoryClass = (category, classValue) => {
@@ -959,7 +963,7 @@ class CategoryClass extends React.Component<any, any> {
                 </div>
                 <div className="bordered category-class-root">
                   <div className="header pr-10 category-class-wrapper">
-                    <p>Select Drugs From</p>
+                    <p></p>
                     <div className="category-class-button-wrapper">
                       <div className="header-dropdown">
                         <DropDown

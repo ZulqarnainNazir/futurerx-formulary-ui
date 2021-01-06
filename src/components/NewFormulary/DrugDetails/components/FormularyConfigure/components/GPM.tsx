@@ -314,7 +314,7 @@ class GPM extends React.Component<any, any> {
                     position={this.props.isPopUpView}
                   />
                 </div>
-                <div className="group-wrapper scrollbar scrollbar-primary  mt-5 mx-auto view-com-sec">
+                <div className="group-wrapper scrollbar scrollbar-primary  mx-auto view-com-sec">
                   {this.state.groupsData.length > 0 &&
                     this.state.groupsData.map((group, key) =>
                       this.state.searchInput == "" ||

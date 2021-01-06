@@ -16,4 +16,68 @@
       }
     }
   }
+  .inner-container,
+  .input-border-none {
+    .__root-additional-criteria-read-only {
+      &-child {
+        display: flex;
+        // justify-content: space-between;
+        &-swapper {
+          margin-top: 20px;
+        }
+        &-accordion {
+          margin-left: 5px;
+          width: 100%;
+        }
+      }
+    }
+    .setting-1 {
+      .tags-input-border-none {
+        .MuiGrid-root,
+        .MuiGrid-item,
+        .MuiGrid-grid-xs-6 {
+          .MuiAutocomplete-root,
+          .MuiAutocomplete-hasClearIcon,
+          .MuiAutocomplete-hasPopupIcon {
+            .MuiFormControl-root,
+            .MuiTextField-root,
+            .MuiFormControl-fullWidth {
+              .MuiInputBase-root,
+              .MuiOutlinedInput-root,
+              .MuiAutocomplete-inputRoot,
+              .MuiInputBase-fullWidth,
+              .MuiInputBase-formControl,
+              .MuiInputBase-adornedEnd,
+              .MuiOutlinedInput-adornedEnd {
+                .MuiInputBase-input {
+                  border: none;
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+//css for mini tabs
+.inner-container {
+  .mini-tabs {
+    margin: 10px 0 0 2px;
+    header {
+      box-shadow: none;
+    }
+  }
+  .frx-mini-tabs-root {
+    background: none;
+    &__tabs {
+      min-height: 30px;
+      &__tab {
+        min-height: 24px;
+        min-width: auto;
+      }
+    }
+    margin: 0 0 20px 0;
+  }
 }
