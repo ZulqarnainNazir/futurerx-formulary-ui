@@ -558,6 +558,8 @@ class Tier extends React.Component<any, tabsState> {
     var numbers = /^[0-9]+$/;
     let tempObject = {};
     let temError = {};
+    console.log(e.target.value);
+
     if (e.target.value.match(numbers)) {
       tempObject = {
         ...this.state.quantityAndFillLimitObject,
@@ -567,11 +569,25 @@ class Tier extends React.Component<any, tabsState> {
         ...this.state.errorObject,
         [e.target.name]: false,
       };
+      this.setState({
+        quantityAndFillLimitObject: tempObject,
+        errorObject: temError,
+      });
     }
-    this.setState({
-      quantityAndFillLimitObject: tempObject,
-      errorObject: temError,
-    });
+    if (e.target.value == "") {
+      tempObject = {
+        ...this.state.quantityAndFillLimitObject,
+        [e.target.name]: e.target.value,
+      };
+      temError = {
+        ...this.state.errorObject,
+        [e.target.name]: false,
+      };
+      this.setState({
+        quantityAndFillLimitObject: tempObject,
+        errorObject: temError,
+      });
+    }
   };
   onSelectedTableRowChanged = (selectedRowKeys) => {
     // this.state.selectedDrugs = [];
