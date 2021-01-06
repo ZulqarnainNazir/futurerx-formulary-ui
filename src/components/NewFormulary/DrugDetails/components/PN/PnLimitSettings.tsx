@@ -22,7 +22,7 @@ class PnLimitSettings extends React.Component<any, any>{
   render() {
     const {showGridHandler, handleStatus,pnSettingsStatus} = this.props
     return (
-      <div className="pn-limit-settings bordered mb-10">
+      <div className="pn-limit-settings bordered mb-10 white-bg">
         <PanelHeader title="pharmacy network settings" tooltip="pharmacy network settings" />
 
         <div className="inner-container">

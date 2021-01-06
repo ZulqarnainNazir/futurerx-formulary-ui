@@ -25,9 +25,9 @@ export interface FrxGridSettingsCellProps {
   isRowSelectorCheckbox?: boolean;
   customSettingIcon?: string;
   className?: string;
-  settingsTriDotDropDownItems?:any[];
+  settingsTriDotDropDownItems?: any[];
   handleSettingsComponentMenuClose?: () => void;
-  handleMenuClick?: (menuItem: GridMenu) => void;
+  handleMenuClick?: (menuItem: GridMenu, data?: any) => void;
   onSettingsTriDotClick: (dataRow: any) => void;
   onsettingsTriDotDropDownItemClick?: (dataRow: any, item: any) => void;
   rowSelectionChange: (dataRow: any, event: any) => void;
@@ -57,8 +57,9 @@ class FrxGridSettingsCell extends React.Component<FrxGridSettingsCellProps> {
                 menuItems={this.props.settingsMenuItems}
                 anchorEl={this.props.settingsAnchor}
                 handleMenuClick={(menu: GridMenu) => {
+                  console.log("data row ", this.props.dataRow);
                   if (this.props.handleMenuClick)
-                    this.props.handleMenuClick(menu);
+                    this.props.handleMenuClick(menu, this.props.dataRow);
                 }}
                 handleClose={() => {
                   if (this.props.handleSettingsComponentMenuClose)
@@ -94,17 +95,23 @@ class FrxGridSettingsCell extends React.Component<FrxGridSettingsCellProps> {
    */
   onSettingsTriDotClcik = () => {
     if (this.props.isRowSelectionEnabled) return;
-    if(this.props.settingsTriDotDropDownItems && this.props.settingsTriDotDropDownItems.length > 0) return; 
+    if (
+      this.props.settingsTriDotDropDownItems &&
+      this.props.settingsTriDotDropDownItems.length > 0
+    )
+      return;
     if (this.props.onSettingsTriDotClick) {
       this.props.onSettingsTriDotClick(this.props.dataRow);
     }
   };
-onTriDotDropDownItemClick = (selectedItem:any) => {
-  if(this.props.onsettingsTriDotDropDownItemClick)
-  {
-    this.props.onsettingsTriDotDropDownItemClick(this.props.dataRow, selectedItem);
-  }
-} 
+  onTriDotDropDownItemClick = (selectedItem: any) => {
+    if (this.props.onsettingsTriDotDropDownItemClick) {
+      this.props.onsettingsTriDotDropDownItemClick(
+        this.props.dataRow,
+        selectedItem
+      );
+    }
+  };
   /**
    * @function renderExpandedCell
    * to render the content when ellipses is expanded
@@ -173,7 +180,7 @@ onTriDotDropDownItemClick = (selectedItem:any) => {
                 savedTarget
               );
             }}
-          >            
+          >
             <svg
               className="frx-grid-settings-cell__icon--expanded"
               width="22"
@@ -298,11 +305,13 @@ onTriDotDropDownItemClick = (selectedItem:any) => {
           return null;
       }
     }
-    const TriDotDropdownContent = <div className="tri-dot-drop-down-wrapper">
-       {this.props.settingsTriDotDropDownItems?.map((data,index) =>
-            <p onClick = {(e) => this.onTriDotDropDownItemClick(data)}>{data}</p>
-        )}      
-     </div>;
+    const TriDotDropdownContent = (
+      <div className="tri-dot-drop-down-wrapper">
+        {this.props.settingsTriDotDropDownItems?.map((data, index) => (
+          <p onClick={e => this.onTriDotDropDownItemClick(data)}>{data}</p>
+        ))}
+      </div>
+    );
     return (
       <>
         {!isRowSelectionEnabled ? (
@@ -319,23 +328,42 @@ onTriDotDropDownItemClick = (selectedItem:any) => {
               );
             }}
           >
-            {
-              (this.props.settingsTriDotDropDownItems && this.props.settingsTriDotDropDownItems.length > 0)?
-              <Popover content={TriDotDropdownContent} trigger="click" placement="bottom">
-              <svg
-                className="frx-grid-settings-cell__icon--non-expanded"
-                width="22"
-                height="6"
-                viewBox="0 0 22 6"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
+            {this.props.settingsTriDotDropDownItems &&
+            this.props.settingsTriDotDropDownItems.length > 0 ? (
+              <Popover
+                content={TriDotDropdownContent}
+                trigger="click"
+                placement="bottom"
               >
-                <circle cx="19.1552" cy="2.58853" r="2.58853" fill="#A5A5A5" />
-                <circle cx="10.8717" cy="2.58853" r="2.58853" fill="#C1C2C4" />
-                <circle cx="2.58853" cy="2.58853" r="2.58853" fill="#E1E1E1" />
-              </svg>
+                <svg
+                  className="frx-grid-settings-cell__icon--non-expanded"
+                  width="22"
+                  height="6"
+                  viewBox="0 0 22 6"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <circle
+                    cx="19.1552"
+                    cy="2.58853"
+                    r="2.58853"
+                    fill="#A5A5A5"
+                  />
+                  <circle
+                    cx="10.8717"
+                    cy="2.58853"
+                    r="2.58853"
+                    fill="#C1C2C4"
+                  />
+                  <circle
+                    cx="2.58853"
+                    cy="2.58853"
+                    r="2.58853"
+                    fill="#E1E1E1"
+                  />
+                </svg>
               </Popover>
-              :
+            ) : (
               <svg
                 className="frx-grid-settings-cell__icon--non-expanded"
                 width="22"
@@ -348,8 +376,7 @@ onTriDotDropDownItemClick = (selectedItem:any) => {
                 <circle cx="10.8717" cy="2.58853" r="2.58853" fill="#C1C2C4" />
                 <circle cx="2.58853" cy="2.58853" r="2.58853" fill="#E1E1E1" />
               </svg>
-            }
-            
+            )}
           </span>
         ) : (
           <>

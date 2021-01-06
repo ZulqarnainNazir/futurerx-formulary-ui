@@ -67,6 +67,7 @@ class ListItem extends Component<any, any> {
     isIncluded: null,
 
     payload: null,
+    isReadOnly: false,
 
     // AL
     alSettings: {
@@ -143,6 +144,7 @@ class ListItem extends Component<any, any> {
       cardName: this.props.card.cardName,
       isIncluded: this.props.card.isIncluded,
       payload: this.props.payload,
+      isReadOnly: this.props?.isReadOnly,
     });
 
     this.initializePreData();
@@ -888,6 +890,7 @@ class ListItem extends Component<any, any> {
       cardName,
       isIncluded,
       payload,
+      isReadOnly,
 
       // AL
       alSettings,
@@ -942,11 +945,21 @@ class ListItem extends Component<any, any> {
             handleAgeCriteriaMinConChange={this.handleALMinConChange}
             handleAgeCriteriaMaxConChange={this.handleALMaxConChange}
             handleAgeCriteriaChange={this.handleALChange}
-            deleteIconHandler={() =>
-              deleteIconHandler(nodeId, cardCode, cardName, isIncluded, payload)
+            deleteIconHandler={
+              isReadOnly
+                ? null
+                : () =>
+                    deleteIconHandler(
+                      nodeId,
+                      cardCode,
+                      cardName,
+                      isIncluded,
+                      payload
+                    )
             }
             isAdditionalCriteria={true}
             nodeId={nodeId}
+            isReadOnly={isReadOnly}
           />
         );
       case 2:
@@ -958,11 +971,21 @@ class ListItem extends Component<any, any> {
             }}
             handleStatus={this.handleGLStatus}
             serviceSettingsChecked={this.serviceSettingsCheckedGL}
-            deleteIconHandler={() =>
-              deleteIconHandler(nodeId, cardCode, cardName, isIncluded, payload)
+            deleteIconHandler={
+              isReadOnly
+                ? null
+                : () =>
+                    deleteIconHandler(
+                      nodeId,
+                      cardCode,
+                      cardName,
+                      isIncluded,
+                      payload
+                    )
             }
             isAdditionalCriteria={true}
             nodeId={nodeId}
+            isReadOnly={isReadOnly}
             additionalCriteriaSequenceId={additionalCriteriaSequenceId}
           />
         );
@@ -978,11 +1001,21 @@ class ListItem extends Component<any, any> {
             handleICDChange={this.handleICDChange}
             handleICDSearch={this.handleICDSearch}
             handleICDOnChange={this.handleICDOnChange}
-            deleteIconHandler={() =>
-              deleteIconHandler(nodeId, cardCode, cardName, isIncluded, payload)
+            deleteIconHandler={
+              isReadOnly
+                ? null
+                : () =>
+                    deleteIconHandler(
+                      nodeId,
+                      cardCode,
+                      cardName,
+                      isIncluded,
+                      payload
+                    )
             }
             isAdditionalCriteria={true}
             nodeId={nodeId}
+            isReadOnly={isReadOnly}
           />
         );
       case 4:
@@ -995,11 +1028,21 @@ class ListItem extends Component<any, any> {
             handleStatus={this.handlePNStatus}
             handlePNChange={this.handlePNChange}
             handlePNSearch={this.handlePNSearch}
-            deleteIconHandler={() =>
-              deleteIconHandler(nodeId, cardCode, cardName, isIncluded, payload)
+            deleteIconHandler={
+              isReadOnly
+                ? null
+                : () =>
+                    deleteIconHandler(
+                      nodeId,
+                      cardCode,
+                      cardName,
+                      isIncluded,
+                      payload
+                    )
             }
             isAdditionalCriteria={true}
             nodeId={nodeId}
+            isReadOnly={isReadOnly}
           />
         );
       case 5:
@@ -1012,11 +1055,21 @@ class ListItem extends Component<any, any> {
             handleStatus={this.handlePTStatus}
             handlePTChange={this.handlePTChange}
             handlePTSearch={this.handlePTSearch}
-            deleteIconHandler={() =>
-              deleteIconHandler(nodeId, cardCode, cardName, isIncluded, payload)
+            deleteIconHandler={
+              isReadOnly
+                ? null
+                : () =>
+                    deleteIconHandler(
+                      nodeId,
+                      cardCode,
+                      cardName,
+                      isIncluded,
+                      payload
+                    )
             }
             isAdditionalCriteria={true}
             nodeId={nodeId}
+            isReadOnly={isReadOnly}
           />
         );
       case 6:
@@ -1032,11 +1085,21 @@ class ListItem extends Component<any, any> {
               isSelectAll: isSelectAllPOS,
               handleSelectAll: this.handlePOSSelectAll,
             }}
-            deleteIconHandler={() =>
-              deleteIconHandler(nodeId, cardCode, cardName, isIncluded, payload)
+            deleteIconHandler={
+              isReadOnly
+                ? null
+                : () =>
+                    deleteIconHandler(
+                      nodeId,
+                      cardCode,
+                      cardName,
+                      isIncluded,
+                      payload
+                    )
             }
             isAdditionalCriteria={true}
             nodeId={nodeId}
+            isReadOnly={isReadOnly}
             additionalCriteriaSequenceId={additionalCriteriaSequenceId}
           />
         );
@@ -1053,11 +1116,21 @@ class ListItem extends Component<any, any> {
               isSelectAll: isSelectAllPR,
               handleSelectAll: this.handlePRSelectAll,
             }}
-            deleteIconHandler={() =>
-              deleteIconHandler(nodeId, cardCode, cardName, isIncluded, payload)
+            deleteIconHandler={
+              isReadOnly
+                ? null
+                : () =>
+                    deleteIconHandler(
+                      nodeId,
+                      cardCode,
+                      cardName,
+                      isIncluded,
+                      payload
+                    )
             }
             isAdditionalCriteria={true}
             nodeId={nodeId}
+            isReadOnly={isReadOnly}
             additionalCriteriaSequenceId={additionalCriteriaSequenceId}
           />
         );
@@ -1073,11 +1146,21 @@ class ListItem extends Component<any, any> {
             handlePCHLChange={this.handlePCHLChange}
             handlePCHLSearch={this.handlePCHLSearch}
             handlePCHLCriteriaChange={this.handlePCHLOnChange}
-            deleteIconHandler={() =>
-              deleteIconHandler(nodeId, cardCode, cardName, isIncluded, payload)
+            deleteIconHandler={
+              isReadOnly
+                ? null
+                : () =>
+                    deleteIconHandler(
+                      nodeId,
+                      cardCode,
+                      cardName,
+                      isIncluded,
+                      payload
+                    )
             }
             isAdditionalCriteria={true}
             nodeId={nodeId}
+            isReadOnly={isReadOnly}
           />
         );
       default:

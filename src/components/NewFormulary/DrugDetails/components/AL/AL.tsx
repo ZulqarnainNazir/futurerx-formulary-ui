@@ -282,10 +282,10 @@ class DrugDetailAL extends React.Component<any, any> {
             showMessage("Success", "success");
             this.getALSummary();
             this.getALDrugsList();
-            this.refreshSelections({ activeTabIndex: this.state.activeTabIndex });
+            // this.refreshSelections({ activeTabIndex: this.state.activeTabIndex });
           } else {
             showMessage("Failure", "error");
-            this.refreshSelections({ activeTabIndex: this.state.activeTabIndex });
+            // this.refreshSelections({ activeTabIndex: this.state.activeTabIndex });
           }
         });
       } else if(this.state.activeTabIndex === 2) {
@@ -384,7 +384,7 @@ class DrugDetailAL extends React.Component<any, any> {
   };
 
   refreshSelections = ({ activeTabIndex = 0 }) => {
-    console.log("----Inside refresh Selection-------")
+    console.log("----Inside refresh Selection-------");
     if(activeTabIndex === 0 || activeTabIndex === 1) {
       
       let alSettings = [
@@ -710,12 +710,16 @@ class DrugDetailAL extends React.Component<any, any> {
 
   validateGLForm = () => {
     let formValid = false;
-    for(let i=0; i<this.formData2.length; i++) {
-      if(this.formData2[i].minimumType && this.formData2[i].maximumType && this.formData2[i].maximumVal && this.formData2[i].maximumVal) {
-        formValid = true;
-      } else {
-        formValid = false;
+    if(this.state.activeTabIndex === 0 || this.state.activeTabIndex === 1) {
+      for(let i=0; i<this.formData2.length; i++) {
+        if(this.formData2[i].minimumType && this.formData2[i].maximumType && this.formData2[i].maximumVal && this.formData2[i].maximumVal) {
+          formValid = true;
+        } else {
+          formValid = false;
+        }
       }
+    } else if(this.state.activeTabIndex === 2) {
+      formValid = !(this.state.alRemoveCheckedList.length === 0);
     }
 
     return formValid;
@@ -1027,7 +1031,7 @@ class DrugDetailAL extends React.Component<any, any> {
             isPinningEnabled={false}
             enableSearch={false}
             enableColumnDrag
-            settingsWidth={50}
+            settingsWidth={30}
             onSearch={() => { }}
             fixedColumnKeys={[]}
             pagintionPosition="topRight"
@@ -1065,34 +1069,36 @@ class DrugDetailAL extends React.Component<any, any> {
     
     return (
       <>
-        <div className="bordered mb-10">
-          <PanelHeader title="Age Limit" tooltip="Age Limit" />
-          <div className="inner-container bg-light-grey">
-            <div className="mb-10">
-              <PanelGrid
-                panelGridTitle={this.state.panelGridTitle1}
-                panelGridValue={this.state.panelGridValue1}
-                panelTitleAlignment={this.state.panelTitleAlignment1}
-              />
-            </div>
-            <div className="modify-wrapper bordered white-bg">
-              <div className="modify-panel">
-                <div className="icon">
-                  <span>R</span>
-                </div>
-                <div className="switch-box">
-                  <CustomizedSwitches
-                    leftTitle="Modify"
-                    rightTitle="view all"
-                  />
-                </div>
-                <div className="mini-tabs">
-                  <FrxMiniTabs
-                    tabList={this.state.tabs}
-                    activeTabIndex={this.state.activeTabIndex}
-                    onClickTab={this.onClickTab}
-                    disabled={this.props.configureSwitch}
-                  />
+        <div className="p-10 pt-0 bordered bt-none mb-10 white-bg">
+          <div className="bordered">
+            <PanelHeader title="Age Limit" tooltip="Age Limit" />
+            <div className="inner-container bg-light-grey">
+              <div className="mb-10">
+                <PanelGrid
+                  panelGridTitle={this.state.panelGridTitle1}
+                  panelGridValue={this.state.panelGridValue1}
+                  panelTitleAlignment={this.state.panelTitleAlignment1}
+                />
+              </div>
+              <div className="modify-wrapper bordered white-bg">
+                <div className="modify-panel">
+                  <div className="icon">
+                    <span>R</span>
+                  </div>
+                  <div className="switch-box">
+                    <CustomizedSwitches
+                      leftTitle="Modify"
+                      rightTitle="view all"
+                    />
+                  </div>
+                  <div className="mini-tabs">
+                    <FrxMiniTabs
+                      tabList={this.state.tabs}
+                      activeTabIndex={this.state.activeTabIndex}
+                      onClickTab={this.onClickTab}
+                      disabled={this.props.configureSwitch}
+                    />
+                  </div>
                 </div>
               </div>
             </div>
@@ -1121,7 +1127,7 @@ class DrugDetailAL extends React.Component<any, any> {
         />}
 
         {this.state.showGrid ? (
-          <div className="bordered">
+          <div className="bordered white-bg">
             <div className="header space-between pr-10">
               Drug Grid
               <div className="button-wrapper">

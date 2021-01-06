@@ -22,6 +22,8 @@ interface Props {
   mode?: "single" | "multi";
   selectedItem?: any;
   type: string;
+  baseFormulary: any;
+  refFormulary: any;
 }
 
 interface State {
@@ -60,7 +62,7 @@ class CompareFormularies extends React.Component<any, any> {
     return true;
   };
   handleIconClick = (popupType) => {
-    if(this.props.handleCompareClear){
+    if (this.props.handleCompareClear) {
       this.props.handleCompareClear();
     }
     this.setState({ selectFormulary: true, currentPopupType: popupType });
@@ -77,6 +79,26 @@ class CompareFormularies extends React.Component<any, any> {
     }
     this.setState({ selectFormulary: false });
   };
+
+  componentDidMount() {
+    if (this.props.baseFormulary && Object.keys(this.props.baseFormulary) &&
+      this.props.refFormulary && Object.keys(this.props.refFormulary)) {
+      this.setState({
+        baseFormulary: this.props.baseFormulary,
+        referenceFormulary: this.props.refFormulary
+      });
+    }
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.baseFormulary && Object.keys(nextProps.baseFormulary) &&
+      nextProps.refFormulary && Object.keys(nextProps.refFormulary)) {
+      this.setState({
+        baseFormulary: nextProps.baseFormulary,
+        referenceFormulary: nextProps.refFormulary
+      });
+    }
+  }
 
   formularyToggle = () => {
     const type =
@@ -230,7 +252,7 @@ class CompareFormularies extends React.Component<any, any> {
                 selectFormulary: !this.state.selectFormulary,
               });
             }}
-            handleAction={() => {}}
+            handleAction={() => { }}
             open={this.state.selectFormulary}
             showActions={false}
             className=""
