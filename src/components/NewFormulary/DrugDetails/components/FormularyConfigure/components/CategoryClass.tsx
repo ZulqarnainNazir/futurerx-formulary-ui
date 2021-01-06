@@ -89,6 +89,8 @@ interface State {
   addedFormularyDrugs: any[];
   fixedSelectedRows: number[];
   selectedRowKeys: number[];
+  isFiltered: boolean;
+  filteredInfo: any;
 }
 
 class CategoryClass extends React.Component<any, any> {
@@ -131,10 +133,42 @@ class CategoryClass extends React.Component<any, any> {
     gridMultiSortedInfo: [],
     isGridMultiSorted: false,
     quickFilter: Array(),
-    fixedSelectedRows: [] as number[]
+    fixedSelectedRows: [] as number[],
+    isFiltered: false,
+    filteredInfo: null,
   };
 
   static contextType = FormularyDetailsContext;
+
+  resetData = () => {
+    let payload = {
+      advancedSearchBody: {},
+      populateGrid: false,
+      closeDialog: false,
+      listItemStatus: {}
+    };
+    this.props.setAdvancedSearch(payload);
+    this.state.filter = Array();
+    this.state.quickFilter = Array();
+    this.state.sort_by = Array();
+    this.state.sort_by.push({ key: 'drug_label_name', value: 'asc' });
+    this.state.index = 0;
+    this.state.limit = 10;
+    this.state.hiddenColumns = Array();
+    this.state.searchNames = Array();
+    this.state.filterPlaceholder = "Search";
+    this.state.searchValue = "";
+    this.state.searchData = Array();
+
+    this.state.gridSingleSortInfo = null;
+    this.state.gridMultiSortedInfo = [];
+    this.state.isGridMultiSorted = false;
+    this.state.isGridSingleSorted = false;
+
+    this.state.filteredInfo = null;
+    this.state.isFiltered = false;
+    this.state.selectedRowKeys = Array();
+  }
 
   populateTierDetails = () => {
     let apiDetails = {};
@@ -184,7 +218,7 @@ class CategoryClass extends React.Component<any, any> {
       });
     }
   };
-  onApplyFilterHandler = filters => {
+  onApplyFilterHandler = (filters, filteredInfo) => {
     console.log("filtering from be:" + JSON.stringify(filters));
     //this.state.filter = Array();
     const fetchedKeys = Object.keys(filters);
@@ -213,14 +247,28 @@ class CategoryClass extends React.Component<any, any> {
           });
         }
       });
+      this.setState({
+        isFiltered: true,
+        filteredInfo: filteredInfo
+      }, () => {
+        if (this.props.advancedSearchBody) {
+          this.populateGridData(this.props.advancedSearchBody);
+        } else {
+          this.populateGridData();
+        }
+      });
     } else {
-      this.state.filter = Array();
-    }
-    console.log("Filters:" + JSON.stringify(this.state.filter));
-    if (this.props.advancedSearchBody) {
-      this.populateGridData(this.props.advancedSearchBody);
-    } else {
-      this.populateGridData();
+      this.setState({
+        filter: Array(),
+        isFiltered: false,
+        filteredInfo: filteredInfo
+      }, () => {
+        if (this.props.advancedSearchBody) {
+          this.populateGridData(this.props.advancedSearchBody);
+        } else {
+          this.populateGridData();
+        }
+      });
     }
   };
 
@@ -326,12 +374,17 @@ class CategoryClass extends React.Component<any, any> {
     }
   };
   onClearFilterHandler = () => {
-    this.state.filter = Array();
-    if (this.props.advancedSearchBody) {
-      this.populateGridData(this.props.advancedSearchBody);
-    } else {
-      this.populateGridData();
-    }
+    this.setState({
+      filter: Array(),
+      isFiltered: false,
+      filteredInfo: null
+    }, () => {
+      if (this.props.advancedSearchBody) {
+        this.populateGridData(this.props.advancedSearchBody);
+      } else {
+        this.populateGridData();
+      }
+    });
   };
 
   populateGridData = (searchBody = null) => {
@@ -660,8 +713,9 @@ class CategoryClass extends React.Component<any, any> {
   onClose = () => {
     console.log("close");
     this.state.addedFormularyDrugs = Array();
+    this.resetData();
     this.setState({ materialPopupInd: false }, () => {
-      this.onSelectAllRows(false);
+      this.populateGridData();
     });
     return true;
   };
@@ -736,7 +790,6 @@ class CategoryClass extends React.Component<any, any> {
               json.payload.code === "200"
             ) {
               this.state.addedFormularyDrugs = Array();
-              this.populateGridData();
             } else {
               this.state.addedFormularyDrugs = Array();
             }
@@ -745,10 +798,11 @@ class CategoryClass extends React.Component<any, any> {
     } else {
       this.state.addedFormularyDrugs = Array();
     }
+    this.resetData();
     this.setState({
       materialPopupInd: false
     }, () => {
-      this.onSelectAllRows(false);
+      this.populateGridData();
     });
   };
   handleSearch = searchObject => {
@@ -838,7 +892,7 @@ class CategoryClass extends React.Component<any, any> {
         );
         this.rowSelectionChange(selectedRows);
 
-        this.setState({ filteredData: data });
+        this.setState({ filteredData: data, selectedRowKeys:  selectedRowKeys});
       } else {
         const data = this.state.filteredData.map((d: any) => {
           if (d.key === selectedRow.key) {
@@ -858,7 +912,8 @@ class CategoryClass extends React.Component<any, any> {
 
         this.rowSelectionChange(selectedRows);
         this.setState({
-          filteredData: data
+          filteredData: data,
+          selectedRowKeys:  selectedRowKeys
         });
       }
     }
@@ -903,7 +958,7 @@ class CategoryClass extends React.Component<any, any> {
       k => this.state.fixedSelectedRows.indexOf(k) < 0
     );
     this.rowSelectionChange(selectedRows);
-    this.setState({ filteredData: data });
+    this.setState({ filteredData: data, selectedRowKeys:  selectedRowKeys });
   };
 
   onOverrideCategoryClass = (category, classValue) => {
@@ -947,6 +1002,10 @@ class CategoryClass extends React.Component<any, any> {
     }
   }
   render() {
+    let gridColumns = this.state.columns;
+    if (this.state.hiddenColumns.length > 0) {
+      gridColumns = gridColumns.filter(key => !this.state.hiddenColumns.includes(key));
+    }
     return (
       <div className="drug-detail-LA-root class-category">
         <div className="drug-detail-la-container">
@@ -1013,7 +1072,7 @@ class CategoryClass extends React.Component<any, any> {
                     pagintionPosition="topRight"
                     gridName=""
                     isFetchingData={this.state.isFetchingData}
-                    columns={this.state.columns}
+                    columns={gridColumns}
                     isPinningEnabled={false}
                     scroll={{ x: 2000, y: 377 }}
                     enableResizingOfColumns
@@ -1038,6 +1097,8 @@ class CategoryClass extends React.Component<any, any> {
                     selectedCurrentPage={
                       this.state.index / this.state.limit + 1
                     }
+                    isFiltered={this.state.isFiltered}
+                    filteredInfo={this.state.filteredInfo}
                   /*rowSelection={{
                   columnWidth: 50,
                   fixed: true,
