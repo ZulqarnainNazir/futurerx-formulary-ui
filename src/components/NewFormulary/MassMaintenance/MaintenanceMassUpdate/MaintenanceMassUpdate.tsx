@@ -6,7 +6,7 @@ import { getDrugDetailsColumn } from "../../DrugDetails/components/FormularyConf
 import { getMaintenacneMassUpdateColumns } from "./components/MaintenanceMassUpdateColumn";
 import { getDrugDetailData } from "../../../../mocks/DrugGridMock";
 // ("../../../mocks/DrugGridMock");
-import { getMaintenanceMassUpdateData } from "../../../../mocks/MaintenanceMassUpdateMockData";
+import { getMaintenanceMassMedicareData,getMaintenanceMassCommercialData } from "../../../../mocks/MaintenanceMassUpdateMockData";
 
 import { Box } from "@material-ui/core";
 import Button from "../../../shared/Frx-components/button/Button";
@@ -17,7 +17,8 @@ import AdvancedSearch from "../../DrugDetails/components/FormularyConfigure/comp
 // "../DrugDetails/components/FormularyConfigure/components/search/AdvancedSearch";
 import "./MaintenanceMassUpdate.scss";
 interface Props {
-  onClickAddNew: () => any;
+  onClickAddNew: (id:any) => any;
+  lob_type:any;
 }
 interface State {}
 
@@ -30,9 +31,20 @@ class MaintenanceMassUpdate extends Component<Props, State> {
     filteredData: [] as any[],
   };
 
-  componentDidMount() {
-    const data = getMaintenanceMassUpdateData(); //getDrugDetailData();
-    const columns = getMaintenacneMassUpdateColumns(); //getDrugDetailsColumn();
+  getGridData(){
+    debugger;
+    if(this.props.lob_type == "commercial")
+    {
+      return getMaintenanceMassCommercialData();
+    }
+    else if(this.props.lob_type == "medicare")
+    {
+      return getMaintenanceMassMedicareData();
+    }
+  }
+  componentDidMount() {  
+    const data = this.getGridData(); 
+    const columns = getMaintenacneMassUpdateColumns(); 
     console.log(data);
     this.setState({
       columns: columns,
@@ -58,6 +70,7 @@ class MaintenanceMassUpdate extends Component<Props, State> {
   render() {
     // const { enableSettings, pinData, scroll } = this.props;
     console.log("", this.props);
+    let hiddenColumns = [];
     let GridElement = <div>Loading</div>;
     if (this.state.data.length > 0) {
       GridElement = (
@@ -111,7 +124,13 @@ class MaintenanceMassUpdate extends Component<Props, State> {
               gridName=""
               enableSettings={true}
               isFetchingData={this.state.isFetchingData}
-              columns={this.state.columns}
+              columns={getMaintenacneMassUpdateColumns(
+                {
+                  onFormularyNameClick: (id: any) =>
+                    this.props.onClickAddNew(id),
+                },
+                hiddenColumns
+              )}
               isPinningEnabled={false}
               scroll={{ x: 0, y: 377 }}
               enableResizingOfColumns={false}
