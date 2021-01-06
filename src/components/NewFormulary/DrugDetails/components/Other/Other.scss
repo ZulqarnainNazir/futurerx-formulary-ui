@@ -19,3 +19,20 @@
     text-decoration: underline dashed;
   }
 }
+
+.other-label {
+  padding: 15px;
+}
+
+.other-label label {
+  display: block;
+  font-size: 12px;
+  color: #707683;
+  line-height: 20px;
+  margin-bottom: 5px;
+  text-transform: uppercase;
+  font-weight: normal;
+  .astrict {
+    color: red;
+  }
+}
