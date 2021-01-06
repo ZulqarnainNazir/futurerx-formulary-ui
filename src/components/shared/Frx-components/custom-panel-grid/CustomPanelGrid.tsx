@@ -56,6 +56,7 @@ class CustomPanelGrid extends React.Component<
     return (
       <div className="custom-panel-grid-root frx-grid-container">
         <FrxDrugGridContainer
+          bordered={false}
           showSettingsMenu={true}
           enableColumnDrag={true}
           pagintionPosition="bottomRight"

@@ -1,9 +1,99 @@
 @import "../../../../assets/style.scss";
+@import "../../../../assets/colors.scss";
+@import "../../../../assets/fonts.scss";
 
 .custom-panel-grid-root {
   .frx-grid-settings-header-cell .frx-grid-settings-header-cell__settings-icon {
     display: none;
   }
+
+  .frx-grid-container
+    .frx-grid
+    .frx-grid__grid-block
+    .frx-grid__grid-block__table-block
+    .ant-table
+    .ant-table-header
+    .ant-table-thead
+    > tr
+    > th:nth-child(1) {
+    border-right: none;
+  }
+  .ant-table {
+    .ant-table-container {
+      .ant-table-header {
+        // border-radius: 5px 5px 0 0;
+        border-radius: 0;
+        & > table {
+          .ant-table-thead {
+            background-color: #f9f9f9;
+            height: 40px;
+            & > tr {
+              & > th {
+                border-right: 1px solid $container-border-color !important;
+                padding: 0 8px !important;
+                text-align: center;
+                .ant-table-filter-trigger-container {
+                  display: none;
+                }
+              }
+              & > th:nth-child(1) {
+                border-right: none !important;
+              }
+            }
+          }
+        }
+      }
+      .ant-table-body {
+        & > table {
+          border-collapse: separate;
+          border-spacing: 0;
+          .ant-table-tbody,
+          .ant-table-row {
+            .ant-table-cell {
+              border: 1px solid $container-border-color;
+              // border-right: none;
+              border-radius: 0;
+              border-top: none;
+              padding: 0 20px;
+              height: 40px;
+              color: $grid-text-color;
+            }
+            .ant-table-cell:first-child {
+              text-align: center;
+              // border-radius: 0;
+            }
+            .ant-table-cell:last-child {
+              border-right: 1px solid $container-border-color;
+              // border-radius: 0;
+            }
+            .ant-table-cell:nth-child(1n + 4) {
+              text-align: center;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  .frx-grid-container
+    .frx-grid
+    .frx-grid__grid-block
+    .frx-grid__grid-block__table-block
+    .ant-table
+    .ant-table-body
+    .ant-table-tbody
+    > tr
+    > td {
+    border-right: 1px solid $container-border-color;
+    border-radius: 0;
+  }
+
+  .ant-table-row {
+    .ant-table-cell {
+      border-right: 1px solid balck;
+    }
+  }
+
   z-index: 999 !important;
   .frx-mini-tabs-root {
     position: unset;
