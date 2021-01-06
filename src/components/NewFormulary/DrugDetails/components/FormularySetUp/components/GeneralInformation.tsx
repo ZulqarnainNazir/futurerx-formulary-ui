@@ -25,6 +25,7 @@ const mapStateToProps = (state) => {
     formulary: state?.setup?.formulary,
     formulary_mode: state?.setup?.mode,
     general_options: state?.setupOptions?.generalOptions,
+    lob:state?.application?.mode_lob
   };
 };
 interface TagModule {
@@ -236,18 +237,12 @@ class GeneralInformation extends React.Component<any, GeneralInformationState> {
     );
   };
   disabledDate = (current) => {
-    // Can not select days before today and today
-    // return current && current < moment().endOf("day");
     return current.isBefore(moment(), "day");
   };
-
-  // selectFormularyClick = (dataRow) => {
-  //   console.log(dataRow);
-  //   if (dataRow) {
-  //     this.props.selectFormularyClick()
-  //   }
-  // };
-
+  getFormularyTypeOptions = (opt) => {
+    const options = this.props.lob === 4 ? opt.formularyType.filter(e => e.formulary_type === 'Commercial').map(e => e.formulary_type) : opt.formularyType.map(e => e.formulary_type);
+    return options;
+  }
   render() {
     const { Option } = Select;
     const {
@@ -298,7 +293,7 @@ class GeneralInformation extends React.Component<any, GeneralInformationState> {
                 <DropDown
                   className="formulary-type-dropdown"
                   placeholder="Select"
-                  options={this.props.general_options ? general_options : []}
+                  options={this.getFormularyTypeOptions(this.props.general_options)}
                   value={this.props.generalInfo.type}
                   disabled={disabled}
                   onChange={this.props.formularyTypeChanged}

@@ -210,7 +210,15 @@ function PAGroupHeader(props: any) {
             : 0;
       }
 
-      setPanelColor(isEditable ? "-green" : "-orange");
+      setPanelColor(
+        isEditable
+          ? props.isPopUpView
+            ? "-grey"
+            : "-green"
+          : props.isPopUpView
+          ? "-grey"
+          : "-orange"
+      );
       setPlaceHolder(selectedVersion);
       let apiDetails = {};
       apiDetails["lob_type"] = props.formulary_lob_id;

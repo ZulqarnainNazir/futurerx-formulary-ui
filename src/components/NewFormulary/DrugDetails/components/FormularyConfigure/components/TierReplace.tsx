@@ -723,6 +723,27 @@ class TierReplace extends React.Component<any, tabsState> {
     }
   };
 
+  resetData = () => {
+    let payload = {
+      advancedSearchBody: {},
+      populateGrid: false,
+      closeDialog: false,
+      listItemStatus: {}
+    };
+    this.props.setAdvancedSearch(payload);
+    this.state.filter = Array();
+    this.state.quickFilter = Array();
+    this.state.sort_by = Array();
+    this.state.sort_by.push({ key: 'drug_label_name', value: 'asc' });
+    this.state.index = 0;
+    this.state.limit = 10;
+    this.state.hiddenColumns = Array();
+    this.state.searchNames = Array();
+    this.state.filterPlaceholder = "Search";
+    this.state.searchValue = "";
+    this.state.searchData = Array();
+  }
+
   componentWillReceiveProps(nextProps) {
     console.log("TIER REPLACE: componentWillReceiveProps");
     if (nextProps.advancedSearchBody && nextProps.populateGrid) {
@@ -741,7 +762,7 @@ class TierReplace extends React.Component<any, tabsState> {
     }
     if (this.props.configureSwitch !== nextProps.configureSwitch) {
       this.initialize(nextProps, true);
-      let payload = {
+      /*let payload = {
         advancedSearchBody: {},
         populateGrid: false,
         closeDialog: false,
@@ -758,7 +779,8 @@ class TierReplace extends React.Component<any, tabsState> {
       this.state.searchNames = Array();
       this.state.filterPlaceholder = "Search";
       this.state.searchValue = "";
-      this.state.searchData = Array();
+      this.state.searchData = Array();*/
+      this.resetData();
 
       if (nextProps.configureSwitch) {
         this.state.selectedFileKey = this.props.lobCode;
@@ -881,6 +903,8 @@ class TierReplace extends React.Component<any, tabsState> {
     console.log("Selected file key is:" + fileKey);
     this.state.selectedFileKey = fileKey;
     //this.setState({ selectedFileKey: fileKey });
+
+    this.resetData();
 
     if (this.props.advancedSearchBody) {
       this.populateGridData(this.props.advancedSearchBody);

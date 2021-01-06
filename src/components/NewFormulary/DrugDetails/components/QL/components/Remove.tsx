@@ -239,14 +239,13 @@ class Remove extends Component<any, State> {
       <div>
         <div className="tier-grid-container ql-remove-grid">
           <FrxDrugGridContainer
-            isDataLoaded
+            isDataLoaded={true}
             isPinningEnabled={false}
             enableSearch={false}
             enableColumnDrag
             onSearch={() => {}}
             fixedColumnKeys={[]}
             pagintionPosition="topRight"
-            // hidePagination
             gridName="DRUG GRID"
             enableSettings={false}
             columns={QlRemoveColumns()}
@@ -255,7 +254,13 @@ class Remove extends Component<any, State> {
             enableResizingOfColumns
             data={this.state.drugGridData}
             settingsWidth={10}
+<<<<<<< HEAD
             rowSelectionChangeFromCell={this.rowSelectionChangeFromCell}
+=======
+            hideItemsPerPage
+            hidePageJumper
+            hideResults
+>>>>>>> 3d7a3f34c79984f2f8c741f9fde6932ea8285ccc
             // clearFilterHandler={this.onClearFilterHandler}
             // applyFilter={this.onApplyFilterHandler}
             // applySort={this.onApplySortHandler}
@@ -266,12 +271,21 @@ class Remove extends Component<any, State> {
             // multiSortedInfo={this.state.gridMultiSortedInfo}
             // onMultiSortToggle={this.onMultiSortToggle}
             // getColumnSettings={this.onSettingsIconHandler}
+<<<<<<< HEAD
             // rowSelection={{
             //   // columnWidth: 50,
             //   // fixed: true,
             //   // type: "checkbox",
             //   onChange: this.onSelectedTableRowChanged,
             // }}
+=======
+            rowSelection={{
+              // columnWidth: 50,
+              fixed: true,
+              type: "checkbox",
+              onChange: this.onSelectedTableRowChanged,
+            }}
+>>>>>>> 3d7a3f34c79984f2f8c741f9fde6932ea8285ccc
           />
         </div>
       </div>
