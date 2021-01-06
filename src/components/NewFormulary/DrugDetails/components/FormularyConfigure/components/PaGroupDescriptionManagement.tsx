@@ -202,7 +202,8 @@ class PaGroupDescriptionManagement extends React.Component<any, any> {
         element["id"] = el[groupProp];
         element["label"] = el.pa_group_description_name;
         element["status"] = el.is_setup_complete ? "completed" : "warning";
-        element["is_archived"] = el.is_archived==null?false:el.is_archived;
+        element["is_archived"] =
+          el.is_archived == null ? false : el.is_archived;
         //console.log(element);
 
         return element;
@@ -278,7 +279,8 @@ class PaGroupDescriptionManagement extends React.Component<any, any> {
         element["id"] = el[groupProp];
         element["label"] = el.pa_group_description_name;
         element["status"] = el.is_setup_complete ? "completed" : "warning";
-        element["is_archived"] = el.is_archived==null?false:el.is_archived;
+        element["is_archived"] =
+          el.is_archived == null ? false : el.is_archived;
         console.log(element);
 
         return element;
@@ -351,7 +353,7 @@ class PaGroupDescriptionManagement extends React.Component<any, any> {
                     position={this.props.isPopUpView}
                   />
                 </div>
-                <div className="group-wrapper scrollbar scrollbar-primary  mt-5 mx-auto view-com-sec">
+                <div className="group-wrapper scrollbar scrollbar-primary mx-auto view-com-sec">
                   {this.state.groupsData.length > 0 &&
                     this.state.groupsData.map((group: any, key: any) =>
                       this.state.searchInput == "" ||
