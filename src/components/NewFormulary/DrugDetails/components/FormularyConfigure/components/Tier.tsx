@@ -650,7 +650,7 @@ class Tier extends React.Component<any, tabsState> {
                         getPerPageItemSize={(size) => { }}
                       />*/}
                       <CustomPanelGrid
-                        gridData={[...this.state.tierDefinationData]}
+                        gridData={tierDefinationData}
                         onMenuClick={(item, data) => {
                           this.settingsTriDotDropDownItemClick(data, item);
                         }}
