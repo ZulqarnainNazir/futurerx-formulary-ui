@@ -11,7 +11,12 @@ import {
   createCreateVersion,
   archiveFormularies,
 } from "./setupService";
-import { setFullFormulary, setLocationHome } from "./../application/applicationSlice";
+import {
+  setFullFormulary,
+  setLocationHome,
+} from "./../application/applicationSlice";
+import { postMessage } from "./../messaging/messagingSlice";
+
 import { stat } from "fs";
 import { dispatch } from "d3";
 
@@ -206,6 +211,14 @@ export const verifyFormularyName = createAsyncThunk(
       const exist: boolean = await checkNameExist(name);
       //console.log(exist);
       dispatch(verifyFormularyNameSuccess(exist));
+      if (exist) {
+        dispatch(
+          postMessage({
+            message: "Formulary name - " + name + " already exist",
+            type: "error",
+          })
+        );
+      }
     } catch (err) {
       //console.log("***** fetchFormularies - ERROR ");
       dispatch(getFormalaryFailure(err.toString()));
@@ -245,6 +258,13 @@ export const saveFormulary = createAsyncThunk(
             continue: input?.CONTINUE,
           };
         } else {
+          dispatch(
+            postMessage({
+              message: resp?.data?.message,
+              type: "error",
+            })
+          );
+
           return null;
         }
       }
@@ -278,6 +298,13 @@ export const initCreateUsingClone = createAsyncThunk(
           id: resp,
         };
       } else {
+        dispatch(
+          postMessage({
+            message: resp?.data?.message,
+            type: "error",
+          })
+        );
+
         return null;
       }
     } catch (err) {
@@ -299,9 +326,26 @@ export const initNewVersion = createAsyncThunk(
         input.effectiveDate
       );
       console.log("- - - -- - - - - - -- - - -");
+
       console.log(resp);
       if (resp) {
         dispatch(createNewVersionSuccess(resp));
+        console.log("***CODE : " + resp.status);
+        if (resp.status === 200) {
+          dispatch(
+            postMessage({
+              message: "New Version created successfully",
+              type: "success",
+            })
+          );
+        } else {
+          dispatch(
+            postMessage({
+              message: resp?.data?.message,
+              type: "error",
+            })
+          );
+        }
         return {
           id_formulary: resp?.data?.id_formulary,
         };
@@ -326,7 +370,14 @@ export const initArchiveFormularies = createAsyncThunk(
       console.log("- - - -- - - - - - -- - - -");
       console.log(resp);
       if (resp) {
+        //"Formulary(s) Archived"
         dispatch(archiveFormulariesSuccess(resp));
+        dispatch(
+          postMessage({
+            message: "Formulary(s) Archived",
+            type: "success",
+          })
+        );
         dispatch(setLocationHome(2));
       }
     } catch (err) {
@@ -356,7 +407,7 @@ export const {
   archiveFormulariesStart,
   archiveFormulariesSuccess,
   archiveFormulariesFailure,
-  clearSetup
+  clearSetup,
 } = setup.actions;
 
 export default setup.reducer;

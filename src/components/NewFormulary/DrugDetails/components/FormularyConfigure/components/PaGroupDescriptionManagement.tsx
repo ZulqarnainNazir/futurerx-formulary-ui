@@ -94,18 +94,18 @@ class PaGroupDescriptionManagement extends React.Component<any, any> {
     let apiDetails = {};
     apiDetails["lob_type"] = this.props.formulary_lob_id;
     apiDetails["pathParams"] = "/" + param;
-    let isPopUpView =this.props.isPopUpView;
+    let isPopUpView = this.props.isPopUpView;
     this.props.getPaGrouptDescriptionVersions(apiDetails).then((json) => {
       let tmpData = json.payload.data;
       debugger;
-      if (isPopUpView){
+      if (isPopUpView) {
         debugger;
-        tmpData = tmpData.filter((obj)=>{
+        tmpData = tmpData.filter((obj) => {
           debugger;
-          if (obj.is_setup_complete){
+          if (obj.is_setup_complete) {
             return obj;
           }
-        })
+        });
       }
 
       let dataLength = tmpData.length;
@@ -190,36 +190,37 @@ class PaGroupDescriptionManagement extends React.Component<any, any> {
       } else if (this.props.formulary_lob_id == 4) {
         groupProp = "id_base_pa_group_description";
       }
-      if (isPopUpView){
-        tmpData = tmpData.filter((obj)=>{
-          if (obj.is_setup_complete){
+      if (isPopUpView) {
+        tmpData = tmpData.filter((obj) => {
+          if (obj.is_setup_complete) {
             return obj;
           }
-        })
+        });
       }
       var result = tmpData.map(function (el) {
         var element = {};
         element["id"] = el[groupProp];
         element["label"] = el.pa_group_description_name;
         element["status"] = el.is_setup_complete ? "completed" : "warning";
-        element["is_archived"] = el.is_archived;
+        element["is_archived"] = el.is_archived==null?false:el.is_archived;
         //console.log(element);
 
         return element;
       });
 
-     
-
       this.setState({
         groupsData: result,
       });
       let completed_groups = result.filter((obj) => {
-        if (!obj.is_archived){
+        if (!obj.is_archived) {
           return obj;
         }
       });
-      if (completed_groups.length>0){
-        this.selectGroup(completed_groups[0].id,completed_groups[0].statusType);
+      if (completed_groups.length > 0) {
+        this.selectGroup(
+          completed_groups[0].id,
+          completed_groups[0].statusType
+        );
       }
     });
 
@@ -265,19 +266,19 @@ class PaGroupDescriptionManagement extends React.Component<any, any> {
         groupProp = "id_base_pa_group_description";
       }
       let isPopUpView = this.props.isPopUpView;
-      if (isPopUpView){
-        tmpData = tmpData.filter((obj)=>{
-          if (obj.is_setup_complete){
+      if (isPopUpView) {
+        tmpData = tmpData.filter((obj) => {
+          if (obj.is_setup_complete) {
             return obj;
           }
-        })
+        });
       }
       var result = tmpData.map(function (el) {
         var element = {};
         element["id"] = el[groupProp];
         element["label"] = el.pa_group_description_name;
         element["status"] = el.is_setup_complete ? "completed" : "warning";
-        element["is_archived"] = el.is_archived;
+        element["is_archived"] = el.is_archived==null?false:el.is_archived;
         console.log(element);
 
         return element;
@@ -303,16 +304,15 @@ class PaGroupDescriptionManagement extends React.Component<any, any> {
             <div className="group-des">
               <div className="panel header">
                 <span>GROUP DESCRIPTION</span>
-                {(!this.props.isPopUpView) && (
+                {!this.props.isPopUpView && (
                   <Box display="flex" justifyContent="flex-end">
-                  <Button
-                    label="+ Add New"
-                    className="Button"
-                    onClick={this.addNewGroup}
-                  />
-                </Box>
+                    <Button
+                      label="+ Add New"
+                      className="Button"
+                      onClick={this.addNewGroup}
+                    />
+                  </Box>
                 )}
-                
               </div>
               <div className="inner-container">
                 <div className="search-input">
@@ -348,6 +348,7 @@ class PaGroupDescriptionManagement extends React.Component<any, any> {
                     tabList={this.state.tabs}
                     activeTabIndex={this.state.activeTabIndex}
                     onClickTab={this.onClickTab}
+                    position={this.props.isPopUpView}
                   />
                 </div>
                 <div className="group-wrapper scrollbar scrollbar-primary  mt-5 mx-auto view-com-sec">
@@ -402,7 +403,9 @@ class PaGroupDescriptionManagement extends React.Component<any, any> {
                 versionTitle={this.state.versionTitle}
                 activeTabIndex={this.state.activeTabIndex}
                 latestVerion={this.state.latestVerion}
-                selectGroupDescriptionClick={this.props.selectGroupDescriptionClick}
+                selectGroupDescriptionClick={
+                  this.props.selectGroupDescriptionClick
+                }
                 isPopUpView={this.props.isPopUpView}
               />
             ) : (
@@ -416,7 +419,9 @@ class PaGroupDescriptionManagement extends React.Component<any, any> {
                 versionTitle={this.state.versionTitle}
                 activeTabIndex={this.state.activeTabIndex}
                 latestVerion={this.state.latestVerion}
-                selectGroupDescriptionClick={this.props.selectGroupDescriptionClick}
+                selectGroupDescriptionClick={
+                  this.props.selectGroupDescriptionClick
+                }
                 isPopUpView={this.props.isPopUpView}
               />
             )}

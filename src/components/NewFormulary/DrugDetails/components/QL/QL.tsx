@@ -35,6 +35,7 @@ import AdvanceSearchContainer from "../../../NewAdvanceSearch/AdvanceSearchConta
 import { setAdvancedSearch } from "../../../../../redux/slices/formulary/advancedSearch/advancedSearchSlice";
 import { setAdditionalCriteria } from "../../../../../redux/slices/formulary/advancedSearch/additionalCriteriaSlice";
 import "./components/common.scss";
+import "./QL.scss";
 
 function mapDispatchToProps(dispatch) {
   return {
@@ -1145,14 +1146,14 @@ class Tier extends React.Component<any, tabsState> {
                       title="SELECT Quantity Limit CRITERIA"
                       tooltip="This section allows for Addition or Removal of product only. To define coverage for all Medicare covered and/or Supplemental products, go to Drug Details"
                     />
-                    <div className="inner-container tier-checkbox">
+                    <div className="inner-container">
                       <div className="mb-10">
                         <PanelGrid
                           panelGridTitle={this.state.panelGridTitle}
                           panelGridValue={this.state.panelGridValue}
                         />
                       </div>
-                      <div className="mb-10">
+                      <div className="quntity-limits-sec">
                         <div className="limited-access">
                           <PanelHeader title="QUANTITY LIMIT SETTINGS" />
                           <div className="modify-wrapper white-bg tier-modify-panel">
@@ -1181,8 +1182,8 @@ class Tier extends React.Component<any, tabsState> {
                           </div>
                         </div>
                       </div>
-                      <div>
-                        {this.state.activeTabIndex !== 2 && (
+                      {this.state.activeTabIndex !== 2 && (
+                        <div className="pt-10">
                           <div className="limited-access">
                             <PanelHeader title="FILL LIMIT SETTINGS" />
                             <FillLimitSettings
@@ -1204,8 +1205,8 @@ class Tier extends React.Component<any, tabsState> {
                               />
                             )}
                           </div>
-                        )}
-                      </div>
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>
