@@ -563,3 +563,12 @@
     text-transform: uppercase;
   }
 }
+
+.pa-group-description-wrapper {
+  display: flex;
+  justify-content: flex-start;
+
+  .new-group-des {
+    width: fit-content !important;
+  }
+}
