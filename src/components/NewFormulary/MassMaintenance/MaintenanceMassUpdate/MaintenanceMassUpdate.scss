@@ -17,6 +17,11 @@
   padding-left: 23px !important;
   border-color: #e5e5e5 !important;
 }
+
+.SearchBox > input::placeholder{
+  //font-size: 12px !important;
+  font-weight: normal;
+}
 .SearchBox > .SearchBox-Icon { 
   top: 8px !important;
 }
@@ -77,7 +82,7 @@
       font-weight: 500;
       font-size: 12px;
       line-height: 30px;
-
+      padding-left: 0px !important;
       color: #1d54b4;
     }
     .dropdown-button-container {

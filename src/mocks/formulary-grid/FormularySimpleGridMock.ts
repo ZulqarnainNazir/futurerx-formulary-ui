@@ -61,8 +61,8 @@ export const getPACommercialData = () => {
   return [
     {
       key: "1",
-      formularyName: "2021Care1234",
-      formularyId: "123456789123",
+      formularyName: "LEGA_COMM_12",
+      formularyId: "3514",
       formularyVersion: 2,
       contractYeat: "2021",
       formularyType: "Commercial",
@@ -75,8 +75,8 @@ export const getPACommercialData = () => {
     },
     {
       key: "2",
-      formularyName: "Medicare12",
-      formularyId: "123456789124",
+      formularyName: "Comme_Test-3",
+      formularyId: "3588",      
       formularyVersion: 3,
       contractYeat: "2021",
       formularyType: "Commercial",
@@ -89,8 +89,8 @@ export const getPACommercialData = () => {
     },
     {
       key: "3",
-      formularyName: "2021Care4321",
-      formularyId: "980765854321",
+      formularyName: "WK_49_COMM_08",
+      formularyId: "3466",      
       formularyVersion: 4,
       contractYeat: "2021",
       formularyType: "Commercial",
@@ -103,8 +103,8 @@ export const getPACommercialData = () => {
     },
     {
       key: "4",
-      formularyName: "Care987",
-      formularyId: "192039483745",
+      formularyName: "Comm_Test_45",
+      formularyId: "3554",      
       formularyVersion: 5,
       contractYeat: "2021",
       formularyType: "Commercial",
@@ -183,8 +183,8 @@ export const getCommercialData = () => {
   return [
     {
       key: "1",
-      formularyName: "2021Care1234",
-      formularyId: "123456789123",
+      formularyName: "LEGA_COMM_12",
+      formularyId: "3514",
       formularyVersion: 2,
       contractYeat: "2021",
       formularyType: "Commercial",
@@ -197,8 +197,8 @@ export const getCommercialData = () => {
     },
     {
       key: "2",
-      formularyName: "Medicare12",
-      formularyId: "123456789124",
+      formularyName: "Comme_Test-3",
+      formularyId: "3588",      
       formularyVersion: 3,
       contractYeat: "2021",
       formularyType: "Commercial",
@@ -211,8 +211,8 @@ export const getCommercialData = () => {
     },
     {
       key: "3",
-      formularyName: "2021Care4321",
-      formularyId: "980765854321",
+      formularyName: "WK_49_COMM_08",
+      formularyId: "3466",      
       formularyVersion: 4,
       contractYeat: "2021",
       formularyType: "Commercial",
@@ -225,8 +225,8 @@ export const getCommercialData = () => {
     },
     {
       key: "4",
-      formularyName: "Care987",
-      formularyId: "192039483745",
+      formularyName: "Comm_Test_45",
+      formularyId: "3554",      
       formularyVersion: 5,
       contractYeat: "2021",
       formularyType: "Commercial",

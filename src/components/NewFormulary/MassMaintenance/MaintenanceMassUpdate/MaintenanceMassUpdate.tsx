@@ -80,7 +80,7 @@ class MaintenanceMassUpdate extends Component<Props, State> {
             <span className="header">MAINTENANCE MASS UPDATE</span>
             <div className="dropdown-button-container ">
             <div className="field-container">
-                <SearchBox iconPosition="left"/>
+                <SearchBox iconPosition="left" placeholder="Search"/>
               </div>
               <DropDown
                 options={["Active", "Archive"]}
