@@ -24,11 +24,11 @@ import {
 
 import {
   fetchSelectedFormulary,
-  clearSetup,
+  clearSetup
 } from "../.././redux/slices/formulary/setup/setupSlice";
 import {
   fetchDesignOptions,
-  clearSetupOptions,
+  clearSetupOptions
 } from "../.././redux/slices/formulary/setup/setupOptionsSlice";
 
 import { fetchFormularyHeader } from "../.././redux/slices/formulary/header/headerSlice";
@@ -48,7 +48,7 @@ const tabs = [
   { id: 1, text: "COMMERCIAL" },
   { id: 2, text: "MEDICARE" },
   { id: 3, text: "MEDICAID" },
-  { id: 4, text: "EXCHANGE" },
+  { id: 4, text: "EXCHANGE" }
 ];
 
 interface State {
@@ -59,22 +59,22 @@ interface State {
   showDrugDetails: boolean;
 }
 
-const mapStateToProps = (state) => {
+const mapStateToProps = state => {
   //console.log("***** DB");
   //console.log(state);
   return {
     formulary_count: state?.dashboard?.formulary_count,
     formulary_list: state?.dashboard?.formulary_list,
-    location_home: state?.application?.location_home,
+    location_home: state?.application?.location_home
   };
 };
 
 function mapDispatchToProps(dispatch) {
   return {
-    fetchFormularies: (a) => dispatch(fetchFormularies(a)),
-    setFormulary: (arg) => dispatch(setFormulary(arg)),
-    fetchFormularyHeader: (arg) => dispatch(fetchFormularyHeader(arg)),
-    setHiddenColumn: (hiddenColumns) =>
+    fetchFormularies: a => dispatch(fetchFormularies(a)),
+    setFormulary: arg => dispatch(setFormulary(arg)),
+    fetchFormularyHeader: arg => dispatch(fetchFormularyHeader(arg)),
+    setHiddenColumn: hiddenColumns =>
       dispatch(gridSettingsSlice.actions.setHiddenColum(hiddenColumns)),
     clearHiddenColumns: () =>
       dispatch(gridSettingsSlice.actions.clearHiddenColumns(true)),
@@ -111,7 +111,7 @@ const defaultListPayload = {
   search_key: "",
   search_value: [],
   sort_by: ["cms_formulary_id"],
-  sort_order: ["desc"],
+  sort_order: ["desc"]
 };
 
 class Formulary extends React.Component<any, any> {
@@ -124,7 +124,7 @@ class Formulary extends React.Component<any, any> {
     showTabs: true,
     showMassMaintenance: false,
     showDrugDetails: false,
-    pageSize: 10,
+    pageSize: 10
   };
 
   listPayload: any = {
@@ -136,7 +136,7 @@ class Formulary extends React.Component<any, any> {
     search_key: "",
     search_value: [],
     sort_by: ["cms_formulary_id"],
-    sort_order: ["desc"],
+    sort_order: ["desc"]
   };
 
   componentDidMount() {
@@ -152,23 +152,27 @@ class Formulary extends React.Component<any, any> {
     this.listPayload = listPayload;
     this.props.fetchFormularies(this.listPayload);
   };
-  uniqByKeepLast = (data) => {
-    const result = Array.from(new Set(data.map(s => s.columnKey)))
-    .map(column => {
-      const getOrder = data.find(s => s.columnKey === column).order === 'ascend' ? 'asc' : 'desc'
-      return {
-        columnKey: column,
-        order: getOrder
+  uniqByKeepLast = data => {
+    const result = Array.from(new Set(data.map(s => s.columnKey))).map(
+      column => {
+        const getOrder =
+          data.find(s => s.columnKey === column).order === "ascend"
+            ? "asc"
+            : "desc";
+        return {
+          columnKey: column,
+          order: getOrder
+        };
       }
-    });
+    );
     return result;
-  }
+  };
   applyMultiSortHandler = sorter => {
     console.log("multi sorted columns ", sorter);
     const listPayload = { ...this.listPayload };
     const updatedSorter = this.uniqByKeepLast(sorter);
-    const sort_by = updatedSorter.map(e=>e.columnKey);
-    const sort_order = updatedSorter.map(e=>e.order);
+    const sort_by = updatedSorter.map(e => e.columnKey);
+    const sort_order = updatedSorter.map(e => e.order);
     listPayload.sort_by = sort_by;
     listPayload.sort_order = sort_order
     this.listPayload = listPayload;
@@ -191,7 +195,7 @@ class Formulary extends React.Component<any, any> {
       this.updateGrid(this.state.activeTabIndex);
     });
   };
-  updateGrid = (currentTabIndex) => {
+  updateGrid = currentTabIndex => {
     // let lob_id = 1;
     // if(currentTabIndex === 2){
     //   lob_id = 4;
@@ -215,7 +219,7 @@ class Formulary extends React.Component<any, any> {
     this.props.addNewFormulary();
     this.setState({
       showTabs: !this.state.showTabs,
-      showDrugDetails: !this.state.showDrugDetails,
+      showDrugDetails: !this.state.showDrugDetails
     });
   };
 
@@ -227,7 +231,7 @@ class Formulary extends React.Component<any, any> {
       this.props.clearHiddenColumns();
       this.setState({
         showTabs: !this.state.showTabs,
-        showDrugDetails: !this.state.showDrugDetails,
+        showDrugDetails: !this.state.showDrugDetails
       });
       console.log(" Setup Complete : " + selectedRow.is_setup_complete);
       if (selectedRow && selectedRow.is_setup_complete) {
@@ -235,7 +239,7 @@ class Formulary extends React.Component<any, any> {
         this.props.fetchSelectedFormulary(selectedRow?.id_formulary);
         this.props.fetchDesignOptions({
           type: selectedRow?.id_formulary_type,
-          id: selectedRow?.id_formulary,
+          id: selectedRow?.id_formulary
         });
         this.props.setLocation(1);
       } else {
@@ -249,7 +253,7 @@ class Formulary extends React.Component<any, any> {
   massMaintenanceCLickHandler = () => {
     this.setState({
       showTabs: !this.state.showTabs,
-      showMassMaintenance: !this.state.showMassMaintenance,
+      showMassMaintenance: !this.state.showMassMaintenance
     });
   };
 
@@ -286,7 +290,7 @@ class Formulary extends React.Component<any, any> {
       this.props.fetchFormularies(this.listPayload);
     }
   };
-  onPageSize = (pageSize) => {
+  onPageSize = pageSize => {
     let id_lob = this.listPayload.id_lob;
     this.listPayload = { ...defaultListPayload };
     this.listPayload.limit = pageSize;
@@ -304,7 +308,8 @@ class Formulary extends React.Component<any, any> {
   onGridPageChangeHandler = (pageNumber: any) => {
     this.listPayload.index = (pageNumber - 1) * this.listPayload.limit;
     this.props.fetchFormularies(this.listPayload);
-  };
+	};
+	
   onClearFilterHandler = () => {
     console.log("Clear Filter");
     let id_lob = this.listPayload.id_lob;
@@ -324,14 +329,14 @@ class Formulary extends React.Component<any, any> {
     ) {
       this.setState({
         showTabs: !this.state.showTabs,
-        showDrugDetails: !this.state.showDrugDetails,
+        showDrugDetails: !this.state.showDrugDetails
       });
       this.props.setLocationHome(0);
       this.props.clearApplication();
       this.props.clearSetup();
       this.props.clearSetupOptions();
       // if (this.props.location_home == 2) {
-        this.onClearFilterHandler();
+      this.onClearFilterHandler();
       // }
     }
   }
