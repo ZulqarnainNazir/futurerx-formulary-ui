@@ -224,6 +224,16 @@ class Remove extends Component<any, State> {
     }
   }
 
+  // componen(nextProps) {
+  //   alert("UNSAFE_componentWillReceiveProps");
+  //   this.getDrugCriteria();
+  // }
+  // UNSAFE_componentWillReceiveProps(nextProps) {
+  //   if (nextProps.qlData) {
+  //     this.getDrugCriteria();
+  //   }
+  // }
+
   render() {
     return (
       <div>

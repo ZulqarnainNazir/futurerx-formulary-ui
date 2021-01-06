@@ -1163,11 +1163,7 @@ class Tier extends React.Component<any, tabsState> {
                       title="SELECT Quantity Limit CRITERIA"
                       tooltip="This section allows for Addition or Removal of product only. To define coverage for all Medicare covered and/or Supplemental products, go to Drug Details"
                     />
-<<<<<<< HEAD
-                    <div className="inner-container ">
-=======
                     <div className="inner-container">
->>>>>>> 8925390bee779d7e85b50ad6f02b271317723c5f
                       <div className="mb-10">
                         <PanelGrid
                           panelGridTitle={this.state.panelGridTitle}
