@@ -26,7 +26,9 @@ const DragBox = (props) => {
           ? "__root-additional-criteria-read-only-child-accordion-section-content-left-inner-spacing-flex"
           : "__root-additional-criteria-child-accordion-section-content-left-inner-spacing-flex"
       }
-      onClick={editable ? undefined : () => onCriteriaSelect(criteria.id)}
+      onClick={
+        isReadOnly || editable ? undefined : () => onCriteriaSelect(criteria.id)
+      }
     >
       <TiltCrossIcon />
       <label htmlFor={criteria.id} className="font-styling">

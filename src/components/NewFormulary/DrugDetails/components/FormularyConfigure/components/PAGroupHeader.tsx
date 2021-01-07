@@ -165,8 +165,8 @@ function PAGroupHeader(props: any) {
             ? "-grey"
             : "-green"
           : props.isPopUpView
-            ? "-grey"
-            : "-orange"
+          ? "-grey"
+          : "-orange"
       );
       setVersion(versions);
       //const latestVerion = verLength > 0 ? selectedVersion.split(" ")[1] : '';
@@ -215,9 +215,9 @@ function PAGroupHeader(props: any) {
         latestVerion =
           verLength > 0
             ? props.version.find(
-              (val) =>
-                val.version_number == Number(selectedVersion.split(" ")[1])
-            ).id_pa_group_description
+                (val) =>
+                  val.version_number == Number(selectedVersion.split(" ")[1])
+              ).id_pa_group_description
             : 0;
       }
 
@@ -228,8 +228,8 @@ function PAGroupHeader(props: any) {
             ? "-grey"
             : "-green"
           : props.isPopUpView
-            ? "-grey"
-            : "-orange"
+          ? "-grey"
+          : "-orange"
       );
       setPlaceHolder(selectedVersion);
       let apiDetails = {};
@@ -333,7 +333,7 @@ function PAGroupHeader(props: any) {
             let id_pa_group_description =
               groupListLength > 0
                 ? groupList.filter((val) => val.is_archived === false)[0]
-                  .id_base_pa_group_description
+                    .id_base_pa_group_description
                 : 0;
             debugger;
             if (param === "delete-version" && versionListLength > 0) {
@@ -342,7 +342,7 @@ function PAGroupHeader(props: any) {
               id_pa_group_description =
                 groupListLength > 0
                   ? groupList.filter((val) => val.is_archived === false)[0]
-                    .id_base_pa_group_description
+                      .id_base_pa_group_description
                   : 0;
             }
             apiDetails["pathParams"] = "/" + id_pa_group_description;
@@ -377,14 +377,12 @@ function PAGroupHeader(props: any) {
             });
             showMessage(
               "Following Formularies are linked to current Group Description:\n" +
-              errs,
+                errs,
               "error"
             );
           }
           showMessage(json.payload.data.message, "error");
         }
-
-
 
         setOpen(false);
       });
@@ -480,7 +478,8 @@ function PAGroupHeader(props: any) {
             const response = json.payload.data;
             const verLength = Object.keys(response).length;
             const isEditable = response[verLength - 1].is_setup_complete;
-            const latestVerion = response[verLength - 1].id_pa_group_description;
+            const latestVerion =
+              response[verLength - 1].id_pa_group_description;
             const value = response[verLength - 1].value;
             setIsSetupComplete(isEditable);
             setVersion(response);
@@ -505,28 +504,27 @@ function PAGroupHeader(props: any) {
             });
             showMessage(
               "Following Formularies are linked to current Group Description:\n" +
-              errs,
+                errs,
               "error"
             );
           }
           showMessage(json.payload.data.message, "error");
         }
 
-
-
         setOpen(false);
       });
   };
   return (
     <div
-      className={`version-wrapper version-wrapper${isSetupComplete === true
-        ? props.isPopUpView
-          ? "-grey"
-          : "-green"
-        : props.isPopUpView
+      className={`version-wrapper version-wrapper${
+        isSetupComplete === true
+          ? props.isPopUpView
+            ? "-grey"
+            : "-green"
+          : props.isPopUpView
           ? "-grey"
           : "-orange"
-        }`}
+      }`}
     >
       <select
         name="group-description"
@@ -535,20 +533,20 @@ function PAGroupHeader(props: any) {
         onChange={onChange}
         style={{ border: "none" }}
       >
-        <option value=""></option>
+        {/* <option value=""></option> */}
         {versionList.map((e, index) =>
           versionListLength === index ? (
             <option value={e.value} selected>
               {e.value}
             </option>
           ) : (
-              <option value={e.value}>{e.value}</option>
-            )
+            <option value={e.value}>{e.value}</option>
+          )
         )}
       </select>
       <div
         className="item item--version-history"
-        onClick={props.isPopUpView ? () => { } : toggleShowViewAll}
+        onClick={props.isPopUpView ? () => {} : toggleShowViewAll}
       >
         <svg
           width="11"
@@ -565,8 +563,8 @@ function PAGroupHeader(props: any) {
                   ? "#8DD5A2"
                   : "#219653"
                 : props.isPopUpView
-                  ? "#8DD5A2"
-                  : "#f65a1c"
+                ? "#8DD5A2"
+                : "#f65a1c"
             }
           />
         </svg>
@@ -574,7 +572,7 @@ function PAGroupHeader(props: any) {
       </div>
       <div
         className="item item--version-history"
-        onClick={props.isPopUpView ? () => { } : () => handleClickOpen("clone")}
+        onClick={props.isPopUpView ? () => {} : () => handleClickOpen("clone")}
       >
         <svg
           width="13"
@@ -591,8 +589,8 @@ function PAGroupHeader(props: any) {
                   ? "#8DD5A2"
                   : "#219653"
                 : props.isPopUpView
-                  ? "#8DD5A2"
-                  : "#f65a1c"
+                ? "#8DD5A2"
+                : "#f65a1c"
             }
           />
         </svg>
@@ -601,7 +599,7 @@ function PAGroupHeader(props: any) {
       <div
         className="item item--version-history"
         onClick={
-          props.isPopUpView ? () => { } : () => handleClickOpen("newVersion")
+          props.isPopUpView ? () => {} : () => handleClickOpen("newVersion")
         }
       >
         <svg
@@ -619,8 +617,8 @@ function PAGroupHeader(props: any) {
                   ? "#8DD5A2"
                   : "#219653"
                 : props.isPopUpView
-                  ? "#8DD5A2"
-                  : "#f65a1c"
+                ? "#8DD5A2"
+                : "#f65a1c"
             }
           />
         </svg>
@@ -628,7 +626,7 @@ function PAGroupHeader(props: any) {
       </div>
       <div
         className="item item--version-history"
-        onClick={props.isPopUpView ? () => { } : () => handleClickOpen("delete")}
+        onClick={props.isPopUpView ? () => {} : () => handleClickOpen("delete")}
       >
         <svg
           width="11"
@@ -647,8 +645,8 @@ function PAGroupHeader(props: any) {
                   ? "#8DD5A2"
                   : "#219653"
                 : props.isPopUpView
-                  ? "#8DD5A2"
-                  : "#f65a1c"
+                ? "#8DD5A2"
+                : "#f65a1c"
             }
           />
         </svg>
@@ -657,7 +655,7 @@ function PAGroupHeader(props: any) {
       <div
         className="item  item--version-history"
         onClick={
-          props.isPopUpView ? () => { } : () => handleClickOpen("archive")
+          props.isPopUpView ? () => {} : () => handleClickOpen("archive")
         }
       >
         <svg
@@ -675,8 +673,8 @@ function PAGroupHeader(props: any) {
                   ? "#8DD5A2"
                   : "#219653"
                 : props.isPopUpView
-                  ? "#8DD5A2"
-                  : "#f65a1c"
+                ? "#8DD5A2"
+                : "#f65a1c"
             }
           />
         </svg>
@@ -700,8 +698,8 @@ function PAGroupHeader(props: any) {
           />
         </STAlertDialog>
       ) : (
-          <ToastContainer />
-        )}
+        <ToastContainer />
+      )}
 
       <DialogPopup
         showCloseIcon={true}
@@ -736,7 +734,7 @@ function PAGroupHeader(props: any) {
             isPinningEnabled={false}
             enableSearch={false}
             enableColumnDrag
-            onSearch={() => { }}
+            onSearch={() => {}}
             fixedColumnKeys={[]}
             pagintionPosition="topRight"
             gridName="DRUG GRID"

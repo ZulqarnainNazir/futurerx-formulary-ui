@@ -1069,7 +1069,7 @@ function NewGroup(props: any) {
                         options={props.drugList}
                         getAutoCompleteChange={getAutoCompleteChangeHandler}
                         autoSelected={drug_list_ids}
-                        disabled={editable}
+                        editable={editable}
                       />
                       {/* <Tags options={drug_list} getAutoCompleteChange={getAutoCompleteChangeHandler}
                        autoSelected={formData.drug_list_ids}/> */}
@@ -1091,7 +1091,9 @@ function NewGroup(props: any) {
                       name="add-filter-2"
                       // checked={isAdditionalCriteriaOpen}
                       onClick={() => {
-                        openAdditionalCriteria();
+                        if (!props.isPopUpView) {
+                          openAdditionalCriteria();
+                        }
                         updateFormData({
                           ...formData,
                           is_additional_criteria_defined: true,
@@ -1146,7 +1148,7 @@ function NewGroup(props: any) {
                     />
                   </RadioGroup>
                 </div> */}
-                {isAdditionalCriteriaOpen ? (
+                {isAdditionalCriteriaOpen && props.formulary_lob_id == 4 ? (
                   <AdvanceSearchContainer
                     openPopup={isAdditionalCriteriaOpen}
                     onClose={closeAddiionalCriteria}

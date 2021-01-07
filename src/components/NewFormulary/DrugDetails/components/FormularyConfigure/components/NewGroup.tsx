@@ -178,14 +178,13 @@ function NewGroup(props: any) {
     }
   };
 
-  useEffect(()=>{
+  useEffect(() => {
     setFormType(props.formType);
-  },[])
+  }, []);
 
-  useEffect(()=>{
+  useEffect(() => {
     setFormType(props.formType);
-  },[props.formType])
-
+  }, [props.formType]);
 
   useEffect(() => {
     // debugger;
@@ -300,7 +299,7 @@ function NewGroup(props: any) {
     formData["removed_drug_list_ids"] = [2];
     let requestData = {};
     debugger;
-    if (formType == 1 ) {
+    if (formType == 1) {
       requestData["messageBody"] = { ...formData };
       if (additionalCriteria != null) {
         requestData["messageBody"]["um_criteria"] = additionalCriteria;
@@ -816,13 +815,20 @@ function NewGroup(props: any) {
                       name="add-filter-2"
                       // checked={isAdditionalCriteriaOpen}
                       onClick={() => {
+                        if (!props.isPopUpView) {
+                          openAdditionalCriteria();
+                        }
                         updateFormData({
                           ...formData,
                           is_additional_criteria_defined: true,
                         });
-                        openAdditionalCriteria();
                       }}
-                      disabled={editable}
+                      disabled={
+                        formData.is_additional_criteria_defined
+                          ? false
+                          : editable
+                      }
+                      checked={formData.is_additional_criteria_defined}
                     />
                     <RadioButton
                       label="No"
@@ -835,6 +841,7 @@ function NewGroup(props: any) {
                         })
                       }
                       disabled={editable}
+                      checked={!formData.is_additional_criteria_defined}
                     />
                   </div>
                 </Space>
@@ -843,6 +850,7 @@ function NewGroup(props: any) {
                     openPopup={isAdditionalCriteriaOpen}
                     onClose={closeAddiionalCriteria}
                     isAdvanceSearch={false}
+                    editable={editable}
                   />
                 ) : null}
               </Grid>
