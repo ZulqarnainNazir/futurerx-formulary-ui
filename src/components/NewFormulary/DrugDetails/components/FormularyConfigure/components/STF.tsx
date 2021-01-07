@@ -131,7 +131,8 @@ class STF extends React.Component<any, any> {
   openTierGridContainer = () => {
     this.state.drugData = [];
     this.state.drugGridData = [];
-
+    this.state.selectedRowKeys =[]; 
+    
     if (this.state.selectedGroupDescription === null) {
       showMessage("Group Description is required", "info");
       return;
