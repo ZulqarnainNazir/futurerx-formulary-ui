@@ -248,7 +248,7 @@ class ConnctedVersionHistoryPopup extends React.Component<
           selectedCurrentPage={
             this.listPayload.index / this.listPayload.limit + 1
           }
-          // isPinningEnabled
+          isPinningEnabled
         />
         {/* // )} */}
       </div>

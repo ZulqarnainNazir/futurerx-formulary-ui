@@ -178,8 +178,8 @@ class FrxDrugGrid extends Component<
   gridRef: React.RefObject<HTMLDivElement>;
   pinnedCount: number;
   initialPinnedCount: number;
-	pinnedIndexMap: Map<string, number>;
-	pinnedPositionMap:Map<string,number>;
+  pinnedIndexMap: Map<string, number>;
+  pinnedPositionMap: Map<string, number>;
   isSettingsEnabled = false;
 
   constructor(props) {
@@ -193,8 +193,8 @@ class FrxDrugGrid extends Component<
         ? this.props.fixedColumnKeys.length
         : 0; // Accounts for the fixed columns and settings key
     this.initialPinnedCount = this.pinnedCount;
-		this.pinnedIndexMap = new Map<string, number>();
-		this.pinnedPositionMap = new Map<string, number>();
+    this.pinnedIndexMap = new Map<string, number>();
+    this.pinnedPositionMap = new Map<string, number>();
   }
 
   componentDidMount() {
@@ -449,8 +449,8 @@ class FrxDrugGrid extends Component<
           if (
             expandedIndex < this.state.columns.filter(c => !c.hidden).length
           ) {
-						if (fromIndex <= 1 || toIndex <= 1) return;
-						console.log(fromIndex, toIndex);
+            if (fromIndex <= 1 || toIndex <= 1) return;
+            console.log(fromIndex, toIndex);
             fromIndex--;
             toIndex--;
           }
@@ -504,10 +504,10 @@ class FrxDrugGrid extends Component<
    * @author Deepak_T
    */
   swapArrayLocs = (arr, fromIndex, toIndex) => {
-		console.log("swpping ", fromIndex, toIndex);
-		
-		if (fromIndex < 0 || toIndex < 0) return;
-		arr = arr.filter(c => !c.hidden)
+    console.log("swpping ", fromIndex, toIndex);
+
+    if (fromIndex < 0 || toIndex < 0) return;
+    arr = arr.filter(c => !c.hidden);
 
     let fromPosition = arr[fromIndex]["position"];
     let toPosition = arr[toIndex]["position"];
@@ -517,11 +517,11 @@ class FrxDrugGrid extends Component<
       arr[toIndex],
       fromPosition,
       toPosition
-		);
-		
+    );
+
     arr[fromIndex]["position"] = toPosition;
-		arr[toIndex]["position"] = fromPosition;
-		arr = [...arr, ...this.state.hiddenColumns]
+    arr[toIndex]["position"] = fromPosition;
+    arr = [...arr, ...this.state.hiddenColumns];
     arr = this.getSortedHiddenAndDisplayedColumnsByPosition(arr);
     // let temp = arr[fromIndex];
 
@@ -753,7 +753,7 @@ class FrxDrugGrid extends Component<
             return (
               <>
                 <FrxGridHeaderCell
-								isAllRowsSelected={this.props.isAllRowsSelected}
+                  isAllRowsSelected={this.props.isAllRowsSelected}
                   onSelectAllRows={this.onSelectAllRows}
                   isPinningEnabled={
                     this.props.isPinningEnabled
@@ -1012,8 +1012,8 @@ class FrxDrugGrid extends Component<
         this.getDataOnFilter(filters);
       } else {
         const appliedFilters = _.pickBy(filters, _.identity);
- 			if(this.props.applyFilter)
-        this.props.applyFilter(appliedFilters, appliedFilters);
+        if (this.props.applyFilter)
+          this.props.applyFilter(appliedFilters, appliedFilters);
       }
     }
 
@@ -1410,11 +1410,10 @@ class FrxDrugGrid extends Component<
     });
     // Remove entry from map.
     if (isColumnUnpinned) {
-			let oldIndex = this.pinnedIndexMap.get(column.displayTitle);
-			let oldPosition = this.pinnedPositionMap.get(column.displayTitle);
-	
-			this.pinnedIndexMap.delete(column.displayTitle);
-			this.pinnedPositionMap.delete(column.displayTitle);
+      let oldIndex = this.pinnedIndexMap.get(column.displayTitle);
+
+      this.pinnedIndexMap.delete(column.displayTitle);
+      // this.pinnedPositionMap.delete(column.displayTitle);
       if (oldIndex !== undefined) {
         console.log(
           "old index of " + column.displayTitle + ": " + oldIndex.toString()
@@ -1424,21 +1423,23 @@ class FrxDrugGrid extends Component<
         if (oldIndex <= columns.length - 1) {
           if (this.pinnedCount > oldIndex) {
             oldIndex = this.pinnedCount!;
-					}
-				
-					let cols = _.cloneDeep(columns)
-					if(oldPosition){
-						cols = cols.map((c:Column<any>) => {
-							if(c.displayTitle === column.displayTitle){
-								c.position = oldPosition ? oldPosition: c.position;
-							}
-							return c
-						})
-					}
-				
-				
-					columns.splice(oldIndex, 0, columns.splice(idxOfCol, 1)[0]);
-					columns = this.getNewColumnPosition(cols,columns)
+          }
+
+          let cols = _.cloneDeep(columns);
+
+          cols = cols.map((c: Column<any>) => {
+            if (c.key) {
+              let oldPosition = this.pinnedPositionMap.get(c.key);
+              console.log("old position of c ", oldPosition, c.key);
+              c.position = oldPosition ? oldPosition : c.position;
+            }
+            return c;
+          });
+
+          console.log(cols);
+
+          columns.splice(oldIndex, 0, columns.splice(idxOfCol, 1)[0]);
+          columns = this.getNewColumnPosition(cols, columns);
         }
       }
     }
@@ -1461,8 +1462,8 @@ class FrxDrugGrid extends Component<
     console.log("column: " + column.displayTitle);
 
     let isColumnToMove = false;
-		let idxOfCol = -1;
-		let positionOfCol = -1;
+    let idxOfCol = -1;
+    let positionOfCol = -1;
 
     let columns = this.state.columns.map((c: Column<any>, idx: number) => {
       if (
@@ -1474,14 +1475,15 @@ class FrxDrugGrid extends Component<
         )
       ) {
         isColumnToMove = true;
-				idxOfCol = idx;
-				positionOfCol = c["position"]
+        idxOfCol = idx;
+        positionOfCol = c["position"];
         c["fixed"] = "left";
         this.pinnedCount++;
         //change position after pinning
         console.log("pinned count after ", this.pinnedCount);
         // c["position"] = this.pinnedCount;
       }
+      this.pinnedPositionMap.set(c.key, c.position);
 
       return c;
     });
@@ -1495,16 +1497,15 @@ class FrxDrugGrid extends Component<
 
     // Move column at index to this.pinnedCount-1
     if (isColumnToMove) {
-			const cols = _.cloneDeep(columns);
-			
-			columns.splice(this.pinnedCount - 1, 0, columns.splice(idxOfCol, 1)[0]);
-			columns = this.getNewColumnPosition(cols,columns)
+      const cols = _.cloneDeep(columns);
+
+      columns.splice(this.pinnedCount - 1, 0, columns.splice(idxOfCol, 1)[0]);
+      columns = this.getNewColumnPosition(cols, columns);
       console.log(
         "moved column to index: " + (this.pinnedCount - 1).toString()
       );
       // Insert index into map
-			this.pinnedIndexMap.set(column.displayTitle, idxOfCol);
-			this.pinnedPositionMap.set(column.displayTitle, positionOfCol);
+      this.pinnedIndexMap.set(column.displayTitle, idxOfCol);
     }
 
     //changing position after pinning
@@ -1513,16 +1514,22 @@ class FrxDrugGrid extends Component<
       // this.updatePinIcon();
       // this.updateUserPrefernces();
     });
-	};
-	
-	getNewColumnPosition = (oldColumns,newColumns) => {
-		for(let i = 0; i < oldColumns.length; i++){
-			newColumns[i]["position"] = oldColumns[i]["position"]
-		}
+  };
 
-		return newColumns
+  getNewColumnPosition = (oldColumns, newColumns) => {
+    for (let i = 0; i < oldColumns.length; i++) {
+			if(oldColumns[i]["key"]){
+				for(let j = 0; j < newColumns.length; j++){
+					if(oldColumns[i]["key"] === newColumns[j]["key"]){
+						newColumns[j]["position"] = oldColumns[i]["position"];
+					}
+				}
+			}
+      // newColumns[i]["position"] = oldColumns[i]["position"];
+    }
 
-	}
+    return newColumns;
+  };
 
   updatePinIcon = () => {
     const columns = this.state.columns.map((c, index) => {
