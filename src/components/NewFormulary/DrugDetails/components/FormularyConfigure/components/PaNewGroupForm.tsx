@@ -24,9 +24,7 @@ import AlertMessages from "./AlertMessages";
 import { ToastContainer } from "react-toastify";
 import showMessage from "../../../../Utils/Toast";
 import Tags from "./Tags";
-import {
-  getPAGroupDetails,
-} from "../../../../../../redux/slices/formulary/pagdm/pagdmSlice";
+import { getPAGroupDetails } from "../../../../../../redux/slices/formulary/pagdm/pagdmSlice";
 import {
   getCategoryList,
   getAdditionalCriteriaSectionList,
@@ -214,7 +212,7 @@ function mapDispatchToProps(dispatch) {
     getPaGrouptDescriptionVersions: (a) =>
       dispatch(getPaGrouptDescriptionVersions(a)),
     getDrugLists: (a) => dispatch(getDrugLists(a)),
-    getPAGroupDetails :(a) => dispatch(getPAGroupDetails(a)),
+    getPAGroupDetails: (a) => dispatch(getPAGroupDetails(a)),
   };
 }
 
@@ -287,7 +285,6 @@ function NewGroup(props: any) {
   };
 
   const saveGroupDescription = (e, is_validation: boolean) => {
-    
     let requestData = {};
     e.preventDefault();
     if (props.formulary_lob_id === 1) {
@@ -379,7 +376,7 @@ function NewGroup(props: any) {
         formData["coverage_restrictions"];
       requestData["messageBody"]["other_criteria"] = formData["other_criteria"];
 
-      if (formType == 1 ) {
+      if (formType == 1) {
         requestData["apiPart"] = "api/1/mcr-pa-group-description";
         requestData["pathParams"] =
           "/" +
@@ -387,9 +384,9 @@ function NewGroup(props: any) {
           "/" +
           props?.formulary_id +
           "?entity_id=0";
-          let id_pa_group_description = formData["id_pa_group_description"]
+        let id_pa_group_description = formData["id_pa_group_description"]
           ? formData["id_pa_group_description"]
-          : 0;  
+          : 0;
         props.putPAGroupDescription(requestData).then((json) => {
           if (json.payload && json.payload.code === "200") {
             showMessage("Success", "success");
@@ -398,9 +395,7 @@ function NewGroup(props: any) {
             apiDetails["pathParams"] =
               "/" + props?.client_id + "?entity_id=" + props?.formulary_id;
 
-              
             props.getPaGrouptDescriptions(apiDetails);
-            
           } else {
             if (json.payload && json.payload.message !== undefined) {
               showMessage(json.payload.message, "error");
@@ -441,7 +436,7 @@ function NewGroup(props: any) {
       requestData["messageBody"]["is_additional_criteria_defined"] =
         formData["is_additional_criteria_defined"];
       requestData["messageBody"]["drug_list_ids"] = drug_list_ids;
-      if (formType == 1 ) {
+      if (formType == 1) {
         requestData["pathParams"] =
           "/" +
           formData["id_pa_group_description"] +
@@ -450,7 +445,7 @@ function NewGroup(props: any) {
           "?entity_id=0";
         let id_pa_group_description = formData["id_pa_group_description"]
           ? formData["id_pa_group_description"]
-          : 0;  
+          : 0;
         props.putPAGroupDescription(requestData).then((json) => {
           if (json.payload && json.payload.code === "200") {
             showMessage("Success", "success");
@@ -460,15 +455,20 @@ function NewGroup(props: any) {
               "/" + props?.client_id + "?entity_id=" + props?.formulary_id;
 
             props.getPaGrouptDescriptions(apiDetails);
-            
-            let id_base_pa_group_description = json.payload.id_base_pa_group_description ? 
-            json.payload.id_base_pa_group_description : props.savePaGdm.current_group_id;
+
+            let id_base_pa_group_description = json.payload
+              .id_base_pa_group_description
+              ? json.payload.id_base_pa_group_description
+              : props.savePaGdm.current_group_id;
             apiDetails["pathParams"] = "/" + id_base_pa_group_description;
 
             props.getPaGrouptDescriptionVersions(apiDetails).then((json) => {
               const isEditable =
                 json.payload.data.length > 0 &&
-                json.payload.data.find((val) => val.id_pa_group_description === id_pa_group_description);
+                json.payload.data.find(
+                  (val) =>
+                    val.id_pa_group_description === id_pa_group_description
+                );
               props.selectGroup(
                 id_base_pa_group_description,
                 isEditable.is_setup_complete
@@ -477,7 +477,7 @@ function NewGroup(props: any) {
             });
           } else if (json?.payload?.status && json?.payload?.status != 200) {
             isSetUpComplete(false);
-          setShowHeader(0);
+            setShowHeader(0);
             showMessage(json.payload.data.message, "error");
           } else {
             showMessage("Failure", "error");
@@ -486,6 +486,7 @@ function NewGroup(props: any) {
       } else {
         requestData["pathParams"] = "/" + props?.formulary_id + "?entity_id=0";
         props.postPAGroupDescription(requestData).then((json) => {
+          debugger;
           if (json.payload && json.payload.code === "200") {
             showMessage("Success", "success");
             let apiDetails = {};
@@ -498,21 +499,19 @@ function NewGroup(props: any) {
 
             debugger;
             props.getPAGroupDetails({
-              
               formulary_id: props.formulary_id,
-              current_group_id:
-                json.payload.id_base_pa_group_description,
-              current_group_des_id:
-                json.payload.id_pa_group_description,
+              current_group_id: json.payload.id_base_pa_group_description,
+              current_group_des_id: json.payload.id_pa_group_description,
             });
 
             formData["id_pa_group_description"] =
               json.payload.id_pa_group_description;
 
-              apiDetails["pathParams"] =
+            apiDetails["pathParams"] =
               "/" + json.payload.id_base_pa_group_description;
-  
-            let id_base_pa_group_description = json.payload.id_base_pa_group_description
+
+            let id_base_pa_group_description =
+              json.payload.id_base_pa_group_description;
             props.getPaGrouptDescriptionVersions(apiDetails).then((json) => {
               const isEditable =
                 json.payload.data.length > 0 &&
@@ -527,10 +526,10 @@ function NewGroup(props: any) {
               );
               isSetUpComplete(isEditable.is_setup_complete);
             });
-          } else if (json?.payload?.status && json?.payload?.status != 200) {
+          } else if (json.payload && json.payload.code != 200) {
             isSetUpComplete(false);
-          setShowHeader(0);
-            showMessage(json.payload.data.message, "error");
+            setShowHeader(0);
+            showMessage(json.payload.message, "error");
           } else {
             showMessage("Failure", "error");
           }
@@ -578,16 +577,15 @@ function NewGroup(props: any) {
   };
   const closeAddiionalCriteria = () => toggleAdditionalCriteriaOpen(false);
 
-  useEffect(()=>{
-    setFormType(props.formType);
-  },[])
-
-  useEffect(()=>{
-    setFormType(props.formType);
-  },[props.formType])
-  
   useEffect(() => {
+    setFormType(props.formType);
+  }, []);
 
+  useEffect(() => {
+    setFormType(props.formType);
+  }, [props.formType]);
+
+  useEffect(() => {
     // debugger;
     console.log(props.additionalCriteriaObject);
     setAdditionalCriteria(props.additionalCriteriaObject);
@@ -618,7 +616,7 @@ function NewGroup(props: any) {
     if (!props.editMode) {
       setEditable(false);
     }
-    
+
     setShowHeader(0);
     setErrorClass("");
   }, [
@@ -662,6 +660,7 @@ function NewGroup(props: any) {
         )}
       </div>
       {(formType > 0 || showHeader > 0) && (
+        
         <PAGroupHeader
           popuptitle={
             formData.pa_group_description_name
@@ -1046,7 +1045,7 @@ function NewGroup(props: any) {
               <Grid item xs={12}>
                 <div className="group">
                   <label className="required-field">
-                    PA Criteria2 <span className="astrict">*</span>
+                    PA Criteria <span className="astrict">*</span>
                   </label>
                   <input
                     className="custom-textfield"
@@ -1098,7 +1097,11 @@ function NewGroup(props: any) {
                           is_additional_criteria_defined: true,
                         });
                       }}
-                      // disabled={editable}
+                      disabled={
+                        formData.is_additional_criteria_defined
+                          ? false
+                          : editable
+                      }
                       checked={formData.is_additional_criteria_defined}
                     />
                     <RadioButton
@@ -1148,6 +1151,7 @@ function NewGroup(props: any) {
                     openPopup={isAdditionalCriteriaOpen}
                     onClose={closeAddiionalCriteria}
                     isAdvanceSearch={false}
+                    editable={editable}
                   />
                 ) : null}
                 <br />

@@ -76,6 +76,8 @@ class CompareTable extends Component<any, any> {
     gridMultiSortedInfo: [],
     isGridMultiSorted: false,
     sort_by: Array(),
+    isFiltered: false,
+    filteredInfo: null,
   };
 
   listPayload: any = {
@@ -94,7 +96,7 @@ class CompareTable extends Component<any, any> {
       });
     }
   };
-  onApplyFilterHandler = filters => {
+  onApplyFilterHandler = (filters, filteredInfo) => {
     const fetchedKeys = Object.keys(filters);
     if (fetchedKeys.length > 0) {
       fetchedKeys.map(fetchedProps => {
@@ -121,19 +123,35 @@ class CompareTable extends Component<any, any> {
           });
         }
       });
+      this.setState({
+        isFiltered: true,
+        filteredInfo: filteredInfo
+      }, () => {
+        this.populateViewAllData(
+          this.listPayload,
+          this.state.baseFormularyId,
+          this.state.reformularyId,
+          this.state.viewAllType
+        );
+      });
     }else{
       this.listPayload.filter = Array();
+      this.setState({
+        isFiltered: false,
+        filteredInfo: filteredInfo
+      }, () => {
+        this.populateViewAllData(
+          this.listPayload,
+          this.state.baseFormularyId,
+          this.state.reformularyId,
+          this.state.viewAllType
+        );
+      });
     }
     console.log("Filters:" + JSON.stringify(this.listPayload.filter));
     /*this.setState({
       isRequestFinished: false
     });*/
-    this.populateViewAllData(
-      this.listPayload,
-      this.state.baseFormularyId,
-      this.state.reformularyId,
-      this.state.viewAllType
-    );
   };
   onPageSize = (pageSize) => {
     if (this.state.viewAllType === TYPE_SINGLE) {
@@ -171,12 +189,17 @@ class CompareTable extends Component<any, any> {
       /*this.setState({
         isRequestFinished: false
       });*/
-      this.populateViewAllData(
-        this.listPayload,
-        this.state.baseFormularyId,
-        this.state.reformularyId,
-        this.state.viewAllType
-      );
+      this.setState({
+        isFiltered: false,
+        filteredInfo: null
+      }, () => {
+        this.populateViewAllData(
+          this.listPayload,
+          this.state.baseFormularyId,
+          this.state.reformularyId,
+          this.state.viewAllType
+        );
+      });
     }
   };
   applyMultiSortHandler = (sorter, multiSortedInfo) => {
@@ -363,6 +386,13 @@ class CompareTable extends Component<any, any> {
     checkBoxEnabled = false
   ) => {
     if (isClose) {
+      this.listPayload = {
+        index: 0,
+        limit: 10,
+        filter: [],
+        sort_by: [],
+        sort_order: []
+      };
       this.setState({
         showViewAll: !this.state.showViewAll,
         columns: Array(),
@@ -376,6 +406,12 @@ class CompareTable extends Component<any, any> {
         hiddenColumns: Array(),
         rejectedKeys: Array(),
         rejectedDrugIds: Array(),
+        gridSingleSortInfo: null,
+        gridMultiSortedInfo: [],
+        isGridMultiSorted: false,
+        isGridSingleSorted: false,
+        isFiltered: false,
+        filteredInfo: null
       });
     } else {
       this.state.showViewAll = !this.state.showViewAll;
@@ -2380,7 +2416,7 @@ class CompareTable extends Component<any, any> {
         </div>
         {showViewAll ? (
           <DialogPopup
-            showCloseIcon={true}
+            showCloseIcon={this.state.isRowSelectionEnabled}
             positiveActionText="Reject"
             negativeActionText=""
             title="view all"
@@ -2390,7 +2426,7 @@ class CompareTable extends Component<any, any> {
             handleAction={(type) => {
               this.onDialogAction(type);
             }}
-            showActions={true}
+            showActions={this.state.isRowSelectionEnabled}
             height="80%"
             width="80%"
             open={showViewAll}
@@ -2438,6 +2474,9 @@ class CompareTable extends Component<any, any> {
               }
               totalRowsCount={this.state.dataCount}
               rowSelectionChange={this.rowSelectionChange}
+              isFiltered={this.state.isFiltered}
+              filteredInfo={this.state.filteredInfo}
+              isDataLoaded={this.state.isRowSelectionEnabled}
             />
           </DialogPopup>
         ) : null}

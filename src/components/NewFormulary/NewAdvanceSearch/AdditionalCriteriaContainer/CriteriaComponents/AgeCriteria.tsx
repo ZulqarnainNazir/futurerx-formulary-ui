@@ -43,7 +43,7 @@ const AgeCriteria = (props) => {
 
             <div className="input-field-group__text-field">
               <input
-                type="text"
+                type="number"
                 className="setup-input-fields"
                 name="min_age_limit"
                 onChange={(e) => handleAgeCriteriaChange(e)}
@@ -70,7 +70,7 @@ const AgeCriteria = (props) => {
 
             <div className="input-field-group__text-field">
               <input
-                type="text"
+                type="number"
                 className="setup-input-fields"
                 name="max_age_limit"
                 onChange={(e) => handleAgeCriteriaChange(e)}

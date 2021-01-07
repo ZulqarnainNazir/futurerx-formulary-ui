@@ -142,15 +142,20 @@ class AdditionalCriteriaContainer extends Component<
                       additionalCriteria={additionalCriteria}
                       handleChildDataSave={this.handleChildDataSave}
                       isReadOnly={this.props.isReadOnly}
+                      editable={this.props.editable}
                     />
                   </div>
                   {!this.props.isReadOnly && (
                     <DeleteIcon
                       className="__root-additional-criteria-child-delete"
-                      onClick={() =>
-                        this.deleteAdditionalCriteria(
-                          additionalCriteria.sequence
-                        )
+                      onClick={
+                        this.props.editable
+                          ? undefined
+                          : () => {
+                              this.deleteAdditionalCriteria(
+                                additionalCriteria.sequence
+                              );
+                            }
                       }
                     />
                   )}
@@ -163,6 +168,7 @@ class AdditionalCriteriaContainer extends Component<
               // disabled={this.state.additionalCriteriaArray.length > 5}
               className={"Button advanced-grid-search__btn-clear"}
               onClick={() => this.handleAddNewClick()}
+              disabled={this.props.editable}
             >
               <AddCircleIcon />
               <span>Add New</span>
