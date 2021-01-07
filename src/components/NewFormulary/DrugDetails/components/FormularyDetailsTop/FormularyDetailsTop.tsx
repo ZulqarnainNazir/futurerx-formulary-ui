@@ -20,25 +20,26 @@ import { ToastContainer } from "react-toastify";
 import showMessage from "../../../Utils/Toast";
 import {
   fetchDesignOptions,
-  fetchTierOptions
+  fetchTierOptions,
 } from "../../../../.././redux/slices/formulary/setup/setupOptionsSlice";
+import moment from "moment";
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
   return {
     mode: state?.setup?.mode,
     currentFormulary: state.setup.formulary,
     formularyVersionList: state.header.formulary_version_list,
-    formularyLobId: state?.application?.formulary_lob_id
+    formularyLobId: state?.application?.formulary_lob_id,
   };
 };
 
 function mapDispatchToProps(dispatch) {
   return {
-    fetchFormularyVersions: a => dispatch(fetchFormularyHeader(a)),
-    fetchSelectedFormulary: a => dispatch(fetchSelectedFormulary(a)),
-    fetchDesignOptions: a => dispatch(fetchDesignOptions(a)),
-    fetchTierOptions: a => dispatch(fetchTierOptions(a)),
-    setLocationHome: a => dispatch(setLocationHome(a))
+    fetchFormularyVersions: (a) => dispatch(fetchFormularyHeader(a)),
+    fetchSelectedFormulary: (a) => dispatch(fetchSelectedFormulary(a)),
+    fetchDesignOptions: (a) => dispatch(fetchDesignOptions(a)),
+    fetchTierOptions: (a) => dispatch(fetchTierOptions(a)),
+    setLocationHome: (a) => dispatch(setLocationHome(a)),
   };
 }
 
@@ -61,7 +62,7 @@ class FormularyDetailsTop extends React.Component<any, any> {
     dialogTitle: "",
 
     lastID: 0,
-    lastVersion: 0
+    lastVersion: 0,
   };
 
   componentDidUpdate() {
@@ -88,7 +89,7 @@ class FormularyDetailsTop extends React.Component<any, any> {
         this.setState({
           lastID: this.props?.currentFormulary?.id_formulary,
           lastVersion: this.props?.currentFormulary?.formulary_info
-            ?.version_number
+            ?.version_number,
         });
       }
     }
@@ -96,7 +97,7 @@ class FormularyDetailsTop extends React.Component<any, any> {
 
   onVersionChangeHandler = (e: any) => {
     const formulary_id = this.props.formularyVersionList.find(
-      el => el.value === e
+      (el) => el.value === e
     ).id_formulary;
     this.externalInferfaceLoadFormulary(6, formulary_id);
   };
@@ -114,7 +115,7 @@ class FormularyDetailsTop extends React.Component<any, any> {
     this.setState({
       isAnyPopupOpen: true,
       isVersionHistoryPopupOpen: true,
-      dialogTitle: "VERSION HISTORY"
+      dialogTitle: "VERSION HISTORY",
     });
   };
 
@@ -124,7 +125,7 @@ class FormularyDetailsTop extends React.Component<any, any> {
       this.setState({
         isAnyPopupOpen: true,
         isClonePopupOpen: true,
-        dialogTitle: "CLONE"
+        dialogTitle: "CLONE",
       });
     } else {
       showMessage("Error: Current formulary is not set", "error");
@@ -137,7 +138,7 @@ class FormularyDetailsTop extends React.Component<any, any> {
       this.setState({
         isAnyPopupOpen: true,
         isDeletePopupOpen: true,
-        dialogTitle: "DELETE"
+        dialogTitle: "DELETE",
       });
     } else {
       showMessage("Error: Current formulary is not set", "error");
@@ -150,7 +151,7 @@ class FormularyDetailsTop extends React.Component<any, any> {
       this.setState({
         isAnyPopupOpen: true,
         isArchivePopupOpen: true,
-        dialogTitle: "Archive"
+        dialogTitle: "Archive",
       });
     } else {
       showMessage("Error: Current formulary is not set", "error");
@@ -163,7 +164,7 @@ class FormularyDetailsTop extends React.Component<any, any> {
       this.setState({
         isAnyPopupOpen: true,
         isNewVersionPopupOpen: true,
-        dialogTitle: "New Version"
+        dialogTitle: "New Version",
       });
     } else {
       showMessage("Error: Current formulary is not set", "error");
@@ -185,7 +186,7 @@ class FormularyDetailsTop extends React.Component<any, any> {
       isDeletePopupOpen: false,
       isArchivePopupOpen: false,
       isNewVersionPopupOpen: false,
-      dialogTitle: ""
+      dialogTitle: "",
       //add other popup toggles too if this is reused
     });
   };
@@ -321,7 +322,14 @@ class FormularyDetailsTop extends React.Component<any, any> {
   //   }
   //   this.props.fetchSubMthsOptions(2021);
   // }
-
+  formatED(input) {
+    console.log("================================");
+    if (input) {
+      const d = new Date(input);
+      const f = moment(d).format("MM-DD-YYYY"); // June 1, 2019
+      return f;
+    }
+  }
   render() {
     let dropDown: any;
     if (this.props.formularyVersionList) {
@@ -329,7 +337,7 @@ class FormularyDetailsTop extends React.Component<any, any> {
         <DropDown
           className="formulary-type-dropdown formulary-versions"
           placeholder="Formulary Version"
-          options={this.props.formularyVersionList.map(e => e.value)}
+          options={this.props.formularyVersionList.map((e) => e.value)}
           onChange={this.onVersionChangeHandler}
           dropdownClassName="version-dd"
         />
@@ -552,7 +560,9 @@ class FormularyDetailsTop extends React.Component<any, any> {
             </div> */}
             <div className="item">
               <span className="label">Effective Date:</span>{" "}
-              {this.props.currentFormulary?.formulary_info?.effective_date}
+              {this.formatED(
+                this.props.currentFormulary?.formulary_info?.effective_date
+              )}
             </div>
             <div className="item">
               <span className="label">Termination Date:</span>{" "}
