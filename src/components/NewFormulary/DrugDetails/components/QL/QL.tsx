@@ -101,6 +101,7 @@ interface tabsState {
   filter: any;
   sort_by: any;
   isSettingsApplied: boolean;
+  isSelectAll: boolean;
 }
 
 class Tier extends React.Component<any, tabsState> {
@@ -145,6 +146,7 @@ class Tier extends React.Component<any, tabsState> {
     gridMultiSortedInfo: [],
     isGridMultiSorted: false,
     isSettingsApplied: false,
+    isSelectAll: false,
   };
 
   onClickTab = (selectedTabIndex: number) => {
@@ -710,7 +712,7 @@ class Tier extends React.Component<any, tabsState> {
       ] = quantityAndFillLimitObject["fillLimitPeriodOfTime"]
         ? quantityAndFillLimitObject["fillLimitPeriodOfTime"]
         : null;
-      apiDetails["messageBody"]["is_select_all"] = false;
+      apiDetails["messageBody"]["is_select_all"] = this.state.isSelectAll;
       apiDetails["messageBody"]["search_key"] = "";
       apiDetails["messageBody"][
         "selected_criteria_ids"
@@ -776,6 +778,7 @@ class Tier extends React.Component<any, tabsState> {
               ...this.state.prevSelectedDrugs,
               ...this.state.selectedDrugs,
             ];
+            this.state.isSelectAll = false;
             this.state.selectedDrugs = Array();
             // window.scrollTo(0, 50);
           } else {
@@ -820,6 +823,7 @@ class Tier extends React.Component<any, tabsState> {
   };
 
   onApply = () => {
+    this.state.prevSelectedDrugs = Array();
     if (this.getCurrentAction() !== constants.TYPE_REMOVE) {
       if (
         this.checkForRequiredFields({
@@ -895,6 +899,8 @@ class Tier extends React.Component<any, tabsState> {
   };
 
   onSelectAllRows = (isSelected: boolean) => {
+    // alert("onSelectAll");
+    // if (isSelected) {
     const selectedRowKeys: number[] = [];
     const data = this.state.drugGridData.map((d: any) => {
       if (!d["isDisabled"]) {
@@ -909,7 +915,25 @@ class Tier extends React.Component<any, tabsState> {
       (k) => this.state.fixedSelectedRows.indexOf(k) < 0
     );
     this.onSelectedTableRowChanged(selectedRows);
-    this.setState({ drugGridData: data });
+    this.setState({
+      drugGridData: data,
+      // isSelectAll: isSelected
+    });
+    // } else {
+    //   const data = this.state.drugGridData.map((d: any) => {
+    //     if (!d["isDisabled"]) {
+    //       d["isChecked"] = isSelected;
+    //     }
+
+    //     // else d["isSelected"] = false;
+    //     return d;
+    //   });
+    //   this.setState({
+    //     selectedDrugs: Array(),
+    //     drugGridData: data,
+    //     // isSelectAll: isSelected,
+    //   });
+    // }
   };
 
   onPageSize = (pageSize) => {
