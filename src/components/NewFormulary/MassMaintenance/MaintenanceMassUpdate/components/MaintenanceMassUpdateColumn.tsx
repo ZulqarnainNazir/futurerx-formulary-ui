@@ -70,9 +70,9 @@ export const getMaintenacneMassUpdateColumns:
       displayTitle: "formulary name",
       customContent: (props) => (
         <div
-          className="input-link"
-          onClick={() => data.onFormularyNameClick(props.data.key)}
-        >
+        //   className="input-link"
+        //   onClick={() => data.onFormularyNameClick(props.data.key)}
+         >
           {props.data.formularyName}
         </div>
       ),

@@ -59,7 +59,7 @@ class PaGroupDescriptionManagement extends React.Component<any, any> {
     stGroupDescriptions: [],
     paTypes: [],
     paGroupDescriptionVersion: null,
-    selectedGrp: "",
+    selectedGrp: false,
     versionList: [{ value: "Version 1" }],
     versionTitle: "Group Description Version 1",
     latestVerion: 0,
@@ -77,6 +77,7 @@ class PaGroupDescriptionManagement extends React.Component<any, any> {
     searchInput: "",
     selectedGroup: -1,
     drugList: [],
+    isSetUpComplete: false,
   };
   onClickTab = (selectedTabIndex: number) => {
     let activeTabIndex = 0;
@@ -118,7 +119,11 @@ class PaGroupDescriptionManagement extends React.Component<any, any> {
         tmpData.length > 0
           ? tmpData[dataLength - 1].id_pa_group_description
           : 0;
-
+      let is_setup_complete =
+          dataLength > 0 ? tmpData[dataLength - 1].is_setup_complete : 0;
+      this.setState({
+            isSetUpComplete: is_setup_complete,
+      });
       let apiDetails = {};
       apiDetails["lob_type"] = this.props.formulary_lob_id;
       apiDetails["pathParams"] = "/" + latestVerion;
@@ -353,7 +358,14 @@ class PaGroupDescriptionManagement extends React.Component<any, any> {
                     position={this.props.isPopUpView}
                   />
                 </div>
-                <div className="group-wrapper scrollbar scrollbar-primary mx-auto view-com-sec">
+
+                <div
+                  className={
+                    this.props.isPopUpView
+                      ? "group-wrapper scrollbar scrollbar-primary mx-auto view-com-sec"
+                      : "group-wrapper new-scroll-bar mx-auto view-com-sec"
+                  }
+                >
                   {this.state.groupsData.length > 0 &&
                     this.state.groupsData.map((group: any, key: any) =>
                       this.state.searchInput == "" ||
@@ -399,7 +411,7 @@ class PaGroupDescriptionManagement extends React.Component<any, any> {
               <PaNewGroupForm
                 tooltip={this.state.tooltip}
                 formType={1}
-                editable={this.state.selectedGrp}
+                editMode={true}
                 versionList={this.state.versionList}
                 drugList={this.state.drugList}
                 versionTitle={this.state.versionTitle}
@@ -408,13 +420,15 @@ class PaGroupDescriptionManagement extends React.Component<any, any> {
                 selectGroupDescriptionClick={
                   this.props.selectGroupDescriptionClick
                 }
+                selectGroup={this.selectGroup}
+                isSetUpComplete={this.state.isSetUpComplete}
                 isPopUpView={this.props.isPopUpView}
               />
             ) : (
               <PaNewGroupForm
                 tooltip={this.state.tooltip}
                 formType={0}
-                editable={this.state.selectedGrp}
+                editMode={false}
                 drugList={this.state.drugList}
                 versionList={this.state.versionList}
                 title={"NEW GROUP DESCRIPTION"}
@@ -424,6 +438,8 @@ class PaGroupDescriptionManagement extends React.Component<any, any> {
                 selectGroupDescriptionClick={
                   this.props.selectGroupDescriptionClick
                 }
+                selectGroup={this.selectGroup}
+                isSetUpComplete={this.state.isSetUpComplete}
                 isPopUpView={this.props.isPopUpView}
               />
             )}

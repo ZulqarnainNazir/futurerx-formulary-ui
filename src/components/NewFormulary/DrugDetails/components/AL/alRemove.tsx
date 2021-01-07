@@ -12,6 +12,7 @@ class ALRemove extends React.Component<any, any> {
   state = {
     selectedRowKeys: [],
     dataToRemove: [],
+    selType: '',
   };
 
   onSelectChange = (selectedRowKeys) => {
@@ -19,6 +20,7 @@ class ALRemove extends React.Component<any, any> {
   };
 
   getSelectedVal = (e) => {
+    this.setState({ selType: e.target.value })
     this.props.handleChangeEvent(e.target.value);
   };
 
@@ -46,7 +48,7 @@ class ALRemove extends React.Component<any, any> {
     const hasSelected = selectedRowKeys.length > 0;
 
     return (
-      <div className="tab-prremove pr-limit-settings bordered mb-10">
+      <div className="tab-prremove pr-limit-settings bordered mb-10 white-bg">
         <PanelHeader
           title="patient residence settings"
           tooltip="patient residence settings"
@@ -65,6 +67,7 @@ class ALRemove extends React.Component<any, any> {
               <option value="non-covered">NonCovered</option>
             </select>
             <Table
+              key={this.state.selType}
               rowSelection={rowSelection}
               columns={columns}
               dataSource={this.state.dataToRemove}

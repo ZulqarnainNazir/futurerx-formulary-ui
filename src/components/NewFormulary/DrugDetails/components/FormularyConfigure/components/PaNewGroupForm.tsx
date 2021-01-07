@@ -24,7 +24,9 @@ import AlertMessages from "./AlertMessages";
 import { ToastContainer } from "react-toastify";
 import showMessage from "../../../../Utils/Toast";
 import Tags from "./Tags";
-
+import {
+  getPAGroupDetails,
+} from "../../../../../../redux/slices/formulary/pagdm/pagdmSlice";
 import {
   getCategoryList,
   getAdditionalCriteriaSectionList,
@@ -45,11 +47,11 @@ import SearchableDropdown from "../../../../../shared/Frx-components/SearchableD
 import { Tag, Space } from "antd";
 import { ReactComponent as CrossCircleWhiteBGIcon } from "../../../../../../assets/icons/crosscirclewhitebg.svg";
 import AdvanceSearchContainer from "../../../../NewAdvanceSearch/AdvanceSearchContainer";
-import "./PaNewGroupForm.scss";
+import "./GroupDescriptionStyles.scss";
 interface Props {
   tooltip?: string;
   formType?: number;
-  editable?: boolean;
+  editMode?: boolean;
   drugList?: any;
 }
 interface initialFormData {
@@ -212,6 +214,7 @@ function mapDispatchToProps(dispatch) {
     getPaGrouptDescriptionVersions: (a) =>
       dispatch(getPaGrouptDescriptionVersions(a)),
     getDrugLists: (a) => dispatch(getDrugLists(a)),
+    getPAGroupDetails :(a) => dispatch(getPAGroupDetails(a)),
   };
 }
 
@@ -240,6 +243,8 @@ function NewGroup(props: any) {
   const [drug_list_ids, setDrug_list_ids] = React.useState([]);
   const [drug_list, setDrug_list] = React.useState([]);
   const [formType, setFormType] = React.useState(props.formType);
+
+  const [isSetupComplete, isSetUpComplete] = React.useState(false);
 
   const [isAdditionalCriteriaOpen, toggleAdditionalCriteriaOpen] = useState(
     false
@@ -282,6 +287,7 @@ function NewGroup(props: any) {
   };
 
   const saveGroupDescription = (e, is_validation: boolean) => {
+    
     let requestData = {};
     e.preventDefault();
     if (props.formulary_lob_id === 1) {
@@ -373,7 +379,7 @@ function NewGroup(props: any) {
         formData["coverage_restrictions"];
       requestData["messageBody"]["other_criteria"] = formData["other_criteria"];
 
-      if (formType == 1) {
+      if (formType == 1 ) {
         requestData["apiPart"] = "api/1/mcr-pa-group-description";
         requestData["pathParams"] =
           "/" +
@@ -381,6 +387,9 @@ function NewGroup(props: any) {
           "/" +
           props?.formulary_id +
           "?entity_id=0";
+          let id_pa_group_description = formData["id_pa_group_description"]
+          ? formData["id_pa_group_description"]
+          : 0;  
         props.putPAGroupDescription(requestData).then((json) => {
           if (json.payload && json.payload.code === "200") {
             showMessage("Success", "success");
@@ -389,7 +398,9 @@ function NewGroup(props: any) {
             apiDetails["pathParams"] =
               "/" + props?.client_id + "?entity_id=" + props?.formulary_id;
 
+              
             props.getPaGrouptDescriptions(apiDetails);
+            
           } else {
             if (json.payload && json.payload.message !== undefined) {
               showMessage(json.payload.message, "error");
@@ -430,13 +441,16 @@ function NewGroup(props: any) {
       requestData["messageBody"]["is_additional_criteria_defined"] =
         formData["is_additional_criteria_defined"];
       requestData["messageBody"]["drug_list_ids"] = drug_list_ids;
-      if (formType == 1) {
+      if (formType == 1 ) {
         requestData["pathParams"] =
           "/" +
           formData["id_pa_group_description"] +
           "/" +
           props?.formulary_id +
           "?entity_id=0";
+        let id_pa_group_description = formData["id_pa_group_description"]
+          ? formData["id_pa_group_description"]
+          : 0;  
         props.putPAGroupDescription(requestData).then((json) => {
           if (json.payload && json.payload.code === "200") {
             showMessage("Success", "success");
@@ -446,10 +460,24 @@ function NewGroup(props: any) {
               "/" + props?.client_id + "?entity_id=" + props?.formulary_id;
 
             props.getPaGrouptDescriptions(apiDetails);
-            apiDetails["pathParams"] =
-              "/" + json.payload.id_base_pa_group_description;
-            props.getPaGrouptDescriptionVersions(apiDetails);
+            
+            let id_base_pa_group_description = json.payload.id_base_pa_group_description ? 
+            json.payload.id_base_pa_group_description : props.savePaGdm.current_group_id;
+            apiDetails["pathParams"] = "/" + id_base_pa_group_description;
+
+            props.getPaGrouptDescriptionVersions(apiDetails).then((json) => {
+              const isEditable =
+                json.payload.data.length > 0 &&
+                json.payload.data.find((val) => val.id_pa_group_description === id_pa_group_description);
+              props.selectGroup(
+                id_base_pa_group_description,
+                isEditable.is_setup_complete
+              );
+              isSetUpComplete(isEditable.is_setup_complete);
+            });
           } else if (json?.payload?.status && json?.payload?.status != 200) {
+            isSetUpComplete(false);
+          setShowHeader(0);
             showMessage(json.payload.data.message, "error");
           } else {
             showMessage("Failure", "error");
@@ -467,13 +495,41 @@ function NewGroup(props: any) {
             props.getPaGrouptDescriptions(apiDetails);
             //props.formType=1;
             setFormType(1);
+
+            debugger;
+            props.getPAGroupDetails({
+              
+              formulary_id: props.formulary_id,
+              current_group_id:
+                json.payload.id_base_pa_group_description,
+              current_group_des_id:
+                json.payload.id_pa_group_description,
+            });
+
             formData["id_pa_group_description"] =
               json.payload.id_pa_group_description;
 
-            apiDetails["pathParams"] =
+              apiDetails["pathParams"] =
               "/" + json.payload.id_base_pa_group_description;
-            props.getPaGrouptDescriptionVersions(apiDetails);
+  
+            let id_base_pa_group_description = json.payload.id_base_pa_group_description
+            props.getPaGrouptDescriptionVersions(apiDetails).then((json) => {
+              const isEditable =
+                json.payload.data.length > 0 &&
+                json.payload.data.find(
+                  (val) =>
+                    val.id_pa_group_description ===
+                    formData["id_pa_group_description"]
+                );
+              props.selectGroup(
+                id_base_pa_group_description,
+                isEditable.is_setup_complete
+              );
+              isSetUpComplete(isEditable.is_setup_complete);
+            });
           } else if (json?.payload?.status && json?.payload?.status != 200) {
+            isSetUpComplete(false);
+          setShowHeader(0);
             showMessage(json.payload.data.message, "error");
           } else {
             showMessage("Failure", "error");
@@ -521,16 +577,27 @@ function NewGroup(props: any) {
     toggleAdditionalCriteriaOpen(true);
   };
   const closeAddiionalCriteria = () => toggleAdditionalCriteriaOpen(false);
+
+  useEffect(()=>{
+    setFormType(props.formType);
+  },[])
+
+  useEffect(()=>{
+    setFormType(props.formType);
+  },[props.formType])
+  
   useEffect(() => {
+
     // debugger;
     console.log(props.additionalCriteriaObject);
     setAdditionalCriteria(props.additionalCriteriaObject);
   }, [props.additionalCriteriaObject]);
 
   useEffect(() => {
-    //debugger;
-    //setPanelColor(props.editable ? '-green' : '')
+    debugger;
+    //setPanelColor(editable ? '-green' : '')
     //setLatestId(props.latestVerion)
+    isSetUpComplete(props.isSetUpComplete);
     updateFormData(initialFormData);
     setDrug_list_ids([]);
     //setPlaceHolder(props.versionTitle)
@@ -551,7 +618,7 @@ function NewGroup(props: any) {
     if (!props.editMode) {
       setEditable(false);
     }
-    setFormType(props.formType);
+    
     setShowHeader(0);
     setErrorClass("");
   }, [
@@ -570,10 +637,11 @@ function NewGroup(props: any) {
       {/* <div className="panel header">
         <span>{props.title ? props.title : formData.pa_group_description_name}</span>
       </div>
-      <PAGroupHeader popuptitle={props.title ? props.title : formData.pa_group_description_name} onChange={onChange} />  */}
+      <PAGroupHeader popuptitle={props.title ? props.title : formData.pa_group_description_name} 
+      onChange={onChange} />  */}
       <div className="panel header">
         <span>
-          {(props.formType > 0 || showHeader > 0) &&
+          {(formType > 0 || showHeader > 0) &&
           formData.pa_group_description_name
             ? formData.pa_group_description_name
             : props.title}
@@ -593,7 +661,7 @@ function NewGroup(props: any) {
           </div>
         )}
       </div>
-      {(props.formType > 0 || showHeader > 0) && (
+      {(formType > 0 || showHeader > 0) && (
         <PAGroupHeader
           popuptitle={
             formData.pa_group_description_name
@@ -601,6 +669,7 @@ function NewGroup(props: any) {
               : props.title
           }
           isPopUpView={props.isPopUpView}
+          isSetupComplete={isSetupComplete}
           onChange={onChange}
         />
       )}
@@ -625,7 +694,7 @@ function NewGroup(props: any) {
                     />
                   }
                   label="Formulary/OTC"
-                  disabled={props.editable}
+                  disabled={editable}
                 />
                 <FormControlLabel
                   value="ExD"
@@ -635,7 +704,7 @@ function NewGroup(props: any) {
                     />
                   }
                   label="Excluded"
-                  disabled={props.editable}
+                  disabled={editable}
                 />
                 <FormControlLabel
                   value="ADD"
@@ -645,7 +714,7 @@ function NewGroup(props: any) {
                     />
                   }
                   label="ADD"
-                  disabled={props.editable}
+                  disabled={editable}
                 />
               </RadioGroup>
             </div>
@@ -661,7 +730,7 @@ function NewGroup(props: any) {
                       name="pa_group_description_name"
                       onChange={handleChange}
                       defaultValue={formData.pa_group_description_name}
-                      disabled={props.editable}
+                      disabled={editable}
                       className={errorClass}
                     />
                   </div>
@@ -685,7 +754,7 @@ function NewGroup(props: any) {
                       valueProp="key"
                       dispProp="value"
                       onChange={handleChange_1}
-                      disabled={props.editable}
+                      disabled={editable}
                     />
                   </div>
                 </Grid>
@@ -708,7 +777,7 @@ function NewGroup(props: any) {
                       valueProp="key"
                       dispProp="value"
                       onChange={handleChange_2}
-                      disabled={props.editable}
+                      disabled={editable}
                     />
                   </div>
                 </Grid>
@@ -727,7 +796,7 @@ function NewGroup(props: any) {
                     name="off_label_uses"
                     defaultValue={formData.off_label_uses}
                     onChange={handleChange}
-                    disabled={props.editable}
+                    disabled={editable}
                   />
                 </div>
               </Grid>
@@ -740,7 +809,7 @@ function NewGroup(props: any) {
                     name="exclusion_criteria"
                     defaultValue={formData.exclusion_criteria}
                     onChange={handleChange}
-                    disabled={props.editable}
+                    disabled={editable}
                   />
                 </div>
               </Grid>
@@ -753,7 +822,7 @@ function NewGroup(props: any) {
                     name="required_medical_info"
                     defaultValue={formData.required_medical_info}
                     onChange={handleChange}
-                    disabled={props.editable}
+                    disabled={editable}
                   />
                 </div>
               </Grid>
@@ -766,7 +835,7 @@ function NewGroup(props: any) {
                     name="age_restrictions"
                     defaultValue={formData.age_restrictions}
                     onChange={handleChange}
-                    disabled={props.editable}
+                    disabled={editable}
                   />
                 </div>
               </Grid>
@@ -779,7 +848,7 @@ function NewGroup(props: any) {
                     className="setup-input-fields"
                     defaultValue={formData.prescriber_restrictions}
                     onChange={handleChange}
-                    disabled={props.editable}
+                    disabled={editable}
                   />
                 </div>
               </Grid>
@@ -794,7 +863,7 @@ function NewGroup(props: any) {
                     className="setup-input-fields"
                     defaultValue={formData.coverage_restrictions}
                     onChange={handleChange}
-                    disabled={props.editable}
+                    disabled={editable}
                   />
                 </div>
               </Grid>
@@ -807,7 +876,7 @@ function NewGroup(props: any) {
                     className="setup-input-fields"
                     defaultValue={formData.other_criteria}
                     onChange={handleChange}
-                    disabled={props.editable}
+                    disabled={editable}
                   />
                 </div>
               </Grid>
@@ -820,7 +889,7 @@ function NewGroup(props: any) {
                 <Checkbox
                   checked={formData.is_suppress_criteria_dispaly_cms_approval}
                   onChange={handleCheckBox}
-                  disabled={props.editable}
+                  disabled={editable}
                   name="is_suppress_criteria_dispaly_cms_approval"
                   inputProps={{ "aria-label": "secondary checkbox" }}
                 />
@@ -830,14 +899,14 @@ function NewGroup(props: any) {
                 <Checkbox
                   checked={formData.is_display_criteria_drugs_not_frf}
                   onChange={handleCheckBox}
-                  disabled={props.editable}
+                  disabled={editable}
                   name="is_display_criteria_drugs_not_frf"
                   inputProps={{ "aria-label": "secondary checkbox" }}
                 />
                 <span>Display Criteria for Drugs not on FRF</span>
               </div>
-              {/* <FormControlLabel control={<Checkbox value="true" name="is_suppress_criteria_dispaly_cms_approval" color="primary" checked={formData.is_suppress_criteria_dispaly_cms_approval } disabled={props.editable} />} label='Supress Criteria and Display: Pending CMS Approval' />
-                        <FormControlLabel control={<Checkbox value="true" name="is_display_criteria_drugs_not_frf" color="primary" checked={formData.is_display_criteria_drugs_not_frf } disabled={props.editable}/>} label='Display Criteria for Drugs not on FRF' /> */}
+              {/* <FormControlLabel control={<Checkbox value="true" name="is_suppress_criteria_dispaly_cms_approval" color="primary" checked={formData.is_suppress_criteria_dispaly_cms_approval } disabled={editable} />} label='Supress Criteria and Display: Pending CMS Approval' />
+                        <FormControlLabel control={<Checkbox value="true" name="is_display_criteria_drugs_not_frf" color="primary" checked={formData.is_display_criteria_drugs_not_frf } disabled={editable}/>} label='Display Criteria for Drugs not on FRF' /> */}
             </div>
             <span>
               do you want to add additional criteria?
@@ -855,14 +924,14 @@ function NewGroup(props: any) {
                   value={true}
                   control={<Radio />}
                   label="Yes"
-                  disabled={props.editable}
+                  disabled={editable}
                   onClick={openAdditionalCriteria}
                 />
                 <FormControlLabel
                   value={false}
                   control={<Radio />}
                   label="No"
-                  disabled={props.editable}
+                  disabled={editable}
                 />
               </RadioGroup>
             </div>
@@ -916,7 +985,7 @@ function NewGroup(props: any) {
                           id_pa_type: 8,
                         })
                       }
-                      disabled={props.editable}
+                      disabled={editable}
                       checked={formData.id_pa_type === 8 ? true : false}
                     />
                     <RadioButton
@@ -929,7 +998,7 @@ function NewGroup(props: any) {
                           id_pa_type: 9,
                         })
                       }
-                      disabled={props.editable}
+                      disabled={editable}
                       checked={formData.id_pa_type === 9 ? true : false}
                     />
                   </div>
@@ -947,13 +1016,13 @@ function NewGroup(props: any) {
                   value="8"
                   control={<Radio checked={formData.id_pa_type == "8" ? true : false} />}
                   label="Always Applies"
-                  disabled={props.editable}
+                  disabled={editable}
                 />
                 <FormControlLabel
                   value="9"
                   control={<Radio checked={formData.id_pa_type == "9" ? true : false} />}
                   label="New Starts Only"
-                  disabled={props.editable}
+                  disabled={editable}
                 />
               </RadioGroup>
             </div> */}
@@ -969,7 +1038,7 @@ function NewGroup(props: any) {
                     name="pa_group_description_name"
                     onChange={handleChange}
                     value={formData.pa_group_description_name}
-                    disabled={props.editable}
+                    disabled={editable}
                   />
                 </div>
                 <br />
@@ -985,7 +1054,7 @@ function NewGroup(props: any) {
                     name="pa_criteria"
                     onChange={handleChange}
                     value={formData.pa_criteria}
-                    disabled={props.editable}
+                    disabled={editable}
                   />
                 </div>
                 <br />
@@ -1001,7 +1070,7 @@ function NewGroup(props: any) {
                         options={props.drugList}
                         getAutoCompleteChange={getAutoCompleteChangeHandler}
                         autoSelected={drug_list_ids}
-                        disabled={props.editable}
+                        disabled={editable}
                       />
                       {/* <Tags options={drug_list} getAutoCompleteChange={getAutoCompleteChangeHandler}
                        autoSelected={formData.drug_list_ids}/> */}
@@ -1029,7 +1098,7 @@ function NewGroup(props: any) {
                           is_additional_criteria_defined: true,
                         });
                       }}
-                      // disabled={props.editable}
+                      // disabled={editable}
                       checked={formData.is_additional_criteria_defined}
                     />
                     <RadioButton
@@ -1042,7 +1111,7 @@ function NewGroup(props: any) {
                           is_additional_criteria_defined: false,
                         })
                       }
-                      disabled={props.editable}
+                      disabled={editable}
                       checked={!formData.is_additional_criteria_defined}
                     />
                   </div>
@@ -1061,16 +1130,16 @@ function NewGroup(props: any) {
                   >
                     <FormControlLabel
                       value={true}
-                      control={<Radio disabled={props.editable}/>}
+                      control={<Radio disabled={editable}/>}
                       label="Yes"
-                      disabled={props.editable}
+                      disabled={editable}
                       onClick={openAdditionalCriteria}
                     />
                     <FormControlLabel
                       value={false}
-                      control={<Radio disabled={props.editable}/>}
+                      control={<Radio disabled={editable}/>}
                       label="No"
-                      disabled={props.editable}
+                      disabled={editable}
                     />
                   </RadioGroup>
                 </div> */}

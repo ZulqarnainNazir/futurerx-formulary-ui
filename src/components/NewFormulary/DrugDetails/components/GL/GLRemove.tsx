@@ -2,6 +2,7 @@ import React from "react";
 import { Table } from "antd";
 import PanelHeader from "../../../../shared/Frx-components/panel-header/PanelHeader";
 import Button from "../../../../shared/Frx-components/button/Button";
+import Box from "@material-ui/core/Box";
 
 const columns = [
   {
@@ -14,6 +15,7 @@ class GLRemove extends React.Component<any, any> {
   state = {
     selectedRowKeys: [],
     dataToRemove: [],
+    selType: '',
   };
 
   onSelectChange = (selectedRowKeys) => {
@@ -22,6 +24,7 @@ class GLRemove extends React.Component<any, any> {
   };
 
   getSelectedVal = (e) => {
+    this.setState({ selType: e.target.value })
     this.props.handleChangeEvent(e.target.value);
   };
 
@@ -66,6 +69,7 @@ class GLRemove extends React.Component<any, any> {
               <option value="non-covered">NonCovered</option>
             </select>
             <Table
+              key={this.state.selType}
               rowSelection={rowSelection}
               columns={columns}
               dataSource={this.state.dataToRemove}
@@ -73,7 +77,9 @@ class GLRemove extends React.Component<any, any> {
             />
           </div>
         </div>
-        <Button label="Apply" onClick={this.props.showGridHandler} />
+        <Box display="flex" justifyContent="flex-end">
+          <Button label="Apply" onClick={this.props.showGridHandler} />
+        </Box>
       </div>
     );
   }

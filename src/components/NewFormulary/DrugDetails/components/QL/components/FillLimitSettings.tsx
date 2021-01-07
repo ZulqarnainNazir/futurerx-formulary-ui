@@ -24,7 +24,7 @@ const FillLimitSettings = (props) => {
               <Input
                 className="formulary-list-search"
                 // placeholder="Search"
-                type="number"
+                type="text"
                 name="fillsAllowed"
                 value={fillsAllowed}
                 onChange={props.handleOnChange}
@@ -42,7 +42,7 @@ const FillLimitSettings = (props) => {
               <Input
                 className="formulary-list-search"
                 // placeholder="Search"
-                type="number"
+                type="text"
                 name="fillLimitPeriodOfTime"
                 value={fillLimitPeriodOfTime}
                 onChange={props.handleOnChange}
