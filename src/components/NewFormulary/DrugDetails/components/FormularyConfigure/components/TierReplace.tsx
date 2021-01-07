@@ -799,7 +799,7 @@ class TierReplace extends React.Component<any, tabsState> {
     this.state.sort_by.push({ key: 'drug_label_name', value: 'asc' });
     this.state.index = 0;
     this.state.limit = 10;
-    this.state.hiddenColumns = Array();
+    //this.state.hiddenColumns = Array();
     this.state.searchNames = Array();
     this.state.filterPlaceholder = "Search";
     this.state.searchValue = "";

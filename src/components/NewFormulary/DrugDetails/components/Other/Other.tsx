@@ -939,7 +939,7 @@ class DrugDetailOther extends React.Component<any, any> {
               <div className="modify-wrapper bordered white-bg">
                 <div className="modify-panel">
                   <div className="icon">
-                    <span>R</span>
+                    <span>P</span>
                   </div>
                   <div className="switch-box">
                     <CustomizedSwitches
