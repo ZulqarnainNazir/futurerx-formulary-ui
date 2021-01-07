@@ -731,6 +731,7 @@ function PAGroupHeader(props: any) {
           </Grid>
 
           <FrxDrugGridContainer
+            isDataLoaded
             isPinningEnabled={false}
             enableSearch={false}
             enableColumnDrag
