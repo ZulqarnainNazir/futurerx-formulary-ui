@@ -529,7 +529,7 @@ function NewGroup(props: any) {
           } else if (json.payload && json.payload.code != 200) {
             isSetUpComplete(false);
             setShowHeader(0);
-            showMessage(json.payload.{message, "error");
+            showMessage(json.payload.message, "error");
           } else {
             showMessage("Failure", "error");
           }
