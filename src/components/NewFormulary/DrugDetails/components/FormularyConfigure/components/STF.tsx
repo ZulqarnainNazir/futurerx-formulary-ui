@@ -458,6 +458,7 @@ class STF extends React.Component<any, any> {
           (obj) => obj[this.state.groupDescriptionProp] == this.state.selectedGroupDescription
         )[0];
         debugger;
+        let thisRef = this;
         var gridData = tmpData.map(function (el) {
           var element = Object.assign({}, el);
           data.push(element);
@@ -473,6 +474,10 @@ class STF extends React.Component<any, any> {
             // the required styles are added under each classNames in FrxGrid.scss (towards the end)
             //table-row--red-font (for red) table-row--green-font (for green) table-row--blue-font for default (for blue)
             gridItem["rowStyle"] = "table-row--blue-font";
+          }
+          if (thisRef.props.configureSwitch) {
+            gridItem["isDisabled"] = true;
+            gridItem["rowStyle"] = "table-row--disabled-font";
           }
           gridItem["tier"] = element.tier_value;
           gridItem["is_um_criteria"] = element.is_um_criteria;
