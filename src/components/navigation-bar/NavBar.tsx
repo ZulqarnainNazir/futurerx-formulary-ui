@@ -4,7 +4,7 @@ import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
 import Divider from "@material-ui/core/Divider";
 import {Avatar} from "@material-ui/core";
-import Logo from "../../assets/icons/_branding.png";
+import Logo from "../../assets/icons/RemedyOne.svg";
 import NavIcon from "../../assets/icons/_avatar.png";
 import DropDown from "../shared/Frx-components/dropdown/DropDown";
 import {Container} from "@material-ui/core";
