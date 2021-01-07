@@ -15,6 +15,8 @@ const GenderCriteria = (props) => {
     isAdditionalCriteria,
     deleteIconHandler,
     nodeId,
+    isReadOnly,
+    editable,
   } = props;
 
   return (
@@ -26,6 +28,8 @@ const GenderCriteria = (props) => {
           handleStatus={handleStatus}
           isAdditionalCriteria={isAdditionalCriteria}
           deleteIconHandler={deleteIconHandler}
+          isReadOnly={isReadOnly}
+          editable={editable}
         >
           <div className="input-field-group">
             <div className="input-field-group__label">Select Gender:</div>
@@ -34,6 +38,7 @@ const GenderCriteria = (props) => {
               {glSettings.map((gl) => (
                 <div className="input-field-group__radio-field" key={gl.id}>
                   <Checkbox
+                    disabled={editable || isReadOnly}
                     id={gl.id + "" + nodeId + "" + additionalCriteriaSequenceId}
                     name={gl.id}
                     onChange={serviceSettingsChecked}

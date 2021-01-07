@@ -5,6 +5,7 @@ import PlusIcon from "../../../../assets/icons/PlusIcon.svg";
 import {
   getColumns,
   getData,
+  getCommercialData,
   getDrugsList,
 } from "../../../../mocks/formulary-grid/FormularySimpleGridMock";
 import { TabInfo } from "../../../../models/tab.model";
@@ -19,10 +20,11 @@ import CustomDatePicker from "../../../shared/Frx-components/date-picker/CustomD
 import { Input } from "antd";
 import FrxLoader from "../../../shared/FrxLoader/FrxLoader";
 import SimpleSearch from "../../../communication/Search/SimpleSearch/SimpleSearch";
-
+import formularyDetailsContext from "../../FormularyDetailsContext";
 import {
   getFormularyGridData,
   getTierAssignmentGridData,
+  getTierAssignmentCommercialGridData,
 } from "../../../../mocks/formulary-grid/FormularyGridData";
 // import FormularyGrid from "./FormularyGrid";
 import DrugGrid from "../../DrugDetails/components/DrugGrid";
@@ -32,6 +34,8 @@ import {
 } from "../../../../mocks/formulary-grid/FormularyGridColumn";
 import RoundedSimpleSearch from "../../../communication/Search/SimpleSearch/RoundedSimpleSearch";
 import { drugData } from "../../../../mocks/BestPriceDrugMock";
+import FrxGridContainer from "../../../shared/FrxGrid/FrxGridContainer";
+import PanelHeader from "../../../shared/Frx-components/panel-header/PanelHeader";
 
 class MassMaintenanceTier extends Component {
   state = {
@@ -56,15 +60,10 @@ class MassMaintenanceTier extends Component {
     activeMiniTabIndex: 0,
     isFormularyGridShown: false,
     columns: null,
-    data: null,
-    pinData: {
-      value: false,
-    },
-    scroll: {
-      x: 960,
-      y: 450,
-    },
+    data: [],   
   };
+
+  static contextType = formularyDetailsContext;
   addNew = () => {};
   advanceSearchClickHandler = (event) => {
     event.stopPropagation();
@@ -90,32 +89,36 @@ class MassMaintenanceTier extends Component {
   rowSelectionChange = (r) => {
     console.log(r);
   };
+
+  getTierAssignmentGridData(){
+    if(this.context.selectedLOBType == "medicare"){
+      return getTierAssignmentGridData();
+    }
+    else if (this.context.selectedLOBType == "commercial"){
+      return getTierAssignmentCommercialGridData();
+    }    
+  }
+
+  getTierGridData(){
+    if(this.context.selectedLOBType == "medicare"){
+      return getData();
+    }
+    else if (this.context.selectedLOBType == "commercial"){
+      return getCommercialData();
+    }    
+  }
+  
   componentDidMount() {
-    this.setState({
-      columns: getTierAssignmentGridColumns(),
-      data: getTierAssignmentGridData(),
+    debugger;
+    this.setState({     
+      data: this.getTierAssignmentGridData(),
+      gridData: this.getTierGridData(),
     });
   }
   handleSearch = (searchObject: any) => {
-    // this.setState({ isFetchingData: true });
-    // if (searchObject) {
-    // setTimeout(() => {
-    //   const newData = this.state.data.filter((item: any) =>
-    //     Object.keys(item)
-    //       .map((_item: any) =>
-    //         item[_item]
-    //           .toString()
-    //           .toLocaleLowerCase()
-    //           .includes(searchObject.searchText.toLocaleLowerCase())
-    //       )
-    //       .includes(true)
-    //   );
-    //   this.setState({ isFetchingData: false, filteredData: newData });
-    // }, 2000);
-    // } else {
-    // this.setState({ isFetchingData: false });
-    // }
+   
   };
+ 
   render() {
     const {
       gridData,
@@ -126,37 +129,16 @@ class MassMaintenanceTier extends Component {
       drugsList,
     } = this.state;
 
-    const { isFormularyGridShown, columns, data, scroll, pinData } = this.state;
-    let dataGrid = <FrxLoader />;
-    if (data) {
-      // dataGrid = (
-      //   <FormularyGrid
-      //     columns={columns}
-      //     data={data}
-      //     bordered={false}
-      //     rowSelectionChange={this.rowSelectionChange}
-      //     enableSettings={false}
-      //     isPinningEnabled={false}
-      //   />
-      // );
-      dataGrid = (
-        <DrugGrid
-          columns={columns}
-          data={data}
-          scroll={scroll}
-          pinData={pinData}
-        />
-      );
-    }
+  
     return (
       <div className="mm-tier-root">
         <div className="bordered details-top">
-          <div className="header">
-            SELECTED FORMULARIES FOR TIER ASSIGNMENT
-            <span>
-              &nbsp; &nbsp;
-              <img src={IconInfo} alt="info" />
-            </span>
+          <div>
+            <PanelHeader
+                      title="SELECTED FORMULARIES FOR TIER ASSIGNMENT"
+                      tooltip="SELECTED FORMULARIES FOR TIER ASSIGNMENT"
+                    />           
+           
           </div>
           <div className="inner-container p-20">
             <div>
@@ -186,7 +168,7 @@ class MassMaintenanceTier extends Component {
                 tabList={miniTabs}
                 activeTabIndex={activeMiniTabIndex}
                 onClickTab={this.onClickMiniTab}
-              />
+              />    
             </div>
           </div>
         </div>
@@ -213,7 +195,28 @@ class MassMaintenanceTier extends Component {
           </div>
 
           <div className="inner-container mm-configure-grid p-20">
-            {dataGrid}
+            
+          <FrxGridContainer
+              enableSearch={false}
+              enableColumnDrag={false}
+              onSearch={this.handleSearch}
+              fixedColumnKeys={[]}
+              pagintionPosition="topRight"
+              gridName=""
+              enableSettings={true}
+              isFetchingData={false}
+              columns={getTierAssignmentGridColumns()}
+              isPinningEnabled={false}
+              scroll={{ x: 0, y: 377 }}
+              enableResizingOfColumns={false}
+              data={this.state.data}
+              isCustomCheckboxEnabled={true}
+              handleCustomRowSelectionChange={this.rowSelectionChange}
+              settingsTriDotClick={() => {
+                console.log("object");
+              }}
+            />
+
             {isSearchOpen ? (
               <AdvancedSearch
                 category="Grievances"
@@ -224,7 +227,9 @@ class MassMaintenanceTier extends Component {
           </div>
         </div>
         <div className="bordered sections-root details-top">
-          <div className="header">tier definition</div>
+          <div className="header">
+            Tier Definition
+         </div>
           <div className="inner-container">
             <div className="sections-root-grid-container">
               <div className="bordered drugs-list-container">
@@ -244,8 +249,8 @@ class MassMaintenanceTier extends Component {
                   <div className="bordered m-b-5">
                     <div className="header">{drug.formularyName}</div>
                     <div className="inner-container drugs-flex-container">
-                      <div className="p-b-15 font-style">New Tier</div>
-                      <div>
+                      <div className="p-b-15 font-style width-65">New Tier</div>
+                      <div className="tier-definition-wrapper">
                         <div className="mini-flex-container">
                           <input type="checkbox" name="" id="" />
                           <span className="font-style">Keep current tier?</span>

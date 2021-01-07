@@ -2,8 +2,22 @@
 @import "../../../../assets/common.scss";
 
 .mm-configure-root {
+
+  .ant-table-cell .ant-checkbox-wrapper .ant-checkbox-checked .ant-checkbox-inner {
+    background-color: #1890ff !important; 
+}
   .mm-pa-root,
   .mm-tier-root {
+    .bordered{
+      background: #ffffff !important;
+    }
+    .width-65{
+     width: 65px;
+    }
+
+    .ant-table {
+      font-size: 12px !important;
+    }
     .dynamic-row-addition {
       margin: 5px 0 0 0;
       text-align: end;
@@ -175,6 +189,9 @@
   }
   .mm-tier-root,
   .mm-pa-root {
+    .ant-table {
+      font-size: 12px !important;
+    }
     .button-container-right-root {
       display: flex;
       justify-content: flex-end;

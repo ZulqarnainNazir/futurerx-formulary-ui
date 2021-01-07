@@ -213,10 +213,7 @@
   padding: 20px;
 }
 .tier-grid-remove-container {
-  .ant-table-cell
-    .ant-checkbox-wrapper
-    .ant-checkbox-checked
-    .ant-checkbox-inner {
+  .ant-table-cell .ant-checkbox-wrapper .ant-checkbox-checked .ant-checkbox-inner {
     background: #1890ff;
   }
 }

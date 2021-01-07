@@ -119,6 +119,7 @@ class STF extends React.Component<any, any> {
     searchData: Array(),
     showStGroupDescription: false,
     selectedGroupDescriptionObj:{},
+    isSelectAll:false,
   };
 
   // onSelectedTableRowChanged = (selectedRowKeys) => {
@@ -131,7 +132,8 @@ class STF extends React.Component<any, any> {
   openTierGridContainer = () => {
     this.state.drugData = [];
     this.state.drugGridData = [];
-
+    this.state.selectedRowKeys =[]; 
+    
     if (this.state.selectedGroupDescription === null) {
       showMessage("Group Description is required", "info");
       return;
@@ -216,7 +218,34 @@ class STF extends React.Component<any, any> {
       apiDetails["lob_type"] = this.props.formulary_lob_id;
       apiDetails["pathParams"] = this.props?.formulary_id + "/" + this.state.fileType + "/" + this.props.tab_type;
       apiDetails["keyVals"] = [{ key: constants.KEY_ENTITY_ID, value: this.props?.formulary_id }];
-      apiDetails["messageBody"] = {};
+      apiDetails["messageBody"] = {
+        covered: {},
+        filter: [],
+        is_select_all: false,
+        not_covered: {},
+        search_key: "",
+        drug_list:"",
+        prev_formulary:"",
+      };
+      if (this.props.advancedSearchBody && Object.keys(this.props.advancedSearchBody).length > 0) {
+        apiDetails["messageBody"] = Object.assign(apiDetails["messageBody"], this.props.advancedSearchBody);
+      }
+
+      apiDetails["messageBody"]['is_select_all'] = this.state.isSelectAll;
+
+      let allFilters = Array();
+      let filterProps = Array();
+      this.state.filter.map(filterInfo => {
+        allFilters.push(filterInfo);
+        filterProps.push(filterInfo["prop"]);
+      });
+
+      this.state.quickFilter.map(filterInfo => {
+        if (!filterProps.includes(filterInfo["prop"]))
+          allFilters.push(filterInfo);
+      });
+
+      apiDetails["messageBody"]["filter"] = allFilters;
       apiDetails["messageBody"]["selected_drug_ids"] = this.state.selectedDrugs;
       apiDetails["messageBody"]["base_st_group_description_id"] = Number(this.state.selectedGroupDescription);
       apiDetails["messageBody"]["id_st_group_description"] = this.state.selectedLastestedVersion;
@@ -281,7 +310,7 @@ class STF extends React.Component<any, any> {
         selectedStType: null,
         is_additional_criteria_defined: false,
       });
-      this.populateGridData();
+      this.populateGridData(null,nextProps.configureSwitch );
     } else {
       this.setState({ tierGridContainer: false });
     }
@@ -382,14 +411,14 @@ class STF extends React.Component<any, any> {
     this.setState({ [tmp_key]: tmp_value });
   };
 
-  populateGridData = (searchBody = null) => {
+  populateGridData = (searchBody = null, switchState=false) => {
     console.log("Populate grid data is called");
     let apiDetails = {};
     apiDetails['messageBody']={};
     apiDetails["lob_type"] = this.props.formulary_lob_id;
     // let tmpGroup :any = this.state.paGroupDescriptions.filter(obj  => obj.id_mcr_base_pa_group_description === this.state.selectedGroupDescription);
     let tmp_fileType: any = "";
-    if (this.props.configureSwitch) {
+    if (!(this.props.configureSwitch || switchState)) {
       apiDetails["messageBody"]["base_st_group_description_id"] = this.state.selectedGroupDescription;
       apiDetails["messageBody"]["id_st_type"] = this.state.selectedStType;
       apiDetails["messageBody"]["st_value"] = this.state.stValue;
@@ -458,6 +487,7 @@ class STF extends React.Component<any, any> {
           (obj) => obj[this.state.groupDescriptionProp] == this.state.selectedGroupDescription
         )[0];
         debugger;
+        let thisRef = this;
         var gridData = tmpData.map(function (el) {
           var element = Object.assign({}, el);
           data.push(element);
@@ -473,6 +503,10 @@ class STF extends React.Component<any, any> {
             // the required styles are added under each classNames in FrxGrid.scss (towards the end)
             //table-row--red-font (for red) table-row--green-font (for green) table-row--blue-font for default (for blue)
             gridItem["rowStyle"] = "table-row--blue-font";
+          }
+          if (thisRef.props.configureSwitch) {
+            gridItem["isDisabled"] = true;
+            gridItem["rowStyle"] = "table-row--disabled-font";
           }
           gridItem["tier"] = element.tier_value;
           gridItem["is_um_criteria"] = element.is_um_criteria;
@@ -798,7 +832,7 @@ class STF extends React.Component<any, any> {
     });
     const selectedRows: number[] = selectedRowKeys.filter((k) => this.state.fixedSelectedRows.indexOf(k) < 0);
     this.onSelectedTableRowChanged(selectedRows);
-    this.setState({ drugGridData: data });
+    this.setState({ drugGridData: data,isSelectAll:isSelected  });
   };
   render() {
     const searchProps = {
@@ -807,8 +841,8 @@ class STF extends React.Component<any, any> {
     };
     const { isAdditionalCriteriaOpen } = this.state;
     return (
-      <div className="bordered stf-root">
-        <div className="modify-wrapper bordered white-bg">
+      <div className=" stf-root">
+        <div className="modify-wrapper  white-bg">
           <div className="settings-form">
             <Grid container>
               <Grid item xs={4}>

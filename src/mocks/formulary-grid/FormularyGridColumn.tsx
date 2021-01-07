@@ -1053,25 +1053,10 @@ export const getCompareFormularyVersionHistoryColumn: () => Column<any>[] = () =
 };
 export const getTierAssignmentGridColumns: () => Column<any>[] = () => {
   return [
+    
     {
-      id: 2,
-      position: 2,
-      sorter: {},
-      textCase: "upper",
-      // pixelWidth: 30,
-      key: "fileType",
-      displayTitle: "FILE TYPE",
-      // dataIndex: "versionForUpdate",
-      isFilterable: true,
-      dataType: "string",
-      filters: textFilters,
-      hidden: false,
-      sortDirections: ["ascend", "descend"],
-    },
-
-    {
-      id: 3,
-      position: 3,
+      id: 1,
+      position: 1,
       sorter: {},
       textCase: "upper",
       // pixelWidth: 30,
@@ -1086,8 +1071,8 @@ export const getTierAssignmentGridColumns: () => Column<any>[] = () => {
     },
 
     {
-      id: 4,
-      position: 4,
+      id: 2,
+      position: 2,
       sorter: {},
       textCase: "upper",
       pixelWidth: 35,
@@ -1102,8 +1087,8 @@ export const getTierAssignmentGridColumns: () => Column<any>[] = () => {
     },
 
     {
-      id: 5,
-      position: 5,
+      id: 3,
+      position: 3,
       sorter: {},
       textCase: "upper",
       // pixelWidth: 30,
@@ -1117,24 +1102,10 @@ export const getTierAssignmentGridColumns: () => Column<any>[] = () => {
       sortDirections: ["ascend", "descend"],
     },
 
+  
     {
-      id: 6,
-      position: 6,
-      sorter: {},
-      textCase: "upper",
-      // pixelWidth: 30,
-      key: "rxcui",
-      displayTitle: "RXCUI",
-      // dataIndex: "versionForUpdate",
-      isFilterable: true,
-      dataType: "string",
-      filters: textFilters,
-      hidden: false,
-      sortDirections: ["ascend", "descend"],
-    },
-    {
-      id: 7,
-      position: 7,
+      id: 4,
+      position: 4,
       sorter: {},
       textCase: "upper",
       // pixelWidth: 30,
@@ -1149,8 +1120,8 @@ export const getTierAssignmentGridColumns: () => Column<any>[] = () => {
     },
 
     {
-      id: 8,
-      position: 8,
+      id: 5,
+      position: 5,
       sorter: {},
       textCase: "upper",
       // pixelWidth: 30,
@@ -1165,57 +1136,198 @@ export const getTierAssignmentGridColumns: () => Column<any>[] = () => {
     },
   ];
 };
-
-export const getDrugsPAGridColumns: () => Column<any>[] = () => {
+export const getTPACommercialGridData = (): any => {
   return [
     {
+      id: 1,
+      key: 1,
+      datasource: "Medispan",
+      labelName: "Abacavir Sulfate SOLN 20 MG/ML",
+      ddid: 58633,
+      gpi: 12341234123,
+      trademark: "G",
+    },
+
+    {
       id: 2,
-      position: 2,
-      sorter: {},
-      textCase: "upper",
-      // pixelWidth: 30,
-      key: "labelName",
-      displayTitle: "LABEL NAME",
-      // dataIndex: "versionForUpdate",
-      isFilterable: true,
-      dataType: "string",
-      filters: textFilters,
-      hidden: false,
-      sortDirections: ["ascend", "descend"],
+      key: 2,
+      datasource: "Medispan",
+      labelName: "Abacair Sulfate Tabs 300 MG",
+      ddid: 58634,
+      gpi: 12341234345,
+      trademark: "G",
     },
     {
       id: 3,
-      position: 3,
-      sorter: {},
-      textCase: "upper",
-      // pixelWidth: 30,
-      key: "rxcui",
-      displayTitle: "RXCUI",
-      // dataIndex: "versionForUpdate",
-      isFilterable: true,
-      dataType: "string",
-      filters: textFilters,
-      hidden: false,
-      sortDirections: ["ascend", "descend"],
+      key: 3,
+      datasource: "Medispan",
+      labelName: "Abacavir Sulfate SOLN 20 MG/ML",
+      ddid: 58635,
+      gpi: 12341234657,
+      trademark: "G",
     },
+
     {
       id: 4,
-      position: 4,
-      sorter: {},
-      textCase: "upper",
-      // pixelWidth: 30,
-      key: "ddid",
-      displayTitle: "DDID",
-      // dataIndex: "versionForUpdate",
-      isFilterable: true,
-      dataType: "string",
-      filters: textFilters,
-      hidden: false,
-      sortDirections: ["ascend", "descend"],
+      key: 4,
+      datasource: "Medispan",
+      labelName: "Abacair Sulfate Tabs 300 MG",
+      ddid: 58636,
+      gpi: 12341234987,
+      trademark: "G",
     },
+
     {
       id: 5,
-      position: 5,
+      key: 5,
+      datasource: "Medispan",
+      labelName: "Abacavir Sulfate SOLN 20 MG/ML",
+      ddid: 58637,
+      gpi: 123412346792,
+      trademark: "G",
+    },
+
+    {
+      id: 6,
+      key: 6,
+      datasource: "Medispan",
+      labelName: "Abacair Sulfate Tabs 300 MG",
+      ddid: 58635,
+      gpi: 12341234927,
+      trademark: "G",
+    },
+
+    {
+      id: 7,
+      key: 7,
+      datasource: "Medispan",
+      labelName: "Abacavir Sulfate SOLN 20 MG/ML",
+      ddid: 58637,
+      gpi: 12341234802,
+      trademark: "G",
+    },
+
+    {
+      id: 8,
+      key: 8,
+      datasource: "Medispan",
+      labelName: "Abacair Sulfate Tabs 300 MG",
+      ddid: 58638,
+      gpi: 12341234937,
+      trademark: "G",
+    },
+
+    {
+      id: 9,
+      key: 9,
+      datasource: "Medispan",
+      labelName: "Abacavir Sulfate SOLN 20 MG/ML",
+      ddid: 58639,
+      gpi: 12341234838,
+      trademark: "G",
+    },
+  ];
+};
+
+export const getTPAtGridData = (): any => {
+  return [
+    {
+      id: 1,
+      key: 1,
+      datasource: "FRF",
+      labelName: "Abacavir Sulfate SOLN 20 MG/ML",
+      ddid: 58633,
+      gpi: 12341234123,
+      trademark: "G",
+    },
+
+    {
+      id: 2,
+      key: 2,
+      datasource: "FRF",
+      labelName: "Abacair Sulfate Tabs 300 MG",
+      ddid: 58634,
+      gpi: 12341234345,
+      trademark: "G",
+    },
+    {
+      id: 3,
+      key: 3,
+      datasource: "FRF",
+      labelName: "Abacavir Sulfate SOLN 20 MG/ML",
+      ddid: 58635,
+      gpi: 12341234657,
+      trademark: "G",
+    },
+
+    {
+      id: 4,
+      key: 4,
+      datasource: "FRF",
+      labelName: "Abacair Sulfate Tabs 300 MG",
+      ddid: 58636,
+      gpi: 12341234987,
+      trademark: "G",
+    },
+
+    {
+      id: 5,
+      key: 5,
+      datasource: "FRF",
+      labelName: "Abacavir Sulfate SOLN 20 MG/ML",
+      ddid: 58637,
+      gpi: 123412346792,
+      trademark: "G",
+    },
+
+    {
+      id: 6,
+      key: 6,
+      datasource: "FRF",
+      labelName: "Abacair Sulfate Tabs 300 MG",
+      ddid: 58635,
+      gpi: 12341234927,
+      trademark: "G",
+    },
+
+    {
+      id: 7,
+      key: 7,
+      datasource: "FRF",
+      labelName: "Abacavir Sulfate SOLN 20 MG/ML",
+      ddid: 58637,
+      gpi: 12341234802,
+      trademark: "G",
+    },
+
+    {
+      id: 8,
+      key: 8,
+      datasource: "FRF",
+      labelName: "Abacair Sulfate Tabs 300 MG",
+      ddid: 58638,
+      gpi: 12341234937,
+      trademark: "G",
+    },
+
+    {
+      id: 9,
+      key: 9,
+      datasource: "FRF",
+      labelName: "Abacavir Sulfate SOLN 20 MG/ML",
+      ddid: 58639,
+      gpi: 12341234838,
+      trademark: "G",
+    },
+  ];
+};
+
+export const getDrugsPAGridColumns: () => Column<any>[] = () => {
+  return [
+    
+    {
+      id: 1,
+      position: 1,
       sorter: {},
       textCase: "upper",
       // pixelWidth: 30,
@@ -1228,9 +1340,59 @@ export const getDrugsPAGridColumns: () => Column<any>[] = () => {
       hidden: false,
       sortDirections: ["ascend", "descend"],
     },
+
     {
-      id: 6,
-      position: 6,
+      id: 2,
+      position: 2,
+      sorter: {},
+      textCase: "upper",
+      pixelWidth: 35,
+      key: "labelName",
+      displayTitle: "LABEL NAME",
+      // dataIndex: "versionForUpdate",
+      isFilterable: true,
+      dataType: "string",
+      filters: textFilters,
+      hidden: false,
+      sortDirections: ["ascend", "descend"],
+    },
+
+    {
+      id: 3,
+      position: 3,
+      sorter: {},
+      textCase: "upper",
+      // pixelWidth: 30,
+      key: "ddid",
+      displayTitle: "DDID",
+      // dataIndex: "versionForUpdate",
+      isFilterable: true,
+      dataType: "string",
+      filters: textFilters,
+      hidden: false,
+      sortDirections: ["ascend", "descend"],
+    },
+
+  
+    {
+      id: 4,
+      position: 4,
+      sorter: {},
+      textCase: "upper",
+      // pixelWidth: 30,
+      key: "gpi",
+      displayTitle: "GPI",
+      // dataIndex: "versionForUpdate",
+      isFilterable: true,
+      dataType: "string",
+      filters: textFilters,
+      hidden: false,
+      sortDirections: ["ascend", "descend"],
+    },
+
+    {
+      id: 5,
+      position: 5,
       sorter: {},
       textCase: "upper",
       // pixelWidth: 30,
@@ -1245,7 +1407,6 @@ export const getDrugsPAGridColumns: () => Column<any>[] = () => {
     },
   ];
 };
-
 export const getFormularyGridColumns: () => Column<any>[] = () => {
   return [
     // {

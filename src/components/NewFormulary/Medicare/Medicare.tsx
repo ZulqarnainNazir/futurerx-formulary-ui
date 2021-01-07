@@ -236,7 +236,7 @@ class Medicare extends React.Component<any, any> {
       if (index === selectedTabIndex) {
         if (selectedTabIndex === 3) {
           // window.location.href = "http://localhost:3001";
-          window.open("http://localhost:3001", "_blank");
+          window.open("http://vertx-dev-staging-01.ap.futurerx.com:3001", "_blank");
         }
         activeMiniTabIndex = index;
       }
@@ -294,6 +294,7 @@ class Medicare extends React.Component<any, any> {
           <div>
             <MaintenanceMassUpdate
               onClickAddNew={this.props.onMassMaintenanceCLick}
+              lob_type={this.props.lob_type}
             />
             {/* <div onClick={this.props.onMassMaintenanceCLick}>
               Mass Maintenance

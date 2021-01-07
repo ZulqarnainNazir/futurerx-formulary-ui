@@ -4,7 +4,7 @@ import FrxTabs from "../../../shared/FrxTabs/FrxTabs";
 import MassMaintenancePA from "./MassMaintenancePA";
 import "./MassMaintenanceConfigure.scss";
 import MassMaintenanceTier from "./MassMaintenanceTier";
-
+import formularyDetailsContext from "../../FormularyDetailsContext";
 const tabs = [
   { id: 1, text: "TIER" },
   { id: 2, text: "PA" },
@@ -16,16 +16,22 @@ interface configureState {
   tabs: Array<TabInfo>;
   activeTabIndex: number;
 }
-interface configureProps {}
+interface configureProps {  
+}
 
-class MassMaintenanceConfigure extends Component<
-  configureProps,
-  configureState
-> {
+class MassMaintenanceConfigure extends Component<configureProps,configureState> {
   state = {
     tabs: tabs,
     activeTabIndex: 0,
   };
+  static contextType = formularyDetailsContext;
+
+ 
+  componentDidMount() {
+    debugger;
+    console.log(this.context);
+ }
+
   onClickTab = (selectedTabIndex: number) => {
     let activeTabIndex = 0;
 

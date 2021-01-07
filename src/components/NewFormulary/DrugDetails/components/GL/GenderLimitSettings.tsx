@@ -3,6 +3,7 @@ import PanelHeader from "../../../../shared/Frx-components/panel-header/PanelHea
 import StatusContentFormPanel from "../common/StatusContentFormPanel/StatusContentFormPanel";
 import { Checkbox } from "antd";
 import Button from "../../../../shared/Frx-components/button/Button";
+import Box from "@material-ui/core/Box";
 
 import "./GL.scss";
 
@@ -88,9 +89,13 @@ const GenderLimitSettings = (props) => {
           <AddIcon/>
           <span className="gender-limit-settings__add-new-form-action-text">Add Gender Age Limit Criteria</span>
         </div> */}
-        <div className="content-right-align">
-          <Button label="Apply" onClick={showGridHandler} disabled={isDisabled} />
-        </div>
+        <Box display="flex" justifyContent="flex-end">
+          <Button
+            label="Apply"
+            onClick={showGridHandler}
+            disabled={isDisabled}
+          />
+        </Box>
       </div>
     </div>
   );

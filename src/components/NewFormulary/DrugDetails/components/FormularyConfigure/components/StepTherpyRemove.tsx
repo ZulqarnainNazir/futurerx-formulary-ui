@@ -81,6 +81,7 @@ class DrugGrid extends React.Component<any, any> {
     searchData: Array(),
     fixedSelectedRows: [] as number[],
     selectedRowKeys: [] as number[],
+    isSelectAll:false,
   };
 
   onSelectedRowKeysChange = (selectedRowKeys) => {
@@ -153,7 +154,8 @@ class DrugGrid extends React.Component<any, any> {
   openTierGridContainer = () => {
     this.state.drugData = [];
     this.state.drugGridData = [];
-
+    this.state.selectedRowKeys =[]; 
+    
     this.populateGridData();
   };
 
@@ -476,7 +478,33 @@ class DrugGrid extends React.Component<any, any> {
       apiDetails["keyVals"] = [
         { key: constants.KEY_ENTITY_ID, value: this.props?.formulary_id },
       ];
-      apiDetails["messageBody"] = {};
+      apiDetails["messageBody"] = {
+        covered: {},
+        filter: [],
+        is_select_all: false,
+        not_covered: {},
+        search_key: "",
+        drug_list:"",
+        prev_formulary:"",
+      };
+      if (this.props.advancedSearchBody && Object.keys(this.props.advancedSearchBody).length > 0) {
+        apiDetails["messageBody"] = Object.assign(apiDetails["messageBody"], this.props.advancedSearchBody);
+      }
+      apiDetails["messageBody"]['is_select_all'] = this.state.isSelectAll;
+
+      let allFilters = Array();
+      let filterProps = Array();
+      this.state.filter.map(filterInfo => {
+        allFilters.push(filterInfo);
+        filterProps.push(filterInfo["prop"]);
+      });
+
+      this.state.quickFilter.map(filterInfo => {
+        if (!filterProps.includes(filterInfo["prop"]))
+          allFilters.push(filterInfo);
+      });
+
+      apiDetails["messageBody"]["filter"] = allFilters;
       if (
         this.state.selectedCriteria &&
         this.state.selectedCriteria.length > 0
@@ -605,7 +633,7 @@ class DrugGrid extends React.Component<any, any> {
       k => this.state.fixedSelectedRows.indexOf(k) < 0
     );
     this.onSelectedTableRowChanged(selectedRows);
-    this.setState({ drugGridData: data });
+    this.setState({ drugGridData: data,isSelectAll:isSelected });
   };
   render() {
     const columns = [
