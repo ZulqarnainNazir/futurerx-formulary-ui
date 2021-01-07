@@ -178,7 +178,8 @@ class FrxDrugGrid extends Component<
   gridRef: React.RefObject<HTMLDivElement>;
   pinnedCount: number;
   initialPinnedCount: number;
-  pinnedIndexMap: Map<string, number>;
+	pinnedIndexMap: Map<string, number>;
+	pinnedPositionMap:Map<string,number>;
   isSettingsEnabled = false;
 
   constructor(props) {
@@ -192,7 +193,8 @@ class FrxDrugGrid extends Component<
         ? this.props.fixedColumnKeys.length
         : 0; // Accounts for the fixed columns and settings key
     this.initialPinnedCount = this.pinnedCount;
-    this.pinnedIndexMap = new Map<string, number>();
+		this.pinnedIndexMap = new Map<string, number>();
+		this.pinnedPositionMap = new Map<string, number>();
   }
 
   componentDidMount() {
@@ -751,6 +753,7 @@ class FrxDrugGrid extends Component<
             return (
               <>
                 <FrxGridHeaderCell
+								isAllRowsSelected={this.props.isAllRowsSelected}
                   onSelectAllRows={this.onSelectAllRows}
                   isPinningEnabled={
                     this.props.isPinningEnabled
@@ -1407,8 +1410,11 @@ class FrxDrugGrid extends Component<
     });
     // Remove entry from map.
     if (isColumnUnpinned) {
-      let oldIndex = this.pinnedIndexMap.get(column.displayTitle);
-      this.pinnedIndexMap.delete(column.displayTitle);
+			let oldIndex = this.pinnedIndexMap.get(column.displayTitle);
+			let oldPosition = this.pinnedPositionMap.get(column.displayTitle);
+	
+			this.pinnedIndexMap.delete(column.displayTitle);
+			this.pinnedPositionMap.delete(column.displayTitle);
       if (oldIndex !== undefined) {
         console.log(
           "old index of " + column.displayTitle + ": " + oldIndex.toString()
@@ -1418,8 +1424,21 @@ class FrxDrugGrid extends Component<
         if (oldIndex <= columns.length - 1) {
           if (this.pinnedCount > oldIndex) {
             oldIndex = this.pinnedCount!;
-          }
-          columns.splice(oldIndex, 0, columns.splice(idxOfCol, 1)[0]);
+					}
+				
+					let cols = _.cloneDeep(columns)
+					if(oldPosition){
+						cols = cols.map((c:Column<any>) => {
+							if(c.displayTitle === column.displayTitle){
+								c.position = oldPosition ? oldPosition: c.position;
+							}
+							return c
+						})
+					}
+				
+				
+					columns.splice(oldIndex, 0, columns.splice(idxOfCol, 1)[0]);
+					columns = this.getNewColumnPosition(cols,columns)
         }
       }
     }
@@ -1442,7 +1461,8 @@ class FrxDrugGrid extends Component<
     console.log("column: " + column.displayTitle);
 
     let isColumnToMove = false;
-    let idxOfCol = -1;
+		let idxOfCol = -1;
+		let positionOfCol = -1;
 
     let columns = this.state.columns.map((c: Column<any>, idx: number) => {
       if (
@@ -1454,7 +1474,8 @@ class FrxDrugGrid extends Component<
         )
       ) {
         isColumnToMove = true;
-        idxOfCol = idx;
+				idxOfCol = idx;
+				positionOfCol = c["position"]
         c["fixed"] = "left";
         this.pinnedCount++;
         //change position after pinning
@@ -1474,12 +1495,16 @@ class FrxDrugGrid extends Component<
 
     // Move column at index to this.pinnedCount-1
     if (isColumnToMove) {
-      columns.splice(this.pinnedCount - 1, 0, columns.splice(idxOfCol, 1)[0]);
+			const cols = _.cloneDeep(columns);
+			
+			columns.splice(this.pinnedCount - 1, 0, columns.splice(idxOfCol, 1)[0]);
+			columns = this.getNewColumnPosition(cols,columns)
       console.log(
         "moved column to index: " + (this.pinnedCount - 1).toString()
       );
       // Insert index into map
-      this.pinnedIndexMap.set(column.displayTitle, idxOfCol);
+			this.pinnedIndexMap.set(column.displayTitle, idxOfCol);
+			this.pinnedPositionMap.set(column.displayTitle, positionOfCol);
     }
 
     //changing position after pinning
@@ -1488,7 +1513,16 @@ class FrxDrugGrid extends Component<
       // this.updatePinIcon();
       // this.updateUserPrefernces();
     });
-  };
+	};
+	
+	getNewColumnPosition = (oldColumns,newColumns) => {
+		for(let i = 0; i < oldColumns.length; i++){
+			newColumns[i]["position"] = oldColumns[i]["position"]
+		}
+
+		return newColumns
+
+	}
 
   updatePinIcon = () => {
     const columns = this.state.columns.map((c, index) => {

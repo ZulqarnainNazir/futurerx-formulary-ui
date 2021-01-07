@@ -226,6 +226,7 @@ class ConnctedVersionHistoryPopup extends React.Component<
           enableColumnDrag
           onSearch={this.handleSearch}
           // enableSettings
+          // enableColumnDrag
           isDataLoaded
           onColumnCellClick={this.onColumnCellClick}
           fixedColumnKeys={["contract_year"]}
@@ -247,7 +248,7 @@ class ConnctedVersionHistoryPopup extends React.Component<
           selectedCurrentPage={
             this.listPayload.index / this.listPayload.limit + 1
           }
-          isPinningEnabled
+          // isPinningEnabled
         />
         {/* // )} */}
       </div>

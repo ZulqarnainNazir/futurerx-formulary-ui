@@ -112,6 +112,7 @@ class FrxDrugGridContainer extends Component<FrxDrugGridContainerProps<any>> {
       <div className="frx-grid-container">
         {this.props.enableSearch ? this.getSearchComponent() : null}
         <FrxDrugGrid
+          isAllRowsSelected={this.props.isAllRowsSelected}
           applySort={this.props.applySort}
           isSingleSorted={this.props.isSingleSorted}
           sortedInfo={this.props.sortedInfo}
@@ -170,10 +171,10 @@ class FrxDrugGridContainer extends Component<FrxDrugGridContainerProps<any>> {
           getColumnSettings={this.props.getColumnSettings}
           isRowSelectorCheckbox={this.props.isRowSelectorCheckbox}
           isPinningEnabled={this.props.isPinningEnabled}
-					onRowExpandHandler={this.props.onRowExpandHandler}
-					onColumnChange={this.props.onColumnChange}
+          onRowExpandHandler={this.props.onRowExpandHandler}
+          onColumnChange={this.props.onColumnChange}
           // isSeparateCheckboxColumn={this.props.isSeparateCheckboxColumn}
-         
+
           expandable={{
             isExpandable: this.props.expandable
               ? this.props.expandable.isExpandable
