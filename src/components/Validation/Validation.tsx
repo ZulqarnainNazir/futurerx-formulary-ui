@@ -159,11 +159,25 @@ function Validation(props) {
           status = "P";
         }
       }
+      let users: any[] = [];
+      let  awsFileURL="https://frx-document-delivery.s3.amazonaws.com/";
+      if (element.users && element.users.length > 0) {
+        let usersList: any[] = element.users.filter((x) => x.name != null);
+        usersList.forEach((u) => {
+          users.push({ 
+            name: u.name,
+            logo_path: (u.logo_path===null)  ? "empty-avatar" : awsFileURL + u.logo_path
+             });
+        });
+      }
+      // user.logo_path = environment.awsFileURL + user.logo_path
+      console.log(users);
       const item = {
         ...element,
         status: status,
         prefered_count: prefered_count,
         display_date: display_date,
+        users: users,
       };
 
       return <Comment element={item} />;
