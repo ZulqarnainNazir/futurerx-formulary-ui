@@ -85,7 +85,6 @@ class Choice extends Component<ChoiceProps, ChoiceState> {
         {
           choiceType === 'list' &&
           <div className="file-type__checklist">
-            Hello World
           </div>
         }
           

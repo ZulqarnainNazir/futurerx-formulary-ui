@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import Button from '../../../../../../shared/Frx-components/button/Button';
 import DialogPopup from '../../../../../../shared/FrxDialogPopup/FrxDialogPopup';
 import Choice from './components/Choice';
+import FileUpload from './components/fileUpload';
 import './UploadFiles.scss';
 
 export interface UploadFilesProps {
@@ -13,13 +14,15 @@ export interface UploadFilesState {
   loadingFileType?: string;
   choiceType?: string;
   step?: number;
+  showFileModal?: boolean;
 }
 
 const initialState = {
   step: 1,
   modalStatus: false,
   loadingFileType: "",
-  choiceType: ""
+  choiceType: "",
+  showFileModal: false
 }
 
 /**
@@ -31,7 +34,8 @@ class UploadFiles extends Component<UploadFilesProps, UploadFilesState> {
     step: 1,
     modalStatus: false,
     loadingFileType: "",
-    choiceType: ""
+    choiceType: "",
+    showFileModal: false
   }
   
   handleCloseModal = () => {
@@ -51,21 +55,26 @@ class UploadFiles extends Component<UploadFilesProps, UploadFilesState> {
   }
   
   handleContinueAction = () => {
-    const { step, loadingFileType } = this.state
-    
+    const { step, loadingFileType } = this.state;
     if(step === 1) {
       if(loadingFileType) {
         this.setState({
           step: 2
         })
       }
+    }else if(step === 2){
+      this.setState({
+        step: 3,
+        modalStatus: false,
+        showFileModal: true
+      })
     }
     
     /**Todo: Handle the modal step logic here, When user clicks on continue for step 2, Set the step to 3 */
   }
   
   render() { 
-    const { modalStatus, choiceType, loadingFileType, step } = this.state;
+    const { modalStatus, choiceType, loadingFileType, step, showFileModal } = this.state;
     return ( 
       <div>
         <Button
@@ -93,12 +102,10 @@ class UploadFiles extends Component<UploadFilesProps, UploadFilesState> {
                 (step === 1 || step === 2 ) &&
                 <Choice onChange={this.handleChoice} choiceType={choiceType} loadingFileType={loadingFileType} step={step}/>
               }
-              
-              {
-                /**Todo: Add step 3 view here: The Table Grid 
-                 *  Suggestion: Create a new component in /UploadFiles/components/{Your Component } */
-              }
             </DialogPopup>
+        }
+        { showFileModal &&
+          <FileUpload onClose={this.handleCloseModal}/>
         }
       </div>
     );
