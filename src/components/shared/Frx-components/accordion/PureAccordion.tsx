@@ -41,6 +41,25 @@ const defaultListPayload = {
   sort_order: []
 };
 
+const columnKeyMapping = {
+  label: 'drug_label_name',
+  fileType: 'file_type',
+  dataSource: 'data_source',
+  gpi: 'generic_product_identifier',
+  tier: 'tier_value',
+  paType: 'pa_type',
+  paGroupDescription: 'pa_group_description',
+  stType: 'st_type',
+  stGroupDescription: 'st_group_description',
+  stValue: 'st_value',
+  qlType: 'ql_type',
+  qlDays: 'ql_days',
+  qlPeriodofTime: 'ql_period_of_time',
+  qlQuantity: 'ql_quantity',
+  fillsAllowed: 'fills_allowed',
+  fullLimitPeriod: 'full_limit_period_of_time'
+};
+
 class PureAccordion extends Component<PureAccordionProps, any> {
   state = {
     active: "",
@@ -63,6 +82,8 @@ class PureAccordion extends Component<PureAccordionProps, any> {
     gridMultiSortedInfo: [],
     isGridMultiSorted: false,
     sort_by: Array(),
+    isFiltered: false,
+    filteredInfo: null,
   };
 
   listPayload: any = {
@@ -81,12 +102,12 @@ class PureAccordion extends Component<PureAccordionProps, any> {
       });
     }
   };
-  onApplyFilterHandler = (filters) => {
+  onApplyFilterHandler = (filters, filteredInfo) => {
     const fetchedKeys = Object.keys(filters);
     if (fetchedKeys.length > 0) {
       fetchedKeys.map(fetchedProps => {
-        if (filters[fetchedProps]) {
-          this.listPayload.filter = this.listPayload.filter.filter(element => element['prop'] !== fetchedProps);
+        if (filters[fetchedProps] && columnKeyMapping[fetchedProps]) {
+          this.listPayload.filter = this.listPayload.filter.filter(element => element['prop'] !== columnKeyMapping[fetchedProps]);
           const fetchedOperator =
             filters[fetchedProps][0].condition === "is like"
               ? "is_like"
@@ -102,17 +123,28 @@ class PureAccordion extends Component<PureAccordionProps, any> {
               ? [filters[fetchedProps][0].value.toString()]
               : [];
           this.listPayload.filter.push({
-            prop: fetchedProps,
+            prop: columnKeyMapping[fetchedProps],
             operator: fetchedOperator,
             values: fetchedValues
           });
         }
       });
       console.log("Filters:" + JSON.stringify(this.listPayload.filter));
+      this.setState({
+        isFiltered: true,
+        filteredInfo: filteredInfo
+      }, () => {
+        this.populateGridData(this.state.baseFormularyId, this.listPayload);
+      });
     }else{
       this.listPayload.filter = Array();
+      this.setState({
+        isFiltered: false,
+        filteredInfo: filteredInfo
+      }, () => {
+        this.populateGridData(this.state.baseFormularyId, this.listPayload);
+      });
     }
-    this.populateGridData(this.state.baseFormularyId, this.listPayload);
   };
   onPageSize = (pageSize) => {
     this.listPayload = { ...defaultListPayload };
@@ -135,7 +167,12 @@ class PureAccordion extends Component<PureAccordionProps, any> {
     /*this.setState({
       isRequestFinished: false,
     })*/
-    this.populateGridData(this.state.baseFormularyId, this.listPayload);
+    this.setState({
+      isFiltered: false,
+      filteredInfo: null
+    }, () => {
+      this.populateGridData(this.state.baseFormularyId, this.listPayload);
+    });
   };
 
   applyMultiSortHandler = (sorter, multiSortedInfo) => {
@@ -160,8 +197,8 @@ class PureAccordion extends Component<PureAccordionProps, any> {
       });
       filteredSorter.map(sortInfo => {
         let sortOrder = sortInfo['order'] === 'ascend' ? 'asc' : 'desc';
-        this.state.sort_by = this.state.sort_by.filter(keyPair => keyPair['key'] !== sortInfo['columnKey']);
-        this.state.sort_by.push({ key: sortInfo['columnKey'], value: sortOrder });
+        this.state.sort_by = this.state.sort_by.filter(keyPair => keyPair['key'] !== columnKeyMapping[sortInfo['columnKey']]);
+        this.state.sort_by.push({ key: columnKeyMapping[sortInfo['columnKey']], value: sortOrder });
       })
 
       let keys = Array();
@@ -210,8 +247,8 @@ class PureAccordion extends Component<PureAccordionProps, any> {
     this.listPayload.sort_order = Array();
     if (order) {
       let sortOrder = order === 'ascend' ? 'asc' : 'desc';
-      this.state.sort_by = this.state.sort_by.filter(keyPair => keyPair['key'] !== key);
-      this.state.sort_by.push({ key: key, value: sortOrder });
+      this.state.sort_by = this.state.sort_by.filter(keyPair => keyPair['key'] !== columnKeyMapping[key]);
+      this.state.sort_by.push({ key: columnKeyMapping[key], value: sortOrder });
     }
     this.setState({
       gridSingleSortInfo: sortedInfo,
@@ -387,6 +424,13 @@ class PureAccordion extends Component<PureAccordionProps, any> {
     let { drugGridHeaderName } = this.state;
     if (gridCellName !== null) drugGridHeaderName = gridCellName;
     if (isClose) {
+      this.listPayload = {
+        index: 0,
+        limit: 10,
+        filter: [],
+        sort_by: [],
+        sort_order: []
+      };
       this.setState({
         drugGridHeaderName,
         openDrugsList: !this.state.openDrugsList,
@@ -399,6 +443,12 @@ class PureAccordion extends Component<PureAccordionProps, any> {
         dataCount: 0,
         isRowSelectionEnabled: false,
         isRequestFinished: true,
+        gridSingleSortInfo: null,
+        gridMultiSortedInfo: [],
+        isGridMultiSorted: false,
+        isGridSingleSorted: false,
+        isFiltered: false,
+        filteredInfo: null,
       });
     } else {
       if (baseFormularyId && count > 0) {
@@ -595,7 +645,7 @@ class PureAccordion extends Component<PureAccordionProps, any> {
                     : "bg-white cell-font-style"
                 }
               >
-                <span>{this.props.headerData.baseOnly}</span>
+                <span></span>
               </div>
               <div
                 className={
@@ -604,7 +654,7 @@ class PureAccordion extends Component<PureAccordionProps, any> {
                     : "bg-white cell-font-style"
                 }
               >
-                <span>{this.props.headerData.referenceOnly}</span>
+                <span></span>
               </div>
               <div
                 className={
@@ -613,7 +663,7 @@ class PureAccordion extends Component<PureAccordionProps, any> {
                     : "bg-white cell-font-style no-border"
                 }
               >
-                <span>{this.props.headerData.nonMatch}</span>
+                <span></span>
               </div>
             </div>
             <div
@@ -626,7 +676,7 @@ class PureAccordion extends Component<PureAccordionProps, any> {
             {this.state.openDrugsList ? (
               <DialogPopup
                 // showCloseIcon={actions}
-                showCloseIcon={true}
+                showCloseIcon={false}
                 positiveActionText="Reject"
                 negativeActionText=""
                 title={this.state.drugGridHeaderName}
@@ -634,7 +684,7 @@ class PureAccordion extends Component<PureAccordionProps, any> {
                   this.toggleDrugsListGrid(null, false, true, null, null);
                 }}
                 handleAction={this.rejectDrugAction}
-                showActions={true}
+                showActions={false}
                 height="80%"
                 width="80%"
                 open={this.state.openDrugsList}
@@ -679,6 +729,8 @@ class PureAccordion extends Component<PureAccordionProps, any> {
                     this.listPayload.index / this.listPayload.limit + 1
                   }
                   totalRowsCount={this.state.dataCount}
+                  isFiltered={this.state.isFiltered}
+                  filteredInfo={this.state.filteredInfo}
                 />
               </DialogPopup>
             ) : null}
@@ -748,7 +800,7 @@ class PureAccordion extends Component<PureAccordionProps, any> {
             </div>
             {this.state.openDrugsList ? (
               <DialogPopup
-                showCloseIcon={true}
+                showCloseIcon={false}
                 positiveActionText=""
                 negativeActionText=""
                 title={this.state.drugGridHeaderName}
@@ -756,7 +808,7 @@ class PureAccordion extends Component<PureAccordionProps, any> {
                   this.toggleDrugsListGrid(null, false, true, null, null);
                 }}
                 handleAction={this.rejectDrugAction}
-                showActions={true}
+                showActions={false}
                 height="80%"
                 width="80%"
                 open={this.state.openDrugsList}
@@ -806,6 +858,8 @@ class PureAccordion extends Component<PureAccordionProps, any> {
                     this.listPayload.index / this.listPayload.limit + 1
                   }
                   totalRowsCount={this.state.dataCount}
+                  isFiltered={this.state.isFiltered}
+                  filteredInfo={this.state.filteredInfo}
                 />
               </DialogPopup>
             ) : null}

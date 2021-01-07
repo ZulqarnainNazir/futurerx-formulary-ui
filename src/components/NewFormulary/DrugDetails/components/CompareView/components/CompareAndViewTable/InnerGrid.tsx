@@ -40,6 +40,91 @@ const defaultListPayload = {
   sort_order: []
 }
 
+const detailsColumns = ['covered', 'notCovered', 'coveredRef', 'notCoveredRef'];
+
+const columnKeyMapping = {
+  label: 'drug_label_name',
+  fileType: 'file_type',
+  dataSource: 'data_source',
+  gpi: 'generic_product_identifier',
+  tier: 'tier_value',
+  paType: 'pa_type',
+  paGroupDescription: 'pa_group_description',
+  stType: 'st_type',
+  stGroupDescription: 'st_group_description',
+  stValue: 'st_value',
+  qlType: 'ql_type',
+  qlDays: 'ql_days',
+  qlPeriodofTime: 'ql_period_of_time',
+  qlQuantity: 'ql_quantity',
+  fillsAllowed: 'fills_allowed',
+  fullLimitPeriod: 'full_limit_period_of_time',
+  minCovered: 'covered_min_ages',
+  maxCovered: 'covered_max_ages',
+  minCoveredCond: 'covered_min_operators',
+  maxCoveredCond: 'covered_max_operators',
+  minNotCovered: 'not_covered_min_ages',
+  maxNotCovered: 'not_covered_max_ages',
+  minNotCoveredCond: 'not_covered_min_operators',
+  maxNotCoveredCond: 'not_covered_max_operators',
+  userDefined: 'user_defined',
+  covered: { 'Gender Limits': 'covered_genders', 'ICD Limits': 'covered_icds', 'Patient Residence': 'covered_patient_residences', 'Pharmacy Network': 'covered_pharmacy_networks', 'Prescriber Taxonomy': 'covered_prescriber_taxonomies', 'Place of Service': 'covered_place_of_services' },
+  notCovered: { 'Gender Limits': 'not_covered_genders', 'ICD Limits': 'not_covered_icds', 'Patient Residence': 'not_covered_patient_residences', 'Pharmacy Network': 'not_covered_pharmacy_networks', 'Prescriber Taxonomy': 'not_covered_prescriber_taxonomies', 'Place of Service': 'not_covered_place_of_services' },
+};
+
+const columnKeyMappingNonMatch = {
+  label: 'drug_label_name_base',
+  fileType: 'file_type_base',
+  dataSource: 'data_source_base',
+  gpi: 'generic_product_identifier_base',
+  tier: 'tier_value_base',
+  tierRef: 'tier_value_ref',
+  paType: 'pa_type_base',
+  paTypeRef: 'pa_type_ref',
+  paGroupDescription: 'pa_group_description_base',
+  paGroupDescriptionRef: 'pa_group_description_ref',
+  stType: 'st_type_base',
+  stTypeRef: 'st_type_ref',
+  stGroupDescription: 'st_group_description_base',
+  stGroupDescriptionRef: 'st_group_description_ref',
+  stValue: 'st_value_base',
+  stValueRef: 'st_value_ref',
+  qlType: 'ql_type_base',
+  qlDays: 'ql_days_base',
+  qlPeriodofTime: 'ql_period_of_time_base',
+  qlQuantity: 'ql_quantity_base',
+  fillsAllowed: 'fills_allowed_base',
+  fullLimitPeriod: 'full_limit_period_of_time_base',
+  qlTypeRef: 'ql_type_ref',
+  qlDaysRef: 'ql_days_ref',
+  qlPeriodofTimeRef: 'ql_period_of_time_ref',
+  qlQuantityRef: 'ql_quantity_ref',
+  fillsAllowedRef: 'fills_allowed_ref',
+  fullLimitPeriodRef: 'full_limit_period_of_time_ref',
+  minCovered: 'covered_min_ages_base',
+  maxCovered: 'covered_max_ages_base',
+  minCoveredCond: 'covered_min_operators_base',
+  maxCoveredCond: 'covered_max_operators_base',
+  minNotCovered: 'not_covered_min_ages_base',
+  maxNotCovered: 'not_covered_max_ages_base',
+  minNotCoveredCond: 'not_covered_min_operators_base',
+  maxNotCoveredCond: 'not_covered_max_operators_base',
+  minCoveredRef: 'covered_min_ages_ref',
+  maxCoveredRef: 'covered_max_ages_ref',
+  minCoveredCondRef: 'covered_min_operators_ref',
+  maxCoveredCondRef: 'covered_max_operators_ref',
+  minNotCoveredRef: 'not_covered_min_ages_ref',
+  maxNotCoveredRef: 'not_covered_max_ages_ref',
+  minNotCoveredCondRef: 'not_covered_min_operators_ref',
+  maxNotCoveredCondRef: 'not_covered_max_operators_ref',
+  userDefined: 'user_defined_base',
+  userDefinedRef: 'user_defined_ref',
+  covered: { 'Gender Limits': 'covered_genders_base', 'ICD Limits': 'covered_icds_base', 'Patient Residence': 'covered_patient_residences_base', 'Pharmacy Network': 'covered_pharmacy_networks_base', 'Prescriber Taxonomy': 'covered_prescriber_taxonomies_base', 'Place of Service': 'covered_place_of_services_base' },
+  notCovered: { 'Gender Limits': 'not_covered_genders_base', 'ICD Limits': 'not_covered_icds_base', 'Patient Residence': 'not_covered_patient_residences_base', 'Pharmacy Network': 'not_covered_pharmacy_networks_base', 'Prescriber Taxonomy': 'not_covered_prescriber_taxonomies_base', 'Place of Service': 'not_covered_place_of_services_base' },
+  coveredRef: { 'Gender Limits': 'covered_genders_ref', 'ICD Limits': 'covered_icds_ref', 'Patient Residence': 'covered_patient_residences_ref', 'Pharmacy Network': 'covered_pharmacy_networks_ref', 'Prescriber Taxonomy': 'covered_prescriber_taxonomies_ref', 'Place of Service': 'covered_place_of_services_ref' },
+  notCoveredRef: { 'Gender Limits': 'not_covered_genders_ref', 'ICD Limits': 'not_covered_icds_ref', 'Patient Residence': 'not_covered_patient_residences_ref', 'Pharmacy Network': 'not_covered_pharmacy_networks_ref', 'Prescriber Taxonomy': 'not_covered_prescriber_taxonomies_ref', 'Place of Service': 'not_covered_place_of_services_ref' },
+};
+
 class InnerGrid extends Component<InnerGridProps, any>{
   state = {
     openDrugsList: false,
@@ -63,6 +148,8 @@ class InnerGrid extends Component<InnerGridProps, any>{
     gridMultiSortedInfo: [],
     isGridMultiSorted: false,
     sort_by: Array(),
+    isFiltered: false,
+    filteredInfo: null,
   }
 
   listPayload: any = {
@@ -149,65 +236,83 @@ class InnerGrid extends Component<InnerGridProps, any>{
       this.toggleDrugsListGrid(null, null, null, true);
     }
   }
-  onApplyFilterHandler = (filters) => {
+  onApplyFilterHandler = (filters, filteredInfo) => {
     const fetchedKeys = Object.keys(filters);
+    let keysMapping = this.state.isLastColumn ? columnKeyMappingNonMatch : columnKeyMapping;
     if (fetchedKeys.length > 0) {
       fetchedKeys.map(fetchedProps => {
         if (filters[fetchedProps]) {
-          this.listPayload.filter = this.listPayload.filter.filter(element => element['prop'] !== fetchedProps);
-          const fetchedOperator =
-            filters[fetchedProps][0].condition === "is like"
-              ? "is_like"
-              : filters[fetchedProps][0].condition === "is not"
-                ? "is_not"
-                : filters[fetchedProps][0].condition === "is not like"
-                  ? "is_not_like"
-                  : filters[fetchedProps][0].condition === "does not exist"
-                    ? "does_not_exist"
-                    : filters[fetchedProps][0].condition;
-          const fetchedValues =
-            filters[fetchedProps][0].value !== ""
-              ? [filters[fetchedProps][0].value.toString()]
-              : [];
-          this.listPayload.filter.push({
-            prop: fetchedProps,
-            operator: fetchedOperator,
-            values: fetchedValues
-          });
+          let isDetailsProp = detailsColumns.includes(fetchedProps) ? true : false;
+          let columnKey = null;
+          if (isDetailsProp) {
+            columnKey = keysMapping[fetchedProps][this.state.rowData['attribute_name']];
+          } else {
+            columnKey = keysMapping[fetchedProps];
+          }
+          if (columnKey) {
+            this.listPayload.filter = this.listPayload.filter.filter(element => element['prop'] !== columnKey);
+            const fetchedOperator =
+              filters[fetchedProps][0].condition === "is like"
+                ? "is_like"
+                : filters[fetchedProps][0].condition === "is not"
+                  ? "is_not"
+                  : filters[fetchedProps][0].condition === "is not like"
+                    ? "is_not_like"
+                    : filters[fetchedProps][0].condition === "does not exist"
+                      ? "does_not_exist"
+                      : filters[fetchedProps][0].condition;
+            const fetchedValues =
+              filters[fetchedProps][0].value !== ""
+                ? [filters[fetchedProps][0].value.toString()]
+                : [];
+            this.listPayload.filter.push({
+              prop: columnKey,
+              operator: fetchedOperator,
+              values: fetchedValues
+            });
+          }
         }
       });
       console.log("Filters:" + JSON.stringify(this.listPayload.filter));
-    }else{
+      this.setState({
+        isFiltered: true,
+        filteredInfo: filteredInfo
+      }, () => {
+        this.populateGridData(this.state.rowData, this.state.baseFormularyId, this.state.refFormularyId, this.listPayload, this.state.isLastColumn);
+      });
+    } else {
       this.listPayload.filter = Array();
+      this.setState({
+        isFiltered: false,
+        filteredInfo: filteredInfo
+      }, () => {
+        this.populateGridData(this.state.rowData, this.state.baseFormularyId, this.state.refFormularyId, this.listPayload, this.state.isLastColumn);
+      });
     }
-    this.populateGridData(this.state.rowData, this.state.baseFormularyId, this.state.refFormularyId, this.listPayload, this.state.isLastColumn);
   }
   onPageSize = (pageSize) => {
     this.listPayload = { ...defaultListPayload };
     this.listPayload.limit = pageSize;
-    this.setState({
-      isRequestFinished: false,
-    })
     this.populateGridData(this.state.rowData, this.state.baseFormularyId, this.state.refFormularyId, this.listPayload, this.state.isLastColumn);
   }
   onGridPageChangeHandler = (pageNumber: any) => {
     this.listPayload.index = (pageNumber - 1) * this.listPayload.limit;
-    this.setState({
-      isRequestFinished: false,
-    })
     this.populateGridData(this.state.rowData, this.state.baseFormularyId, this.state.refFormularyId, this.listPayload, this.state.isLastColumn);
   }
   onClearFilterHandler = () => {
     this.listPayload = { ...defaultListPayload };
     this.listPayload.filter = Array();
     this.setState({
-      isRequestFinished: false,
-    })
-    this.populateGridData(this.state.rowData, this.state.baseFormularyId, this.state.refFormularyId, this.listPayload, this.state.isLastColumn);
+      isFiltered: false,
+      filteredInfo: null
+    }, () => {
+      this.populateGridData(this.state.rowData, this.state.baseFormularyId, this.state.refFormularyId, this.listPayload, this.state.isLastColumn);
+    });
   }
 
   applyMultiSortHandler = (sorter, multiSortedInfo) => {
     console.log('Multisort info:' + JSON.stringify(sorter));
+    let keysMapping = this.state.isLastColumn ? columnKeyMappingNonMatch : columnKeyMapping;
     this.setState({
       isGridMultiSorted: true,
       isGridSingleSorted: false,
@@ -227,9 +332,17 @@ class InnerGrid extends Component<InnerGridProps, any>{
         }
       });
       filteredSorter.map(sortInfo => {
+        let isDetailsProp = detailsColumns.includes(sortInfo['columnKey']) ? true : false;
+        let columnKey = null;
+        if (isDetailsProp) {
+          columnKey = keysMapping[sortInfo['columnKey']][this.state.rowData['attribute_name']];
+        } else {
+          columnKey = keysMapping[sortInfo['columnKey']];
+        }
+
         let sortOrder = sortInfo['order'] === 'ascend' ? 'asc' : 'desc';
-        this.state.sort_by = this.state.sort_by.filter(keyPair => keyPair['key'] !== sortInfo['columnKey']);
-        this.state.sort_by.push({ key: sortInfo['columnKey'], value: sortOrder });
+        this.state.sort_by = this.state.sort_by.filter(keyPair => keyPair['key'] !== columnKey);
+        this.state.sort_by.push({ key: columnKey, value: sortOrder });
       })
 
       let keys = Array();
@@ -273,13 +386,22 @@ class InnerGrid extends Component<InnerGridProps, any>{
    */
   onApplySortHandler = (key, order, sortedInfo) => {
     console.log("sort details ", key, order);
+    let keysMapping = this.state.isLastColumn ? columnKeyMappingNonMatch : columnKeyMapping;
     this.state.sort_by = Array();
     this.listPayload.sort_by = Array();
     this.listPayload.sort_order = Array();
     if (order) {
+      let isDetailsProp = detailsColumns.includes(key) ? true : false;
+      let columnKey = null;
+      if (isDetailsProp) {
+        columnKey = keysMapping[key][this.state.rowData['attribute_name']];
+      } else {
+        columnKey = keysMapping[key];
+      }
+
       let sortOrder = order === 'ascend' ? 'asc' : 'desc';
-      this.state.sort_by = this.state.sort_by.filter(keyPair => keyPair['key'] !== key);
-      this.state.sort_by.push({ key: key, value: sortOrder });
+      this.state.sort_by = this.state.sort_by.filter(keyPair => keyPair['key'] !== columnKey);
+      this.state.sort_by.push({ key: columnKey, value: sortOrder });
     }
     this.setState({
       gridSingleSortInfo: sortedInfo,
@@ -650,6 +772,13 @@ class InnerGrid extends Component<InnerGridProps, any>{
         this.state.checkbox = showCheckbox;
         this.state.actions = showCheckbox;
       }
+      this.listPayload = {
+        index: 0,
+        limit: 10,
+        filter: [],
+        sort_by: [],
+        sort_order: []
+      };
       this.setState({
         openDrugsList: !this.state.openDrugsList,
         drugGridData: Array(),
@@ -663,6 +792,12 @@ class InnerGrid extends Component<InnerGridProps, any>{
         rejectedKeys: Array(),
         rejectedDrugIds: Array(),
         isRequestFinished: true,
+        gridSingleSortInfo: null,
+        gridMultiSortedInfo: [],
+        isGridMultiSorted: false,
+        isGridSingleSorted: false,
+        isFiltered: false,
+        filteredInfo: null,
       });
     } else {
       if (dataCount > 0) {
@@ -684,21 +819,21 @@ class InnerGrid extends Component<InnerGridProps, any>{
 
   getAttributeValue = (row) => {
     if (this.state.rowData['attribute_field_name'] === 'tierValue') {
-      return ''+row['tier'];
+      return '' + row['tier'];
     } else if (this.state.rowData['attribute_name'] === 'Tx Category') {
-      return ''+row['category'];
+      return '' + row['category'];
     } else if (this.state.rowData['attribute_name'] === 'Tx Class') {
-      return ''+row['class'];
+      return '' + row['class'];
     } else if (this.state.rowData['attribute_field_name'] === 'paType') {
-      return ''+row['paType'];
+      return '' + row['paType'];
     } else if (this.state.rowData['attribute_field_name'] === 'paGroupDescription') {
-      return ''+row['groupDescription'];
+      return '' + row['groupDescription'];
     } else if (this.state.rowData['attribute_field_name'] === 'stType') {
-      return ''+row['stType'];
+      return '' + row['stType'];
     } else if (this.state.rowData['attribute_field_name'] === 'stGroupDescription') {
-      return ''+row['groupDescription'];
+      return '' + row['groupDescription'];
     } else if (this.state.rowData['attribute_field_name'] === 'qlType') {
-      return ''+row['qlType'];
+      return '' + row['qlType'];
     } else if (this.state.rowData['attribute_field_name'] === 'isAL') {
       return '';
     } else if (this.state.rowData['attribute_field_name'] === 'isGL') {
@@ -756,7 +891,7 @@ class InnerGrid extends Component<InnerGridProps, any>{
             case 'Tx Category':
               apiDetails['messageBody']['attribute_field_data_type'] = 'STR';
               apiDetails['messageBody']['attribute_field_name'] = 'drugCategory';
-              apiDetails['messageBody']['attribute_field_value'] = attributeValue.replace(/[*]/g,"");
+              apiDetails['messageBody']['attribute_field_value'] = attributeValue.replace(/[*]/g, "");
               apiDetails['messageBody']['attribute_name'] = this.state.rowData['attribute_name'];
               apiDetails['messageBody']['file_type'] = this.state.rowData['file_type'];
               apiDetails['messageBody']['filter'] = [];
@@ -764,7 +899,7 @@ class InnerGrid extends Component<InnerGridProps, any>{
             case 'Tx Class':
               apiDetails['messageBody']['attribute_field_data_type'] = 'STR';
               apiDetails['messageBody']['attribute_field_name'] = 'drugClass';
-              apiDetails['messageBody']['attribute_field_value'] = attributeValue.replace(/[*]/g,"");
+              apiDetails['messageBody']['attribute_field_value'] = attributeValue.replace(/[*]/g, "");
               apiDetails['messageBody']['attribute_name'] = this.state.rowData['attribute_name'];
               apiDetails['messageBody']['file_type'] = this.state.rowData['file_type'];
               apiDetails['messageBody']['filter'] = [];
@@ -825,7 +960,7 @@ class InnerGrid extends Component<InnerGridProps, any>{
       gridColumns = this.state.gridColumns.filter(column => !this.state.hiddenColumns.includes(column['key']));
     switch (this.props.tableType) {
       case "COMPARE":
-        if(!this.state.isRequestFinished){
+        if (!this.state.isRequestFinished) {
           return <FrxLoader />;
         }
         return (
@@ -929,13 +1064,13 @@ class InnerGrid extends Component<InnerGridProps, any>{
             ))}
             {this.state.openDrugsList ? (
               <DialogPopup
-                showCloseIcon={this.state.actions}
+                showCloseIcon={this.state.checkbox}
                 positiveActionText="Reject"
                 negativeActionText=""
                 title={this.state.drugGridHeaderName}
                 handleClose={() => this.toggleDrugsListGrid(null, null, null, true)}
                 handleAction={(type) => { this.onDialogAction(type) }}
-                showActions={this.state.actions}
+                showActions={this.state.checkbox}
                 height="80%"
                 width="80%"
                 open={this.state.openDrugsList}
@@ -977,6 +1112,8 @@ class InnerGrid extends Component<InnerGridProps, any>{
                   pageSize={this.listPayload.limit}
                   selectedCurrentPage={(this.listPayload.index / this.listPayload.limit + 1)}
                   totalRowsCount={this.state.dataCount}
+                  isFiltered={this.state.isFiltered}
+                  filteredInfo={this.state.filteredInfo}
                 />
               </DialogPopup>
             ) : null}
@@ -984,7 +1121,7 @@ class InnerGrid extends Component<InnerGridProps, any>{
         );
 
       case "VIEW":
-        if(!this.state.isRequestFinished){
+        if (!this.state.isRequestFinished) {
           return <FrxLoader />;
         }
         return (
@@ -1016,13 +1153,13 @@ class InnerGrid extends Component<InnerGridProps, any>{
             ))}
             {this.state.openDrugsList ? (
               <DialogPopup
-                showCloseIcon={this.state.actions}
+                showCloseIcon={this.state.checkbox}
                 positiveActionText=""
                 negativeActionText=""
                 title={this.state.drugGridHeaderName}
                 handleClose={() => this.toggleDrugsListGrid(null, null, null, true)}
                 handleAction={(type) => { }}
-                showActions={this.state.actions}
+                showActions={this.state.checkbox}
                 height="80%"
                 width="80%"
                 open={this.state.openDrugsList}
@@ -1064,6 +1201,8 @@ class InnerGrid extends Component<InnerGridProps, any>{
                   pageSize={this.listPayload.limit}
                   selectedCurrentPage={(this.listPayload.index / this.listPayload.limit + 1)}
                   totalRowsCount={this.state.dataCount}
+                  isFiltered={this.state.isFiltered}
+                  filteredInfo={this.state.filteredInfo}
                 />
               </DialogPopup>
             ) : null}
