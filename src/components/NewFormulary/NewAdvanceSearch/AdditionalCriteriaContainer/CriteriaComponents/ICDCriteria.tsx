@@ -14,6 +14,8 @@ const ICDCriteria = (props) => {
     handleICDSearch,
     handleICDOnChange,
     deleteIconHandler,
+    isReadOnly,
+    editable,
   } = props;
 
   const options = icdResults.data.map((obj) => (
@@ -31,6 +33,8 @@ const ICDCriteria = (props) => {
           handleStatus={handleStatus}
           isAdditionalCriteria={isAdditionalCriteria}
           deleteIconHandler={deleteIconHandler}
+          isReadOnly={isReadOnly}
+          editable={editable}
         >
           <div className="root-icd-limit-settings__form">
             <div className="input-field-group">
@@ -51,6 +55,7 @@ const ICDCriteria = (props) => {
                   onChange={handleICDChange}
                   notFoundContent={null}
                   className="select-icds"
+                  disabled={editable || isReadOnly}
                 >
                   {options}
                 </Select>
@@ -61,6 +66,7 @@ const ICDCriteria = (props) => {
               <div className="input-field-group__label">Lookback Days:</div>
               <div className="input-field-group__text-field">
                 <input
+                  disabled={editable || isReadOnly}
                   type="number"
                   className="setup-input-fields"
                   onChange={handleICDOnChange}

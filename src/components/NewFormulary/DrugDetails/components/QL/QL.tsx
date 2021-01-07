@@ -101,6 +101,7 @@ interface tabsState {
   filter: any;
   sort_by: any;
   isSettingsApplied: boolean;
+  isSelectAll: boolean;
 }
 
 class Tier extends React.Component<any, tabsState> {
@@ -145,6 +146,7 @@ class Tier extends React.Component<any, tabsState> {
     gridMultiSortedInfo: [],
     isGridMultiSorted: false,
     isSettingsApplied: false,
+    isSelectAll: false,
   };
 
   onClickTab = (selectedTabIndex: number) => {
@@ -201,6 +203,7 @@ class Tier extends React.Component<any, tabsState> {
         return (
           <Remove
             selectedCriteria={this.state.selectedCriteria}
+            onApply={this.onApply}
             onUpdateSelectedCriteria={this.onUpdateSelectedCriteria}
           />
         );
@@ -312,7 +315,12 @@ class Tier extends React.Component<any, tabsState> {
     }
 
     if (searchBody) {
-      apiDetails["messageBody"] = Object.assign({}, searchBody);
+      apiDetails["messageBody"] = Object.assign(
+        apiDetails["messageBody"],
+        searchBody
+      );
+      //   apiDetails["messageBody"],
+      // searchBody // Object.assign({}, searchBody);
     }
     console.log("[apiDetails]:", apiDetails);
     this.props.postFormularyDrugQl(apiDetails).then((json) => {
@@ -652,126 +660,132 @@ class Tier extends React.Component<any, tabsState> {
 
   handleSave = () => {
     // debugger;
-    const { quantityAndFillLimitObject } = this.state;
-    let currentAction = this.getCurrentAction();
-    console.log(
-      "[quantityAndFillLimitObject]:",
-      this.state.quantityAndFillLimitObject
-    );
-    console.log("[selectedDrug]", this.state.selectedDrugs);
-    console.log("[drugData]:", this.state.drugData);
-    console.log("[action]:", currentAction);
+    if (this.state.selectedDrugs && this.state.selectedDrugs.length > 0) {
+      const { quantityAndFillLimitObject } = this.state;
+      let currentAction = this.getCurrentAction();
+      console.log(
+        "[quantityAndFillLimitObject]:",
+        this.state.quantityAndFillLimitObject
+      );
+      console.log("[selectedDrug]", this.state.selectedDrugs);
+      console.log("[drugData]:", this.state.drugData);
+      console.log("[action]:", currentAction);
 
-    let apiDetails = {};
+      let apiDetails = {};
 
-    apiDetails["pathParams"] =
-      this.props.current_formulary.id_formulary +
-      "/" +
-      this.props.current_formulary.formulary_type_info.formulary_type_code +
-      "/" +
-      currentAction;
-    apiDetails["messageBody"] = {};
-    apiDetails["messageBody"]["selected_drug_ids"] = this.state.selectedDrugs;
-    // apiDetails["messageBody"]["covered"] = { drug_list_ids: [] };
-    // apiDetails["messageBody"]["not_covered"] = {
-    //   formulary_drug_ids: [],
-    //   drug_ids: [],
-    // };
+      apiDetails["pathParams"] =
+        this.props.current_formulary.id_formulary +
+        "/" +
+        this.props.current_formulary.formulary_type_info.formulary_type_code +
+        "/" +
+        currentAction;
+      apiDetails["messageBody"] = {};
+      apiDetails["messageBody"]["selected_drug_ids"] = this.state.selectedDrugs;
+      // apiDetails["messageBody"]["covered"] = { drug_list_ids: [] };
+      // apiDetails["messageBody"]["not_covered"] = {
+      //   formulary_drug_ids: [],
+      //   drug_ids: [],
+      // };
 
-    apiDetails["messageBody"]["quantity"] = quantityAndFillLimitObject[
-      "quantity"
-    ]
-      ? quantityAndFillLimitObject["quantity"]
-      : null;
-    apiDetails["messageBody"][
-      "quantity_limit_days"
-    ] = quantityAndFillLimitObject["days"]
-      ? quantityAndFillLimitObject["days"]
-      : null;
-    apiDetails["messageBody"]["quantity_limit_period_of_time"] =
-      quantityAndFillLimitObject["periodOfTime"];
-    apiDetails["messageBody"]["fills_allowed"] = quantityAndFillLimitObject[
-      "fillsAllowed"
-    ]
-      ? quantityAndFillLimitObject["fillsAllowed"]
-      : null;
-    apiDetails["messageBody"][
-      "full_limit_period_of_time"
-    ] = quantityAndFillLimitObject["fillLimitPeriodOfTime"]
-      ? quantityAndFillLimitObject["fillLimitPeriodOfTime"]
-      : null;
-    apiDetails["messageBody"]["is_select_all"] = false;
-    apiDetails["messageBody"]["search_key"] = "";
-    apiDetails["messageBody"][
-      "selected_criteria_ids"
-    ] = this.state.selectedCriteria;
-    if (
-      this.state.additionalCriteriaState != null &&
-      this.state.is_additional_criteria_defined
-    ) {
-      apiDetails["messageBody"]["is_custom_additional_criteria"] = true;
+      apiDetails["messageBody"]["quantity"] = quantityAndFillLimitObject[
+        "quantity"
+      ]
+        ? quantityAndFillLimitObject["quantity"]
+        : null;
       apiDetails["messageBody"][
-        "um_criteria"
-      ] = this.state.additionalCriteriaState;
+        "quantity_limit_days"
+      ] = quantityAndFillLimitObject["days"]
+        ? quantityAndFillLimitObject["days"]
+        : null;
+      apiDetails["messageBody"][
+        "quantity_limit_period_of_time"
+      ] = quantityAndFillLimitObject["periodOfTime"]
+        ? quantityAndFillLimitObject["periodOfTime"]
+        : null;
+      apiDetails["messageBody"]["fills_allowed"] = quantityAndFillLimitObject[
+        "fillsAllowed"
+      ]
+        ? quantityAndFillLimitObject["fillsAllowed"]
+        : null;
+      apiDetails["messageBody"][
+        "full_limit_period_of_time"
+      ] = quantityAndFillLimitObject["fillLimitPeriodOfTime"]
+        ? quantityAndFillLimitObject["fillLimitPeriodOfTime"]
+        : null;
+      apiDetails["messageBody"]["is_select_all"] = this.state.isSelectAll;
+      apiDetails["messageBody"]["search_key"] = "";
+      apiDetails["messageBody"][
+        "selected_criteria_ids"
+      ] = this.state.selectedCriteria;
+      if (
+        this.state.additionalCriteriaState != null &&
+        this.state.is_additional_criteria_defined
+      ) {
+        apiDetails["messageBody"]["is_custom_additional_criteria"] = true;
+        apiDetails["messageBody"][
+          "um_criteria"
+        ] = this.state.additionalCriteriaState;
+      }
+
+      // apiDetails["messageBody"]["filter"] = this.state.filter;
+      // if (this.state.sort_by && this.state.sort_by.length > 0) {
+      //   let keys = Array();
+      //   let values = Array();
+
+      //   this.state.sort_by.map((keyPair) => {
+      //     keys.push(keyPair["key"]);
+      //     values.push(keyPair["value"]);
+      //   });
+
+      //   apiDetails["messageBody"]["sort_by"] = keys;
+      //   apiDetails["messageBody"]["sort_order"] = values;
+      // }
+
+      apiDetails["messageBody"]["filter"] = [];
+
+      console.log("[path]:", apiDetails["pathParams"]);
+      console.log("{apiDetails}", apiDetails);
+
+      const saveData = this.props
+        .postApplyFormularyDrugQl(apiDetails)
+        .then((json) => {
+          console.log("Save response is:" + JSON.stringify(json));
+          console.log("[json]", json);
+
+          if (json.payload && json.payload.code === "200") {
+            showMessage("Success", "success");
+            this.state.drugData = [];
+            this.state.drugGridData = [];
+            let payload = {
+              additionalCriteriaBody: this.props.additionalCriteriaBody,
+            };
+
+            payload.additionalCriteriaBody = [];
+
+            this.props.setAdditionalCriteria(payload);
+            // this.setState({ quantityAndFillLimitObject: {} });
+            // this.goToSettingSection();
+            this.showDrugGrid();
+
+            this.props
+              .getQlSummary(this.props.current_formulary.id_formulary)
+              .then((json) => {
+                console.log("[new ql summary]", json);
+                this.initailizeQlSummary(json);
+              });
+            this.state.isSettingsApplied = true;
+            this.state.prevSelectedDrugs = [
+              ...this.state.prevSelectedDrugs,
+              ...this.state.selectedDrugs,
+            ];
+            this.state.isSelectAll = false;
+            this.state.selectedDrugs = Array();
+            // window.scrollTo(0, 50);
+          } else {
+            showMessage("Failure", "error");
+          }
+        });
     }
-
-    // apiDetails["messageBody"]["filter"] = this.state.filter;
-    // if (this.state.sort_by && this.state.sort_by.length > 0) {
-    //   let keys = Array();
-    //   let values = Array();
-
-    //   this.state.sort_by.map((keyPair) => {
-    //     keys.push(keyPair["key"]);
-    //     values.push(keyPair["value"]);
-    //   });
-
-    //   apiDetails["messageBody"]["sort_by"] = keys;
-    //   apiDetails["messageBody"]["sort_order"] = values;
-    // }
-
-    apiDetails["messageBody"]["filter"] = [];
-
-    console.log("[path]:", apiDetails["pathParams"]);
-    console.log("{apiDetails}", apiDetails);
-
-    const saveData = this.props
-      .postApplyFormularyDrugQl(apiDetails)
-      .then((json) => {
-        console.log("Save response is:" + JSON.stringify(json));
-        console.log("[json]", json);
-
-        if (json.payload && json.payload.code === "200") {
-          showMessage("Success", "success");
-          this.state.drugData = [];
-          this.state.drugGridData = [];
-          let payload = {
-            additionalCriteriaBody: this.props.additionalCriteriaBody,
-          };
-
-          payload.additionalCriteriaBody = [];
-
-          this.props.setAdditionalCriteria(payload);
-          // this.setState({ quantityAndFillLimitObject: {} });
-          // this.goToSettingSection();
-          this.showDrugGrid();
-
-          this.props
-            .getQlSummary(this.props.current_formulary.id_formulary)
-            .then((json) => {
-              console.log("[new ql summary]", json);
-              this.initailizeQlSummary(json);
-            });
-          this.state.isSettingsApplied = true;
-          this.state.prevSelectedDrugs = [
-            ...this.state.prevSelectedDrugs,
-            ...this.state.selectedDrugs,
-          ];
-          this.state.selectedDrugs = Array();
-          // window.scrollTo(0, 50);
-        } else {
-          showMessage("Failure", "error");
-        }
-      });
   };
 
   advanceSearchClickHandler = () => {
@@ -809,6 +823,7 @@ class Tier extends React.Component<any, tabsState> {
   };
 
   onApply = () => {
+    this.state.prevSelectedDrugs = Array();
     if (this.getCurrentAction() !== constants.TYPE_REMOVE) {
       if (
         this.checkForRequiredFields({
@@ -871,18 +886,21 @@ class Tier extends React.Component<any, tabsState> {
           (k) => this.state.fixedSelectedRows.indexOf(k) < 0
         );
         const removeSelectedDrug = this.state.selectedDrugs.filter(
-          (drugId) => drugId !== this.state.selectedDrugs[selectedRow.key - 1]
+          (drugId) => drugId !== selectedRow.md5_id
         );
         // this.onSelectedTableRowChanged(selectedRows);
         this.setState({
           drugGridData: data,
           selectedDrugs: removeSelectedDrug,
+          // prevSelectedDrugs: removeSelectedDrug,
         });
       }
     }
   };
 
   onSelectAllRows = (isSelected: boolean) => {
+    // alert("onSelectAll");
+    // if (isSelected) {
     const selectedRowKeys: number[] = [];
     const data = this.state.drugGridData.map((d: any) => {
       if (!d["isDisabled"]) {
@@ -897,7 +915,25 @@ class Tier extends React.Component<any, tabsState> {
       (k) => this.state.fixedSelectedRows.indexOf(k) < 0
     );
     this.onSelectedTableRowChanged(selectedRows);
-    this.setState({ drugGridData: data });
+    this.setState({
+      drugGridData: data,
+      // isSelectAll: isSelected
+    });
+    // } else {
+    //   const data = this.state.drugGridData.map((d: any) => {
+    //     if (!d["isDisabled"]) {
+    //       d["isChecked"] = isSelected;
+    //     }
+
+    //     // else d["isSelected"] = false;
+    //     return d;
+    //   });
+    //   this.setState({
+    //     selectedDrugs: Array(),
+    //     drugGridData: data,
+    //     // isSelectAll: isSelected,
+    //   });
+    // }
   };
 
   onPageSize = (pageSize) => {
@@ -1188,6 +1224,8 @@ class Tier extends React.Component<any, tabsState> {
                               is_additional_criteria_defined={
                                 this.state.is_additional_criteria_defined
                               }
+                              onApply={this.onApply}
+                              switchState={this.props.switchState}
                             />
                             {this.state.isAdditionalCriteriaOpen && (
                               <AdvanceSearchContainer
@@ -1204,7 +1242,7 @@ class Tier extends React.Component<any, tabsState> {
                   </div>
                 </div>
               </Grid>
-              <div
+              {/* <div
                 className="apply-button"
                 style={{
                   display: "flex",
@@ -1217,7 +1255,7 @@ class Tier extends React.Component<any, tabsState> {
                   onClick={this.onApply}
                   disabled={this.props.switchState}
                 ></Button>
-              </div>
+              </div> */}
             </Grid>
             {this.state.drugGridContainer && (
               <div className="select-drug-from-table">

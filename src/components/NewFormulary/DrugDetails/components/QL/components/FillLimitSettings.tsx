@@ -7,6 +7,7 @@ import Radio from "@material-ui/core/Radio";
 import RadioGroup from "@material-ui/core/RadioGroup";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import { Input } from "@material-ui/core";
+import Button from "../../../../../shared/Frx-components/button/Button";
 import "./common.scss";
 
 const FillLimitSettings = (props) => {
@@ -80,6 +81,20 @@ const FillLimitSettings = (props) => {
           </div>
         </Grid>
       </Grid>
+      <div
+        className="apply-button"
+        style={{
+          display: "flex",
+          justifyContent: "flex-end",
+          width: "100%",
+        }}
+      >
+        <Button
+          label="Apply"
+          onClick={props.onApply}
+          disabled={props.switchState}
+        ></Button>
+      </div>
     </div>
   );
 };

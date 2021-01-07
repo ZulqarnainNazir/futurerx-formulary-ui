@@ -514,6 +514,11 @@ class DrugDetailICD extends React.Component<any, any> {
             modIcdLimits = Array(ncgendersArray.length).fill(+element.lookback_days);
           }
         }
+        
+        if (thisRef.props.configureSwitch) {
+          gridItem["isDisabled"] = true;
+          gridItem["rowStyle"] = "table-row--disabled-font";
+        }
 
         gridItem["icdLimit"] = element.is_icdl ? "" + element.is_icdl : "";
         gridItem["icdLookBack"] = modIcdLimits + "";
@@ -834,6 +839,7 @@ class DrugDetailICD extends React.Component<any, any> {
           { id: 2, text: "Append", disabled: false },
           { id: 3, text: "Remove", disabled: false },
         ],
+        showGrid: false,
       });
     }
 

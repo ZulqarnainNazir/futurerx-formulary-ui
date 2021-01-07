@@ -49,7 +49,7 @@ class PrRemove extends React.Component<any,any> {
     const hasSelected = selectedRowKeys.length > 0;
     return (
       <div className="tab-prremove pr-limit-settings bordered mb-10">
-        <PanelHeader title="patient residence settings" tooltip="patient residence settings" />
+        <PanelHeader title="patient residence criteria" tooltip="patient residence criteria" />
         {/* <div>
           <span style={{ marginLeft: 8 }}>
             {hasSelected ? `Selected ${selectedRowKeys.length} items` : ''}

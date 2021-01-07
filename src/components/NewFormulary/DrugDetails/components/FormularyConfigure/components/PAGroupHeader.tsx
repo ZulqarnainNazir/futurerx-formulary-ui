@@ -30,6 +30,7 @@ import { formatTimeStr } from "antd/lib/statistic/utils";
 import showMessage from "../../../../Utils/Toast";
 import { KeyboardReturnOutlined } from "@material-ui/icons";
 import { ToastContainer } from "react-toastify";
+import "./PAGroupHeader.scss";
 
 function mapStateToProps(state) {
   return {
@@ -317,51 +318,56 @@ function PAGroupHeader(props: any) {
         lob_type: props.formulary_lob_id,
       })
       .then((json) => {
-        let apiDetails = {};
-        apiDetails["lob_type"] = props.formulary_lob_id;
-        apiDetails["pathParams"] =
-          "/" + props.client_id + "?entity_id=" + props?.formulary_id;
-        props.getPaGrouptDescriptions(apiDetails).then((json) => {
-          const groupList = json?.payload?.data;
-          const groupListLength = Object.keys(groupList).length;
-          //const id_pa_group_description = groupListLength>0?groupList[0].id_base_pa_group_description:0;
-          let id_pa_group_description =
-            groupListLength > 0
-              ? groupList.filter((val) => val.is_archived === false)[0]
-                  .id_base_pa_group_description
-              : 0;
-          debugger;
-          if (param === "delete-version" && versionListLength > 0) {
-            id_pa_group_description = props.savePaGdm.current_group_id;
-          } else {
-            id_pa_group_description =
+        debugger;
+        if (
+          json?.payload?.success?.status &&
+          json?.payload?.success?.status == 200
+        ) {
+          let apiDetails = {};
+          apiDetails["lob_type"] = props.formulary_lob_id;
+          apiDetails["pathParams"] =
+            "/" + props.client_id + "?entity_id=" + props?.formulary_id;
+          props.getPaGrouptDescriptions(apiDetails).then((json) => {
+            const groupList = json?.payload?.data;
+            const groupListLength = Object.keys(groupList).length;
+            //const id_pa_group_description = groupListLength>0?groupList[0].id_base_pa_group_description:0;
+            let id_pa_group_description =
               groupListLength > 0
                 ? groupList.filter((val) => val.is_archived === false)[0]
                     .id_base_pa_group_description
                 : 0;
-          }
-          apiDetails["pathParams"] = "/" + id_pa_group_description;
-          props.getPaGrouptDescriptionVersions(apiDetails).then((json) => {
-            let response = json.payload.data;
+            debugger;
+            if (param === "delete-version" && versionListLength > 0) {
+              id_pa_group_description = props.savePaGdm.current_group_id;
+            } else {
+              id_pa_group_description =
+                groupListLength > 0
+                  ? groupList.filter((val) => val.is_archived === false)[0]
+                      .id_base_pa_group_description
+                  : 0;
+            }
+            apiDetails["pathParams"] = "/" + id_pa_group_description;
+            props.getPaGrouptDescriptionVersions(apiDetails).then((json) => {
+              let response = json.payload.data;
 
-            const verLength = Object.keys(response).length;
-            const isEditable = response[verLength - 1].is_setup_complete;
-            const latestVerion =
-              response[verLength - 1].id_pa_group_description;
-            const value = response[verLength - 1].value;
-            setIsSetupComplete(isEditable);
-            setVersion(response);
-            setPlaceHolder(value);
+              const verLength = Object.keys(response).length;
+              const isEditable = response[verLength - 1].is_setup_complete;
+              const latestVerion =
+                response[verLength - 1].id_pa_group_description;
+              const value = response[verLength - 1].value;
+              setIsSetupComplete(isEditable);
+              setVersion(response);
+              setPlaceHolder(value);
 
-            let apiDetails = {};
-            apiDetails["lob_type"] = props.formulary_lob_id;
-            apiDetails["pathParams"] = "/" + latestVerion;
-            props.getPaGrouptDescription(apiDetails);
-            props.getPaTypes(props.saveGdm.formulary_id);
+              let apiDetails = {};
+              apiDetails["lob_type"] = props.formulary_lob_id;
+              apiDetails["pathParams"] = "/" + latestVerion;
+              props.getPaGrouptDescription(apiDetails);
+              props.getPaTypes(props.saveGdm.formulary_id);
+            });
           });
-        });
-
-        if (json?.payload?.status && json?.payload?.status != 200) {
+          showMessage(SUCCESS_MSG["delete"], "success");
+        } else if (json?.payload?.status && json?.payload?.status != 200) {
           if (
             json?.payload?.data?.formularies &&
             json?.payload?.data?.formularies?.length > 0
@@ -378,12 +384,7 @@ function PAGroupHeader(props: any) {
           }
           showMessage(json.payload.data.message, "error");
         }
-        if (
-          json?.payload?.success?.status &&
-          json?.payload?.success?.status == 200
-        ) {
-          showMessage(SUCCESS_MSG["delete"], "success");
-        }
+
         setOpen(false);
       });
   };
@@ -395,18 +396,17 @@ function PAGroupHeader(props: any) {
         lob_type: props.formulary_lob_id, // clone page input
       })
       .then((json) => {
-        let apiDetails = {};
-        apiDetails["lob_type"] = props.formulary_lob_id;
-        apiDetails["pathParams"] = "/" + props.client_id;
-        props.getPaGrouptDescriptions(apiDetails);
-        if (json?.payload?.status && json?.payload?.status != 200) {
-          showMessage(json.payload.data.message, "error");
-        }
         if (
           json?.payload?.success?.status &&
           json?.payload?.success?.status == 200
         ) {
+          let apiDetails = {};
+          apiDetails["lob_type"] = props.formulary_lob_id;
+          apiDetails["pathParams"] = "/" + props.client_id;
+          props.getPaGrouptDescriptions(apiDetails);
           showMessage(SUCCESS_MSG["clone"], "success");
+        } else if (json?.payload?.status && json?.payload?.status != 200) {
+          showMessage(json.payload.data.message, "error");
         }
         setOpen(false);
       });
@@ -428,30 +428,29 @@ function PAGroupHeader(props: any) {
         lob_type: props.formulary_lob_id,
       })
       .then((json) => {
-        let apiDetails = {};
-        apiDetails["lob_type"] = props.formulary_lob_id;
-        apiDetails["pathParams"] = "/" + props.client_id;
-        props.getPaGrouptDescriptions(apiDetails);
-
-        apiDetails["pathParams"] = "/" + props.saveGdm.current_group_id;
-        props.getPaGrouptDescriptionVersions(apiDetails).then((json) => {
-          console.log(json);
-          setVersion(json.payload.data);
-          let v = props.version;
-        });
-
-        apiDetails["pathParams"] = "/" + props.saveGdm.current_group_id;
-        // props.getPaGrouptDescription(apiDetails);
-
-        props.getPaTypes(props.saveGdm.formulary_id);
-        if (json?.payload?.status && json?.payload?.status != 200) {
-          showMessage(json.payload.data.message, "error");
-        }
         if (
           json?.payload?.success?.status &&
           json?.payload?.success?.status == 200
         ) {
+          let apiDetails = {};
+          apiDetails["lob_type"] = props.formulary_lob_id;
+          apiDetails["pathParams"] = "/" + props.client_id;
+          props.getPaGrouptDescriptions(apiDetails);
+
+          apiDetails["pathParams"] = "/" + props.saveGdm.current_group_id;
+          props.getPaGrouptDescriptionVersions(apiDetails).then((json) => {
+            console.log(json);
+            setVersion(json.payload.data);
+            let v = props.version;
+          });
+
+          apiDetails["pathParams"] = "/" + props.saveGdm.current_group_id;
+          // props.getPaGrouptDescription(apiDetails);
+
+          props.getPaTypes(props.saveGdm.formulary_id);
           showMessage(SUCCESS_MSG["archive"], "success");
+        } else if (json?.payload?.status && json?.payload?.status != 200) {
+          showMessage(json.payload.data.message, "error");
         }
         setOpen(false);
       });
@@ -466,31 +465,36 @@ function PAGroupHeader(props: any) {
         lob_type: props.formulary_lob_id,
       })
       .then((json) => {
-        let apiDetails = {};
-        apiDetails["lob_type"] = props.formulary_lob_id;
-        apiDetails["pathParams"] = "/" + props.client_id;
-        props.getPaGrouptDescriptions(apiDetails);
-
-        apiDetails["pathParams"] = "/" + props.saveGdm.current_group_id;
-        props.getPaGrouptDescriptionVersions(apiDetails).then((json) => {
-          const response = json.payload.data;
-          const verLength = Object.keys(response).length;
-          const isEditable = response[verLength - 1].is_setup_complete;
-          const latestVerion = response[verLength - 1].id_pa_group_description;
-          const value = response[verLength - 1].value;
-          setIsSetupComplete(isEditable);
-          setVersion(response);
-          setPlaceHolder(value);
-
+        if (
+          json?.payload?.success?.status &&
+          json?.payload?.success?.status == 200
+        ) {
           let apiDetails = {};
           apiDetails["lob_type"] = props.formulary_lob_id;
-          apiDetails["pathParams"] = "/" + latestVerion;
-          props.getPaGrouptDescription(apiDetails);
-          props.getPaTypes(props.saveGdm.formulary_id);
-          setOpen(false);
-        });
+          apiDetails["pathParams"] = "/" + props.client_id;
+          props.getPaGrouptDescriptions(apiDetails);
 
-        if (json?.payload?.status && json?.payload?.status != 200) {
+          apiDetails["pathParams"] = "/" + props.saveGdm.current_group_id;
+          props.getPaGrouptDescriptionVersions(apiDetails).then((json) => {
+            const response = json.payload.data;
+            const verLength = Object.keys(response).length;
+            const isEditable = response[verLength - 1].is_setup_complete;
+            const latestVerion =
+              response[verLength - 1].id_pa_group_description;
+            const value = response[verLength - 1].value;
+            setIsSetupComplete(isEditable);
+            setVersion(response);
+            setPlaceHolder(value);
+
+            let apiDetails = {};
+            apiDetails["lob_type"] = props.formulary_lob_id;
+            apiDetails["pathParams"] = "/" + latestVerion;
+            props.getPaGrouptDescription(apiDetails);
+            props.getPaTypes(props.saveGdm.formulary_id);
+            setOpen(false);
+          });
+          showMessage(SUCCESS_MSG["newVersion"], "success");
+        } else if (json?.payload?.status && json?.payload?.status != 200) {
           if (
             json?.payload?.data?.formularies &&
             json?.payload?.data?.formularies?.length > 0
@@ -507,12 +511,7 @@ function PAGroupHeader(props: any) {
           }
           showMessage(json.payload.data.message, "error");
         }
-        if (
-          json?.payload?.success?.status &&
-          json?.payload?.success?.status == 200
-        ) {
-          showMessage(SUCCESS_MSG["newVersion"], "success");
-        }
+
         setOpen(false);
       });
   };
@@ -535,7 +534,7 @@ function PAGroupHeader(props: any) {
         onChange={onChange}
         style={{ border: "none" }}
       >
-        <option value=""></option>
+        {/* <option value=""></option> */}
         {versionList.map((e, index) =>
           versionListLength === index ? (
             <option value={e.value} selected>
@@ -733,6 +732,7 @@ function PAGroupHeader(props: any) {
           </Grid>
 
           <FrxDrugGridContainer
+            isDataLoaded
             isPinningEnabled={false}
             enableSearch={false}
             enableColumnDrag

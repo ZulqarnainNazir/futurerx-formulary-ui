@@ -26,6 +26,7 @@ import showMessage from "../../../../Utils/Toast";
 import SearchBox from "../../../../../shared/Frx-components/search-box/SearchBox";
 import getLobCode from "../../../../Utils/LobUtils";
 import { getIntelliscenseSearch } from "../../../../../../redux/slices/formulary/categoryClass/categoryClassActionCreation";
+import FrxLoader from "../../../../../shared/FrxLoader/FrxLoader";
 
 import "./TierReplace.scss";
 
@@ -55,6 +56,8 @@ interface tabsState {
   isFiltered: boolean;
   filteredInfo: any;
   filter: any[];
+  isSelectAll: boolean;
+  isRequestFinished: boolean;
 }
 
 const mapStateToProps = (state) => {
@@ -118,6 +121,8 @@ class TierReplace extends React.Component<any, tabsState> {
     searchData: Array(),
     isFiltered: false,
     filteredInfo: null,
+    isSelectAll: false,
+    isRequestFinished: true,
   };
 
   constructor(props) {
@@ -702,6 +707,9 @@ class TierReplace extends React.Component<any, tabsState> {
       this.state.selectedDrugs.length > 0 &&
       this.state.selectedTier !== -1
     ) {
+      this.setState({
+        isRequestFinished: false,
+      });
       let apiDetails = {};
       apiDetails["apiPart"] = tierConstants.APPLY_TIER;
       apiDetails["pathParams"] =
@@ -711,38 +719,68 @@ class TierReplace extends React.Component<any, tabsState> {
         "/" +
         commonConstants.TYPE_REPLACE;
       apiDetails["keyVals"] = [];
-      apiDetails["messageBody"] = {};
+      apiDetails["messageBody"] = {
+        category_list: "",
+        covered: {},
+        filter: [],
+        is_select_all: false,
+        not_covered: {},
+        removedformulary_drug_ids: [],
+        search_key: "",
+      };
       apiDetails["messageBody"]["selected_drug_ids"] = this.state.selectedDrugs;
       apiDetails["messageBody"]["id_tier"] = this.state.selectedTier;
+
+      if (this.props.advancedSearchBody && Object.keys(this.props.advancedSearchBody).length > 0) {
+        apiDetails["messageBody"] = Object.assign(apiDetails["messageBody"], this.props.advancedSearchBody);
+      }
+
+      apiDetails["messageBody"]['is_select_all'] = this.state.isSelectAll;
+
+      let allFilters = Array();
+      let filterProps = Array();
+      this.state.filter.map(filterInfo => {
+        allFilters.push(filterInfo);
+        filterProps.push(filterInfo["prop"]);
+      });
+
+      this.state.quickFilter.map(filterInfo => {
+        if (!filterProps.includes(filterInfo["prop"]))
+          allFilters.push(filterInfo);
+      });
+
+      apiDetails["messageBody"]["filter"] = allFilters;
 
       const saveData = this.props.postTierApplyInfo(apiDetails).then((json) => {
         console.log("Save response is:" + JSON.stringify(json));
         if (json.payload && json.payload.code && json.payload.code === "200") {
           showMessage("Success", "success");
-          this.state.drugData = [];
-          this.state.drugGridData = [];
-          this.populateGridData();
-
-          apiDetails = {};
-          apiDetails["apiPart"] = tierConstants.FORMULARY_TIERS;
-          apiDetails["pathParams"] = this.props?.formulary_id;
-          apiDetails["keyVals"] = [
-            {
-              key: commonConstants.KEY_ENTITY_ID,
-              value: this.props?.formulary_id,
-            },
-          ];
-
-          const TierDefinationData = this.props
-            .getTier(apiDetails)
-            .then((json) => {
-              this.setState({
-                tierGridContainer: true,
-              });
-            });
         } else {
           showMessage("Failure", "error");
         }
+        this.state.drugData = [];
+        this.state.drugGridData = [];
+        this.resetData();
+        this.populateGridData();
+
+        apiDetails = {};
+        apiDetails["apiPart"] = tierConstants.FORMULARY_TIERS;
+        apiDetails["pathParams"] = this.props?.formulary_id;
+        apiDetails["keyVals"] = [
+          {
+            key: commonConstants.KEY_ENTITY_ID,
+            value: this.props?.formulary_id,
+          },
+        ];
+
+        const TierDefinationData = this.props
+          .getTier(apiDetails)
+          .then((json) => {
+            this.setState({
+              tierGridContainer: true,
+              isRequestFinished: true,
+            });
+          });
       });
     }
   };
@@ -774,6 +812,7 @@ class TierReplace extends React.Component<any, tabsState> {
 
     this.state.filteredInfo = null;
     this.state.isFiltered = false;
+    this.state.isSelectAll = false;
   }
 
   componentWillReceiveProps(nextProps) {
@@ -898,9 +937,12 @@ class TierReplace extends React.Component<any, tabsState> {
           }
         }
       }
+    } else if (this.props.lobCode === "COMM") {
+      this.state.selectedFileKey = "COMMDF";
+      this.state.selectedFileType = "Drug Table";
     }
     this.resetData();
-    this.setState({ selectedTier: tierValue });
+    this.setState({ selectedTier: tierValue, tierGridContainer: false });
   };
 
   fileTypeDropDownSelectHandler = (value, event) => {
@@ -917,6 +959,7 @@ class TierReplace extends React.Component<any, tabsState> {
     }
     console.log("Selected file key is:" + fileKey);
     this.state.selectedFileKey = fileKey;
+    this.state.selectedFileType = fileType;
     //this.setState({ selectedFileKey: fileKey });
 
     this.resetData();
@@ -1020,7 +1063,7 @@ class TierReplace extends React.Component<any, tabsState> {
       (k) => this.state.fixedSelectedRows.indexOf(k) < 0
     );
     this.onSelectedTableRowChanged(selectedRows);
-    this.setState({ drugGridData: data });
+    this.setState({ drugGridData: data, isSelectAll: isSelected });
   };
   render() {
     const searchProps = {
@@ -1033,6 +1076,10 @@ class TierReplace extends React.Component<any, tabsState> {
       columns = columns.filter(
         (key) => !this.state.hiddenColumns.includes(key)
       );
+    }
+    console.log('Render selected file type is:' + this.state.selectedFileType);
+    if (!this.state.isRequestFinished) {
+      return <FrxLoader />;
     }
     return (
       <>

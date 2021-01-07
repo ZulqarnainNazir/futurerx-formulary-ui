@@ -51,8 +51,8 @@ class PTRemove extends React.Component<any, any> {
     return (
       <div className="tab-prremove pr-limit-settings bordered mb-10">
         <PanelHeader
-          title="patient residence settings"
-          tooltip="patient residence settings"
+          title="prescriber taxonomy criteria"
+          tooltip="prescriber taxonomy criteria"
         />
         {/* <div>
           <span style={{ marginLeft: 8 }}>

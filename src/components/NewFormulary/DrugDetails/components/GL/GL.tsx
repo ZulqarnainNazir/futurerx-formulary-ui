@@ -670,6 +670,11 @@ class DrugDetailGL extends React.Component<any, any> {
         //   //table-row--red-font (for red) table-row--green-font (for green) table-row--blue-font for default (for blue)
         //   gridItem["rowStyle"] = "table-row--blue-font";
         // }
+        
+        if (thisRef.props.configureSwitch) {
+          gridItem["isDisabled"] = true;
+          gridItem["rowStyle"] = "table-row--disabled-font";
+        }
 
         gridItem["genderLimit"] = element.is_gl ? "" + element.is_gl : "";
         gridItem["coveredGender"] = element.covered_genders
@@ -904,6 +909,7 @@ class DrugDetailGL extends React.Component<any, any> {
           { id: 2, text: "Append", disabled: false },
           { id: 3, text: "Remove", disabled: false },
         ],
+        showGrid: false,
       });
     }
 

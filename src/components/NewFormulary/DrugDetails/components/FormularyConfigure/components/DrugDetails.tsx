@@ -44,8 +44,13 @@ const mapStateToProps = (state) => {
   };
 };
 
+interface ddTopState {
+  activeTabIndex: number,
+  tabs: any[],
+}
+
 class DrugDetails extends React.Component<any, drugDetailsState> {
-  state = {
+  state: ddTopState = {
     activeTabIndex: 0,
     tabs: [],
   };
@@ -54,13 +59,10 @@ class DrugDetails extends React.Component<any, drugDetailsState> {
     let activeTabIndex = 0;
 
     console.log("The Tabs = ", this.state.tabs)
-    // debugger;
     const tabs = this.state.tabs.map((tab: TabInfo, index: number) => {
-      // debugger;
       console.log("The Tab index = ", index, " The Selected index = ", selectedTabIndex);
       if (index === selectedTabIndex) {
         activeTabIndex = index;
-        // debugger;
       }
       return tab;
     });
@@ -180,38 +182,29 @@ class DrugDetails extends React.Component<any, drugDetailsState> {
   }
 
   renderActiveTabContent = () => {
-    // debugger;
     const tabIndex = this.state.activeTabIndex;
     console.log("The Active Tab Index ==== ", tabIndex);
+    console.log("The Available Tabs = ", this.state.tabs);
+    let tabToRender = this.state.tabs[tabIndex]?.text;
     if (this.props.formulary_lob_id === 4) {
-      // debugger;
-      switch (tabIndex) {
-        case 0:
-          // debugger;
+      switch (tabToRender) {
+        case "AL":
           return <DrugDetailAL />;
-        case 1:
-          // debugger;
+        case "GL":
           return <DrugDetailGL />;
-        case 2:
-          // debugger;
+        case "ICD":
           return <DrugDetailICD />;
-        case 3:
-          // debugger;
+        case "PR":
           return <DrugDetailPR />;
-        case 4:
-          // debugger;
+        case "PN":
           return <DrugDetailPN />;
-        case 5:
-          // debugger;
+        case "PT":
           return <DrugDetailPT />;
-        case 6:
-          // debugger;
+        case "POS":
           return <DrugDetailPOS />;
-        case 7:
-          // debugger;
+        case "FFF":
           return <DrugDetailFFF />;
-        case 8:
-          // debugger;
+        case "Other":
           return <DrugDetailOther />;
       }
     } else {

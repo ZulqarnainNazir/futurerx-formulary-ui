@@ -540,6 +540,11 @@ class DrugDetailPN extends React.Component<any, any> {
             }
           }
         }
+        
+        if (thisRef.props.configureSwitch) {
+          gridItem["isDisabled"] = true;
+          gridItem["rowStyle"] = "table-row--disabled-font";
+        }
 
         gridItem["pharmacyNetwork"] = element.is_phnw
           ? "" + element.is_phnw
@@ -674,14 +679,12 @@ class DrugDetailPN extends React.Component<any, any> {
   };
 
   validateGLForm = () => {
-    if(this.state.activeTabIndex === 0) {
+    if(this.state.activeTabIndex === 0 || this.state.activeTabIndex === 1) {
       return !(this.state.selectedList.length === 0);
 
     } else if(this.state.activeTabIndex === 2) {
       return !(this.state.pnRemoveCheckedList.length === 0);
     }
-
-    return true;
   }
 
   showGridHandler = () => {
@@ -716,7 +719,9 @@ class DrugDetailPN extends React.Component<any, any> {
   refreshSelections = ({ activeTabIndex = 0 }) => {
     if(activeTabIndex === 0 || activeTabIndex === 1) {
       // this.getPOSSettings();
+      this.setState({ selectedList: [] });
     } else if (activeTabIndex === 2) {
+      this.setState({ pnRemoveCheckedList: [] });
       this.getPNCriteriaList(true);
     }
   }
@@ -728,19 +733,25 @@ class DrugDetailPN extends React.Component<any, any> {
     // }
 
     if (nextProps.configureSwitch){
-      this.setState({tabs:[
-        { id: 1, text: "Replace", disabled: true },
-        { id: 2, text: "Append", disabled: true },
-        { id: 3, text: "Remove", disabled: true },
-      ], activeTabIndex:0});
+      this.setState({
+        tabs:[
+          { id: 1, text: "Replace", disabled: true },
+          { id: 2, text: "Append", disabled: true },
+          { id: 3, text: "Remove", disabled: true },
+        ], 
+        activeTabIndex:0
+      });
 
       this.getPNDrugsList();
     } else {
-      this.setState({tabs:[
-        { id: 1, text: "Replace", disabled:false },
-        { id: 2, text: "Append", disabled:false },
-        { id: 3, text: "Remove", disabled:false },
-      ]});
+      this.setState({
+        tabs:[
+          { id: 1, text: "Replace", disabled:false },
+          { id: 2, text: "Append", disabled:false },
+          { id: 3, text: "Remove", disabled:false },
+        ],
+        showGrid: false,
+      });
     }
 
     if (nextProps.advancedSearchBody && nextProps.populateGrid) {
@@ -1059,6 +1070,7 @@ class DrugDetailPN extends React.Component<any, any> {
         </div>
         {(this.state.activeTabIndex == 0 || this.state.activeTabIndex == 1) && (
           <PnLimitSettings
+            key={this.state.activeTabIndex}
             options={this.state.replaceTab.searchResult}
             handleReplaceSrch={this.handleReplaceSrch}
             handleStatus={this.handleStatus}
