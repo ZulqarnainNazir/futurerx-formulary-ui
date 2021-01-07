@@ -32,7 +32,7 @@ const FormularyDashboardStatsChart = (props) => {
       <div className="chart-data">
         <div className="chart-data__container">  
           <div className="chart-data__value">{props.total?props.total:stats.average}</div>
-          <div className="chart-data__label">Validations</div>
+          {/* <div className="chart-data__label">Validations</div> */}
         </div>
       </div>
     </div>

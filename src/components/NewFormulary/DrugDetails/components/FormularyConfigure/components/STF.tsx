@@ -45,7 +45,8 @@ function mapDispatchToProps(dispatch) {
     getStTypes: (a) => dispatch(getStTypes(a)),
     getDrugLists: (a) => dispatch(getDrugLists(a)),
     postFormularyDrugST: (a) => dispatch(postFormularyDrugST(a)),
-    getStGrouptDescriptionVersions: (a) => dispatch(getStGrouptDescriptionVersions(a)),
+    getStGrouptDescriptionVersions: (a) =>
+      dispatch(getStGrouptDescriptionVersions(a)),
     postApplyFormularyDrugST: (a) => dispatch(postApplyFormularyDrugST(a)),
     setAdvancedSearch: (a) => dispatch(setAdvancedSearch(a)),
     setAdditionalCriteria: (a) => dispatch(setAdditionalCriteria(a)),
@@ -71,7 +72,12 @@ const mapStateToProps = (state) => {
 class STF extends React.Component<any, any> {
   state = {
     selectFormulary: false,
-    panelGridTitle1: ["Value Based Insurance", "Number of Drugs", "added drugs", "removed drugs"],
+    panelGridTitle1: [
+      "Value Based Insurance",
+      "Number of Drugs",
+      "added drugs",
+      "removed drugs",
+    ],
     panelTitleAlignment1: ["left", "left", "left", "left"],
     panelGridValue1: [],
     isNotesOpen: false,
@@ -118,8 +124,8 @@ class STF extends React.Component<any, any> {
     searchValue: "",
     searchData: Array(),
     showStGroupDescription: false,
-    selectedGroupDescriptionObj:{},
-    isSelectAll:false,
+    selectedGroupDescriptionObj: {},
+    isSelectAll: false,
   };
 
   // onSelectedTableRowChanged = (selectedRowKeys) => {
@@ -132,8 +138,8 @@ class STF extends React.Component<any, any> {
   openTierGridContainer = () => {
     this.state.drugData = [];
     this.state.drugGridData = [];
-    this.state.selectedRowKeys =[]; 
-    
+    this.state.selectedRowKeys = [];
+
     if (this.state.selectedGroupDescription === null) {
       showMessage("Group Description is required", "info");
       return;
@@ -149,7 +155,10 @@ class STF extends React.Component<any, any> {
       return;
     }
 
-    if (this.state.showStConfiguration && this.state.selectedLobFormulary["id_formulary"] === undefined) {
+    if (
+      this.state.showStConfiguration &&
+      this.state.selectedLobFormulary["id_formulary"] === undefined
+    ) {
       showMessage("Related Formulary is required", "info");
       return;
     }
@@ -216,62 +225,88 @@ class STF extends React.Component<any, any> {
       let apiDetails = {};
       // apiDetails['apiPart'] = constants.APPLY_TIER;
       apiDetails["lob_type"] = this.props.formulary_lob_id;
-      apiDetails["pathParams"] = this.props?.formulary_id + "/" + this.state.fileType + "/" + this.props.tab_type;
-      apiDetails["keyVals"] = [{ key: constants.KEY_ENTITY_ID, value: this.props?.formulary_id }];
+      apiDetails["pathParams"] =
+        this.props?.formulary_id +
+        "/" +
+        this.state.fileType +
+        "/" +
+        this.props.tab_type;
+      apiDetails["keyVals"] = [
+        { key: constants.KEY_ENTITY_ID, value: this.props?.formulary_id },
+      ];
       apiDetails["messageBody"] = {
         covered: {},
         filter: [],
         is_select_all: false,
         not_covered: {},
         search_key: "",
-        drug_list:"",
-        prev_formulary:"",
+        drug_list: "",
+        prev_formulary: "",
       };
-      if (this.props.advancedSearchBody && Object.keys(this.props.advancedSearchBody).length > 0) {
-        apiDetails["messageBody"] = Object.assign(apiDetails["messageBody"], this.props.advancedSearchBody);
+      if (
+        this.props.advancedSearchBody &&
+        Object.keys(this.props.advancedSearchBody).length > 0
+      ) {
+        apiDetails["messageBody"] = Object.assign(
+          apiDetails["messageBody"],
+          this.props.advancedSearchBody
+        );
       }
 
-      apiDetails["messageBody"]['is_select_all'] = this.state.isSelectAll;
+      apiDetails["messageBody"]["is_select_all"] = this.state.isSelectAll;
 
       let allFilters = Array();
       let filterProps = Array();
-      this.state.filter.map(filterInfo => {
+      this.state.filter.map((filterInfo) => {
         allFilters.push(filterInfo);
         filterProps.push(filterInfo["prop"]);
       });
 
-      this.state.quickFilter.map(filterInfo => {
+      this.state.quickFilter.map((filterInfo) => {
         if (!filterProps.includes(filterInfo["prop"]))
           allFilters.push(filterInfo);
       });
 
       apiDetails["messageBody"]["filter"] = allFilters;
       apiDetails["messageBody"]["selected_drug_ids"] = this.state.selectedDrugs;
-      apiDetails["messageBody"]["base_st_group_description_id"] = Number(this.state.selectedGroupDescription);
-      apiDetails["messageBody"]["id_st_group_description"] = this.state.selectedLastestedVersion;
-      apiDetails["messageBody"]["id_st_type"] = Number(this.state.selectedStType);
+      apiDetails["messageBody"]["base_st_group_description_id"] = Number(
+        this.state.selectedGroupDescription
+      );
+      apiDetails["messageBody"][
+        "id_st_group_description"
+      ] = this.state.selectedLastestedVersion;
+      apiDetails["messageBody"]["id_st_type"] = Number(
+        this.state.selectedStType
+      );
       apiDetails["messageBody"]["search_key"] = "";
       apiDetails["messageBody"]["st_value"] = Number(this.state.stValue);
 
-      if (this.state.additionalCriteriaState != null && this.state.is_additional_criteria_defined) {
+      if (
+        this.state.additionalCriteriaState != null &&
+        this.state.is_additional_criteria_defined
+      ) {
         apiDetails["messageBody"]["is_custom_additional_criteria"] = true;
-        apiDetails["messageBody"]["um_criteria"] = this.state.additionalCriteriaState;
+        apiDetails["messageBody"][
+          "um_criteria"
+        ] = this.state.additionalCriteriaState;
       } else {
         apiDetails["messageBody"]["is_custom_additional_criteria"] = false;
         apiDetails["messageBody"]["um_criteria"] = [];
       }
 
-      const saveData = this.props.postApplyFormularyDrugST(apiDetails).then((json) => {
-        console.log("Save response is:" + JSON.stringify(json));
-        if (json.payload && json.payload.code === "200") {
-          this.state.drugData = [];
-          this.state.drugGridData = [];
-          this.populateGridData();
-          this.props.getStSummary(this.props?.formulary_id).then((json) => {
-            this.setState({ tierGridContainer: true });
-          });
-        }
-      });
+      const saveData = this.props
+        .postApplyFormularyDrugST(apiDetails)
+        .then((json) => {
+          console.log("Save response is:" + JSON.stringify(json));
+          if (json.payload && json.payload.code === "200") {
+            this.state.drugData = [];
+            this.state.drugGridData = [];
+            this.populateGridData();
+            this.props.getStSummary(this.props?.formulary_id).then((json) => {
+              this.setState({ tierGridContainer: true });
+            });
+          }
+        });
     }
   };
 
@@ -310,7 +345,7 @@ class STF extends React.Component<any, any> {
         selectedStType: null,
         is_additional_criteria_defined: false,
       });
-      this.populateGridData(null,nextProps.configureSwitch );
+      this.populateGridData(null, nextProps.configureSwitch);
     } else {
       this.setState({ tierGridContainer: false });
     }
@@ -323,12 +358,12 @@ class STF extends React.Component<any, any> {
     let apiDetails = {};
     apiDetails["lob_type"] = this.props.formulary_lob_id;
     apiDetails["pathParams"] = "/" + tmp_value;
-    this.state.showStGroupDescription=false;
+    this.state.showStGroupDescription = false;
     let selected = this.state.stGroupDescription.filter(
       (obj) => obj[this.state.groupDescriptionProp] == tmp_value
     )[0];
     this.setState({
-      selectedGroupDescriptionObj : selected
+      selectedGroupDescriptionObj: selected,
     });
     this.props.getStGrouptDescriptionVersions(apiDetails).then((json) => {
       let data = json.payload.data;
@@ -351,11 +386,17 @@ class STF extends React.Component<any, any> {
       });
       let tmp_additionalCriteria = false;
       this.props
-        .getStGrouptDescription({ lob_type: this.props.formulary_lob_id, pathParams: "/" + latestVersionId })
+        .getStGrouptDescription({
+          lob_type: this.props.formulary_lob_id,
+          pathParams: "/" + latestVersionId,
+        })
         .then((json) => {
           this.props.setAdditionalCriteria([]);
           if (json.payload && json.payload.code === "200") {
-            if (json.payload.data["um_criteria"] != null && json.payload.data["um_criteria"].length > 0) {
+            if (
+              json.payload.data["um_criteria"] != null &&
+              json.payload.data["um_criteria"].length > 0
+            ) {
               let payload: any = {};
               payload.additionalCriteriaBody = json.payload.data["um_criteria"];
               this.props.setAdditionalCriteria(payload);
@@ -411,15 +452,17 @@ class STF extends React.Component<any, any> {
     this.setState({ [tmp_key]: tmp_value });
   };
 
-  populateGridData = (searchBody = null, switchState=false) => {
+  populateGridData = (searchBody = null, switchState = false) => {
     console.log("Populate grid data is called");
     let apiDetails = {};
-    apiDetails['messageBody']={};
+    apiDetails["messageBody"] = {};
     apiDetails["lob_type"] = this.props.formulary_lob_id;
     // let tmpGroup :any = this.state.paGroupDescriptions.filter(obj  => obj.id_mcr_base_pa_group_description === this.state.selectedGroupDescription);
     let tmp_fileType: any = "";
     if (!(this.props.configureSwitch || switchState)) {
-      apiDetails["messageBody"]["base_st_group_description_id"] = this.state.selectedGroupDescription;
+      apiDetails["messageBody"][
+        "base_st_group_description_id"
+      ] = this.state.selectedGroupDescription;
       apiDetails["messageBody"]["id_st_type"] = this.state.selectedStType;
       apiDetails["messageBody"]["st_value"] = this.state.stValue;
       tmp_fileType = this.state.fileType;
@@ -438,12 +481,12 @@ class STF extends React.Component<any, any> {
 
     let allFilters = Array();
     let filterProps = Array();
-    this.state.filter.map(filterInfo => {
+    this.state.filter.map((filterInfo) => {
       allFilters.push(filterInfo);
       filterProps.push(filterInfo["prop"]);
     });
 
-    this.state.quickFilter.map(filterInfo => {
+    this.state.quickFilter.map((filterInfo) => {
       if (!filterProps.includes(filterInfo["prop"]))
         allFilters.push(filterInfo);
     });
@@ -453,12 +496,12 @@ class STF extends React.Component<any, any> {
     // if (this.state.sort_by && this.state.sort_by.length ==0){
     //   this.state.sort_by.push({ key: 'drug_label_name', value: 'asc' });
     // }
-    
+
     if (this.state.sort_by && this.state.sort_by.length > 0) {
       let keys = Array();
       let values = Array();
 
-      this.state.sort_by.map(keyPair => {
+      this.state.sort_by.map((keyPair) => {
         keys.push(keyPair["key"]);
         values.push(keyPair["value"]);
       });
@@ -467,76 +510,102 @@ class STF extends React.Component<any, any> {
       apiDetails["messageBody"]["sort_order"] = values;
     }
 
-    apiDetails["pathParams"] = this.props?.formulary_id + "/" + tmp_fileType + "/";
+    apiDetails["pathParams"] =
+      this.props?.formulary_id + "/" + tmp_fileType + "/";
     apiDetails["keyVals"] = [
       { key: constants.KEY_ENTITY_ID, value: this.props?.formulary_id },
       { key: constants.KEY_INDEX, value: this.state.index },
       { key: constants.KEY_LIMIT, value: this.state.limit },
     ];
-   
+
     if (searchBody) {
-      apiDetails["messageBody"] = Object.assign(apiDetails["messageBody"], searchBody);
+      apiDetails["messageBody"] = Object.assign(
+        apiDetails["messageBody"],
+        searchBody
+      );
     }
 
-    const drugGridDate = this.props.postFormularyDrugST(apiDetails).then((json) => {
-      if (json.payload != null && json.payload.code === "200") {
-        let tmpData = json.payload.result;
-        var data: any[] = [];
-        let count = 1;
-        let selected = this.state.stGroupDescription.filter(
-          (obj) => obj[this.state.groupDescriptionProp] == this.state.selectedGroupDescription
-        )[0];
-        debugger;
-        let thisRef = this;
-        var gridData = tmpData.map(function (el) {
-          var element = Object.assign({}, el);
-          data.push(element);
-          let gridItem = {};
-          gridItem["id"] = count;
-          gridItem["key"] = count;
+    const drugGridDate = this.props
+      .postFormularyDrugST(apiDetails)
+      .then((json) => {
+        if (json.payload != null && json.payload.code === "200") {
+          let tmpData = json.payload.result;
+          var data: any[] = [];
+          let count = 1;
+          let selected = this.state.stGroupDescription.filter(
+            (obj) =>
+              obj[this.state.groupDescriptionProp] ==
+              this.state.selectedGroupDescription
+          )[0];
           debugger;
-          if (selected && selected["st_group_description_name"] === element.st_group_description) {
-            //console.log("element value tier ", selectedGroup, element.pa_group_description);
-            gridItem["isChecked"] = true;
-            gridItem["isDisabled"] = true;
-            // decide on class names based on data properties conditionally
-            // the required styles are added under each classNames in FrxGrid.scss (towards the end)
-            //table-row--red-font (for red) table-row--green-font (for green) table-row--blue-font for default (for blue)
-            gridItem["rowStyle"] = "table-row--blue-font";
-          }
-          if (thisRef.props.configureSwitch) {
-            gridItem["isDisabled"] = true;
-            gridItem["rowStyle"] = "table-row--disabled-font";
-          }
-          gridItem["tier"] = element.tier_value;
-          gridItem["is_um_criteria"] = element.is_um_criteria;
-          gridItem["st_group_description"] = element.st_group_description;
-          gridItem["st_type"] = element.st_type;
-          gridItem["st_value"] = element.st_value;
-          gridItem["file_type"] = element.file_type ? "" + element.file_type : "";
-          gridItem["data_source"] = element.data_source ? "" + element.data_source : "";
-          gridItem["drug_label_name"] = element.drug_label_name ? "" + element.drug_label_name : "";
-          gridItem["ndc"] = "";
-          gridItem["rxcui"] = element.rxcui ? "" + element.rxcui : "";
-          gridItem["generic_product_identifier"] = element.generic_product_identifier ? "" + element.generic_product_identifier : "";
-          gridItem["trademark_code"] = element.trademark_code ? "" + element.trademark_code : "";
-          gridItem["database_category"] = element.database_category ? "" + element.database_category : "";
-          count++;
-          return gridItem;
-        });
-        this.setState({
-          drugData: data,
-          drugGridData: gridData,
-          dataCount: json.payload.count,
-        });
-      }else{
-        this.setState({
-          drugData: Array(),
-          drugGridData: Array(),
-          dataCount: 0
-        });
-      }
-    });
+          let thisRef = this;
+          var gridData = tmpData.map(function (el) {
+            var element = Object.assign({}, el);
+            data.push(element);
+            let gridItem = {};
+            gridItem["id"] = count;
+            gridItem["key"] = count;
+            debugger;
+            if (
+              selected &&
+              selected["st_group_description_name"] ===
+                element.st_group_description
+            ) {
+              //console.log("element value tier ", selectedGroup, element.pa_group_description);
+              gridItem["isChecked"] = true;
+              gridItem["isDisabled"] = true;
+              // decide on class names based on data properties conditionally
+              // the required styles are added under each classNames in FrxGrid.scss (towards the end)
+              //table-row--red-font (for red) table-row--green-font (for green) table-row--blue-font for default (for blue)
+              gridItem["rowStyle"] = "table-row--blue-font";
+            }
+            if (thisRef.props.configureSwitch) {
+              gridItem["isDisabled"] = true;
+              gridItem["rowStyle"] = "table-row--disabled-font";
+            }
+            gridItem["tier"] = element.tier_value;
+            gridItem["is_um_criteria"] = element.is_um_criteria;
+            gridItem["st_group_description"] = element.st_group_description;
+            gridItem["st_type"] = element.st_type;
+            gridItem["st_value"] = element.st_value;
+            gridItem["file_type"] = element.file_type
+              ? "" + element.file_type
+              : "";
+            gridItem["data_source"] = element.data_source
+              ? "" + element.data_source
+              : "";
+            gridItem["drug_label_name"] = element.drug_label_name
+              ? "" + element.drug_label_name
+              : "";
+            gridItem["ndc"] = "";
+            gridItem["rxcui"] = element.rxcui ? "" + element.rxcui : "";
+            gridItem[
+              "generic_product_identifier"
+            ] = element.generic_product_identifier
+              ? "" + element.generic_product_identifier
+              : "";
+            gridItem["trademark_code"] = element.trademark_code
+              ? "" + element.trademark_code
+              : "";
+            gridItem["database_category"] = element.database_category
+              ? "" + element.database_category
+              : "";
+            count++;
+            return gridItem;
+          });
+          this.setState({
+            drugData: data,
+            drugGridData: gridData,
+            dataCount: json.payload.count,
+          });
+        } else {
+          this.setState({
+            drugData: Array(),
+            drugGridData: Array(),
+            dataCount: 0,
+          });
+        }
+      });
     this.setState({ tierGridContainer: true });
   };
 
@@ -551,7 +620,7 @@ class STF extends React.Component<any, any> {
     if (order) {
       let sortOrder = order === "ascend" ? "asc" : "desc";
       this.state.sort_by = this.state.sort_by.filter(
-        keyPair => keyPair["key"] !== key
+        (keyPair) => keyPair["key"] !== key
       );
       this.state.sort_by.push({ key: key, value: sortOrder });
     }
@@ -560,7 +629,7 @@ class STF extends React.Component<any, any> {
       gridSingleSortInfo: sortedInfo,
       isGridSingleSorted: true,
       isGridMultiSorted: false,
-      gridMultiSortedInfo: []
+      gridMultiSortedInfo: [],
     });
     if (this.props.advancedSearchBody) {
       this.populateGridData(this.props.advancedSearchBody);
@@ -569,24 +638,26 @@ class STF extends React.Component<any, any> {
     }
   };
 
-  onApplyFilterHandler = filters => {
+  onApplyFilterHandler = (filters) => {
     console.log("filtering from be:" + JSON.stringify(filters));
     //this.state.filter = Array();
     const fetchedKeys = Object.keys(filters);
     if (fetchedKeys && fetchedKeys.length > 0) {
       fetchedKeys.map((fetchedProps) => {
         if (filters[fetchedProps]) {
-          this.state.filter = this.state.filter.filter(element => element['prop'] !== fetchedProps);
+          this.state.filter = this.state.filter.filter(
+            (element) => element["prop"] !== fetchedProps
+          );
           const fetchedOperator =
             filters[fetchedProps][0].condition === "is like"
               ? "is_like"
               : filters[fetchedProps][0].condition === "is not"
-                ? "is_not"
-                : filters[fetchedProps][0].condition === "is not like"
-                  ? "is_not_like"
-                  : filters[fetchedProps][0].condition === "does not exist"
-                    ? "does_not_exist"
-                    : filters[fetchedProps][0].condition;
+              ? "is_not"
+              : filters[fetchedProps][0].condition === "is not like"
+              ? "is_not_like"
+              : filters[fetchedProps][0].condition === "does not exist"
+              ? "does_not_exist"
+              : filters[fetchedProps][0].condition;
           const fetchedValues =
             filters[fetchedProps][0].value !== ""
               ? [filters[fetchedProps][0].value.toString()]
@@ -608,8 +679,6 @@ class STF extends React.Component<any, any> {
       this.populateGridData();
     }
   };
-
-
 
   onClickTab = (selectedTabIndex: number) => {
     let activeTabIndex = 0;
@@ -654,7 +723,9 @@ class STF extends React.Component<any, any> {
     apiDetails_1["lob_type"] = this.props.formulary_lob_id;
     apiDetails_1["pathParams"] = "/" + this.props?.client_id;
     this.props.getStGrouptDescriptions(apiDetails_1).then((json) => {
-      let result = json.payload.data.filter((obj) => !obj.is_archived && obj.is_setup_complete);
+      let result = json.payload.data.filter(
+        (obj) => !obj.is_archived && obj.is_setup_complete
+      );
       this.setState({
         stGroupDescription: result,
       });
@@ -685,33 +756,32 @@ class STF extends React.Component<any, any> {
 
   applyMultiSortHandler = (sorter, multiSortedInfo) => {
     console.log("Multisort info:" + JSON.stringify(sorter));
-    
-		
-		this.setState(  {
-			isGridMultiSorted: true,
-			isGridSingleSorted: false,
-			gridMultiSortedInfo: multiSortedInfo,
-			gridSingleSortInfo: null,
-		})
+
+    this.setState({
+      isGridMultiSorted: true,
+      isGridSingleSorted: false,
+      gridMultiSortedInfo: multiSortedInfo,
+      gridSingleSortInfo: null,
+    });
 
     if (sorter && sorter.length > 0) {
       let uniqueKeys = Array();
       let filteredSorter = Array();
-      sorter.map(sortInfo => {
+      sorter.map((sortInfo) => {
         if (uniqueKeys.includes(sortInfo["columnKey"])) {
         } else {
           filteredSorter.push(sortInfo);
           uniqueKeys.push(sortInfo["columnKey"]);
         }
       });
-      filteredSorter.map(sortInfo => {
+      filteredSorter.map((sortInfo) => {
         let sortOrder = sortInfo["order"] === "ascend" ? "asc" : "desc";
         this.state.sort_by = this.state.sort_by.filter(
-          keyPair => keyPair["key"] !== sortInfo["columnKey"]
+          (keyPair) => keyPair["key"] !== sortInfo["columnKey"]
         );
         this.state.sort_by.push({
           key: sortInfo["columnKey"],
-          value: sortOrder
+          value: sortOrder,
         });
       });
     }
@@ -830,9 +900,11 @@ class STF extends React.Component<any, any> {
       // else d["isSelected"] = false;
       return d;
     });
-    const selectedRows: number[] = selectedRowKeys.filter((k) => this.state.fixedSelectedRows.indexOf(k) < 0);
+    const selectedRows: number[] = selectedRowKeys.filter(
+      (k) => this.state.fixedSelectedRows.indexOf(k) < 0
+    );
     this.onSelectedTableRowChanged(selectedRows);
-    this.setState({ drugGridData: data,isSelectAll:isSelected  });
+    this.setState({ drugGridData: data, isSelectAll: isSelected });
   };
   render() {
     const searchProps = {
@@ -841,7 +913,7 @@ class STF extends React.Component<any, any> {
     };
     const { isAdditionalCriteriaOpen } = this.state;
     return (
-      <div className=" stf-root">
+      <div className="stf-root">
         <div className="modify-wrapper  white-bg">
           <div className="settings-form">
             <Grid container>
@@ -861,19 +933,33 @@ class STF extends React.Component<any, any> {
 
                   <div className="input-element">
                     <div className="bordered pointer bg-green">
-                      <span onClick={(e) => {this.setState({ showStGroupDescription: true });}} className="inner-font">
-                        {this.state.selectedGroupDescriptionObj["st_group_description_name"]
-                          ? this.state.selectedGroupDescriptionObj["st_group_description_name"]
+                      <span
+                        onClick={(e) => {
+                          this.setState({ showStGroupDescription: true });
+                        }}
+                        className="inner-font"
+                      >
+                        {this.state.selectedGroupDescriptionObj[
+                          "st_group_description_name"
+                        ]
+                          ? this.state.selectedGroupDescriptionObj[
+                              "st_group_description_name"
+                            ]
                           : "Select Group Description"}
                       </span>
-                      <EditIcon onClick={(e) =>{this.setState({ showStGroupDescription: true });}} className={"hide-edit-icon"} />
+                      <EditIcon
+                        onClick={(e) => {
+                          this.setState({ showStGroupDescription: true });
+                        }}
+                        className={"hide-edit-icon"}
+                      />
                     </div>
                   </div>
                 </div>
 
                 <div className="group mb-20">
                   <label>
-                    Do you want to view existing ST configurations in another formulary?{" "}
+                    view existing ST configurations in another formulary?
                     <span className="astrict">*</span>
                   </label>
                   <Space size="large">
@@ -882,14 +968,18 @@ class STF extends React.Component<any, any> {
                         label="Yes"
                         name="add-filter-1"
                         // checked={isAdditionalCriteriaOpen}
-                        onClick={() => this.setState({ showStConfiguration: true })}
+                        onClick={() =>
+                          this.setState({ showStConfiguration: true })
+                        }
                         disabled={this.props.editable}
                       />
                       <RadioButton
                         label="No"
                         name="add-filter-1"
                         // checked={!isAdditionalCriteriaOpen}
-                        onClick={() => this.setState({ showStConfiguration: false })}
+                        onClick={() =>
+                          this.setState({ showStConfiguration: false })
+                        }
                         disabled={this.props.editable}
                       />
                     </div>
@@ -897,7 +987,8 @@ class STF extends React.Component<any, any> {
 
                   <div className="group mb-20">
                     <label>
-                      do you want to add additional criteria? <span className="astrict">*</span>
+                      do you want to add additional criteria?{" "}
+                      <span className="astrict">*</span>
                     </label>
                     <Space size="large">
                       <div className="marketing-material radio-group">
@@ -907,7 +998,9 @@ class STF extends React.Component<any, any> {
                           // checked={isAdditionalCriteriaOpen}
                           onClick={() => {
                             this.setState({ isAdditionalCriteriaOpen: true });
-                            this.setState({ is_additional_criteria_defined: true });
+                            this.setState({
+                              is_additional_criteria_defined: true,
+                            });
                           }}
                           disabled={this.props.editable}
                         />
@@ -916,7 +1009,9 @@ class STF extends React.Component<any, any> {
                           name="add-filter"
                           // checked={!isAdditionalCriteriaOpen}
                           onClick={() => {
-                            this.setState({ is_additional_criteria_defined: false });
+                            this.setState({
+                              is_additional_criteria_defined: false,
+                            });
                           }}
                           disabled={this.props.editable}
                         />
@@ -950,17 +1045,24 @@ class STF extends React.Component<any, any> {
                 {this.state.showStConfiguration ? (
                   <div className="group mb-20">
                     <label>
-                      Select Related Formulary to View Existing configuration? <span className="astrict">*</span>
+                      Select Related Formulary to View Existing configuration?{" "}
+                      <span className="astrict">*</span>
                     </label>
                     {/* <DropDown options={this.state.lobFormularies} valueProp="id_formulary" dispProp="formulary_name" onSelect={this.dropDownSelectHandlerLob} disabled={this.props.configureSwitch}/> */}
                     <div className="input-element">
                       <div className="bordered pointer bg-green">
-                        <span onClick={(e) => this.handleIconClick()} className="inner-font">
+                        <span
+                          onClick={(e) => this.handleIconClick()}
+                          className="inner-font"
+                        >
                           {this.state.selectedLobFormulary["formulary_name"]
                             ? this.state.selectedLobFormulary["formulary_name"]
                             : "Select Formulary"}
                         </span>
-                        <EditIcon onClick={(e) => this.handleIconClick()} className={"hide-edit-icon"} />
+                        <EditIcon
+                          onClick={(e) => this.handleIconClick()}
+                          className={"hide-edit-icon"}
+                        />
                       </div>
                     </div>
                   </div>
@@ -984,7 +1086,11 @@ class STF extends React.Component<any, any> {
               </Grid>
             </Grid>
             <Box display="flex" justifyContent="flex-end">
-              <Button label="Apply" onClick={this.settingFormApplyHandler} disabled={this.props.configureSwitch} />
+              <Button
+                label="Apply"
+                onClick={this.settingFormApplyHandler}
+                disabled={this.props.configureSwitch}
+              />
             </Box>
           </div>
 
@@ -999,7 +1105,9 @@ class STF extends React.Component<any, any> {
                       onClick={this.advanceSearchClickHandler}
                       disabled={this.props.configureSwitch}
                     />
-                    {!this.props.configureSwitch && <Button label="Save" onClick={this.handleSave} />}
+                    {!this.props.configureSwitch && (
+                      <Button label="Save" onClick={this.handleSave} />
+                    )}
                   </div>
                 </div>
 
@@ -1023,7 +1131,9 @@ class STF extends React.Component<any, any> {
                     customSettingIcon={"FILL-DOT"}
                     settingsWidth={30}
                     pageSize={this.state.limit}
-                    selectedCurrentPage={this.state.index / this.state.limit + 1}
+                    selectedCurrentPage={
+                      this.state.index / this.state.limit + 1
+                    }
                     totalRowsCount={this.state.dataCount}
                     getPerPageItemSize={this.onPageSize}
                     onGridPageChangeHandler={this.onGridPageChangeHandler}
@@ -1101,7 +1211,12 @@ class STF extends React.Component<any, any> {
           >
             {/* <SelectFormularyPopUp formularyToggle={this.formularyToggle} /> */}
             {/* <CloneFormularyPopup type="medicare" /> */}
-            <GPM isPopUpView={true} selectGroupDescriptionClick={this.dropDownSelectHandlerGroupDescription} />
+            <GPM
+              isPopUpView={true}
+              selectGroupDescriptionClick={
+                this.dropDownSelectHandlerGroupDescription
+              }
+            />
           </DialogPopup>
         )}
         <ToastContainer />

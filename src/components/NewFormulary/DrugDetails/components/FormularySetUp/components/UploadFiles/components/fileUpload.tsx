@@ -13,7 +13,7 @@ const uploadData = [
         key: 1,
         file_name: "FRX Standard Template",
         upload_status: "Complete",
-        user: "Phoebe Edmunds",
+        user: "Preeti Patel",
         uload_date: "09/09/2020 @ 10:21 AM"
     },
     {
@@ -21,7 +21,7 @@ const uploadData = [
         key: 2,
         file_name: "FRX Standard Template 1",
         upload_status: "Complete",
-        user: "Phoebe Edmunds",
+        user: "Preeti Patel",
         uload_date: "09/09/2020 @ 10:21 AM"
     },
     {
@@ -29,7 +29,7 @@ const uploadData = [
         key: 3,
         file_name: "FRX Standard Template 2",
         upload_status: "Complete",
-        user: "Edmunds Phoebe",
+        user: "Preeti Patel",
         uload_date: "09/09/2020 @ 10:21 AM"
     }
 ]

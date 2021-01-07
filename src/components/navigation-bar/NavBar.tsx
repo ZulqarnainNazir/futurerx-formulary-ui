@@ -4,7 +4,7 @@ import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
 import Divider from "@material-ui/core/Divider";
 import {Avatar} from "@material-ui/core";
-import Logo from "../../assets/icons/_branding.png";
+import Logo from "../../assets/icons/RemedyOne.svg";
 import NavIcon from "../../assets/icons/_avatar.png";
 import DropDown from "../shared/Frx-components/dropdown/DropDown";
 import {Container} from "@material-ui/core";
@@ -12,6 +12,7 @@ import {Container} from "@material-ui/core";
 import SubNavBar from "./sub-navbar/SubNavBar";
 
 import "./NavBar.scss";
+import AccountCircleIcon from "@material-ui/icons/AccountCircle";
 
 interface Props extends RouteComponentProps{
   history: any;
@@ -74,18 +75,19 @@ class NavBar extends Component<Props, State> {
                   </svg>
 
                   <Divider orientation="vertical" className="navbar-item" />
+                  <AccountCircleIcon className="empty-avatar navbar-item"></AccountCircleIcon>
 
-                  <Avatar
+                  {/* <Avatar
                     className="navbar-item"
                     component="span"
                     style={{height: "25px", width: "25px"}}
                     alt="NavIcon"
                     src={NavIcon}
-                  />
+                  /> */}
 
                   <DropDown
-                    placeholder="Lalith Denduluri"
-                    options={["Select ", "Lalith Denduluri"]}
+                    placeholder="Preeti Patel"
+                    options={["Select ", "Preeti Patel"]}
                   />
                 </Container>
               </div>

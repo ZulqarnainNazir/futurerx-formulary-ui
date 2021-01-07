@@ -1188,7 +1188,7 @@ class Tier extends React.Component<any, tabsState> {
                           <div className="modify-wrapper white-bg tier-modify-panel">
                             <div className="modify-panel">
                               <div className="icon">
-                                <span>R</span>
+                                <span>P</span>
                               </div>
                               <div className="switch-box">
                                 <CustomizedSwitches
