@@ -44,6 +44,7 @@ import * as categoryConstants from "../../../../../../api/http-category-class";
 import getLobCode from "../../../../Utils/LobUtils";
 import showMessage from "../../../../Utils/Toast";
 import { ToastContainer } from "react-toastify";
+import FrxLoader from "../../../../../shared/FrxLoader/FrxLoader";
 
 function mapDispatchToProps(dispatch) {
   return {
@@ -92,6 +93,7 @@ interface State {
   isFiltered: boolean;
   filteredInfo: any;
   isSelectAll: boolean;
+  isRequestFinished: boolean;
 }
 
 class CategoryClass extends React.Component<any, any> {
@@ -138,6 +140,7 @@ class CategoryClass extends React.Component<any, any> {
     isFiltered: false,
     filteredInfo: null,
     isSelectAll: false,
+    isRequestFinished: true,
   };
 
   static contextType = FormularyDetailsContext;
@@ -759,6 +762,9 @@ class CategoryClass extends React.Component<any, any> {
         this.state.overriddenClass &&
         this.state.addedFormularyDrugs.length > 0
       ) {
+        this.setState({
+          isRequestFinished: false,
+        });
         let apiDetails = {};
         apiDetails["apiPart"] = categoryConstants.DRUG_CATEGORY_CLASS;
         apiDetails["pathParams"] =
@@ -815,16 +821,19 @@ class CategoryClass extends React.Component<any, any> {
             } else {
               this.state.addedFormularyDrugs = Array();
             }
+            this.state.isRequestFinished = true;
+            this.resetData();
+            this.populateGridData();
           });
       }
     } else {
       this.state.addedFormularyDrugs = Array();
-    }
-    this.resetData();
-    this.setState({
-      materialPopupInd: false
-    }, () => {
+      this.state.isRequestFinished = true;
+      this.resetData();
       this.populateGridData();
+    }
+    this.setState({
+      materialPopupInd: false,
     });
   };
   handleSearch = searchObject => {
@@ -1027,6 +1036,9 @@ class CategoryClass extends React.Component<any, any> {
     let gridColumns = this.state.columns;
     if (this.state.hiddenColumns.length > 0) {
       gridColumns = gridColumns.filter(key => !this.state.hiddenColumns.includes(key));
+    }
+    if(!this.state.isRequestFinished){
+      return <FrxLoader />;
     }
     return (
       <div className="drug-detail-LA-root class-category">
