@@ -29,7 +29,7 @@ class FileUploadDetails extends React.Component<any,any>{
     render() {
         return (
             <>
-                <div className="back" onClick={this.props.back}>Commercial Uploads</div>
+                <div className="back" onClick={this.props.back}>&lt; Commercial Uploads</div>
                 <div className="up-file-top">
                     <div>
                         <label>FORMULARY TYPE</label>
