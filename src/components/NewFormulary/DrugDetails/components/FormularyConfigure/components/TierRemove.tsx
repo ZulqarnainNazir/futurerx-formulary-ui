@@ -20,6 +20,7 @@ import { setAdvancedSearch } from "../../../../../../redux/slices/formulary/adva
 import showMessage from "../../../../Utils/Toast";
 import { getIntelliscenseSearch } from "../../../../../../redux/slices/formulary/categoryClass/categoryClassActionCreation";
 import "./TierReplace.scss";
+import FrxLoader from "../../../../../shared/FrxLoader/FrxLoader";
 
 interface tabsState {
   tierGridContainer: boolean;
@@ -45,6 +46,8 @@ interface tabsState {
   isFiltered: boolean;
   filteredInfo: any;
   filter: any[];
+  isSelectAll: boolean;
+  isRequestFinished: boolean;
 }
 
 const mapStateToProps = (state) => {
@@ -109,6 +112,8 @@ class TierRemove extends React.Component<any, tabsState> {
     quickFilter: Array(),
     isFiltered: false,
     filteredInfo: null,
+    isSelectAll: false,
+    isRequestFinished: true,
   };
 
   constructor(props) {
@@ -606,6 +611,9 @@ class TierRemove extends React.Component<any, tabsState> {
 
   handleSave = () => {
     if (this.state.selectedDrugs && this.state.selectedDrugs.length > 0) {
+      this.setState({
+        isRequestFinished: false,
+      });
       let apiDetails = {};
       apiDetails["apiPart"] = tierConstants.APPLY_TIER;
       apiDetails["pathParams"] =
@@ -615,7 +623,15 @@ class TierRemove extends React.Component<any, tabsState> {
         "/" +
         commonConstants.TYPE_REMOVE;
       apiDetails["keyVals"] = [];
-      apiDetails["messageBody"] = {};
+      apiDetails["messageBody"] = {
+        category_list: "",
+        covered: {},
+        filter: [],
+        is_select_all: false,
+        not_covered: {},
+        removedformulary_drug_ids: [],
+        search_key: "",
+      };
       if (
         this.state.selectedCriteria &&
         this.state.selectedCriteria.length > 0
@@ -626,31 +642,52 @@ class TierRemove extends React.Component<any, tabsState> {
       }
       apiDetails["messageBody"]["selected_drug_ids"] = this.state.selectedDrugs;
 
+      if (this.props.advancedSearchBody && Object.keys(this.props.advancedSearchBody).length > 0) {
+        apiDetails["messageBody"] = Object.assign(apiDetails["messageBody"], this.props.advancedSearchBody);
+      }
+
+      apiDetails["messageBody"]['is_select_all'] = this.state.isSelectAll;
+
+      let allFilters = Array();
+      let filterProps = Array();
+      this.state.filter.map(filterInfo => {
+        allFilters.push(filterInfo);
+        filterProps.push(filterInfo["prop"]);
+      });
+
+      this.state.quickFilter.map(filterInfo => {
+        if (!filterProps.includes(filterInfo["prop"]))
+          allFilters.push(filterInfo);
+      });
+
+      apiDetails["messageBody"]["filter"] = allFilters;
+
       const saveData = this.props.postTierApplyInfo(apiDetails).then((json) => {
         console.log("Save response is:" + JSON.stringify(json));
         if (json.payload && json.payload.code && json.payload.code === "200") {
           showMessage("Success", "success");
-          this.state.drugData = [];
-          this.state.drugGridData = [];
-          this.populateGridData();
-          apiDetails = {};
-          apiDetails["apiPart"] = tierConstants.FORMULARY_TIERS;
-          apiDetails["pathParams"] = this.props?.formulary_id;
-          apiDetails["keyVals"] = [
-            {
-              key: commonConstants.KEY_ENTITY_ID,
-              value: this.props?.formulary_id,
-            },
-          ];
-
-          const TierDefinationData = this.props
-            .getTier(apiDetails)
-            .then((json) => {
-              this.setState({ tierGridContainer: true });
-            });
         } else {
           showMessage("Failure", "error");
         }
+        this.state.drugData = [];
+        this.state.drugGridData = [];
+        this.resetData();
+        this.populateGridData();
+        apiDetails = {};
+        apiDetails["apiPart"] = tierConstants.FORMULARY_TIERS;
+        apiDetails["pathParams"] = this.props?.formulary_id;
+        apiDetails["keyVals"] = [
+          {
+            key: commonConstants.KEY_ENTITY_ID,
+            value: this.props?.formulary_id,
+          },
+        ];
+
+        const TierDefinationData = this.props
+          .getTier(apiDetails)
+          .then((json) => {
+            this.setState({ tierGridContainer: true , isRequestFinished: true});
+          });
       });
     }
   };
@@ -757,7 +794,7 @@ class TierRemove extends React.Component<any, tabsState> {
       return d;
     });
     this.onSelectedTableRowChanged(selectedRowKeys);
-    this.setState({ drugGridData: data });
+    this.setState({ drugGridData: data, isSelectAll: isSelected });
   };
 
 
@@ -825,6 +862,7 @@ class TierRemove extends React.Component<any, tabsState> {
     this.state.filteredInfo = null;
     this.state.isFiltered = false;
     this.state.selectedRowKeys = Array();
+    this.state.isSelectAll = false;
   }
 
   render() {
@@ -848,6 +886,9 @@ class TierRemove extends React.Component<any, tabsState> {
     let gridColumns = this.props.lobCode === 'MCR' ? tierColumns() : tierColumnsNonMcr();
     if (this.state.hiddenColumns.length > 0) {
       gridColumns = gridColumns.filter(key => !this.state.hiddenColumns.includes(key));
+    }
+    if(!this.state.isRequestFinished){
+      return <FrxLoader />;
     }
     return (
       <>
