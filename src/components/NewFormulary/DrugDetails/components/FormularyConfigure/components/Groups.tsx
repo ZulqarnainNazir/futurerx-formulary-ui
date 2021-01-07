@@ -194,6 +194,18 @@ export default class Groups extends React.Component<Props, any> {
         break;
     }
   };
+  
+  getGroupTitle = () => {
+    const { title = "" } = this.props;
+    
+    if(title.length > 35) {
+      return `${title.substring(0, 35)}...`
+    } else {
+      return title;
+    }
+  }
+  
+  
   render() {
     const color = this.getStatus();
 
@@ -205,7 +217,7 @@ export default class Groups extends React.Component<Props, any> {
       >
         <div className="group">
           <span>{this.getStatusIcon(this.props.statusType)}</span>
-          <span className="group-title">{this.props.title} </span>
+          <span className="group-title">{this.getGroupTitle()} </span>
         </div>
         <div className="edit-icon">
           <span>{this.getEditIcon(this.props.statusType)}</span>

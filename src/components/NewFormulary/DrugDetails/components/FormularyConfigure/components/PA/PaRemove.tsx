@@ -612,7 +612,7 @@ class PaRemove extends React.Component<any, any> {
         {this.state.tierGridContainer && (
           <div className="select-drug-from-table">
             <div className="bordered white-bg">
-              <div className="header space-between pr-10">
+              <div className="header align-end pr-10">
                 <div className="button-wrapper">
                   <Button
                     className="Button normal"

@@ -127,7 +127,7 @@ class StepTherapy extends React.Component<any, tabsState> {
               <Grid item xs={12}>
                 <div className="mb-10">
                   <div className="limited-access">
-                    <PanelHeader title="Prior Authorization - DRUG SELECTION" />
+                    <PanelHeader title="STEP THERAPY - DRUG SELECTION" />
                     <div className="inner-container">
                       <PanelGrid
                         panelGridTitle={this.state.panelGridTitle}

@@ -846,7 +846,7 @@ class STF extends React.Component<any, any> {
           <div className="settings-form">
             <Grid container>
               <Grid item xs={4}>
-                <div className="group">
+                <div className="group mb-20">
                   <label>
                     ST GROUP DESCRIPTION<span className="astrict">*</span>
                   </label>
@@ -871,7 +871,7 @@ class STF extends React.Component<any, any> {
                   </div>
                 </div>
 
-                <div className="group mt-10">
+                <div className="group mb-20">
                   <label>
                     Do you want to view existing ST configurations in another formulary?{" "}
                     <span className="astrict">*</span>
@@ -895,7 +895,7 @@ class STF extends React.Component<any, any> {
                     </div>
                   </Space>
 
-                  <div className="group mt-10">
+                  <div className="group mb-20">
                     <label>
                       do you want to add additional criteria? <span className="astrict">*</span>
                     </label>
@@ -934,7 +934,7 @@ class STF extends React.Component<any, any> {
                 </div>
               </Grid>
               <Grid item xs={4}>
-                <div className="group">
+                <div className="group mb-20">
                   <label>
                     ST Type <span className="astrict">*</span>
                   </label>
@@ -948,7 +948,7 @@ class STF extends React.Component<any, any> {
                   />
                 </div>
                 {this.state.showStConfiguration ? (
-                  <div className="group">
+                  <div className="group mb-20">
                     <label>
                       Select Related Formulary to View Existing configuration? <span className="astrict">*</span>
                     </label>
@@ -970,7 +970,7 @@ class STF extends React.Component<any, any> {
               </Grid>
 
               <Grid item xs={4}>
-                <div className="group">
+                <div className="group mb-20">
                   <label>
                     ST Value <span className="astrict">*</span>
                   </label>
@@ -991,7 +991,7 @@ class STF extends React.Component<any, any> {
           {this.state.tierGridContainer && (
             <div className="select-drug-from-table">
               <div className="bordered white-bg">
-                <div className="header space-between pr-10">
+                <div className="header align-end pr-10">
                   <div className="button-wrapper">
                     <Button
                       className="Button normal"
