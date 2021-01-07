@@ -27,6 +27,7 @@ import SearchBox from "../../../../../shared/Frx-components/search-box/SearchBox
 import getLobCode from "../../../../Utils/LobUtils";
 import { getIntelliscenseSearch } from "../../../../../../redux/slices/formulary/categoryClass/categoryClassActionCreation";
 import FrxLoader from "../../../../../shared/FrxLoader/FrxLoader";
+import * as _ from "lodash";
 
 import "./TierReplace.scss";
 
@@ -58,6 +59,8 @@ interface tabsState {
   filter: any[];
   isSelectAll: boolean;
   isRequestFinished: boolean;
+  isColumnsChanged: boolean;
+  changedColumns: any[];
 }
 
 const mapStateToProps = (state) => {
@@ -123,6 +126,8 @@ class TierReplace extends React.Component<any, tabsState> {
     filteredInfo: null,
     isSelectAll: false,
     isRequestFinished: true,
+    changedColumns: Array(),
+    isColumnsChanged: false,
   };
 
   constructor(props) {
@@ -134,7 +139,7 @@ class TierReplace extends React.Component<any, tabsState> {
     this.initialize(this.props, true);
   }
 
-  onSettingsIconHandler = (hiddenColumn, visibleColumn) => {
+  /*onSettingsIconHandler = (hiddenColumn, visibleColumn) => {
     console.log(
       "Settings icon handler: Hidden" +
       JSON.stringify(hiddenColumn) +
@@ -147,7 +152,7 @@ class TierReplace extends React.Component<any, tabsState> {
         hiddenColumns: hiddenColumnKeys,
       });
     }
-  };
+  };*/
   onApplyFilterHandler = (filters, filteredInfo) => {
     console.log("filtering from be:" + JSON.stringify(filters));
     //this.state.filter = Array();
@@ -799,7 +804,7 @@ class TierReplace extends React.Component<any, tabsState> {
     this.state.sort_by.push({ key: 'drug_label_name', value: 'asc' });
     this.state.index = 0;
     this.state.limit = 10;
-    this.state.hiddenColumns = Array();
+    //this.state.hiddenColumns = Array();
     this.state.searchNames = Array();
     this.state.filterPlaceholder = "Search";
     this.state.searchValue = "";
@@ -1043,6 +1048,16 @@ class TierReplace extends React.Component<any, tabsState> {
     }
   };
 
+  onColumnChange = (columns: any[]) => {
+    console.log("swapped", columns);
+    const cols = _.cloneDeep(columns);
+    const changedColumns = cols
+    this.setState({
+      isColumnsChanged: true,
+      changedColumns
+    });
+  };
+
   onSelectAllRows = (isSelected: boolean) => {
     const selectedRowKeys: number[] = [];
     const data = this.state.drugGridData.map((d: any) => {
@@ -1070,13 +1085,13 @@ class TierReplace extends React.Component<any, tabsState> {
       lobCode: this.props.lobCode,
       pageType: pageTypes.TYPE_TIER,
     };
-    let columns =
+    /*let columns =
       this.props.lobCode === "MCR" ? tierColumns() : tierColumnsNonMcr();
     if (this.state.hiddenColumns.length > 0) {
       columns = columns.filter(
         (key) => !this.state.hiddenColumns.includes(key)
       );
-    }
+    }*/
     console.log('Render selected file type is:' + this.state.selectedFileType);
     if (!this.state.isRequestFinished) {
       return <FrxLoader />;
@@ -1177,7 +1192,11 @@ class TierReplace extends React.Component<any, tabsState> {
                   pagintionPosition="topRight"
                   gridName="TIER"
                   enableSettings
-                  columns={columns}
+                  columns={
+                    this.state.isColumnsChanged
+                      ? this.state.changedColumns
+                      : tierColumnsNonMcr()
+                  }
                   scroll={{ x: 2000, y: 377 }}
                   isFetchingData={false}
                   enableResizingOfColumns
@@ -1197,11 +1216,11 @@ class TierReplace extends React.Component<any, tabsState> {
                   isMultiSorted={this.state.isGridMultiSorted}
                   multiSortedInfo={this.state.gridMultiSortedInfo}
                   onMultiSortToggle={this.onMultiSortToggle}
-                  getColumnSettings={this.onSettingsIconHandler}
                   pageSize={this.state.limit}
                   selectedCurrentPage={this.state.index / this.state.limit + 1}
                   isFiltered={this.state.isFiltered}
                   filteredInfo={this.state.filteredInfo}
+                  onColumnChange={this.onColumnChange}
                 // rowSelection={{
                 //   columnWidth: 50,
                 //   selectedRowKeys: this.state.selectedRowKeys,
