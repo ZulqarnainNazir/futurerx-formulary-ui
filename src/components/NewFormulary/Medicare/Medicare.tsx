@@ -595,18 +595,21 @@ class Medicare extends React.Component<any, any> {
               filteredInfo={this.state.filteredInfo}
               // isCustomCheckboxEnabled={false}
               // handleCustomRowSelectionChange={()=>{}}
-              // columns={formularyDetailsGridColumns(
-              //   {
-              //     onFormularyNameClick: (id: any) =>
-              //       this.props.drugDetailClick(id)
-              //   },
-              //   hiddenColumns
-              // )}
               columns={
-                this.state.isColumnsChanged
-                  ? this.state.changedColumns
-                  : formularyDetailsGridColumns()
-              }
+								this.state.isColumnsChanged
+								? this.state.changedColumns:
+								formularyDetailsGridColumns(
+                {
+                  onFormularyNameClick: (id: any) =>
+                    this.props.drugDetailClick(id)
+                },
+                hiddenColumns
+              )}
+              // columns={
+              //   this.state.isColumnsChanged
+              //     ? this.state.changedColumns
+              //     : formularyDetailsGridColumns()
+              // }
               scroll={{ x: 1600, y: 630 }}
               isFetchingData={false}
               enableResizingOfColumns
