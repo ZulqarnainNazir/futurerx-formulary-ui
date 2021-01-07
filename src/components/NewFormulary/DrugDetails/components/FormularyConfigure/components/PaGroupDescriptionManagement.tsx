@@ -307,7 +307,7 @@ class PaGroupDescriptionManagement extends React.Component<any, any> {
       <>
         <div className="bordered">
           <PanelHeader title="Prior Authorization - Group Description Management" />
-          <div className="inner-container bg-light-grey display-flex">
+          <div className="inner-container bg-light-grey pa-group-description-wrapper">
             <div className="group-des">
               <div className="panel header">
                 <span>GROUP DESCRIPTION</span>

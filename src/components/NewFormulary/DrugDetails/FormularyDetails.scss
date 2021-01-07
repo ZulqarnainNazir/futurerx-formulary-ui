@@ -6,7 +6,6 @@
 .version-wrapper {
   border: 1px solid #f65a1c;
   height: 37px;
-  max-width: 890px;
   width: 100%;
   background: #fff5f0;
   border-radius: 3px;
@@ -108,8 +107,7 @@
 .version-wrapper-orange {
   border: 1px solid #f65a1c;
   height: 37px;
-  max-width: 890px;
-  width: 100%;
+  width: 100% !important;
   background: #fff5f0;
   border-radius: 3px;
   display: flex;
@@ -140,7 +138,7 @@
     display: flex;
     align-items: center;
     text-decoration-line: underline;
-    color: #219653;
+    color: #f65a1c;
   }
 
   .item {
@@ -172,6 +170,13 @@
   }
   .formulary-type-dropdown {
     width: 205px !important;
+    .ant-select-arrow {
+      svg {
+        path {
+          fill: #f65a1c;
+        }
+      }
+    }
   }
 
   #group-description {
@@ -196,8 +201,7 @@
 .version-wrapper-green {
   border: 1px solid #80c483;
   height: 37px;
-  max-width: 890px;
-  width: 100%;
+  width: 100% !important;
   background: #d5ffd7;
   border-radius: 3px;
   display: flex;
@@ -259,6 +263,13 @@
   }
   .formulary-type-dropdown {
     width: 205px !important;
+    .ant-select-arrow {
+      svg {
+        path {
+          fill: #219653;
+        }
+      }
+    }
   }
 
   #group-description {
@@ -373,10 +384,11 @@
   border: 1px solid #e5e5e5;
   border-radius: 5px;
   .breadcrum-sec {
-    display: flex;
-    justify-content: space-between;
+    display: grid;
+    grid-template-columns: 1fr 3fr;
     align-items: center;
     margin-bottom: 27px;
+    grid-gap: 40px;
     .breadcrum {
       span {
         margin-right: 5px;
@@ -1270,37 +1282,37 @@
 .astrict {
   color: red;
 }
-.drug-details-bottom{
-  .details-tab-top{
+.drug-details-bottom {
+  .details-tab-top {
     margin-bottom: 0;
     border-bottom: 0;
     border-radius: 5px 5px 0 0;
-    .inner-container{
+    .inner-container {
       padding-bottom: 0;
     }
   }
-  .details-tab-bottom-info{
-    .tier-grid-container{
+  .details-tab-bottom-info {
+    .tier-grid-container {
       padding: 0 10px;
-      .frx-grid-container .frx-grid .frx-grid__grid-block{
+      .frx-grid-container .frx-grid .frx-grid__grid-block {
         padding-top: 0;
       }
     }
-    .tab-prremove{
+    .tab-prremove {
       background: white;
     }
-    .tier-grid-remove-container{
+    .tier-grid-remove-container {
       padding: 0;
-      &.other-removed-sec{
+      &.other-removed-sec {
         padding-top: 15px;
       }
     }
   }
 }
-.pt-0{
+.pt-0 {
   padding-top: 0 !important;
 }
-.bt-none{
+.bt-none {
   border-top: none !important;
   border-top-left-radius: 0 !important;
   border-top-right-radius: 0 !important;

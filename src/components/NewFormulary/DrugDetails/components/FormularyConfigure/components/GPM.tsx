@@ -263,7 +263,7 @@ class GPM extends React.Component<any, any> {
       <>
         <div className="bordered">
           <PanelHeader title="STEP THERAPY - Group Description Management" />
-          <div className="inner-container bg-light-grey display-flex">
+          <div className="inner-container bg-light-grey step-therapy-wrapper">
             <div className="group-des">
               <div className="panel header">
                 <span>GROUP DESCRIPTION</span>

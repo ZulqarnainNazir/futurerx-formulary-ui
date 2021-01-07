@@ -13,12 +13,8 @@ export const getDrugsList = () => [
   { drug: "Lipitor 40mg" },
   { drug: "Lipitor 60mg" },
   { drug: "Lipitor 80mg" },
-  { drug: "Lipitor 120mg" },
-  { drug: "Lipitor 20mg" },
-  { drug: "Lipitor 40mg" },
-  { drug: "Lipitor 60mg" },
-  { drug: "Lipitor 80mg" },
-  { drug: "Lipitor 120mg" },
+  
+  
 ];
 
 export const getColumns = () => [
@@ -60,6 +56,67 @@ export const getColumns = () => [
     className: "table-head-center",
   },
 ];
+
+export const getPACommercialData = () => {
+  return [
+    {
+      key: "1",
+      formularyName: "LEGA_COMM_12",
+      formularyId: "3514",
+      formularyVersion: 2,
+      contractYeat: "2021",
+      formularyType: "Commercial",
+      effectiveDate: "01/01/2021",
+      tier: {
+        tierId: "1",
+        tierNumber: "Tier 1",
+        tierDescription: "Generic Brand",
+      },
+    },
+    {
+      key: "2",
+      formularyName: "Comme_Test-3",
+      formularyId: "3588",      
+      formularyVersion: 3,
+      contractYeat: "2021",
+      formularyType: "Commercial",
+      effectiveDate: "01/01/2021",
+      tier: {
+        tierId: "1",
+        tierNumber: "Tier 1",
+        tierDescription: "Generic Brand",
+      },
+    },
+    {
+      key: "3",
+      formularyName: "WK_49_COMM_08",
+      formularyId: "3466",      
+      formularyVersion: 4,
+      contractYeat: "2021",
+      formularyType: "Commercial",
+      effectiveDate: "01/01/2021",
+      tier: {
+        tierId: "1",
+        tierNumber: "Tier 1",
+        tierDescription: "Generic Brand",
+      },
+    },
+    {
+      key: "4",
+      formularyName: "Comm_Test_45",
+      formularyId: "3554",      
+      formularyVersion: 5,
+      contractYeat: "2021",
+      formularyType: "Commercial",
+      effectiveDate: "01/01/2021",
+      tier: {
+        tierId: "1",
+        tierNumber: "Tier 1",
+        tierDescription: "Generic Brand",
+      },
+    },
+  ];
+};
 
 export const getData = () => {
   return [
@@ -112,6 +169,67 @@ export const getData = () => {
       formularyVersion: 5,
       contractYeat: "2021",
       formularyType: "Medicare",
+      effectiveDate: "01/01/2021",
+      tier: {
+        tierId: "1",
+        tierNumber: "Tier 1",
+        tierDescription: "Generic Brand",
+      },
+    },
+  ];
+};
+
+export const getCommercialData = () => {
+  return [
+    {
+      key: "1",
+      formularyName: "LEGA_COMM_12",
+      formularyId: "3514",
+      formularyVersion: 2,
+      contractYeat: "2021",
+      formularyType: "Commercial",
+      effectiveDate: "01/01/2021",
+      tier: {
+        tierId: "1",
+        tierNumber: "Tier 1",
+        tierDescription: "Generic Brand",
+      },
+    },
+    {
+      key: "2",
+      formularyName: "Comme_Test-3",
+      formularyId: "3588",      
+      formularyVersion: 3,
+      contractYeat: "2021",
+      formularyType: "Commercial",
+      effectiveDate: "01/01/2021",
+      tier: {
+        tierId: "1",
+        tierNumber: "Tier 1",
+        tierDescription: "Generic Brand",
+      },
+    },
+    {
+      key: "3",
+      formularyName: "WK_49_COMM_08",
+      formularyId: "3466",      
+      formularyVersion: 4,
+      contractYeat: "2021",
+      formularyType: "Commercial",
+      effectiveDate: "01/01/2021",
+      tier: {
+        tierId: "1",
+        tierNumber: "Tier 1",
+        tierDescription: "Generic Brand",
+      },
+    },
+    {
+      key: "4",
+      formularyName: "Comm_Test_45",
+      formularyId: "3554",      
+      formularyVersion: 5,
+      contractYeat: "2021",
+      formularyType: "Commercial",
       effectiveDate: "01/01/2021",
       tier: {
         tierId: "1",

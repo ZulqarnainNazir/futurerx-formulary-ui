@@ -294,6 +294,7 @@ class Medicare extends React.Component<any, any> {
           <div>
             <MaintenanceMassUpdate
               onClickAddNew={this.props.onMassMaintenanceCLick}
+              lob_type={this.props.lob_type}
             />
             {/* <div onClick={this.props.onMassMaintenanceCLick}>
               Mass Maintenance

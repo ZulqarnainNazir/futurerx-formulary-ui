@@ -807,8 +807,8 @@ class STF extends React.Component<any, any> {
     };
     const { isAdditionalCriteriaOpen } = this.state;
     return (
-      <div className="bordered stf-root">
-        <div className="modify-wrapper bordered white-bg">
+      <div className=" stf-root">
+        <div className="modify-wrapper  white-bg">
           <div className="settings-form">
             <Grid container>
               <Grid item xs={4}>

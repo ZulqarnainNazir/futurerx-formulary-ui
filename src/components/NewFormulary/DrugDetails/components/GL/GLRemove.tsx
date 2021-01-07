@@ -2,6 +2,7 @@ import React from "react";
 import { Table } from "antd";
 import PanelHeader from "../../../../shared/Frx-components/panel-header/PanelHeader";
 import Button from "../../../../shared/Frx-components/button/Button";
+import Box from "@material-ui/core/Box";
 
 const columns = [
   {
@@ -76,7 +77,9 @@ class GLRemove extends React.Component<any, any> {
             />
           </div>
         </div>
-        <Button label="Apply" onClick={this.props.showGridHandler} />
+        <Box display="flex" justifyContent="flex-end">
+          <Button label="Apply" onClick={this.props.showGridHandler} />
+        </Box>
       </div>
     );
   }
