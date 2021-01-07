@@ -486,6 +486,7 @@ function NewGroup(props: any) {
       } else {
         requestData["pathParams"] = "/" + props?.formulary_id + "?entity_id=0";
         props.postPAGroupDescription(requestData).then((json) => {
+          debugger;
           if (json.payload && json.payload.code === "200") {
             showMessage("Success", "success");
             let apiDetails = {};
@@ -525,10 +526,10 @@ function NewGroup(props: any) {
               );
               isSetUpComplete(isEditable.is_setup_complete);
             });
-          } else if (json?.payload?.status && json?.payload?.status != 200) {
+          } else if (json.payload && json.payload.code != 200) {
             isSetUpComplete(false);
             setShowHeader(0);
-            showMessage(json.payload.data.message, "error");
+            showMessage(json.payload.{message, "error");
           } else {
             showMessage("Failure", "error");
           }
@@ -659,6 +660,7 @@ function NewGroup(props: any) {
         )}
       </div>
       {(formType > 0 || showHeader > 0) && (
+        
         <PAGroupHeader
           popuptitle={
             formData.pa_group_description_name
