@@ -91,6 +91,7 @@ interface State {
   selectedRowKeys: number[];
   isFiltered: boolean;
   filteredInfo: any;
+  isSelectAll: boolean;
 }
 
 class CategoryClass extends React.Component<any, any> {
@@ -136,6 +137,7 @@ class CategoryClass extends React.Component<any, any> {
     fixedSelectedRows: [] as number[],
     isFiltered: false,
     filteredInfo: null,
+    isSelectAll: false,
   };
 
   static contextType = FormularyDetailsContext;
@@ -168,6 +170,7 @@ class CategoryClass extends React.Component<any, any> {
     this.state.filteredInfo = null;
     this.state.isFiltered = false;
     this.state.selectedRowKeys = Array();
+    this.state.isSelectAll = false;
   }
 
   populateTierDetails = () => {
@@ -780,6 +783,25 @@ class CategoryClass extends React.Component<any, any> {
           is_custom_category: this.state.customCategory,
           is_custom_class: this.state.customClass
         };
+        if (this.props.advancedSearchBody && Object.keys(this.props.advancedSearchBody).length > 0) {
+          apiDetails["messageBody"] = Object.assign(apiDetails["messageBody"], this.props.advancedSearchBody);
+        }
+
+        apiDetails["messageBody"]['is_select_all'] = this.state.isSelectAll;
+
+        let allFilters = Array();
+        let filterProps = Array();
+        this.state.filter.map(filterInfo => {
+          allFilters.push(filterInfo);
+          filterProps.push(filterInfo["prop"]);
+        });
+
+        this.state.quickFilter.map(filterInfo => {
+          if (!filterProps.includes(filterInfo["prop"]))
+            allFilters.push(filterInfo);
+        });
+
+        apiDetails["messageBody"]["filter"] = allFilters;
         const postData = this.props
           .postDrugsClassCategoryOverride(apiDetails)
           .then(json => {
@@ -892,7 +914,7 @@ class CategoryClass extends React.Component<any, any> {
         );
         this.rowSelectionChange(selectedRows);
 
-        this.setState({ filteredData: data, selectedRowKeys:  selectedRowKeys});
+        this.setState({ filteredData: data, selectedRowKeys: selectedRowKeys });
       } else {
         const data = this.state.filteredData.map((d: any) => {
           if (d.key === selectedRow.key) {
@@ -913,7 +935,7 @@ class CategoryClass extends React.Component<any, any> {
         this.rowSelectionChange(selectedRows);
         this.setState({
           filteredData: data,
-          selectedRowKeys:  selectedRowKeys
+          selectedRowKeys: selectedRowKeys
         });
       }
     }
@@ -958,7 +980,7 @@ class CategoryClass extends React.Component<any, any> {
       k => this.state.fixedSelectedRows.indexOf(k) < 0
     );
     this.rowSelectionChange(selectedRows);
-    this.setState({ filteredData: data, selectedRowKeys:  selectedRowKeys });
+    this.setState({ filteredData: data, selectedRowKeys: selectedRowKeys, isSelectAll: isSelected });
   };
 
   onOverrideCategoryClass = (category, classValue) => {

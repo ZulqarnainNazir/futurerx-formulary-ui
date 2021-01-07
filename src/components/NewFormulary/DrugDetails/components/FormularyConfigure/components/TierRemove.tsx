@@ -45,6 +45,7 @@ interface tabsState {
   isFiltered: boolean;
   filteredInfo: any;
   filter: any[];
+  isSelectAll: boolean;
 }
 
 const mapStateToProps = (state) => {
@@ -109,6 +110,7 @@ class TierRemove extends React.Component<any, tabsState> {
     quickFilter: Array(),
     isFiltered: false,
     filteredInfo: null,
+    isSelectAll: false,
   };
 
   constructor(props) {
@@ -626,6 +628,26 @@ class TierRemove extends React.Component<any, tabsState> {
       }
       apiDetails["messageBody"]["selected_drug_ids"] = this.state.selectedDrugs;
 
+      if (this.props.advancedSearchBody && Object.keys(this.props.advancedSearchBody).length > 0) {
+        apiDetails["messageBody"] = Object.assign(apiDetails["messageBody"], this.props.advancedSearchBody);
+      }
+
+      apiDetails["messageBody"]['is_select_all'] = this.state.isSelectAll;
+
+      let allFilters = Array();
+      let filterProps = Array();
+      this.state.filter.map(filterInfo => {
+        allFilters.push(filterInfo);
+        filterProps.push(filterInfo["prop"]);
+      });
+
+      this.state.quickFilter.map(filterInfo => {
+        if (!filterProps.includes(filterInfo["prop"]))
+          allFilters.push(filterInfo);
+      });
+
+      apiDetails["messageBody"]["filter"] = allFilters;
+
       const saveData = this.props.postTierApplyInfo(apiDetails).then((json) => {
         console.log("Save response is:" + JSON.stringify(json));
         if (json.payload && json.payload.code && json.payload.code === "200") {
@@ -757,7 +779,7 @@ class TierRemove extends React.Component<any, tabsState> {
       return d;
     });
     this.onSelectedTableRowChanged(selectedRowKeys);
-    this.setState({ drugGridData: data });
+    this.setState({ drugGridData: data, isSelectAll: isSelected });
   };
 
 
@@ -825,6 +847,7 @@ class TierRemove extends React.Component<any, tabsState> {
     this.state.filteredInfo = null;
     this.state.isFiltered = false;
     this.state.selectedRowKeys = Array();
+    this.state.isSelectAll = false;
   }
 
   render() {
