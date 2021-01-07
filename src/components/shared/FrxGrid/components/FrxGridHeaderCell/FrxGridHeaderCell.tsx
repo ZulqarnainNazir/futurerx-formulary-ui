@@ -22,6 +22,7 @@ interface FrxGridHeaderCellProps {
 	multiSortedInfo: any[];
 	
 	singleSortedInfo:any;
+	isAllRowsSelected?:boolean;
   pinColumnToLeft?: (c: Column<any>) => void;
   unpinColumn?: (c: Column<any>) => void;
   onSelectAllRows?: (isSelected: boolean) => void;
@@ -49,12 +50,13 @@ class FrxGridHeaderCell extends Component<FrxGridHeaderCellProps> {
       multiSortOrder,
       unpinColumn,
       pinColumnToLeft,
-      isPinningEnabled
+			isPinningEnabled,
+			isAllRowsSelected
     } = this.props;
     return (
       <>
         {column.headerCellSelection ? (
-          <Checkbox onChange={this.onSelectAll} />
+          <Checkbox onChange={this.onSelectAll} checked={isAllRowsSelected?true:false} />
         ) : (
           <>
             {isPinningEnabled && (

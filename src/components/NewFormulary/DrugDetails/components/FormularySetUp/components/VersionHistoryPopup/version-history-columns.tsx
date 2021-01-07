@@ -16,6 +16,7 @@ export const versionHistoryColumns: () => Column<VersionHistoryData>[] = () => [
     displayTitle: "Service Year",
     isFilterable: true,
     dataType: "number",
+    fixed: "left",
     // className: "entry-component",
     // toolTip: (props) => <FrxGridToolTip {...props} />,
     // showToolTip: true,
