@@ -12,6 +12,7 @@ import {Container} from "@material-ui/core";
 import SubNavBar from "./sub-navbar/SubNavBar";
 
 import "./NavBar.scss";
+import AccountCircleIcon from "@material-ui/icons/AccountCircle";
 
 interface Props extends RouteComponentProps{
   history: any;
@@ -74,14 +75,15 @@ class NavBar extends Component<Props, State> {
                   </svg>
 
                   <Divider orientation="vertical" className="navbar-item" />
+                  <AccountCircleIcon className="empty-avatar navbar-item"></AccountCircleIcon>
 
-                  <Avatar
+                  {/* <Avatar
                     className="navbar-item"
                     component="span"
                     style={{height: "25px", width: "25px"}}
                     alt="NavIcon"
                     src={NavIcon}
-                  />
+                  /> */}
 
                   <DropDown
                     placeholder="Preeti Patel"
