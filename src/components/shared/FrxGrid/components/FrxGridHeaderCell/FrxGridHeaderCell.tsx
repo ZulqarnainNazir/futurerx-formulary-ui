@@ -56,7 +56,7 @@ class FrxGridHeaderCell extends Component<FrxGridHeaderCellProps> {
     return (
       <>
         {column.headerCellSelection ? (
-          <Checkbox onChange={this.onSelectAll} checked={isAllRowsSelected?true:false} />
+          <Checkbox onChange={this.onSelectAll} />
         ) : (
           <>
             {isPinningEnabled && (

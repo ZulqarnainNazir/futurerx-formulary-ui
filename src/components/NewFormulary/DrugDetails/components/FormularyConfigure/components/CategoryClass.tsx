@@ -45,6 +45,7 @@ import getLobCode from "../../../../Utils/LobUtils";
 import showMessage from "../../../../Utils/Toast";
 import { ToastContainer } from "react-toastify";
 import FrxLoader from "../../../../../shared/FrxLoader/FrxLoader";
+import * as _ from "lodash";
 
 function mapDispatchToProps(dispatch) {
   return {
@@ -94,6 +95,8 @@ interface State {
   filteredInfo: any;
   isSelectAll: boolean;
   isRequestFinished: boolean;
+  isColumnsChanged: boolean;
+  changedColumns: any[];
 }
 
 class CategoryClass extends React.Component<any, any> {
@@ -141,6 +144,8 @@ class CategoryClass extends React.Component<any, any> {
     filteredInfo: null,
     isSelectAll: false,
     isRequestFinished: true,
+    changedColumns: Array(),
+    isColumnsChanged: false,
   };
 
   static contextType = FormularyDetailsContext;
@@ -210,7 +215,7 @@ class CategoryClass extends React.Component<any, any> {
     });
   };
 
-  onSettingsIconHandler = (hiddenColumn, visibleColumn) => {
+  /*onSettingsIconHandler = (hiddenColumn, visibleColumn) => {
     console.log(
       "Settings icon handler: Hidden" +
       JSON.stringify(hiddenColumn) +
@@ -223,7 +228,7 @@ class CategoryClass extends React.Component<any, any> {
         hiddenColumns: hiddenColumnKeys
       });
     }
-  };
+  };*/
   onApplyFilterHandler = (filters, filteredInfo) => {
     console.log("filtering from be:" + JSON.stringify(filters));
     //this.state.filter = Array();
@@ -1032,6 +1037,15 @@ class CategoryClass extends React.Component<any, any> {
       this.props.setAdvancedSearch(payload);
     }
   }
+  onColumnChange = (columns: any[]) => {
+    console.log("swapped", columns);
+    const cols = _.cloneDeep(columns);
+    const changedColumns = cols
+    this.setState({
+      isColumnsChanged: true,
+      changedColumns
+    });
+  };
   render() {
     let gridColumns = this.state.columns;
     if (this.state.hiddenColumns.length > 0) {
@@ -1106,7 +1120,11 @@ class CategoryClass extends React.Component<any, any> {
                     pagintionPosition="topRight"
                     gridName=""
                     isFetchingData={this.state.isFetchingData}
-                    columns={gridColumns}
+                    columns={
+                      this.state.isColumnsChanged
+                        ? this.state.changedColumns
+                        : categoryCommercialClassColumns()
+                    }
                     isPinningEnabled={false}
                     scroll={{ x: 2000, y: 377 }}
                     enableResizingOfColumns
@@ -1126,13 +1144,13 @@ class CategoryClass extends React.Component<any, any> {
                     isMultiSorted={this.state.isGridMultiSorted}
                     multiSortedInfo={this.state.gridMultiSortedInfo}
                     onMultiSortToggle={this.onMultiSortToggle}
-                    getColumnSettings={this.onSettingsIconHandler}
                     pageSize={this.state.limit}
                     selectedCurrentPage={
                       this.state.index / this.state.limit + 1
                     }
                     isFiltered={this.state.isFiltered}
                     filteredInfo={this.state.filteredInfo}
+                    onColumnChange={this.onColumnChange}
                   /*rowSelection={{
                   columnWidth: 50,
                   fixed: true,
