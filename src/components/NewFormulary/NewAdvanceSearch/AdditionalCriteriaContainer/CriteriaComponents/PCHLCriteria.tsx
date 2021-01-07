@@ -16,6 +16,8 @@ const PCHLCriteria = (props) => {
     handlePCHLCriteriaChange,
     isAdditionalCriteria,
     deleteIconHandler,
+    isReadOnly,
+    editable,
   } = props;
 
   const options = pchlResults.data.map((obj) => (
@@ -33,6 +35,8 @@ const PCHLCriteria = (props) => {
           handleStatus={handleStatus}
           isAdditionalCriteria={isAdditionalCriteria}
           deleteIconHandler={deleteIconHandler}
+          isReadOnly={isReadOnly}
+          editable={editable}
         >
           <div className="input-field-group">
             <div className="input-field-group__flex-container">
@@ -49,6 +53,7 @@ const PCHLCriteria = (props) => {
                 name="lookback_name"
                 onChange={handlePCHLCriteriaChange}
                 value={pchlSettings.lookback_name}
+                disabled={editable || isReadOnly}
               />
             </div>
             <div className="input-field-group__flex-container">
@@ -70,6 +75,7 @@ const PCHLCriteria = (props) => {
                   ]}
                   onChange={handlePCHLCriteriaChange}
                   isOptionsObj={true}
+                  disabled={editable || isReadOnly}
                 />
               </div>
             </div>
@@ -91,6 +97,7 @@ const PCHLCriteria = (props) => {
                 onSearch={handlePCHLSearch}
                 onChange={handlePCHLChange}
                 notFoundContent={null}
+                disabled={editable || isReadOnly}
                 className="input-field-group__flex-container__autocomplete-select"
               >
                 {options}
@@ -112,6 +119,7 @@ const PCHLCriteria = (props) => {
                 name="lookback_period"
                 onChange={handlePCHLCriteriaChange}
                 value={pchlSettings.lookback_period}
+                disabled={editable || isReadOnly}
               />
             </div>
             <div className="input-field-group__flex-container">
@@ -127,6 +135,7 @@ const PCHLCriteria = (props) => {
                 name="number_of_fills"
                 onChange={handlePCHLCriteriaChange}
                 value={pchlSettings.number_of_fills}
+                disabled={editable || isReadOnly}
               />
             </div>
             <div className="input-field-group__flex-container">
@@ -142,6 +151,7 @@ const PCHLCriteria = (props) => {
                 name="number_of_days_supply_per_fill"
                 onChange={handlePCHLCriteriaChange}
                 value={pchlSettings.number_of_days_supply_per_fill}
+                disabled={editable || isReadOnly}
               />
             </div>
           </div>

@@ -13,6 +13,8 @@ const PNCriteria = (props) => {
     handlePNChange,
     handlePNSearch,
     deleteIconHandler,
+    isReadOnly,
+    editable,
   } = props;
 
   const options = pnResults.data.map((obj) => (
@@ -30,6 +32,8 @@ const PNCriteria = (props) => {
           handleStatus={handleStatus}
           deleteIconHandler={deleteIconHandler}
           isAdditionalCriteria={isAdditionalCriteria}
+          isReadOnly={isReadOnly}
+          editable={editable}
         >
           <div className="root-pt-limit-settings__form">
             <div className="input-field-group">
@@ -50,6 +54,7 @@ const PNCriteria = (props) => {
                   onChange={handlePNChange}
                   notFoundContent={null}
                   className="select-icds"
+                  disabled={editable || isReadOnly}
                 >
                   {options}
                 </Select>

@@ -17,6 +17,8 @@ const PRCriteria = (props) => {
     isAdditionalCriteria,
     deleteIconHandler,
     nodeId,
+    isReadOnly,
+    editable,
   } = props;
 
   return (
@@ -35,6 +37,8 @@ const PRCriteria = (props) => {
           handleStatus={handleStatus}
           isAdditionalCriteria={isAdditionalCriteria}
           deleteIconHandler={deleteIconHandler}
+          isReadOnly={isReadOnly}
+          editable={editable}
           //   showDelete={false}
         >
           <div className="input-field-group">
@@ -42,7 +46,11 @@ const PRCriteria = (props) => {
               <div className="input-field-group__label">Select services:</div>
               <div
                 className="input-field-group__select-all-action"
-                onClick={selectAllHandler.handleSelectAll}
+                onClick={
+                  isReadOnly || editable
+                    ? undefined
+                    : selectAllHandler.handleSelectAll
+                }
               >
                 {/* {selectAllHandler.isSelectAll ? "Unselect all" : "Select all"} */}
                 Select all
@@ -66,6 +74,7 @@ const PRCriteria = (props) => {
                     name={s.id_patient_residence_type}
                     onChange={serviceSettingsChecked}
                     checked={s.isChecked}
+                    disabled={editable || isReadOnly}
                   ></Checkbox>
                   <label
                     htmlFor={

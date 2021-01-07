@@ -75,6 +75,8 @@ const StatusContentFormPanel = (props) => {
     isAdditionalCriteria,
     deleteIconHandler,
     showDelete = true,
+    isReadOnly,
+    editable,
   } = props;
 
   const [statusType, setStatusType] = useState(type ? type : "covered");
@@ -149,6 +151,7 @@ const StatusContentFormPanel = (props) => {
 
             <div className="status-content-form-panel__type-dropdown-container">
               <Dropdown
+                disabled={editable || isReadOnly}
                 overlay={menu}
                 placement="bottomCenter"
                 trigger={["click"]}

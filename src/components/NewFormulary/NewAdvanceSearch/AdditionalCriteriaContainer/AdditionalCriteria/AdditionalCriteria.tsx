@@ -138,6 +138,7 @@ class AdditionalCriteria extends Component<any, any> {
   loadSavedSettings = (additionalCriteriaBody) => {
     const additionalCriteriaSequenceId = this.props.additionalCriteria.sequence;
     const isReadOnly = this.props.isReadOnly;
+    const editable = this.props.editable;
     let savedCriteriaList: any[] = [];
     let globalCardCount = 0;
 
@@ -174,7 +175,13 @@ class AdditionalCriteria extends Component<any, any> {
 
           ///////////////////////////// AL
           if (Object.prototype.hasOwnProperty.call(covered, "age")) {
-            if (Object.keys(covered["age"]).length) {
+            if (
+              (covered["age"]["min_age_condition"] !== "" &&
+                covered["age"]["min_age_limit"] !== "" &&
+                covered["age"]["max_age_condition"] !== "" &&
+                covered["age"]["max_age_limit"] !== "") ||
+              Object.keys(covered["age"]).length
+            ) {
               globalCardCount++;
               let currentNode = {
                 id: globalCardCount,
@@ -193,6 +200,7 @@ class AdditionalCriteria extends Component<any, any> {
                     payload={covered["age"]}
                     handleGlobalState={this.handleAllNodesState}
                     isReadOnly={isReadOnly}
+                    editable={editable}
                   />
                 ),
               };
@@ -222,6 +230,7 @@ class AdditionalCriteria extends Component<any, any> {
                     payload={covered["gender"]}
                     handleGlobalState={this.handleAllNodesState}
                     isReadOnly={isReadOnly}
+                    editable={editable}
                   />
                 ),
               };
@@ -252,6 +261,7 @@ class AdditionalCriteria extends Component<any, any> {
                     payload={covered["icd"]}
                     handleGlobalState={this.handleAllNodesState}
                     isReadOnly={isReadOnly}
+                    editable={editable}
                   />
                 ),
               };
@@ -282,6 +292,7 @@ class AdditionalCriteria extends Component<any, any> {
                     payload={covered["pharmacy_networks"]}
                     handleGlobalState={this.handleAllNodesState}
                     isReadOnly={isReadOnly}
+                    editable={editable}
                   />
                 ),
               };
@@ -314,6 +325,7 @@ class AdditionalCriteria extends Component<any, any> {
                     payload={covered["prescriber_taxonomies"]}
                     handleGlobalState={this.handleAllNodesState}
                     isReadOnly={isReadOnly}
+                    editable={editable}
                   />
                 ),
               };
@@ -345,6 +357,7 @@ class AdditionalCriteria extends Component<any, any> {
                     payload={covered["place_of_services"]}
                     handleGlobalState={this.handleAllNodesState}
                     isReadOnly={isReadOnly}
+                    editable={editable}
                   />
                 ),
               };
@@ -375,6 +388,7 @@ class AdditionalCriteria extends Component<any, any> {
                     payload={covered["patient_residences"]}
                     handleGlobalState={this.handleAllNodesState}
                     isReadOnly={isReadOnly}
+                    editable={editable}
                   />
                 ),
               };
@@ -412,6 +426,7 @@ class AdditionalCriteria extends Component<any, any> {
                     }
                     handleGlobalState={this.handleAllNodesState}
                     isReadOnly={isReadOnly}
+                    editable={editable}
                   />
                 ),
               };
@@ -431,8 +446,13 @@ class AdditionalCriteria extends Component<any, any> {
           not_covered = additionalCriteriaBody[prop];
           ///////////////////////////// AL
           if (Object.prototype.hasOwnProperty.call(not_covered, "age")) {
-            console.log("null check: ", not_covered["age"] !== {});
-            if (Object.keys(not_covered["age"]).length) {
+            if (
+              (not_covered["age"]["min_age_condition"] !== "" &&
+                not_covered["age"]["min_age_limit"] !== "" &&
+                not_covered["age"]["max_age_condition"] !== "" &&
+                not_covered["age"]["max_age_limit"] !== "") ||
+              Object.keys(not_covered["age"]).length
+            ) {
               globalCardCount++;
               let currentNode = {
                 id: globalCardCount,
@@ -451,6 +471,7 @@ class AdditionalCriteria extends Component<any, any> {
                     payload={not_covered["age"]}
                     handleGlobalState={this.handleAllNodesState}
                     isReadOnly={isReadOnly}
+                    editable={editable}
                   />
                 ),
               };
@@ -479,6 +500,7 @@ class AdditionalCriteria extends Component<any, any> {
                     payload={not_covered["gender"]}
                     handleGlobalState={this.handleAllNodesState}
                     isReadOnly={isReadOnly}
+                    editable={editable}
                   />
                 ),
               };
@@ -510,6 +532,7 @@ class AdditionalCriteria extends Component<any, any> {
                     payload={not_covered["icd"]}
                     handleGlobalState={this.handleAllNodesState}
                     isReadOnly={isReadOnly}
+                    editable={editable}
                   />
                 ),
               };
@@ -542,6 +565,7 @@ class AdditionalCriteria extends Component<any, any> {
                     payload={not_covered["pharmacy_networks"]}
                     handleGlobalState={this.handleAllNodesState}
                     isReadOnly={isReadOnly}
+                    editable={editable}
                   />
                 ),
               };
@@ -574,6 +598,7 @@ class AdditionalCriteria extends Component<any, any> {
                     payload={not_covered["prescriber_taxonomies"]}
                     handleGlobalState={this.handleAllNodesState}
                     isReadOnly={isReadOnly}
+                    editable={editable}
                   />
                 ),
               };
@@ -608,6 +633,7 @@ class AdditionalCriteria extends Component<any, any> {
                     payload={not_covered["place_of_services"]}
                     handleGlobalState={this.handleAllNodesState}
                     isReadOnly={isReadOnly}
+                    editable={editable}
                   />
                 ),
               };
@@ -642,6 +668,7 @@ class AdditionalCriteria extends Component<any, any> {
                     payload={not_covered["patient_residences"]}
                     handleGlobalState={this.handleAllNodesState}
                     isReadOnly={isReadOnly}
+                    editable={editable}
                   />
                 ),
               };
@@ -679,6 +706,7 @@ class AdditionalCriteria extends Component<any, any> {
                     }
                     handleGlobalState={this.handleAllNodesState}
                     isReadOnly={isReadOnly}
+                    editable={editable}
                   />
                 ),
               };
@@ -1023,7 +1051,7 @@ class AdditionalCriteria extends Component<any, any> {
                 >
                   <Button
                     onClick={
-                      this.props.editable
+                      this.props.isReadOnly || this.props.editable
                         ? undefined
                         : this.clearCurrentCriteriaState
                     }
@@ -1034,7 +1062,7 @@ class AdditionalCriteria extends Component<any, any> {
                   </Button>
                   <Button
                     onClick={
-                      this.props.editable
+                      this.props.isReadOnly || this.props.editable
                         ? undefined
                         : this.setCurrentCriteriaState
                     }
