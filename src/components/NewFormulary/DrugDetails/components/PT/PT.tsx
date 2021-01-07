@@ -290,13 +290,12 @@ class DrugDetailPT extends React.Component<any, any> {
   };
 
   validateGLForm = () => {
-    if (this.state.activeTabIndex === 0) {
+    if (this.state.activeTabIndex === 0 || this.state.activeTabIndex === 1) {
       return !(this.state.selectedList.length === 0);
+
     } else if (this.state.activeTabIndex === 2) {
       return !(this.state.ptRemoveCheckedList.length === 0);
     }
-
-    return true;
   };
 
   showGridHandler = () => {
@@ -325,6 +324,7 @@ class DrugDetailPT extends React.Component<any, any> {
     if (activeTabIndex === 0 || activeTabIndex === 1) {
       this.setState({ selectedList: [] });
     } else if (activeTabIndex === 2) {
+      this.setState({ ptRemoveCheckedList: [] });
       this.getPTCriteriaList(true);
     }
   };
@@ -1135,6 +1135,7 @@ class DrugDetailPT extends React.Component<any, any> {
         </div>
         {(this.state.activeTabIndex == 0 || this.state.activeTabIndex == 1) && (
           <PtSettings
+            key={this.state.activeTabIndex}
             options={this.state.replaceTab.searchResult}
             handleReplaceSrch={this.handleReplaceSrch}
             handleStatus={this.handleStatus}
