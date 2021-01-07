@@ -419,11 +419,18 @@ class FrxDrugGrid extends Component<
     onDragEnd: (fromIndex, toIndex) => {
       if (!this.props.enableColumnDrag) return;
 
-      if (this.props.expandable && this.props.expandable.isExpandable) {
-        if (fromIndex <= 1 || toIndex <= 1) return;
-        fromIndex--;
-        toIndex--;
-      }
+			if (this.props.expandable && this.props.expandable.isExpandable) {
+				const expandedIndex = this.props.expandable.expandIconColumnIndex
+				console.log(" expanded index " , expandedIndex, this.state.columns.length)
+				if(expandedIndex){
+					if(!(expandedIndex === this.state.columns.length)){
+						if (fromIndex <= 1 || toIndex <= 1) return;
+						fromIndex--;
+						toIndex--;
+					}
+				}
+	
+				}
 
       if (fromIndex <= 0 || toIndex <= 0) return;
       const columns = [...this.state.columns];
