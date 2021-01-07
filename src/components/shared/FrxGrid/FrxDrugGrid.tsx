@@ -1012,7 +1012,7 @@ class FrxDrugGrid extends Component<
         this.getDataOnFilter(filters);
       } else {
         const appliedFilters = _.pickBy(filters, _.identity);
-
+ 			if(this.props.applyFilter)
         this.props.applyFilter(appliedFilters, appliedFilters);
       }
     }
