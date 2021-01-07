@@ -30,6 +30,7 @@ import { formatTimeStr } from "antd/lib/statistic/utils";
 import showMessage from "../../../../Utils/Toast";
 import { KeyboardReturnOutlined } from "@material-ui/icons";
 import { ToastContainer } from "react-toastify";
+import "./PAGroupHeader.scss";
 
 function mapStateToProps(state) {
   return {
@@ -731,6 +732,7 @@ function PAGroupHeader(props: any) {
           </Grid>
 
           <FrxDrugGridContainer
+            isDataLoaded
             isPinningEnabled={false}
             enableSearch={false}
             enableColumnDrag

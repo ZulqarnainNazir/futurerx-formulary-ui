@@ -959,6 +959,7 @@ class TierReplace extends React.Component<any, tabsState> {
     }
     console.log("Selected file key is:" + fileKey);
     this.state.selectedFileKey = fileKey;
+    this.state.selectedFileType = fileType;
     //this.setState({ selectedFileKey: fileKey });
 
     this.resetData();
@@ -1076,7 +1077,8 @@ class TierReplace extends React.Component<any, tabsState> {
         (key) => !this.state.hiddenColumns.includes(key)
       );
     }
-    if(!this.state.isRequestFinished){
+    console.log('Render selected file type is:' + this.state.selectedFileType);
+    if (!this.state.isRequestFinished) {
       return <FrxLoader />;
     }
     return (

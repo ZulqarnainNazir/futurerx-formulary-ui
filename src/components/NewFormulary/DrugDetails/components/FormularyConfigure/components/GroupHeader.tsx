@@ -25,6 +25,7 @@ import {
 import { connect } from "react-redux";
 import { ToastContainer } from "react-toastify";
 import showMessage from "../../../../Utils/Toast";
+import "./PAGroupHeader.scss";
 
 function mapStateToProps(state) {
   return {
@@ -523,6 +524,21 @@ function GroupHeader(props: any) {
         setOpen(false);
       });
   };
+
+  const rowSelectionChangeFromCell = (
+    key: string,
+    selectedRow: any,
+    isSelected: boolean
+  ) => {
+    console.log(key);
+    console.log(selectedRow);
+    console.log(isSelected);
+  };
+
+  const onSelectAllRows = (isSelected: boolean) => {
+    console.log(isSelected);
+  };
+
   return (
     <div
       className={`version-wrapper${
@@ -739,6 +755,7 @@ function GroupHeader(props: any) {
           </Grid>
 
           <FrxDrugGridContainer
+            isDataLoaded
             isPinningEnabled={false}
             enableSearch={false}
             enableColumnDrag
