@@ -90,6 +90,7 @@ interface drugDetailALState {
   isGridMultiSorted: boolean;
   filter: any[],
   quickFilter: any[],
+  isSelectAll: boolean;
 }
 
 const defaultListPayload = {
@@ -180,6 +181,7 @@ class DrugDetailAL extends React.Component<any, any> {
     isGridMultiSorted: false,
     filter: Array(),
     quickFilter: Array(),
+    isSelectAll: false,
   };
 
   listPayload: any = {
@@ -264,6 +266,7 @@ class DrugDetailAL extends React.Component<any, any> {
       this.rpSavePayload.selected_drug_ids = this.state.selectedDrugs
       this.rpSavePayload.age_limits = ageLimits
       this.rpSavePayload.is_covered = this.state.alSettings[0].covered
+      this.rpSavePayload.is_select_all = this.state.isSelectAll
       apiDetails["messageBody"] = this.rpSavePayload;
 
       if (this.state.activeTabIndex === 0 || this.state.activeTabIndex === 1) {
@@ -356,6 +359,7 @@ class DrugDetailAL extends React.Component<any, any> {
         this.rmSavePayload.selected_drug_ids = this.state.selectedDrugs
         this.rmSavePayload.is_covered = this.state.alRemoveSettingsStatus.covered
         this.rmSavePayload.selected_criteria_ids = alCheckedList
+        this.rmSavePayload.is_select_all = this.state.isSelectAll
         apiDetails["messageBody"] = this.rmSavePayload;
         apiDetails["pathParams"] = this.props?.formulary_id + "/" +  getLobCode(this.props.formulary_lob_id) + "/" + alConstants.TYPE_REMOVE;
         console.log("The API Details - ", apiDetails);
@@ -969,7 +973,7 @@ class DrugDetailAL extends React.Component<any, any> {
       k => this.state.fixedSelectedRows.indexOf(k) < 0
     );
     this.onSelectedTableRowChanged(selectedRows);
-    this.setState({ data: data });
+    this.setState({ data: data, isSelectAll: isSelected });
   };
   
 
@@ -1153,7 +1157,7 @@ class DrugDetailAL extends React.Component<any, any> {
               <div className="modify-wrapper bordered white-bg">
                 <div className="modify-panel">
                   <div className="icon">
-                    <span>R</span>
+                    <span>P</span>
                   </div>
                   <div className="switch-box">
                     <CustomizedSwitches

@@ -18,6 +18,7 @@ import DialogPopup from "../../../../../shared/FrxDialogPopup/FrxDialogPopup";
 import FormControl from "@material-ui/core/FormControl";
 import FormLabel from "@material-ui/core/FormLabel";
 import CloneFormularyPopup from "../../FormularySetUp/components/CloneFormularyPopup";
+import UploadFiles from './UploadFiles';
 
 const mapStateToProps = (state) => {
   //console.log(state);
@@ -427,11 +428,7 @@ class GeneralInformation extends React.Component<any, GeneralInformationState> {
 
                 {this.props.generalInfo.method === "upload" && (
                   <div>
-                    <Button
-                      label="Upload"
-                      htmlFor="upload-file"
-                      className="upload-button"
-                    />
+                    <UploadFiles/>
                   </div>
                 )}
               </div>
