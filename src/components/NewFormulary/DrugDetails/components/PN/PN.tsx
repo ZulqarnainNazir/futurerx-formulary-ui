@@ -88,6 +88,7 @@ interface pnState {
   isGridMultiSorted: boolean;
   filter: any[],
   quickFilter: any[],
+  isSelectAll: boolean;
 }
 
 const columnFilterMapping = {
@@ -150,6 +151,7 @@ class DrugDetailPN extends React.Component<any, any> {
     isGridMultiSorted: false,
     filter: Array(),
     quickFilter: Array(),
+    isSelectAll: false,
   };
 
   listPayload: any = {
@@ -225,6 +227,7 @@ class DrugDetailPN extends React.Component<any, any> {
         this.rpSavePayload.pharmacy_networks = this.state.selectedList;
         this.rpSavePayload.breadcrumb_code_value = "PHNW";
         this.rpSavePayload.is_covered = this.state.pnSettingsStatus.covered;
+        this.rpSavePayload.is_select_all = this.state.isSelectAll
 
         let triggerType = (this.state.activeTabIndex === 0) ? pnConstants.TYPE_REPLACE : pnConstants.TYPE_APPEND
 
@@ -255,6 +258,7 @@ class DrugDetailPN extends React.Component<any, any> {
         this.rmSavePayload.selected_drug_ids = this.state.selectedDrugs;
         this.rmSavePayload.is_covered = this.state.pnRemoveSettingsStatus.covered;
         this.rmSavePayload.selected_criteria_ids = pnCheckedList;
+        this.rmSavePayload.is_select_all = this.state.isSelectAll
         apiDetails["messageBody"] = this.rmSavePayload;
         apiDetails["pathParams"] =
           this.props?.formulary_id +
@@ -540,6 +544,11 @@ class DrugDetailPN extends React.Component<any, any> {
             }
           }
         }
+        
+        if (thisRef.props.configureSwitch) {
+          gridItem["isDisabled"] = true;
+          gridItem["rowStyle"] = "table-row--disabled-font";
+        }
 
         gridItem["pharmacyNetwork"] = element.is_phnw
           ? "" + element.is_phnw
@@ -728,19 +737,25 @@ class DrugDetailPN extends React.Component<any, any> {
     // }
 
     if (nextProps.configureSwitch){
-      this.setState({tabs:[
-        { id: 1, text: "Replace", disabled: true },
-        { id: 2, text: "Append", disabled: true },
-        { id: 3, text: "Remove", disabled: true },
-      ], activeTabIndex:0});
+      this.setState({
+        tabs:[
+          { id: 1, text: "Replace", disabled: true },
+          { id: 2, text: "Append", disabled: true },
+          { id: 3, text: "Remove", disabled: true },
+        ], 
+        activeTabIndex:0
+      });
 
       this.getPNDrugsList();
     } else {
-      this.setState({tabs:[
-        { id: 1, text: "Replace", disabled:false },
-        { id: 2, text: "Append", disabled:false },
-        { id: 3, text: "Remove", disabled:false },
-      ]});
+      this.setState({
+        tabs:[
+          { id: 1, text: "Replace", disabled:false },
+          { id: 2, text: "Append", disabled:false },
+          { id: 3, text: "Remove", disabled:false },
+        ],
+        showGrid: false,
+      });
     }
 
     if (nextProps.advancedSearchBody && nextProps.populateGrid) {
@@ -851,7 +866,7 @@ class DrugDetailPN extends React.Component<any, any> {
       k => this.state.fixedSelectedRows.indexOf(k) < 0
     );
     this.onSelectedTableRowChanged(selectedRows);
-    this.setState({ data: data });
+    this.setState({ data: data, isSelectAll: isSelected });
   };
   
 

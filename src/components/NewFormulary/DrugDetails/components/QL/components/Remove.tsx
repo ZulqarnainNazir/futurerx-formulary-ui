@@ -4,6 +4,7 @@ import FrxDrugGridContainer from "../../../../../shared/FrxGrid/FrxDrugGridConta
 import * as constants from "../../../../../../api/http-commons"; //"../../../../../api/http-commons";
 //"../../../../shared/FrxGrid/FrxDrugGridContainer";
 import { postCriteriaListQl } from "../../../../../../redux/slices/formulary/ql/qlActionCreation";
+import Button from "../../../../../shared/Frx-components/button/Button";
 import { connect } from "react-redux";
 
 function mapDispatchToProps(dispatch) {
@@ -274,6 +275,20 @@ class Remove extends Component<any, State> {
               onChange: this.onSelectedTableRowChanged,
             }}
           />
+          <div
+            className="apply-button"
+            style={{
+              display: "flex",
+              justifyContent: "flex-end",
+              width: "100%",
+            }}
+          >
+            <Button
+              label="Apply"
+              onClick={this.props.onApply}
+              disabled={this.props.switchState}
+            ></Button>
+          </div>
         </div>
       </div>
     );

@@ -203,6 +203,7 @@ class DrugDetailPR extends React.Component<any, any> {
         this.rpSavePayload.selected_drug_ids = this.state.selectedDrugs
         this.rpSavePayload.is_covered = this.state.prSettingsStatus.covered //this.state.posCheckedList
         this.rpSavePayload.patient_residences = patientResidences;
+        this.rpSavePayload.is_select_all = this.state.isSelectAll
         apiDetails["messageBody"] = this.rpSavePayload;
         apiDetails["pathParams"] = this.props?.formulary_id + "/" +  getLobCode(this.props.formulary_lob_id) + "/" + prConstants.TYPE_REPLACE;
         console.log("The API Details - ", apiDetails);
@@ -263,6 +264,7 @@ class DrugDetailPR extends React.Component<any, any> {
         this.rmSavePayload.selected_drug_ids = this.state.selectedDrugs
         this.rmSavePayload.is_covered = this.state.posRemoveSettingsStatus.covered
         this.rmSavePayload.selected_criteria_ids = prCheckedList
+        this.rmSavePayload.is_select_all = this.state.isSelectAll
         apiDetails["messageBody"] = this.rmSavePayload;
         apiDetails["pathParams"] = this.props?.formulary_id + "/" +  getLobCode(this.props.formulary_lob_id) + "/" + prConstants.TYPE_REMOVE;
         console.log("The API Details - ", apiDetails);
@@ -544,6 +546,11 @@ class DrugDetailPR extends React.Component<any, any> {
             }
           }
         }
+        
+        if (thisRef.props.configureSwitch) {
+          gridItem["isDisabled"] = true;
+          gridItem["rowStyle"] = "table-row--disabled-font";
+        }
 
         gridItem["patientResidence"] = element.is_patrs ? "" + element.is_patrs : "";
         gridItem["coveredpatientResidence"] = element.covered_patient_residences ? "" + element.covered_patient_residences : "";
@@ -739,19 +746,25 @@ class DrugDetailPR extends React.Component<any, any> {
     // }
 
     if (nextProps.configureSwitch){
-      this.setState({tabs:[
-        { id: 1, text: "Replace", disabled: true },
-        { id: 2, text: "Append", disabled: true },
-        { id: 3, text: "Remove", disabled: true },
-      ], activeTabIndex:0});
+      this.setState({
+        tabs:[
+          { id: 1, text: "Replace", disabled: true },
+          { id: 2, text: "Append", disabled: true },
+          { id: 3, text: "Remove", disabled: true },
+        ], 
+        activeTabIndex:0
+      });
 
       this.getPRDrugsList();
     } else {
-      this.setState({tabs:[
-        { id: 1, text: "Replace", disabled:false },
-        { id: 2, text: "Append", disabled:false },
-        { id: 3, text: "Remove", disabled:false },
-      ]});
+      this.setState({
+        tabs:[
+          { id: 1, text: "Replace", disabled:false },
+          { id: 2, text: "Append", disabled:false },
+          { id: 3, text: "Remove", disabled:false },
+        ],
+        showGrid: false,
+      });
     }
 
     if (nextProps.advancedSearchBody && nextProps.populateGrid) {
@@ -862,7 +875,7 @@ class DrugDetailPR extends React.Component<any, any> {
       k => this.state.fixedSelectedRows.indexOf(k) < 0
     );
     this.onSelectedTableRowChanged(selectedRows);
-    this.setState({ data: data });
+    this.setState({ data: data, isSelectAll: isSelected });
   };
 
   onMultiSortToggle = (isMultiSortOn: boolean) => {

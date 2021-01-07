@@ -95,6 +95,7 @@ interface otherState {
   isGridMultiSorted: boolean,
   filter: any[],
   quickFilter: any[],
+  isSelectAll: boolean;
 }
 
 class DrugDetailOther extends React.Component<any, any> {
@@ -141,6 +142,7 @@ class DrugDetailOther extends React.Component<any, any> {
     isGridMultiSorted: false,
     filter: Array(),
     quickFilter: Array(),
+    isSelectAll: false,
   };
 
   listPayload: any = {
@@ -194,6 +196,7 @@ class DrugDetailOther extends React.Component<any, any> {
 
       if (this.state.activeTabIndex === 0 || this.state.activeTabIndex === 1) {
         this.rpSavePayload.selected_drug_ids = this.state.selectedDrugs
+        this.rpSavePayload.is_select_all = this.state.isSelectAll
         apiDetails["messageBody"] = this.rpSavePayload;
         let triggerType = (this.state.activeTabIndex === 0) ? otConstants.TYPE_REPLACE : otConstants.TYPE_APPEND
         apiDetails["pathParams"] = this.props?.formulary_id + "/" +  getLobCode(this.props.formulary_lob_id) + "/" + triggerType;
@@ -212,6 +215,7 @@ class DrugDetailOther extends React.Component<any, any> {
 
       } else if(this.state.activeTabIndex === 2) {
         this.rmSavePayload.selected_drug_ids = this.state.selectedDrugs
+        this.rmSavePayload.is_select_all = this.state.isSelectAll
         apiDetails["messageBody"] = this.rmSavePayload;
         apiDetails["pathParams"] = this.props?.formulary_id + "/" +  getLobCode(this.props.formulary_lob_id) + "/" + otConstants.TYPE_REMOVE;
         console.log("The API Details - ", apiDetails);
@@ -449,6 +453,11 @@ class DrugDetailOther extends React.Component<any, any> {
           }
         }
         
+        if (thisRef.props.configureSwitch) {
+          gridItem["isDisabled"] = true;
+          gridItem["rowStyle"] = "table-row--disabled-font";
+        }
+        
         gridItem["tier"] = element.tier_value ? "" + element.tier_value : "";
         gridItem["labelName"] = element.drug_label_name ? "" + element.drug_label_name : "";
         gridItem["ddid"] = element.drug_descriptor_identifier ? "" + element.drug_descriptor_identifier : "";
@@ -610,11 +619,14 @@ class DrugDetailOther extends React.Component<any, any> {
       this.getOtherList();
       this.getOTHERSummary();
     } else {
-      this.setState({tabs:[
-        { id: 1, text: "Replace", disabled:false },
-        { id: 2, text: "Append", disabled:false },
-        { id: 3, text: "Remove", disabled:false },
-      ]});
+      this.setState({
+        tabs:[
+          { id: 1, text: "Replace", disabled:false },
+          { id: 2, text: "Append", disabled:false },
+          { id: 3, text: "Remove", disabled:false },
+        ],
+        showGrid: false,
+      });
       this.getOTHERSummary();
     }
 
@@ -658,7 +670,7 @@ class DrugDetailOther extends React.Component<any, any> {
       k => this.state.fixedSelectedRows.indexOf(k) < 0
     );
     this.onSelectedTableRowChanged(selectedRows);
-    this.setState({ data: data });
+    this.setState({ data: data, isSelectAll: isSelected });
   };
 
   onSettingsIconHandler = (hiddenColumn, visibleColumn) => {

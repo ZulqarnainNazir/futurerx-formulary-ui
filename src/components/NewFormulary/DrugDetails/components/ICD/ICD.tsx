@@ -89,6 +89,7 @@ interface icdState {
   isGridMultiSorted: boolean;
   filter: any[],
   quickFilter: any[],
+  isSelectAll: boolean;
 }
 
 const columnFilterMapping = {
@@ -153,6 +154,7 @@ class DrugDetailICD extends React.Component<any, any> {
     isGridMultiSorted: false,
     filter: Array(),
     quickFilter: Array(),
+    isSelectAll: false,
   };
 
   listPayload: any = {
@@ -236,6 +238,7 @@ class DrugDetailICD extends React.Component<any, any> {
         this.rpSavePayload.icd_limits.icds = this.state.selectedList;
         this.rpSavePayload.breadcrumb_code_value = "ICDL";
         this.rpSavePayload.is_covered = this.state.icdSettingsStatus.covered;
+        this.rpSavePayload.is_select_all = this.state.isSelectAll
         apiDetails["messageBody"] = this.rpSavePayload;
         apiDetails["pathParams"] =
           this.props?.formulary_id +
@@ -268,6 +271,7 @@ class DrugDetailICD extends React.Component<any, any> {
         this.rmSavePayload.selected_drug_ids = this.state.selectedDrugs;
         this.rmSavePayload.is_covered = this.state.icdRemoveSettingsStatus.covered;
         this.rmSavePayload.selected_criteria_ids = icdCheckedList;
+        this.rmSavePayload.is_select_all = this.state.isSelectAll
         apiDetails["messageBody"] = this.rmSavePayload;
         apiDetails["pathParams"] =
           this.props?.formulary_id +
@@ -513,6 +517,11 @@ class DrugDetailICD extends React.Component<any, any> {
           if(ncgendersArray.length !== modIcdLimits.length) {
             modIcdLimits = Array(ncgendersArray.length).fill(+element.lookback_days);
           }
+        }
+        
+        if (thisRef.props.configureSwitch) {
+          gridItem["isDisabled"] = true;
+          gridItem["rowStyle"] = "table-row--disabled-font";
         }
 
         gridItem["icdLimit"] = element.is_icdl ? "" + element.is_icdl : "";
@@ -834,6 +843,7 @@ class DrugDetailICD extends React.Component<any, any> {
           { id: 2, text: "Append", disabled: false },
           { id: 3, text: "Remove", disabled: false },
         ],
+        showGrid: false,
       });
     }
 
@@ -954,7 +964,7 @@ class DrugDetailICD extends React.Component<any, any> {
       k => this.state.fixedSelectedRows.indexOf(k) < 0
     );
     this.onSelectedTableRowChanged(selectedRows);
-    this.setState({ data: data });
+    this.setState({ data: data, isSelectAll: isSelected });
   };
   
 

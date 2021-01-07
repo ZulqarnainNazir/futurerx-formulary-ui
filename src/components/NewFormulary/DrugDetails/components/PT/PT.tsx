@@ -90,6 +90,7 @@ interface ptState {
   isGridMultiSorted: boolean;
   filter: any[];
   quickFilter: any[];
+  isSelectAll: boolean;
 }
 
 const columnFilterMapping = {
@@ -154,6 +155,7 @@ class DrugDetailPT extends React.Component<any, any> {
     isGridMultiSorted: false,
     filter: Array(),
     quickFilter: Array(),
+    isSelectAll: false,
   };
 
   listPayload: any = {
@@ -229,6 +231,7 @@ class DrugDetailPT extends React.Component<any, any> {
         this.rpSavePayload.prescriber_taxonomies = this.state.selectedList;
         this.rpSavePayload.breadcrumb_code_value = "PRTX";
         this.rpSavePayload.is_covered = this.state.ptSettingsStatus.covered;
+        this.rpSavePayload.is_select_all = this.state.isSelectAll
 
         let triggerType = (this.state.activeTabIndex === 0) ? ptConstants.TYPE_REPLACE : ptConstants.TYPE_APPEND
 
@@ -259,6 +262,7 @@ class DrugDetailPT extends React.Component<any, any> {
         this.rmSavePayload.selected_drug_ids = this.state.selectedDrugs;
         this.rmSavePayload.is_covered = this.state.ptRemoveSettingsStatus.covered;
         this.rmSavePayload.selected_criteria_ids = ptCheckedList;
+        this.rmSavePayload.is_select_all = this.state.isSelectAll
         apiDetails["messageBody"] = this.rmSavePayload;
         apiDetails["pathParams"] =
           this.props?.formulary_id +
@@ -629,6 +633,11 @@ class DrugDetailPT extends React.Component<any, any> {
             }
           }
         }
+        
+        if (thisRef.props.configureSwitch) {
+          gridItem["isDisabled"] = true;
+          gridItem["rowStyle"] = "table-row--disabled-font";
+        }
 
         gridItem["prescriberTaxonomy"] = element.is_prtx
           ? "" + element.is_prtx
@@ -800,6 +809,7 @@ class DrugDetailPT extends React.Component<any, any> {
           { id: 2, text: "Append", disabled: false },
           { id: 3, text: "Remove", disabled: false },
         ],
+        showGrid: false,
       });
     }
 
@@ -924,7 +934,7 @@ class DrugDetailPT extends React.Component<any, any> {
       (k) => this.state.fixedSelectedRows.indexOf(k) < 0
     );
     this.onSelectedTableRowChanged(selectedRows);
-    this.setState({ data: data });
+    this.setState({ data: data, isSelectAll: isSelected });
   };
   onMultiSortToggle = (isMultiSortOn: boolean) => {
     console.log("is Multi sort on ", isMultiSortOn);

@@ -162,7 +162,8 @@ function Validation(props) {
       let users: any[] = [];
       let  awsFileURL="https://frx-document-delivery.s3.amazonaws.com/";
       if (element.users && element.users.length > 0) {
-        let usersList: any[] = element.users.filter((x) => x.name != null);
+        let usersList: any[] = element.users.filter((x) => x.name !== null);
+        console.log(usersList);
         usersList.forEach((u) => {
           users.push({ 
             name: u.name,
@@ -171,7 +172,7 @@ function Validation(props) {
         });
       }
       // user.logo_path = environment.awsFileURL + user.logo_path
-      console.log(users);
+      console.log("U : ",users);
       const item = {
         ...element,
         status: status,

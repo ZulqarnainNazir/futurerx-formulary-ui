@@ -88,6 +88,7 @@ interface glState {
   isGridMultiSorted: boolean;
   filter: any[];
   quickFilter: any[];
+  isSelectAll: boolean;
 }
 
 const columnFilterMapping = {
@@ -153,6 +154,7 @@ class DrugDetailGL extends React.Component<any, any> {
     isGridMultiSorted: false,
     filter: Array(),
     quickFilter: Array(),
+    isSelectAll: false,
   };
 
   listPayload: any = {
@@ -277,6 +279,7 @@ class DrugDetailGL extends React.Component<any, any> {
         this.rpSavePayload.gender_limits = glRows;
         this.rpSavePayload.breadcrumb_code_value = "GL";
         this.rpSavePayload.is_covered = this.state.glSettingsStatus.covered;
+        this.rpSavePayload.is_select_all = this.state.isSelectAll
         apiDetails["messageBody"] = this.rpSavePayload;
         apiDetails["pathParams"] =
           this.props?.formulary_id +
@@ -343,6 +346,7 @@ class DrugDetailGL extends React.Component<any, any> {
         this.rmSavePayload.selected_drug_ids = this.state.selectedDrugs;
         this.rmSavePayload.is_covered = this.state.glRemoveSettingsStatus.covered;
         this.rmSavePayload.selected_criteria_ids = glCheckedList;
+        this.rmSavePayload.is_select_all = this.state.isSelectAll
         apiDetails["messageBody"] = this.rmSavePayload;
         apiDetails["pathParams"] =
           this.props?.formulary_id +
@@ -670,6 +674,11 @@ class DrugDetailGL extends React.Component<any, any> {
         //   //table-row--red-font (for red) table-row--green-font (for green) table-row--blue-font for default (for blue)
         //   gridItem["rowStyle"] = "table-row--blue-font";
         // }
+        
+        if (thisRef.props.configureSwitch) {
+          gridItem["isDisabled"] = true;
+          gridItem["rowStyle"] = "table-row--disabled-font";
+        }
 
         gridItem["genderLimit"] = element.is_gl ? "" + element.is_gl : "";
         gridItem["coveredGender"] = element.covered_genders
@@ -904,6 +913,7 @@ class DrugDetailGL extends React.Component<any, any> {
           { id: 2, text: "Append", disabled: false },
           { id: 3, text: "Remove", disabled: false },
         ],
+        showGrid: false,
       });
     }
 
@@ -1028,7 +1038,7 @@ class DrugDetailGL extends React.Component<any, any> {
       (k) => this.state.fixedSelectedRows.indexOf(k) < 0
     );
     this.onSelectedTableRowChanged(selectedRows);
-    this.setState({ data: data });
+    this.setState({ data: data, isSelectAll: isSelected });
   };
 
   onMultiSortToggle = (isMultiSortOn: boolean) => {
