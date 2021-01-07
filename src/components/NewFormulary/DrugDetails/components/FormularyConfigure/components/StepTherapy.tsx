@@ -2,7 +2,10 @@ import React from "react";
 import { connect } from "react-redux";
 import { Grid } from "@material-ui/core";
 import FrxMiniTabs from "../../../../../shared/FrxMiniTabs/FrxMiniTabs";
-import { getTapList, getMiniTabs } from "../../../../../../mocks/formulary/mock-data";
+import {
+  getTapList,
+  getMiniTabs,
+} from "../../../../../../mocks/formulary/mock-data";
 import CustomizedSwitches from "./CustomizedSwitches";
 import PanelHeader from "./PanelHeader";
 import PanelGrid from "./panelGrid";
@@ -66,8 +69,8 @@ class StepTherapy extends React.Component<any, tabsState> {
 
   componentWillReceiveProps(nextProps) {
     // debugger;
-    console.log('TIER: componentWillReceiveProps', nextProps);
-    
+    console.log("TIER: componentWillReceiveProps", nextProps);
+
     let tmpData = nextProps.stData;
     if (tmpData && Array.isArray(tmpData) && tmpData.length > 0) {
       var tierOption: any[] = [];
@@ -95,28 +98,28 @@ class StepTherapy extends React.Component<any, tabsState> {
     }
   }
   componentDidMount() {
-    
-    const TierDefinationData = this.props.getStSummary(this.props?.formulary_id).then((json => {
-      // debugger;
-      let tmpData = json.payload.result;
-      var rows = tmpData.map(function (el) {
-        var curRow = [
-          el["st_type_name"],
-          el["total_group_description_count"],
-          el["added_group_description_count"],
-          el["removed_group_description_count"],
-          el["total_drug_count"],
-          el["added_drug_count"],
-          el["removed_drug_count"],
-        ];
-        return curRow;
-      });
+    const TierDefinationData = this.props
+      .getStSummary(this.props?.formulary_id)
+      .then((json) => {
+        // debugger;
+        let tmpData = json.payload.result;
+        var rows = tmpData.map(function (el) {
+          var curRow = [
+            el["st_type_name"],
+            el["total_group_description_count"],
+            el["added_group_description_count"],
+            el["removed_group_description_count"],
+            el["total_drug_count"],
+            el["added_drug_count"],
+            el["removed_drug_count"],
+          ];
+          return curRow;
+        });
 
-      console.log(rows);
-      this.setState({
-        panelGridValue: rows,
+        this.setState({
+          panelGridValue: rows,
+        });
       });
-    }));
   }
   render() {
     return (
@@ -127,7 +130,7 @@ class StepTherapy extends React.Component<any, tabsState> {
               <Grid item xs={12}>
                 <div className="mb-10">
                   <div className="limited-access">
-                    <PanelHeader title="Prior Authorization - DRUG SELECTION" />
+                    <PanelHeader title="STEP THERAPY - DRUG SELECTION" />
                     <div className="inner-container">
                       <PanelGrid
                         panelGridTitle={this.state.panelGridTitle}
