@@ -103,9 +103,8 @@ class FrxDrugGridContainer extends Component<FrxDrugGridContainerProps<any>> {
    * TODO: fix a type for the searchObject
    * @author Deepak_T
    */
-  handleSearch = (searchObject) => {
-		if(this.props.onSearch)
-    	this.props.onSearch(searchObject);
+  handleSearch = searchObject => {
+    if (this.props.onSearch) this.props.onSearch(searchObject);
   };
 
   render() {
@@ -116,12 +115,12 @@ class FrxDrugGridContainer extends Component<FrxDrugGridContainerProps<any>> {
           applySort={this.props.applySort}
           isSingleSorted={this.props.isSingleSorted}
           sortedInfo={this.props.sortedInfo}
-					applyMultiSort={this.props.applyMultiSort}
-					isMultiSorted={this.props.isMultiSorted}
-					multiSortedInfo={this.props.multiSortedInfo}
-					onMultiSortToggle={this.props.onMultiSortToggle}
-					isFiltered={this.props.isFiltered}
-					filteredInfo={this.props.filteredInfo}
+          applyMultiSort={this.props.applyMultiSort}
+          isMultiSorted={this.props.isMultiSorted}
+          multiSortedInfo={this.props.multiSortedInfo}
+          onMultiSortToggle={this.props.onMultiSortToggle}
+          isFiltered={this.props.isFiltered}
+          filteredInfo={this.props.filteredInfo}
           isDataLoaded={this.props.isDataLoaded}
           bordered={false}
           columns={this.props.columns}
@@ -133,7 +132,7 @@ class FrxDrugGridContainer extends Component<FrxDrugGridContainerProps<any>> {
           enableColumnDrag={this.props.enableColumnDrag}
           loading={{
             spinning: this.props.isFetchingData,
-            indicator: <FrxLoader />,
+            indicator: <FrxLoader />
           }}
           customSettingIcon={this.props.customSettingIcon}
           hideMultiSort={this.props.hideMultiSort}
@@ -171,8 +170,10 @@ class FrxDrugGridContainer extends Component<FrxDrugGridContainerProps<any>> {
           getColumnSettings={this.props.getColumnSettings}
           isRowSelectorCheckbox={this.props.isRowSelectorCheckbox}
           isPinningEnabled={this.props.isPinningEnabled}
-          onRowExpandHandler={this.props.onRowExpandHandler}
+					onRowExpandHandler={this.props.onRowExpandHandler}
+					onColumnChange={this.props.onColumnChange}
           // isSeparateCheckboxColumn={this.props.isSeparateCheckboxColumn}
+         
           expandable={{
             isExpandable: this.props.expandable
               ? this.props.expandable.isExpandable
@@ -196,7 +197,7 @@ class FrxDrugGridContainer extends Component<FrxDrugGridContainerProps<any>> {
               this.props.expandable &&
               this.props.expandable.expandedRowClassName
                 ? this.props.expandable.expandedRowClassName
-                : undefined,
+                : undefined
           }}
         />
       </div>

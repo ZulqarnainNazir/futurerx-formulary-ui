@@ -37,7 +37,7 @@ import FrxGridIntellisenseFilter from "./components/FrxGridIntellisenseFilter/Fr
 import {
   tooltipMock1,
   tooltipMock2,
-  tooltipMock3,
+  tooltipMock3
 } from "../../../mocks/GridDrugLabelTooltip";
 
 /**
@@ -45,7 +45,7 @@ import {
  * to get the column headers which cn be resized
  * @param props has width , onResize handler
  */
-const ResizableTitle = (props) => {
+const ResizableTitle = props => {
   const { onResize, onResizeStop, onResizeStart, width, ...restProps } = props;
 
   if (!width) {
@@ -59,7 +59,7 @@ const ResizableTitle = (props) => {
       handle={
         <span
           className="react-resizable-handle"
-          onClick={(e) => {
+          onClick={e => {
             e.stopPropagation();
           }}
         />
@@ -100,7 +100,7 @@ interface FrxDrugGridState<T> {
   isMultiSort?: boolean;
   sortedInfo: any;
   multiSortedInfo: any;
-	isFiltered?:boolean;
+  isFiltered?: boolean;
   isSingleSort?: boolean;
   columns: Column<T>[];
   visibleColumns: Column<T>[];
@@ -137,7 +137,7 @@ class FrxDrugGrid extends Component<
     sortedInfo: null,
     multiSortedInfo: [],
     isSingleSort: false,
-		isFiltered:false,
+    isFiltered: false,
     suggestions: {},
     columns: [],
     visibleColumns: [],
@@ -164,8 +164,8 @@ class FrxDrugGrid extends Component<
     openDialogOnClickingCell: {
       isOpen: false,
       component: undefined,
-      dataRow: null,
-    },
+      dataRow: null
+    }
   };
 
   //instance variables
@@ -213,27 +213,31 @@ class FrxDrugGrid extends Component<
       : this.props.gridName === "CLAIMS"
       ? CLAIMS_GRID_SETTINGS_WIDTH
       : SETTINGS_WIDTH;
-    let modifiedSettingsEnabledColumns: Column<any>[] = [];
+    let modifiedSettingsEnabledColumns: Column<any>[] = columns.slice();
     if (enableSettings) {
-      const settingsEnabledColumns = columns.map((c: Column<any>) => {
-        c.position += 1;
-        return c;
-      });
+      let settingsEnabledColumns = columns.slice();
+      const idx = columns.findIndex(c => c.key === "settings");
+      if (idx < 0) {
+        settingsEnabledColumns = columns.map((c: Column<any>) => {
+          c.position += 1;
+          return c;
+        });
 
-      modifiedSettingsEnabledColumns = [
-        {
-          position: 1,
-          key: "settings",
-          displayTitle: " ",
-          hidden: false,
-          fixed: "left",
-          width: settingsWidth,
+        modifiedSettingsEnabledColumns = [
+          {
+            position: 1,
+            key: "settings",
+            displayTitle: " ",
+            hidden: false,
+            fixed: "left",
+            width: settingsWidth,
 
-          render: (record) => <></>,
-        },
+            render: record => <></>
+          },
 
-        ...settingsEnabledColumns,
-      ];
+          ...settingsEnabledColumns
+        ];
+      }
     }
 
     let requiredColumns: Column<any>[] = [];
@@ -241,8 +245,8 @@ class FrxDrugGrid extends Component<
       requiredColumns = _.cloneDeep(modifiedSettingsEnabledColumns);
     else requiredColumns = _.cloneDeep(columns);
 
-    const visibleColumns = requiredColumns.filter((c) => !c.hidden);
-    const hiddenColumns = requiredColumns.filter((c) => c.hidden);
+    const visibleColumns = requiredColumns.filter(c => !c.hidden);
+    const hiddenColumns = requiredColumns.filter(c => c.hidden);
 
     const gridWidth =
       this.gridRef && this.gridRef.current
@@ -260,7 +264,7 @@ class FrxDrugGrid extends Component<
       columns: requiredColumns,
       suggestions: suggestionsForEachColumn,
       visibleColumns,
-      hiddenColumns,
+      hiddenColumns
     });
   };
 
@@ -270,54 +274,65 @@ class FrxDrugGrid extends Component<
   //       this.initializeColumns();
   //     }
   //   }
-	// }
-	
-	componentDidUpdate(previousProps, previousState) {
+  // }
 
+  componentDidUpdate(previousProps, previousState) {
+    if (this.props.isMultiSorted !== undefined && !this.props.isDataLoaded) {
+      if (
+        this.props.isMultiSorted !== previousState.isMultiSort ||
+        !this.isGridGridMultiSortedInfoSame(
+          this.props.multiSortedInfo,
+          previousState.multiSortedInfo
+        )
+      ) {
+        console.log("multi sort from props ", this.props.isMultiSorted);
+        console.log("multi sort array ", this.multiSortArray);
+        this.multiSortArray = this.state.multiSortedInfo.map(
+          item => item.columnKey
+        );
+        this.setState(
+          {
+            multiSortedInfo: this.props.multiSortedInfo,
+            isMultiSort: this.props.isMultiSorted
+          },
+          () => {
+            this.updateFilters();
+          }
+        );
+      }
+    }
 
-		if(this.props.isMultiSorted !== undefined && !this.props.isDataLoaded){
-			if(this.props.isMultiSorted !== previousState.isMultiSort || 
-				!this.isGridGridMultiSortedInfoSame(this.props.multiSortedInfo, previousState.multiSortedInfo)){
-				console.log("multi sort from props ", this.props.isMultiSorted)
-				console.log("multi sort array ", this.multiSortArray)
-				this.multiSortArray = this.state.multiSortedInfo.map(item => item.columnKey)
-				this.setState({
-					multiSortedInfo:this.props.multiSortedInfo,
-					isMultiSort:this.props.isMultiSorted
-				}, () => {
-					this.updateFilters()
-				})
-			}
-		}
+    if (this.props.isSingleSorted !== undefined && !this.props.isDataLoaded) {
+      if (this.props.isSingleSorted !== previousState.isSingleSort) {
+        const sortedInfo = { ...this.props.sortedInfo };
 
-		if(this.props.isSingleSorted !== undefined && !this.props.isDataLoaded){
-			if(this.props.isSingleSorted !== previousState.isSingleSort){
-				const sortedInfo = {...this.props.sortedInfo}
-				
-				this.setState({
-					sortedInfo:this.props.sortedInfo,
-					isSingleSort:this.props.isSingleSorted
-				
-				}, () => {
-					this.updateFilters();
-				})
-			}
-		}
+        this.setState(
+          {
+            sortedInfo: this.props.sortedInfo,
+            isSingleSort: this.props.isSingleSorted
+          },
+          () => {
+            this.updateFilters();
+          }
+        );
+      }
+    }
 
-		if(this.props.isFiltered !== undefined && !this.props.isDataLoaded){
-			if(this.props.isFiltered !== previousState.isFiltered){
-				const sortedInfo = {...this.props.sortedInfo}
-				
-				this.setState({
-					filteredInfo:this.props.filteredInfo,
-					isFiltered:this.props.isFiltered
-				
-				}, () => {
-					this.updateFilters();
-				})
-			}
-		}
+    if (this.props.isFiltered !== undefined && !this.props.isDataLoaded) {
+      if (this.props.isFiltered !== previousState.isFiltered) {
+        const sortedInfo = { ...this.props.sortedInfo };
 
+        this.setState(
+          {
+            filteredInfo: this.props.filteredInfo,
+            isFiltered: this.props.isFiltered
+          },
+          () => {
+            this.updateFilters();
+          }
+        );
+      }
+    }
 
     // if (this.props.isSingleSorted !== undefined && !this.props.isDataLoaded) {
     //   if (this.props.isSingleSorted !== previousState.isSingleSort) {
@@ -349,6 +364,7 @@ class FrxDrugGrid extends Component<
 
       //for setting prefs
       if (!this.isGridColumnsSame(previousProps.columns, this.props.columns)) {
+        console.log("changed hidden cols ");
         this.initializeColumns();
       }
 
@@ -387,12 +403,9 @@ class FrxDrugGrid extends Component<
       }
     }
     return true;
-	};
-	
-	isGridGridMultiSortedInfoSame = (
-    oldInfo: any[],
-    newInfo: any[]
-  ) => {
+  };
+
+  isGridGridMultiSortedInfoSame = (oldInfo: any[], newInfo: any[]) => {
     if (oldInfo === undefined && newInfo === undefined) {
       return true;
     }
@@ -404,7 +417,8 @@ class FrxDrugGrid extends Component<
     }
     for (let i = 0; i < oldInfo.length; i++) {
       if (
-        oldInfo[i].columnKey !== newInfo[i].columnKey ||  oldInfo[i].order !== newInfo[i].order
+        oldInfo[i].columnKey !== newInfo[i].columnKey ||
+        oldInfo[i].order !== newInfo[i].order
       ) {
         return false;
       }
@@ -419,18 +433,28 @@ class FrxDrugGrid extends Component<
     onDragEnd: (fromIndex, toIndex) => {
       if (!this.props.enableColumnDrag) return;
 
-			if (this.props.expandable && this.props.expandable.isExpandable) {
-				const expandedIndex = this.props.expandable.expandIconColumnIndex
-				console.log(" expanded index " , expandedIndex, this.state.columns.length)
-				if(expandedIndex){
-					if(!(expandedIndex === this.state.columns.length)){
+      if (this.props.expandable && this.props.expandable.isExpandable) {
+        const expandedIndex = this.props.expandable.expandIconColumnIndex;
+        console.log(
+          " expanded index ",
+          fromIndex,
+          toIndex,
+          expandedIndex,
+          this.state.columns.length,
+          this.state.columns.filter(c => !c.hidden).length
+        );
+        if (expandedIndex) {
+          if (
+            expandedIndex < this.state.columns.filter(c => !c.hidden).length
+          ) {
 						if (fromIndex <= 1 || toIndex <= 1) return;
-						fromIndex--;
-						toIndex--;
-					}
-				}
-	
-				}
+						console.log(fromIndex, toIndex);
+            fromIndex--;
+            toIndex--;
+          }
+        }
+      }
+      console.log(fromIndex, toIndex);
 
       if (fromIndex <= 0 || toIndex <= 0) return;
       const columns = [...this.state.columns];
@@ -438,20 +462,33 @@ class FrxDrugGrid extends Component<
       if (
         this.props.fixedColumnKeys.includes(columns[fromIndex]["key"]) ||
         this.props.fixedColumnKeys.includes(columns[toIndex]["key"])
-      )
+      ) {
         return;
+      }
+      console.log(fromIndex, toIndex);
 
       let swappedCols = this.swapArrayLocs(columns, fromIndex, toIndex);
+      console.log(fromIndex, toIndex, swappedCols);
 
       swappedCols = this.sortColumnsByPosition(swappedCols);
 
-      this.setState({
-        columns: [...swappedCols],
-      });
+      this.setState(
+        {
+          columns: [...swappedCols],
+          visibleColumns: [...swappedCols].filter(c => !c.hidden),
+          hiddenColumns: [...swappedCols].filter(c => c.hidden)
+        },
+        () => {
+          if (!this.props.isDataLoaded && this.props.onColumnChange) {
+            const changedColumns = _.cloneDeep(this.state.columns);
+            this.props.onColumnChange(changedColumns);
+          }
+        }
+      );
     },
     nodeSelector: "th",
     handleSelector: ".frx-grid-header-cell--dragHandler",
-    ignoreSelector: "react-resizable-handle",
+    ignoreSelector: "react-resizable-handle"
   };
 
   /**
@@ -465,19 +502,30 @@ class FrxDrugGrid extends Component<
    * @author Deepak_T
    */
   swapArrayLocs = (arr, fromIndex, toIndex) => {
-    console.log("swpping ", fromIndex, toIndex);
-    if (fromIndex < 0 || toIndex < 0) return;
+		console.log("swpping ", fromIndex, toIndex);
+		
+		if (fromIndex < 0 || toIndex < 0) return;
+		arr = arr.filter(c => !c.hidden)
 
     let fromPosition = arr[fromIndex]["position"];
     let toPosition = arr[toIndex]["position"];
-    console.log("positions ", fromPosition, toPosition);
+    console.log(
+      "positions ",
+      arr[fromIndex],
+      arr[toIndex],
+      fromPosition,
+      toPosition
+		);
+		
     arr[fromIndex]["position"] = toPosition;
-    arr[toIndex]["position"] = fromPosition;
-    let temp = arr[fromIndex];
+		arr[toIndex]["position"] = fromPosition;
+		arr = [...arr, ...this.state.hiddenColumns]
+    arr = this.getSortedHiddenAndDisplayedColumnsByPosition(arr);
+    // let temp = arr[fromIndex];
 
-    arr[fromIndex] = arr[toIndex];
+    // arr[fromIndex] = arr[toIndex];
 
-    arr[toIndex] = temp;
+    // arr[toIndex] = temp;
 
     return arr;
   };
@@ -616,8 +664,7 @@ class FrxDrugGrid extends Component<
           // c["width"] = width > columnWidth ? width : columnWidth;
           c["width"] = width;
           if (c.isFilterable) {
-            c["filterIcon"] = (filtered) => {
-					
+            c["filterIcon"] = filtered => {
               return (
                 <>
                   <FrxGridFilterIcon {...filtered} filtered={filtered} />
@@ -625,7 +672,7 @@ class FrxDrugGrid extends Component<
               );
             };
 
-            c["filterDropdown"] = (props) => {
+            c["filterDropdown"] = props => {
               if (c.dataType !== "date" && !c.enableIntellisense) {
                 return <FrxGridFilterDropDown {...props} />;
               } else if (c.dataType === "date" && !c.enableIntellisense) {
@@ -755,8 +802,8 @@ class FrxDrugGrid extends Component<
         openDialogOnClickingCell: {
           isOpen: !prevState.openDialogOnClickingCell.isOpen,
           component: componentToOpenOnClickingCell,
-          dataRow: dataRow,
-        },
+          dataRow: dataRow
+        }
       };
     });
   };
@@ -800,7 +847,7 @@ class FrxDrugGrid extends Component<
    */
   withData = (WrappedComponent: any, data: any) => {
     console.log(" wrpped modal", WrappedComponent);
-    return (props) => {
+    return props => {
       return (
         <WrappedComponent
           data={data}
@@ -822,8 +869,8 @@ class FrxDrugGrid extends Component<
         ...prevState,
         openDialogOnClickingCell: {
           ...prevState.openDialogOnClickingCell,
-          isOpen: false,
-        },
+          isOpen: false
+        }
       };
     });
   };
@@ -856,17 +903,17 @@ class FrxDrugGrid extends Component<
     // });
 
     // return columns;
-    const cols = columns.map((c: Column<any>, idx: number) => {
-      c["position"] = idx + 1;
-      return c;
-    });
+    // const cols = columns.map((c: Column<any>, idx: number) => {
+    //   c["position"] = idx + 1;
+    //   return c;
+    // });
     // cols.sort((c1: any, c2: any) => {
     //   if (c1.position > c2.position) return 1;
     //   else if (c1.position < c2.position) return -1;
     //   else return 0;
     // });
 
-    return cols;
+    return columns;
   };
   /**
    * @function getGridData
@@ -946,9 +993,9 @@ class FrxDrugGrid extends Component<
         {
           filteredInfo: isFilterApplied ? filters : null,
           sortedInfo: isSorterApplied ? sorter : null,
-					isSingleSort: isSorterApplied,
-					isFiltered:isFilterApplied,
-          isMultiSort: isSorterApplied && this.state.isMultiSort,
+          isSingleSort: isSorterApplied,
+          isFiltered: isFilterApplied,
+          isMultiSort: isSorterApplied && this.state.isMultiSort
         },
         () => {
           this.updateFilters();
@@ -957,16 +1004,14 @@ class FrxDrugGrid extends Component<
     }
 
     if (filters && extra.action === "filter") {
-			console.log(filters)
-			if(this.props.isDataLoaded){
-				this.getDataOnFilter(filters);
-			}else{
-				const appliedFilters = _.pickBy(filters, _.identity);
-				
-				this.props.applyFilter(appliedFilters, appliedFilters)
-			}
-    
-      
+      console.log(filters);
+      if (this.props.isDataLoaded) {
+        this.getDataOnFilter(filters);
+      } else {
+        const appliedFilters = _.pickBy(filters, _.identity);
+
+        this.props.applyFilter(appliedFilters, appliedFilters);
+      }
     }
 
     //ADD NOT MULTISORT CHECK
@@ -986,7 +1031,7 @@ class FrxDrugGrid extends Component<
       this.setState({
         currentPage: pagination.current,
         goToPageValue: pagination.current,
-        pageSize: pagination.pageSize,
+        pageSize: pagination.pageSize
       });
     }
 
@@ -997,7 +1042,7 @@ class FrxDrugGrid extends Component<
     //IF BLOCK FOR MULTI SORT
     if (this.state.isMultiSort) {
       if (extra.action === "sort") {
-        const isElemPresent = function (arr: Array<any>, elem) {
+        const isElemPresent = function(arr: Array<any>, elem) {
           for (let i = 0; i < arr.length; i++) {
             if (arr[i] === elem) {
               return i;
@@ -1029,7 +1074,7 @@ class FrxDrugGrid extends Component<
               columnsAndOrder.push({
                 columnKey: cKey,
                 order: order,
-                type: this.getColumnDataType(cKey),
+                type: this.getColumnDataType(cKey)
               });
             } else {
               // Update order of the element
@@ -1061,13 +1106,13 @@ class FrxDrugGrid extends Component<
           const existingMultiSortedInfo = _.cloneDeep(
             this.state.multiSortedInfo
           );
-          const index = existingMultiSortedInfo.findIndex((item) => {
+          const index = existingMultiSortedInfo.findIndex(item => {
             return item.columnKey === sorter.columnKey;
           });
           if (index === -1) {
             this.setState({
               multiSortedInfo: [...this.state.multiSortedInfo, sorter],
-              isMultiSort: true,
+              isMultiSort: true
             });
           } else {
             const order = existingMultiSortedInfo[index].order;
@@ -1082,7 +1127,7 @@ class FrxDrugGrid extends Component<
 
             this.setState({
               multiSortedInfo: existingMultiSortedInfo,
-              isMultiSort: true,
+              isMultiSort: true
             });
           }
 
@@ -1100,7 +1145,7 @@ class FrxDrugGrid extends Component<
           } else {
             this.setState({
               currentPage: 1,
-              goToPageValue: 1,
+              goToPageValue: 1
             });
             console.log(" 1st");
             if (this.props.applyMultiSort)
@@ -1115,14 +1160,14 @@ class FrxDrugGrid extends Component<
           const existingMultiSortedInfo = _.cloneDeep(
             this.state.multiSortedInfo
           );
-          const index = existingMultiSortedInfo.findIndex((item) => {
+          const index = existingMultiSortedInfo.findIndex(item => {
             return item.columnKey === sorter.columnKey;
           });
 
           if (index === -1) {
             this.setState({
               multiSortedInfo: [...this.state.multiSortedInfo, sorter],
-              isMultiSort: true,
+              isMultiSort: true
             });
           } else {
             const order = existingMultiSortedInfo[index].order;
@@ -1137,7 +1182,7 @@ class FrxDrugGrid extends Component<
 
             this.setState({
               multiSortedInfo: existingMultiSortedInfo,
-              isMultiSort: true,
+              isMultiSort: true
             });
           }
 
@@ -1152,50 +1197,65 @@ class FrxDrugGrid extends Component<
               columnKey: cKey,
               order: order,
               type: this.getColumnDataType(cKey)
-						});
-						if(this.props.isDataLoaded){
-							this.multisortColumns();
-
-						}
-							
-							else{
-								console.log(" 2nd")
-								this.setState({
-								
-									currentPage: 1,
-									goToPageValue: 1,
-								});
-								if(this.props.applyMultiSort){
-									console.log("grid internal multisorted info ", this.state.multiSortedInfo,[...existingMultiSortedInfo, sorter] )
-								 this.props.applyMultiSort([...existingMultiSortedInfo, sorter], [...existingMultiSortedInfo, sorter])
-								}
-							}
+            });
+            if (this.props.isDataLoaded) {
+              this.multisortColumns();
+            } else {
+              console.log(" 2nd");
+              this.setState({
+                currentPage: 1,
+                goToPageValue: 1
+              });
+              if (this.props.applyMultiSort) {
+                console.log(
+                  "grid internal multisorted info ",
+                  this.state.multiSortedInfo,
+                  [...existingMultiSortedInfo, sorter]
+                );
+                this.props.applyMultiSort(
+                  [...existingMultiSortedInfo, sorter],
+                  [...existingMultiSortedInfo, sorter]
+                );
+              }
+            }
             // this.updateMultisortOrder();
           } else {
-						// Update order of the element
-						if(	this.columnsToMultisort && this.columnsToMultisort.length > elemIdx )
-							this.columnsToMultisort[elemIdx].order = order;
-						if(this.props.isDataLoaded){
-							this.multisortColumns();
-
-						}
-							
-							else{
-								console.log(" 3rd")
-								this.setState({
-								
-									currentPage: 1,
-									goToPageValue: 1,
-								});
-								if(this.props.applyMultiSort){
-									console.log("grid internal multisorted info 3rd ", this.state.multiSortedInfo,[...existingMultiSortedInfo, sorter] )
-									const sorterData = [...existingMultiSortedInfo, sorter].filter((item,index,self) => {
-										return self.findIndex((val)=> val.columnKey === item.columnKey) === index
-									})
-									console.log("grid internal multisorted info 3rd sorterData", sorterData )
-									this.props.applyMultiSort(sorterData, sorterData)
-								}
-								}
+            // Update order of the element
+            if (
+              this.columnsToMultisort &&
+              this.columnsToMultisort.length > elemIdx
+            )
+              this.columnsToMultisort[elemIdx].order = order;
+            if (this.props.isDataLoaded) {
+              this.multisortColumns();
+            } else {
+              console.log(" 3rd");
+              this.setState({
+                currentPage: 1,
+                goToPageValue: 1
+              });
+              if (this.props.applyMultiSort) {
+                console.log(
+                  "grid internal multisorted info 3rd ",
+                  this.state.multiSortedInfo,
+                  [...existingMultiSortedInfo, sorter]
+                );
+                const sorterData = [...existingMultiSortedInfo, sorter].filter(
+                  (item, index, self) => {
+                    return (
+                      self.findIndex(
+                        val => val.columnKey === item.columnKey
+                      ) === index
+                    );
+                  }
+                );
+                console.log(
+                  "grid internal multisorted info 3rd sorterData",
+                  sorterData
+                );
+                this.props.applyMultiSort(sorterData, sorterData);
+              }
+            }
             // this.updateMultisortOrder();
           }
         }
@@ -1227,7 +1287,7 @@ class FrxDrugGrid extends Component<
     data: any,
     eventTarget: EventTarget & HTMLButtonElement
   ) => {
-		console.log("data on settings cell ", data )
+    console.log("data on settings cell ", data);
     const settingsAnchor = eventTarget;
     const settingsMenuItems = data.items ? data.items : [];
     const keys = this.state.expandedKeys;
@@ -1236,7 +1296,7 @@ class FrxDrugGrid extends Component<
     }
     const expandedKeys = expanded
       ? keys.concat(data.key)
-      : keys.filter((k) => k !== data.key);
+      : keys.filter(k => k !== data.key);
     this.setState({ expandedKeys, settingsAnchor, settingsMenuItems });
   };
 
@@ -1256,10 +1316,10 @@ class FrxDrugGrid extends Component<
    * @param menuItem item in the menu which was clicked
    * @author Deepak_T
    */
-  settingsTriDotMenuClick = (menuItem: GridMenu, data?:any) => {
+  settingsTriDotMenuClick = (menuItem: GridMenu, data?: any) => {
     console.log(menuItem);
     if (this.props.settingsTriDotMenuClick)
-      this.props.settingsTriDotMenuClick(menuItem,data);
+      this.props.settingsTriDotMenuClick(menuItem, data);
   };
 
   /**
@@ -1433,7 +1493,7 @@ class FrxDrugGrid extends Component<
   updatePinIcon = () => {
     const columns = this.state.columns.map((c, index) => {
       if (c.key === "settings") {
-        c["render"] = (record) => this.renderActionMenu(record);
+        c["render"] = record => this.renderActionMenu(record);
       }
       c["title"] = () => {
         return (
@@ -1441,7 +1501,7 @@ class FrxDrugGrid extends Component<
             {c.key === "settings" ? (
               <span className="action-settingicon">
                 <svg
-                  onClick={(e) => this.openSettingsModal(e)}
+                  onClick={e => this.openSettingsModal(e)}
                   width="16"
                   height="16"
                   viewBox="0 0 24 20"
@@ -1469,12 +1529,12 @@ class FrxDrugGrid extends Component<
                     bottom: c.key === "name" ? "" : "-1px",
                     // top: 1,
                     cursor: "pointer",
-                    fontSize: "11px",
+                    fontSize: "11px"
                   }}
                 >
                   {c.fixed ? (
                     <FontAwesomeIcon
-                      onClick={(e) => {
+                      onClick={e => {
                         e.stopPropagation();
                         this.unpinColumn(c);
                       }}
@@ -1488,9 +1548,9 @@ class FrxDrugGrid extends Component<
                         color: "#4b93e5",
                         position: "relative",
                         top: 0,
-                        marginRight: "5px",
+                        marginRight: "5px"
                       }}
-                      onClick={(e) => {
+                      onClick={e => {
                         e.stopPropagation();
                         this.pinColumnToLeft(c);
                       }}
@@ -1505,7 +1565,7 @@ class FrxDrugGrid extends Component<
                   style={{
                     marginBottom: c.key === "name" ? "10px" : "",
                     position: "relative",
-                    bottom: c.key === "name" ? "" : "-1px",
+                    bottom: c.key === "name" ? "" : "-1px"
                   }}
                   className="header-labels common-label-text-fields-f12"
                 >
@@ -1521,7 +1581,7 @@ class FrxDrugGrid extends Component<
 
     this.setState({ columns: columns });
   };
-  renderExpandedEllipses = (record) => {
+  renderExpandedEllipses = record => {
     return (
       <>
         <svg
@@ -1563,14 +1623,14 @@ class FrxDrugGrid extends Component<
         id="action-menu"
         className={`expand-cell ${isExpanded ? "expanded-ellipses" : ""}`}
         // style={{ border: "1px solid yellow", display:'flex' }}
-        onMouseOver={(e) => {
+        onMouseOver={e => {
           e.stopPropagation();
 
           if (!isExpanded) this.onExpand(true, record);
           // else this.onExpand(false, record);
           else return false;
         }}
-        onMouseLeave={(e) => {
+        onMouseLeave={e => {
           e.stopPropagation();
 
           if (isExpanded) this.onExpand(false, record);
@@ -1584,7 +1644,7 @@ class FrxDrugGrid extends Component<
     );
   };
 
-  renderEllipses = (record) => {
+  renderEllipses = record => {
     return (
       <svg
         className="ellipsi-img"
@@ -1703,7 +1763,7 @@ class FrxDrugGrid extends Component<
       {
         isMultiSort: !this.state.isMultiSort,
         multiSortedInfo: [],
-        sortedInfo: null,
+        sortedInfo: null
       },
       () => {
         // this.updateMultisortOrder();
@@ -1729,7 +1789,7 @@ class FrxDrugGrid extends Component<
         filteredInfo: null,
         sortedInfo: null,
         filterTable: [],
-        sortedTable: [],
+        sortedTable: []
       },
       () => {
         if (!this.props.isDataLoaded) this.props.clearFilterHandler();
@@ -1747,7 +1807,7 @@ class FrxDrugGrid extends Component<
    * TODO: Test the implementation
    */
   updateFilters = () => {
-    const columns = this.state.columns.map((c) => {
+    const columns = this.state.columns.map(c => {
       const key = c.key;
       c["filteredValue"] = this.state.filteredInfo
         ? this.state.filteredInfo![key]
@@ -1757,31 +1817,35 @@ class FrxDrugGrid extends Component<
           this.state.sortedInfo!["order"]
           ? this.state.sortedInfo!["order"]
           : null
-        : this.state.multiSortedInfo && this.state.multiSortedInfo.length > 0 ? this.getSortOrderForColumn(c):null;
+        : this.state.multiSortedInfo && this.state.multiSortedInfo.length > 0
+        ? this.getSortOrderForColumn(c)
+        : null;
       return c;
     });
 
     this.setState({ columns: columns }, () => {
       //this.props.clearFilterHandler()
     });
-	};
-	
-	/**
-	 * @function getSortOrderForColumn
-	 * to get sort order direction for columns in case of multi sort
-	 * @param c column object
-	 * @author Deepak_T
-	 */
-	getSortOrderForColumn = (c:Column<any>) => {
-		console.log("getting multi sort order")
-		const index = this.state.multiSortedInfo.findIndex(item => item.columnKey === c.key);
-		if(index !== -1){
-			const item = this.state.multiSortedInfo[index];
-			const order = item.order;
-			console.log("internal column order ", order, c.key)
-			return order;
-		}else return null;
-	}
+  };
+
+  /**
+   * @function getSortOrderForColumn
+   * to get sort order direction for columns in case of multi sort
+   * @param c column object
+   * @author Deepak_T
+   */
+  getSortOrderForColumn = (c: Column<any>) => {
+    console.log("getting multi sort order");
+    const index = this.state.multiSortedInfo.findIndex(
+      item => item.columnKey === c.key
+    );
+    if (index !== -1) {
+      const item = this.state.multiSortedInfo[index];
+      const order = item.order;
+      console.log("internal column order ", order, c.key);
+      return order;
+    } else return null;
+  };
 
   /**
    * @function onGoToPageValueChange
@@ -1841,7 +1905,7 @@ class FrxDrugGrid extends Component<
     this.setState(
       {
         goToPageValue: +this.state.goToPageValue,
-        currentPage: +this.state.goToPageValue,
+        currentPage: +this.state.goToPageValue
       },
       () => {
         if (!this.props.isDataLoaded)
@@ -1944,7 +2008,10 @@ class FrxDrugGrid extends Component<
       return (
         d &&
         inputText !== "" &&
-        d.toString().toLowerCase().indexOf(inputText.toLowerCase()) > -1
+        d
+          .toString()
+          .toLowerCase()
+          .indexOf(inputText.toLowerCase()) > -1
       );
     });
 
@@ -2117,7 +2184,7 @@ class FrxDrugGrid extends Component<
    *
    * TODO: define type for filters
    */
-  getDataOnFilter = (filters) => {
+  getDataOnFilter = filters => {
     const filteredColumns = Object.keys(filters).reduce((acc, k) => {
       if (filters[k] && filters[k].length > 0) {
         return Object.assign(acc, { [k]: filters[k] });
@@ -2134,7 +2201,7 @@ class FrxDrugGrid extends Component<
    * @author Deepak_T
    * TODO: define type for filteredColumns . Handle complex object
    */
-  filterColumns = (filteredColumns) => {
+  filterColumns = filteredColumns => {
     const data = [...this.props.data];
 
     const filterKeys = Object.keys(filteredColumns);
@@ -2162,8 +2229,8 @@ class FrxDrugGrid extends Component<
       this.setState({ filterTable: [] });
     } else {
       let filteredData = [...data];
-      filterKeys.forEach((k) => {
-        filteredData = filteredData.filter((d) => {
+      filterKeys.forEach(k => {
+        filteredData = filteredData.filter(d => {
           if (textKeys.includes(k)) {
             return this.filterByText(
               filteredColumns[k][0].condition,
@@ -2205,7 +2272,7 @@ class FrxDrugGrid extends Component<
         sortedTable: [],
         sortedInfo: null,
         currentPage: 1,
-        goToPageValue: 1,
+        goToPageValue: 1
       });
     }
   };
@@ -2239,7 +2306,7 @@ class FrxDrugGrid extends Component<
       sort_order = -1;
     }
     if (type === "text") {
-      return function (a, b) {
+      return function(a, b) {
         console.log("property ", property, a[property], b[property]);
         // a should come before b in the sorted order
         if (
@@ -2259,7 +2326,7 @@ class FrxDrugGrid extends Component<
         }
       };
     } else if (type === "date") {
-      return function (a, b) {
+      return function(a, b) {
         // a should come before b in the sorted order
 
         let d1 = moment(a[property]);
@@ -2276,7 +2343,7 @@ class FrxDrugGrid extends Component<
         }
       };
     } else if (type === "numerical") {
-      return function (a, b) {
+      return function(a, b) {
         // a should come before b in the sorted order
         if (a[property] - b[property] < 0) {
           return -1 * sort_order;
@@ -2296,7 +2363,7 @@ class FrxDrugGrid extends Component<
    * to get type of dta in the column
    * @author Deepak_T
    */
-  getColumnDataType = (columnKey) => {
+  getColumnDataType = columnKey => {
     const textKeys: (string | undefined)[] = this.state.columns
       .filter(
         (c: Column<any>) => c.dataType === "string" && !c.enableIntellisense
@@ -2368,7 +2435,7 @@ class FrxDrugGrid extends Component<
     this.setState({
       sortedTable: sortedData,
       currentPage: 1,
-      goToPageValue: 1,
+      goToPageValue: 1
     });
   };
 
@@ -2392,7 +2459,7 @@ class FrxDrugGrid extends Component<
    * @function getMultisortOrderByColKey
    * to get the priority in multi sort
    */
-  getMultisortOrderByColKey = (colKey) => {
+  getMultisortOrderByColKey = colKey => {
     for (let i = 0; i < this.multiSortArray.length; i++) {
       const ckey = this.multiSortArray[i];
       if (ckey === colKey) {
@@ -2483,7 +2550,7 @@ class FrxDrugGrid extends Component<
       this.setState({
         sortedTable: sortedData,
         currentPage: 1,
-        goToPageValue: 1,
+        goToPageValue: 1
       });
     }
   };
@@ -2553,7 +2620,7 @@ class FrxDrugGrid extends Component<
     this.setState({
       sortedTable: sortedData,
       currentPage: 1,
-      goToPageValue: 1,
+      goToPageValue: 1
     });
   };
 
@@ -2576,13 +2643,20 @@ class FrxDrugGrid extends Component<
    */
   onShowColumn = (column: Column<any>) => {
     console.log("column ", column);
-    const hiddenColumns = this.state.hiddenColumns.filter(
-      (c) => c.key !== column.key
+    let hiddenColumns = this.state.hiddenColumns.filter(
+      c => c.key !== column.key
     );
-    const visibleColumns = [
+    let visibleColumns = [
       ...this.state.visibleColumns,
-      { ...column, hidden: false },
+      { ...column, hidden: false }
     ];
+
+    hiddenColumns = this.getSortedHiddenAndDisplayedColumnsByPosition(
+      hiddenColumns
+    );
+    visibleColumns = this.getSortedHiddenAndDisplayedColumnsByPosition(
+      visibleColumns
+    );
 
     this.setState({ hiddenColumns, visibleColumns });
   };
@@ -2593,20 +2667,26 @@ class FrxDrugGrid extends Component<
    * @author Deepak_T
    */
   onHideColumn = (column: Column<any>) => {
-    const visibleColumns = this.state.visibleColumns.filter(
-      (c) => c.key !== column.key
+    let visibleColumns = this.state.visibleColumns.filter(
+      c => c.key !== column.key
     );
-    const hiddenColumns = [
+    let hiddenColumns = [
       ...this.state.hiddenColumns,
-      { ...column, hidden: true },
+      { ...column, hidden: true }
     ];
     //extra added
+    hiddenColumns = this.getSortedHiddenAndDisplayedColumnsByPosition(
+      hiddenColumns
+    );
+    visibleColumns = this.getSortedHiddenAndDisplayedColumnsByPosition(
+      visibleColumns
+    );
 
     this.setState({ hiddenColumns, visibleColumns });
   };
 
-  getSortedHiddenAndDisplayedColumnsByPosition = () => {
-    const cols = [...this.state.visibleColumns, ...this.state.hiddenColumns];
+  getSortedHiddenAndDisplayedColumnsByPosition = (cols: Column<any>[]) => {
+    // const cols = [...this.state.visibleColumns, ...this.state.hiddenColumns];
     cols.sort((c1: any, c2: any) => {
       if (c1.position > c2.position) return 1;
       else if (c1.position < c2.position) return -1;
@@ -2623,14 +2703,20 @@ class FrxDrugGrid extends Component<
    */
   onCancelSettings = () => {
     // const cols = [...this.state.visibleColumns, ...this.state.hiddenColumns];
-    const cols = [...this.state.columns];
+    // const cols = [...this.state.columns];
+    // const columns = [...this.sortColumnsByPosition(cols)];
+    const cols = [
+      ...this.getSortedHiddenAndDisplayedColumnsByPosition([
+        ...this.state.columns
+      ])
+    ];
     const columns = [...this.sortColumnsByPosition(cols)];
 
     this.setState(
       {
         showGridSettingsModal: false,
-        visibleColumns: this.state.columns.filter((c) => !c.hidden),
-        hiddenColumns: this.state.columns.filter((c) => c.hidden),
+        visibleColumns: columns.filter(c => !c.hidden),
+        hiddenColumns: columns.filter(c => c.hidden)
       },
       () => {
         // const changedColumns = _.cloneDeep(this.state.columns)
@@ -2646,19 +2732,28 @@ class FrxDrugGrid extends Component<
    */
   onApplySettings = () => {
     // const cols = [...this.state.visibleColumns, ...this.state.hiddenColumns];
-    const cols = [...this.getSortedHiddenAndDisplayedColumnsByPosition()];
+    console.log("visible cols ", _.cloneDeep(this.state.visibleColumns));
+    console.log("hidden cols ", _.cloneDeep(this.state.hiddenColumns));
+    const cols = [
+      ...this.getSortedHiddenAndDisplayedColumnsByPosition([
+        ...this.state.visibleColumns,
+        ...this.state.hiddenColumns
+      ])
+    ];
+    console.log("total cols ", cols);
     const columns = [...this.sortColumnsByPosition(cols)];
-
+    console.log("total cols ", columns);
     this.setState(
       {
         columns,
-        visibleColumns: columns.filter((c) => !c.hidden),
-        hiddenColumns: columns.filter((c) => c.hidden),
-        showGridSettingsModal: false,
+        // visibleColumns: columns.filter((c) => !c.hidden),
+        // hiddenColumns: columns.filter((c) => c.hidden),
+        showGridSettingsModal: false
       },
       () => {
         // const changedCols = this.getSortedHiddenAndDisplayedColumnsByPosition()
         const changedColumns = _.cloneDeep(this.state.columns);
+        console.log("changed cols ", changedColumns);
         if (this.props.onColumnChange)
           this.props.onColumnChange(changedColumns);
       }
@@ -2671,10 +2766,16 @@ class FrxDrugGrid extends Component<
    * @author Deepak_T
    */
   onCloseSettings = () => {
+    const cols = [
+      ...this.getSortedHiddenAndDisplayedColumnsByPosition([
+        ...this.state.columns
+      ])
+    ];
+    const columns = [...this.sortColumnsByPosition(cols)];
     this.setState({
-      visibleColumns: this.state.columns.filter((c) => !c.hidden),
-      hiddenColumns: this.state.columns.filter((c) => c.hidden),
-      showGridSettingsModal: !this.state.showGridSettingsModal,
+      visibleColumns: columns.filter(c => !c.hidden),
+      hiddenColumns: columns.filter(c => c.hidden),
+      showGridSettingsModal: !this.state.showGridSettingsModal
     });
   };
 
@@ -2699,7 +2800,7 @@ class FrxDrugGrid extends Component<
     const keys = this.state.expandedKeys;
     const expandedKeys = expanded
       ? keys.concat(record.key)
-      : keys.filter((k) => k !== record.key);
+      : keys.filter(k => k !== record.key);
     if (this.props.onRowExpandHandler) {
       this.props.onRowExpandHandler(expandedKeys);
     }
@@ -2711,7 +2812,7 @@ class FrxDrugGrid extends Component<
    * to render the expand icon
    * @author Deepak_T
    */
-  renderExpanderIcon = (props) => {
+  renderExpanderIcon = props => {
     const closeIcon =
       this.props.expandable && this.props.expandable.isExpandable
         ? this.props.expandable.expandCloseIcon
@@ -2793,7 +2894,7 @@ class FrxDrugGrid extends Component<
    * to handle resiing of columnsby adjusting pixelWidth
    * @param index index of column being resized
    */
-  handleResize = (index) => (e, { size }) => {
+  handleResize = index => (e, { size }) => {
     e.stopPropagation();
     console.log("index of resize ", index, this.beginDrag, size);
     if (!this.beginDrag) return;
@@ -2819,7 +2920,7 @@ class FrxDrugGrid extends Component<
       nextColumns[index] = {
         ...nextColumns[index],
         // width: width,
-        pixelWidth: pixelWidth,
+        pixelWidth: pixelWidth
       };
       return { columns: nextColumns };
     });
@@ -2837,8 +2938,8 @@ class FrxDrugGrid extends Component<
   // to pass to table as resizable column
   components = {
     header: {
-      cell: ResizableTitle,
-    },
+      cell: ResizableTitle
+    }
     // body: {
     //   wrapper: CustomTableBody,
     //   row: CustomRow
@@ -2860,11 +2961,11 @@ class FrxDrugGrid extends Component<
       columns = gridColumns.map((col, index) => ({
         ...col,
 
-        onHeaderCell: (column) => ({
+        onHeaderCell: column => ({
           width: column.width,
           onResize: this.handleResize(index),
           onResizeStop: this.handleResizeStop,
-          onResizeStart: this.handleResizeStart,
+          onResizeStart: this.handleResizeStart
           // onMouseDown: e => {
           //   this.beginDrag = true;
 
@@ -2874,7 +2975,7 @@ class FrxDrugGrid extends Component<
           //   e.preventDefault();
           //   this.beginDrag = false;
           // }
-        }),
+        })
       }));
     }
     const {
@@ -2882,7 +2983,7 @@ class FrxDrugGrid extends Component<
       hideItemsPerPage,
       hideMultiSort,
       hidePageJumper,
-      hideResults,
+      hideResults
     } = this.props;
 
     const ModalInnerComponent = this.withData(
@@ -2897,11 +2998,11 @@ class FrxDrugGrid extends Component<
           selectedRows
         );
       },
-      getCheckboxProps: (record) => ({
+      getCheckboxProps: record => ({
         disabled: record.name === "Disabled User",
         // Column configuration not to be checked
-        name: record.name,
-      }),
+        name: record.name
+      })
     };
 
     return (
@@ -2914,8 +3015,8 @@ class FrxDrugGrid extends Component<
                 openDialogOnClickingCell: {
                   isOpen: false,
                   component: undefined,
-                  dataRow: null,
-                },
+                  dataRow: null
+                }
               })
             }
             className="clone-modal"
@@ -3029,7 +3130,7 @@ class FrxDrugGrid extends Component<
                   summary={this.props.summary ? this.props.summary : undefined}
                   expandIcon={
                     this.props.expandable && this.props.expandable.isExpandable
-                      ? (props) => this.renderExpanderIcon(props)
+                      ? props => this.renderExpanderIcon(props)
                       : undefined
                   }
                   expandIconColumnIndex={
@@ -3053,7 +3154,7 @@ class FrxDrugGrid extends Component<
                       ? this.props.expandable.expandedRowClassName
                       : undefined
                   }
-                  expandedRowRender={(record) => (
+                  expandedRowRender={record => (
                     <>
                       {this.props.expandable &&
                       this.props.expandable.isExpandable
@@ -3063,7 +3164,7 @@ class FrxDrugGrid extends Component<
                   )}
                   scroll={{
                     y: this.props.scroll ? this.props.scroll.y : 420,
-                    x: this.props.scroll ? this.props.scroll.x : 400,
+                    x: this.props.scroll ? this.props.scroll.x : 400
                   }}
                 />
               ) : (
@@ -3099,7 +3200,7 @@ class FrxDrugGrid extends Component<
                   summary={this.props.summary ? this.props.summary : undefined}
                   scroll={{
                     y: this.props.scroll ? this.props.scroll.y : 420,
-                    x: this.props.scroll ? this.props.scroll.x : 400,
+                    x: this.props.scroll ? this.props.scroll.x : 400
                   }}
                 />
               )}
