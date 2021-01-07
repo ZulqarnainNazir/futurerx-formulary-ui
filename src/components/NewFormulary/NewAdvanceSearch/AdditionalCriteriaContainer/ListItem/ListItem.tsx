@@ -156,8 +156,9 @@ class ListItem extends Component<any, any> {
     const updatedPayload = this.state.payload;
     const { cardCode, cardName, isIncluded } = this.state;
 
-    const isArrCriteria =
-      cardCode === 4 || cardCode === 5 || cardCode === 8 ? true : false;
+    // const isArrCriteria =
+    //   cardCode === 4 || cardCode === 5 || cardCode === 8 ? true : false;
+    const isCriteriaObject = cardCode === 1 || cardCode === 3 ? true : false;
     // age & icd are objects
     // gender, pn, pt, pos, pr, pchl are array
     this.props.handleGlobalState(
@@ -166,7 +167,7 @@ class ListItem extends Component<any, any> {
       cardName,
       isIncluded,
       updatedPayload,
-      isArrCriteria
+      isCriteriaObject
     );
   }
 
@@ -890,6 +891,7 @@ class ListItem extends Component<any, any> {
       cardName,
       isIncluded,
       payload,
+
       isReadOnly,
 
       // AL
@@ -931,8 +933,11 @@ class ListItem extends Component<any, any> {
     const {
       additionalCriteriaSequenceId,
       card: { cardCode },
+      editable,
       deleteIconHandler,
     } = this.props;
+
+    const isCriteriaObject = cardCode === 1 || cardCode === 3 ? true : false;
     switch (cardCode) {
       case 1:
         return (
@@ -946,7 +951,7 @@ class ListItem extends Component<any, any> {
             handleAgeCriteriaMaxConChange={this.handleALMaxConChange}
             handleAgeCriteriaChange={this.handleALChange}
             deleteIconHandler={
-              isReadOnly
+              editable || isReadOnly
                 ? null
                 : () =>
                     deleteIconHandler(
@@ -954,12 +959,14 @@ class ListItem extends Component<any, any> {
                       cardCode,
                       cardName,
                       isIncluded,
-                      payload
+                      payload,
+                      isCriteriaObject
                     )
             }
             isAdditionalCriteria={true}
             nodeId={nodeId}
             isReadOnly={isReadOnly}
+            editable={editable}
           />
         );
       case 2:
@@ -972,7 +979,7 @@ class ListItem extends Component<any, any> {
             handleStatus={this.handleGLStatus}
             serviceSettingsChecked={this.serviceSettingsCheckedGL}
             deleteIconHandler={
-              isReadOnly
+              editable || isReadOnly
                 ? null
                 : () =>
                     deleteIconHandler(
@@ -980,12 +987,14 @@ class ListItem extends Component<any, any> {
                       cardCode,
                       cardName,
                       isIncluded,
-                      payload
+                      payload,
+                      isCriteriaObject
                     )
             }
             isAdditionalCriteria={true}
             nodeId={nodeId}
             isReadOnly={isReadOnly}
+            editable={editable}
             additionalCriteriaSequenceId={additionalCriteriaSequenceId}
           />
         );
@@ -1002,7 +1011,7 @@ class ListItem extends Component<any, any> {
             handleICDSearch={this.handleICDSearch}
             handleICDOnChange={this.handleICDOnChange}
             deleteIconHandler={
-              isReadOnly
+              editable || isReadOnly
                 ? null
                 : () =>
                     deleteIconHandler(
@@ -1010,12 +1019,14 @@ class ListItem extends Component<any, any> {
                       cardCode,
                       cardName,
                       isIncluded,
-                      payload
+                      payload,
+                      isCriteriaObject
                     )
             }
             isAdditionalCriteria={true}
             nodeId={nodeId}
             isReadOnly={isReadOnly}
+            editable={editable}
           />
         );
       case 4:
@@ -1029,7 +1040,7 @@ class ListItem extends Component<any, any> {
             handlePNChange={this.handlePNChange}
             handlePNSearch={this.handlePNSearch}
             deleteIconHandler={
-              isReadOnly
+              editable || isReadOnly
                 ? null
                 : () =>
                     deleteIconHandler(
@@ -1037,12 +1048,14 @@ class ListItem extends Component<any, any> {
                       cardCode,
                       cardName,
                       isIncluded,
-                      payload
+                      payload,
+                      isCriteriaObject
                     )
             }
             isAdditionalCriteria={true}
             nodeId={nodeId}
             isReadOnly={isReadOnly}
+            editable={editable}
           />
         );
       case 5:
@@ -1056,7 +1069,7 @@ class ListItem extends Component<any, any> {
             handlePTChange={this.handlePTChange}
             handlePTSearch={this.handlePTSearch}
             deleteIconHandler={
-              isReadOnly
+              editable || isReadOnly
                 ? null
                 : () =>
                     deleteIconHandler(
@@ -1064,12 +1077,14 @@ class ListItem extends Component<any, any> {
                       cardCode,
                       cardName,
                       isIncluded,
-                      payload
+                      payload,
+                      isCriteriaObject
                     )
             }
             isAdditionalCriteria={true}
             nodeId={nodeId}
             isReadOnly={isReadOnly}
+            editable={editable}
           />
         );
       case 6:
@@ -1086,7 +1101,7 @@ class ListItem extends Component<any, any> {
               handleSelectAll: this.handlePOSSelectAll,
             }}
             deleteIconHandler={
-              isReadOnly
+              editable || isReadOnly
                 ? null
                 : () =>
                     deleteIconHandler(
@@ -1094,12 +1109,14 @@ class ListItem extends Component<any, any> {
                       cardCode,
                       cardName,
                       isIncluded,
-                      payload
+                      payload,
+                      isCriteriaObject
                     )
             }
             isAdditionalCriteria={true}
             nodeId={nodeId}
             isReadOnly={isReadOnly}
+            editable={editable}
             additionalCriteriaSequenceId={additionalCriteriaSequenceId}
           />
         );
@@ -1117,7 +1134,7 @@ class ListItem extends Component<any, any> {
               handleSelectAll: this.handlePRSelectAll,
             }}
             deleteIconHandler={
-              isReadOnly
+              editable || isReadOnly
                 ? null
                 : () =>
                     deleteIconHandler(
@@ -1125,12 +1142,14 @@ class ListItem extends Component<any, any> {
                       cardCode,
                       cardName,
                       isIncluded,
-                      payload
+                      payload,
+                      isCriteriaObject
                     )
             }
             isAdditionalCriteria={true}
             nodeId={nodeId}
             isReadOnly={isReadOnly}
+            editable={editable}
             additionalCriteriaSequenceId={additionalCriteriaSequenceId}
           />
         );
@@ -1147,7 +1166,7 @@ class ListItem extends Component<any, any> {
             handlePCHLSearch={this.handlePCHLSearch}
             handlePCHLCriteriaChange={this.handlePCHLOnChange}
             deleteIconHandler={
-              isReadOnly
+              editable || isReadOnly
                 ? null
                 : () =>
                     deleteIconHandler(
@@ -1155,12 +1174,14 @@ class ListItem extends Component<any, any> {
                       cardCode,
                       cardName,
                       isIncluded,
-                      payload
+                      payload,
+                      isCriteriaObject
                     )
             }
             isAdditionalCriteria={true}
             nodeId={nodeId}
             isReadOnly={isReadOnly}
+            editable={editable}
           />
         );
       default:

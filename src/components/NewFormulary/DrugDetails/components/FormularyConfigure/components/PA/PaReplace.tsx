@@ -122,7 +122,8 @@ class PaReplace extends React.Component<any, any> {
     searchNames: Array(),
     filterPlaceholder: "Search",
     searchValue: "",
-    searchData: Array()
+    searchData: Array(),
+    isSelectAll: false,
   };
 
   rowSelectionChangeFromCell = (
@@ -203,7 +204,7 @@ class PaReplace extends React.Component<any, any> {
   openTierGridContainer = () => {
     this.state.drugData = [];
     this.state.drugGridData = [];
-
+    this.state.selectedRowKeys =[]; 
     if (this.state.selectedGroupDescription === null) {
       showMessage("Group Description is required", "info");
       return;
@@ -303,7 +304,37 @@ class PaReplace extends React.Component<any, any> {
       apiDetails["keyVals"] = [
         { key: constants.KEY_ENTITY_ID, value: this.props?.formulary_id },
       ];
-      apiDetails["messageBody"] = {};
+
+
+
+      apiDetails["messageBody"] = {
+        covered: {},
+        filter: [],
+        is_select_all: false,
+        not_covered: {},
+        search_key: "",
+        drug_list:"",
+        prev_formulary:"",
+      };
+      if (this.props.advancedSearchBody && Object.keys(this.props.advancedSearchBody).length > 0) {
+        apiDetails["messageBody"] = Object.assign(apiDetails["messageBody"], this.props.advancedSearchBody);
+      }
+
+      apiDetails["messageBody"]['is_select_all'] = this.state.isSelectAll;
+
+      let allFilters = Array();
+      let filterProps = Array();
+      this.state.filter.map(filterInfo => {
+        allFilters.push(filterInfo);
+        filterProps.push(filterInfo["prop"]);
+      });
+
+      this.state.quickFilter.map(filterInfo => {
+        if (!filterProps.includes(filterInfo["prop"]))
+          allFilters.push(filterInfo);
+      });
+
+      apiDetails["messageBody"]["filter"] = allFilters;
       apiDetails["messageBody"]["selected_drug_ids"] = this.state.selectedDrugs;
       apiDetails["messageBody"][
         "base_pa_group_description_id"
@@ -597,6 +628,7 @@ class PaReplace extends React.Component<any, any> {
             this.state.selectedGroupDescription
         )[0];
         // debugger;
+        let thisRef = this;
         var gridData = tmpData.map(function (el) {
           var element = Object.assign({}, el);
           data.push(element);
@@ -616,6 +648,11 @@ class PaReplace extends React.Component<any, any> {
             // the required styles are added under each classNames in FrxGrid.scss (towards the end)
             //table-row--red-font (for red) table-row--green-font (for green) table-row--blue-font for default (for blue)
             gridItem["rowStyle"] = "table-row--blue-font";
+          }
+
+          if (thisRef.props.configureSwitch) {
+            gridItem["isDisabled"] = true;
+            gridItem["rowStyle"] = "table-row--disabled-font";
           }
           gridItem["tier"] = element.tier_value;
           gridItem["is_um_criteria"] = element.is_um_criteria;
@@ -730,7 +767,7 @@ class PaReplace extends React.Component<any, any> {
       (k) => this.state.fixedSelectedRows.indexOf(k) < 0
     );
     this.onSelectedTableRowChanged(selectedRows);
-    this.setState({ drugGridData: data });
+    this.setState({ drugGridData: data ,isSelectAll:isSelected }); 
   };
   // additional criteria toggle
 
