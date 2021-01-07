@@ -46,7 +46,10 @@ function Comment(props: Props) {
             {users.length > 0 ? (
               users.map((a) => {
                 return (
-                  <AccountCircleIcon className="empty-avatar"></AccountCircleIcon>
+                  <div className="tooltip">
+                    <span className="tooltiptext">{a.name}</span>
+                    <AccountCircleIcon className="empty-avatar"></AccountCircleIcon>
+                  </div>
                 );
               })
             ) : (
