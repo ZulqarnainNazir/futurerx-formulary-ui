@@ -486,6 +486,7 @@ function NewGroup(props: any) {
       } else {
         requestData["pathParams"] = "/" + props?.formulary_id + "?entity_id=0";
         props.postPAGroupDescription(requestData).then((json) => {
+          debugger;
           if (json.payload && json.payload.code === "200") {
             showMessage("Success", "success");
             let apiDetails = {};
@@ -525,10 +526,10 @@ function NewGroup(props: any) {
               );
               isSetUpComplete(isEditable.is_setup_complete);
             });
-          } else if (json?.payload?.status && json?.payload?.status != 200) {
+          } else if (json.payload && json.payload.code != 200) {
             isSetUpComplete(false);
             setShowHeader(0);
-            showMessage(json.payload.data.message, "error");
+            showMessage(json.payload.message, "error");
           } else {
             showMessage("Failure", "error");
           }
@@ -659,6 +660,7 @@ function NewGroup(props: any) {
         )}
       </div>
       {(formType > 0 || showHeader > 0) && (
+        
         <PAGroupHeader
           popuptitle={
             formData.pa_group_description_name
@@ -1067,7 +1069,7 @@ function NewGroup(props: any) {
                         options={props.drugList}
                         getAutoCompleteChange={getAutoCompleteChangeHandler}
                         autoSelected={drug_list_ids}
-                        disabled={editable}
+                        editable={editable}
                       />
                       {/* <Tags options={drug_list} getAutoCompleteChange={getAutoCompleteChangeHandler}
                        autoSelected={formData.drug_list_ids}/> */}
@@ -1089,7 +1091,9 @@ function NewGroup(props: any) {
                       name="add-filter-2"
                       // checked={isAdditionalCriteriaOpen}
                       onClick={() => {
-                        openAdditionalCriteria();
+                        if (!props.isPopUpView) {
+                          openAdditionalCriteria();
+                        }
                         updateFormData({
                           ...formData,
                           is_additional_criteria_defined: true,
@@ -1144,7 +1148,7 @@ function NewGroup(props: any) {
                     />
                   </RadioGroup>
                 </div> */}
-                {isAdditionalCriteriaOpen ? (
+                {isAdditionalCriteriaOpen && props.formulary_lob_id == 4 ? (
                   <AdvanceSearchContainer
                     openPopup={isAdditionalCriteriaOpen}
                     onClose={closeAddiionalCriteria}

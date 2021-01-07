@@ -153,7 +153,8 @@ class DrugGrid extends React.Component<any, any> {
   openTierGridContainer = () => {
     this.state.drugData = [];
     this.state.drugGridData = [];
-
+    this.state.selectedRowKeys =[]; 
+    
     this.populateGridData();
   };
 

@@ -13,6 +13,8 @@ const AgeCriteria = (props) => {
     handleAgeCriteriaMaxConChange,
     isAdditionalCriteria,
     deleteIconHandler,
+    isReadOnly,
+    editable,
   } = props;
 
   return (
@@ -24,12 +26,15 @@ const AgeCriteria = (props) => {
           handleStatus={handleStatus}
           isAdditionalCriteria={isAdditionalCriteria}
           deleteIconHandler={deleteIconHandler}
+          isReadOnly={isReadOnly}
+          editable={editable}
         >
           <div className="input-field-group">
             <div className="input-field-group__label">Minimum</div>
 
             <div className="input-field-group__dropdown-field">
               <DropDown
+                disabled={editable || isReadOnly}
                 value={alSettings.min_age_condition}
                 options={[
                   { label: "Greater Then", value: "GT" },
@@ -43,6 +48,7 @@ const AgeCriteria = (props) => {
 
             <div className="input-field-group__text-field">
               <input
+                disabled={editable || isReadOnly}
                 type="number"
                 className="setup-input-fields"
                 name="min_age_limit"
@@ -57,6 +63,7 @@ const AgeCriteria = (props) => {
 
             <div className="input-field-group__dropdown-field">
               <DropDown
+                disabled={editable || isReadOnly}
                 value={alSettings.max_age_condition}
                 options={[
                   { label: "Greater Then", value: "GT" },
@@ -70,6 +77,7 @@ const AgeCriteria = (props) => {
 
             <div className="input-field-group__text-field">
               <input
+                disabled={editable || isReadOnly}
                 type="number"
                 className="setup-input-fields"
                 name="max_age_limit"

@@ -14,6 +14,8 @@ const PTCriteria = (props) => {
     handlePTChange,
     handlePTSearch,
     deleteIconHandler,
+    isReadOnly,
+    editable,
   } = props;
 
   const options = ptResults.data.map((obj) => (
@@ -31,6 +33,8 @@ const PTCriteria = (props) => {
           handleStatus={handleStatus}
           deleteIconHandler={deleteIconHandler}
           isAdditionalCriteria={isAdditionalCriteria}
+          isReadOnly={isReadOnly}
+          editable={editable}
         >
           <div className="root-pt-limit-settings__form">
             <div className="input-field-group">
@@ -51,6 +55,7 @@ const PTCriteria = (props) => {
                   onChange={handlePTChange}
                   notFoundContent={null}
                   className="select-icds"
+                  disabled={editable || isReadOnly}
                 >
                   {options}
                 </Select>

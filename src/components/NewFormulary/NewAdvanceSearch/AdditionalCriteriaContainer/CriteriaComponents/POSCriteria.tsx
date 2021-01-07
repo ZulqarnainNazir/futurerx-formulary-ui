@@ -16,6 +16,8 @@ const POSCriteria = (props) => {
     isAdditionalCriteria,
     deleteIconHandler,
     nodeId,
+    isReadOnly,
+    editable,
   } = props;
 
   return (
@@ -33,13 +35,19 @@ const POSCriteria = (props) => {
           handleStatus={handleStatus}
           isAdditionalCriteria={isAdditionalCriteria}
           deleteIconHandler={deleteIconHandler}
+          isReadOnly={isReadOnly}
+          editable={editable}
         >
           <div className="input-field-group">
             <div className="input-field-group__header">
               <div className="input-field-group__label">Select services:</div>
               <div
                 className="input-field-group__select-all-action"
-                onClick={selectAllHandler.handleSelectAll}
+                onClick={
+                  editable || isReadOnly
+                    ? undefined
+                    : selectAllHandler.handleSelectAll
+                }
               >
                 {/* {selectAllHandler.isSelectAll ? "Unselect all" : "Select all"} */}
                 Select all
@@ -63,6 +71,7 @@ const POSCriteria = (props) => {
                     name={s.id_place_of_service_type}
                     onChange={serviceSettingsChecked}
                     checked={s.isChecked}
+                    disabled={editable || isReadOnly}
                   ></Checkbox>
                   <label
                     htmlFor={
