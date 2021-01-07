@@ -19,13 +19,16 @@
   text-align: left;
 }
 
-.no-avatar{
+.no-avatar {
   border-radius: 50%;
   height: 36px;
   width: 36px;
   border: 1px dashed #666666;
 }
 
-.empty-avatar{
-  color:grey;
+.empty-avatar {
+  color: grey;
+}
+.multi-avatar {
+  display: inline-flex;
 }

@@ -42,15 +42,17 @@ function Comment(props: Props) {
       </Col>
       <Col xs={24} lg={4} style={{ textAlign: "center" }}>
         <Space size="large">
-          {/* <Avatar src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png" />
-          <div className="no-avatar" />
-          <AccountCircleIcon className="empty-avatar"></AccountCircleIcon> */}
-
-          {users.length > 0 ? (
-            <AccountCircleIcon className="empty-avatar"></AccountCircleIcon>
-          ) : (
-            <div className="no-avatar" />
-          )}
+          <div className="multi-avatar">
+            {users.length > 0 ? (
+              users.map((a) => {
+                return (
+                  <AccountCircleIcon className="empty-avatar"></AccountCircleIcon>
+                );
+              })
+            ) : (
+              <div className="no-avatar" />
+            )}
+          </div>
         </Space>
       </Col>
       <Col xs={24} lg={4} style={{ textAlign: "left" }}>
