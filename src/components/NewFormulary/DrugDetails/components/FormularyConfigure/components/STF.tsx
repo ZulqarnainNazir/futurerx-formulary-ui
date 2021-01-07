@@ -119,6 +119,7 @@ class STF extends React.Component<any, any> {
     searchData: Array(),
     showStGroupDescription: false,
     selectedGroupDescriptionObj:{},
+    isSelectAll:false,
   };
 
   // onSelectedTableRowChanged = (selectedRowKeys) => {
@@ -217,7 +218,34 @@ class STF extends React.Component<any, any> {
       apiDetails["lob_type"] = this.props.formulary_lob_id;
       apiDetails["pathParams"] = this.props?.formulary_id + "/" + this.state.fileType + "/" + this.props.tab_type;
       apiDetails["keyVals"] = [{ key: constants.KEY_ENTITY_ID, value: this.props?.formulary_id }];
-      apiDetails["messageBody"] = {};
+      apiDetails["messageBody"] = {
+        covered: {},
+        filter: [],
+        is_select_all: false,
+        not_covered: {},
+        search_key: "",
+        drug_list:"",
+        prev_formulary:"",
+      };
+      if (this.props.advancedSearchBody && Object.keys(this.props.advancedSearchBody).length > 0) {
+        apiDetails["messageBody"] = Object.assign(apiDetails["messageBody"], this.props.advancedSearchBody);
+      }
+
+      apiDetails["messageBody"]['is_select_all'] = this.state.isSelectAll;
+
+      let allFilters = Array();
+      let filterProps = Array();
+      this.state.filter.map(filterInfo => {
+        allFilters.push(filterInfo);
+        filterProps.push(filterInfo["prop"]);
+      });
+
+      this.state.quickFilter.map(filterInfo => {
+        if (!filterProps.includes(filterInfo["prop"]))
+          allFilters.push(filterInfo);
+      });
+
+      apiDetails["messageBody"]["filter"] = allFilters;
       apiDetails["messageBody"]["selected_drug_ids"] = this.state.selectedDrugs;
       apiDetails["messageBody"]["base_st_group_description_id"] = Number(this.state.selectedGroupDescription);
       apiDetails["messageBody"]["id_st_group_description"] = this.state.selectedLastestedVersion;
@@ -804,7 +832,7 @@ class STF extends React.Component<any, any> {
     });
     const selectedRows: number[] = selectedRowKeys.filter((k) => this.state.fixedSelectedRows.indexOf(k) < 0);
     this.onSelectedTableRowChanged(selectedRows);
-    this.setState({ drugGridData: data });
+    this.setState({ drugGridData: data,isSelectAll:isSelected  });
   };
   render() {
     const searchProps = {
