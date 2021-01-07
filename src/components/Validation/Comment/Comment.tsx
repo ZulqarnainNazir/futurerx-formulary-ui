@@ -5,17 +5,36 @@ import "./Comment.css";
 interface Props {
   element: any;
 }
+//"#EE5959"
+function getStatuColor(s) {
+  if (s === "P") {
+    return "#b0dfa5";
+  } else if (s === "W") {
+    return "#f5c38c";
+  } else if (s === "F") {
+    return "#fc7878";
+  }
+}
 
 function Comment(props: Props) {
-  const { validation_name, notes_count, display_date } = props.element;
+  const {
+    validation_name,
+    notes_count,
+    display_date,
+    status,
+    prefered_count,
+  } = props.element;
   return (
     <Row className="Comment-card" align="middle">
       <Col xs={24} lg={12}>
         <Space size="large">
           <Avatar
-            style={{ backgroundColor: "#EE5959", verticalAlign: "middle" }}
+            style={{
+              backgroundColor: getStatuColor(status),
+              verticalAlign: "middle",
+            }}
           >
-            {1}
+            {prefered_count}
           </Avatar>
           <span className="title">{validation_name}</span>
         </Space>

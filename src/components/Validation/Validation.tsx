@@ -32,7 +32,7 @@ function Validation(props) {
     failed1,
     warning1,
     comment = "";
-
+  let validationItems;
   if (Object.keys(props.validationData).length > 0) {
     total1 =
       props.validationData.validation_summary &&
@@ -47,78 +47,126 @@ function Validation(props) {
       props.validationData.validation_summary &&
       props.validationData.validation_summary.warning;
 
+    // validationItems = getValidationItems(props.validationData.validations);
+
+    // comment = props.validationData.validations.map((element) => {
+    //   let users, usersList, failed, warning, passed;
+    //   if (element.users && element.users.length > 0) {
+    //     usersList = element.users.filter((x) => x.name != null);
+    //     usersList.length > 0 &&
+    //       usersList.map((user) => {
+    //         users = [
+    //           {
+    //             ...user,
+    //             logo_path: user.logo_path, //environment.awsFileURL + user.logo_path
+    //           },
+    //         ];
+    //       });
+    //   }
+    //   const display_date =
+    //     element.latest_note_added_time != null
+    //       ? dateFormat.dateFormat(element.latest_note_added_time)
+    //       : "No notes";
+    //   if (element.children && element.children.length > 0) {
+    //     element.children.map((childElement) => {
+    //       switch (childElement.validation_status) {
+    //         case "F":
+    //           failed = {
+    //             ...element,
+    //             failed: element.failed + 1,
+    //           };
+    //           break;
+    //         case "W":
+    //           warning = {
+    //             ...element,
+    //             warning: element.warning + 1,
+    //           };
+    //           break;
+    //         case "P":
+    //           passed = {
+    //             ...element,
+    //             passed: element.passed + 1,
+    //           };
+    //           break;
+    //       }
+    //     });
+    //     if (element.failed > 0) {
+    //       element.prefered_count = element.failed;
+    //       element.validation_status = "F";
+    //     } else if (element.warning > 0) {
+    //       element.prefered_count = element.warning;
+    //       element.validation_status = "W";
+    //     } else if (element.passed > 0) {
+    //       element.prefered_count = element.passed;
+    //       element.validation_status = "P";
+    //     }
+    //   }
+    //   const list = {
+    //     ...element,
+    //     prefered_count: 0,
+    //     failed: 0,
+    //     warning: 0,
+    //     passed: 0,
+    //     notesFormgroup: "",
+    //     notes: [],
+    //     users: users,
+    //     notesControlObj: {
+    //       display_label: "",
+    //       maxlength: 500,
+    //       label: "",
+    //       type: "text",
+    //       is_required: false,
+    //       formcontrol: "",
+    //     },
+    //     display_date: display_date,
+    //   };
+    //   return <Comment element={list} />;
+    // });
+
     comment = props.validationData.validations.map((element) => {
-      let users, usersList, failed, warning, passed;
-      if (element.users && element.users.length > 0) {
-        usersList = element.users.filter((x) => x.name != null);
-        usersList.length > 0 &&
-          usersList.map((user) => {
-            users = [
-              {
-                ...user,
-                logo_path: user.logo_path, //environment.awsFileURL + user.logo_path
-              },
-            ];
-          });
-      }
+      console.log(element);
+      let prefered_count = 0;
+      let failed = 0;
+      let warning = 0;
+      let passed = 0;
+      let status: string = "";
       const display_date =
         element.latest_note_added_time != null
           ? dateFormat.dateFormat(element.latest_note_added_time)
           : "No notes";
       if (element.children && element.children.length > 0) {
-        element.children.map((childElement) => {
+        element.children.forEach((childElement) => {
           switch (childElement.validation_status) {
             case "F":
-              failed = {
-                ...element,
-                failed: element.failed + 1,
-              };
+              failed = failed + 1;
               break;
             case "W":
-              warning = {
-                ...element,
-                warning: element.warning + 1,
-              };
+              warning = warning + 1;
               break;
             case "P":
-              passed = {
-                ...element,
-                passed: element.passed + 1,
-              };
+              passed = passed + 1;
               break;
           }
         });
-        if (element.failed > 0) {
-          element.prefered_count = element.failed;
-          element.validation_status = "F";
-        } else if (element.warning > 0) {
-          element.prefered_count = element.warning;
-          element.validation_status = "W";
-        } else if (element.passed > 0) {
-          element.prefered_count = element.passed;
-          element.validation_status = "P";
+        if (failed > 0) {
+          prefered_count = failed;
+          status = "F";
+        } else if (warning > 0) {
+          prefered_count = warning;
+          status = "W";
+        } else if (passed > 0) {
+          prefered_count = passed;
+          status = "P";
         }
       }
-      const list = {
+      const item = {
         ...element,
-        prefered_count: 0,
-        failed: 0,
-        warning: 0,
-        passed: 0,
-        notesFormgroup: "",
-        notes: [],
-        users: users,
-        notesControlObj: {
-          display_label: "",
-          maxlength: 500,
-          label: "",
-          type: "text",
-          is_required: false,
-          formcontrol: "",
-        },
+        status: status,
+        prefered_count: prefered_count,
         display_date: display_date,
       };
-      return <Comment element={list} />;
+
+      return <Comment element={item} />;
     });
   }
 
