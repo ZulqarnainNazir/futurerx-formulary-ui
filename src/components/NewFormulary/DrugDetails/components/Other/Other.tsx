@@ -449,6 +449,11 @@ class DrugDetailOther extends React.Component<any, any> {
           }
         }
         
+        if (thisRef.props.configureSwitch) {
+          gridItem["isDisabled"] = true;
+          gridItem["rowStyle"] = "table-row--disabled-font";
+        }
+        
         gridItem["tier"] = element.tier_value ? "" + element.tier_value : "";
         gridItem["labelName"] = element.drug_label_name ? "" + element.drug_label_name : "";
         gridItem["ddid"] = element.drug_descriptor_identifier ? "" + element.drug_descriptor_identifier : "";
@@ -610,11 +615,14 @@ class DrugDetailOther extends React.Component<any, any> {
       this.getOtherList();
       this.getOTHERSummary();
     } else {
-      this.setState({tabs:[
-        { id: 1, text: "Replace", disabled:false },
-        { id: 2, text: "Append", disabled:false },
-        { id: 3, text: "Remove", disabled:false },
-      ]});
+      this.setState({
+        tabs:[
+          { id: 1, text: "Replace", disabled:false },
+          { id: 2, text: "Append", disabled:false },
+          { id: 3, text: "Remove", disabled:false },
+        ],
+        showGrid: false,
+      });
       this.getOTHERSummary();
     }
 

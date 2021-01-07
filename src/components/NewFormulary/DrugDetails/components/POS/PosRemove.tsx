@@ -50,8 +50,8 @@ class PosRemove extends React.Component<any, any> {
     return (
       <div className="tab-prremove pr-limit-settings bordered mb-10">
         <PanelHeader
-          title="patient residence settings"
-          tooltip="patient residence settings"
+          title="place of service criteria"
+          tooltip="place of service criteria"
         />
         {/* <div>
           <span style={{ marginLeft: 8 }}>

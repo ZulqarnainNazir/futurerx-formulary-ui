@@ -52,8 +52,8 @@ class GLRemove extends React.Component<any, any> {
     return (
       <div className="tab-prremove pr-limit-settings bordered mb-10">
         <PanelHeader
-          title="patient residence settings"
-          tooltip="patient residence settings"
+          title="gender criteria"
+          tooltip="gender criteria"
         />
         {/* <div>
           <span style={{ marginLeft: 8 }}>
