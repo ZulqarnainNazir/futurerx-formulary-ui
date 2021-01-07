@@ -4,13 +4,13 @@ import Formulary from "./NewFormulary";
 import FrxTabs from "../shared/FrxTabs/FrxTabs";
 
 const tabs = [
-    { id: 1, text: "Formulary" },
-    { id: 2, text: "Formulary Components" },
-    { id: 3, text: "Formulary Benefits" },   
-  ];
+  { id: 1, text: "Formulary" },
+  { id: 2, text: "Components" },
+  { id: 3, text: "Formulary Benefits" },
+];
 
 class FormularyRoot extends React.Component<any, any> {
-state = {
+  state = {
     tabs: tabs,
     activeTabIndex: 0,
   };
@@ -21,9 +21,15 @@ state = {
     const tabs = this.state.tabs.map((tab: TabInfo, index: number) => {
       if (index === selectedTabIndex) {
         if (selectedTabIndex === 1) {
-          window.open("http://vertx-dev-staging-01.ap.futurerx.com:8000/", "_blank");
-        }else if(selectedTabIndex === 2){
-          window.open("http://vertx-dev-staging-01.ap.futurerx.com:5000", "_blank");
+          window.open(
+            "http://vertx-dev-staging-01.ap.futurerx.com:8000/",
+            "_blank"
+          );
+        } else if (selectedTabIndex === 2) {
+          window.open(
+            "http://vertx-dev-staging-01.ap.futurerx.com:5000",
+            "_blank"
+          );
         }
         activeTabIndex = index;
       }
@@ -40,29 +46,27 @@ state = {
       case 1:
         return <div>Formulary Components</div>;
       case 2:
-        return <div>Formulary Benefits</div>;      
+        return <div>Formulary Benefits</div>;
     }
   };
 
- 
-  render() {   
-   
+  render() {
     return (
       <>
-       <div className="formulary-root">       
-       <FrxTabs
+        <div className="formulary-root">
+          <FrxTabs
             tabList={this.state.tabs}
             typeCard={"line"}
             activeTabIndex={this.state.activeTabIndex}
             onClickTab={this.onClickTab}
-          />        
-        <div className="formulary-inner-content-wrapper">
+          />
+          <div className="formulary-inner-content-wrapper">
             {this.renderActiveTabContent()}
+          </div>
         </div>
-       </div>       
       </>
     );
   }
 }
 
-export default (FormularyRoot);
+export default FormularyRoot;
