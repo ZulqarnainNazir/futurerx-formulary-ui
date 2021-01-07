@@ -95,6 +95,7 @@ interface otherState {
   isGridMultiSorted: boolean,
   filter: any[],
   quickFilter: any[],
+  isSelectAll: boolean;
 }
 
 class DrugDetailOther extends React.Component<any, any> {
@@ -141,6 +142,7 @@ class DrugDetailOther extends React.Component<any, any> {
     isGridMultiSorted: false,
     filter: Array(),
     quickFilter: Array(),
+    isSelectAll: false,
   };
 
   listPayload: any = {
@@ -194,6 +196,7 @@ class DrugDetailOther extends React.Component<any, any> {
 
       if (this.state.activeTabIndex === 0 || this.state.activeTabIndex === 1) {
         this.rpSavePayload.selected_drug_ids = this.state.selectedDrugs
+        this.rpSavePayload.is_select_all = this.state.isSelectAll
         apiDetails["messageBody"] = this.rpSavePayload;
         let triggerType = (this.state.activeTabIndex === 0) ? otConstants.TYPE_REPLACE : otConstants.TYPE_APPEND
         apiDetails["pathParams"] = this.props?.formulary_id + "/" +  getLobCode(this.props.formulary_lob_id) + "/" + triggerType;
@@ -212,6 +215,7 @@ class DrugDetailOther extends React.Component<any, any> {
 
       } else if(this.state.activeTabIndex === 2) {
         this.rmSavePayload.selected_drug_ids = this.state.selectedDrugs
+        this.rmSavePayload.is_select_all = this.state.isSelectAll
         apiDetails["messageBody"] = this.rmSavePayload;
         apiDetails["pathParams"] = this.props?.formulary_id + "/" +  getLobCode(this.props.formulary_lob_id) + "/" + otConstants.TYPE_REMOVE;
         console.log("The API Details - ", apiDetails);
@@ -666,7 +670,7 @@ class DrugDetailOther extends React.Component<any, any> {
       k => this.state.fixedSelectedRows.indexOf(k) < 0
     );
     this.onSelectedTableRowChanged(selectedRows);
-    this.setState({ data: data });
+    this.setState({ data: data, isSelectAll: isSelected });
   };
 
   onSettingsIconHandler = (hiddenColumn, visibleColumn) => {
@@ -939,7 +943,7 @@ class DrugDetailOther extends React.Component<any, any> {
               <div className="modify-wrapper bordered white-bg">
                 <div className="modify-panel">
                   <div className="icon">
-                    <span>R</span>
+                    <span>P</span>
                   </div>
                   <div className="switch-box">
                     <CustomizedSwitches

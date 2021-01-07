@@ -21,6 +21,7 @@ import showMessage from "../../../../Utils/Toast";
 import { getIntelliscenseSearch } from "../../../../../../redux/slices/formulary/categoryClass/categoryClassActionCreation";
 import "./TierReplace.scss";
 import FrxLoader from "../../../../../shared/FrxLoader/FrxLoader";
+import * as _ from "lodash";
 
 interface tabsState {
   tierGridContainer: boolean;
@@ -48,6 +49,8 @@ interface tabsState {
   filter: any[];
   isSelectAll: boolean;
   isRequestFinished: boolean;
+  isColumnsChanged: boolean;
+  changedColumns: any[];
 }
 
 const mapStateToProps = (state) => {
@@ -114,6 +117,8 @@ class TierRemove extends React.Component<any, tabsState> {
     filteredInfo: null,
     isSelectAll: false,
     isRequestFinished: true,
+    changedColumns: Array(),
+    isColumnsChanged: false,
   };
 
   constructor(props) {
@@ -139,7 +144,7 @@ class TierRemove extends React.Component<any, tabsState> {
     this.state.selectedFileKey = this.props.lobCode;
   }
 
-  onSettingsIconHandler = (hiddenColumn, visibleColumn) => {
+  /*onSettingsIconHandler = (hiddenColumn, visibleColumn) => {
     console.log(
       "Settings icon handler: Hidden" +
       JSON.stringify(hiddenColumn) +
@@ -152,7 +157,7 @@ class TierRemove extends React.Component<any, tabsState> {
         hiddenColumns: hiddenColumnKeys
       });
     }
-  };
+  };*/
   onApplyFilterHandler = (filters, filteredInfo) => {
     console.log("filtering from be:" + (JSON.stringify(filters)));
     //this.state.filter = Array();
@@ -834,6 +839,16 @@ class TierRemove extends React.Component<any, tabsState> {
     this.setState({ isSearchOpen: !this.state.isSearchOpen });
   };
 
+  onColumnChange = (columns: any[]) => {
+    console.log("swapped", columns);
+    const cols = _.cloneDeep(columns);
+    const changedColumns = cols
+    this.setState({
+      isColumnsChanged: true,
+      changedColumns
+    });
+  };
+
   resetData = () => {
     let payload = {
       advancedSearchBody: {},
@@ -962,7 +977,11 @@ class TierRemove extends React.Component<any, tabsState> {
                   pagintionPosition="topRight"
                   gridName="TIER"
                   enableSettings
-                  columns={gridColumns}
+                  columns={
+                    this.state.isColumnsChanged
+                      ? this.state.changedColumns
+                      : tierColumnsNonMcr()
+                  }
                   scroll={{ x: 2000, y: 377 }}
                   isFetchingData={false}
                   enableResizingOfColumns
@@ -982,13 +1001,13 @@ class TierRemove extends React.Component<any, tabsState> {
                   isMultiSorted={this.state.isGridMultiSorted}
                   multiSortedInfo={this.state.gridMultiSortedInfo}
                   onMultiSortToggle={this.onMultiSortToggle}
-                  getColumnSettings={this.onSettingsIconHandler}
                   pageSize={this.state.limit}
                   selectedCurrentPage={
                     this.state.index / this.state.limit + 1
                   }
                   isFiltered={this.state.isFiltered}
                   filteredInfo={this.state.filteredInfo}
+                  onColumnChange={this.onColumnChange}
                 />
               </div>
             </div>

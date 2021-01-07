@@ -125,8 +125,9 @@ function GroupHeader(props: any) {
   }, [props.isSetupComplete]);
 
   useEffect(() => {
-    if (props.version.length > 0) {
-      let versions = props.version;
+    let versions = props.version;
+    if (versions.length > 0) {
+      //let versions = props.version;
       if (props.isPopUpView) {
         debugger;
         versions = versions.filter((obj) => {

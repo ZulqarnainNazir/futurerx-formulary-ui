@@ -230,7 +230,7 @@ class CB extends React.Component<any, any> {
               </div>
               <div className="modify-panel">
                 <div className="icon">
-                  <span>R</span>
+                  <span>P</span>
                 </div>
                 <div className="switch-box">
                   <CustomizedSwitches
