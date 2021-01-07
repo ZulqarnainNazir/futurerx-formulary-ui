@@ -84,8 +84,8 @@ class NavBar extends Component<Props, State> {
                   />
 
                   <DropDown
-                    placeholder="Lalith Denduluri"
-                    options={["Select ", "Lalith Denduluri"]}
+                    placeholder="Preeti Patel"
+                    options={["Select ", "Preeti Patel"]}
                   />
                 </Container>
               </div>
