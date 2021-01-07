@@ -366,6 +366,11 @@ class DrugDetailFFF extends React.Component<any, any> {
             gridItem["rowStyle"] = "table-row--blue-font";
           }
         }
+        
+        if (thisRef.props.configureSwitch) {
+          gridItem["isDisabled"] = true;
+          gridItem["rowStyle"] = "table-row--disabled-font";
+        }
 
         gridItem["tier"] = element.tier_value ? "" + element.tier_value : "";
         gridItem["labelName"] = element.drug_label_name ? "" + element.drug_label_name : "";
@@ -459,19 +464,25 @@ class DrugDetailFFF extends React.Component<any, any> {
     console.log("-----Component Will Receive Props------", nextProps);
 
     if (nextProps.configureSwitch){
-      this.setState({tabs:[
-        { id: 1, text: "Replace", disabled: true },
-        { id: 2, text: "Append", disabled: true },
-        { id: 3, text: "Remove", disabled: true },
-      ], activeTabIndex:0});
+      this.setState({
+        tabs:[
+          { id: 1, text: "Replace", disabled: true },
+          { id: 2, text: "Append", disabled: true },
+          { id: 3, text: "Remove", disabled: true },
+        ],
+        activeTabIndex: 0,
+      });
 
       this.getFFFDrugsList();
     } else {
-      this.setState({tabs:[
-        { id: 1, text: "Replace", disabled: false },
-        { id: 2, text: "Append", disabled: true },
-        { id: 3, text: "Remove", disabled: false },
-      ]});
+      this.setState({
+        tabs:[
+          { id: 1, text: "Replace", disabled: false },
+          { id: 2, text: "Append", disabled: true },
+          { id: 3, text: "Remove", disabled: false },
+        ],
+        showGrid: false,
+      });
     }
 
     if (nextProps.advancedSearchBody && nextProps.populateGrid) {

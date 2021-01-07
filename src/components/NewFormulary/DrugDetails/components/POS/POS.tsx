@@ -562,6 +562,11 @@ class DrugDetailPOS extends React.Component<any, any> {
             }
           }
         }
+        
+        if (thisRef.props.configureSwitch) {
+          gridItem["isDisabled"] = true;
+          gridItem["rowStyle"] = "table-row--disabled-font";
+        }
 
         gridItem["placeOfService"] = element.is_pos ? "" + element.is_pos : "";
         gridItem["coveredPlaceOfService"] = element.covered_place_of_services
@@ -949,6 +954,7 @@ class DrugDetailPOS extends React.Component<any, any> {
           { id: 2, text: "Append", disabled: false },
           { id: 3, text: "Remove", disabled: false },
         ],
+        showGrid: false,
       });
     }
 

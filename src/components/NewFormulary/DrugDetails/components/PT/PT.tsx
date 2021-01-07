@@ -629,6 +629,11 @@ class DrugDetailPT extends React.Component<any, any> {
             }
           }
         }
+        
+        if (thisRef.props.configureSwitch) {
+          gridItem["isDisabled"] = true;
+          gridItem["rowStyle"] = "table-row--disabled-font";
+        }
 
         gridItem["prescriberTaxonomy"] = element.is_prtx
           ? "" + element.is_prtx
@@ -800,6 +805,7 @@ class DrugDetailPT extends React.Component<any, any> {
           { id: 2, text: "Append", disabled: false },
           { id: 3, text: "Remove", disabled: false },
         ],
+        showGrid: false,
       });
     }
 

@@ -667,6 +667,11 @@ class DrugDetailAL extends React.Component<any, any> {
             }
           }
         }
+        
+        if (thisRef.props.configureSwitch) {
+          gridItem["isDisabled"] = true;
+          gridItem["rowStyle"] = "table-row--disabled-font";
+        }
 
         gridItem["is_al"] = element.is_al ? "" + element.is_al : "";
         gridItem["covered_min_operators"] = element.covered_min_operators ? "" + element.covered_min_operators : "";
@@ -837,20 +842,26 @@ class DrugDetailAL extends React.Component<any, any> {
     console.log("-----Component Will Receive Props------", nextProps);
 
     if (nextProps.configureSwitch){
-      this.setState({tabs:[
-        { id: 1, text: "Replace", disabled: true },
-        { id: 2, text: "Append", disabled: true },
-        { id: 3, text: "Remove", disabled: true },
-      ], activeTabIndex:0});
+      this.setState({
+        tabs:[
+          { id: 1, text: "Replace", disabled: true },
+          { id: 2, text: "Append", disabled: true },
+          { id: 3, text: "Remove", disabled: true },
+        ], 
+        activeTabIndex:0
+      });
 
       this.getALDrugsList();
 
     } else {
-      this.setState({tabs:[
-        { id: 1, text: "Replace", disabled: false },
-        { id: 2, text: "Append", disabled: false },
-        { id: 3, text: "Remove", disabled: false },
-      ]});
+      this.setState({
+        tabs:[
+          { id: 1, text: "Replace", disabled: false },
+          { id: 2, text: "Append", disabled: false },
+          { id: 3, text: "Remove", disabled: false },
+        ],
+        showGrid: false,
+      });
     }
 
     if (nextProps.advancedSearchBody && nextProps.populateGrid) {

@@ -50,8 +50,8 @@ class ALRemove extends React.Component<any, any> {
     return (
       <div className="tab-prremove pr-limit-settings bordered mb-10 white-bg">
         <PanelHeader
-          title="patient residence settings"
-          tooltip="patient residence settings"
+          title="age limit criterias"
+          tooltip="age limit criterias"
         />
         {/* <div>
           <span style={{ marginLeft: 8 }}>
