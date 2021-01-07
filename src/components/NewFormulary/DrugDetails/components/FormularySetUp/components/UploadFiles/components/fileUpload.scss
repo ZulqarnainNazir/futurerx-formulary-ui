@@ -55,6 +55,10 @@
                 color: #1D54B4;
                 text-decoration: underline dashed;
                 font-weight: bold;
+                cursor: pointer;
+                svg{
+                    margin-left: 3px;
+                }
             }
             .user{
                 width: 40px;
@@ -112,6 +116,7 @@
             font-weight: bold;
             font-size: 12px;
             margin-bottom: 10px;
+            cursor: pointer;
         }
         .up-file-top{
             width: 100%;
