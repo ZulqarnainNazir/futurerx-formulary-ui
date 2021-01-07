@@ -26,6 +26,7 @@ import showMessage from "../../../../Utils/Toast";
 import SearchBox from "../../../../../shared/Frx-components/search-box/SearchBox";
 import getLobCode from "../../../../Utils/LobUtils";
 import { getIntelliscenseSearch } from "../../../../../../redux/slices/formulary/categoryClass/categoryClassActionCreation";
+import FrxLoader from "../../../../../shared/FrxLoader/FrxLoader";
 
 import "./TierReplace.scss";
 
@@ -56,6 +57,7 @@ interface tabsState {
   filteredInfo: any;
   filter: any[];
   isSelectAll: boolean;
+  isRequestFinished: boolean;
 }
 
 const mapStateToProps = (state) => {
@@ -120,6 +122,7 @@ class TierReplace extends React.Component<any, tabsState> {
     isFiltered: false,
     filteredInfo: null,
     isSelectAll: false,
+    isRequestFinished: true,
   };
 
   constructor(props) {
@@ -704,6 +707,9 @@ class TierReplace extends React.Component<any, tabsState> {
       this.state.selectedDrugs.length > 0 &&
       this.state.selectedTier !== -1
     ) {
+      this.setState({
+        isRequestFinished: false,
+      });
       let apiDetails = {};
       apiDetails["apiPart"] = tierConstants.APPLY_TIER;
       apiDetails["pathParams"] =
@@ -772,6 +778,7 @@ class TierReplace extends React.Component<any, tabsState> {
           .then((json) => {
             this.setState({
               tierGridContainer: true,
+              isRequestFinished: true,
             });
           });
       });
@@ -1068,6 +1075,9 @@ class TierReplace extends React.Component<any, tabsState> {
       columns = columns.filter(
         (key) => !this.state.hiddenColumns.includes(key)
       );
+    }
+    if(!this.state.isRequestFinished){
+      return <FrxLoader />;
     }
     return (
       <>
