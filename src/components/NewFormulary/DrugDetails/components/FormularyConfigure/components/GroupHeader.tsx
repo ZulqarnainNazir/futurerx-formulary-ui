@@ -384,19 +384,20 @@ function GroupHeader(props: any) {
         st_group_description_name: param.st_group_description_name, // clone page input
       })
       .then((json) => {
-        props.getStGrouptDescriptions({
-          lob_type: lob_type,
-          pathParams: props.saveGdm.formulary_id,
-        });
-        if (json?.payload?.status && json?.payload?.status != 200) {
-          showMessage(json.payload.data.message, "error");
-        }
         if (
           json?.payload?.success?.status &&
           json?.payload?.success?.status == 200
         ) {
+          props.getStGrouptDescriptions({
+            lob_type: lob_type,
+            pathParams: props.saveGdm.formulary_id,
+          });
           showMessage(SUCCESS_MSG["clone"], "success");
+        } else if (json?.payload?.status && json?.payload?.status != 200) {
+          showMessage(json.payload.data.message, "error");
         }
+
+
         setOpen(false);
       });
   };
@@ -420,43 +421,42 @@ function GroupHeader(props: any) {
     props
       .archiveGroupDescription({ lob_type: lob_type, pathParams: pathParams })
       .then((json) => {
-        props.getStGrouptDescriptions({
-          lob_type: lob_type,
-          pathParams: props.saveGdm.formulary_id,
-        });
-        props
-          .getStGrouptDescriptionVersions({
-            lob_type: lob_type,
-            pathParams: props.saveGdm.current_group_id,
-          })
-          .then((json) => {
-            const response = json.payload.data;
-            const verLength = Object.keys(response).length;
-            const isEditable = response[verLength - 1].is_setup_complete;
-            const latestVerion =
-              response[verLength - 1].id_st_group_description;
-            const value = response[verLength - 1].value;
-            setIsSetupComplete(isEditable);
-            setVersion(response);
-            setPlaceHolder(value);
-
-            let apiDetails = {};
-            apiDetails["lob_type"] = lob_type;
-            apiDetails["pathParams"] = "/" + latestVerion;
-            props.getStGrouptDescription(apiDetails);
-            props.getStTypes(props.saveGdm.formulary_id);
-          });
-        // props.getStGrouptDescription({lob_type:lob_type,pathParams:props.saveGdm.current_group_des_id})
-        // props.getStTypes(props.saveGdm.formulary_id)
-        if (json?.payload?.status && json?.payload?.status != 200) {
-          showMessage(json.payload.data.message, "error");
-        }
         if (
           json?.payload?.success?.status &&
           json?.payload?.success?.status == 200
         ) {
+          props.getStGrouptDescriptions({
+            lob_type: lob_type,
+            pathParams: props.saveGdm.formulary_id,
+          });
+          props
+            .getStGrouptDescriptionVersions({
+              lob_type: lob_type,
+              pathParams: props.saveGdm.current_group_id,
+            })
+            .then((json) => {
+              const response = json.payload.data;
+              const verLength = Object.keys(response).length;
+              const isEditable = response[verLength - 1].is_setup_complete;
+              const latestVerion =
+                response[verLength - 1].id_st_group_description;
+              const value = response[verLength - 1].value;
+              setIsSetupComplete(isEditable);
+              setVersion(response);
+              setPlaceHolder(value);
+
+              let apiDetails = {};
+              apiDetails["lob_type"] = lob_type;
+              apiDetails["pathParams"] = "/" + latestVerion;
+              props.getStGrouptDescription(apiDetails);
+              props.getStTypes(props.saveGdm.formulary_id);
+            });
           showMessage(SUCCESS_MSG["archive"], "success");
+        } else if (json?.payload?.status && json?.payload?.status != 200) {
+          showMessage(json.payload.data.message, "error");
         }
+
+
         setOpen(false);
       });
   };
@@ -471,38 +471,43 @@ function GroupHeader(props: any) {
         pathParams: pathParams,
       })
       .then((json) => {
-        let apiDetails = {};
-        apiDetails["lob_type"] = props.formulary_lob_id;
-        apiDetails["pathParams"] = "/" + props.client_id;
-        props.getStGrouptDescriptions({
-          lob_type: lob_type,
-          pathParams: props.saveGdm.formulary_id,
-        });
-
-        apiDetails["pathParams"] = "/" + props.saveGdm.current_group_id;
-        props
-          .getStGrouptDescriptionVersions({
+        if (
+          json?.payload?.success?.status &&
+          json?.payload?.success?.status == 200
+        ) {
+          let apiDetails = {};
+          apiDetails["lob_type"] = props.formulary_lob_id;
+          apiDetails["pathParams"] = "/" + props.client_id;
+          props.getStGrouptDescriptions({
             lob_type: lob_type,
-            pathParams: props.saveGdm.current_group_id,
-          })
-          .then((json) => {
-            const response = json.payload.data;
-            const verLength = Object.keys(response).length;
-            const isEditable = response[verLength - 1].is_setup_complete;
-            const latestVerion =
-              response[verLength - 1].id_st_group_description;
-            const value = response[verLength - 1].value;
-            setIsSetupComplete(isEditable);
-            setVersion(response);
-            setPlaceHolder(value);
-
-            let apiDetails = {};
-            apiDetails["lob_type"] = lob_type;
-            apiDetails["pathParams"] = "/" + latestVerion;
-            props.getStGrouptDescription(apiDetails);
-            props.getStTypes(props.saveGdm.formulary_id);
+            pathParams: props.saveGdm.formulary_id,
           });
-        if (json?.payload?.status && json?.payload?.status != 200) {
+
+          apiDetails["pathParams"] = "/" + props.saveGdm.current_group_id;
+          props
+            .getStGrouptDescriptionVersions({
+              lob_type: lob_type,
+              pathParams: props.saveGdm.current_group_id,
+            })
+            .then((json) => {
+              const response = json.payload.data;
+              const verLength = Object.keys(response).length;
+              const isEditable = response[verLength - 1].is_setup_complete;
+              const latestVerion =
+                response[verLength - 1].id_st_group_description;
+              const value = response[verLength - 1].value;
+              setIsSetupComplete(isEditable);
+              setVersion(response);
+              setPlaceHolder(value);
+
+              let apiDetails = {};
+              apiDetails["lob_type"] = lob_type;
+              apiDetails["pathParams"] = "/" + latestVerion;
+              props.getStGrouptDescription(apiDetails);
+              props.getStTypes(props.saveGdm.formulary_id);
+            });
+          showMessage(SUCCESS_MSG["newVersion"], "success");
+        } else if (json?.payload?.status && json?.payload?.status != 200) {
           if (
             json?.payload?.data?.formularies &&
             json?.payload?.data?.formularies?.length > 0
@@ -519,12 +524,8 @@ function GroupHeader(props: any) {
           }
           showMessage(json.payload.data.message, "error");
         }
-        if (
-          json?.payload?.success?.status &&
-          json?.payload?.success?.status == 200
-        ) {
-          showMessage(SUCCESS_MSG["newVersion"], "success");
-        }
+
+
         setOpen(false);
       });
   };
