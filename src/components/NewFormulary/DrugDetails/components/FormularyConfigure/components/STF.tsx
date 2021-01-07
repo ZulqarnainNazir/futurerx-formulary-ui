@@ -281,7 +281,7 @@ class STF extends React.Component<any, any> {
         selectedStType: null,
         is_additional_criteria_defined: false,
       });
-      this.populateGridData();
+      this.populateGridData(null,nextProps.configureSwitch );
     } else {
       this.setState({ tierGridContainer: false });
     }
@@ -382,14 +382,14 @@ class STF extends React.Component<any, any> {
     this.setState({ [tmp_key]: tmp_value });
   };
 
-  populateGridData = (searchBody = null) => {
+  populateGridData = (searchBody = null, switchState=false) => {
     console.log("Populate grid data is called");
     let apiDetails = {};
     apiDetails['messageBody']={};
     apiDetails["lob_type"] = this.props.formulary_lob_id;
     // let tmpGroup :any = this.state.paGroupDescriptions.filter(obj  => obj.id_mcr_base_pa_group_description === this.state.selectedGroupDescription);
     let tmp_fileType: any = "";
-    if (this.props.configureSwitch) {
+    if (!(this.props.configureSwitch || switchState)) {
       apiDetails["messageBody"]["base_st_group_description_id"] = this.state.selectedGroupDescription;
       apiDetails["messageBody"]["id_st_type"] = this.state.selectedStType;
       apiDetails["messageBody"]["st_value"] = this.state.stValue;
@@ -458,6 +458,7 @@ class STF extends React.Component<any, any> {
           (obj) => obj[this.state.groupDescriptionProp] == this.state.selectedGroupDescription
         )[0];
         debugger;
+        let thisRef = this;
         var gridData = tmpData.map(function (el) {
           var element = Object.assign({}, el);
           data.push(element);
@@ -473,6 +474,10 @@ class STF extends React.Component<any, any> {
             // the required styles are added under each classNames in FrxGrid.scss (towards the end)
             //table-row--red-font (for red) table-row--green-font (for green) table-row--blue-font for default (for blue)
             gridItem["rowStyle"] = "table-row--blue-font";
+          }
+          if (thisRef.props.configureSwitch) {
+            gridItem["isDisabled"] = true;
+            gridItem["rowStyle"] = "table-row--disabled-font";
           }
           gridItem["tier"] = element.tier_value;
           gridItem["is_um_criteria"] = element.is_um_criteria;

@@ -156,8 +156,9 @@ class ListItem extends Component<any, any> {
     const updatedPayload = this.state.payload;
     const { cardCode, cardName, isIncluded } = this.state;
 
-    const isArrCriteria =
-      cardCode === 4 || cardCode === 5 || cardCode === 8 ? true : false;
+    // const isArrCriteria =
+    //   cardCode === 4 || cardCode === 5 || cardCode === 8 ? true : false;
+    const isCriteriaObject = cardCode === 1 || cardCode === 3 ? true : false;
     // age & icd are objects
     // gender, pn, pt, pos, pr, pchl are array
     this.props.handleGlobalState(
@@ -166,7 +167,7 @@ class ListItem extends Component<any, any> {
       cardName,
       isIncluded,
       updatedPayload,
-      isArrCriteria
+      isCriteriaObject
     );
   }
 
@@ -890,6 +891,7 @@ class ListItem extends Component<any, any> {
       cardName,
       isIncluded,
       payload,
+
       isReadOnly,
 
       // AL
@@ -933,6 +935,8 @@ class ListItem extends Component<any, any> {
       card: { cardCode },
       deleteIconHandler,
     } = this.props;
+
+    const isCriteriaObject = cardCode === 1 || cardCode === 3 ? true : false;
     switch (cardCode) {
       case 1:
         return (
@@ -954,7 +958,8 @@ class ListItem extends Component<any, any> {
                       cardCode,
                       cardName,
                       isIncluded,
-                      payload
+                      payload,
+                      isCriteriaObject
                     )
             }
             isAdditionalCriteria={true}
@@ -980,7 +985,8 @@ class ListItem extends Component<any, any> {
                       cardCode,
                       cardName,
                       isIncluded,
-                      payload
+                      payload,
+                      isCriteriaObject
                     )
             }
             isAdditionalCriteria={true}
@@ -1010,7 +1016,8 @@ class ListItem extends Component<any, any> {
                       cardCode,
                       cardName,
                       isIncluded,
-                      payload
+                      payload,
+                      isCriteriaObject
                     )
             }
             isAdditionalCriteria={true}
@@ -1037,7 +1044,8 @@ class ListItem extends Component<any, any> {
                       cardCode,
                       cardName,
                       isIncluded,
-                      payload
+                      payload,
+                      isCriteriaObject
                     )
             }
             isAdditionalCriteria={true}
@@ -1064,7 +1072,8 @@ class ListItem extends Component<any, any> {
                       cardCode,
                       cardName,
                       isIncluded,
-                      payload
+                      payload,
+                      isCriteriaObject
                     )
             }
             isAdditionalCriteria={true}
@@ -1094,7 +1103,8 @@ class ListItem extends Component<any, any> {
                       cardCode,
                       cardName,
                       isIncluded,
-                      payload
+                      payload,
+                      isCriteriaObject
                     )
             }
             isAdditionalCriteria={true}
@@ -1125,7 +1135,8 @@ class ListItem extends Component<any, any> {
                       cardCode,
                       cardName,
                       isIncluded,
-                      payload
+                      payload,
+                      isCriteriaObject
                     )
             }
             isAdditionalCriteria={true}
@@ -1155,7 +1166,8 @@ class ListItem extends Component<any, any> {
                       cardCode,
                       cardName,
                       isIncluded,
-                      payload
+                      payload,
+                      isCriteriaObject
                     )
             }
             isAdditionalCriteria={true}
