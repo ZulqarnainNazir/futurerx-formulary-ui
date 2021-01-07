@@ -275,6 +275,65 @@ class DrugDetailAL extends React.Component<any, any> {
           alConstants.TYPE_REPLACE;
           console.log("The API Details - ", apiDetails);
 
+          // Append Functionality
+          if(this.state.activeTabIndex === 1) {
+            // let selDrugs = this.state.selectedDrugs;
+            // let setAlconditions = new Set();
+            let appendALSettings = [...ageLimits];
+
+            if(this.formData2.length < 3 && this.state.selectedDrugs.length === 1 && ageLimits.length < 3) {
+
+              for(let i=0; i<this.state.selectedDrugs.length; i++) {
+                let tmpSelDrg = this.state.selectedDrugs[i];
+    
+                for(let j=0; j<this.state.data.length; j++) {
+                  if(tmpSelDrg === this.state.data[j].md5_id){
+                    let cminOp = [];
+                    let cminAg = [];
+                    let cmaxOp = [];
+                    let cmaxAg = [];
+                    if(this.state.alSettings[0].covered) {
+                      cminOp = this.state.data[j]?.covered_min_operators.split(",").map(e => e.trim());
+                      cminAg = this.state.data[j]?.covered_min_ages.split(",").map(e => e.trim());
+                      cmaxOp = this.state.data[j]?.covered_max_operators.split(",").map(e => e.trim());
+                      cmaxAg = this.state.data[j]?.covered_max_ages.split(",").map(e => e.trim());
+    
+                    } else if(!this.state.alSettings[0].covered) {
+                      cminOp = this.state.data[j]?.not_covered_min_operators.split(",").map(e => e.trim());
+                      cminAg = this.state.data[j]?.not_covered_min_ages.split(",").map(e => e.trim());
+                      cmaxOp = this.state.data[j]?.not_covered_max_operators.split(",").map(e => e.trim());
+                      cmaxAg = this.state.data[j]?.not_covered_max_ages.split(",").map(e => e.trim());
+                    }
+  
+                    if(cminOp.length > 0) {
+                      let maxAls = 3;
+                      
+                      for(let a=0; a<cminOp.length; a++) {
+                        if(appendALSettings.length < maxAls) {
+                          if(cminOp[a] !== "" && cminAg[a] !== "" && cmaxOp[a] !== "" && cmaxAg[a] !== "") {
+                            let alTmpObj = {
+                              min_age_condition: cminOp[a],
+                              min_age_limit: +cminAg[a],
+                              max_age_condition: cmaxOp[a],
+                              max_age_limit: +cmaxAg[a],
+                              sequence_number: appendALSettings.length + 1,
+                            };
+                            appendALSettings.push(alTmpObj);
+                          }
+                        }
+                      }
+                    }
+    
+                    console.log("The Append Al Objects = ", appendALSettings);
+                  }
+                }
+              }
+    
+              // let alArray = Array.from(setAlconditions);
+              this.rpSavePayload.age_limits = appendALSettings;
+            }
+          }
+
         // Replace and Append Drug method call
         this.props.postReplaceALDrug(apiDetails).then((json) => {
           console.log("The Replace AL Json Response = ", json);
