@@ -145,9 +145,10 @@ function PAGroupHeader(props: any) {
   }, [props.isSetupComplete]);
 
   useEffect(() => {
-    // debugger;
-    if (props.version.length > 0) {
-      let versions = props.version;
+     debugger;
+    let versions = props.version;
+    if (versions.length > 0) {
+      
       if (props.isPopUpView) {
         debugger;
         versions = versions.filter((obj) => {

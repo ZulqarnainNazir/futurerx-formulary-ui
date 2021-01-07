@@ -271,7 +271,7 @@ class MassMaintenancePA extends Component<any, MassMaintenancePAState> {
           <div className="header">PRIOR AUTHORIZATION</div>
           <div className="modify-panel">
             <div className="icon">
-              <span>R</span>
+              <span>P</span>
             </div>
             <div className="switch-box">
               <CustomizedSwitches leftTitle="Modify" rightTitle="view all" />

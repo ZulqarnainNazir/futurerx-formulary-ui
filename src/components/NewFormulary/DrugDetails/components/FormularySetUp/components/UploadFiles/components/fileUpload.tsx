@@ -70,7 +70,7 @@ class FileUpload extends React.Component<any,any> {
         return (
             !this.state.isDetail ? (
                 <DialogPopup
-                showCloseIcon={true}
+                showCloseIcon={false}
                 positiveActionText="Download Templates"
                 negativeActionText=""
                 title={"COMMERCIAL UPLOADS"}
