@@ -225,7 +225,7 @@ class ListItem extends Component<any, any> {
         let icdData: any[] = [];
         let icdValue: string[] | undefined = [];
 
-        if (Object.keys(payload).length) {
+        if (payload !== null && Object.keys(payload).length) {
           icdSettings = { ...payload };
           if (payload.icds !== "") {
             if (payload.icds.length > 0) {

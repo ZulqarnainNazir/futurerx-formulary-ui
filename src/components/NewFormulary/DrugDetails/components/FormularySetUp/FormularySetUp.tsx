@@ -84,7 +84,8 @@ class FormularySetUp extends React.Component<any, any> {
       bildMethod: false,
       serviceYear: false,
       classificaton: false,
-    }
+    },
+    saveInProgress: false,
   };
 
   componentDidMount() {
@@ -136,34 +137,34 @@ class FormularySetUp extends React.Component<any, any> {
   }
 
   UNSAFE_componentWillReceiveProps = (newProps) => {
-    console.log("# - - - - - - - - - ");
-    console.log("# 1 *FL       : " + (newProps?.formulary ? "" : "X"));
-    console.log("# 2  ST       : " + (newProps?.setupOptions ? "" : "X"));
-    console.log(
-      "# 3  ST.GI    : " + (newProps?.setupOptions?.generalOptions ? "" : "X")
-    );
+    // console.log("# - - - - - - - - - ");
+    // console.log("# 1 *FL       : " + (newProps?.formulary ? "" : "X"));
+    // console.log("# 2  ST       : " + (newProps?.setupOptions ? "" : "X"));
+    // console.log(
+    //   "# 3  ST.GI    : " + (newProps?.setupOptions?.generalOptions ? "" : "X")
+    // );
 
-    console.log(
-      "# 4  ST.GI.TY : " +
-        (newProps?.setupOptions?.generalOptions?.formularyType ? "" : "X")
-    );
-    console.log(
-      "# 5  ST.GI.CY : " +
-        (newProps?.setupOptions?.generalOptions?.contractYear ? "" : "X")
-    );
-    console.log(
-      "# 6  ST.GI.CS : " +
-        (newProps?.setupOptions?.generalOptions?.classification_systems
-          ? ""
-          : "X")
-    );
+    // console.log(
+    //   "# 4  ST.GI.TY : " +
+    //     (newProps?.setupOptions?.generalOptions?.formularyType ? "" : "X")
+    // );
+    // console.log(
+    //   "# 5  ST.GI.CY : " +
+    //     (newProps?.setupOptions?.generalOptions?.contractYear ? "" : "X")
+    // );
+    // console.log(
+    //   "# 6  ST.GI.CS : " +
+    //     (newProps?.setupOptions?.generalOptions?.classification_systems
+    //       ? ""
+    //       : "X")
+    // );
 
-    console.log(
-      "# 7  ST.DN    : " + (newProps?.setupOptions?.designOptions ? "" : "X")
-    );
-    console.log(
-      "# 8  ST.TR    : " + (newProps?.setupOptions?.tierOptions ? "" : "X")
-    );
+    // console.log(
+    //   "# 7  ST.DN    : " + (newProps?.setupOptions?.designOptions ? "" : "X")
+    // );
+    // console.log(
+    //   "# 8  ST.TR    : " + (newProps?.setupOptions?.tierOptions ? "" : "X")
+    // );
 
     if (
       newProps.formulary &&
@@ -548,7 +549,7 @@ class FormularySetUp extends React.Component<any, any> {
   }
   onSave = (e) => {
     console.log(
-      "  SAVE - (" +
+      "++++++++++++++++++++++++++++++++ SAVE - (" +
         e +
         ") Mode: " +
         this.props.mode +
@@ -632,9 +633,18 @@ class FormularySetUp extends React.Component<any, any> {
       input.formulary_id = -1;
       input.is_setup_complete = false;
     }
-
+    console.log(" +++ saveInProgress :: "+this.state.saveInProgress);
+    if(this.state.saveInProgress) {
+      return;
+    }
+    this.setState({
+      saveInProgress:true,
+    });
     this.props.saveFormulary(input).then((arg) => {
-      console.log("SAVE Callback ", arg?.payload);
+      this.setState({
+        saveInProgress:false,
+      });
+      console.log("++++++++++++++++++++++++++++++++ SAVE Callback ", arg?.payload);
       if (
         arg &&
         arg.payload &&
@@ -859,7 +869,7 @@ const mapStateToProps = (state) => {
   //  console.log("SP  -  -  -  -  -  -  -  -  -  -  -  - STATE");
   //  console.log(state?.setup?.messageType +" - "+ state?.setup?.message  );
   if (state?.setup?.messageType !== "" && state?.setup?.message !== "") {
-    console.log(">>>>>>>>>>> # " + state?.setup?.messageType +" | "+state?.setup?.message);
+    // console.log(">>>>>>>>>>> # " + state?.setup?.messageType +" | "+state?.setup?.message);
     // showMessage(state?.setup?.message, state?.setup?.messageType);
     // console.log("--------");
     // throt_fun(state?.setup?.message, state?.setup?.messageType);

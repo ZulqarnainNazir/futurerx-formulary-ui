@@ -183,7 +183,7 @@ class Medicare extends React.Component<any, any> {
               enableSearch={false}
               enableColumnDrag
               onSearch={() => {}}
-              fixedColumnKeys={["contract_year"]}
+              fixedColumnKeys={[]}
               pagintionPosition="topRight"
               gridName="MEDICARE"
               enableSettings
@@ -580,7 +580,7 @@ class Medicare extends React.Component<any, any> {
               enableSearch={false}
               enableColumnDrag
               onSearch={() => {}}
-              fixedColumnKeys={["contract_year"]}
+              fixedColumnKeys={[]}
               pagintionPosition="topRight"
               gridName="MEDICARE"
               enableSettings
