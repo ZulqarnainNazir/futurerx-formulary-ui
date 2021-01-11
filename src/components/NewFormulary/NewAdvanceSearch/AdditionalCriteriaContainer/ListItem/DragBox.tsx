@@ -2,20 +2,30 @@ import React from "react";
 import { useDrag, DragSourceMonitor } from "react-dnd";
 import { ReactComponent as TiltCrossIcon } from "../../../../../assets/icons/TiltCrossIcon.svg";
 
-const DragBox = (props) => {
+const DragBox = (
+  props
+  // {
+  // criteria,
+  // onCriteriaSelect,
+  // isReadOnly,
+  // editable,
+  // nodeId,
+  // }
+) => {
+  const { criteria, onCriteriaSelect, isReadOnly, editable } = props;
   const [{ isDragging }, drag] = useDrag({
     item: { id: `${props.nodeId}`, type: "ListItem" },
     end: (item: { id: string } | undefined, monitor: DragSourceMonitor) => {
       const dropResult = monitor.getDropResult();
       if (item && dropResult) {
-        props.onCriteriaSelect(props.criteria.id);
+        isReadOnly || editable || onCriteriaSelect(criteria.id);
+        // onCriteriaSelect(criteria.id);
       }
     },
     collect: (monitor) => ({
       isDragging: monitor.isDragging(),
     }),
   });
-  const { criteria, onCriteriaSelect, isReadOnly, editable } = props;
   return (
     <div
       ref={drag}
@@ -26,9 +36,10 @@ const DragBox = (props) => {
           ? "__root-additional-criteria-read-only-child-accordion-section-content-left-inner-spacing-flex"
           : "__root-additional-criteria-child-accordion-section-content-left-inner-spacing-flex"
       }
-      onClick={
-        isReadOnly || editable ? undefined : () => onCriteriaSelect(criteria.id)
-      }
+      // onClick={
+      //   isReadOnly || editable ? undefined : () => onCriteriaSelect(criteria.id)
+      // }
+      // onDrag={isReadOnly || editable ? undefined : undefined}
     >
       <TiltCrossIcon />
       <label htmlFor={criteria.id} className="font-styling">
