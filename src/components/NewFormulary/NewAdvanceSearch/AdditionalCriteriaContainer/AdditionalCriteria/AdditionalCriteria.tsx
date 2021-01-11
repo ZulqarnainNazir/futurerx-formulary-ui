@@ -1,7 +1,6 @@
 import React, { Component } from "react";
 import CustomAccordion from "../../../../shared/Frx-components/accordion/CustomAccordion";
 
-import { ReactComponent as TiltCrossIcon } from "../../../../../assets/icons/TiltCrossIcon.svg";
 import { connect } from "react-redux";
 import { getDrugDetailsPOSSettings } from "../../../../../redux/slices/formulary/drugDetails/pos/posActionCreation";
 import { getDrugDetailsPRSettings } from "../../../../../redux/slices/formulary/drugDetails/pr/prActionCreation";
@@ -12,10 +11,8 @@ import * as _ from "lodash";
 import { Button } from "@material-ui/core";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
-import { useDrag, DragSourceMonitor } from "react-dnd";
 import DragBox from "../ListItem/DragBox";
 import DropBox from "../ListItem/DropBox";
-// const hiddenColumns = _.cloneDeep(this.props.hiddenColumns);
 
 interface PayloadBody {
   age: any;
@@ -888,82 +885,14 @@ class AdditionalCriteria extends Component<any, any> {
 
     const { criteriaMock } = this.state;
 
-    let filteredList = Array();
+    let filteredList: any[] = [];
 
     let cardName = "";
-
-    switch (cardCode) {
-      case 1:
-        filteredList = this.state.selectedCriteriaList.filter(
-          (card) => card.cardCode === cardCode
-        );
-        cardName = criteriaMock[cardCode - 1].cardName;
-        this.setNodes(cardName, cardCode, filteredList);
-
-        break;
-      case 2:
-        filteredList = this.state.selectedCriteriaList.filter(
-          (card) => card.cardCode === cardCode
-        );
-        cardName = criteriaMock[cardCode - 1].cardName;
-        this.setNodes(cardName, cardCode, filteredList);
-
-        break;
-      case 3:
-        filteredList = this.state.selectedCriteriaList.filter(
-          (card) => card.cardCode === cardCode
-        );
-
-        cardName = criteriaMock[cardCode - 1].cardName;
-        this.setNodes(cardName, cardCode, filteredList);
-
-        break;
-      case 4:
-        filteredList = this.state.selectedCriteriaList.filter(
-          (card) => card.cardCode === cardCode
-        );
-
-        cardName = criteriaMock[cardCode - 1].cardName;
-        this.setNodes(cardName, cardCode, filteredList);
-
-        break;
-      case 5:
-        filteredList = this.state.selectedCriteriaList.filter(
-          (card) => card.cardCode === cardCode
-        );
-
-        cardName = criteriaMock[cardCode - 1].cardName;
-        this.setNodes(cardName, cardCode, filteredList);
-
-        break;
-      case 6:
-        filteredList = this.state.selectedCriteriaList.filter(
-          (card) => card.cardCode === cardCode
-        );
-        cardName = criteriaMock[cardCode - 1].cardName;
-        this.setNodes(cardName, cardCode, filteredList);
-
-        break;
-      case 7:
-        filteredList = this.state.selectedCriteriaList.filter(
-          (card) => card.cardCode === cardCode
-        );
-        cardName = criteriaMock[cardCode - 1].cardName;
-        this.setNodes(cardName, cardCode, filteredList);
-
-        break;
-      case 8:
-        filteredList = this.state.selectedCriteriaList.filter(
-          (card) => card.cardCode === cardCode
-        );
-        cardName = criteriaMock[cardCode - 1].cardName;
-        this.setNodes(cardName, cardCode, filteredList);
-
-        break;
-      default:
-        console.log("default state");
-        break;
-    }
+    filteredList = this.state.selectedCriteriaList.filter(
+      (card) => card.cardCode === cardCode
+    );
+    cardName = criteriaMock[cardCode - 1].cardName;
+    this.setNodes(cardName, cardCode, filteredList);
   };
   render() {
     const { selectedCriteriaList } = this.state;
@@ -1068,31 +997,4 @@ class AdditionalCriteria extends Component<any, any> {
   }
 }
 
-function mapDispatchToProps(dispatch) {
-  return {
-    getPOSSettings: (a) => dispatch(getDrugDetailsPOSSettings(a)),
-    getPRSettings: (a) => dispatch(getDrugDetailsPRSettings(a)),
-
-    setAdditionalCriteria: (a) => dispatch(setAdditionalCriteria(a)),
-  };
-}
-
-const mapStateToProps = (state) => {
-  return {
-    // additional criteria state
-
-    additionalCriteriaObject:
-      state?.additionalCriteria?.additionalCriteriaObject,
-    additionalCriteriaBody: state?.additionalCriteria?.additionalCriteriaBody,
-    populateGrid: state?.additionalCriteria?.populateGrid,
-    closeDialog: state?.additionalCriteria?.closeDialog,
-    listItemStatus: state?.additionalCriteria?.listItemStatus,
-
-    formulary_id: state?.application?.formulary_id,
-    formulary: state?.application?.formulary,
-    formulary_lob_id: state?.application?.formulary_lob_id,
-    formulary_type_id: state?.application?.formulary_type_id,
-  };
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(AdditionalCriteria);
+export default AdditionalCriteria;

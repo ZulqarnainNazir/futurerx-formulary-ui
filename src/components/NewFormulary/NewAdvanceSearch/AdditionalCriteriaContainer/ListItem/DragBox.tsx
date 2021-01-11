@@ -2,16 +2,7 @@ import React from "react";
 import { useDrag, DragSourceMonitor } from "react-dnd";
 import { ReactComponent as TiltCrossIcon } from "../../../../../assets/icons/TiltCrossIcon.svg";
 
-const DragBox = (
-  props
-  // {
-  // criteria,
-  // onCriteriaSelect,
-  // isReadOnly,
-  // editable,
-  // nodeId,
-  // }
-) => {
+const DragBox = (props) => {
   const { criteria, onCriteriaSelect, isReadOnly, editable } = props;
   const [{ isDragging }, drag] = useDrag({
     item: { id: `${props.nodeId}`, type: "ListItem" },
@@ -39,7 +30,6 @@ const DragBox = (
       // onClick={
       //   isReadOnly || editable ? undefined : () => onCriteriaSelect(criteria.id)
       // }
-      // onDrag={isReadOnly || editable ? undefined : undefined}
     >
       <TiltCrossIcon />
       <label htmlFor={criteria.id} className="font-styling">
