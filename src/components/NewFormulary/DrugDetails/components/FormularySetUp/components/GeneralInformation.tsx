@@ -18,15 +18,15 @@ import DialogPopup from "../../../../../shared/FrxDialogPopup/FrxDialogPopup";
 import FormControl from "@material-ui/core/FormControl";
 import FormLabel from "@material-ui/core/FormLabel";
 import CloneFormularyPopup from "../../FormularySetUp/components/CloneFormularyPopup";
-import UploadFiles from './UploadFiles';
+import UploadFiles from "./UploadFiles";
 
-const mapStateToProps = (state) => {
+const mapStateToProps = state => {
   //console.log(state);
   return {
     formulary: state?.setup?.formulary,
     formulary_mode: state?.setup?.mode,
     general_options: state?.setupOptions?.generalOptions,
-    mode_lob: state?.application?.mode_lob,
+    mode_lob: state?.application?.mode_lob
   };
 };
 interface TagModule {
@@ -53,6 +53,7 @@ interface GeneralInformationState {
 
   DialogshowInd: boolean;
   showClonePopup: boolean;
+  showSelectFormularyPopup: boolean;
 }
 class GeneralInformation extends React.Component<any, GeneralInformationState> {
   state = {
@@ -72,14 +73,15 @@ class GeneralInformation extends React.Component<any, GeneralInformationState> {
     tagDesc: "",
     DialogshowInd: false,
     showClonePopup: false,
+    showSelectFormularyPopup: false
   };
-  UNSAFE_componentWillReceiveProps = (newProps) => {
+  UNSAFE_componentWillReceiveProps = newProps => {
     if (newProps.formulary) {
       this.setState({
         selectedMethod:
           newProps.formulary.formulary_info.formulary_build_method,
         forumalry_description:
-          newProps.formulary.formulary_info.formulary_description,
+          newProps.formulary.formulary_info.formulary_description
       });
     }
   };
@@ -93,7 +95,7 @@ class GeneralInformation extends React.Component<any, GeneralInformationState> {
   changeMethodHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
     //console.log((event.target.value))
     this.setState({
-      selectedMethod: event.target.value,
+      selectedMethod: event.target.value
     });
   };
   getClassificationRadio = () => {
@@ -105,9 +107,9 @@ class GeneralInformation extends React.Component<any, GeneralInformationState> {
         aria-label={"classification_system"}
         name="classification_system"
         value={value}
-        onChange={(e) => this.props.onRadioChange(e, "generalInformation")}
+        onChange={e => this.props.onRadioChange(e, "generalInformation")}
       >
-        {this.props.general_options.classification_systems.map((el) => {
+        {this.props.general_options.classification_systems.map(el => {
           return (
             <FormControlLabel
               value={el.id_classification_system}
@@ -135,19 +137,19 @@ class GeneralInformation extends React.Component<any, GeneralInformationState> {
   addNewTagToForm = () => {
     const { addTagsOpened } = this.state;
     this.setState({
-      addTagsOpened: !addTagsOpened,
+      addTagsOpened: !addTagsOpened
     });
   };
   cancelAddTags = () => {
     this.setState({
       displayedTags: [],
-      addTagsOpened: !this.state.addTagsOpened,
+      addTagsOpened: !this.state.addTagsOpened
     });
   };
   toggleAddTags = () => {
     const { addTagsOpened } = this.state;
     this.setState({
-      addTagsOpened: !addTagsOpened,
+      addTagsOpened: !addTagsOpened
     });
   };
   addTag = (tag: TagModule) => {
@@ -157,7 +159,7 @@ class GeneralInformation extends React.Component<any, GeneralInformationState> {
 
   removeTag = (tag: TagModule) => {
     const displayedTags: TagModule[] = this.state.displayedTags;
-    const filteredDisplayedTags = displayedTags.filter((t) => t.id !== tag.id);
+    const filteredDisplayedTags = displayedTags.filter(t => t.id !== tag.id);
     this.setState({ displayedTags: filteredDisplayedTags });
   };
 
@@ -166,10 +168,10 @@ class GeneralInformation extends React.Component<any, GeneralInformationState> {
   };
   addNewTagToList = () => {
     const { count, tagName, tagDesc, tagCategories } = this.state;
-    const catObj = tagCategories.map((cat) => {
+    const catObj = tagCategories.map(cat => {
       return {
         name: cat,
-        color: this.getRandomTagColor(),
+        color: this.getRandomTagColor()
       };
     });
     const newTag: TagModule = {
@@ -177,7 +179,7 @@ class GeneralInformation extends React.Component<any, GeneralInformationState> {
       name: tagName,
       categories: tagCategories,
       categoriesWithColor: catObj,
-      description: tagDesc,
+      description: tagDesc
     };
 
     this.setState({
@@ -187,7 +189,7 @@ class GeneralInformation extends React.Component<any, GeneralInformationState> {
       tagName: "",
       tagDesc: "",
       tagCategories: [],
-      tagCategoriesWithColor: [],
+      tagCategoriesWithColor: []
     });
 
     this.handleAddNewTagPopup();
@@ -195,24 +197,24 @@ class GeneralInformation extends React.Component<any, GeneralInformationState> {
   handleAddNewTagPopup = () => {
     this.setState({
       addTagsOpened: !this.state.addTagsOpened,
-      addNewTagOpened: !this.state.addNewTagOpened,
+      addNewTagOpened: !this.state.addNewTagOpened
     });
   };
-  handleChange = (event) => {
+  handleChange = event => {
     if (event.target.name === "name") {
       this.setState({
-        tagName: event.target.value,
+        tagName: event.target.value
       });
     }
     if (event.target.name === "desc") {
       this.setState({
-        tagDesc: event.target.value,
+        tagDesc: event.target.value
       });
     }
   };
-  handleCategoryChange = (value) => {
+  handleCategoryChange = value => {
     this.setState({
-      tagCategories: [...value],
+      tagCategories: [...value]
     });
   };
   isOpenFormularyOptions = () => {
@@ -230,38 +232,46 @@ class GeneralInformation extends React.Component<any, GeneralInformationState> {
         aria-label={"is_closed_formulary"}
         name="is_closed_formulary"
         value={val}
-        onChange={(e) => this.props.onRadioChange(e, "generalInformation")}
+        onChange={e => this.props.onRadioChange(e, "generalInformation")}
       >
         <FormControlLabel value={true} control={<Radio />} label="Closed" />
         <FormControlLabel value={false} control={<Radio />} label="Open" />
       </RadioGroup>
     );
   };
-  disabledDate = (current) => {
+  disabledDate = current => {
     return current.isBefore(moment(), "day");
   };
-  getFormularyTypeOptions = (opt) => {
+  getFormularyTypeOptions = opt => {
     // const options = this.props.lob === 4 ? opt.formularyType.filter(e => e.formulary_type === 'Commercial').map(e => e.formulary_type) : opt.formularyType.map(e => e.formulary_type);
-    console.log(" >>>>>> "+ this.props.mode_lob);
-    let options: any[] = opt.formularyType.map((e) => e.formulary_type);
+    console.log(" >>>>>> " + this.props.mode_lob);
+    let options: any[] = opt.formularyType.map(e => e.formulary_type);
     // console.log(options);
 
-     if (this.props.mode_lob === 1) {
-      options =  opt.formularyType
-        .filter((e) => e.formulary_type === "Medicare" || e.formulary_type === "Medicare-Medicaid Plan (MMP)")
-        .map((e) => e.formulary_type);
+    if (this.props.mode_lob === 1) {
+      options = opt.formularyType
+        .filter(
+          e =>
+            e.formulary_type === "Medicare" ||
+            e.formulary_type === "Medicare-Medicaid Plan (MMP)"
+        )
+        .map(e => e.formulary_type);
     } else if (this.props.mode_lob === 2) {
-      options =  opt.formularyType
-        .filter((e) => e.formulary_type === "Managed Medicaid" || e.formulary_type === "State Medicaid")
-        .map((e) => e.formulary_type);
+      options = opt.formularyType
+        .filter(
+          e =>
+            e.formulary_type === "Managed Medicaid" ||
+            e.formulary_type === "State Medicaid"
+        )
+        .map(e => e.formulary_type);
     } else if (this.props.mode_lob === 3) {
       options = opt.formularyType
-        .filter((e) => e.formulary_type === "Exchange")
-        .map((e) => e.formulary_type);
+        .filter(e => e.formulary_type === "Exchange")
+        .map(e => e.formulary_type);
     } else if (this.props.mode_lob === 4) {
       options = opt.formularyType
-        .filter((e) => e.formulary_type === "Commercial")
-        .map((e) => e.formulary_type);
+        .filter(e => e.formulary_type === "Commercial")
+        .map(e => e.formulary_type);
     }
 
     return options;
@@ -274,14 +284,14 @@ class GeneralInformation extends React.Component<any, GeneralInformationState> {
 
       tagName,
       tagCategories,
-      tagDesc,
+      tagDesc
     } = this.state;
     const FORMULARY = this.props.formulary;
     const disabled = this.props.formulary_mode === "EXISTING" ? true : false;
     let general_options: any;
     if (this.props.general_options) {
       general_options = this.props.general_options.formularyType.map(
-        (e) => e.formulary_type
+        e => e.formulary_type
       );
     }
     let FORMULARY_Values: any;
@@ -300,7 +310,7 @@ class GeneralInformation extends React.Component<any, GeneralInformationState> {
         contract_year:
           this.props.formulary_mode === "EXISTING"
             ? [FORMULARY.formulary_info?.contract_year]
-            : ["2021", "2022"],
+            : ["2021", "2022"]
       };
     }
     return (
@@ -309,7 +319,9 @@ class GeneralInformation extends React.Component<any, GeneralInformationState> {
         <div className="general-information-fields-wrapper setup-label">
           <Grid container>
             <Grid item xs={4}>
-              <div className={`group error-${this.props.errorObj.formularyType}`}>
+              <div
+                className={`group error-${this.props.errorObj.formularyType}`}
+              >
                 <label>
                   FORMULARY TYPE <span className="astrict">*</span>
                 </label>
@@ -326,7 +338,9 @@ class GeneralInformation extends React.Component<any, GeneralInformationState> {
               </div>
             </Grid>
             <Grid item xs={4}>
-              <div className={`group error-${this.props.errorObj.formularyName}`}>
+              <div
+                className={`group error-${this.props.errorObj.formularyName}`}
+              >
                 <label>
                   FORMULARY NAME <span className="astrict">*</span>
                 </label>
@@ -364,7 +378,7 @@ class GeneralInformation extends React.Component<any, GeneralInformationState> {
                 disabled={disabled}
                 disabledDate={this.disabledDate}
                 format={"MM/DD/YYYY"}
-                onChange={(e) =>
+                onChange={e =>
                   this.props.datePickerChange(
                     e,
                     "generalInformation",
@@ -401,7 +415,7 @@ class GeneralInformation extends React.Component<any, GeneralInformationState> {
                     aria-label={this.props.generalInfo.method}
                     name="method"
                     value={this.props.generalInfo.method?.toString()}
-                    onChange={(e) =>
+                    onChange={e =>
                       this.props.onRadioChange(e, "generalInformation")
                     }
                   >
@@ -428,7 +442,7 @@ class GeneralInformation extends React.Component<any, GeneralInformationState> {
 
                 {this.props.generalInfo.method === "upload" && (
                   <div>
-                    <UploadFiles/>
+                    <UploadFiles />
                   </div>
                 )}
               </div>
@@ -436,21 +450,23 @@ class GeneralInformation extends React.Component<any, GeneralInformationState> {
 
             {this.props.generalInfo.method === "C" && (
               <Grid item xs={4}>
-                 {this.props.formulary_mode === "NEW" && (
-                <div className={`group clone-div error-${this.props.errorObj.bildMethod}`}>
-                  <div className="inner-div">
-                    <label>
-                      CLONE FORMULARY <span className="astrict">*</span>
-                    </label>
-                    <span
-                      onClick={(e) => this.setState({ showClonePopup: true })}
-                      className="input-link"
-                    >
-                      Clone Formulary
-                    </span>
+                {this.props.formulary_mode === "NEW" && (
+                  <div
+                    className={`group clone-div error-${this.props.errorObj.bildMethod}`}
+                  >
+                    <div className="inner-div">
+                      <label>
+                        CLONE FORMULARY <span className="astrict">*</span>
+                      </label>
+                      <span
+                        onClick={e => this.setState({ showClonePopup: true })}
+                        className="input-link"
+                      >
+                        Clone Formulary
+                      </span>
+                    </div>
                   </div>
-                </div>
-                 )}
+                )}
               </Grid>
             )}
             <Grid item xs={4}>
@@ -461,11 +477,11 @@ class GeneralInformation extends React.Component<any, GeneralInformationState> {
                 <DropDown
                   className="formulary-type-dropdown"
                   options={this.props.general_options.contractYear?.map(
-                    (e) => e.contract_year
+                    e => e.contract_year
                   )}
                   value={this.props.generalInfo.service_year}
                   disabled={disabled}
-                  onChange={(e) =>
+                  onChange={e =>
                     this.props.onDropdownChange(
                       e,
                       "generalInformation",
@@ -488,15 +504,24 @@ class GeneralInformation extends React.Component<any, GeneralInformationState> {
               </div>
             </Grid>
             <Grid item xs={4}>
-              {this.props.generalInfo.type !== "Commercial" ? (
+              {/* Commercial shouldn't have this but condition changed to help dev */}
+              {this.props.generalInfo.type === "Commercial" ? (
                 <div className="group">
                   <label>
                     Which prior year's formulary does this most closely
                     resemble?
                   </label>
-                  <a href="#" className="input-link select-formulary-link">
+                  {/* <a href="#" className="input-link select-formulary-link">
                     Select Formulary
-                  </a>
+                  </a> */}
+                  <span
+                    onClick={e =>
+                      this.setState({ showSelectFormularyPopup: true })
+                    }
+                    className="input-link"
+                  >
+                    Select Formulary
+                  </span>
                 </div>
               ) : null}
             </Grid>
@@ -537,11 +562,11 @@ class GeneralInformation extends React.Component<any, GeneralInformationState> {
                   <DropDown
                     className="formulary-type-dropdown"
                     options={this.props.general_options.states.map(
-                      (e) => e.state_name
+                      e => e.state_name
                     )}
                     value={this.props.generalInfo.selectedState}
                     disabled={disabled}
-                    onChange={(e) =>
+                    onChange={e =>
                       this.props.onDropdownChange(
                         e,
                         "generalInformation",
@@ -641,7 +666,7 @@ class GeneralInformation extends React.Component<any, GeneralInformationState> {
                   open={this.state.showClonePopup}
                   handleClose={() => {
                     this.setState({
-                      showClonePopup: false,
+                      showClonePopup: false
                     });
                   }}
                   showActions={false}
@@ -652,10 +677,40 @@ class GeneralInformation extends React.Component<any, GeneralInformationState> {
                   <CloneFormularyPopup
                     type="commercial" // type will be dynamic based on the LOB
                     lobID="4"
-                    selectFormularyClick={(r) => {
+                    selectFormularyClick={r => {
                       this.props.cloneFormularyClick(r);
                       this.setState({
-                        showClonePopup: false,
+                        showClonePopup: false
+                      });
+                    }}
+                  />
+                </DialogPopup>
+              ) : null}
+
+              {this.state.showSelectFormularyPopup ? (
+                <DialogPopup
+                  positiveActionText=""
+                  negativeActionText="Close"
+                  title={"Select Formulary"}
+                  handleAction={() => {}}
+                  open={this.state.showSelectFormularyPopup}
+                  handleClose={() => {
+                    this.setState({
+                      showSelectFormularyPopup: false
+                    });
+                  }}
+                  showActions={false}
+                  className="dialog-popup clone-popup"
+                  height="80%"
+                  width="90%"
+                >
+                  <CloneFormularyPopup
+                    type="commercial" // type will be dynamic based on the LOB
+                    lobID="4" // id should be populated
+                    selectFormularyClick={r => {
+                      this.props.selectFormularyClick(r);
+                      this.setState({
+                        showSelectFormularyPopup: false
                       });
                     }}
                   />
@@ -678,7 +733,7 @@ const categories = [
   { id: 5, name: "Category 5", color: "blue" },
   { id: 6, name: "Category 6", color: "orange" },
   { id: 7, name: "Category 7", color: "green" },
-  { id: 8, name: "Category 8", color: "blue" },
+  { id: 8, name: "Category 8", color: "blue" }
 ];
 
 // fake data
@@ -692,8 +747,8 @@ const tags = [
       { name: "Category 1", color: "green" },
       { name: "Category 2", color: "blue" },
       { name: "Category 6", color: "orange" },
-      { name: "Category 8", color: "green" },
-    ],
+      { name: "Category 8", color: "green" }
+    ]
   },
   {
     id: 2,
@@ -703,8 +758,8 @@ const tags = [
     categoriesWithColor: [
       { name: "Category 1", color: "blue" },
       { name: "Category 2", color: "orange" },
-      { name: "Category 8", color: "green" },
-    ],
+      { name: "Category 8", color: "green" }
+    ]
   },
   {
     id: 3,
@@ -713,8 +768,8 @@ const tags = [
     categories: ["Category 1", "Category 8"],
     categoriesWithColor: [
       { name: "Category 1", color: "green" },
-      { name: "Category 8", color: "orange" },
-    ],
+      { name: "Category 8", color: "orange" }
+    ]
   },
   {
     id: 4,
@@ -727,7 +782,7 @@ const tags = [
       "Category 4",
       "Category 5",
       "Category 7",
-      "Category 8",
+      "Category 8"
     ],
     categoriesWithColor: [
       { name: "Category 1", color: "green" },
@@ -736,8 +791,8 @@ const tags = [
       { name: "Category 4", color: "orange" },
       { name: "Category 7", color: "blue" },
       { name: "Category 5", color: "green" },
-      { name: "Category 8", color: "orange" },
-    ],
+      { name: "Category 8", color: "orange" }
+    ]
   },
   {
     id: 5,
@@ -749,8 +804,8 @@ const tags = [
       { name: "Category 2", color: "green" },
       { name: "Category 4", color: "orange" },
       { name: "Category 6", color: "blue" },
-      { name: "Category 8", color: "green" },
-    ],
+      { name: "Category 8", color: "green" }
+    ]
   },
   {
     id: 6,
@@ -761,8 +816,8 @@ const tags = [
       { name: "Category 2", color: "green" },
       { name: "Category 4", color: "orange" },
       { name: "Category 6", color: "blue" },
-      { name: "Category 8", color: "green" },
-    ],
+      { name: "Category 8", color: "green" }
+    ]
   },
   {
     id: 7,
@@ -773,8 +828,8 @@ const tags = [
       { name: "Category 1", color: "green" },
       { name: "Category 4", color: "orange" },
       { name: "Category 6", color: "blue" },
-      { name: "Category 8", color: "green" },
-    ],
+      { name: "Category 8", color: "green" }
+    ]
   },
   {
     id: 8,
@@ -785,8 +840,8 @@ const tags = [
       { name: "Category 1", color: "green" },
       { name: "Category 4", color: "orange" },
       { name: "Category 6", color: "blue" },
-      { name: "Category 8", color: "green" },
-    ],
+      { name: "Category 8", color: "green" }
+    ]
   },
   {
     id: 9,
@@ -797,8 +852,8 @@ const tags = [
       { name: "Category 1", color: "green" },
       { name: "Category 4", color: "orange" },
       { name: "Category 6", color: "blue" },
-      { name: "Category 8", color: "green" },
-    ],
+      { name: "Category 8", color: "green" }
+    ]
   },
   {
     id: 10,
@@ -809,8 +864,8 @@ const tags = [
       { name: "Category 1", color: "green" },
       { name: "Category 4", color: "orange" },
       { name: "Category 6", color: "blue" },
-      { name: "Category 8", color: "green" },
-    ],
+      { name: "Category 8", color: "green" }
+    ]
   },
   {
     id: 11,
@@ -821,7 +876,7 @@ const tags = [
       { name: "Category 1", color: "green" },
       { name: "Category 4", color: "orange" },
       { name: "Category 6", color: "blue" },
-      { name: "Category 8", color: "green" },
-    ],
-  },
+      { name: "Category 8", color: "green" }
+    ]
+  }
 ];

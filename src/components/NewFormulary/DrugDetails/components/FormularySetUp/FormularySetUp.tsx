@@ -688,7 +688,11 @@ class FormularySetUp extends React.Component<any, any> {
 
       this.handleCreateUsingClone(row.id_base_formulary);
     }
-  };
+	};
+	
+	handleSelectFormulary = (row:any) => {
+		console.log("selected formulary ", row)
+	}
 
   handleCreateUsingClone = (baseID: number) => {
     console.log(
@@ -764,7 +768,8 @@ class FormularySetUp extends React.Component<any, any> {
               onDropdownChange={this.onDropdownChange}
               formularyTypeChanged={this.formularyTypeChanged}
               datePickerChange={this.onDatePickerChangeHandler}
-              cloneFormularyClick={this.handleCloneSource}
+							cloneFormularyClick={this.handleCloneSource}
+							selectFormularyClick={this.handleSelectFormulary}
               errorObj={this.state.errorObj}
             />
             {this.state.generalInformation.type !== "" ? (
