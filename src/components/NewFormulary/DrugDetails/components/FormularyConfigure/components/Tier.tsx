@@ -97,6 +97,10 @@ interface tabsState {
   filteredTierLabels: any[];
   updateTierId: any;
   updateTierMode: any;
+  newTierLabel: any;
+  isEditMode: boolean;
+  currentTierLabel: any;
+  newTierLabelId: any;
 }
 
 const MODE_ADD_NEW = 0;
@@ -119,7 +123,7 @@ class Tier extends React.Component<any, tabsState> {
     tierLabels: [],
     settingsTriDotDropDownItems: [],
     tierLabelNames: [],
-    filteredTierLabels: [],
+    filteredTierLabels: Array(),
     tierData: [],
     tierDefinationColumns: [],
     tierDefinationData: [],
@@ -140,6 +144,9 @@ class Tier extends React.Component<any, tabsState> {
       { id: 2, text: "Append", disabled: true },
       { id: 3, text: "Remove", disabled: false },
     ],
+    isEditMode: false,
+    newTierLabel: '',
+    currentTierLabel: '',
   };
 
   populateTierDetails = (TierColumns, formularyId) => {
@@ -193,6 +200,10 @@ class Tier extends React.Component<any, tabsState> {
           showMessage("Tier Deleted", "success");
           const TierColumns = tierDefinationColumns();
           this.populateTierDetails(TierColumns, this.props.formulary_id);
+          this.populateTierLabels(
+            this.props.formulary_id,
+            this.props.formulary_type_id
+          );
         } else {
           showMessage("Error: Failed to delete tier", "error");
         }
@@ -219,6 +230,10 @@ class Tier extends React.Component<any, tabsState> {
           showMessage("Tier/s reassign is successful", "success");
           const TierColumns = tierDefinationColumns();
           this.populateTierDetails(TierColumns, this.props.formulary_id);
+          this.populateTierLabels(
+            this.props.formulary_id,
+            this.props.formulary_type_id
+          );
         } else {
           showMessage("Error: Failed to reassign tier/s", "error");
         }
@@ -404,7 +419,7 @@ class Tier extends React.Component<any, tabsState> {
 
   settingsTriDotDropDownItemClick = (data: any, item: any) => {
     if (item.title === "Replace Tier") {
-      console.log('Replace tier id is:'+data.id_tier);
+      console.log('Replace tier id is:' + data.id_tier);
       this.onAddNewTierHandler(data.id_tier, data.tier_label, MODE_REPLACE);
     } else if (item.title === "Delete Tier") {
       this.setState({ selectedTierToDelete: data.tier_name });
@@ -442,6 +457,7 @@ class Tier extends React.Component<any, tabsState> {
             return tierInfo['tier_label'];
           });
           filteredTierLabels = this.state.tierLabelNames.filter(label => !existingTierLabels.includes(label));
+          filteredTierLabels = [...['Create New'], ...filteredTierLabels];
         }
         this.setState({
           addNewTierPopup: true,
@@ -456,7 +472,7 @@ class Tier extends React.Component<any, tabsState> {
           return tierInfo['tier_label'];
         });
         filteredTierLabels = this.state.tierLabelNames.filter(label => !existingTierLabels.includes(label));
-        filteredTierLabels = [...[tierLabel], ...filteredTierLabels];
+        filteredTierLabels = [...['Create New', tierLabel], ...filteredTierLabels];
       }
       this.setState({
         addNewTierPopup: true,
@@ -477,6 +493,9 @@ class Tier extends React.Component<any, tabsState> {
     //showMessage("Popup closed", "success");
     this.setState({
       addNewTierPopup: false,
+      isEditMode: false,
+      newTierLabel: '',
+      currentTierLabel: '',
     });
   };
 
@@ -484,15 +503,31 @@ class Tier extends React.Component<any, tabsState> {
     let tierLabel = event.value.toString().trim();
     let tierLabelId = -1;
     if (tierLabel) {
-      let filtered = this.state.tierLabels.filter(
-        (tierObject) => tierObject["tier_label"] === tierLabel
-      );
-      if (filtered && filtered.length > 0) {
-        tierLabelId = filtered[0]["id_tier_label"];
-        this.state.newTierLabelId = tierLabelId;
+      if (tierLabel === 'Create New') {
+        this.setState({
+          isEditMode: true,
+          newTierLabel: '',
+          currentTierLabel: ''
+        });
+      } else {
+        let filtered = this.state.tierLabels.filter(
+          (tierObject) => tierObject["tier_label"] === tierLabel
+        );
+        if (filtered && filtered.length > 0) {
+          tierLabelId = filtered[0]["id_tier_label"];
+          this.state.newTierLabelId = tierLabelId;
+        }
       }
     }
   };
+
+  onTierLabelChange = (e) => {
+    if (e.target.value) {
+      this.state.newTierLabel = e.target.value;
+    } else {
+      this.state.newTierLabel = '';
+    }
+  }
 
   onNewTierAction = (action) => {
     if (action === "positive") {
@@ -505,6 +540,12 @@ class Tier extends React.Component<any, tabsState> {
         id_tier_label: this.state.newTierLabelId,
       };
 
+      if (this.state.newTierLabelId === -1) {
+        apiDetails["messageBody"]['id_tier_label'] = null;
+        apiDetails["messageBody"]['is_custom'] = true;
+        apiDetails["messageBody"]['tier_label_name'] = this.state.currentTierLabel;
+      }
+
       if (this.state.updateTierMode === MODE_ADD_NEW) {
         const TierDefinationData = this.props
           .postNewTier(apiDetails)
@@ -516,9 +557,26 @@ class Tier extends React.Component<any, tabsState> {
             ) {
               showMessage("Tier Added", "success");
               const TierColumns = tierDefinationColumns();
-              this.populateTierDetails(TierColumns, this.props.formulary_id);
+              this.setState({
+                isEditMode: false,
+                newTierLabel: '',
+                currentTierLabel: '',
+                newTierLabelId: -1,
+              }, () => {
+                this.populateTierDetails(TierColumns, this.props.formulary_id);
+                this.populateTierLabels(
+                  this.props.formulary_id,
+                  this.props.formulary_type_id
+                );
+              });
             } else {
               showMessage("Error: Failed to add tier", "error");
+              this.setState({
+                isEditMode: false,
+                newTierLabel: '',
+                currentTierLabel: '',
+                newTierLabelId: -1,
+              });
             }
           });
       } else if (this.state.updateTierMode === MODE_REPLACE) {
@@ -532,9 +590,26 @@ class Tier extends React.Component<any, tabsState> {
             ) {
               showMessage("Tier Replaced", "success");
               const TierColumns = tierDefinationColumns();
-              this.populateTierDetails(TierColumns, this.props.formulary_id);
+              this.setState({
+                isEditMode: false,
+                newTierLabel: '',
+                currentTierLabel: '',
+                newTierLabelId: -1,
+              }, () => {
+                this.populateTierDetails(TierColumns, this.props.formulary_id);
+                this.populateTierLabels(
+                  this.props.formulary_id,
+                  this.props.formulary_type_id
+                );
+              });
             } else {
               showMessage("Error: Failed to replace tier", "error");
+              this.setState({
+                isEditMode: false,
+                newTierLabel: '',
+                currentTierLabel: '',
+                newTierLabelId: -1,
+              });
             }
           });
       }
@@ -601,6 +676,59 @@ class Tier extends React.Component<any, tabsState> {
       deleteTierReplacePopup: false,
     });
   }
+  onNewTierSave = (e) => {
+    console.log('Tier label value:' + this.state.newTierLabel);
+    if (this.state.newTierLabel && this.state.newTierLabel.length > 0) {
+      let existingTierLabels = this.state.tierOption.map(tierInfo => {
+        return tierInfo['tier_label'];
+      });
+      let tmpLabels = Array();
+      tmpLabels = existingTierLabels.filter(label => label === this.state.newTierLabel);
+      if (tmpLabels.length > 0) {
+        showMessage('Tier label already exists', 'error');
+        return;
+      }
+      tmpLabels = this.state.filteredTierLabels.filter(label => label === this.state.newTierLabel);
+      if (tmpLabels.length > 0) {
+        showMessage('Tier label already exists in the current dropdown', 'error');
+        return;
+      }
+      if (this.state.currentTierLabel && this.state.currentTierLabel.length > 0) {
+        this.state.filteredTierLabels = this.state.filteredTierLabels.filter(label => label !== this.state.currentTierLabel);
+        this.state.filteredTierLabels = [...[this.state.newTierLabel], ...this.state.filteredTierLabels]
+      } else {
+        this.state.filteredTierLabels = this.state.filteredTierLabels.filter(label => label !== 'Create New');
+        this.state.filteredTierLabels = [...[this.state.newTierLabel], ...this.state.filteredTierLabels]
+      }
+    } else {
+      if (this.state.currentTierLabel && this.state.currentTierLabel.length > 0) {
+        this.state.filteredTierLabels = this.state.filteredTierLabels.filter(label => label !== this.state.currentTierLabel);
+      } else {
+        this.state.filteredTierLabels = this.state.filteredTierLabels.filter(label => label !== 'Create New');
+      }
+      this.state.filteredTierLabels = [...['Create New'], ...this.state.filteredTierLabels];
+    }
+    this.setState({
+      isEditMode: false,
+      newTierLabel: '',
+      currentTierLabel: this.state.newTierLabel
+    });
+  }
+
+  onNewTierClose = (e) => {
+    this.setState({
+      isEditMode: false,
+      newTierLabel: '',
+    });
+  }
+
+  onNewTierEdit = (e) => {
+    this.setState({
+      isEditMode: true,
+      newTierLabel: this.state.currentTierLabel,
+    });
+  }
+
   render() {
     const tierDefinationColumns = this.state.tierDefinationColumns;
     const tierDefinationData = this.state.tierDefinationData;
@@ -726,7 +854,7 @@ class Tier extends React.Component<any, tabsState> {
                       </DialogPopup>
                       <DialogPopup
                         className="tier-dialog-popup"
-                        showCloseIcon={true}
+                        showCloseIcon={!this.state.isEditMode}
                         positiveActionText={this.state.popupPositiveButtonText}
                         negativeActionText="Cancel"
                         title={this.state.pupupTitle}
@@ -736,7 +864,7 @@ class Tier extends React.Component<any, tabsState> {
                             ? this.onDeleteTierAction(e)
                             : this.onNewTierAction(e)
                         }
-                        showActions={true}
+                        showActions={!this.state.isEditMode}
                         open={this.state.addNewTierPopup}
                       >
                         {this.state.deleteTierPupup ? (
@@ -772,14 +900,31 @@ class Tier extends React.Component<any, tabsState> {
                                       tier description
                                   </div>
                                     <div className="tier-descripption">
-                                      <DropDown
+                                      {this.state.isEditMode ? <input
                                         className="tier-description-dropdown"
-                                        placeholder="Select"
-                                        options={this.state.filteredTierLabels}
-                                        onSelect={
-                                          this.tierLabelDropDownSelectHandler
-                                        }
-                                      />
+                                        type='text'
+                                        onChange={this.onTierLabelChange}
+                                        defaultValue={this.state.currentTierLabel}
+                                      /> :
+                                        <DropDown
+                                          className="tier-description-dropdown"
+                                          placeholder="Select"
+                                          options={this.state.filteredTierLabels}
+                                          onSelect={
+                                            this.tierLabelDropDownSelectHandler
+                                          }
+                                        />}
+                                      {this.state.isEditMode ?
+                                        <div className="tier-modify-buttons">
+                                          <i className="fa fa-save" onClick={this.onNewTierSave}></i>
+                                          <i className="fa fa-times" onClick={this.onNewTierClose}></i>
+                                        </div> :
+                                        this.state.currentTierLabel.length > 0 ?
+                                          <div className="tier-modify-buttons">
+                                            <i className="fa fa-pencil" onClick={this.onNewTierEdit}></i>
+                                          </div> :
+                                          null
+                                      }
                                     </div>
                                   </div>
                                 </div>
