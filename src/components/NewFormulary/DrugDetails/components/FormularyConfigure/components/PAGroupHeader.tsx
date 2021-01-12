@@ -145,19 +145,22 @@ function PAGroupHeader(props: any) {
   }, [props.isSetupComplete]);
 
   useEffect(() => {
-     
+     debugger;
     let versions = props.version;
+
+    if (props.isPopUpView && versions.length>0) {
+        
+      versions = versions.filter((obj) => {
+        
+        if (obj.is_setup_complete) {
+          return obj;
+        }
+      });
+    }
     if (versions.length > 0) {
       
-      if (props.isPopUpView) {
-        
-        versions = versions.filter((obj) => {
-          
-          if (obj.is_setup_complete) {
-            return obj;
-          }
-        });
-      }
+      
+      debugger;
       const verLength = Object.keys(versions).length;
       const isEditable = versions[verLength - 1]?.is_setup_complete;
       const value = versions[verLength - 1]?.value;
