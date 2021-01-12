@@ -105,9 +105,7 @@ class GPM extends React.Component<any, any> {
     this.props.getStGrouptDescriptionVersions(apiDetails).then((json) => {
       let tmpData = json.payload?.data;
       if (isPopUpView) {
-        debugger;
         tmpData = tmpData.filter((obj) => {
-          debugger;
           if (obj.is_setup_complete) {
             return obj;
           }
@@ -218,9 +216,6 @@ class GPM extends React.Component<any, any> {
   }
 
   componentWillReceiveProps(nextProps) {
-    // debugger;
-    console.log("TIER: componentWillReceiveProps", nextProps);
-
     let tmpData = nextProps.descriptions;
     if (tmpData && Array.isArray(tmpData) && tmpData.length > 0) {
       let groupProp = "";
@@ -244,8 +239,6 @@ class GPM extends React.Component<any, any> {
         element["status"] = el.is_setup_complete ? "completed" : "warning";
         element["is_archived"] =
           el.is_archived == null ? false : el.is_archived;
-        console.log(element);
-
         return element;
       });
       this.setState({

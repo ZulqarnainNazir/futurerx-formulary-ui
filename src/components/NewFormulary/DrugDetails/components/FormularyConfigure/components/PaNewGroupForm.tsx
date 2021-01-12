@@ -251,7 +251,7 @@ function NewGroup(props: any) {
   const [additionalCriteria, setAdditionalCriteria] = useState(null);
 
   const handleChange = (e) => {
-    // debugger;
+    
     let tmp_value = e.target.value;
     if (e.target.value == "true") {
       tmp_value = true;
@@ -304,7 +304,7 @@ function NewGroup(props: any) {
         return;
       }
       if (msg.length > 0) {
-        console.log(msg);
+        
         setErrorClass("invalid");
         return;
       }
@@ -327,7 +327,7 @@ function NewGroup(props: any) {
         return;
       }
     }
-    // debugger;
+    
     //requestData['keyVals'] = [{ key: 'index', value: 0 }, { key: 'limit', value: 10 }, { key: 'entity_id', value: 1262 }];
     formData["is_validation_required"] = is_validation;
     requestData["lob_type"] = props.formulary_lob_id;
@@ -443,9 +443,8 @@ function NewGroup(props: any) {
           "/" +
           props?.formulary_id +
           "?entity_id=0";
-        let id_pa_group_description = formData["id_pa_group_description"]
-          ? formData["id_pa_group_description"]
-          : 0;
+        let id_pa_group_description = props.savePaGdm.current_group_des_id; 
+
         props.putPAGroupDescription(requestData).then((json) => {
           if (json.payload && json.payload.code === "200") {
             showMessage("Success", "success");
@@ -463,16 +462,17 @@ function NewGroup(props: any) {
             apiDetails["pathParams"] = "/" + id_base_pa_group_description;
 
             props.getPaGrouptDescriptionVersions(apiDetails).then((json) => {
+              
               const isEditable =
                 json.payload.data.length > 0 &&
                 json.payload.data.find(
                   (val) =>
                     val.id_pa_group_description === id_pa_group_description
                 );
-              props.selectGroup(
-                id_base_pa_group_description,
-                isEditable.is_setup_complete
-              );
+              // props.selectGroup(
+              //   id_base_pa_group_description,
+              //   isEditable.is_setup_complete
+              // );
               isSetUpComplete(isEditable.is_setup_complete);
             });
           } else if (json?.payload?.status && json?.payload?.status != 200) {
@@ -486,7 +486,7 @@ function NewGroup(props: any) {
       } else {
         requestData["pathParams"] = "/" + props?.formulary_id + "?entity_id=0";
         props.postPAGroupDescription(requestData).then((json) => {
-          debugger;
+          
           if (json.payload && json.payload.code === "200") {
             showMessage("Success", "success");
             let apiDetails = {};
@@ -497,7 +497,7 @@ function NewGroup(props: any) {
             //props.formType=1;
             setFormType(1);
 
-            debugger;
+            
             props.getPAGroupDetails({
               formulary_id: props.formulary_id,
               current_group_id: json.payload.id_base_pa_group_description,
@@ -572,7 +572,7 @@ function NewGroup(props: any) {
   };
 
   const openAdditionalCriteria = () => {
-    console.log(isAdditionalCriteriaOpen);
+    
     toggleAdditionalCriteriaOpen(true);
   };
   const closeAddiionalCriteria = () => toggleAdditionalCriteriaOpen(false);
@@ -586,13 +586,13 @@ function NewGroup(props: any) {
   }, [props.formType]);
 
   useEffect(() => {
-    // debugger;
-    console.log(props.additionalCriteriaObject);
+    
+    
     setAdditionalCriteria(props.additionalCriteriaObject);
   }, [props.additionalCriteriaObject]);
 
   useEffect(() => {
-    debugger;
+    
     //setPanelColor(editable ? '-green' : '')
     //setLatestId(props.latestVerion)
     isSetUpComplete(props.isSetUpComplete);
@@ -627,7 +627,7 @@ function NewGroup(props: any) {
   ]);
 
   const getAutoCompleteChangeHandler = (val) => {
-    // debugger;
+    
     setDrug_list_ids(val);
   };
   return (

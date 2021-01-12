@@ -387,7 +387,7 @@ class PaReplace extends React.Component<any, any> {
 
   
   dropDownSelectHandlerGroupDescription = (tmp_value, event) => {
-    debugger;
+    
     // let tmp_index = event.key;
     // let tmp_value = event.value;
     this.setState({ selectedGroupDescription: tmp_value });
@@ -427,7 +427,7 @@ class PaReplace extends React.Component<any, any> {
           pathParams: "/" + latestVersionId,
         })
         .then((json) => {
-          // debugger;
+          
           this.props.setAdditionalCriteria([]);
           if (json.payload && json.payload.code === "200") {
             if (
@@ -512,7 +512,7 @@ class PaReplace extends React.Component<any, any> {
   };
 
   handleChange = (e: any) => {
-    // debugger;
+    
     let tmp_value = e.target.value;
     let tmp_key = e.target.name;
     if (e.target.value == "true") {
@@ -541,7 +541,7 @@ class PaReplace extends React.Component<any, any> {
         searchBody
       );
     }
-    debugger;
+    
     let allFilters = Array();
     let filterProps = Array();
     this.state.filter.map(filterInfo => {
@@ -627,7 +627,7 @@ class PaReplace extends React.Component<any, any> {
             obj[this.state.groupDescriptionProp] ==
             this.state.selectedGroupDescription
         )[0];
-        // debugger;
+        
         let thisRef = this;
         var gridData = tmpData.map(function (el) {
           var element = Object.assign({}, el);
@@ -635,7 +635,7 @@ class PaReplace extends React.Component<any, any> {
           let gridItem = {};
           gridItem["id"] = count;
           gridItem["key"] = count;
-          // debugger;
+          
 
           if ( selected &&
             selected["pa_group_description_name"] ===
@@ -749,7 +749,7 @@ class PaReplace extends React.Component<any, any> {
     this.setState({ isAdditionalCriteriaOpen: false });
   };
   openAdditionalCriteria = () => {
-    // debugger;
+    
     this.setState({ isAdditionalCriteriaOpen: true });
   };
   onSelectAllRows = (isSelected: boolean) => {

@@ -160,7 +160,7 @@ class DrugGrid extends React.Component<any, any> {
   };
 
   onApplyFilterHandler = filters => {
-    console.log("filtering from be:" + JSON.stringify(filters));
+    
     //this.state.filter = Array();
     const fetchedKeys = Object.keys(filters);
     if (fetchedKeys && fetchedKeys.length > 0) {
@@ -191,7 +191,7 @@ class DrugGrid extends React.Component<any, any> {
     } else {
       this.state.filter = Array();
     }
-    console.log("Filters:" + JSON.stringify(this.state.filter));
+    
     if (this.props.advancedSearchBody) {
       this.populateGridData(this.props.advancedSearchBody);
     } else {
@@ -207,7 +207,7 @@ class DrugGrid extends React.Component<any, any> {
    * @param order the sorting order : 'ascend' | 'descend'
    */
   onApplySortHandler = (key, order, sortedInfo) => {
-    console.log("sort details ", key, order);
+    
     this.state.sort_by = Array();
     if (order) {
       let sortOrder = order === "ascend" ? "asc" : "desc";
@@ -231,7 +231,7 @@ class DrugGrid extends React.Component<any, any> {
   };
 
   applyMultiSortHandler = (sorter, multiSortedInfo) => {
-    console.log("Multisort info:" + JSON.stringify(sorter));
+    
     
 		
 		this.setState(  {
@@ -271,7 +271,7 @@ class DrugGrid extends React.Component<any, any> {
   };
 
   onMultiSortToggle = (isMultiSortOn: boolean) => {
-    console.log("is Multi sort on ", isMultiSortOn);
+    
     this.state.sort_by = Array();
     this.state.gridSingleSortInfo = null;
     this.state.gridMultiSortedInfo = [];
@@ -286,12 +286,7 @@ class DrugGrid extends React.Component<any, any> {
   };
 
   onSettingsIconHandler = (hiddenColumn, visibleColumn) => {
-    console.log(
-      "Settings icon handler: Hidden" +
-        JSON.stringify(hiddenColumn) +
-        " Visible:" +
-        JSON.stringify(visibleColumn)
-    );
+    
     if (hiddenColumn && hiddenColumn.length > 0) {
       let hiddenColumnKeys = hiddenColumn.map((column) => column["key"]);
       this.setState({
@@ -309,7 +304,7 @@ class DrugGrid extends React.Component<any, any> {
   //   }
   // };
   populateGridData = (searchBody = null) => {
-    console.log("Populate grid data is called");
+    
     let apiDetails = {};
 
     apiDetails["pathParams"] = this.props?.formulary_id + "/" + getLobCode(this.props?.formulary_lob_id);
@@ -439,7 +434,7 @@ class DrugGrid extends React.Component<any, any> {
   };
 
   onPageSize = (pageSize) => {
-    console.log("Page size load");
+    
     this.state.limit = pageSize;
     if (this.props.advancedSearchBody) {
       this.populateGridData(this.props.advancedSearchBody);
@@ -448,7 +443,7 @@ class DrugGrid extends React.Component<any, any> {
     }
   };
   onGridPageChangeHandler = (pageNumber: any) => {
-    console.log("Page change load");
+    
     this.state.index = (pageNumber - 1) * this.state.limit;
     if (this.props.advancedSearchBody) {
       this.populateGridData(this.props.advancedSearchBody);
@@ -518,7 +513,7 @@ class DrugGrid extends React.Component<any, any> {
       const saveData = this.props
         .postApplyFormularyDrugST(apiDetails)
         .then((json) => {
-          console.log("Save response is:" + JSON.stringify(json));
+          
           if (
             json.payload &&
             json.payload.code &&
@@ -539,7 +534,7 @@ class DrugGrid extends React.Component<any, any> {
   };
 
   handleSearch = (searchObject) => {
-    console.log(searchObject);
+    
     this.setState({ isFetchingData: true });
     if (searchObject && searchObject.status) {
       setTimeout(() => {
@@ -557,7 +552,7 @@ class DrugGrid extends React.Component<any, any> {
     selectedRow: any,
     isSelected: boolean
   ) => {
-    console.log("data row ", selectedRow, isSelected);
+    
     if (!selectedRow["isDisabled"]) {
       if (isSelected) {
         const data = this.state.drugGridData.map((d: any) => {
@@ -572,7 +567,7 @@ class DrugGrid extends React.Component<any, any> {
           ...this.state.selectedRowKeys,
           selectedRow.key,
         ];
-        console.log("selected row keys ", selectedRowKeys);
+        
         const selectedRows: number[] = selectedRowKeys.filter(
           (k) => this.state.fixedSelectedRows.indexOf(k) < 0
         );
@@ -605,7 +600,7 @@ class DrugGrid extends React.Component<any, any> {
   };
 
   onSelectedTableRowChanged = (selectedRowKeys) => {
-    console.log("selected row ", selectedRowKeys);
+    
 
     this.state.selectedDrugs = [];
     this.setState({
