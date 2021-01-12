@@ -98,11 +98,8 @@ class PaGroupDescriptionManagement extends React.Component<any, any> {
     let isPopUpView = this.props.isPopUpView;
     this.props.getPaGrouptDescriptionVersions(apiDetails).then((json) => {
       let tmpData = json.payload.data;
-      debugger;
       if (isPopUpView) {
-        debugger;
         tmpData = tmpData.filter((obj) => {
-          debugger;
           if (obj.is_setup_complete) {
             return obj;
           }
@@ -181,7 +178,6 @@ class PaGroupDescriptionManagement extends React.Component<any, any> {
   };
 
   componentDidMount() {
-    debugger;
     let apiDetails = {};
     apiDetails["lob_type"] = this.props.formulary_lob_id;
     apiDetails["pathParams"] =
@@ -209,7 +205,6 @@ class PaGroupDescriptionManagement extends React.Component<any, any> {
         element["status"] = el.is_setup_complete ? "completed" : "warning";
         element["is_archived"] =
           el.is_archived == null ? false : el.is_archived;
-        //console.log(element);
 
         return element;
       });
@@ -231,14 +226,12 @@ class PaGroupDescriptionManagement extends React.Component<any, any> {
     });
 
     this.props.getPaTypes(this.props.formulary_id).then((json) => {
-      //debugger;
       this.setState({
         paTypes: json.payload.data,
       });
     });
 
     this.props.getDrugLists(this.props.client_id).then((json) => {
-      //debugger;
       let tmp_list: any = [];
       json.payload.data.map((obj) => {
         let tmp_obj = {
@@ -260,9 +253,6 @@ class PaGroupDescriptionManagement extends React.Component<any, any> {
   }
 
   componentWillReceiveProps(nextProps) {
-    // debugger;
-    console.log("TIER: componentWillReceiveProps", nextProps);
-
     let tmpData = nextProps.descriptions;
     if (tmpData && Array.isArray(tmpData) && tmpData.length > 0) {
       let groupProp = "";
@@ -286,7 +276,6 @@ class PaGroupDescriptionManagement extends React.Component<any, any> {
         element["status"] = el.is_setup_complete ? "completed" : "warning";
         element["is_archived"] =
           el.is_archived == null ? false : el.is_archived;
-        console.log(element);
 
         return element;
       });

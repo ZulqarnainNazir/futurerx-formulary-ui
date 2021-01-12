@@ -116,7 +116,7 @@ function PAGroupHeader(props: any) {
     }
 
     props.postPAGroupDescriptionFormularies(apiDetails).then((json) => {
-      // debugger;
+      
       let tmp_array: any = [];
       let count = 1;
       json.payload.result.map((obj) => {
@@ -137,24 +137,22 @@ function PAGroupHeader(props: any) {
   };
 
   useEffect(() => {
-    debugger;
     setIsSetupComplete(props.isSetupComplete);
   }, []);
 
   useEffect(() => {
-    debugger;
     setIsSetupComplete(props.isSetupComplete);
   }, [props.isSetupComplete]);
 
   useEffect(() => {
-     debugger;
+     
     let versions = props.version;
     if (versions.length > 0) {
       
       if (props.isPopUpView) {
-        debugger;
+        
         versions = versions.filter((obj) => {
-          debugger;
+          
           if (obj.is_setup_complete) {
             return obj;
           }
@@ -272,7 +270,7 @@ function PAGroupHeader(props: any) {
   };
 
   const onSelectedTableRowChanged = (selectedRowKeys) => {
-    // debugger;
+    
     fomulariesList.map((obj) => (obj["applied_version"] = ""));
     if (selectedRowKeys && selectedRowKeys.length > 0) {
       let tmp: any = selectedRowKeys.map((tierId) => {
@@ -283,7 +281,7 @@ function PAGroupHeader(props: any) {
     }
   };
   const applyFormularies = (e: any) => {
-    // debugger;
+    
     let apiDetails = {};
 
     if (effectiveDate == "") {
@@ -300,7 +298,6 @@ function PAGroupHeader(props: any) {
     apiDetails["pathParams"] = "/" + props.saveGdm.current_group_id;
 
     apiDetails["messageBody"] = {};
-    // debugger;
     //var str = effectiveDate.format("yyyy/MM/D");
     apiDetails["messageBody"]["effective_date"] = effectiveDate;
     apiDetails["messageBody"]["formulary_ids"] = selectedFormularies;
@@ -311,7 +308,7 @@ function PAGroupHeader(props: any) {
     apiDetails["messageBody"]["pa_group_description_formulary_ids"] = [];
 
     props.postApplyPAGroupDescriptionFormularies(apiDetails).then((json) => {
-      console.log("Save response is:" + JSON.stringify(json));
+      
       if (json.payload && json.payload.code === "200") {
         setShowViewAll(!showViewAll);
         showMessage("Success", "success");
@@ -337,7 +334,7 @@ function PAGroupHeader(props: any) {
         lob_type: props.formulary_lob_id,
       })
       .then((json) => {
-        debugger;
+        
         if (
           json?.payload?.success?.status &&
           json?.payload?.success?.status == 200
@@ -355,7 +352,7 @@ function PAGroupHeader(props: any) {
                 ? groupList.filter((val) => val.is_archived === false)[0]
                     .id_base_pa_group_description
                 : 0;
-            debugger;
+            
             if (param === "delete-version" && versionListLength > 0) {
               id_pa_group_description = props.saveGdm.current_group_id;
             } else {
@@ -497,7 +494,7 @@ function PAGroupHeader(props: any) {
   };
 
   const newVersionGroup = (e: any, param: any) => {
-    // debugger;
+    
 
     props
       .newVersionGroupDescription({

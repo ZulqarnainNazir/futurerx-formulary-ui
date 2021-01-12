@@ -91,7 +91,7 @@ function GroupHeader(props: any) {
     }
 
     props.postSTGroupDescriptionFormularies(apiDetails).then((json) => {
-      // debugger;
+      
       let tmp_array: any = [];
       let count = 1;
       json.payload.result.map((obj) => {
@@ -106,7 +106,7 @@ function GroupHeader(props: any) {
   };
 
   const onSelectedTableRowChanged = (selectedRowKeys) => {
-    // debugger;
+    
     fomulariesList.map((obj) => (obj["applied_version"] = ""));
     if (selectedRowKeys && selectedRowKeys.length > 0) {
       let tmp: any = selectedRowKeys.map((tierId) => {
@@ -118,12 +118,10 @@ function GroupHeader(props: any) {
   };
 
   useEffect(() => {
-    debugger;
     setIsSetupComplete(props.isSetupComplete);
   }, []);
 
   useEffect(() => {
-    debugger;
     setIsSetupComplete(props.isSetupComplete);
   }, [props.isSetupComplete]);
 
@@ -132,9 +130,7 @@ function GroupHeader(props: any) {
     if (versions.length > 0) {
       //let versions = props.version;
       if (props.isPopUpView) {
-        debugger;
         versions = versions.filter((obj) => {
-          debugger;
           if (obj.is_setup_complete) {
             return obj;
           }
@@ -229,7 +225,6 @@ function GroupHeader(props: any) {
       const latestVerionNo = verLength > 0 ? selectedVersion.split(" ")[1] : "";
       setSelectedVersion(latestVerionNo);
       setSelectedVersionId(latestVerion);
-      debugger;
       props.getSTGroupDetails({
         formulary_id: props.saveGdm.formulary_id,
         current_group_id:
@@ -261,7 +256,6 @@ function GroupHeader(props: any) {
   };
 
   const applyFormularies = (e: any) => {
-    // debugger;
     let apiDetails = {};
 
     if (effectiveDate == null) {
@@ -287,7 +281,6 @@ function GroupHeader(props: any) {
     apiDetails["messageBody"]["st_group_description_formulary_ids"] = [];
 
     props.postApplySTGroupDescriptionFormularies(apiDetails).then((json) => {
-      console.log("Save response is:" + JSON.stringify(json));
       if (json.payload && json.payload.code === "200") {
         showMessage("Success", "success");
       } else {
@@ -564,13 +557,11 @@ function GroupHeader(props: any) {
     selectedRow: any,
     isSelected: boolean
   ) => {
-    console.log(key);
-    console.log(selectedRow);
-    console.log(isSelected);
+    
   };
 
   const onSelectAllRows = (isSelected: boolean) => {
-    console.log(isSelected);
+    
   };
 
   return (
