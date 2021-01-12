@@ -4,7 +4,7 @@ import { ReactComponent as TiltCrossIcon } from "../../../../../assets/icons/Til
 
 const DragBox = (props) => {
   const [{ isDragging }, drag] = useDrag({
-    item: { id: `${props.nodeId}`, type: "div" },
+    item: { id: `${props.nodeId}`, type: "ListItem" },
     end: (item: { id: string } | undefined, monitor: DragSourceMonitor) => {
       const dropResult = monitor.getDropResult();
       if (item && dropResult) {
