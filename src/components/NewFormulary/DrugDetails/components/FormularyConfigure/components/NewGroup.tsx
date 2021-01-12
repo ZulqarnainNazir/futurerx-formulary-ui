@@ -306,9 +306,7 @@ function NewGroup(props: any) {
       }
       requestData["lob_type"] = props.formulary_lob_id;
       requestData["apiPart"] = "api/1/mcr-st-group-description";
-      let id_st_group_description = formData["id_st_group_description"]
-        ? formData["id_st_group_description"]
-        : 0;
+      let id_st_group_description = props.saveGdm.current_group_des_id;
       requestData["pathParams"] =
         "/" +
         id_st_group_description +
@@ -323,22 +321,23 @@ function NewGroup(props: any) {
           apiDetails["pathParams"] =
             "/" + props?.client_id + "?entity_id=" + props?.formulary_id;
           props.getStGrouptDescriptions(apiDetails);
-
+          debugger;
           let id_base_st_group_description = json.payload
             .id_base_st_group_description
             ? json.payload.id_base_st_group_description
             : props.saveGdm.current_group_id;
           apiDetails["pathParams"] = "/" + id_base_st_group_description;
           props.getStGrouptDescriptionVersions(apiDetails).then((json) => {
+            debugger;
             const isEditable =
               json.payload.data.length > 0 &&
               json.payload.data.find(
                 (val) => val.id_st_group_description === id_st_group_description
               );
-            props.selectGroup(
-              id_base_st_group_description,
-              isEditable.is_setup_complete
-            );
+            // props.selectGroup(
+            //   id_base_st_group_description,
+            //   isEditable.is_setup_complete
+            // );
             isSetUpComplete(isEditable.is_setup_complete);
           });
         } else if (json?.payload?.status && json?.payload?.status != 200) {

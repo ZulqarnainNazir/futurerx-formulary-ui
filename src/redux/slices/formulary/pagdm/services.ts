@@ -1,12 +1,7 @@
 import { PAGDMSaveResponse } from "./pagdmSlice";
 import { BASE_URL1 } from "../../../../api/http-helper";
 import axios from "axios";
-
-const headers = {
-  Authorization: "Bearer 1e05ff8b-a0af-4a8f-8915-487321900f21",
-  Accept: "application/json",
-  "Content-Type": "application/json;charset=UTF-8",
-};
+import * as commonConstants from "../../../../api/http-commons";
 
 export async function savePaGroup(payload: any): Promise<PAGDMSaveResponse> {
   if(payload.latestId===0){
@@ -19,7 +14,7 @@ export async function savePaGroup(payload: any): Promise<PAGDMSaveResponse> {
   }
     try {
       const response = await axios.post(url, payload, {
-        headers: headers,
+        headers: commonConstants.REQUEST_HEADER,
       });
       return {
         success: response
@@ -37,7 +32,7 @@ export async function savePaGroup(payload: any): Promise<PAGDMSaveResponse> {
   }
     try {
       const response = await axios.put(url, payload, {
-        headers: headers,
+        headers: commonConstants.REQUEST_HEADER,
       });
       return {
         success: response
@@ -58,7 +53,7 @@ export async function deletePaGroup(payload: any): Promise<PAGDMSaveResponse> {
   }
   try {
     const response = await axios.delete(url,{
-      headers: headers
+      headers: commonConstants.REQUEST_HEADER
     });
     return {
       success: response
@@ -79,7 +74,7 @@ export async function clonePaGroup(payload: any): Promise<PAGDMSaveResponse> {
   
   try {
     const response = await axios.post(url,payload,{
-      headers: headers
+      headers: commonConstants.REQUEST_HEADER
     });
     return {
       success: response
@@ -102,7 +97,7 @@ export async function archivePaGroup(payload: any): Promise<PAGDMSaveResponse> {
 
   try {
     const response = await axios.post(url,{},{
-      headers: headers
+      headers: commonConstants.REQUEST_HEADER
     });
     return {
       success: response
@@ -122,7 +117,7 @@ export async function newVersionPaGroup(payload: any): Promise<PAGDMSaveResponse
   }
   try {
     const response = await axios.post(url,{},{
-      headers: headers
+      headers: commonConstants.REQUEST_HEADER
     });
     return {
       success: response

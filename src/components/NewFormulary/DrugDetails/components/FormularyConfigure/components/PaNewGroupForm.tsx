@@ -443,11 +443,11 @@ function NewGroup(props: any) {
           "/" +
           props?.formulary_id +
           "?entity_id=0";
-        let id_pa_group_description = formData["id_pa_group_description"]
-          ? formData["id_pa_group_description"]
-          : 0;
+        let id_pa_group_description = props.savePaGdm.current_group_des_id; 
+
         props.putPAGroupDescription(requestData).then((json) => {
           if (json.payload && json.payload.code === "200") {
+            debugger;
             showMessage("Success", "success");
             let apiDetails = {};
             apiDetails["lob_type"] = props.formulary_lob_id;
@@ -463,16 +463,17 @@ function NewGroup(props: any) {
             apiDetails["pathParams"] = "/" + id_base_pa_group_description;
 
             props.getPaGrouptDescriptionVersions(apiDetails).then((json) => {
+              debugger;
               const isEditable =
                 json.payload.data.length > 0 &&
                 json.payload.data.find(
                   (val) =>
                     val.id_pa_group_description === id_pa_group_description
                 );
-              props.selectGroup(
-                id_base_pa_group_description,
-                isEditable.is_setup_complete
-              );
+              // props.selectGroup(
+              //   id_base_pa_group_description,
+              //   isEditable.is_setup_complete
+              // );
               isSetUpComplete(isEditable.is_setup_complete);
             });
           } else if (json?.payload?.status && json?.payload?.status != 200) {
