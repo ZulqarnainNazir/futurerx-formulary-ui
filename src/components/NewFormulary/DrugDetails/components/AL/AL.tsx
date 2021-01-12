@@ -345,6 +345,8 @@ class DrugDetailAL extends React.Component<any, any> {
             this.getALSummary();
             this.getALDrugsList();
             // this.refreshSelections({ activeTabIndex: this.state.activeTabIndex });
+          } else if (json?.payload?.code && json?.payload?.code != "200") {
+            showMessage(json.payload?.message, "error");
           } else {
             showMessage("Failure", "error");
             // this.refreshSelections({ activeTabIndex: this.state.activeTabIndex });
