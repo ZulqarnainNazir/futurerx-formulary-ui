@@ -91,7 +91,7 @@ export default class CommonDialogAction extends React.Component<any, any> {
         isHandleActions: false,
         postiveBtn: "",
         negativeBtn: "",
-        dialogClassName:"common-workflow-dialog-action"
+        dialogClassName:"common-dialog-action"
       });
     }
   };
@@ -157,7 +157,7 @@ export default class CommonDialogAction extends React.Component<any, any> {
             </div>
           </div>
           <DialogPopup
-            className="common-dialog-action"
+            className={this.state.dialogClassName}
             showCloseIcon={true}
             positiveActionText={this.state.postiveBtn}
             negativeActionText={this.state.negativeBtn}
