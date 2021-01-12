@@ -15,11 +15,12 @@ import "./Medicare.scss";
 import { Popover, Button } from "antd";
 import DropDown from "../../shared/Frx-components/dropdown/DropDown";
 import DropDownMap from "../../shared/Frx-components/dropdown/DropDownMap";
-import MenuItem from '@material-ui/core/MenuItem';
-import ListItemText from '@material-ui/core/ListItemText';
-import Select from '@material-ui/core/Select';
-import Checkbox from '@material-ui/core/Checkbox';
-import Input from '@material-ui/core/Input';
+import MenuItem from "@material-ui/core/MenuItem";
+import ListItemText from "@material-ui/core/ListItemText";
+import Select from "@material-ui/core/Select";
+import Checkbox from "@material-ui/core/Checkbox";
+import Input from "@material-ui/core/Input";
+import * as _ from "lodash";
 
 import {
   homeSearchOptions,
@@ -27,6 +28,7 @@ import {
 } from "../../../redux/slices/formulary/homeSearch/searchSlice";
 import AdvanceSearchContainer from "../NewAdvanceSearch/AdvanceSearchContainer";
 import { AnyARecord, AnyCnameRecord, AnySrvRecord } from "dns";
+import { Column } from "../../../models/grid.model";
 interface State {
   miniTabs: Array<TabInfo>;
   activeMiniTabIndex: number;
@@ -42,6 +44,8 @@ interface State {
   isFiltered: boolean;
   filteredInfo: any;
   staticData: string[];
+  isColumnsChanged: boolean;
+  changedColumns: Column<any>[];
 }
 
 const miniTabs = [
@@ -75,12 +79,12 @@ const steps = [
   "Bazaar"
 ];
 
-const top100Films:any = [
-  { title: 'The Shawshank Redemption', year: 1994 },
-  { title: 'The Godfather', year: 1972 },
-  { title: 'The Godfather: Part II', year: 1974 },
-  { title: 'The Dark Knight', year: 2008 },
-  { title: '12 Angry Men', year: 1957 },
+const top100Films: any = [
+  { title: "The Shawshank Redemption", year: 1994 },
+  { title: "The Godfather", year: 1972 },
+  { title: "The Godfather: Part II", year: 1974 },
+  { title: "The Dark Knight", year: 2008 },
+  { title: "12 Angry Men", year: 1957 },
   { title: "Schindler's List", year: 1993 }
 ];
 
@@ -90,9 +94,9 @@ const MenuProps = {
   PaperProps: {
     style: {
       maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
-      width: 250,
-    },
-  },
+      width: 250
+    }
+  }
 };
 class Medicare extends React.Component<any, any> {
   state = {
@@ -110,8 +114,24 @@ class Medicare extends React.Component<any, any> {
     isGridMultiSorted: false,
     isFiltered: false,
     filteredInfo: null,
-    staticData: []
+    staticData: [],
+    isColumnsChanged: false,
+    changedColumns: []
   };
+
+  onColumnChange = (columns: Column<any>[]) => {
+    console.log("swapped", columns);
+    const cols = _.cloneDeep(columns);
+    // const changedColumns = cols.filter(
+    //   (c: Column<any>) => c.key !== "settings"
+		// );
+		const changedColumns = cols
+    this.setState({
+      isColumnsChanged: true,
+      changedColumns
+    });
+  };
+
   defaultHTML = () => {
     return (
       <div className="formulary-grid default-height">
@@ -163,11 +183,15 @@ class Medicare extends React.Component<any, any> {
               enableSearch={false}
               enableColumnDrag
               onSearch={() => {}}
-              fixedColumnKeys={["claimId"]}
+              fixedColumnKeys={[]}
               pagintionPosition="topRight"
               gridName="MEDICARE"
               enableSettings
-              columns={formularyDetailsGridColumns()}
+              columns={
+                this.state.isColumnsChanged
+                  ? this.state.changedColumns
+                  : formularyDetailsGridColumns()
+              }
               scroll={{ y: 630 }}
               isFetchingData={false}
               enableResizingOfColumns
@@ -179,11 +203,15 @@ class Medicare extends React.Component<any, any> {
               selectedCurrentPage={this.props.selectedCurrentPage}
               applyFilter={this.applyFilterHandler}
               getColumnSettings={this.props.getColumnSettings}
+              onColumnChange={this.onColumnChange}
               data={[]}
               expandable={{
                 isExpandable: true,
-                expandIconColumnIndex:
-                  formularyDetailsGridColumns({}).length + 1,
+                expandIconColumnIndex: this.state.isColumnsChanged
+                  ? this.state.changedColumns.filter(
+                      (c: Column<any>) => !c.hidden
+                    ).length + 1
+                  : formularyDetailsGridColumns({}).length + 1,
                 expandedRowRender: (record: any) => (
                   <FormularyExpandedDetails
                     rowData={record}
@@ -267,20 +295,19 @@ class Medicare extends React.Component<any, any> {
     }
   }
 
-  getStepName(stepNumber:any){
-    if(stepNumber === 1){
+  getStepName(stepNumber: any) {
+    if (stepNumber === 1) {
       return "Work in progress";
     }
-    if(stepNumber === 2){
+    if (stepNumber === 2) {
       return "Review";
     }
-    if(stepNumber === 3){
+    if (stepNumber === 3) {
       return "Approved";
     }
-    if(stepNumber === 4){
+    if (stepNumber === 4) {
       return "In production";
     }
-
   }
   renderActiveMiniTabContent = () => {
     const miniTabIndex = this.state.activeMiniTabIndex;
@@ -391,11 +418,11 @@ class Medicare extends React.Component<any, any> {
       gridMultiSortedInfo: []
     });
   };
-  checkStaticData = (ob:any) => {
-    const title:string = ob.label;
-    const getSelected:any = [...this.state.staticData];
+  checkStaticData = (ob: any) => {
+    const title: string = ob.label;
+    const getSelected: any = [...this.state.staticData];
     return getSelected.indexOf(title) > -1;
-  }
+  };
   renderCheckboxDropdown = () => {
     let htmlElement = (
       <DropDownMap
@@ -407,9 +434,9 @@ class Medicare extends React.Component<any, any> {
         dispProp={""}
         value={""}
       />
-    )
-    const fetchedData:any = [...this.state.searchSubCategory];
-    if(fetchedData.length > 0){
+    );
+    const fetchedData: any = [...this.state.searchSubCategory];
+    if (fetchedData.length > 0) {
       htmlElement = (
         <Select
           className="custom-multi-select"
@@ -418,35 +445,37 @@ class Medicare extends React.Component<any, any> {
           multiple
           value={this.state.staticData}
           onChange={this.searchFormularyList}
-          input={<Input disableUnderline/>}
-          renderValue={(obj)=> (this.state.staticData.join(", "))}
+          input={<Input disableUnderline />}
+          renderValue={obj => this.state.staticData.join(", ")}
           MenuProps={MenuProps}
         >
-          {fetchedData.map((e) => (
+          {fetchedData.map(e => (
             <MenuItem key={e.label} value={e.label}>
               <Checkbox checked={this.checkStaticData(e)} />
               <ListItemText primary={e.label} />
             </MenuItem>
           ))}
         </Select>
-      )
+      );
     }
     return htmlElement;
-  }
+  };
   topSearch = () => {
-    const getFetchedData:any = [...this.state.searchSubCategory];
+    const getFetchedData: any = [...this.state.searchSubCategory];
     let categoryObj = {
-          "associated-contracts": "",
-          breadcrumbs: "breadcrumb",
-          "formulary-types": "ft",
-          "medicare-contract-types": "mct",
-          "client-states": "state",
-          "tier-descriptions": "td",
-        }[this.state.searchType];
-    const selectedData:any = [...this.state.staticData];
-    const values= getFetchedData.filter(el => selectedData.indexOf(el.label) > -1).map(e => e.code_value);
+      "associated-contracts": "",
+      breadcrumbs: "breadcrumb",
+      "formulary-types": "ft",
+      "medicare-contract-types": "mct",
+      "client-states": "state",
+      "tier-descriptions": "td"
+    }[this.state.searchType];
+    const selectedData: any = [...this.state.staticData];
+    const values = getFetchedData
+      .filter(el => selectedData.indexOf(el.label) > -1)
+      .map(e => e.code_value);
     this.props.formularyListSearch(categoryObj, values);
-  }
+  };
   getGridData = () => {
     const baseData = [...this.props.dashboardGrid.list];
     let hiddenColumns = [];
@@ -481,9 +510,9 @@ class Medicare extends React.Component<any, any> {
           progress: 25
         },
         step: {
-          step_name:this.getStepName(steps.indexOf(e.step) + 1),
+          step_name: this.getStepName(steps.indexOf(e.step) + 1),
           step: steps.indexOf(e.step) + 1
-        },
+        }
       };
     });
     const addNewButtonDDContent = (
@@ -519,8 +548,17 @@ class Medicare extends React.Component<any, any> {
               <div className="field-container multiSelectCheck">
                 {this.renderCheckboxDropdown()}
                 <span className="search-btn" onClick={this.topSearch}>
-                  <svg width="14" height="13" viewBox="0 0 14 13" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M13.8096 11.2393L11.0832 8.70813C10.9602 8.59389 10.7934 8.53042 10.6184 8.53042H10.1726C10.9274 7.63422 11.3758 6.50698 11.3758 5.28073C11.3758 2.36364 8.82994 0 5.68792 0C2.54589 0 0 2.36364 0 5.28073C0 8.19783 2.54589 10.5615 5.68792 10.5615C7.00872 10.5615 8.22287 10.1451 9.18817 9.44439V9.85822C9.18817 10.0207 9.25654 10.1756 9.37959 10.2898L12.106 12.821C12.363 13.0597 12.7787 13.0597 13.033 12.821L13.8069 12.1025C14.0639 11.8639 14.0639 11.478 13.8096 11.2393ZM5.68792 8.53042C3.75457 8.53042 2.18766 7.07822 2.18766 5.28073C2.18766 3.48579 3.75184 2.03105 5.68792 2.03105C7.62126 2.03105 9.18817 3.48325 9.18817 5.28073C9.18817 7.07568 7.624 8.53042 5.68792 8.53042Z" fill="#1D54B4"/>
+                  <svg
+                    width="14"
+                    height="13"
+                    viewBox="0 0 14 13"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M13.8096 11.2393L11.0832 8.70813C10.9602 8.59389 10.7934 8.53042 10.6184 8.53042H10.1726C10.9274 7.63422 11.3758 6.50698 11.3758 5.28073C11.3758 2.36364 8.82994 0 5.68792 0C2.54589 0 0 2.36364 0 5.28073C0 8.19783 2.54589 10.5615 5.68792 10.5615C7.00872 10.5615 8.22287 10.1451 9.18817 9.44439V9.85822C9.18817 10.0207 9.25654 10.1756 9.37959 10.2898L12.106 12.821C12.363 13.0597 12.7787 13.0597 13.033 12.821L13.8069 12.1025C14.0639 11.8639 14.0639 11.478 13.8096 11.2393ZM5.68792 8.53042C3.75457 8.53042 2.18766 7.07822 2.18766 5.28073C2.18766 3.48579 3.75184 2.03105 5.68792 2.03105C7.62126 2.03105 9.18817 3.48325 9.18817 5.28073C9.18817 7.07568 7.624 8.53042 5.68792 8.53042Z"
+                      fill="#1D54B4"
+                    />
                   </svg>
                 </span>
               </div>
@@ -542,7 +580,7 @@ class Medicare extends React.Component<any, any> {
               enableSearch={false}
               enableColumnDrag
               onSearch={() => {}}
-              fixedColumnKeys={["claimId"]}
+              fixedColumnKeys={[]}
               pagintionPosition="topRight"
               gridName="MEDICARE"
               enableSettings
@@ -557,13 +595,21 @@ class Medicare extends React.Component<any, any> {
               filteredInfo={this.state.filteredInfo}
               // isCustomCheckboxEnabled={false}
               // handleCustomRowSelectionChange={()=>{}}
-              columns={formularyDetailsGridColumns(
+              columns={
+								this.state.isColumnsChanged
+								? this.state.changedColumns:
+								formularyDetailsGridColumns(
                 {
                   onFormularyNameClick: (id: any) =>
                     this.props.drugDetailClick(id)
                 },
                 hiddenColumns
               )}
+              // columns={
+              //   this.state.isColumnsChanged
+              //     ? this.state.changedColumns
+              //     : formularyDetailsGridColumns()
+              // }
               scroll={{ x: 1600, y: 630 }}
               isFetchingData={false}
               enableResizingOfColumns
@@ -576,10 +622,14 @@ class Medicare extends React.Component<any, any> {
               applyFilter={this.applyFilterHandler}
               getColumnSettings={this.props.getColumnSettings}
               data={gridData}
+              onColumnChange={this.onColumnChange}
               expandable={{
                 isExpandable: true,
-                expandIconColumnIndex:
-                  formularyDetailsGridColumns({}).length + 1,
+                expandIconColumnIndex: this.state.isColumnsChanged
+                  ? this.state.changedColumns.filter(
+                      (c: Column<any>) => !c.hidden
+                    ).length + 1
+                  : formularyDetailsGridColumns({}).length + 1,
                 // expandedRowRender: (props) => <FormularyExpandedDetails />,
                 expandedRowRender: (record: any) => (
                   <FormularyExpandedDetails
@@ -706,28 +756,28 @@ class Medicare extends React.Component<any, any> {
   //   });
 
   //   this.props.formularyListSearch(categoryObj, subCat);
-    // requestData["category"] = categoryObj;
-    // requestData["lob_type"] = this.props.formulary_lob_id;
-    // requestData['pathParams'] = this.state.searchType+'/'+this.props.client_id;
+  // requestData["category"] = categoryObj;
+  // requestData["lob_type"] = this.props.formulary_lob_id;
+  // requestData['pathParams'] = this.state.searchType+'/'+this.props.client_id;
 
-    // requestData["messageBody"] = {};
-    // requestData["messageBody"]["filter"] = []
-    // requestData["messageBody"]["search_key"] = '';
-    // requestData["messageBody"]["sort_by"] = [
-    //   "contract_year",
-    //   "lob_name",
-    //   "formulary_name",
-    //   "status"
-    // ];
-    // requestData["messageBody"]["sort_order"] = [
-    //   "asc",
-    //   "asc",
-    //   "asc",
-    //   "asc"
-    // ];
-    // requestData["messageBody"]["id_lob"] = null;
-    // requestData["messageBody"]["search_by"] = categoryObj;
-    // requestData["messageBody"]["search_value"] = [subCat];
+  // requestData["messageBody"] = {};
+  // requestData["messageBody"]["filter"] = []
+  // requestData["messageBody"]["search_key"] = '';
+  // requestData["messageBody"]["sort_by"] = [
+  //   "contract_year",
+  //   "lob_name",
+  //   "formulary_name",
+  //   "status"
+  // ];
+  // requestData["messageBody"]["sort_order"] = [
+  //   "asc",
+  //   "asc",
+  //   "asc",
+  //   "asc"
+  // ];
+  // requestData["messageBody"]["id_lob"] = null;
+  // requestData["messageBody"]["search_by"] = categoryObj;
+  // requestData["messageBody"]["search_value"] = [subCat];
   // searchFormularyList = (subCat) => {
   //   let requestData = {};
   //   let categoryObj = {
@@ -746,10 +796,10 @@ class Medicare extends React.Component<any, any> {
   //   this.props.formularyListSearch(categoryObj, subCat);
   // };
   searchFormularyList = (event: React.ChangeEvent<{ value: unknown }>) => {
-    const val = (event.target.value as string[]);
+    const val = event.target.value as string[];
     this.setState({
       staticData: val
-    })
+    });
   };
   componentDidMount() {
     console.log("****** Component Did Mount", this.props.dashboardGrid);

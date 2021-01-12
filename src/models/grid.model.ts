@@ -50,6 +50,7 @@ export interface Grid<RecordType = unknown> {
   pagintionPosition: PagintionPosition;
   enableColumnDrag?: boolean;
   enableResizingOfColumns?: boolean;
+  isAllRowsSelected?: boolean;
   summary?: (data: RecordType[]) => React.ReactNode; // to add a summary row in grid
   settingsTriDotMenuClick?: (item: GridMenu, data?: any) => void;
   rowSelectionChange?: (data: any, isMultiple?: boolean) => void;

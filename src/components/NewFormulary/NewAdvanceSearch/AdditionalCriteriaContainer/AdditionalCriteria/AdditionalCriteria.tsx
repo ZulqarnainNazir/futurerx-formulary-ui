@@ -14,6 +14,7 @@ import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import { useDrag, DragSourceMonitor } from "react-dnd";
 import DragBox from "../ListItem/DragBox";
+import DropBox from "../ListItem/DropBox";
 // const hiddenColumns = _.cloneDeep(this.props.hiddenColumns);
 
 interface PayloadBody {
@@ -1027,20 +1028,7 @@ class AdditionalCriteria extends Component<any, any> {
                       : "__root-additional-criteria-child-accordion-section-content-right-top scroll-bar"
                   }
                 >
-                  {selectedCriteriaList.length === 0 ? (
-                    <div className="text-center">
-                      <p>
-                        Drag the file type(s) from the list on the left to
-                        create a filter.
-                      </p>
-                    </div>
-                  ) : (
-                    selectedCriteriaList.map((criteriaObject, idx) => (
-                      <div key={criteriaObject.id}>
-                        {criteriaObject["render"]}
-                      </div>
-                    ))
-                  )}
+                  <DropBox selectedCriteriaList={selectedCriteriaList} />
                 </div>
                 <div
                   className={

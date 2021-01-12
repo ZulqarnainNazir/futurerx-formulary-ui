@@ -139,7 +139,7 @@ export const setFormulary = createAsyncThunk(
 export const setFullFormulary = createAsyncThunk(
   "application",
   async (value: Formulary, { dispatch }) => {
-    console.log("***** setFullFormulary ", value);
+    // console.log("***** setFullFormulary ", value);
 
     const obj = {
       formulary_id: value?.id_formulary,

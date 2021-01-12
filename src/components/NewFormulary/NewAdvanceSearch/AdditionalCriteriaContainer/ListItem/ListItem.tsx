@@ -220,11 +220,12 @@ class ListItem extends Component<any, any> {
         });
         break;
       case 3:
+        console.log("ICD: ", payload);
         let { icdSettings } = this.state;
         let icdData: any[] = [];
         let icdValue: string[] | undefined = [];
 
-        if (payload !== null) {
+        if (payload !== null && Object.keys(payload).length) {
           icdSettings = { ...payload };
           if (payload.icds !== "") {
             if (payload.icds.length > 0) {

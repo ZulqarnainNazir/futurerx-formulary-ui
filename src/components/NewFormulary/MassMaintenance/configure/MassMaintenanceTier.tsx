@@ -158,7 +158,7 @@ class MassMaintenanceTier extends Component {
 
           <div className="modify-panel">
             <div className="icon">
-              <span>R</span>
+              <span>P</span>
             </div>
             <div className="switch-box">
               <CustomizedSwitches leftTitle="Modify" rightTitle="view all" />

@@ -8,7 +8,7 @@ export const getPaFulfilled = (state, action) => {
     console.log("getPaFulfilled: Payload invalid");
     return;
   }
-  const data = action.payload.result;
+  let data = action.payload.result;
   // Response stored in the redux store.
   state.data = data;
   
@@ -28,7 +28,7 @@ export const getPaDescriptionFulfilled = (state, action) => {
     console.log("getPaFulfilled: Payload invalid");
     return;
   }
-  const data = action.payload.data;
+  let data = action.payload.data;
   // Response stored in the redux store.
   state.description = data;
   
@@ -48,7 +48,7 @@ export const getPaDescriptionsFulfilled = (state, action) => {
     console.log("getPaFulfilled: Payload invalid");
     return;
   }
-  const data = action.payload.data;
+  let data = action.payload.data;
   // Response stored in the redux store.
   state.descriptions = data;
   
@@ -63,13 +63,18 @@ export const getPaDescriptionsRejected = (state, action) => {
 
 export const getVersionFulfilled = (state, action) => {
   state.isLoading = false;
+  let stVersion;
   if(action.payload.data === undefined || (action.payload.data.length === 0)) {
+    stVersion = action.payload.data;
+    // Response stored in the redux store.
+    state.paVersion = stVersion;
     console.log("getStepTherapyFulfilled: Payload invalid");
     return;
+  }else{
+    stVersion = action.payload.data;
+    // Response stored in the redux store.
+    state.paVersion = stVersion;
   }
-  const stVersion = action.payload.data;
-  // Response stored in the redux store.
-  state.paVersion = stVersion;
   
 }
 

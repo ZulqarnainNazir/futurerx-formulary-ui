@@ -1,7 +1,38 @@
-.bordered.stf-root {
+@import "../../../../../../assets/style.scss";
+
+.stf-root {
+  .modify-wrapper {
+    .settings-form {
+      .group {
+        .marketing-material,
+        .radio-group {
+          padding-top: 0 !important;
+        }
+      }
+    }
+    .select-drug-from-table {
+      .white-bg {
+        .header,
+        .space-between {
+          display: flex !important;
+          justify-content: flex-end !important;
+        }
+      }
+    }
+  }
+}
+.bordered .stf-root {
   .settings-form {
     .group {
       padding: 0 0 20px 0;
+
+      // .ant-space .ant-space-horizontal .ant-space-align-center {
+      //   .ant-space-item {
+      .radio-group {
+        padding-top: 0;
+      }
+      // }
+      // }
     }
   }
   .input-element {
