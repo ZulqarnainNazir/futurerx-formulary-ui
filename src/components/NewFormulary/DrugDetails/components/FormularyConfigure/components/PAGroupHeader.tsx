@@ -135,24 +135,23 @@ function PAGroupHeader(props: any) {
   };
 
   useEffect(() => {
-    debugger;
+    // debugger;
     setIsSetupComplete(props.isSetupComplete);
   }, []);
 
   useEffect(() => {
-    debugger;
+    // debugger;
     setIsSetupComplete(props.isSetupComplete);
   }, [props.isSetupComplete]);
 
   useEffect(() => {
-     debugger;
+    //  debugger;
     let versions = props.version;
     if (versions.length > 0) {
-      
       if (props.isPopUpView) {
-        debugger;
+        // debugger;
         versions = versions.filter((obj) => {
-          debugger;
+          // debugger;
           if (obj.is_setup_complete) {
             return obj;
           }
@@ -319,7 +318,7 @@ function PAGroupHeader(props: any) {
         lob_type: props.formulary_lob_id,
       })
       .then((json) => {
-        debugger;
+        // debugger;
         if (
           json?.payload?.success?.status &&
           json?.payload?.success?.status == 200
@@ -337,7 +336,7 @@ function PAGroupHeader(props: any) {
                 ? groupList.filter((val) => val.is_archived === false)[0]
                     .id_base_pa_group_description
                 : 0;
-            debugger;
+            // debugger;
             if (param === "delete-version" && versionListLength > 0) {
               id_pa_group_description = props.savePaGdm.current_group_id;
             } else {

@@ -486,7 +486,7 @@ function NewGroup(props: any) {
       } else {
         requestData["pathParams"] = "/" + props?.formulary_id + "?entity_id=0";
         props.postPAGroupDescription(requestData).then((json) => {
-          debugger;
+          // debugger;
           if (json.payload && json.payload.code === "200") {
             showMessage("Success", "success");
             let apiDetails = {};
@@ -497,7 +497,7 @@ function NewGroup(props: any) {
             //props.formType=1;
             setFormType(1);
 
-            debugger;
+            // debugger;
             props.getPAGroupDetails({
               formulary_id: props.formulary_id,
               current_group_id: json.payload.id_base_pa_group_description,
@@ -592,7 +592,7 @@ function NewGroup(props: any) {
   }, [props.additionalCriteriaObject]);
 
   useEffect(() => {
-    debugger;
+    // debugger;
     //setPanelColor(editable ? '-green' : '')
     //setLatestId(props.latestVerion)
     isSetUpComplete(props.isSetUpComplete);
@@ -660,7 +660,6 @@ function NewGroup(props: any) {
         )}
       </div>
       {(formType > 0 || showHeader > 0) && (
-        
         <PAGroupHeader
           popuptitle={
             formData.pa_group_description_name

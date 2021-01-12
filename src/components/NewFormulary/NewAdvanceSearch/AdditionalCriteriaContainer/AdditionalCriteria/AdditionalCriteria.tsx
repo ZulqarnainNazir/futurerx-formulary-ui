@@ -76,49 +76,6 @@ class AdditionalCriteria extends Component<any, any> {
     deletedCache: [],
     clearCache: [],
     globalCardCountCache: 0,
-
-    criteriaMock: [
-      {
-        cardCode: 1,
-        cardName: "age",
-        isIncluded: true,
-      },
-      {
-        cardCode: 2,
-        cardName: "gender",
-        isIncluded: true,
-      },
-      {
-        cardCode: 3,
-        cardName: "icd",
-        isIncluded: true,
-      },
-      {
-        cardCode: 4,
-        cardName: "pharmacy_networks",
-        isIncluded: true,
-      },
-      {
-        cardCode: 5,
-        cardName: "prescriber_taxonomies",
-        isIncluded: true,
-      },
-      {
-        cardCode: 6,
-        cardName: "place_of_services",
-        isIncluded: true,
-      },
-      {
-        cardCode: 7,
-        cardName: "patient_residences",
-        isIncluded: true,
-      },
-      {
-        cardCode: 8,
-        cardName: "prerequisite_claims_history_lookbacks",
-        isIncluded: true,
-      },
-    ],
   };
 
   componentDidMount() {
@@ -144,7 +101,7 @@ class AdditionalCriteria extends Component<any, any> {
     let covered;
     let not_covered;
 
-    const { criteriaMock } = this.state;
+    // const { criteriaMock } = this.state;
 
     if (
       additionalCriteriaBody.covered !== {} &&
@@ -174,11 +131,11 @@ class AdditionalCriteria extends Component<any, any> {
           ///////////////////////////// AL
           if (Object.prototype.hasOwnProperty.call(covered, "age")) {
             if (
-              (covered["age"]["min_age_condition"] !== "" &&
-                covered["age"]["min_age_limit"] !== "" &&
-                covered["age"]["max_age_condition"] !== "" &&
-                covered["age"]["max_age_limit"] !== "") ||
-              Object.keys(covered["age"]).length
+              Object.keys(covered["age"]).length &&
+              (covered["age"]["min_age_condition"] !== "" ||
+                covered["age"]["min_age_limit"] !== "" ||
+                covered["age"]["max_age_condition"] !== "" ||
+                covered["age"]["max_age_limit"] !== "")
             ) {
               globalCardCount++;
               let currentNode = {
@@ -238,8 +195,9 @@ class AdditionalCriteria extends Component<any, any> {
           ///////////////////////////// ICD
           if (Object.prototype.hasOwnProperty.call(covered, "icd")) {
             if (
-              covered["icd"]["look_back_days"] !== "" ||
-              covered["icd"]["icds"].length > 0
+              Object.keys(covered["icd"]).length &&
+              (covered["icd"]["look_back_days"] !== "" ||
+                covered["icd"]["icds"].length > 0)
             ) {
               globalCardCount++;
               let currentNode = {
@@ -445,11 +403,11 @@ class AdditionalCriteria extends Component<any, any> {
           ///////////////////////////// AL
           if (Object.prototype.hasOwnProperty.call(not_covered, "age")) {
             if (
-              (not_covered["age"]["min_age_condition"] !== "" &&
-                not_covered["age"]["min_age_limit"] !== "" &&
-                not_covered["age"]["max_age_condition"] !== "" &&
-                not_covered["age"]["max_age_limit"] !== "") ||
-              Object.keys(not_covered["age"]).length
+              Object.keys(not_covered["age"]).length &&
+              (not_covered["age"]["min_age_condition"] !== "" ||
+                not_covered["age"]["min_age_limit"] !== "" ||
+                not_covered["age"]["max_age_condition"] !== "" ||
+                not_covered["age"]["max_age_limit"] !== "")
             ) {
               globalCardCount++;
               let currentNode = {
@@ -509,8 +467,9 @@ class AdditionalCriteria extends Component<any, any> {
           ///////////////////////////// ICD
           if (Object.prototype.hasOwnProperty.call(not_covered, "icd")) {
             if (
-              not_covered["icd"]["look_back_days"] !== "" ||
-              not_covered["icd"]["icds"].length > 0
+              Object.keys(not_covered["icd"]).length &&
+              (not_covered["icd"]["look_back_days"] !== "" ||
+                not_covered["icd"]["icds"].length > 0)
             ) {
               globalCardCount++;
               let currentNode = {
@@ -883,7 +842,7 @@ class AdditionalCriteria extends Component<any, any> {
       selectedCriteriaId: cardCode,
     });
 
-    const { criteriaMock } = this.state;
+    // const { criteriaMock } = this.state;
 
     let filteredList: any[] = [];
 
@@ -997,4 +956,46 @@ class AdditionalCriteria extends Component<any, any> {
   }
 }
 
+const criteriaMock = [
+  {
+    cardCode: 1,
+    cardName: "age",
+    isIncluded: true,
+  },
+  {
+    cardCode: 2,
+    cardName: "gender",
+    isIncluded: true,
+  },
+  {
+    cardCode: 3,
+    cardName: "icd",
+    isIncluded: true,
+  },
+  {
+    cardCode: 4,
+    cardName: "pharmacy_networks",
+    isIncluded: true,
+  },
+  {
+    cardCode: 5,
+    cardName: "prescriber_taxonomies",
+    isIncluded: true,
+  },
+  {
+    cardCode: 6,
+    cardName: "place_of_services",
+    isIncluded: true,
+  },
+  {
+    cardCode: 7,
+    cardName: "patient_residences",
+    isIncluded: true,
+  },
+  {
+    cardCode: 8,
+    cardName: "prerequisite_claims_history_lookbacks",
+    isIncluded: true,
+  },
+];
 export default AdditionalCriteria;

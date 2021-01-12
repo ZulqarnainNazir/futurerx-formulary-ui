@@ -98,11 +98,11 @@ class PaGroupDescriptionManagement extends React.Component<any, any> {
     let isPopUpView = this.props.isPopUpView;
     this.props.getPaGrouptDescriptionVersions(apiDetails).then((json) => {
       let tmpData = json.payload.data;
-      debugger;
+      // debugger;
       if (isPopUpView) {
-        debugger;
+        // debugger;
         tmpData = tmpData.filter((obj) => {
-          debugger;
+          // debugger;
           if (obj.is_setup_complete) {
             return obj;
           }
@@ -120,9 +120,9 @@ class PaGroupDescriptionManagement extends React.Component<any, any> {
           ? tmpData[dataLength - 1].id_pa_group_description
           : 0;
       let is_setup_complete =
-          dataLength > 0 ? tmpData[dataLength - 1].is_setup_complete : 0;
+        dataLength > 0 ? tmpData[dataLength - 1].is_setup_complete : 0;
       this.setState({
-            isSetUpComplete: is_setup_complete,
+        isSetUpComplete: is_setup_complete,
       });
       let apiDetails = {};
       apiDetails["lob_type"] = this.props.formulary_lob_id;
@@ -181,7 +181,7 @@ class PaGroupDescriptionManagement extends React.Component<any, any> {
   };
 
   componentDidMount() {
-    debugger;
+    // debugger;
     let apiDetails = {};
     apiDetails["lob_type"] = this.props.formulary_lob_id;
     apiDetails["pathParams"] =

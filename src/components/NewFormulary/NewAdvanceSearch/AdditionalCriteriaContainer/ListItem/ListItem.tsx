@@ -181,14 +181,13 @@ class ListItem extends Component<any, any> {
     switch (cardCode) {
       case 1:
         let { alSettings } = this.state;
-        if (payload !== null) {
+        if (payload !== null && Object.keys(payload).length) {
           alSettings = { ...payload };
         }
         const alSettingsStatus = {
           type: isIncluded ? COVERED : NOT_COVERED,
           covered: isIncluded,
         };
-
         this.setState({
           alSettings,
           alSettingsStatus,
@@ -561,6 +560,17 @@ class ListItem extends Component<any, any> {
     this.props.getICDSearch(apiDetails).then((json) => {
       let response = json.payload && json.payload.data ? json.payload.data : [];
       const data = [...response].slice(0, 8);
+
+      // ADDED to set state with newData instead of data . Also added value in icdResultsobject state
+      // const newData = [...this.state.pnResults.data, ...data].filter(
+      //   (item: any, index, self) => {
+      //     return self.findIndex((val: any) => val.key === item.key) === index;
+      //   }
+      // );
+
+      // const newValue = newData.map((d) => d.value);
+      // console.log("newData", newData, newValue);
+
       this.setState({
         icdResults: {
           data,
@@ -588,6 +598,15 @@ class ListItem extends Component<any, any> {
     let pnSettings: any[] = [...this.state.pnSettings];
 
     // let pns: any[] = [];
+    // const pnResults = { ...this.state.pnResults };
+    // const pnResultsData = [...pnResults.data];
+    // pnResultsData.forEach((pn: any) => {
+    //   value.forEach((v) => {
+    //     if (pn["value"] === v) {
+    //       pnSettings.push(pn);
+    //     }
+    //   });
+    // });
     this.state.pnResults.data.forEach((pn: any) => {
       value.forEach((v) => {
         if (pn["key"] === v) {
@@ -596,6 +615,7 @@ class ListItem extends Component<any, any> {
       });
     });
 
+    // console.log("modified pn results", pnResultsData, pnSettings);
     const payload: any = { ...pnSettings };
     this.setState({
       pnSettings,
@@ -614,9 +634,24 @@ class ListItem extends Component<any, any> {
     this.props.getPNSearch(apiDetails).then((json) => {
       let response = json.payload && json.payload.data ? json.payload.data : [];
       const data = [...response].slice(0, 8);
+
+      // console.log("after search ", [...this.state.pnResults.data, ...data]);
+
+      // // ADDED to set state with newData instead of data . Also added value in pnResults state
+      // const newData = [...this.state.pnResults.data, ...data].filter(
+      //   (item: any, index, self) => {
+      //     return self.findIndex((val: any) => val.key === item.key) === index;
+      //   }
+      // );
+
+      // const newValue = newData.map((d) => d.value);
+      // console.log("newData", newData, newValue);
+
       this.setState({
         pnResults: {
           data,
+          // data: newData,
+          // value: newValue,
         },
       });
     });
