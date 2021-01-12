@@ -1,6 +1,7 @@
 import { GDMSaveResponse } from "./gdmSlice";
 import { BASE_URL1 } from "../../../../api/http-helper";
 import axios from "axios";
+import * as commonConstants from "../../../../api/http-commons";
 
 const POSt_ST_GROUP_DESCRIPTION_URL = BASE_URL1 + "api/1/mcr-st-group-description/1";
 const PUT_ST_GROUP_DESCRIPTION_URL = BASE_URL1 + "api/1/mcr-st-group-description";
@@ -15,12 +16,6 @@ const DELETE_ST_COMM_GROUP_DESCRIPTION_URL = BASE_URL1 + "api/1/st-group-descrip
 const CLONE_ST_COMM_GROUP_DESCRIPTION_URL = BASE_URL1 + "api/1/clone-st-group-description/";
 const ARCHIVE_ST_COMM_GROUP_DESCRIPTION_URL = BASE_URL1 + "api/1/archive-st-group-description/";
 const NEWVERSION_ST_COMM_GROUP_DESCRIPTION_URL = BASE_URL1 + "api/1/st-group-description-version/";
-
-const headers = {
-  Authorization: "Bearer 1e05ff8b-a0af-4a8f-8915-487321900f21",
-  Accept: "application/json",
-  "Content-Type": "application/json;charset=UTF-8",
-};
 
 export async function saveStGroup(apiDetails: any): Promise<GDMSaveResponse> {
     //let url = `${BASE_URL1}api/1/mcr-st-group-description/1/${payload.formularyId}?entity_id=0`;
@@ -42,7 +37,7 @@ export async function saveStGroup(apiDetails: any): Promise<GDMSaveResponse> {
 
     try {
       const response = await axios.post(POST_URL, messageBody, {
-        headers: headers,
+        headers: commonConstants.REQUEST_HEADER,
       });
       return {
         success: response
@@ -73,7 +68,7 @@ export async function editStGroup(apiDetails: any): Promise<GDMSaveResponse> {
     //let url = `${BASE_URL1}api/1/mcr-st-group-description/${payload.latestId}/${payload.formularyId}?entity_id=0`;
     try {
       const response = await axios.put(POST_URL, messageBody, {
-        headers: headers,
+        headers: commonConstants.REQUEST_HEADER,
       });
       return {
         success: response
@@ -103,7 +98,7 @@ export async function deleteStGroup(payload: any): Promise<GDMSaveResponse> {
 
   try {
     const response = await axios.delete(POST_URL,{
-      headers: headers
+      headers: commonConstants.REQUEST_HEADER
     });
     return {
       success: response
@@ -131,7 +126,7 @@ export async function cloneStGroup(payload: any): Promise<GDMSaveResponse> {
   }
   try {
     const response = await axios.post(POST_URL,{'st_group_description_name':payload.st_group_description_name},{
-      headers: headers
+      headers: commonConstants.REQUEST_HEADER
     });
     return {
       success: response
@@ -160,7 +155,7 @@ export async function archiveStGroup(payload: any): Promise<GDMSaveResponse> {
   }
   try {
     const response = await axios.post(POST_URL,{},{
-      headers: headers
+      headers: commonConstants.REQUEST_HEADER
     });
     return {
       success: response
@@ -190,7 +185,7 @@ export async function newVersionStGroup(payload: any): Promise<GDMSaveResponse> 
 
   try {
     const response = await axios.post(POST_URL,{},{
-      headers: headers
+      headers: commonConstants.REQUEST_HEADER
     });
     return {
       success: response

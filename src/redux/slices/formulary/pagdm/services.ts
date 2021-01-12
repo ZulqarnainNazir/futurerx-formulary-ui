@@ -1,12 +1,13 @@
 import { PAGDMSaveResponse } from "./pagdmSlice";
 import { BASE_URL1 } from "../../../../api/http-helper";
 import axios from "axios";
+import * as commonConstants from "../../../../api/http-commons";
 
-const headers = {
-  Authorization: "Bearer 3580657f-d85d-42a5-8187-542ea824c5f4",
-  Accept: "application/json",
-  "Content-Type": "application/json;charset=UTF-8",
-};
+// const headers = {
+//   Authorization: "Bearer 3580657f-d85d-42a5-8187-542ea824c5f4",
+//   Accept: "application/json",
+//   "Content-Type": "application/json;charset=UTF-8",
+// };
 
 export async function savePaGroup(payload: any): Promise<PAGDMSaveResponse> {
   if (payload.latestId === 0) {
@@ -18,7 +19,7 @@ export async function savePaGroup(payload: any): Promise<PAGDMSaveResponse> {
     }
     try {
       const response = await axios.post(url, payload, {
-        headers: headers,
+        headers: commonConstants.REQUEST_HEADER,
       });
       return {
         success: response,
@@ -36,7 +37,7 @@ export async function savePaGroup(payload: any): Promise<PAGDMSaveResponse> {
     }
     try {
       const response = await axios.put(url, payload, {
-        headers: headers,
+        headers: commonConstants.REQUEST_HEADER,
       });
       return {
         success: response,
@@ -57,7 +58,7 @@ export async function deletePaGroup(payload: any): Promise<PAGDMSaveResponse> {
   }
   try {
     const response = await axios.delete(url, {
-      headers: headers,
+      headers: commonConstants.REQUEST_HEADER,
     });
     return {
       success: response,
@@ -78,7 +79,7 @@ export async function clonePaGroup(payload: any): Promise<PAGDMSaveResponse> {
 
   try {
     const response = await axios.post(url, payload, {
-      headers: headers,
+      headers: commonConstants.REQUEST_HEADER,
     });
     return {
       success: response,
@@ -102,7 +103,7 @@ export async function archivePaGroup(payload: any): Promise<PAGDMSaveResponse> {
       url,
       {},
       {
-        headers: headers,
+        headers: commonConstants.REQUEST_HEADER,
       }
     );
     return {
@@ -128,7 +129,7 @@ export async function newVersionPaGroup(
       url,
       {},
       {
-        headers: headers,
+        headers: commonConstants.REQUEST_HEADER,
       }
     );
     return {
