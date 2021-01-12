@@ -753,8 +753,6 @@ class FormularySetUp extends React.Component<any, any> {
     this.props.setLocation(1);
   }
 
-  // handleCloneMethodPopup;
-
   render() {
     return (
       <div>
@@ -841,13 +839,13 @@ class FormularySetUp extends React.Component<any, any> {
                 />
               </Box>
 
-              {/* <Box
+              <Box
                 display="flex"
                 justifyContent="flex-end"
                 className="save-and-continue-btn"
               >
                 <Button className="tempBtn" label=">" onClick={() => this.overrideNave()} />
-              </Box> */}
+              </Box>
             </div>
           </>
         ) : (
@@ -860,27 +858,7 @@ class FormularySetUp extends React.Component<any, any> {
   }
 }
 
-var throt_fun = throttle(
-  function (message, messageType) {
-    //console.log(">>>>>>>>...");
-    //showMessage(message, messageType);
-    // postMessage({ message: message, type: messageType });
-  },
-  800,
-  { leading: true, trailing: false }
-);
-
 const mapStateToProps = (state) => {
-  //  console.log("SP  -  -  -  -  -  -  -  -  -  -  -  - STATE");
-  //  console.log(state?.setup?.messageType +" - "+ state?.setup?.message  );
-  if (state?.setup?.messageType !== "" && state?.setup?.message !== "") {
-    // console.log(">>>>>>>>>>> # " + state?.setup?.messageType +" | "+state?.setup?.message);
-    // showMessage(state?.setup?.message, state?.setup?.messageType);
-    // console.log("--------");
-    // throt_fun(state?.setup?.message, state?.setup?.messageType);
-    //postMessage({ message: state?.setup?.message, type: state?.setup?.messageType });
-
-  }
   return {
     mode: state?.application?.mode,
     formulary_id: state?.application?.formulary_id,
