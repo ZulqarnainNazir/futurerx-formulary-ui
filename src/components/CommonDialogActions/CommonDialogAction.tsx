@@ -13,7 +13,7 @@ import { ReactComponent as ExportIcon } from "../../assets/icons/exporticon.svg"
 import { ReactComponent as BazariconIcon } from "../../assets/icons/bazaricon.svg";
 import { ReactComponent as SearchcIcon } from "../../assets/icons/searchicon.svg";
 import { ReactComponent as ProfileIcon } from "../../assets/icons/profileicon.svg";
-import WorkFlow from "./components/WorkFlow";
+import WorkFlowDialog from "./components/Workflow-Dialog/WorkFlow-Dialog";
 import Audit from "./components/Audit";
 import Notification from "./components/Notification";
 import Note from "./components/Note";
@@ -26,15 +26,16 @@ import Search from "./components/Search";
 import Profile from "./components/Profile";
 
 export default class CommonDialogAction extends React.Component<any, any> {
-  state = {
-    show: false,
-    popUpName: "",
-    title: "",
-    popUpInd: false,
-    postiveBtn: "",
-    negativeBtn: "",
-    isHandleActions: false,
-  };
+    state = {
+        show:false,
+        popUpName:"",
+        title:"",
+        popUpInd:false,
+        postiveBtn:"",
+        negativeBtn:"",
+        dialogClassName:"common-dialog-action",
+        isHandleActions:false
+    }
 
   processCloseActions = () => {
     this.setState({ show: true });
@@ -61,24 +62,36 @@ export default class CommonDialogAction extends React.Component<any, any> {
         isHandleActions: true,
         postiveBtn: "Save",
         negativeBtn: "Cancel",
+        dialogClassName:"common-dialog-action"
       });
     } else if (dialogIdentifier === "qa") {
       this.setState({
         isHandleActions: true,
         postiveBtn: "Ask a Question",
         negativeBtn: "",
+        dialogClassName:"common-dialog-action"
       });
     } else if (dialogIdentifier === "search") {
       this.setState({
         isHandleActions: true,
         postiveBtn: "Search",
         negativeBtn: "",
+        dialogClassName:"common-dialog-action"
       });
-    } else {
+    } 
+    else if(dialogIdentifier === "workflow"){
+      this.setState({
+        isHandleActions:false, 
+        postiveBtn:"", 
+        negativeBtn:"", 
+        dialogClassName:"common-workflow-dialog-action"})            
+    }
+    else {
       this.setState({
         isHandleActions: false,
         postiveBtn: "",
         negativeBtn: "",
+        dialogClassName:"common-workflow-dialog-action"
       });
     }
   };
@@ -91,7 +104,7 @@ export default class CommonDialogAction extends React.Component<any, any> {
             <div className="icons-list">
               <WorkFlowIcon
                 className="marginRight"
-                onClick={(e) => this.handleIconClick("workflow", "")}
+                onClick={(e) => this.handleIconClick("workflow","Task Name")}
               />
               <AuditIcon
                 className="marginRight"
@@ -160,7 +173,7 @@ export default class CommonDialogAction extends React.Component<any, any> {
             popupMaxWidth={"lg"}
           >
             {this.state.popUpName === "workflow" ? (
-              <WorkFlow />
+              <WorkFlowDialog />
             ) : this.state.popUpName === "audit" ? (
               <Audit />
             ) : this.state.popUpName === "notification" ? (
