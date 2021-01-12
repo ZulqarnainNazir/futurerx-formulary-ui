@@ -13,7 +13,7 @@ import { ReactComponent as ExportIcon } from "../../assets/icons/exporticon.svg"
 import { ReactComponent as BazariconIcon } from "../../assets/icons/bazaricon.svg";
 import { ReactComponent as SearchcIcon } from "../../assets/icons/searchicon.svg";
 import { ReactComponent as ProfileIcon } from "../../assets/icons/profileicon.svg";
-import WorkFlow from "./components/WorkFlow";
+import WorkFlowDialog from "./components/Workflow-Dialog/WorkFlow-Dialog";
 import Audit from "./components/Audit";
 import Notification from "./components/Notification";
 import Note from "./components/Note";
@@ -33,6 +33,7 @@ export default class CommonDialogAction extends React.Component<any, any> {
         popUpInd:false,
         postiveBtn:"",
         negativeBtn:"",
+        dialogClassName:"common-dialog-action",
         isHandleActions:false
     }
 
@@ -48,16 +49,19 @@ export default class CommonDialogAction extends React.Component<any, any> {
     handleIconClick = (dialogIdentifier, title) => {
         this.setState({ popUpInd: true, title: title, popUpName: dialogIdentifier });
         if(dialogIdentifier === "help" || dialogIdentifier === "import" || dialogIdentifier === "export" || dialogIdentifier === "bazar" ){
-            this.setState({isHandleActions:true, postiveBtn:"Save", negativeBtn:"Cancel"})
+            this.setState({isHandleActions:true, postiveBtn:"Save", negativeBtn:"Cancel", dialogClassName:"common-dialog-action"})
         }
         else if(dialogIdentifier === "qa"){
-            this.setState({isHandleActions:true, postiveBtn:"Ask a Question", negativeBtn:""})
+            this.setState({isHandleActions:true, postiveBtn:"Ask a Question", negativeBtn:"", dialogClassName:"common-dialog-action"})
         }
         else if(dialogIdentifier === "search"){
-            this.setState({isHandleActions:true, postiveBtn:"Search", negativeBtn:""})
+            this.setState({isHandleActions:true, postiveBtn:"Search", negativeBtn:"", dialogClassName:"common-dialog-action"})
+        }
+        else if(dialogIdentifier === "workflow"){
+            this.setState({isHandleActions:false, postiveBtn:"", negativeBtn:"", dialogClassName:"common-workflow-dialog-action"})            
         }
         else{
-            this.setState({isHandleActions:false, postiveBtn:"", negativeBtn:""})
+            this.setState({isHandleActions:false, postiveBtn:"", negativeBtn:"", dialogClassName:"common-dialog-action"})
         }
     }
   render() {
@@ -68,7 +72,7 @@ export default class CommonDialogAction extends React.Component<any, any> {
             <Grid item xs={5}>
                 <div className="icon-list-wrapper">
                     <div className="icons-list">
-                    <WorkFlowIcon className="marginRight" onClick={(e) => this.handleIconClick("workflow","")} />
+                    <WorkFlowIcon className="marginRight" onClick={(e) => this.handleIconClick("workflow","Task Name")} />
                     <AuditIcon className="marginRight" onClick={(e) => this.handleIconClick("audit","MEMBER AUDITS")} />
                     <NotificationiconIcon className="marginRight" onClick={(e) => this.handleIconClick("notification", "MEMBER ALERTS")} />
                     <NoteIcon className="marginRight" onClick={(e) => this.handleIconClick("note", "MEMBER NOTES")} />
@@ -82,7 +86,7 @@ export default class CommonDialogAction extends React.Component<any, any> {
                     </div>
                 </div>
                 <DialogPopup
-                  className="common-dialog-action"
+                  className={this.state.dialogClassName}
                   showCloseIcon={true}
                   positiveActionText={this.state.postiveBtn}
                   negativeActionText={this.state.negativeBtn}
@@ -98,7 +102,7 @@ export default class CommonDialogAction extends React.Component<any, any> {
                   popupMaxWidth={"lg"}
                 >
                     {this.state.popUpName === "workflow" ?
-                        <WorkFlow /> :
+                        <WorkFlowDialog /> :
                     this.state.popUpName === "audit" ?
                         <Audit /> :
                     this.state.popUpName === "notification" ?
