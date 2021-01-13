@@ -145,8 +145,8 @@ export default class CommonDialogAction extends React.Component<any, any> {
               /> */}
               <SearchcIcon
                 className="marginRight"
-                onClick={(e) =>
-                  this.handleIconClick("search", "Advance Search")
+                onClick={
+                  this.props.handleAdvanceSearchPopUp
                 }
               />
               {/* <ProfileIcon

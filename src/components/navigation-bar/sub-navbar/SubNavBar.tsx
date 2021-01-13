@@ -153,7 +153,7 @@ class SubNavBar extends Component<Props, State> {
                     fill="white"
                   />
                 </svg> */}
-                <CommonDialogAction />
+                <CommonDialogAction handleAdvanceSearchPopUp={this.handleAdvanceSearchPopUp} />
               </Grid>
             </Grid>
           </Toolbar>
