@@ -251,7 +251,7 @@ function NewGroup(props: any) {
   const [additionalCriteria, setAdditionalCriteria] = useState(null);
 
   const handleChange = (e) => {
-    
+
     let tmp_value = e.target.value;
     if (e.target.value == "true") {
       tmp_value = true;
@@ -262,8 +262,8 @@ function NewGroup(props: any) {
       e.target.value === "yes" || e.target.value === "true"
         ? true
         : e.target.value === "no" || e.target.value === "false"
-        ? false
-        : e.target.value;
+          ? false
+          : e.target.value;
     updateFormData({
       ...formData,
       [e.target.name]: formVal,
@@ -304,7 +304,7 @@ function NewGroup(props: any) {
         return;
       }
       if (msg.length > 0) {
-        
+
         setErrorClass("invalid");
         return;
       }
@@ -327,7 +327,7 @@ function NewGroup(props: any) {
         return;
       }
     }
-    
+
     //requestData['keyVals'] = [{ key: 'index', value: 0 }, { key: 'limit', value: 10 }, { key: 'entity_id', value: 1262 }];
     formData["is_validation_required"] = is_validation;
     requestData["lob_type"] = props.formulary_lob_id;
@@ -443,7 +443,7 @@ function NewGroup(props: any) {
           "/" +
           props?.formulary_id +
           "?entity_id=0";
-        let id_pa_group_description = props.savePaGdm.current_group_des_id; 
+        let id_pa_group_description = props.savePaGdm.current_group_des_id;
 
         props.putPAGroupDescription(requestData).then((json) => {
           if (json.payload && json.payload.code === "200") {
@@ -462,18 +462,19 @@ function NewGroup(props: any) {
             apiDetails["pathParams"] = "/" + id_base_pa_group_description;
 
             props.getPaGrouptDescriptionVersions(apiDetails).then((json) => {
-              
-              const isEditable =
-                json.payload.data.length > 0 &&
-                json.payload.data.find(
-                  (val) =>
-                    val.id_pa_group_description === id_pa_group_description
-                );
-              // props.selectGroup(
-              //   id_base_pa_group_description,
-              //   isEditable.is_setup_complete
-              // );
-              isSetUpComplete(isEditable.is_setup_complete);
+              if (json.payload && json.payload.code === "200") {
+                const isEditable =
+                  json.payload.data.length > 0 &&
+                  json.payload.data.find(
+                    (val) =>
+                      val.id_pa_group_description === id_pa_group_description
+                  );
+                // props.selectGroup(
+                //   id_base_pa_group_description,
+                //   isEditable.is_setup_complete
+                // );
+                isSetUpComplete(isEditable.is_setup_complete);
+              }
             });
           } else if (json?.payload?.status && json?.payload?.status != 200) {
             isSetUpComplete(false);
@@ -486,7 +487,7 @@ function NewGroup(props: any) {
       } else {
         requestData["pathParams"] = "/" + props?.formulary_id + "?entity_id=0";
         props.postPAGroupDescription(requestData).then((json) => {
-          
+
           if (json.payload && json.payload.code === "200") {
             showMessage("Success", "success");
             let apiDetails = {};
@@ -497,7 +498,7 @@ function NewGroup(props: any) {
             //props.formType=1;
             setFormType(1);
 
-            
+
             props.getPAGroupDetails({
               formulary_id: props.formulary_id,
               current_group_id: json.payload.id_base_pa_group_description,
@@ -513,18 +514,20 @@ function NewGroup(props: any) {
             let id_base_pa_group_description =
               json.payload.id_base_pa_group_description;
             props.getPaGrouptDescriptionVersions(apiDetails).then((json) => {
-              const isEditable =
-                json.payload.data.length > 0 &&
-                json.payload.data.find(
-                  (val) =>
-                    val.id_pa_group_description ===
-                    formData["id_pa_group_description"]
+              if (json.payload && json.payload.code === "200") {
+                const isEditable =
+                  json.payload.data.length > 0 &&
+                  json.payload.data.find(
+                    (val) =>
+                      val.id_pa_group_description ===
+                      formData["id_pa_group_description"]
+                  );
+                props.selectGroup(
+                  id_base_pa_group_description,
+                  isEditable.is_setup_complete
                 );
-              props.selectGroup(
-                id_base_pa_group_description,
-                isEditable.is_setup_complete
-              );
-              isSetUpComplete(isEditable.is_setup_complete);
+                isSetUpComplete(isEditable.is_setup_complete);
+              }
             });
           } else if (json.payload && json.payload.code != 200) {
             isSetUpComplete(false);
@@ -572,7 +575,7 @@ function NewGroup(props: any) {
   };
 
   const openAdditionalCriteria = () => {
-    
+
     toggleAdditionalCriteriaOpen(true);
   };
   const closeAddiionalCriteria = () => toggleAdditionalCriteriaOpen(false);
@@ -586,13 +589,13 @@ function NewGroup(props: any) {
   }, [props.formType]);
 
   useEffect(() => {
-    
-    
+
+
     setAdditionalCriteria(props.additionalCriteriaObject);
   }, [props.additionalCriteriaObject]);
 
   useEffect(() => {
-    
+
     //setPanelColor(editable ? '-green' : '')
     //setLatestId(props.latestVerion)
     isSetUpComplete(props.isSetUpComplete);
@@ -621,13 +624,13 @@ function NewGroup(props: any) {
     setErrorClass("");
   }, [
     props.PaGDData ||
-      props.versionList ||
-      props.activeTabIndex ||
-      props.editMode,
+    props.versionList ||
+    props.activeTabIndex ||
+    props.editMode,
   ]);
 
   const getAutoCompleteChangeHandler = (val) => {
-    
+
     setDrug_list_ids(val);
   };
   return (
@@ -640,7 +643,7 @@ function NewGroup(props: any) {
       <div className="panel header">
         <span>
           {(formType > 0 || showHeader > 0) &&
-          formData.pa_group_description_name
+            formData.pa_group_description_name
             ? formData.pa_group_description_name
             : props.title}
         </span>
@@ -660,7 +663,7 @@ function NewGroup(props: any) {
         )}
       </div>
       {(formType > 0 || showHeader > 0) && (
-        
+
         <PAGroupHeader
           popuptitle={
             formData.pa_group_description_name
@@ -1164,7 +1167,7 @@ function NewGroup(props: any) {
           {props.isPopUpView && (
             <AdditionalCriteriaContainer
               criteriaList={getAdditionalCriteriaSectionList()}
-              handleChildDataSave={() => {}}
+              handleChildDataSave={() => { }}
               isReadOnly={props.isPopUpView}
             />
           )}

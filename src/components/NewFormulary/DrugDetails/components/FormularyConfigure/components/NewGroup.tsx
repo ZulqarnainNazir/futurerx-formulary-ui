@@ -328,10 +328,10 @@ function NewGroup(props: any) {
             : props.saveGdm.current_group_id;
           apiDetails["pathParams"] = "/" + id_base_st_group_description;
           props.getStGrouptDescriptionVersions(apiDetails).then((json) => {
-            debugger;
+            
             const isEditable =
-              json.payload.data.length > 0 &&
-              json.payload.data.find(
+              json?.payload?.data?.length > 0 &&
+              json?.payload?.data?.find(
                 (val) => val.id_st_group_description === id_st_group_description
               );
             // props.selectGroup(
@@ -387,8 +387,8 @@ function NewGroup(props: any) {
             json.payload.success.data.id_base_st_group_description;
           props.getStGrouptDescriptionVersions(apiDetails).then((json) => {
             const isEditable =
-              json.payload.data.length > 0 &&
-              json.payload.data.find(
+              json?.payload?.data?.length > 0 &&
+              json?.payload?.data.find(
                 (val) =>
                   val.id_st_group_description ===
                   formData["id_st_group_description"]
