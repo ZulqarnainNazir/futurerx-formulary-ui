@@ -18,6 +18,7 @@ import DialogPopup from "../../../../../shared/FrxDialogPopup/FrxDialogPopup";
 import FormControl from "@material-ui/core/FormControl";
 import FormLabel from "@material-ui/core/FormLabel";
 import CloneFormularyPopup from "../../FormularySetUp/components/CloneFormularyPopup";
+import SelectFormularyPopup from "../../FormularySetUp/components/SelectFormularyPopup";
 import UploadFiles from "./UploadFiles";
 
 const mapStateToProps = state => {
@@ -505,7 +506,7 @@ class GeneralInformation extends React.Component<any, GeneralInformationState> {
             </Grid>
             <Grid item xs={4}>
               {/* Commercial shouldn't have this but condition changed to help dev */}
-              {this.props.generalInfo.type === "Commercial" ? (
+              {this.props.generalInfo.type !== "Commercial" ? (
                 <div className="group">
                   <label>
                     Which prior year's formulary does this most closely
@@ -704,7 +705,7 @@ class GeneralInformation extends React.Component<any, GeneralInformationState> {
                   height="80%"
                   width="90%"
                 >
-                  <CloneFormularyPopup
+                  <SelectFormularyPopup
                     type="commercial" // type will be dynamic based on the LOB
                     lobID="4" // id should be populated
                     selectFormularyClick={r => {
