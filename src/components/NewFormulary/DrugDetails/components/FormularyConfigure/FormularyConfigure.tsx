@@ -13,11 +13,11 @@ import { setAdvancedSearch } from "../../../../../redux/slices/formulary/advance
 
 const tabs = [
   { id: 1, text: "ASSEMBLY" },
-  { id: 2, text: "TIER" },
-  { id: 3, text: "CATEGORY/CLASS" },
-  { id: 4, text: "PA" },
-  { id: 5, text: "ST" },
-  { id: 6, text: "QL" },
+  { id: 2, text: "TIER",tooltip:"Tier" },
+  { id: 3, text: "CATEGORY/CLASS", tooltip:"Category/Class" },
+  { id: 4, text: "PA", tooltip:"Prior Authorization"},
+  { id: 5, text: "ST", tooltip:"Step Therapy"},
+  { id: 6, text: "QL", tooltip:"Quantity Limit"},
   { id: 7, text: "OTHER UM EDITS" },
 ];
 

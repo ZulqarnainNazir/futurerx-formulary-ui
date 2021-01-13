@@ -389,7 +389,9 @@ class PaReplace extends React.Component<any, any> {
     }
   };
 
+
   dropDownSelectHandlerGroupDescription = (tmp_value, event) => {
+
     // let tmp_index = event.key;
     // let tmp_value = event.value;
     this.setState({ selectedGroupDescription: tmp_value });
@@ -401,54 +403,60 @@ class PaReplace extends React.Component<any, any> {
       (obj) => obj[this.state.groupDescriptionProp] == tmp_value
     )[0];
     this.setState({
-      selectedGroupDescriptionObj: selected,
+      selectedGroupDescriptionObj: selected
     });
     this.props.getPaGrouptDescriptionVersions(apiDetails).then((json) => {
-      let data = json.payload.data;
-      let ftype = "";
-      switch (this.props.formulary_lob_id) {
-        case 1:
-          ftype = data[0].file_type;
-          break;
-        case 4:
-          ftype = "COMM";
-          break;
-        default:
-          break;
-      }
-      let latestVersionId = -1;
-      data.forEach((element) => {
-        if (element.id_pa_group_description > latestVersionId) {
-          latestVersionId = element.id_pa_group_description;
+      if (json?.payload && json?.payload?.data?.length > 0) {
+        let data = json.payload.data;
+        let ftype = "";
+        switch (this.props.formulary_lob_id) {
+          case 1:
+            ftype = data[0].file_type;
+            break;
+          case 4:
+            ftype = "COMM";
+            break;
+          default:
+            break;
         }
-      });
-      let tmp_additionalCriteria = false;
-      this.props
-        .getPaGrouptDescription({
-          lob_type: this.props.formulary_lob_id,
-          pathParams: "/" + latestVersionId,
-        })
-        .then((json) => {
-          this.props.setAdditionalCriteria([]);
-          if (json.payload && json.payload.code === "200") {
-            if (
-              json.payload.data["um_criteria"] != null &&
-              json.payload.data["um_criteria"].length > 0
-            ) {
-              let payload: any = {};
-              payload.additionalCriteriaBody = json.payload.data["um_criteria"];
-              this.props.setAdditionalCriteria(payload);
-              tmp_additionalCriteria = true;
-            }
+        let latestVersionId = -1;
+        data.forEach((element) => {
+          if (element.id_pa_group_description > latestVersionId) {
+            latestVersionId = element.id_pa_group_description;
           }
-          this.setState({
-            is_additional_criteria_defined: tmp_additionalCriteria,
-          });
         });
-      this.setState({
-        selectedLastestedVersion: latestVersionId,
-        fileType: ftype,
-      });
+        let tmp_additionalCriteria = false;
+        let tmp_selectedPaType=null;
+        this.props
+          .getPaGrouptDescription({
+            lob_type: this.props.formulary_lob_id,
+            pathParams: "/" + latestVersionId,
+          })
+          .then((json) => {
+
+            this.props.setAdditionalCriteria([]);
+            if (json.payload && json.payload.code === "200") {
+              if (
+                json.payload.data["um_criteria"] != null &&
+                json.payload.data["um_criteria"].length > 0
+              ) {
+                let payload: any = {};
+                payload.additionalCriteriaBody = json.payload.data["um_criteria"];
+                this.props.setAdditionalCriteria(payload);
+                tmp_additionalCriteria = true;
+              }
+              tmp_selectedPaType=json?.payload?.data?.id_pa_type;
+            }
+            this.setState({
+              is_additional_criteria_defined: tmp_additionalCriteria,
+              selectedPaType: tmp_selectedPaType
+            });
+          });
+        this.setState({
+          selectedLastestedVersion: latestVersionId,
+          fileType: ftype,
+        });
+      }
     });
     this.setState({
       tierGridContainer: false,
@@ -636,8 +644,8 @@ class PaReplace extends React.Component<any, any> {
           gridItem["id"] = count;
           gridItem["key"] = count;
 
-          if (
-            selected &&
+
+          if (selected &&
             selected["pa_group_description_name"] ===
               element.pa_group_description
           ) {
@@ -717,17 +725,19 @@ class PaReplace extends React.Component<any, any> {
     apiDetails_1["pathParams"] = "/" + this.props?.client_id;
 
     this.props.getPaGrouptDescriptions(apiDetails_1).then((json: any) => {
-      let result = json.payload.data.filter(
-        (obj) => !obj.is_archived && obj.is_setup_complete
-      );
-      this.setState({
-        paGroupDescriptions: result,
-      });
+      if (json?.payload && json?.payload?.data?.length > 0) {
+        let result = json.payload.data.filter(
+          (obj) => !obj.is_archived && obj.is_setup_complete
+        );
+        this.setState({
+          paGroupDescriptions: result,
+        });
+      }
     });
 
     this.props.getPaSummary(this.props?.formulary_id).then((json) => {
       this.setState({
-        paTypes: json.payload.result,
+        paTypes: json?.payload?.result,
       });
     });
 
@@ -737,7 +747,7 @@ class PaReplace extends React.Component<any, any> {
     };
     this.props.getLobFormularies(apiDetails).then((json) => {
       this.setState({
-        lobFormularies: json.payload.result,
+        lobFormularies: json?.payload?.result,
       });
     });
 
@@ -846,7 +856,7 @@ class PaReplace extends React.Component<any, any> {
       isGridSingleSorted: false,
       gridMultiSortedInfo: multiSortedInfo,
       gridSingleSortInfo: null,
-    });
+    })
 
     if (sorter && sorter.length > 0) {
       let uniqueKeys = Array();
@@ -916,26 +926,12 @@ class PaReplace extends React.Component<any, any> {
               /> */}
               <div className="input-element">
                 <div className="bordered pointer bg-green">
-                  <span
-                    onClick={(e) => {
-                      this.setState({ showPaGroupDescription: true });
-                    }}
-                    className="inner-font"
-                  >
-                    {this.state.selectedGroupDescriptionObj[
-                      "pa_group_description_name"
-                    ]
-                      ? this.state.selectedGroupDescriptionObj[
-                          "pa_group_description_name"
-                        ]
+                  <span onClick={(e) => { this.setState({ showPaGroupDescription: true }); }} className="inner-font">
+                    {this.state.selectedGroupDescriptionObj["pa_group_description_name"]
+                      ? this.state.selectedGroupDescriptionObj["pa_group_description_name"]
                       : "Select Group Description"}
                   </span>
-                  <EditIcon
-                    onClick={(e) => {
-                      this.setState({ showPaGroupDescription: true });
-                    }}
-                    className={"hide-edit-icon"}
-                  />
+                  <EditIcon onClick={(e) => { this.setState({ showPaGroupDescription: true }); }} className={"hide-edit-icon"} />
                 </div>
               </div>
             </Col>
@@ -1023,8 +1019,8 @@ class PaReplace extends React.Component<any, any> {
                 </div>
               </Col>
             ) : (
-              <Col lg={8}></Col>
-            )}
+                <Col lg={8}></Col>
+              )}
             <Col lg={4}></Col>
             <Col lg={8}>
               <label>
@@ -1122,7 +1118,7 @@ class PaReplace extends React.Component<any, any> {
                   isPinningEnabled={false}
                   enableSearch={false}
                   enableColumnDrag
-                  onSearch={() => {}}
+                  onSearch={() => { }}
                   fixedColumnKeys={[]}
                   pagintionPosition="topRight"
                   gridName="DRUG GRID"
@@ -1150,12 +1146,12 @@ class PaReplace extends React.Component<any, any> {
                   isMultiSorted={this.state.isGridMultiSorted}
                   multiSortedInfo={this.state.gridMultiSortedInfo}
                   onMultiSortToggle={this.onMultiSortToggle}
-                  // rowSelection={{
-                  //   columnWidth: 50,
-                  //   fixed: true,
-                  //   type: "checkbox",
-                  //   onChange: this.onSelectedTableRowChanged,
-                  // }}
+                // rowSelection={{
+                //   columnWidth: 50,
+                //   fixed: true,
+                //   type: "checkbox",
+                //   onChange: this.onSelectedTableRowChanged,
+                // }}
                 />
               </div>
             </div>
@@ -1179,7 +1175,7 @@ class PaReplace extends React.Component<any, any> {
                 selectFormulary: !this.state.selectFormulary,
               });
             }}
-            handleAction={() => {}}
+            handleAction={() => { }}
             open={this.state.selectFormulary}
             showActions={false}
             className=""
@@ -1204,7 +1200,7 @@ class PaReplace extends React.Component<any, any> {
                 showPaGroupDescription: !this.state.showPaGroupDescription,
               });
             }}
-            handleAction={() => {}}
+            handleAction={() => { }}
             open={this.state.showPaGroupDescription}
             showActions={false}
             className=""
