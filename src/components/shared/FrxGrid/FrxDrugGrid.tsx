@@ -2351,12 +2351,14 @@ class FrxDrugGrid extends Component<
         console.log("property ", property, a[property], b[property]);
         // a should come before b in the sorted order
         if (
+					a[property] &&  b[property] && 
           a[property].toString().toLowerCase() <
           b[property].toString().toLowerCase()
         ) {
           return -1 * sort_order;
           // a should come after b in the sorted order
         } else if (
+					a[property] &&  b[property] && 
           a[property].toString().toLowerCase() >
           b[property].toString().toLowerCase()
         ) {
@@ -2369,27 +2371,33 @@ class FrxDrugGrid extends Component<
     } else if (type === "date") {
       return function(a, b) {
         // a should come before b in the sorted order
+				if(	a[property] &&  b[property] ){
+					let d1 = moment(a[property]);
+					let d2 = moment(b[property]);
+			
+	
+					if (d1.isBefore(d2, "day")) {
+						return -1 * sort_order;
+						// a should come after b in the sorted order
+					} else if (d1.isAfter(d2, "day")) {
+						return 1 * sort_order;
+						// a and b are the same
+					} else {
+						return 0 * sort_order;
+					}
 
-        let d1 = moment(a[property]);
-        let d2 = moment(b[property]);
-
-        if (d1.isBefore(d2, "day")) {
-          return -1 * sort_order;
-          // a should come after b in the sorted order
-        } else if (d1.isAfter(d2, "day")) {
-          return 1 * sort_order;
-          // a and b are the same
-        } else {
-          return 0 * sort_order;
-        }
+				}else{
+					return 0 * sort_order;
+				}
+     
       };
     } else if (type === "numerical") {
       return function(a, b) {
         // a should come before b in the sorted order
-        if (a[property] - b[property] < 0) {
+        if (	a[property] &&  b[property] && a[property] - b[property] < 0) {
           return -1 * sort_order;
           // a should come after b in the sorted order
-        } else if (a[property] - b[property] > 0) {
+        } else if (	a[property] &&  b[property] && a[property] - b[property] > 0) {
           return 1 * sort_order;
           // a and b are the same
         } else {

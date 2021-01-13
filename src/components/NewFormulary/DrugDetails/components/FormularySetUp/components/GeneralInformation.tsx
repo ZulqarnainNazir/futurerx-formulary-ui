@@ -27,7 +27,9 @@ const mapStateToProps = state => {
     formulary: state?.setup?.formulary,
     formulary_mode: state?.setup?.mode,
     general_options: state?.setupOptions?.generalOptions,
-    mode_lob: state?.application?.mode_lob
+    mode_lob: state?.application?.mode_lob,
+    resembleFormularyData:
+      state?.setupOptions?.generalOptions?.resembling_formularies
   };
 };
 interface TagModule {
@@ -276,6 +278,20 @@ class GeneralInformation extends React.Component<any, GeneralInformationState> {
     }
 
     return options;
+  };
+
+  getFormularyLob = () => {
+    const options = this.props.general_options;
+    let lob = "commercial";
+    if (options && options.formularyType && options.formularyType.length > 0) {
+      const formulary = options.formularyType.filter(
+        t => t.id_lob === this.props.mode_lob
+      );
+      if (formulary && formulary.length > 0) {
+        lob = formulary[0].formulary_type;
+      }
+    }
+    return lob.toLowerCase();
   };
   render() {
     const { Option } = Select;
@@ -706,8 +722,14 @@ class GeneralInformation extends React.Component<any, GeneralInformationState> {
                   width="90%"
                 >
                   <SelectFormularyPopup
-                    type="commercial" // type will be dynamic based on the LOB
-                    lobID="4" // id should be populated
+                    type={this.getFormularyLob()} // type will be dynamic based on the LOB
+                    lobID={this.props.mode_lob} // id should be populated
+                    resembleFormularyData={
+                      this.props.resembleFormularyData &&
+                      this.props.resembleFormularyData.length > 0
+                        ? this.props.resembleFormularyData
+                        : []
+                    }
                     selectFormularyClick={r => {
                       this.props.selectFormularyClick(r);
                       this.setState({
