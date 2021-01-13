@@ -25,6 +25,7 @@ import {
   fetchTierOptions,
   fetchSubMthsOptions,
   fetchStatesOptions,
+  fetchResemblingFlsOptions
 } from "../../../../.././redux/slices/formulary/setup/setupOptionsSlice";
 import { setLocation } from "../../../../.././redux/slices/formulary/application/applicationSlice";
 
@@ -115,10 +116,12 @@ class FormularySetUp extends React.Component<any, any> {
 
     if (type === 1) {
       // MRC...
+      this.props.fetchResemblingFlsOptions({ type: type, id: id });
       this.props.fetchMedicareOptions({ type: type, id: id });
       this.props.fetchSupplementalOptions({ type: type, id: id });
     } else if (type === 2) {
       // MMP...
+      this.props.fetchResemblingFlsOptions({ type: type, id: id });
       this.props.fetchStatesOptions(type);
       this.props.fetchMedicareOptions({ type: type, id: id });
       this.props.fetchSupplementalOptions({ type: type, id: id });
@@ -749,8 +752,6 @@ class FormularySetUp extends React.Component<any, any> {
     this.props.setLocation(1);
   }
 
-  // handleCloneMethodPopup;
-
   render() {
     return (
       <div>
@@ -836,13 +837,13 @@ class FormularySetUp extends React.Component<any, any> {
                 />
               </Box>
 
-              {/* <Box
+              <Box
                 display="flex"
                 justifyContent="flex-end"
                 className="save-and-continue-btn"
               >
                 <Button className="tempBtn" label=">" onClick={() => this.overrideNave()} />
-              </Box> */}
+              </Box>
             </div>
           </>
         ) : (
@@ -855,27 +856,7 @@ class FormularySetUp extends React.Component<any, any> {
   }
 }
 
-var throt_fun = throttle(
-  function (message, messageType) {
-    //console.log(">>>>>>>>...");
-    //showMessage(message, messageType);
-    // postMessage({ message: message, type: messageType });
-  },
-  800,
-  { leading: true, trailing: false }
-);
-
 const mapStateToProps = (state) => {
-  //  console.log("SP  -  -  -  -  -  -  -  -  -  -  -  - STATE");
-  //  console.log(state?.setup?.messageType +" - "+ state?.setup?.message  );
-  if (state?.setup?.messageType !== "" && state?.setup?.message !== "") {
-    // console.log(">>>>>>>>>>> # " + state?.setup?.messageType +" | "+state?.setup?.message);
-    // showMessage(state?.setup?.message, state?.setup?.messageType);
-    // console.log("--------");
-    // throt_fun(state?.setup?.message, state?.setup?.messageType);
-    //postMessage({ message: state?.setup?.message, type: state?.setup?.messageType });
-
-  }
   return {
     mode: state?.application?.mode,
     formulary_id: state?.application?.formulary_id,
@@ -889,6 +870,7 @@ function mapDispatchToProps(dispatch) {
   return {
     fetchSelectedFormulary: (a) => dispatch(fetchSelectedFormulary(a)),
     fetchGeneralOptions: (a) => dispatch(fetchGeneralOptions(a)),
+    fetchResemblingFlsOptions: (a) => dispatch(fetchResemblingFlsOptions(a)),
     fetchMedicareOptions: (a) => dispatch(fetchMedicareOptions(a)),
     fetchDesignOptions: (a) => dispatch(fetchDesignOptions(a)),
     fetchTierOptions: (a) => dispatch(fetchTierOptions(a)),

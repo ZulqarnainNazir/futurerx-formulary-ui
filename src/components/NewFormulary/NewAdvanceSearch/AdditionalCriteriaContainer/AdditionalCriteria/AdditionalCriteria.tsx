@@ -1,7 +1,6 @@
 import React, { Component } from "react";
 import CustomAccordion from "../../../../shared/Frx-components/accordion/CustomAccordion";
 
-import { ReactComponent as TiltCrossIcon } from "../../../../../assets/icons/TiltCrossIcon.svg";
 import { connect } from "react-redux";
 import { getDrugDetailsPOSSettings } from "../../../../../redux/slices/formulary/drugDetails/pos/posActionCreation";
 import { getDrugDetailsPRSettings } from "../../../../../redux/slices/formulary/drugDetails/pr/prActionCreation";
@@ -12,10 +11,8 @@ import * as _ from "lodash";
 import { Button } from "@material-ui/core";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
-import { useDrag, DragSourceMonitor } from "react-dnd";
 import DragBox from "../ListItem/DragBox";
 import DropBox from "../ListItem/DropBox";
-// const hiddenColumns = _.cloneDeep(this.props.hiddenColumns);
 
 interface PayloadBody {
   age: any;
@@ -79,49 +76,6 @@ class AdditionalCriteria extends Component<any, any> {
     deletedCache: [],
     clearCache: [],
     globalCardCountCache: 0,
-
-    criteriaMock: [
-      {
-        cardCode: 1,
-        cardName: "age",
-        isIncluded: true,
-      },
-      {
-        cardCode: 2,
-        cardName: "gender",
-        isIncluded: true,
-      },
-      {
-        cardCode: 3,
-        cardName: "icd",
-        isIncluded: true,
-      },
-      {
-        cardCode: 4,
-        cardName: "pharmacy_networks",
-        isIncluded: true,
-      },
-      {
-        cardCode: 5,
-        cardName: "prescriber_taxonomies",
-        isIncluded: true,
-      },
-      {
-        cardCode: 6,
-        cardName: "place_of_services",
-        isIncluded: true,
-      },
-      {
-        cardCode: 7,
-        cardName: "patient_residences",
-        isIncluded: true,
-      },
-      {
-        cardCode: 8,
-        cardName: "prerequisite_claims_history_lookbacks",
-        isIncluded: true,
-      },
-    ],
   };
 
   componentDidMount() {
@@ -147,7 +101,7 @@ class AdditionalCriteria extends Component<any, any> {
     let covered;
     let not_covered;
 
-    const { criteriaMock } = this.state;
+    // const { criteriaMock } = this.state;
 
     if (
       additionalCriteriaBody.covered !== {} &&
@@ -173,15 +127,14 @@ class AdditionalCriteria extends Component<any, any> {
           prop === "covered"
         ) {
           covered = additionalCriteriaBody[prop];
-
           ///////////////////////////// AL
           if (Object.prototype.hasOwnProperty.call(covered, "age")) {
             if (
-              (covered["age"]["min_age_condition"] !== "" &&
-                covered["age"]["min_age_limit"] !== "" &&
-                covered["age"]["max_age_condition"] !== "" &&
-                covered["age"]["max_age_limit"] !== "") ||
-              Object.keys(covered["age"]).length
+              Object.keys(covered["age"]).length &&
+              (covered["age"]["min_age_condition"] !== "" ||
+                covered["age"]["min_age_limit"] !== "" ||
+                covered["age"]["max_age_condition"] !== "" ||
+                covered["age"]["max_age_limit"] !== "")
             ) {
               globalCardCount++;
               let currentNode = {
@@ -241,8 +194,9 @@ class AdditionalCriteria extends Component<any, any> {
           ///////////////////////////// ICD
           if (Object.prototype.hasOwnProperty.call(covered, "icd")) {
             if (
-              covered["icd"]["look_back_days"] !== "" ||
-              covered["icd"]["icds"].length > 0
+              Object.keys(covered["icd"]).length &&
+              (covered["icd"]["look_back_days"] !== "" ||
+                covered["icd"]["icds"].length > 0)
             ) {
               globalCardCount++;
               let currentNode = {
@@ -448,11 +402,11 @@ class AdditionalCriteria extends Component<any, any> {
           ///////////////////////////// AL
           if (Object.prototype.hasOwnProperty.call(not_covered, "age")) {
             if (
-              (not_covered["age"]["min_age_condition"] !== "" &&
-                not_covered["age"]["min_age_limit"] !== "" &&
-                not_covered["age"]["max_age_condition"] !== "" &&
-                not_covered["age"]["max_age_limit"] !== "") ||
-              Object.keys(not_covered["age"]).length
+              Object.keys(not_covered["age"]).length &&
+              (not_covered["age"]["min_age_condition"] !== "" ||
+                not_covered["age"]["min_age_limit"] !== "" ||
+                not_covered["age"]["max_age_condition"] !== "" ||
+                not_covered["age"]["max_age_limit"] !== "")
             ) {
               globalCardCount++;
               let currentNode = {
@@ -512,8 +466,9 @@ class AdditionalCriteria extends Component<any, any> {
           ///////////////////////////// ICD
           if (Object.prototype.hasOwnProperty.call(not_covered, "icd")) {
             if (
-              not_covered["icd"]["look_back_days"] !== "" ||
-              not_covered["icd"]["icds"].length > 0
+              Object.keys(not_covered["icd"]).length &&
+              (not_covered["icd"]["look_back_days"] !== "" ||
+                not_covered["icd"]["icds"].length > 0)
             ) {
               globalCardCount++;
               let currentNode = {
@@ -819,6 +774,7 @@ class AdditionalCriteria extends Component<any, any> {
     updatedPayload,
     isCriteriaObject
   ) => {
+    debugger;
     if (!isCriteriaObject)
       updatedPayload = cardCode === 8 ? [updatedPayload] : updatedPayload;
     let sequence = this.state.apiAdditionalCriteriaState.sequence;
@@ -886,84 +842,16 @@ class AdditionalCriteria extends Component<any, any> {
       selectedCriteriaId: cardCode,
     });
 
-    const { criteriaMock } = this.state;
+    // const { criteriaMock } = this.state;
 
-    let filteredList = Array();
+    let filteredList: any[] = [];
 
     let cardName = "";
-
-    switch (cardCode) {
-      case 1:
-        filteredList = this.state.selectedCriteriaList.filter(
-          (card) => card.cardCode === cardCode
-        );
-        cardName = criteriaMock[cardCode - 1].cardName;
-        this.setNodes(cardName, cardCode, filteredList);
-
-        break;
-      case 2:
-        filteredList = this.state.selectedCriteriaList.filter(
-          (card) => card.cardCode === cardCode
-        );
-        cardName = criteriaMock[cardCode - 1].cardName;
-        this.setNodes(cardName, cardCode, filteredList);
-
-        break;
-      case 3:
-        filteredList = this.state.selectedCriteriaList.filter(
-          (card) => card.cardCode === cardCode
-        );
-
-        cardName = criteriaMock[cardCode - 1].cardName;
-        this.setNodes(cardName, cardCode, filteredList);
-
-        break;
-      case 4:
-        filteredList = this.state.selectedCriteriaList.filter(
-          (card) => card.cardCode === cardCode
-        );
-
-        cardName = criteriaMock[cardCode - 1].cardName;
-        this.setNodes(cardName, cardCode, filteredList);
-
-        break;
-      case 5:
-        filteredList = this.state.selectedCriteriaList.filter(
-          (card) => card.cardCode === cardCode
-        );
-
-        cardName = criteriaMock[cardCode - 1].cardName;
-        this.setNodes(cardName, cardCode, filteredList);
-
-        break;
-      case 6:
-        filteredList = this.state.selectedCriteriaList.filter(
-          (card) => card.cardCode === cardCode
-        );
-        cardName = criteriaMock[cardCode - 1].cardName;
-        this.setNodes(cardName, cardCode, filteredList);
-
-        break;
-      case 7:
-        filteredList = this.state.selectedCriteriaList.filter(
-          (card) => card.cardCode === cardCode
-        );
-        cardName = criteriaMock[cardCode - 1].cardName;
-        this.setNodes(cardName, cardCode, filteredList);
-
-        break;
-      case 8:
-        filteredList = this.state.selectedCriteriaList.filter(
-          (card) => card.cardCode === cardCode
-        );
-        cardName = criteriaMock[cardCode - 1].cardName;
-        this.setNodes(cardName, cardCode, filteredList);
-
-        break;
-      default:
-        console.log("default state");
-        break;
-    }
+    filteredList = this.state.selectedCriteriaList.filter(
+      (card) => card.cardCode === cardCode
+    );
+    cardName = criteriaMock[cardCode - 1].cardName;
+    this.setNodes(cardName, cardCode, filteredList);
   };
   render() {
     const { selectedCriteriaList } = this.state;
@@ -1068,31 +956,46 @@ class AdditionalCriteria extends Component<any, any> {
   }
 }
 
-function mapDispatchToProps(dispatch) {
-  return {
-    getPOSSettings: (a) => dispatch(getDrugDetailsPOSSettings(a)),
-    getPRSettings: (a) => dispatch(getDrugDetailsPRSettings(a)),
-
-    setAdditionalCriteria: (a) => dispatch(setAdditionalCriteria(a)),
-  };
-}
-
-const mapStateToProps = (state) => {
-  return {
-    // additional criteria state
-
-    additionalCriteriaObject:
-      state?.additionalCriteria?.additionalCriteriaObject,
-    additionalCriteriaBody: state?.additionalCriteria?.additionalCriteriaBody,
-    populateGrid: state?.additionalCriteria?.populateGrid,
-    closeDialog: state?.additionalCriteria?.closeDialog,
-    listItemStatus: state?.additionalCriteria?.listItemStatus,
-
-    formulary_id: state?.application?.formulary_id,
-    formulary: state?.application?.formulary,
-    formulary_lob_id: state?.application?.formulary_lob_id,
-    formulary_type_id: state?.application?.formulary_type_id,
-  };
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(AdditionalCriteria);
+const criteriaMock = [
+  {
+    cardCode: 1,
+    cardName: "age",
+    isIncluded: true,
+  },
+  {
+    cardCode: 2,
+    cardName: "gender",
+    isIncluded: true,
+  },
+  {
+    cardCode: 3,
+    cardName: "icd",
+    isIncluded: true,
+  },
+  {
+    cardCode: 4,
+    cardName: "pharmacy_networks",
+    isIncluded: true,
+  },
+  {
+    cardCode: 5,
+    cardName: "prescriber_taxonomies",
+    isIncluded: true,
+  },
+  {
+    cardCode: 6,
+    cardName: "place_of_services",
+    isIncluded: true,
+  },
+  {
+    cardCode: 7,
+    cardName: "patient_residences",
+    isIncluded: true,
+  },
+  {
+    cardCode: 8,
+    cardName: "prerequisite_claims_history_lookbacks",
+    isIncluded: true,
+  },
+];
+export default AdditionalCriteria;

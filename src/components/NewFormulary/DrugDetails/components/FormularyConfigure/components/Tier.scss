@@ -180,10 +180,19 @@
     padding: 5px 15px;
     height: 40px;
     font-size: 12px;
+    display: flex;
+    align-items: center;
   }
 
   .tier-description-dropdown {
     width: 300px;
+  }
+
+  .tier-modify-buttons {
+    padding: 5px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
   }
 }
 

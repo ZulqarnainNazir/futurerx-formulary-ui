@@ -11,7 +11,6 @@ const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
 const checkedIcon = <CheckBoxIcon fontSize="small" />;
 
 export default function CheckboxesTags(props: any) {
-  debugger;
   const onchangeHandler = (e, val) => {
     props.getAutoCompleteChange(val);
   };

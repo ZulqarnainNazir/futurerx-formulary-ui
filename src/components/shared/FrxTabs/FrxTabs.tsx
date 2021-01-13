@@ -57,16 +57,18 @@ class FrxTabs extends React.Component<TabProps, TabState> {
           activeKey={String(this.props.activeTabIndex + 1)}
           aria-label="tabs"
         >
-          {this.props.tabList.map((tab: TabInfo, index: number) => (
+          {this.props.tabList.map((tab: any, index: number) => (
             <TabPane disabled={tab.disable===true}
               key={tab.id}
               tab={
                 this.props.countIndex === index && this.props.count ? (
-                  <span className="tabs-with-count">
+                  <span className="tabs-with-count" title={tab.tooltip}>
                     {tab.text} <em>{this.props.count}</em>
                   </span>
                 ) : (
-                  tab.text
+                  <span title={tab.tooltip}>
+                    {tab.text}
+                  </span>
                 )
               }
             />
