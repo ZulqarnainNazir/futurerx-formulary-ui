@@ -1,3 +1,14 @@
+.drawer-wrapper {
+  .ant-drawer-content-wrapper {
+    max-height: 100vh !important;
+    top: 0% !important;
+  }
+
+  .ant-drawer-header {
+    background: #ffffff !important;
+  }
+}
+
 .sub-navbar {
   .nav-menu-right {
     display: flex;

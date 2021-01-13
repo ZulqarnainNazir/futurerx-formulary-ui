@@ -2,6 +2,8 @@ import React, { Component } from "react";
 import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
 import { Select } from "antd";
+import 'antd/dist/antd.css';
+import { Drawer, Button, Radio, Space } from 'antd';
 
 import { Grid, Container } from "@material-ui/core";
 import AdvanceSearchContainer from "../../advance-search/AdvanceSearchContainer";
@@ -22,7 +24,27 @@ interface State {}
 class SubNavBar extends Component<Props, State> {
   state = {
     advanceSearchPopUpOpen: false,
-    searchType: "member"
+    searchType: "member",
+    visible: false,
+    placement: ""
+  };
+
+  showDrawer = () => {
+    this.setState({
+      visible: true,
+    });
+  };
+
+  onClose = () => {
+    this.setState({
+      visible: false,
+    });
+  };
+
+  onChange = e => {
+    this.setState({
+      placement: e.target.value,
+    });
   };
 
   handleAdvanceSearchPopUp = () => {
@@ -47,6 +69,7 @@ class SubNavBar extends Component<Props, State> {
     }, 300);
   };
   render() {
+    const { placement, visible } = this.state;
     return (
       <div className="sub-navbar">
         <AppBar position="static">
@@ -54,7 +77,20 @@ class SubNavBar extends Component<Props, State> {
             <Grid container>
               <Grid item sm={7}>
                 <div className="nav-menu-right">
-                <Navhamburger className="nav-hamburger-icon" />
+                <Navhamburger className="nav-hamburger-icon" onClick={this.showDrawer} />
+                <Drawer
+                  title="Basic Drawer"
+                  placement="left"
+                  closable={true}
+                  onClose={this.onClose}
+                  visible={visible}
+                  key={placement}
+                  className="drawer-wrapper"
+                >
+                  <p>Some contents...</p>
+                  <p>Some contents...</p>
+                  <p>Some contents...</p>
+                </Drawer>
                 <span className="subNavBar-icon-select-dropdown-container">
                   <Select
                     placeholder="Navigation"
