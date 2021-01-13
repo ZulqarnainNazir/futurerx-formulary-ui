@@ -54,7 +54,7 @@ class FormularySetUp extends React.Component<any, any> {
       state_id: (null as unknown) as number,
       medicare_types_ref_other: false,
       selectedResemblanceFormulary: null,
-      selectedResemblanceFormularyId: null
+      resemble_formulary_id: null
     },
     medicareInfo: {
       medicare_contract_types: []
@@ -708,7 +708,7 @@ class FormularySetUp extends React.Component<any, any> {
       this.setState({
         generalInformation: {
           ...this.state.generalInformation,
-          selectedResemblanceFormularyId: row.id_base_formulary,
+          resemble_formulary_id: row.id_base_formulary,
           selectedResemblanceFormulary: row.formulary_name
         }
       });
