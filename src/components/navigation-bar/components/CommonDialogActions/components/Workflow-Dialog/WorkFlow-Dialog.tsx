@@ -9,6 +9,7 @@ import { Grid } from "@material-ui/core";
 import DropDownMap from "../../../../../shared/Frx-components/dropdown/DropDownMap";
 import DropDown from "../../../../../shared/Frx-components/dropdown/DropDownMap";
 import FrxTimeProgressBar from "../../../../../shared/FrxTimeProgressBar/FrxTimeProgressBar";
+import {ReactComponent as OrangeDot} from "../../../../../../assets/icons/orange-dot.svg";
 export default class WorkFlowDialog extends React.Component<any, any> {
   state = {
     expandCloseIconInd: true,
@@ -27,12 +28,15 @@ export default class WorkFlowDialog extends React.Component<any, any> {
         <div className="workFlowlabel">
           In Review
         </div>
-        <div className="workFlowControl">
+        <div className="workFlowControl workFlowControl-dot">
           <DropDown
             options={["Complete", "Work InProgress"]}
             defaultValue="Complete"
             className="dropdown-input"
           />
+          <span className="drop-down-icon">
+            <OrangeDot />
+          </span>
         </div>
         <div className="workFlowControl">
           <DropDown

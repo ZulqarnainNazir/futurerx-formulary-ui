@@ -1,174 +1,189 @@
-.worflowDialogContainer{
-    width: 1000px;
-    height: 60px;
+.worflowDialogContainer {
+  width: 1000px;
+  height: 60px;
 
-    .workFlowlabel{
-        position: relative;
-        float: left;
-        width: 60px;
-        height: 35px;
-        padding-top: 10px;
-        margin-left: 8px;
-        font-family: Roboto;
-        font-style: normal;
-        font-weight: normal;
-        font-size: 12px;
-        line-height: 14px;
-        color: #707683;
-        margin-right: 20px;
-    }
+  .workFlowlabel {
+    position: relative;
+    float: left;
+    width: 60px;
+    height: 35px;
+    padding-top: 10px;
+    margin-left: 8px;
+    font-family: Roboto;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 12px;
+    line-height: 14px;
+    color: #707683;
+    margin-right: 20px;
+  }
 
-    .workFlowControl{
-        position: relative;
-        float: left;
-        margin-right: 35px;
-        width: 182px;
-        height: 35px;
-    }
+  .workFlowControl {
+    position: relative;
+    float: left;
+    margin-right: 35px;
+    width: 182px;
+    height: 35px;
 
-    .workFlowBarControl{
-        position: relative;
-        float: left;
-        margin-right: 35px;
-        width: 200px;
-        height: 35px;
-        padding-top: 7px;
-    }
-
-    .workFlowIcon{
-        position: relative;
-        float: left;
-        text-align: right;
-        height: 35px;
-        width: 7px;
-        padding-top: 7px;
-    }
-    .workFlowIcon:hover{
-        cursor: pointer;
-    }
-
-    .ant-select {
-        width: 100% !important;
-    }
-
-    .expandedDetailWrapper{
-        position: relative;
-        float: left;
-        width: 100%;
-        height: 600px;
-        margin-top: 35px;
-        border-top: 1px solid #E5E5E5;
-    }
-
-    .expandedLeftSection{
-        position: relative;
-        float: left;
-        width: 211px;
-        height: 100%;
-        border-right: 1px solid #E5E5E5;
-
-    }
-    .expandedMiddleSection{
-        position: relative;
-        float: left;
-        width: 379px;
-        height: 100%;
-        border-right: 1px solid #E5E5E5;
-    }
-    .expandedRightSection{
-        position: relative;
-        float: left;
-        width: 410px;
-        height: 100%;
-    }
-
-    .expandedRightSectionWrapper{
-        width: 339px;
-        margin-left: 30px;
-        background: greenyellow;
-    }
-
-    .workFlowNotes{
-        position: relative;
-        float: left;
-        height: 75px;
-        width: 100%;      
-        padding-top: 30px;
-        font-family: Roboto;
-        font-style: normal;
-        font-weight: normal;
-        font-size: 12px;
-        line-height: 14px;
-        text-transform: uppercase;
-        color: #707683;
-    }
-    .workFlowNoteDetail{
-        position: relative;
-        float: left;
-        height: 102px;
-        width: 100%;
-        border-bottom: 1px solid #E5E5E5;
-        //background: pink;
-    }
-
-    .workFlowNoteDetailPic{
-        position: relative;
-        float: left;
-        width: 35px;
-        height: 100%;
-        //background: url(.png);
-        //background: yellow;
-    }
-    .workFlowNoteDetailText{
-        position: relative;
-        float: left;
-        width: 264px;
-        height: 100%;
-        //background: greenyellow;
-
-    }
-}
-.common-workflow-dialog-action {
-    .frx-dialog-root__heading .MuiTypography-root {
-        padding-left: 0px !important;
-    }
-    h2 span:nth-child(2) {
-        display: none;
-      }
-
-   
-    // padding-right: 0;
-    z-index: 999 !important;
-  
-    // height: 100% !important;
-    > .MuiDialog-container > .MuiDialog-paper > .frx-dialog-root__btn-actions > .frx-dialog-root__cancel-btn {
-      display: none;
-    }
-    > .MuiDialog-container > .MuiDialog-paper > .frx-dialog-root__btn-actions {
-      margin-right: 40px;
-    }
-  
-    > .MuiDialog-container > .MuiDialog-paper > .frx-dialog-root__btn-actions > .frx-dialog-root__save-btn {
-      width: 99px;
-      // background: #e5e5e5;
-    }
-  
-    .frx-dialog-root__heading {
-      border-bottom: 0;
-      .MuiTypography-root {
-        padding-top: 15px;
-        padding-left: 12px;
-        font-family: "Roboto";
-        font-style: normal;
-       // font-weight: normal;
-        font-size: 12px;
-        line-height: 15px;
-        letter-spacing: 0.1px;
-        color: #323c47 !important;
-        text-transform: uppercase;
-      }
-    }
-    .MuiDialogContent-root {
-      padding: 0;
+    .drop-down-icon {
+      position: absolute;
+      top: 5px;
+      left: 10px;
     }
   }
+
+  .workFlowControl-dot {
+    .ant-select-selection-item {
+      padding-left: 15px !important;
+    }
+  }
+
+  .workFlowBarControl {
+    position: relative;
+    float: left;
+    margin-right: 35px;
+    width: 200px;
+    height: 35px;
+    padding-top: 7px;
+  }
+
+  .workFlowIcon {
+    position: relative;
+    float: left;
+    text-align: right;
+    height: 35px;
+    width: 7px;
+    padding-top: 7px;
+  }
+  .workFlowIcon:hover {
+    cursor: pointer;
+  }
+
+  .ant-select {
+    width: 100% !important;
+  }
+
+  .expandedDetailWrapper {
+    position: relative;
+    float: left;
+    width: 100%;
+    height: 600px;
+    margin-top: 35px;
+    border-top: 1px solid #e5e5e5;
+  }
+
+  .expandedLeftSection {
+    position: relative;
+    float: left;
+    width: 211px;
+    height: 100%;
+    border-right: 1px solid #e5e5e5;
+  }
+  .expandedMiddleSection {
+    position: relative;
+    float: left;
+    width: 379px;
+    height: 100%;
+    border-right: 1px solid #e5e5e5;
+  }
+  .expandedRightSection {
+    position: relative;
+    float: left;
+    width: 410px;
+    height: 100%;
+  }
+
+  .expandedRightSectionWrapper {
+    width: 339px;
+    margin-left: 30px;
+    background: greenyellow;
+  }
+
+  .workFlowNotes {
+    position: relative;
+    float: left;
+    height: 75px;
+    width: 100%;
+    padding-top: 30px;
+    font-family: Roboto;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 12px;
+    line-height: 14px;
+    text-transform: uppercase;
+    color: #707683;
+  }
+  .workFlowNoteDetail {
+    position: relative;
+    float: left;
+    height: 102px;
+    width: 100%;
+    border-bottom: 1px solid #e5e5e5;
+    //background: pink;
+  }
+
+  .workFlowNoteDetailPic {
+    position: relative;
+    float: left;
+    width: 35px;
+    height: 100%;
+    //background: url(.png);
+    //background: yellow;
+  }
+  .workFlowNoteDetailText {
+    position: relative;
+    float: left;
+    width: 264px;
+    height: 100%;
+    //background: greenyellow;
+  }
+}
+.common-workflow-dialog-action {
+  .frx-dialog-root__heading .MuiTypography-root {
+    padding-left: 0px !important;
+  }
+  h2 span:nth-child(2) {
+    display: none;
+  }
+
+  // padding-right: 0;
+  z-index: 999 !important;
+
+  // height: 100% !important;
+  > .MuiDialog-container
+    > .MuiDialog-paper
+    > .frx-dialog-root__btn-actions
+    > .frx-dialog-root__cancel-btn {
+    display: none;
+  }
+  > .MuiDialog-container > .MuiDialog-paper > .frx-dialog-root__btn-actions {
+    margin-right: 40px;
+  }
+
+  > .MuiDialog-container
+    > .MuiDialog-paper
+    > .frx-dialog-root__btn-actions
+    > .frx-dialog-root__save-btn {
+    width: 99px;
+    // background: #e5e5e5;
+  }
+
+  .frx-dialog-root__heading {
+    border-bottom: 0;
+    .MuiTypography-root {
+      padding-top: 15px;
+      padding-left: 12px;
+      font-family: "Roboto";
+      font-style: normal;
+      // font-weight: normal;
+      font-size: 12px;
+      line-height: 15px;
+      letter-spacing: 0.1px;
+      color: #323c47 !important;
+      text-transform: uppercase;
+    }
+  }
+  .MuiDialogContent-root {
+    padding: 0;
+  }
+}
