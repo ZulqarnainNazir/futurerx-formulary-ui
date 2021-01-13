@@ -7,7 +7,7 @@ export const getValidationList = createAsyncThunk(
   "formulary/getValidationList",
   async (formulary_id: string) => {
     const requestHeaders = {
-      // headers: REQUEST_HEADER,
+      headers: REQUEST_HEADER,
     };
     return fetch(URL + formulary_id, requestHeaders)
       .then((response) => {
