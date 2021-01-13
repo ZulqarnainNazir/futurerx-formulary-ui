@@ -172,7 +172,7 @@ class STF extends React.Component<any, any> {
   };
 
   onClose = () => {
-    
+
     this.setState({ selectFormulary: false });
     return true;
   };
@@ -181,7 +181,7 @@ class STF extends React.Component<any, any> {
   };
 
   onPageSize = (pageSize) => {
-    
+
     this.state.limit = pageSize;
     if (this.props.advancedSearchBody) {
       this.populateGridData(this.props.advancedSearchBody);
@@ -190,7 +190,7 @@ class STF extends React.Component<any, any> {
     }
   };
   onGridPageChangeHandler = (pageNumber: any) => {
-    
+
     this.state.index = (pageNumber - 1) * this.state.limit;
     if (this.props.advancedSearchBody) {
       this.populateGridData(this.props.advancedSearchBody);
@@ -208,7 +208,7 @@ class STF extends React.Component<any, any> {
   };
 
   selectFormularyClick = (dataRow) => {
-    
+
     if (dataRow) {
       this.state.selectedLobFormulary = dataRow;
       // if(this.state.currentPopupType === this.POPUP_TYPE_BASE){
@@ -297,8 +297,8 @@ class STF extends React.Component<any, any> {
       const saveData = this.props
         .postApplyFormularyDrugST(apiDetails)
         .then((json) => {
-          
-          if (json.payload && json.payload.code === "200") {
+
+          if (json?.payload && json?.payload?.code === "200") {
             this.state.drugData = [];
             this.state.drugGridData = [];
             this.populateGridData();
@@ -366,56 +366,61 @@ class STF extends React.Component<any, any> {
       selectedGroupDescriptionObj: selected,
     });
     this.props.getStGrouptDescriptionVersions(apiDetails).then((json) => {
-      let data = json.payload.data;
-      let ftype = "";
-      switch (this.props.formulary_lob_id) {
-        case 1:
-          ftype = data[0].file_type;
-          break;
-        case 4:
-          ftype = "COMM";
-          break;
-        default:
-          break;
-      }
-      let latestVersionId = -1;
-      data.forEach((element) => {
-        if (element.id_st_group_description > latestVersionId) {
-          latestVersionId = element.id_st_group_description;
+      if (json?.payload && json?.payload?.data?.length > 0) {
+        let data = json.payload.data;
+        let ftype = "";
+        switch (this.props.formulary_lob_id) {
+          case 1:
+            ftype = data[0].file_type;
+            break;
+          case 4:
+            ftype = "COMM";
+            break;
+          default:
+            break;
         }
-      });
-      let tmp_additionalCriteria = false;
-      this.props
-        .getStGrouptDescription({
-          lob_type: this.props.formulary_lob_id,
-          pathParams: "/" + latestVersionId,
-        })
-        .then((json) => {
-          this.props.setAdditionalCriteria([]);
-          if (json.payload && json.payload.code === "200") {
-            if (
-              json.payload.data["um_criteria"] != null &&
-              json.payload.data["um_criteria"].length > 0
-            ) {
-              let payload: any = {};
-              payload.additionalCriteriaBody = json.payload.data["um_criteria"];
-              this.props.setAdditionalCriteria(payload);
-              tmp_additionalCriteria = true;
-            }
+        let latestVersionId = -1;
+        data.forEach((element) => {
+          if (element.id_st_group_description > latestVersionId) {
+            latestVersionId = element.id_st_group_description;
           }
-          this.setState({
-            is_additional_criteria_defined: tmp_additionalCriteria,
-          });
         });
-      this.setState({
-        selectedLastestedVersion: latestVersionId,
-        fileType: ftype,
-      });
-      this.setState({
-        tierGridContainer: false,
-        gridData: [],
-        drugGridData: [],
-      });
+        let tmp_additionalCriteria = false;
+        let tmp_selectedStType = null;
+        this.props
+          .getStGrouptDescription({
+            lob_type: this.props.formulary_lob_id,
+            pathParams: "/" + latestVersionId,
+          })
+          .then((json) => {
+            this.props.setAdditionalCriteria([]);
+            if (json?.payload && json?.payload?.code === "200") {
+              if (
+                json.payload.data["um_criteria"] != null &&
+                json.payload.data["um_criteria"].length > 0
+              ) {
+                let payload: any = {};
+                payload.additionalCriteriaBody = json.payload.data["um_criteria"];
+                this.props.setAdditionalCriteria(payload);
+                tmp_additionalCriteria = true;
+              }
+              tmp_selectedStType=json?.payload?.data?.id_st_type;
+            }
+            this.setState({
+              is_additional_criteria_defined: tmp_additionalCriteria,
+              selectedStType: tmp_selectedStType,
+            });
+          });
+        this.setState({
+          selectedLastestedVersion: latestVersionId,
+          fileType: ftype,
+        });
+        this.setState({
+          tierGridContainer: false,
+          gridData: [],
+          drugGridData: [],
+        });
+      }
     });
   };
 
@@ -453,7 +458,7 @@ class STF extends React.Component<any, any> {
   };
 
   populateGridData = (searchBody = null, switchState = false) => {
-    
+
     let apiDetails = {};
     apiDetails["messageBody"] = {};
     apiDetails["lob_type"] = this.props.formulary_lob_id;
@@ -528,7 +533,7 @@ class STF extends React.Component<any, any> {
     const drugGridDate = this.props
       .postFormularyDrugST(apiDetails)
       .then((json) => {
-        if (json.payload != null && json.payload.code === "200") {
+        if (json?.payload != null && json?.payload?.code === "200") {
           let tmpData = json.payload.result;
           var data: any[] = [];
           let count = 1;
@@ -547,9 +552,9 @@ class STF extends React.Component<any, any> {
             if (
               selected &&
               selected["st_group_description_name"] ===
-                element.st_group_description
+              element.st_group_description
             ) {
-              
+
               gridItem["isChecked"] = true;
               gridItem["isDisabled"] = true;
               // decide on class names based on data properties conditionally
@@ -580,8 +585,8 @@ class STF extends React.Component<any, any> {
             gridItem[
               "generic_product_identifier"
             ] = element.generic_product_identifier
-              ? "" + element.generic_product_identifier
-              : "";
+                ? "" + element.generic_product_identifier
+                : "";
             gridItem["trademark_code"] = element.trademark_code
               ? "" + element.trademark_code
               : "";
@@ -613,7 +618,7 @@ class STF extends React.Component<any, any> {
    * @param order the sorting order : 'ascend' | 'descend'
    */
   onApplySortHandler = (key, order, sortedInfo) => {
-    
+
     this.state.sort_by = Array();
     if (order) {
       let sortOrder = order === "ascend" ? "asc" : "desc";
@@ -637,7 +642,7 @@ class STF extends React.Component<any, any> {
   };
 
   onApplyFilterHandler = (filters) => {
-    
+
     //this.state.filter = Array();
     const fetchedKeys = Object.keys(filters);
     if (fetchedKeys && fetchedKeys.length > 0) {
@@ -650,12 +655,12 @@ class STF extends React.Component<any, any> {
             filters[fetchedProps][0].condition === "is like"
               ? "is_like"
               : filters[fetchedProps][0].condition === "is not"
-              ? "is_not"
-              : filters[fetchedProps][0].condition === "is not like"
-              ? "is_not_like"
-              : filters[fetchedProps][0].condition === "does not exist"
-              ? "does_not_exist"
-              : filters[fetchedProps][0].condition;
+                ? "is_not"
+                : filters[fetchedProps][0].condition === "is not like"
+                  ? "is_not_like"
+                  : filters[fetchedProps][0].condition === "does not exist"
+                    ? "does_not_exist"
+                    : filters[fetchedProps][0].condition;
           const fetchedValues =
             filters[fetchedProps][0].value !== ""
               ? [filters[fetchedProps][0].value.toString()]
@@ -670,7 +675,7 @@ class STF extends React.Component<any, any> {
     } else {
       this.state.filter = Array();
     }
-    
+
     if (this.props.advancedSearchBody) {
       this.populateGridData(this.props.advancedSearchBody);
     } else {
@@ -721,7 +726,8 @@ class STF extends React.Component<any, any> {
     apiDetails_1["lob_type"] = this.props.formulary_lob_id;
     apiDetails_1["pathParams"] = "/" + this.props?.client_id;
     this.props.getStGrouptDescriptions(apiDetails_1).then((json) => {
-      let result = json.payload.data.filter(
+
+      let result = json?.payload?.data.filter(
         (obj) => !obj.is_archived && obj.is_setup_complete
       );
       this.setState({
@@ -731,7 +737,7 @@ class STF extends React.Component<any, any> {
 
     this.props.getStTypes(this.props.formulary_lob_id).then((json) => {
       this.setState({
-        stTypes: json.payload.data,
+        stTypes: json?.payload?.data,
       });
     });
     let apiDetails = {
@@ -740,7 +746,7 @@ class STF extends React.Component<any, any> {
     };
     this.props.getLobFormularies(apiDetails).then((json) => {
       this.setState({
-        lobFormularies: json.payload.result,
+        lobFormularies: json?.payload?.result,
       });
     });
   }
@@ -753,7 +759,7 @@ class STF extends React.Component<any, any> {
   };
 
   applyMultiSortHandler = (sorter, multiSortedInfo) => {
-    
+
 
     this.setState({
       isGridMultiSorted: true,
@@ -792,7 +798,7 @@ class STF extends React.Component<any, any> {
   };
 
   onMultiSortToggle = (isMultiSortOn: boolean) => {
-    
+
     this.state.sort_by = Array();
     this.state.gridSingleSortInfo = null;
     this.state.gridMultiSortedInfo = [];
@@ -820,7 +826,7 @@ class STF extends React.Component<any, any> {
     selectedRow: any,
     isSelected: boolean
   ) => {
-    
+
     if (!selectedRow["isDisabled"]) {
       if (isSelected) {
         const data = this.state.drugGridData.map((d: any) => {
@@ -835,7 +841,7 @@ class STF extends React.Component<any, any> {
           ...this.state.selectedRowKeys,
           selectedRow.key,
         ];
-        
+
         const selectedRows: number[] = selectedRowKeys.filter(
           (k) => this.state.fixedSelectedRows.indexOf(k) < 0
         );
@@ -868,7 +874,7 @@ class STF extends React.Component<any, any> {
   };
 
   onSelectedTableRowChanged = (selectedRowKeys) => {
-    
+
 
     this.state.selectedDrugs = [];
     this.setState({
@@ -935,8 +941,8 @@ class STF extends React.Component<any, any> {
                           "st_group_description_name"
                         ]
                           ? this.state.selectedGroupDescriptionObj[
-                              "st_group_description_name"
-                            ]
+                          "st_group_description_name"
+                          ]
                           : "Select Group Description"}
                       </span>
                       <EditIcon
@@ -1059,8 +1065,8 @@ class STF extends React.Component<any, any> {
                     </div>
                   </div>
                 ) : (
-                  ""
-                )}
+                    ""
+                  )}
               </Grid>
 
               <Grid item xs={4}>
@@ -1108,7 +1114,7 @@ class STF extends React.Component<any, any> {
                     isPinningEnabled={false}
                     enableSearch={false}
                     enableColumnDrag
-                    onSearch={() => {}}
+                    onSearch={() => { }}
                     fixedColumnKeys={[]}
                     pagintionPosition="topRight"
                     gridName="TIER"
@@ -1139,12 +1145,12 @@ class STF extends React.Component<any, any> {
                     multiSortedInfo={this.state.gridMultiSortedInfo}
                     onMultiSortToggle={this.onMultiSortToggle}
                     getColumnSettings={this.onSettingsIconHandler}
-                    // rowSelection={{
-                    //   columnWidth: 50,
-                    //   fixed: true,
-                    //   type: "checkbox",
-                    //   onChange: this.onSelectedTableRowChanged,
-                    // }}
+                  // rowSelection={{
+                  //   columnWidth: 50,
+                  //   fixed: true,
+                  //   type: "checkbox",
+                  //   onChange: this.onSelectedTableRowChanged,
+                  // }}
                   />
                 </div>
               </div>
@@ -1169,7 +1175,7 @@ class STF extends React.Component<any, any> {
                 selectFormulary: !this.state.selectFormulary,
               });
             }}
-            handleAction={() => {}}
+            handleAction={() => { }}
             open={this.state.selectFormulary}
             showActions={false}
             className=""
@@ -1194,7 +1200,7 @@ class STF extends React.Component<any, any> {
                 showStGroupDescription: !this.state.showStGroupDescription,
               });
             }}
-            handleAction={() => {}}
+            handleAction={() => { }}
             open={this.state.showStGroupDescription}
             showActions={false}
             className=""

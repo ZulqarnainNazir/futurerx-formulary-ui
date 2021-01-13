@@ -103,47 +103,49 @@ class GPM extends React.Component<any, any> {
     apiDetails["pathParams"] = param;
     let isPopUpView = this.props.isPopUpView;
     this.props.getStGrouptDescriptionVersions(apiDetails).then((json) => {
-      let tmpData = json.payload?.data;
-      if (isPopUpView) {
-        tmpData = tmpData.filter((obj) => {
-          if (obj.is_setup_complete) {
-            return obj;
+      if (json?.payload && json?.payload?.code === "200") {
+        let tmpData = json.payload?.data;
+        if (isPopUpView) {
+          tmpData = tmpData.filter((obj) => {
+            if (obj.is_setup_complete) {
+              return obj;
+            }
+          });
+        }
+        let dataLength = tmpData && tmpData.length ? tmpData.length : 0;
+        let latestVerion =
+          dataLength > 0 ? tmpData[dataLength - 1].id_st_group_description : 0;
+        let is_setup_complete =
+          dataLength > 0 ? tmpData[dataLength - 1].is_setup_complete : 0;
+        this.setState({
+          isSetUpComplete: is_setup_complete,
+        });
+
+        let apiDetails = {};
+        apiDetails["lob_type"] = this.props.formulary_lob_id;
+        apiDetails["pathParams"] = latestVerion;
+
+        this.props.getStGrouptDescription(apiDetails).then((json) => {
+          if (json.payload && json.payload.code === "200") {
+            let payload: any = {
+              additionalCriteriaObject: this.props.additionalCriteria
+                .additionalCriteriaObject,
+              additionalCriteriaBody: this.props.additionalCriteria
+                .additionalCriteriaBody,
+              populateGrid: this.props.additionalCriteria.populateGrid,
+              closeDialog: this.props.additionalCriteria.closeDialog,
+              listItemStatus: { ...this.props.additionalCriteria.listItemStatus },
+            };
+            payload.additionalCriteriaBody = json.payload.data["um_criteria"];
+            this.props.setAdditionalCriteria(payload);
           }
         });
+        this.props.getSTGroupDetails({
+          formulary_id: this.props.formulary_id,
+          current_group_id: param,
+          current_group_des_id: latestVerion,
+        });
       }
-      let dataLength = tmpData && tmpData.length ? tmpData.length : 0;
-      let latestVerion =
-        dataLength > 0 ? tmpData[dataLength - 1].id_st_group_description : 0;
-      let is_setup_complete =
-        dataLength > 0 ? tmpData[dataLength - 1].is_setup_complete : 0;
-      this.setState({
-        isSetUpComplete: is_setup_complete,
-      });
-
-      let apiDetails = {};
-      apiDetails["lob_type"] = this.props.formulary_lob_id;
-      apiDetails["pathParams"] = latestVerion;
-
-      this.props.getStGrouptDescription(apiDetails).then((json) => {
-        if (json.payload && json.payload.code === "200") {
-          let payload: any = {
-            additionalCriteriaObject: this.props.additionalCriteria
-              .additionalCriteriaObject,
-            additionalCriteriaBody: this.props.additionalCriteria
-              .additionalCriteriaBody,
-            populateGrid: this.props.additionalCriteria.populateGrid,
-            closeDialog: this.props.additionalCriteria.closeDialog,
-            listItemStatus: { ...this.props.additionalCriteria.listItemStatus },
-          };
-          payload.additionalCriteriaBody = json.payload.data["um_criteria"];
-          this.props.setAdditionalCriteria(payload);
-        }
-      });
-      this.props.getSTGroupDetails({
-        formulary_id: this.props.formulary_id,
-        current_group_id: param,
-        current_group_des_id: latestVerion,
-      });
     });
     this.setState({
       newGroup: true,
@@ -179,39 +181,41 @@ class GPM extends React.Component<any, any> {
       this.props?.client_id + "?entity_id=" + this.props?.formulary_id;
     let isPopUpView = this.props.isPopUpView;
     this.props.getStGrouptDescriptions(apiDetails).then((json) => {
-      let tmpData = json.payload.data;
-      let groupProp = "";
-      if (this.props.formulary_lob_id == 1) {
-        groupProp = "id_st_group_description";
-      } else if (this.props.formulary_lob_id == 4) {
-        groupProp = "id_st_group_description";
-      }
-      if (isPopUpView) {
-        tmpData = tmpData.filter((obj) => {
-          if (obj.is_setup_complete) {
+      if (json?.payload && json?.payload?.code === "200") {
+        let tmpData = json.payload.data;
+        let groupProp = "";
+        if (this.props.formulary_lob_id == 1) {
+          groupProp = "id_st_group_description";
+        } else if (this.props.formulary_lob_id == 4) {
+          groupProp = "id_st_group_description";
+        }
+        if (isPopUpView) {
+          tmpData = tmpData.filter((obj) => {
+            if (obj.is_setup_complete) {
+              return obj;
+            }
+          });
+        }
+        var result = tmpData.map(function (el) {
+          var element = {};
+          element["id"] = el[groupProp];
+          element["label"] = el.st_group_description_name;
+          element["status"] = el.is_setup_complete ? "completed" : "warning";
+          element["is_archived"] =
+            el.is_archived == null ? false : el.is_archived;
+          return element;
+        });
+        this.setState({
+          groupsData: result,
+        });
+        let completed_groups = result.filter((obj) => {
+          if (!obj.is_archived) {
             return obj;
           }
         });
-      }
-      var result = tmpData.map(function (el) {
-        var element = {};
-        element["id"] = el[groupProp];
-        element["label"] = el.st_group_description_name;
-        element["status"] = el.is_setup_complete ? "completed" : "warning";
-        element["is_archived"] =
-          el.is_archived == null ? false : el.is_archived;
-        return element;
-      });
-      this.setState({
-        groupsData: result,
-      });
-      let completed_groups = result.filter((obj) => {
-        if (!obj.is_archived) {
-          return obj;
+        if (completed_groups.length > 0) {
+          this.selectGroup(completed_groups[0].id, completed_groups[0].status);
         }
-      });
-      if (completed_groups.length > 0) {
-        this.selectGroup(completed_groups[0].id, completed_groups[0].status);
       }
     });
     this.props.getStTypes(this.props.formulary_id).then((json) => {
@@ -321,36 +325,36 @@ class GPM extends React.Component<any, any> {
                   }
                 >
                   {this.state.groupsData.length > 0 &&
-                    this.state.groupsData.map((group:any, key) =>
+                    this.state.groupsData.map((group: any, key) =>
                       this.state.searchInput == "" ||
-                      (this.state.searchInput != "" &&
-                        group.label.toLowerCase().indexOf(this.state.searchInput.toLowerCase()) > -1) ? (
-                        this.state.activeTabIndex == 0 &&
-                        group.is_archived == false ? (
-                          <Groups
-                            key={key}
-                            id={group.id}
-                            title={group.label}
-                            statusType={group.status}
-                            selectGroup={this.selectGroup}
-                            isSelected={this.state.selectedGroup == group.id}
-                          />
-                        ) : this.state.activeTabIndex == 1 &&
-                          group.is_archived == true ? (
-                          <Groups
-                            key={key}
-                            id={group.id}
-                            title={group.label}
-                            statusType={group.status}
-                            selectGroup={this.selectGroup}
-                            isSelected={this.state.selectedGroup == group.id}
-                          />
+                        (this.state.searchInput != "" &&
+                          group.label.toLowerCase().indexOf(this.state.searchInput.toLowerCase()) > -1) ? (
+                          this.state.activeTabIndex == 0 &&
+                            group.is_archived == false ? (
+                              <Groups
+                                key={key}
+                                id={group.id}
+                                title={group.label}
+                                statusType={group.status}
+                                selectGroup={this.selectGroup}
+                                isSelected={this.state.selectedGroup == group.id}
+                              />
+                            ) : this.state.activeTabIndex == 1 &&
+                              group.is_archived == true ? (
+                                <Groups
+                                  key={key}
+                                  id={group.id}
+                                  title={group.label}
+                                  statusType={group.status}
+                                  selectGroup={this.selectGroup}
+                                  isSelected={this.state.selectedGroup == group.id}
+                                />
+                              ) : (
+                                ""
+                              )
                         ) : (
                           ""
                         )
-                      ) : (
-                        ""
-                      )
                     )}
                 </div>
               </div>
@@ -368,19 +372,19 @@ class GPM extends React.Component<any, any> {
                 selectGroup={this.selectGroup}
               />
             ) : (
-              <NewGroup
-                tooltip={this.state.tooltip}
-                formType={0}
-                title={"NEW GROUP DESCRIPTION"}
-                editMode={false}
-                isPopUpView={this.props.isPopUpView}
-                selectGroupDescriptionClick={
-                  this.props.selectGroupDescriptionClick
-                }
-                isSetUpComplete={this.state.isSetUpComplete}
-                selectGroup={this.selectGroup}
-              />
-            )}
+                <NewGroup
+                  tooltip={this.state.tooltip}
+                  formType={0}
+                  title={"NEW GROUP DESCRIPTION"}
+                  editMode={false}
+                  isPopUpView={this.props.isPopUpView}
+                  selectGroupDescriptionClick={
+                    this.props.selectGroupDescriptionClick
+                  }
+                  isSetUpComplete={this.state.isSetUpComplete}
+                  selectGroup={this.selectGroup}
+                />
+              )}
           </div>
         </div>
       </>
