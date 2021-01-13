@@ -25,6 +25,7 @@ import {
   fetchTierOptions,
   fetchSubMthsOptions,
   fetchStatesOptions,
+  fetchResemblingFlsOptions
 } from "../../../../.././redux/slices/formulary/setup/setupOptionsSlice";
 import { setLocation } from "../../../../.././redux/slices/formulary/application/applicationSlice";
 
@@ -115,10 +116,12 @@ class FormularySetUp extends React.Component<any, any> {
 
     if (type === 1) {
       // MRC...
+      this.props.fetchResemblingFlsOptions({ type: type, id: id });
       this.props.fetchMedicareOptions({ type: type, id: id });
       this.props.fetchSupplementalOptions({ type: type, id: id });
     } else if (type === 2) {
       // MMP...
+      this.props.fetchResemblingFlsOptions({ type: type, id: id });
       this.props.fetchStatesOptions(type);
       this.props.fetchMedicareOptions({ type: type, id: id });
       this.props.fetchSupplementalOptions({ type: type, id: id });
@@ -867,6 +870,7 @@ function mapDispatchToProps(dispatch) {
   return {
     fetchSelectedFormulary: (a) => dispatch(fetchSelectedFormulary(a)),
     fetchGeneralOptions: (a) => dispatch(fetchGeneralOptions(a)),
+    fetchResemblingFlsOptions: (a) => dispatch(fetchResemblingFlsOptions(a)),
     fetchMedicareOptions: (a) => dispatch(fetchMedicareOptions(a)),
     fetchDesignOptions: (a) => dispatch(fetchDesignOptions(a)),
     fetchTierOptions: (a) => dispatch(fetchTierOptions(a)),
