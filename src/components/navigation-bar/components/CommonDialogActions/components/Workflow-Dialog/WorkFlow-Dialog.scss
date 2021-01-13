@@ -2,18 +2,19 @@
   width: 1000px;
   height: 60px;
 
+  font-family: "Roboto";
+  font-style: normal;
+  font-weight: normal;
+  font-size: 12px;
+  line-height: 14px;
+
   .workFlowlabel {
     position: relative;
     float: left;
     width: 60px;
     height: 35px;
     padding-top: 10px;
-    margin-left: 8px;
-    font-family: Roboto;
-    font-style: normal;
-    font-weight: normal;
-    font-size: 12px;
-    line-height: 14px;
+    margin-left: 8px;   
     color: #707683;
     margin-right: 20px;
   }
@@ -27,7 +28,7 @@
 
     .drop-down-icon {
       position: absolute;
-      top: 5px;
+      top: 10px;
       left: 10px;
     }
   }
@@ -73,6 +74,7 @@
   }
 
   .expandedLeftSection {
+    padding-top: 25px ;
     position: relative;
     float: left;
     width: 211px;
@@ -104,12 +106,7 @@
     float: left;
     height: 75px;
     width: 100%;
-    padding-top: 30px;
-    font-family: Roboto;
-    font-style: normal;
-    font-weight: normal;
-    font-size: 12px;
-    line-height: 14px;
+    padding-top: 30px;    
     text-transform: uppercase;
     color: #707683;
   }
@@ -119,24 +116,127 @@
     height: 102px;
     width: 100%;
     border-bottom: 1px solid #e5e5e5;
-    //background: pink;
   }
-
-  .workFlowNoteDetailPic {
+  .workFlowNoteDetailPic{
     position: relative;
     float: left;
-    width: 35px;
+    width: 45px;
     height: 100%;
-    //background: url(.png);
-    //background: yellow;
-  }
-  .workFlowNoteDetailText {
+    //background: url(.png);   
+    
+    span{
+      float: left;
+      height: 30px;
+      width: 30px;
+      border-radius: 50%;
+      border:1px solid grey;
+    }
+}
+.workFlowNoteDetailText{
     position: relative;
     float: left;
     width: 264px;
     height: 100%;
-    //background: greenyellow;
+    background:white;
+    color:#323C47;
+}
+.workFlowNoteDetailText label{ 
+  font-weight: 500;  
+  line-height: 20px;  
+  color: #323C47;
+}
+.workFlowNoteDetailText span{
+  line-height: 20px; 
+  color: #C4C4C4;
+  margin-left: 15px;
+}
+.workFlowNoteDetailText div{  
+  line-height: 16px;  
+  color: #707683;
+}
+.workFlowNoteDetailText p{ 
+    line-height: 16px;
+    color: #323C47;
+    font-weight: normal;
+}
+.row{
+    padding-top: 7px;
+    padding-left: 8px;
+    width: 100%;
+    height: 35px;    
+
+  .statusIcon{
+    position: relative;
+    float: left;
+    width: 16px;
+    height: 100%;
+    padding-top: 7px;
   }
+
+  label{
+    position: relative;
+    float: left;
+    width: 110px;
+    height: 100%;
+    padding-top: 7px; 
+    font-weight: 500;
+    color: #323C47;
+ }
+ p{
+  position: relative;
+  float: left;
+  width: 110px;
+  height: 100%;
+  padding-top: 5px; 
+  font-weight: normal;
+  line-height: 20px;
+  color: #323C47;
+}
+ .taskPicWrapper{
+  position: relative;
+  float: left;
+  width: 50px;
+  height: 100%;      
+    span{
+      float: left;
+      height: 25px;
+      width: 25px;
+      border-radius: 50%;
+      //background: url(.png);
+      border:1px solid grey;
+    }   
+ }
+
+ .eyeIcon{
+  position: relative;
+  float: left;
+  width: 20px;
+  height: 100%;
+  padding-top: 7px;
+ }
+
+}
+
+.row:hover{
+  //background: #EEF3F7;
+  cursor: pointer;
+}
+
+.text{
+  color:grey;
+  margin-left: 30px;
+  position: absolute;
+  width: 59px;
+  height: 20px;
+  left: 30px;
+  padding-top: 20px;  
+ line-height: 20px;
+ text-transform: uppercase;
+ color: #707683;
+}
+
+
+
 }
 .common-workflow-dialog-action {
   .frx-dialog-root__heading .MuiTypography-root {
