@@ -18,7 +18,9 @@ import DialogPopup from "../../../../../shared/FrxDialogPopup/FrxDialogPopup";
 import FormControl from "@material-ui/core/FormControl";
 import FormLabel from "@material-ui/core/FormLabel";
 import CloneFormularyPopup from "../../FormularySetUp/components/CloneFormularyPopup";
+import SelectFormularyPopup from "../../FormularySetUp/components/SelectFormularyPopup";
 import UploadFiles from "./UploadFiles";
+import SelectFormularyDropDown from "./SelectFormularyDropdown/SelectFormularyDropdown";
 
 const mapStateToProps = state => {
   //console.log(state);
@@ -26,7 +28,9 @@ const mapStateToProps = state => {
     formulary: state?.setup?.formulary,
     formulary_mode: state?.setup?.mode,
     general_options: state?.setupOptions?.generalOptions,
-    mode_lob: state?.application?.mode_lob
+    mode_lob: state?.application?.mode_lob,
+    resembleFormularyData:
+      state?.setupOptions?.generalOptions?.resembling_formularies
   };
 };
 interface TagModule {
@@ -276,6 +280,20 @@ class GeneralInformation extends React.Component<any, GeneralInformationState> {
 
     return options;
   };
+
+  getFormularyLob = () => {
+    const options = this.props.general_options;
+    let lob = "commercial";
+    if (options && options.formularyType && options.formularyType.length > 0) {
+      const formulary = options.formularyType.filter(
+        t => t.id_lob === this.props.mode_lob
+      );
+      if (formulary && formulary.length > 0) {
+        lob = formulary[0].formulary_type;
+      }
+    }
+    return lob.toLowerCase();
+  };
   render() {
     const { Option } = Select;
     const {
@@ -505,7 +523,7 @@ class GeneralInformation extends React.Component<any, GeneralInformationState> {
             </Grid>
             <Grid item xs={4}>
               {/* Commercial shouldn't have this but condition changed to help dev */}
-              {this.props.generalInfo.type === "Commercial" ? (
+              {this.props.generalInfo.type !== "Commercial" ? (
                 <div className="group">
                   <label>
                     Which prior year's formulary does this most closely
@@ -513,15 +531,24 @@ class GeneralInformation extends React.Component<any, GeneralInformationState> {
                   </label>
                   {/* <a href="#" className="input-link select-formulary-link">
                     Select Formulary
-                  </a> */}
-                  <span
-                    onClick={e =>
-                      this.setState({ showSelectFormularyPopup: true })
-                    }
-                    className="input-link"
-                  >
-                    Select Formulary
-                  </span>
+									</a> */}
+                  {this.props.selectedResemblanceFormulary ? (
+                    <SelectFormularyDropDown
+                      formularyName={this.props.selectedResemblanceFormulary}
+                      openSelectFormulary={() =>
+                        this.setState({ showSelectFormularyPopup: true })
+                      }
+                    />
+                  ) : (
+                    <span
+                      onClick={e =>
+                        this.setState({ showSelectFormularyPopup: true })
+                      }
+                      className="input-link"
+                    >
+                      Select Formulary
+                    </span>
+                  )}
                 </div>
               ) : null}
             </Grid>
@@ -704,9 +731,15 @@ class GeneralInformation extends React.Component<any, GeneralInformationState> {
                   height="80%"
                   width="90%"
                 >
-                  <CloneFormularyPopup
-                    type="commercial" // type will be dynamic based on the LOB
-                    lobID="4" // id should be populated
+                  <SelectFormularyPopup
+                    type={this.getFormularyLob()} // type will be dynamic based on the LOB
+                    lobID={this.props.mode_lob} // id should be populated
+                    resembleFormularyData={
+                      this.props.resembleFormularyData &&
+                      this.props.resembleFormularyData.length > 0
+                        ? this.props.resembleFormularyData
+                        : []
+                    }
                     selectFormularyClick={r => {
                       this.props.selectFormularyClick(r);
                       this.setState({

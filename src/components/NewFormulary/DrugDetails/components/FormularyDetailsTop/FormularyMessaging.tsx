@@ -4,6 +4,7 @@ import "./FormularyDetailsTop.scss";
 import Snackbar, { SnackbarOrigin } from "@material-ui/core/Snackbar";
 import MuiAlert, { AlertProps } from "@material-ui/lab/Alert";
 import { makeStyles, Theme } from "@material-ui/core/styles";
+import { throttle } from "lodash";
 
 const mapStateToProps = (state) => {
   return {
@@ -12,8 +13,6 @@ const mapStateToProps = (state) => {
     message: state?.messaging?.message,
     other_message: state?.setup?.message,
     other_type: state?.setup?.messageType,
-
-
   };
 };
 
@@ -46,11 +45,26 @@ class FormularyMessaging extends React.Component<any, any> {
     console.log("MSG : " + this.props.uniqueID);
     //console.log(prevProps.message + " > " + this.props.message);
     if (prevProps.uniqueID !== this.props.uniqueID) {
-      if(this.props?.type === "success" || this.props?.type === "info" || this.props?.type === "warning" || this.props?.type === "error")
-      console.log("->");
-      this.setState({ showMsg: true });
+      if (
+        this.props?.type === "success" ||
+        this.props?.type === "info" ||
+        this.props?.type === "warning" ||
+        this.props?.type === "error"
+      ) {
+        // console.log("->");
+        // this.setState({ showMsg: true });
+        this.throttleMsg(this.props.message, this.props.type);
+      }
     }
   }
+
+  throttleMsg = throttle(
+    (message, messageType) => {
+      this.setState({ showMsg: true });
+    },
+    100,
+    { leading: false, trailing: true }
+  );
 
   render() {
     let dropDown: any;
