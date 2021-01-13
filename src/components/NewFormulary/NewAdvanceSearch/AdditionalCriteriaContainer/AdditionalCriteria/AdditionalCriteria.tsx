@@ -127,7 +127,6 @@ class AdditionalCriteria extends Component<any, any> {
           prop === "covered"
         ) {
           covered = additionalCriteriaBody[prop];
-
           ///////////////////////////// AL
           if (Object.prototype.hasOwnProperty.call(covered, "age")) {
             if (
@@ -775,6 +774,7 @@ class AdditionalCriteria extends Component<any, any> {
     updatedPayload,
     isCriteriaObject
   ) => {
+    debugger;
     if (!isCriteriaObject)
       updatedPayload = cardCode === 8 ? [updatedPayload] : updatedPayload;
     let sequence = this.state.apiAdditionalCriteriaState.sequence;
