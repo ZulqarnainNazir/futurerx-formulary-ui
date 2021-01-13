@@ -59,7 +59,7 @@ function mapDispatchToProps(dispatch) {
       dispatch(postSTGroupDescriptionFormularies(arg)), // Version History
     postApplySTGroupDescriptionFormularies: (arg) =>
       dispatch(postApplySTGroupDescriptionFormularies(arg)), // Version History
-      getSTGroupDetails: (arg) =>
+    getSTGroupDetails: (arg) =>
       dispatch(getSTGroupDetails(arg)),
   };
 }
@@ -91,10 +91,10 @@ function GroupHeader(props: any) {
     }
 
     props.postSTGroupDescriptionFormularies(apiDetails).then((json) => {
-      
+
       let tmp_array: any = [];
       let count = 1;
-      json.payload.result.map((obj) => {
+      json?.payload?.result?.map((obj) => {
         obj["id"] = count;
         obj["key"] = count;
         tmp_array.push(obj);
@@ -106,7 +106,7 @@ function GroupHeader(props: any) {
   };
 
   const onSelectedTableRowChanged = (selectedRowKeys) => {
-    
+
     fomulariesList.map((obj) => (obj["applied_version"] = ""));
     if (selectedRowKeys && selectedRowKeys.length > 0) {
       let tmp: any = selectedRowKeys.map((tierId) => {
@@ -127,15 +127,16 @@ function GroupHeader(props: any) {
 
   useEffect(() => {
     let versions = props.version;
+    if (props.isPopUpView && versions.length > 0) {
+      versions = versions.filter((obj) => {
+        if (obj.is_setup_complete) {
+          return obj;
+        }
+      });
+    }
     if (versions.length > 0) {
       //let versions = props.version;
-      if (props.isPopUpView) {
-        versions = versions.filter((obj) => {
-          if (obj.is_setup_complete) {
-            return obj;
-          }
-        });
-      }
+
       const verLength = Object.keys(versions).length;
       const isEditable = versions[verLength - 1].is_setup_complete;
       const value = versions[verLength - 1].value;
@@ -145,8 +146,8 @@ function GroupHeader(props: any) {
             ? "-grey"
             : "-green"
           : props.isPopUpView
-          ? "-grey"
-          : "-orange"
+            ? "-grey"
+            : "-orange"
       );
       setVersion(versions);
       setPlaceHolder(value);
@@ -190,8 +191,8 @@ function GroupHeader(props: any) {
       var latestVerion: any = 0;
       if (is_setup) {
         isEditable = is_setup.is_setup_complete;
-        latestVerion =  is_setup.id_st_group_description ;
-      } 
+        latestVerion = is_setup.id_st_group_description;
+      }
       // else {
       //   isEditable = props.version.find(
       //     (val) => val.version_number == Number(selectedVersion.split(" ")[1])
@@ -212,8 +213,8 @@ function GroupHeader(props: any) {
             ? "-grey"
             : "-green"
           : props.isPopUpView
-          ? "-grey"
-          : "-orange"
+            ? "-grey"
+            : "-orange"
       );
       setPlaceHolder(selectedVersion);
 
@@ -228,8 +229,8 @@ function GroupHeader(props: any) {
       props.getSTGroupDetails({
         formulary_id: props.saveGdm.formulary_id,
         current_group_id:
-        props.saveGdm.current_group_id,
-        current_group_des_id:latestVerion
+          props.saveGdm.current_group_id,
+        current_group_des_id: latestVerion
       });
     }
     props.onChange(selectedVersion);
@@ -281,7 +282,7 @@ function GroupHeader(props: any) {
     apiDetails["messageBody"]["st_group_description_formulary_ids"] = [];
 
     props.postApplySTGroupDescriptionFormularies(apiDetails).then((json) => {
-      if (json.payload && json.payload.code === "200") {
+      if (json?.payload && json?.payload?.code === "200") {
         showMessage("Success", "success");
       } else {
         showMessage("Failure", "error");
@@ -322,7 +323,7 @@ function GroupHeader(props: any) {
               let id_st_group_description =
                 groupListLength > 0
                   ? groupList.filter((val) => val.is_archived === false)[0]
-                      .id_st_group_description
+                    .id_st_group_description
                   : 0;
               if (param === "delete-version" && versionListLength > 0) {
                 id_st_group_description = props.saveGdm.current_group_id;
@@ -330,7 +331,7 @@ function GroupHeader(props: any) {
                 id_st_group_description =
                   groupListLength > 0
                     ? groupList.filter((val) => val.is_archived === false)[0]
-                        .id_st_group_description
+                      .id_st_group_description
                     : 0;
               }
               props
@@ -339,26 +340,28 @@ function GroupHeader(props: any) {
                   pathParams: id_st_group_description,
                 })
                 .then((json) => {
-                  const response = json.payload.data;
-                  const verLength = Object.keys(response).length;
-                  const isEditable = response[verLength - 1].is_setup_complete;
-                  const latestVerion =
-                    response[verLength - 1].id_st_group_description;
-                  const value = response[verLength - 1].value;
-                  setIsSetupComplete(isEditable);
-                  setVersion(response);
-                  setPlaceHolder(value);
-                  setSelectedVersion(response[verLength - 1].version_number);
-                  props.getSTGroupDetails({
-                    formulary_id: props.saveGdm.formulary_id,
-                    current_group_id: id_st_group_description,
-                    current_group_des_id:latestVerion
-                  });
-                  let apiDetails = {};
-                  apiDetails["lob_type"] = lob_type;
-                  apiDetails["pathParams"] = "/" + latestVerion;
-                  props.getStGrouptDescription(apiDetails);
-                  props.getStTypes(props.saveGdm.formulary_id);
+                  if (json?.payload && json?.payload?.data?.length > 0) {
+                    const response = json.payload.data;
+                    const verLength = Object.keys(response).length;
+                    const isEditable = response[verLength - 1].is_setup_complete;
+                    const latestVerion =
+                      response[verLength - 1].id_st_group_description;
+                    const value = response[verLength - 1].value;
+                    setIsSetupComplete(isEditable);
+                    setVersion(response);
+                    setPlaceHolder(value);
+                    setSelectedVersion(response[verLength - 1].version_number);
+                    props.getSTGroupDetails({
+                      formulary_id: props.saveGdm.formulary_id,
+                      current_group_id: id_st_group_description,
+                      current_group_des_id: latestVerion
+                    });
+                    let apiDetails = {};
+                    apiDetails["lob_type"] = lob_type;
+                    apiDetails["pathParams"] = "/" + latestVerion;
+                    props.getStGrouptDescription(apiDetails);
+                    props.getStTypes(props.saveGdm.formulary_id);
+                  }
                 });
             });
           showMessage(SUCCESS_MSG["delete"], "success");
@@ -373,7 +376,7 @@ function GroupHeader(props: any) {
             });
             showMessage(
               "Following Formularies are linked to current Group Description:\n" +
-                errs,
+              errs,
               "error"
             );
           }
@@ -449,6 +452,7 @@ function GroupHeader(props: any) {
               pathParams: props.saveGdm.current_group_id,
             })
             .then((json) => {
+              if (json?.payload && json?.payload?.data?.length > 0) {
               const response = json.payload.data;
               const verLength = Object.keys(response).length;
               const isEditable = response[verLength - 1].is_setup_complete;
@@ -462,13 +466,14 @@ function GroupHeader(props: any) {
               props.getSTGroupDetails({
                 formulary_id: props.saveGdm.formulary_id,
                 current_group_id: props.saveGdm.current_group_id,
-                current_group_des_id:latestVerion
+                current_group_des_id: latestVerion
               });
               let apiDetails = {};
               apiDetails["lob_type"] = lob_type;
               apiDetails["pathParams"] = "/" + latestVerion;
               props.getStGrouptDescription(apiDetails);
               props.getStTypes(props.saveGdm.formulary_id);
+            }
             });
           showMessage(SUCCESS_MSG["archive"], "success");
         } else if (json?.payload?.status && json?.payload?.status != 200) {
@@ -481,7 +486,7 @@ function GroupHeader(props: any) {
 
   const newVersionGroup = (e: any, param: any) => {
     let lob_type = props.formulary_lob_id;
-    let pathParams = selectedVersionId + "?entity_id=" + props.formulary_id;
+    let pathParams = props.saveGdm.current_group_des_id + "?entity_id=" + props.formulary_id;
     props.cleanMessages({ error: "", success: "" });
     props
       .newVersionGroupDescription({
@@ -508,6 +513,7 @@ function GroupHeader(props: any) {
               pathParams: props.saveGdm.current_group_id,
             })
             .then((json) => {
+              if (json?.payload && json?.payload?.data?.length > 0) {
               const response = json.payload.data;
               const verLength = Object.keys(response).length;
               const isEditable = response[verLength - 1].is_setup_complete;
@@ -520,14 +526,15 @@ function GroupHeader(props: any) {
               setSelectedVersion(response[verLength - 1].version_number);
               props.getSTGroupDetails({
                 formulary_id: props.saveGdm.formulary_id,
-                current_group_id:props.saveGdm.current_group_id,
-                current_group_des_id:latestVerion
+                current_group_id: props.saveGdm.current_group_id,
+                current_group_des_id: latestVerion
               });
               let apiDetails = {};
               apiDetails["lob_type"] = lob_type;
               apiDetails["pathParams"] = "/" + latestVerion;
               props.getStGrouptDescription(apiDetails);
               props.getStTypes(props.saveGdm.formulary_id);
+            }
             });
           showMessage(SUCCESS_MSG["newVersion"], "success");
         } else if (json?.payload?.status && json?.payload?.status != 200) {
@@ -541,7 +548,7 @@ function GroupHeader(props: any) {
             });
             showMessage(
               "Following Formularies are linked to current Group Description:\n" +
-                errs,
+              errs,
               "error"
             );
           }
@@ -557,24 +564,23 @@ function GroupHeader(props: any) {
     selectedRow: any,
     isSelected: boolean
   ) => {
-    
+
   };
 
   const onSelectAllRows = (isSelected: boolean) => {
-    
+
   };
 
   return (
     <div
-      className={`version-wrapper${
-        isSetupComplete === true
+      className={`version-wrapper${isSetupComplete === true
           ? props.isPopUpView
             ? "-grey"
             : "-green"
           : props.isPopUpView
-          ? "-grey"
-          : "-orange"
-      }`}
+            ? "-grey"
+            : "-orange"
+        }`}
     >
       {/* <div className={`version-wrapper${panelColor}`}> */}
       <select
@@ -590,13 +596,13 @@ function GroupHeader(props: any) {
               {e.value}
             </option>
           ) : (
-            <option value={e.value}>{e.value}</option>
-          )
+              <option value={e.value}>{e.value}</option>
+            )
         )}
       </select>
       <div
         className="item item--version-history"
-        onClick={props.isPopUpView ? () => {} : toggleShowViewAll}
+        onClick={props.isPopUpView ? () => { } : toggleShowViewAll}
       >
         <svg
           width="11"
@@ -613,8 +619,8 @@ function GroupHeader(props: any) {
                   ? "#8DD5A2"
                   : "#219653"
                 : props.isPopUpView
-                ? "#8DD5A2"
-                : "#f65a1c"
+                  ? "#8DD5A2"
+                  : "#f65a1c"
             }
           />
         </svg>
@@ -622,7 +628,7 @@ function GroupHeader(props: any) {
       </div>
       <div
         className="item item--version-history"
-        onClick={props.isPopUpView ? () => {} : () => handleClickOpen("clone")}
+        onClick={props.isPopUpView ? () => { } : () => handleClickOpen("clone")}
       >
         <svg
           width="13"
@@ -639,8 +645,8 @@ function GroupHeader(props: any) {
                   ? "#8DD5A2"
                   : "#219653"
                 : props.isPopUpView
-                ? "#8DD5A2"
-                : "#f65a1c"
+                  ? "#8DD5A2"
+                  : "#f65a1c"
             }
           />
         </svg>
@@ -649,7 +655,7 @@ function GroupHeader(props: any) {
       <div
         className="item item--version-history"
         onClick={
-          props.isPopUpView ? () => {} : () => handleClickOpen("newVersion")
+          props.isPopUpView ? () => { } : () => handleClickOpen("newVersion")
         }
       >
         <svg
@@ -667,8 +673,8 @@ function GroupHeader(props: any) {
                   ? "#8DD5A2"
                   : "#219653"
                 : props.isPopUpView
-                ? "#8DD5A2"
-                : "#f65a1c"
+                  ? "#8DD5A2"
+                  : "#f65a1c"
             }
           />
         </svg>
@@ -676,7 +682,7 @@ function GroupHeader(props: any) {
       </div>
       <div
         className="item item--version-history"
-        onClick={props.isPopUpView ? () => {} : () => handleClickOpen("delete")}
+        onClick={props.isPopUpView ? () => { } : () => handleClickOpen("delete")}
       >
         <svg
           width="11"
@@ -695,8 +701,8 @@ function GroupHeader(props: any) {
                   ? "#8DD5A2"
                   : "#219653"
                 : props.isPopUpView
-                ? "#8DD5A2"
-                : "#f65a1c"
+                  ? "#8DD5A2"
+                  : "#f65a1c"
             }
           />
         </svg>
@@ -705,7 +711,7 @@ function GroupHeader(props: any) {
       <div
         className="item item--version-history"
         onClick={
-          props.isPopUpView ? () => {} : () => handleClickOpen("archive")
+          props.isPopUpView ? () => { } : () => handleClickOpen("archive")
         }
       >
         <svg
@@ -723,8 +729,8 @@ function GroupHeader(props: any) {
                   ? "#8DD5A2"
                   : "#219653"
                 : props.isPopUpView
-                ? "#8DD5A2"
-                : "#f65a1c"
+                  ? "#8DD5A2"
+                  : "#f65a1c"
             }
           />
         </svg>
@@ -748,8 +754,8 @@ function GroupHeader(props: any) {
           />
         </STAlertDialog>
       ) : (
-        <ToastContainer />
-      )}
+          <ToastContainer />
+        )}
       <DialogPopup
         showCloseIcon={true}
         positiveActionText="Save"
@@ -784,7 +790,7 @@ function GroupHeader(props: any) {
             isPinningEnabled={false}
             enableSearch={false}
             enableColumnDrag
-            onSearch={() => {}}
+            onSearch={() => { }}
             fixedColumnKeys={[]}
             pagintionPosition="topRight"
             gridName="DRUG GRID"

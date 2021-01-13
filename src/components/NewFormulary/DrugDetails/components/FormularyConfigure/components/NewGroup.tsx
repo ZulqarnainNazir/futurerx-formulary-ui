@@ -328,10 +328,10 @@ function NewGroup(props: any) {
             : props.saveGdm.current_group_id;
           apiDetails["pathParams"] = "/" + id_base_st_group_description;
           props.getStGrouptDescriptionVersions(apiDetails).then((json) => {
-            debugger;
+            
             const isEditable =
-              json.payload.data.length > 0 &&
-              json.payload.data.find(
+              json?.payload?.data?.length > 0 &&
+              json?.payload?.data?.find(
                 (val) => val.id_st_group_description === id_st_group_description
               );
             // props.selectGroup(
@@ -387,8 +387,8 @@ function NewGroup(props: any) {
             json.payload.success.data.id_base_st_group_description;
           props.getStGrouptDescriptionVersions(apiDetails).then((json) => {
             const isEditable =
-              json.payload.data.length > 0 &&
-              json.payload.data.find(
+              json?.payload?.data?.length > 0 &&
+              json?.payload?.data.find(
                 (val) =>
                   val.id_st_group_description ===
                   formData["id_st_group_description"]
@@ -505,7 +505,7 @@ function NewGroup(props: any) {
                     type="text"
                     name="st_group_description_name"
                     onChange={handleChange}
-                    defaultValue={formData.st_group_description_name}
+                    value={formData.st_group_description_name}
                     disabled={editable}
                     className={errorClass}
                   />
@@ -521,7 +521,7 @@ function NewGroup(props: any) {
                       type="text"
                       name="excluded_drug_file"
                       onChange={handleChange}
-                      defaultValue={formData.excluded_drug_file}
+                      value={formData.excluded_drug_file}
                       disabled={editable}
                     />
                   </div>

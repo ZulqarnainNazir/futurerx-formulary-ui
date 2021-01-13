@@ -204,7 +204,7 @@ class PaReplace extends React.Component<any, any> {
   openTierGridContainer = () => {
     this.state.drugData = [];
     this.state.drugGridData = [];
-    this.state.selectedRowKeys =[]; 
+    this.state.selectedRowKeys = [];
     if (this.state.selectedGroupDescription === null) {
       showMessage("Group Description is required", "info");
       return;
@@ -276,7 +276,7 @@ class PaReplace extends React.Component<any, any> {
         selectedPaType: null,
         is_additional_criteria_defined: false,
       });
-      this.populateGridData(null,nextProps.configureSwitch );
+      this.populateGridData(null, nextProps.configureSwitch);
     } else {
       this.setState({ tierGridContainer: false });
     }
@@ -305,31 +305,35 @@ class PaReplace extends React.Component<any, any> {
         { key: constants.KEY_ENTITY_ID, value: this.props?.formulary_id },
       ];
 
-
-
       apiDetails["messageBody"] = {
         covered: {},
         filter: [],
         is_select_all: false,
         not_covered: {},
         search_key: "",
-        drug_list:"",
-        prev_formulary:"",
+        drug_list: "",
+        prev_formulary: "",
       };
-      if (this.props.advancedSearchBody && Object.keys(this.props.advancedSearchBody).length > 0) {
-        apiDetails["messageBody"] = Object.assign(apiDetails["messageBody"], this.props.advancedSearchBody);
+      if (
+        this.props.advancedSearchBody &&
+        Object.keys(this.props.advancedSearchBody).length > 0
+      ) {
+        apiDetails["messageBody"] = Object.assign(
+          apiDetails["messageBody"],
+          this.props.advancedSearchBody
+        );
       }
 
-      apiDetails["messageBody"]['is_select_all'] = this.state.isSelectAll;
+      apiDetails["messageBody"]["is_select_all"] = this.state.isSelectAll;
 
       let allFilters = Array();
       let filterProps = Array();
-      this.state.filter.map(filterInfo => {
+      this.state.filter.map((filterInfo) => {
         allFilters.push(filterInfo);
         filterProps.push(filterInfo["prop"]);
       });
 
-      this.state.quickFilter.map(filterInfo => {
+      this.state.quickFilter.map((filterInfo) => {
         if (!filterProps.includes(filterInfo["prop"]))
           allFilters.push(filterInfo);
       });
@@ -385,69 +389,71 @@ class PaReplace extends React.Component<any, any> {
     }
   };
 
-  
+
   dropDownSelectHandlerGroupDescription = (tmp_value, event) => {
-    
+
     // let tmp_index = event.key;
     // let tmp_value = event.value;
     this.setState({ selectedGroupDescription: tmp_value });
     let apiDetails = {};
     apiDetails["lob_type"] = this.props.formulary_lob_id;
     apiDetails["pathParams"] = "/" + tmp_value;
-    this.state.showPaGroupDescription=false;
+    this.state.showPaGroupDescription = false;
     let selected = this.state.paGroupDescriptions.filter(
       (obj) => obj[this.state.groupDescriptionProp] == tmp_value
     )[0];
     this.setState({
-      selectedGroupDescriptionObj : selected
+      selectedGroupDescriptionObj: selected
     });
     this.props.getPaGrouptDescriptionVersions(apiDetails).then((json) => {
-      let data = json.payload.data;
-      let ftype = "";
-      switch (this.props.formulary_lob_id) {
-        case 1:
-          ftype = data[0].file_type;
-          break;
-        case 4:
-          ftype = "COMM";
-          break;
-        default:
-          break;
-      }
-      let latestVersionId = -1;
-      data.forEach((element) => {
-        if (element.id_pa_group_description > latestVersionId) {
-          latestVersionId = element.id_pa_group_description;
+      if (json?.payload && json?.payload?.data?.length > 0) {
+        let data = json.payload.data;
+        let ftype = "";
+        switch (this.props.formulary_lob_id) {
+          case 1:
+            ftype = data[0].file_type;
+            break;
+          case 4:
+            ftype = "COMM";
+            break;
+          default:
+            break;
         }
-      });
-      let tmp_additionalCriteria = false;
-      this.props
-        .getPaGrouptDescription({
-          lob_type: this.props.formulary_lob_id,
-          pathParams: "/" + latestVersionId,
-        })
-        .then((json) => {
-          
-          this.props.setAdditionalCriteria([]);
-          if (json.payload && json.payload.code === "200") {
-            if (
-              json.payload.data["um_criteria"] != null &&
-              json.payload.data["um_criteria"].length > 0
-            ) {
-              let payload: any = {};
-              payload.additionalCriteriaBody = json.payload.data["um_criteria"];
-              this.props.setAdditionalCriteria(payload);
-              tmp_additionalCriteria = true;
-            }
+        let latestVersionId = -1;
+        data.forEach((element) => {
+          if (element.id_pa_group_description > latestVersionId) {
+            latestVersionId = element.id_pa_group_description;
           }
-          this.setState({
-            is_additional_criteria_defined: tmp_additionalCriteria,
-          });
         });
-      this.setState({
-        selectedLastestedVersion: latestVersionId,
-        fileType: ftype,
-      });
+        let tmp_additionalCriteria = false;
+        this.props
+          .getPaGrouptDescription({
+            lob_type: this.props.formulary_lob_id,
+            pathParams: "/" + latestVersionId,
+          })
+          .then((json) => {
+
+            this.props.setAdditionalCriteria([]);
+            if (json.payload && json.payload.code === "200") {
+              if (
+                json.payload.data["um_criteria"] != null &&
+                json.payload.data["um_criteria"].length > 0
+              ) {
+                let payload: any = {};
+                payload.additionalCriteriaBody = json.payload.data["um_criteria"];
+                this.props.setAdditionalCriteria(payload);
+                tmp_additionalCriteria = true;
+              }
+            }
+            this.setState({
+              is_additional_criteria_defined: tmp_additionalCriteria,
+            });
+          });
+        this.setState({
+          selectedLastestedVersion: latestVersionId,
+          fileType: ftype,
+        });
+      }
     });
     this.setState({
       tierGridContainer: false,
@@ -512,7 +518,6 @@ class PaReplace extends React.Component<any, any> {
   };
 
   handleChange = (e: any) => {
-    
     let tmp_value = e.target.value;
     let tmp_key = e.target.name;
     if (e.target.value == "true") {
@@ -523,7 +528,7 @@ class PaReplace extends React.Component<any, any> {
     this.setState({ [tmp_key]: tmp_value });
   };
 
-  populateGridData = (searchBody = null, switchState=false) => {
+  populateGridData = (searchBody = null, switchState = false) => {
     console.log("Populate grid data is called");
     let apiDetails = {};
 
@@ -541,15 +546,15 @@ class PaReplace extends React.Component<any, any> {
         searchBody
       );
     }
-    
+
     let allFilters = Array();
     let filterProps = Array();
-    this.state.filter.map(filterInfo => {
+    this.state.filter.map((filterInfo) => {
       allFilters.push(filterInfo);
       filterProps.push(filterInfo["prop"]);
     });
 
-    this.state.quickFilter.map(filterInfo => {
+    this.state.quickFilter.map((filterInfo) => {
       if (!filterProps.includes(filterInfo["prop"]))
         allFilters.push(filterInfo);
     });
@@ -558,12 +563,12 @@ class PaReplace extends React.Component<any, any> {
     // if (this.state.sort_by && this.state.sort_by.length ==0){
     //   this.state.sort_by.push({ key: 'drug_label_name', value: 'asc' });
     // }
-    
+
     if (this.state.sort_by && this.state.sort_by.length > 0) {
       let keys = Array();
       let values = Array();
 
-      this.state.sort_by.map(keyPair => {
+      this.state.sort_by.map((keyPair) => {
         keys.push(keyPair["key"]);
         values.push(keyPair["value"]);
       });
@@ -627,7 +632,7 @@ class PaReplace extends React.Component<any, any> {
             obj[this.state.groupDescriptionProp] ==
             this.state.selectedGroupDescription
         )[0];
-        
+
         let thisRef = this;
         var gridData = tmpData.map(function (el) {
           var element = Object.assign({}, el);
@@ -635,11 +640,11 @@ class PaReplace extends React.Component<any, any> {
           let gridItem = {};
           gridItem["id"] = count;
           gridItem["key"] = count;
-          
 
-          if ( selected &&
+
+          if (selected &&
             selected["pa_group_description_name"] ===
-            element.pa_group_description
+              element.pa_group_description
           ) {
             //console.log("element value tier ", selectedGroup, element.pa_group_description);
             gridItem["isChecked"] = true;
@@ -669,7 +674,9 @@ class PaReplace extends React.Component<any, any> {
             : "";
           gridItem["ndc"] = "";
           gridItem["rxcui"] = element.rxcui ? "" + element.rxcui : "";
-          gridItem["generic_product_identifier"] = element.generic_product_identifier
+          gridItem[
+            "generic_product_identifier"
+          ] = element.generic_product_identifier
             ? "" + element.generic_product_identifier
             : "";
           gridItem["trademark_code"] = element.trademark_code
@@ -686,11 +693,11 @@ class PaReplace extends React.Component<any, any> {
           drugGridData: gridData,
           dataCount: json.payload.count,
         });
-      }else{
+      } else {
         this.setState({
           drugData: Array(),
           drugGridData: Array(),
-          dataCount: 0
+          dataCount: 0,
         });
       }
     }
@@ -715,17 +722,19 @@ class PaReplace extends React.Component<any, any> {
     apiDetails_1["pathParams"] = "/" + this.props?.client_id;
 
     this.props.getPaGrouptDescriptions(apiDetails_1).then((json: any) => {
-      let result = json.payload.data.filter(
-        (obj) => !obj.is_archived && obj.is_setup_complete
-      );
-      this.setState({
-        paGroupDescriptions: result,
-      });
+      if (json?.payload && json?.payload?.data?.length > 0) {
+        let result = json.payload.data.filter(
+          (obj) => !obj.is_archived && obj.is_setup_complete
+        );
+        this.setState({
+          paGroupDescriptions: result,
+        });
+      }
     });
 
     this.props.getPaSummary(this.props?.formulary_id).then((json) => {
       this.setState({
-        paTypes: json.payload.result,
+        paTypes: json?.payload?.result,
       });
     });
 
@@ -735,7 +744,7 @@ class PaReplace extends React.Component<any, any> {
     };
     this.props.getLobFormularies(apiDetails).then((json) => {
       this.setState({
-        lobFormularies: json.payload.result,
+        lobFormularies: json?.payload?.result,
       });
     });
 
@@ -749,7 +758,6 @@ class PaReplace extends React.Component<any, any> {
     this.setState({ isAdditionalCriteriaOpen: false });
   };
   openAdditionalCriteria = () => {
-    
     this.setState({ isAdditionalCriteriaOpen: true });
   };
   onSelectAllRows = (isSelected: boolean) => {
@@ -767,28 +775,30 @@ class PaReplace extends React.Component<any, any> {
       (k) => this.state.fixedSelectedRows.indexOf(k) < 0
     );
     this.onSelectedTableRowChanged(selectedRows);
-    this.setState({ drugGridData: data ,isSelectAll:isSelected }); 
+    this.setState({ drugGridData: data, isSelectAll: isSelected });
   };
   // additional criteria toggle
 
-  onApplyFilterHandler = filters => {
+  onApplyFilterHandler = (filters) => {
     console.log("filtering from be:" + JSON.stringify(filters));
     //this.state.filter = Array();
     const fetchedKeys = Object.keys(filters);
     if (fetchedKeys && fetchedKeys.length > 0) {
       fetchedKeys.map((fetchedProps) => {
         if (filters[fetchedProps]) {
-          this.state.filter = this.state.filter.filter(element => element['prop'] !== fetchedProps);
+          this.state.filter = this.state.filter.filter(
+            (element) => element["prop"] !== fetchedProps
+          );
           const fetchedOperator =
             filters[fetchedProps][0].condition === "is like"
               ? "is_like"
               : filters[fetchedProps][0].condition === "is not"
-                ? "is_not"
-                : filters[fetchedProps][0].condition === "is not like"
-                  ? "is_not_like"
-                  : filters[fetchedProps][0].condition === "does not exist"
-                    ? "does_not_exist"
-                    : filters[fetchedProps][0].condition;
+              ? "is_not"
+              : filters[fetchedProps][0].condition === "is not like"
+              ? "is_not_like"
+              : filters[fetchedProps][0].condition === "does not exist"
+              ? "does_not_exist"
+              : filters[fetchedProps][0].condition;
           const fetchedValues =
             filters[fetchedProps][0].value !== ""
               ? [filters[fetchedProps][0].value.toString()]
@@ -811,14 +821,13 @@ class PaReplace extends React.Component<any, any> {
     }
   };
 
-
   onApplySortHandler = (key, order, sortedInfo) => {
     console.log("sort details ", key, order);
     this.state.sort_by = Array();
     if (order) {
       let sortOrder = order === "ascend" ? "asc" : "desc";
       this.state.sort_by = this.state.sort_by.filter(
-        keyPair => keyPair["key"] !== key
+        (keyPair) => keyPair["key"] !== key
       );
       this.state.sort_by.push({ key: key, value: sortOrder });
     }
@@ -827,7 +836,7 @@ class PaReplace extends React.Component<any, any> {
       gridSingleSortInfo: sortedInfo,
       isGridSingleSorted: true,
       isGridMultiSorted: false,
-      gridMultiSortedInfo: []
+      gridMultiSortedInfo: [],
     });
     if (this.props.advancedSearchBody) {
       this.populateGridData(this.props.advancedSearchBody);
@@ -838,33 +847,32 @@ class PaReplace extends React.Component<any, any> {
 
   applyMultiSortHandler = (sorter, multiSortedInfo) => {
     console.log("Multisort info:" + JSON.stringify(sorter));
-    
-		
-		this.setState(  {
-			isGridMultiSorted: true,
-			isGridSingleSorted: false,
-			gridMultiSortedInfo: multiSortedInfo,
-			gridSingleSortInfo: null,
-		})
+
+    this.setState({
+      isGridMultiSorted: true,
+      isGridSingleSorted: false,
+      gridMultiSortedInfo: multiSortedInfo,
+      gridSingleSortInfo: null,
+    })
 
     if (sorter && sorter.length > 0) {
       let uniqueKeys = Array();
       let filteredSorter = Array();
-      sorter.map(sortInfo => {
+      sorter.map((sortInfo) => {
         if (uniqueKeys.includes(sortInfo["columnKey"])) {
         } else {
           filteredSorter.push(sortInfo);
           uniqueKeys.push(sortInfo["columnKey"]);
         }
       });
-      filteredSorter.map(sortInfo => {
+      filteredSorter.map((sortInfo) => {
         let sortOrder = sortInfo["order"] === "ascend" ? "asc" : "desc";
         this.state.sort_by = this.state.sort_by.filter(
-          keyPair => keyPair["key"] !== sortInfo["columnKey"]
+          (keyPair) => keyPair["key"] !== sortInfo["columnKey"]
         );
         this.state.sort_by.push({
           key: sortInfo["columnKey"],
-          value: sortOrder
+          value: sortOrder,
         });
       });
     }
@@ -914,15 +922,15 @@ class PaReplace extends React.Component<any, any> {
                 value={this.state.selectedGroupDescription}
               /> */}
               <div className="input-element">
-                  <div className="bordered pointer bg-green">
-                    <span onClick={(e) => {this.setState({ showPaGroupDescription: true });}} className="inner-font">
-                      {this.state.selectedGroupDescriptionObj["pa_group_description_name"]
-                        ? this.state.selectedGroupDescriptionObj["pa_group_description_name"]
-                        : "Select Group Description"}
-                    </span>
-                    <EditIcon onClick={(e) =>{this.setState({ showPaGroupDescription: true });}} className={"hide-edit-icon"} />
-                  </div>
+                <div className="bordered pointer bg-green">
+                  <span onClick={(e) => { this.setState({ showPaGroupDescription: true }); }} className="inner-font">
+                    {this.state.selectedGroupDescriptionObj["pa_group_description_name"]
+                      ? this.state.selectedGroupDescriptionObj["pa_group_description_name"]
+                      : "Select Group Description"}
+                  </span>
+                  <EditIcon onClick={(e) => { this.setState({ showPaGroupDescription: true }); }} className={"hide-edit-icon"} />
                 </div>
+              </div>
             </Col>
             <Col lg={4}></Col>
             <Col lg={8} className="mb-10">
@@ -937,7 +945,6 @@ class PaReplace extends React.Component<any, any> {
                 disabled={this.props.configureSwitch}
                 value={this.state.selectedPaType}
               />
-              
             </Col>
             <Col lg={8}>
               <label>
@@ -1009,8 +1016,8 @@ class PaReplace extends React.Component<any, any> {
                 </div>
               </Col>
             ) : (
-              <Col lg={8}></Col>
-            )}
+                <Col lg={8}></Col>
+              )}
             <Col lg={4}></Col>
             <Col lg={8}>
               <label>
@@ -1065,8 +1072,7 @@ class PaReplace extends React.Component<any, any> {
               </Space>
             </Col>
           </Row>
-         
-         
+
           {isAdditionalCriteriaOpen ? (
             <AdvanceSearchContainer
               openPopup={isAdditionalCriteriaOpen}
@@ -1109,7 +1115,7 @@ class PaReplace extends React.Component<any, any> {
                   isPinningEnabled={false}
                   enableSearch={false}
                   enableColumnDrag
-                  onSearch={() => {}}
+                  onSearch={() => { }}
                   fixedColumnKeys={[]}
                   pagintionPosition="topRight"
                   gridName="DRUG GRID"
@@ -1137,12 +1143,12 @@ class PaReplace extends React.Component<any, any> {
                   isMultiSorted={this.state.isGridMultiSorted}
                   multiSortedInfo={this.state.gridMultiSortedInfo}
                   onMultiSortToggle={this.onMultiSortToggle}
-                  // rowSelection={{
-                  //   columnWidth: 50,
-                  //   fixed: true,
-                  //   type: "checkbox",
-                  //   onChange: this.onSelectedTableRowChanged,
-                  // }}
+                // rowSelection={{
+                //   columnWidth: 50,
+                //   fixed: true,
+                //   type: "checkbox",
+                //   onChange: this.onSelectedTableRowChanged,
+                // }}
                 />
               </div>
             </div>
@@ -1166,7 +1172,7 @@ class PaReplace extends React.Component<any, any> {
                 selectFormulary: !this.state.selectFormulary,
               });
             }}
-            handleAction={() => {}}
+            handleAction={() => { }}
             open={this.state.selectFormulary}
             showActions={false}
             className=""
@@ -1191,7 +1197,7 @@ class PaReplace extends React.Component<any, any> {
                 showPaGroupDescription: !this.state.showPaGroupDescription,
               });
             }}
-            handleAction={() => {}}
+            handleAction={() => { }}
             open={this.state.showPaGroupDescription}
             showActions={false}
             className=""
@@ -1200,7 +1206,12 @@ class PaReplace extends React.Component<any, any> {
           >
             {/* <SelectFormularyPopUp formularyToggle={this.formularyToggle} /> */}
             {/* <CloneFormularyPopup type="medicare" /> */}
-            <PaGroupDescriptionManagement isPopUpView={true} selectGroupDescriptionClick={this.dropDownSelectHandlerGroupDescription} />
+            <PaGroupDescriptionManagement
+              isPopUpView={true}
+              selectGroupDescriptionClick={
+                this.dropDownSelectHandlerGroupDescription
+              }
+            />
           </DialogPopup>
         )}
         <ToastContainer />
