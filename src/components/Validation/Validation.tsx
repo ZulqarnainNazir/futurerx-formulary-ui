@@ -27,23 +27,23 @@ function Validation(props) {
     props.getValidationList(props.current_formulary);
   }, props.current_formulary);
 
-  let total1,
-    passed1,
-    failed1,
-    warning1,
-    comment = "";
+  let totalOverall = 0;
+  let passedOverall = 0;
+  let failedOverall = 0;
+  let warningOverall = 0;
+  let comment = "";
   let validationItems;
   if (Object.keys(props.validationData).length > 0) {
-    total1 =
+    totalOverall =
       props.validationData.validation_summary &&
       props.validationData.validation_summary.total;
-    failed1 =
+    failedOverall =
       props.validationData.validation_summary &&
       props.validationData.validation_summary.failed;
-    passed1 =
+    passedOverall =
       props.validationData.validation_summary &&
       props.validationData.validation_summary.passed;
-    warning1 =
+    warningOverall =
       props.validationData.validation_summary &&
       props.validationData.validation_summary.warning;
 
@@ -190,14 +190,14 @@ function Validation(props) {
       <Paper elevation={0} style={{ marginBottom: "3rem" }}>
         <div className="title">Summary of Checks and Validations</div>
         <div className="container">
-          <ValidationStartsCard total={total1} />
-          <Card label="Failed" value={failed1} color="rgba(252,120,120,0.75)" />
+          <ValidationStartsCard total={totalOverall} />
+          <Card label="Failed" value={failedOverall} color="rgba(252,120,120,0.75)" />
           <Card
             label="Warning"
-            value={warning1}
+            value={warningOverall}
             color="rgba(245,195,140,0.75)"
           />
-          <Card label="Passed" value={passed1} color="rgba(176,223,165,0.75)" />
+          <Card label="Passed" value={passedOverall} color="rgba(176,223,165,0.75)" />
         </div>
       </Paper>
       {comment}

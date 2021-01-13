@@ -84,7 +84,12 @@ class FormularyDesignCommercial extends React.Component<any, any> {
     }
     checkUncheckHandler = () => {
         const des_opt = {...this.props.edit_info};
-        if(des_opt.edits.length > 0 || des_opt.custom_edits.length > 0){
+        let isNA = false;
+        if(des_opt.edits.length === 1){
+            const elObj =this.props.designOptions.filter(e => e.id_edit === des_opt.edits[0]);
+            isNA = elObj.map(e => e.edit_name)[0] === 'N/A';
+        }
+        if((des_opt.edits.length > 0 || des_opt.custom_edits.length > 0) && !isNA){
             des_opt.edits = [];
             des_opt.custom_edits = [];
             const NAId = this.props.designOptions?.filter(e => e.is_custom !== true && e.edit_name === 'N/A').map(e=>e.id_edit)[0];
@@ -197,6 +202,17 @@ class FormularyDesignCommercial extends React.Component<any, any> {
         }
         return checkbox; 
     }
+    renderCheckUncheckButton = () => {
+        const staticOpt = this.props.edit_info.edits;
+        const staticOptLen = this.props.edit_info.edits.length;
+        const customOptLen = this.props.edit_info.custom_edits.length;
+        let isNA = false;
+        if(staticOptLen === 1){
+            const elObj =this.props.designOptions.filter(e => e.id_edit === staticOpt[0]);
+            isNA = elObj.map(e => e.edit_name)[0] === 'N/A';
+        }
+        return isNA ? <Button label="Check All" className="uncheck-btn" onClick={this.checkUncheckHandler}/> : <Button label="Uncheck All" className="uncheck-btn" onClick={this.checkUncheckHandler}/>;
+    }
   render() {
     return (
       <div className="supplemental-models-container">
@@ -210,11 +226,7 @@ class FormularyDesignCommercial extends React.Component<any, any> {
                 <ul>
                     <li>
                     <Box display="flex" justifyContent="flex-end" className="compare-btn">
-                        {(this.props.edit_info.edits.length > 0 || this.props.edit_info.custom_edits.length > 0) ? (
-                            <Button label="Uncheck All" className="uncheck-btn" onClick={this.checkUncheckHandler}/>
-                        ) : (
-                            <Button label="Check All" className="uncheck-btn" onClick={this.checkUncheckHandler}/>
-                        )}
+                        {this.renderCheckUncheckButton()}
                     </Box>
                     </li>
                 </ul>
