@@ -426,6 +426,7 @@ class PaReplace extends React.Component<any, any> {
           }
         });
         let tmp_additionalCriteria = false;
+        let tmp_selectedPaType=null;
         this.props
           .getPaGrouptDescription({
             lob_type: this.props.formulary_lob_id,
@@ -444,9 +445,11 @@ class PaReplace extends React.Component<any, any> {
                 this.props.setAdditionalCriteria(payload);
                 tmp_additionalCriteria = true;
               }
+              tmp_selectedPaType=json?.payload?.data?.id_pa_type;
             }
             this.setState({
               is_additional_criteria_defined: tmp_additionalCriteria,
+              selectedPaType: tmp_selectedPaType
             });
           });
         this.setState({
