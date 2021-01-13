@@ -1,0 +1,64 @@
+.containerQA{
+  padding-left: 15px;
+  min-width: 800px;
+  width: 939px !important;
+  height: 521px;
+}
+.headerTitle{
+  font-family: Roboto;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 12px;
+  line-height: 35px;
+  letter-spacing: 0.1px;
+  color: #323C47;
+}
+/* Styles for wrapping the search box */
+
+.paddingTop0{
+  padding-top: 0px !important;
+}
+.has-search .form-control-feedback {
+    position: absolute;
+    z-index: 2;
+    display: block;
+    width: 2.375rem;
+    height: 2.375rem;
+    line-height: 2.375rem;
+    text-align: center;
+    pointer-events: none;
+    color: #aaa;
+}
+.paddingLeft15{
+  padding-left: 15px;
+}
+
+.votesDiv {
+  font-family: Roboto;
+  font-style: normal;
+  font-weight: 500;
+  font-size: 18px;
+  line-height: 35px;
+  letter-spacing: 0.1px;
+  color: #323C47;
+}
+svg { cursor: pointer;margin-top: 9px; }
+.marginLeft{
+  margin-left: 5px;
+}
+.question{
+  color: blue;
+}
+.questionDiv{
+  height: 110px;
+  align-items: center;
+  border-bottom: 3px solid #E5E5E5;
+  overflow: hidden;
+}
+ .over {
+    width: 626px;
+    overflow:hidden; 
+    white-space:nowrap; 
+    margin-top: 5px;
+    text-overflow: ellipsis;
+}
