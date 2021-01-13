@@ -9,6 +9,7 @@ import {
   getDesignOptions,
   getSupplementalOptions,
   getTierOptions,
+  getResemblingFormularies,
 } from "./setupOptionsService";
 
 interface SetupOptionsState {
@@ -38,6 +39,7 @@ export interface GeneralOptions {
   classification_systems: any[];
   states: any[];
   clone_source_formularies: any[];
+  resembling_formularies: any[];
 }
 
 const generalOptionsInitialState: GeneralOptions = {
@@ -47,6 +49,7 @@ const generalOptionsInitialState: GeneralOptions = {
   classification_systems: [],
   states: [],
   clone_source_formularies: [],
+  resembling_formularies: [],
 };
 
 export interface MedicareOptions {
@@ -91,7 +94,6 @@ const setup = createSlice({
       state,
       { payload }: PayloadAction<GeneralOptions>
     ) {
-      // console.log("***** getGeneralOptionsSuccess # 1");
       if (!state.generalOptions) {
         state.generalOptions = {};
         state.generalOptions = generalOptionsInitialState;
@@ -102,18 +104,16 @@ const setup = createSlice({
         payload?.classification_systems;
       state.generalOptions.clone_source_formularies =
         payload?.clone_source_formularies;
-
       state.isLoading = false;
       state.error = null;
     },
     getGeneralOptionsFailure: loadingFailed,
+
     getSubMthsOptionsStart: startLoading,
     getSubMthsOptionsSuccess(
       state,
       { payload }: PayloadAction<GeneralOptions>
     ) {
-      // console.log("***** getSubMthsOptionsSuccess ");
-      // console.log(payload);
       if (!state.generalOptions) {
         state.generalOptions = {};
         state.generalOptions = generalOptionsInitialState;
@@ -126,8 +126,6 @@ const setup = createSlice({
 
     getStatesOptionsStart: startLoading,
     getStatesOptionsSuccess(state, { payload }: PayloadAction<GeneralOptions>) {
-      //console.log("***** getStatesOptionsSuccess ");
-      //console.log(payload);
       if (!state.generalOptions) {
         state.generalOptions = {};
         state.generalOptions = generalOptionsInitialState;
@@ -138,22 +136,31 @@ const setup = createSlice({
     },
     getStatesOptionsFailure: loadingFailed,
 
+    getResemblingFlsOptionsStart: startLoading,
+    getResemblingFlsOptionsSuccess(state, { payload }: PayloadAction<GeneralOptions>) {
+      if (!state.generalOptions) {
+        state.generalOptions = {};
+        state.generalOptions = generalOptionsInitialState;
+      }
+      state.generalOptions.resembling_formularies = payload?.resembling_formularies;
+      state.isLoading = false;
+      state.error = null;
+    },
+    getResemblingFlsOptionsFailure: loadingFailed,
+    
     getMedicareOptionsStart: startLoading,
     getMedicareOptionsSuccess(
       state,
       { payload }: PayloadAction<MedicareOptions>
     ) {
-      //console.log("***** getMedicareOptionsSuccess ");
-      //console.log(payload);
       state.medicareOptions = payload;
       state.isLoading = false;
       state.error = null;
     },
     getMedicareOptionsFailure: loadingFailed,
+
     getDesignOptionsStart: startLoading,
     getDesignOptionsSuccess(state, { payload }: PayloadAction<DesignOptions>) {
-      // console.log("***** getDesignOptionsSuccess ");
-      // console.log(payload);
       state.designOptions = payload;
       state.isLoading = false;
       state.error = null;
@@ -162,18 +169,6 @@ const setup = createSlice({
 
     getTierOptionsStart: startLoading,
     getTierOptionsSuccess(state, { payload }: PayloadAction<TierOptions>) {
-      //console.log("***** getTierOptionsSuccess Reducer");
-      // let AddNew: any = {
-      //   id_tier_label: -1,
-      //   tier_label: "Add New",
-      //   display_text: "",
-      //   code_value: "",
-      // };
-      // // TODO - Cleanup
-      // let base1: any;
-      // base1 = payload;
-      // let newList = [AddNew, ...base1];
-      // state.tierOptions = newList;
       state.tierOptions = payload;
       state.isLoading = false;
       state.error = null;
@@ -185,8 +180,6 @@ const setup = createSlice({
       state,
       { payload }: PayloadAction<SupplementalOptions>
     ) {
-      // console.log("***** getSupplementalOptionsSuccess ");
-      // console.log(payload);
       state.supplementalOptions = payload;
       state.isLoading = false;
       state.error = null;
@@ -194,9 +187,6 @@ const setup = createSlice({
     getSupplementalOptionsFailure: loadingFailed,
 
     clearSetupOptions(state, { payload }: PayloadAction<any>) {
-      console.log("***** CLEAR SETUP Options");
-
-      //state.generalOptions = null;
       state.medicareOptions = null;
       state.designOptions = null;
       state.supplementalOptions = null;
@@ -254,6 +244,23 @@ export const fetchStatesOptions = createAsyncThunk(
     }
   }
 );
+
+export const fetchResemblingFlsOptions = createAsyncThunk(
+  "setupOptions",
+  async (input: TypeAndId, { dispatch }) => {
+    // console.log("***** fetchSubMthsOptions");
+    try {
+      dispatch(getResemblingFlsOptionsStart());
+      const options: any = await getResemblingFormularies(input.type);
+      // console.log("*** options : ", options);
+      dispatch(getResemblingFlsOptionsSuccess(options));
+    } catch (err) {
+      //console.log("*****  AC - ERROR ");
+      dispatch(getResemblingFlsOptionsFailure(err.toString()));
+    }
+  }
+);
+
 
 export const fetchMedicareOptions = createAsyncThunk(
   "setupOptions",
@@ -381,6 +388,10 @@ export const {
   getSubMthsOptionsStart,
   getSubMthsOptionsSuccess,
   getSubMthsOptionsFailure,
+
+  getResemblingFlsOptionsStart,
+  getResemblingFlsOptionsSuccess,
+  getResemblingFlsOptionsFailure,
 
   getMedicareOptionsStart,
   getMedicareOptionsSuccess,
