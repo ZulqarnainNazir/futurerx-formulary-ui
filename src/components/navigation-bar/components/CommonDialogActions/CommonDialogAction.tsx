@@ -1,18 +1,18 @@
 import React from "react";
 import Grid from "@material-ui/core/Grid";
-import DialogPopup from "../shared/FrxDialogPopup/FrxDialogPopup";
+import DialogPopup from "../../../shared/FrxDialogPopup/FrxDialogPopup";
 import "./CommonDialogAction.scss";
-import { ReactComponent as WorkFlowIcon } from "../../assets/icons/workflowicon.svg";
-import { ReactComponent as AuditIcon } from "../../assets/icons/auditicon.svg";
-import { ReactComponent as NotificationiconIcon } from "../../assets/icons/notificationicon.svg";
-import { ReactComponent as NoteIcon } from "../../assets/icons/noteicon.svg";
-import { ReactComponent as HelpIcon } from "../../assets/icons/helpicon.svg";
-import { ReactComponent as QAiconcon } from "../../assets/icons/Q&Aicon.svg";
-import { ReactComponent as ImportIcon } from "../../assets/icons/importicon.svg";
-import { ReactComponent as ExportIcon } from "../../assets/icons/exporticon.svg";
-import { ReactComponent as BazariconIcon } from "../../assets/icons/bazaricon.svg";
-import { ReactComponent as SearchcIcon } from "../../assets/icons/searchicon.svg";
-import { ReactComponent as ProfileIcon } from "../../assets/icons/profileicon.svg";
+import { ReactComponent as WorkFlowIcon } from "../../../../assets/icons/workflowicon.svg";
+import { ReactComponent as AuditIcon } from "../../../../assets/icons/auditicon.svg";
+import { ReactComponent as NotificationiconIcon } from "../../../../assets/icons/nav-notification.svg";
+import { ReactComponent as NoteIcon } from "../../../../assets/icons/noteicon.svg";
+import { ReactComponent as HelpIcon } from "../../../../assets/icons/nav-help.svg";
+import { ReactComponent as QAiconcon } from "../../../../assets/icons/nav-qa.svg";
+import { ReactComponent as ImportIcon } from "../../../../assets/icons/importicon.svg";
+import { ReactComponent as ExportIcon } from "../../../../assets/icons/exporticon.svg";
+import { ReactComponent as BazariconIcon } from "../../../../assets/icons/bazaricon.svg";
+import { ReactComponent as SearchcIcon } from "../../../../assets/icons/nav-search.svg";
+import { ReactComponent as ProfileIcon } from "../../../../assets/icons/profileicon.svg";
 import WorkFlowDialog from "./components/Workflow-Dialog/WorkFlow-Dialog";
 import Audit from "./components/Audit";
 import Notification from "./components/Notification";
@@ -97,63 +97,62 @@ export default class CommonDialogAction extends React.Component<any, any> {
   };
   render() {
     return (
-      <Grid container>
-        <Grid item xs={7}></Grid>
-        <Grid item xs={5}>
-          <div className="icon-list-wrapper">
-            <div className="icons-list">
+      <Grid container justify="flex-end">
+        <>
+          <div className="nav-icon-list-wrapper">
+            <div className="nav-icons-list">
               <WorkFlowIcon
                 className="marginRight"
                 onClick={(e) => this.handleIconClick("workflow","Task Name")}
               />
-              <AuditIcon
+              {/* <AuditIcon
                 className="marginRight"
                 onClick={(e) => this.handleIconClick("audit", "MEMBER AUDITS")}
-              />
+              /> */}
               <NotificationiconIcon
                 className="marginRight"
                 onClick={(e) =>
                   this.handleIconClick("notification", "MEMBER ALERTS")
                 }
               />
-              <NoteIcon
+              {/* <NoteIcon
                 className="marginRight"
                 onClick={(e) => this.handleIconClick("note", "MEMBER NOTES")}
-              />
-              <HelpIcon
-                className="marginRight"
-                onClick={(e) => this.handleIconClick("help", "HELP")}
-              />
+              /> */}
               <QAiconcon
                 className="marginRight"
                 onClick={(e) =>
                   this.handleIconClick("qa", "QUSTIONS AND ANSWERS")
                 }
               />
-              <ImportIcon
+              <HelpIcon
+                className="marginRight"
+                onClick={(e) => this.handleIconClick("help", "HELP")}
+              />
+              {/* <ImportIcon
                 className="marginRight"
                 onClick={(e) => this.handleIconClick("import", "IMPORT")}
               />
               <ExportIcon
                 className="marginRight"
                 onClick={(e) => this.handleIconClick("export", "EXPORT")}
-              />
-              <BazariconIcon
+              /> */}
+              {/* <BazariconIcon
                 className="marginRight"
                 onClick={(e) =>
                   this.handleIconClick("bazar", "BUY FROM THE BAZAAR")
                 }
-              />
+              /> */}
               <SearchcIcon
                 className="marginRight"
                 onClick={(e) =>
                   this.handleIconClick("search", "Advance Search")
                 }
               />
-              <ProfileIcon
+              {/* <ProfileIcon
                 className="marginRight"
                 onClick={(e) => this.handleIconClick("profile", "")}
-              />
+              /> */}
             </div>
           </div>
           <DialogPopup
@@ -196,7 +195,7 @@ export default class CommonDialogAction extends React.Component<any, any> {
               <Profile />
             ) : null}
           </DialogPopup>
-        </Grid>
+        </>
       </Grid>
     );
   }

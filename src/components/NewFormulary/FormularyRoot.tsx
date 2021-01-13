@@ -2,7 +2,6 @@ import React, { Fragment } from "react";
 import { TabInfo } from "../../models/tab.model";
 import Formulary from "./NewFormulary";
 import FrxTabs from "../shared/FrxTabs/FrxTabs";
-import CommonDialogAction from "../CommonDialogActions/CommonDialogAction";
 
 const tabs = [
   { id: 1, text: "Formulary" },
@@ -53,8 +52,6 @@ class FormularyRoot extends React.Component<any, any> {
 
   render() {
     return (
-      <Fragment>
-      <CommonDialogAction />
       <>
         <div className="formulary-root">
           <FrxTabs
@@ -68,7 +65,6 @@ class FormularyRoot extends React.Component<any, any> {
           </div>
         </div>
       </>
-      </Fragment>
     );
   }
 }

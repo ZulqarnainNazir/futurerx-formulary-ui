@@ -1,6 +1,6 @@
 import React from "react";
-import { memberAlertsColumns } from "../../../utils/grid/columns";
-import FrxGridContainer from "../../shared/FrxGrid/FrxGridContainer";
+import { memberAlertsColumns } from "../../../../../utils/grid/columns";
+import FrxGridContainer from "../../../../shared/FrxGrid/FrxGridContainer";
 import MemberAlertRowExpanded from "./MemberAlertRowExpanded";
 
 

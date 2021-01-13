@@ -4,7 +4,7 @@ import React from "react";
 import "./profile.scss";
 
 // import images
-import Placeholder from "../../../assets/img/user-profile.jpg";
+import Placeholder from "../../../../../assets/img/user-profile.jpg";
 
 export default class Profile extends React.Component<any, any> {
   render() {
