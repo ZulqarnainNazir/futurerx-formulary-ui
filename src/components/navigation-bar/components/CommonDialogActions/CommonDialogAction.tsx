@@ -18,7 +18,7 @@ import Audit from "./components/Audit";
 import Notification from "./components/Notification";
 import Note from "./components/Note";
 import Help from "./components/Help";
-import QA from "./components/QA";
+import QA from "./components/QA-Dialog/QA";
 import Import from "./components/Import";
 import Export from "./components/Export";
 import Bazar from "./components/Bazar";
