@@ -20,6 +20,7 @@ import FormLabel from "@material-ui/core/FormLabel";
 import CloneFormularyPopup from "../../FormularySetUp/components/CloneFormularyPopup";
 import SelectFormularyPopup from "../../FormularySetUp/components/SelectFormularyPopup";
 import UploadFiles from "./UploadFiles";
+import SelectFormularyDropDown from "./SelectFormularyDropdown/SelectFormularyDropdown";
 
 const mapStateToProps = state => {
   //console.log(state);
@@ -530,15 +531,24 @@ class GeneralInformation extends React.Component<any, GeneralInformationState> {
                   </label>
                   {/* <a href="#" className="input-link select-formulary-link">
                     Select Formulary
-                  </a> */}
-                  <span
-                    onClick={e =>
-                      this.setState({ showSelectFormularyPopup: true })
-                    }
-                    className="input-link"
-                  >
-                    Select Formulary
-                  </span>
+									</a> */}
+                  {this.props.selectedResemblanceFormulary ? (
+                    <SelectFormularyDropDown
+                      formularyName={this.props.selectedResemblanceFormulary}
+                      openSelectFormulary={() =>
+                        this.setState({ showSelectFormularyPopup: true })
+                      }
+                    />
+                  ) : (
+                    <span
+                      onClick={e =>
+                        this.setState({ showSelectFormularyPopup: true })
+                      }
+                      className="input-link"
+                    >
+                      Select Formulary
+                    </span>
+                  )}
                 </div>
               ) : null}
             </Grid>
