@@ -98,12 +98,14 @@ class PaRemove extends React.Component<any, any> {
       .postCriteriaListPA(apiDetails)
       .then((json) => {
         let data: any = [];
-        json.payload.result.map((obj) => {
-          data.push({
-            key: obj.id_pa_group_description,
-            pa_group_description_name: obj.pa_group_description_name,
+        if (json?.payload && json?.payload?.result?.length > 0) {
+          json.payload.result.map((obj) => {
+            data.push({
+              key: obj.id_pa_group_description,
+              pa_group_description_name: obj.pa_group_description_name,
+            });
           });
-        });
+        }
         this.setState({
           paGroupDescriptions: data,
         });
@@ -113,7 +115,7 @@ class PaRemove extends React.Component<any, any> {
   openTierGridContainer = () => {
     this.state.drugData = [];
     this.state.drugGridData = [];
-    this.state.selectedRowKeys =[]; 
+    this.state.selectedRowKeys = [];
     this.populateGridData();
   };
 
@@ -150,83 +152,85 @@ class PaRemove extends React.Component<any, any> {
       showMessage("Select criteria to remove Drugs", "info");
       return;
     }
- // debugger;
- let allFilters = Array();
- let filterProps = Array();
- this.state.filter.map(filterInfo => {
-   allFilters.push(filterInfo);
-   filterProps.push(filterInfo["prop"]);
- });
+    // debugger;
+    let allFilters = Array();
+    let filterProps = Array();
+    this.state.filter.map(filterInfo => {
+      allFilters.push(filterInfo);
+      filterProps.push(filterInfo["prop"]);
+    });
 
- this.state.quickFilter.map(filterInfo => {
-   if (!filterProps.includes(filterInfo["prop"]))
-     allFilters.push(filterInfo);
- });
+    this.state.quickFilter.map(filterInfo => {
+      if (!filterProps.includes(filterInfo["prop"]))
+        allFilters.push(filterInfo);
+    });
 
- apiDetails["messageBody"]["filter"] = allFilters;
-//  if (this.state.sort_by && this.state.sort_by.length ==0){
-//   this.state.sort_by.push({ key: 'drug_label_name', value: 'asc' });
-// }
- if (this.state.sort_by && this.state.sort_by.length > 0) {
-   let keys = Array();
-   let values = Array();
+    apiDetails["messageBody"]["filter"] = allFilters;
+    //  if (this.state.sort_by && this.state.sort_by.length ==0){
+    //   this.state.sort_by.push({ key: 'drug_label_name', value: 'asc' });
+    // }
+    if (this.state.sort_by && this.state.sort_by.length > 0) {
+      let keys = Array();
+      let values = Array();
 
-   this.state.sort_by.map(keyPair => {
-     keys.push(keyPair["key"]);
-     values.push(keyPair["value"]);
-   });
+      this.state.sort_by.map(keyPair => {
+        keys.push(keyPair["key"]);
+        values.push(keyPair["value"]);
+      });
 
-   apiDetails["messageBody"]["sort_by"] = keys;
-   apiDetails["messageBody"]["sort_order"] = values;
- }
+      apiDetails["messageBody"]["sort_by"] = keys;
+      apiDetails["messageBody"]["sort_order"] = values;
+    }
     apiDetails["messageBody"][
       "selected_criteria_ids"
     ] = this.state.selectedCriteria;
     const drugGridDate = this.props
       .postFormularyDrugPA(apiDetails)
       .then((json) => {
-        let tmpData = json.payload.result;
-        var data: any[] = [];
-        let count = 1;
-        var gridData = tmpData.map(function (el) {
-          var element = Object.assign({}, el);
-          data.push(element);
-          let gridItem = {};
-          gridItem["id"] = count;
-          gridItem["key"] = count;
-          gridItem["tier"] = element.tier_value;
-          gridItem["is_um_criteria"] = element.is_um_criteria;
-          gridItem["pa_group_description"] = element.pa_group_description;
-          gridItem["pa_type"] = element.pa_type;
-          gridItem["file_type"] = element.file_type
-            ? "" + element.file_type
-            : "";
-          gridItem["data_source"] = element.data_source
-            ? "" + element.data_source
-            : "";
-          gridItem["drug_label_name"] = element.drug_label_name
-            ? "" + element.drug_label_name
-            : "";
-          gridItem["ndc"] = "";
-          gridItem["rxcui"] = element.rxcui ? "" + element.rxcui : "";
-          gridItem["generic_product_identifier"] = element.generic_product_identifier
-            ? "" + element.generic_product_identifier
-            : "";
-          gridItem["trademark_code"] = element.trademark_code
-            ? "" + element.trademark_code
-            : "";
-          gridItem["database_category"] = element.database_category
-            ? "" + element.database_category
-            : "";
-          count++;
-          return gridItem;
-        });
-        this.setState({
-          drugData: data,
-          drugGridData: gridData,
-          dataCount: json.payload.count,
-        });
-        this.setState({ tierGridContainer: true });
+        if (json?.payload && json?.payload?.result?.length > 0) {
+          let tmpData = json.payload.result;
+          var data: any[] = [];
+          let count = 1;
+          var gridData = tmpData.map(function (el) {
+            var element = Object.assign({}, el);
+            data.push(element);
+            let gridItem = {};
+            gridItem["id"] = count;
+            gridItem["key"] = count;
+            gridItem["tier"] = element.tier_value;
+            gridItem["is_um_criteria"] = element.is_um_criteria;
+            gridItem["pa_group_description"] = element.pa_group_description;
+            gridItem["pa_type"] = element.pa_type;
+            gridItem["file_type"] = element.file_type
+              ? "" + element.file_type
+              : "";
+            gridItem["data_source"] = element.data_source
+              ? "" + element.data_source
+              : "";
+            gridItem["drug_label_name"] = element.drug_label_name
+              ? "" + element.drug_label_name
+              : "";
+            gridItem["ndc"] = "";
+            gridItem["rxcui"] = element.rxcui ? "" + element.rxcui : "";
+            gridItem["generic_product_identifier"] = element.generic_product_identifier
+              ? "" + element.generic_product_identifier
+              : "";
+            gridItem["trademark_code"] = element.trademark_code
+              ? "" + element.trademark_code
+              : "";
+            gridItem["database_category"] = element.database_category
+              ? "" + element.database_category
+              : "";
+            count++;
+            return gridItem;
+          });
+          this.setState({
+            drugData: data,
+            drugGridData: gridData,
+            dataCount: json.payload.count,
+          });
+          this.setState({ tierGridContainer: true });
+        }
       });
   };
 
@@ -277,13 +281,13 @@ class PaRemove extends React.Component<any, any> {
         is_select_all: false,
         not_covered: {},
         search_key: "",
-        drug_list:"",
-        prev_formulary:"",
+        drug_list: "",
+        prev_formulary: "",
       };
       if (this.props.advancedSearchBody && Object.keys(this.props.advancedSearchBody).length > 0) {
         apiDetails["messageBody"] = Object.assign(apiDetails["messageBody"], this.props.advancedSearchBody);
       }
-      
+
       apiDetails["messageBody"]['is_select_all'] = this.state.isSelectAll;
 
       let allFilters = Array();
@@ -377,7 +381,7 @@ class PaRemove extends React.Component<any, any> {
       (k) => this.state.fixedSelectedRows.indexOf(k) < 0
     );
     this.onSelectedTableRowChanged(selectedRows);
-    this.setState({ drugGridData: data,isSelectAll:isSelected });
+    this.setState({ drugGridData: data, isSelectAll: isSelected });
   };
   // additional criteria toggle
 
@@ -448,14 +452,14 @@ class PaRemove extends React.Component<any, any> {
 
   applyMultiSortHandler = (sorter, multiSortedInfo) => {
     console.log("Multisort info:" + JSON.stringify(sorter));
-    
-		
-		this.setState(  {
-			isGridMultiSorted: true,
-			isGridSingleSorted: false,
-			gridMultiSortedInfo: multiSortedInfo,
-			gridSingleSortInfo: null,
-		})
+
+
+    this.setState({
+      isGridMultiSorted: true,
+      isGridSingleSorted: false,
+      gridMultiSortedInfo: multiSortedInfo,
+      gridSingleSortInfo: null,
+    })
 
     if (sorter && sorter.length > 0) {
       let uniqueKeys = Array();
@@ -629,7 +633,7 @@ class PaRemove extends React.Component<any, any> {
                   isPinningEnabled={false}
                   enableSearch={false}
                   enableColumnDrag
-                  onSearch={() => {}}
+                  onSearch={() => { }}
                   fixedColumnKeys={[]}
                   pagintionPosition="topRight"
                   gridName="DRUG GRID"

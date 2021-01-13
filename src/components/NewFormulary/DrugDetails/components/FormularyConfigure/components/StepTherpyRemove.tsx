@@ -81,7 +81,7 @@ class DrugGrid extends React.Component<any, any> {
     searchData: Array(),
     fixedSelectedRows: [] as number[],
     selectedRowKeys: [] as number[],
-    isSelectAll:false,
+    isSelectAll: false,
   };
 
   onSelectedRowKeysChange = (selectedRowKeys) => {
@@ -139,12 +139,14 @@ class DrugGrid extends React.Component<any, any> {
       .postCriteriaListST(apiDetails)
       .then((json) => {
         let data: any = [];
-        json.payload.result.map((obj) => {
-          data.push({
-            key: obj.id_st_group_description,
-            st_group_description_name: obj.st_group_description_name,
+        if (json?.payload && json?.payload?.result?.length > 0) {
+          json.payload.result.map((obj) => {
+            data.push({
+              key: obj.id_st_group_description,
+              st_group_description_name: obj.st_group_description_name,
+            });
           });
-        });
+        }
         this.setState({
           stGroupDescriptions: data,
         });
@@ -154,13 +156,13 @@ class DrugGrid extends React.Component<any, any> {
   openTierGridContainer = () => {
     this.state.drugData = [];
     this.state.drugGridData = [];
-    this.state.selectedRowKeys =[]; 
-    
+    this.state.selectedRowKeys = [];
+
     this.populateGridData();
   };
 
   onApplyFilterHandler = filters => {
-    
+
     //this.state.filter = Array();
     const fetchedKeys = Object.keys(filters);
     if (fetchedKeys && fetchedKeys.length > 0) {
@@ -191,7 +193,7 @@ class DrugGrid extends React.Component<any, any> {
     } else {
       this.state.filter = Array();
     }
-    
+
     if (this.props.advancedSearchBody) {
       this.populateGridData(this.props.advancedSearchBody);
     } else {
@@ -201,13 +203,13 @@ class DrugGrid extends React.Component<any, any> {
 
 
 
-    /**
-   * the selected sorter details will be availbale here to mak api call
-   * @param key the column key
-   * @param order the sorting order : 'ascend' | 'descend'
-   */
+  /**
+ * the selected sorter details will be availbale here to mak api call
+ * @param key the column key
+ * @param order the sorting order : 'ascend' | 'descend'
+ */
   onApplySortHandler = (key, order, sortedInfo) => {
-    
+
     this.state.sort_by = Array();
     if (order) {
       let sortOrder = order === "ascend" ? "asc" : "desc";
@@ -231,15 +233,15 @@ class DrugGrid extends React.Component<any, any> {
   };
 
   applyMultiSortHandler = (sorter, multiSortedInfo) => {
-    
-    
-		
-		this.setState(  {
-			isGridMultiSorted: true,
-			isGridSingleSorted: false,
-			gridMultiSortedInfo: multiSortedInfo,
-			gridSingleSortInfo: null,
-		})
+
+
+
+    this.setState({
+      isGridMultiSorted: true,
+      isGridSingleSorted: false,
+      gridMultiSortedInfo: multiSortedInfo,
+      gridSingleSortInfo: null,
+    })
 
     if (sorter && sorter.length > 0) {
       let uniqueKeys = Array();
@@ -271,7 +273,7 @@ class DrugGrid extends React.Component<any, any> {
   };
 
   onMultiSortToggle = (isMultiSortOn: boolean) => {
-    
+
     this.state.sort_by = Array();
     this.state.gridSingleSortInfo = null;
     this.state.gridMultiSortedInfo = [];
@@ -286,7 +288,7 @@ class DrugGrid extends React.Component<any, any> {
   };
 
   onSettingsIconHandler = (hiddenColumn, visibleColumn) => {
-    
+
     if (hiddenColumn && hiddenColumn.length > 0) {
       let hiddenColumnKeys = hiddenColumn.map((column) => column["key"]);
       this.setState({
@@ -304,7 +306,7 @@ class DrugGrid extends React.Component<any, any> {
   //   }
   // };
   populateGridData = (searchBody = null) => {
-    
+
     let apiDetails = {};
 
     apiDetails["pathParams"] = this.props?.formulary_id + "/" + getLobCode(this.props?.formulary_lob_id);
@@ -334,7 +336,7 @@ class DrugGrid extends React.Component<any, any> {
     // if (this.state.sort_by && this.state.sort_by.length ==0){
     //   this.state.sort_by.push({ key: 'drug_label_name', value: 'asc' });
     // }
-    
+
     if (this.state.sort_by && this.state.sort_by.length > 0) {
       let keys = Array();
       let values = Array();
@@ -354,7 +356,7 @@ class DrugGrid extends React.Component<any, any> {
       { key: constants.KEY_INDEX, value: this.state.index },
       { key: constants.KEY_LIMIT, value: this.state.limit },
     ];
-   
+
     if (searchBody) {
       apiDetails["messageBody"] = Object.assign(apiDetails["messageBody"], searchBody);
     }
@@ -378,63 +380,63 @@ class DrugGrid extends React.Component<any, any> {
     const drugGridDate = this.props
       .postFormularyDrugST(apiDetails)
       .then((json) => {
-        if (json.payload && json.payload.result) {
-        let tmpData = json.payload.result;
-        var data: any[] = [];
-        let count = 1;
-        var gridData = tmpData.map(function (el) {
-          var element = Object.assign({}, el);
-          data.push(element);
-          let gridItem = {};
-          gridItem["id"] = count;
-          gridItem["key"] = count;
-          gridItem["is_um_criteria"] = element.is_um_criteria;
-          gridItem["st_group_description"] = element.st_group_description;
-          gridItem["st_type"] = element.st_type;
-          gridItem["st_value"] = element.st_value;
-          gridItem["tier_value"] = element.tier_value;
-          gridItem["file_type"] = element.file_type
-            ? "" + element.file_type
-            : "";
-          gridItem["data_source"] = element.data_source
-            ? "" + element.data_source
-            : "";
-          gridItem["drug_label_name"] = element.drug_label_name
-            ? "" + element.drug_label_name
-            : "";
-          gridItem["ndc"] = "";
-          gridItem["rxcui"] = element.rxcui ? "" + element.rxcui : "";
-          gridItem["generic_product_identifier"] = element.generic_product_identifier
-            ? "" + element.generic_product_identifier
-            : "";
-          gridItem["trademark_code"] = element.trademark_code
-            ? "" + element.trademark_code
-            : "";
-          gridItem["database_category"] = element.database_category
-            ? "" + element.database_category
-            : "";
-          count++;
-          return gridItem;
-        });
-        this.setState({
-          drugData: data,
-          drugGridData: gridData,
-          dataCount: json.payload.count,
-        });
+        if (json?.payload && json?.payload?.result) {
+          let tmpData = json.payload.result;
+          var data: any[] = [];
+          let count = 1;
+          var gridData = tmpData.map(function (el) {
+            var element = Object.assign({}, el);
+            data.push(element);
+            let gridItem = {};
+            gridItem["id"] = count;
+            gridItem["key"] = count;
+            gridItem["is_um_criteria"] = element.is_um_criteria;
+            gridItem["st_group_description"] = element.st_group_description;
+            gridItem["st_type"] = element.st_type;
+            gridItem["st_value"] = element.st_value;
+            gridItem["tier_value"] = element.tier_value;
+            gridItem["file_type"] = element.file_type
+              ? "" + element.file_type
+              : "";
+            gridItem["data_source"] = element.data_source
+              ? "" + element.data_source
+              : "";
+            gridItem["drug_label_name"] = element.drug_label_name
+              ? "" + element.drug_label_name
+              : "";
+            gridItem["ndc"] = "";
+            gridItem["rxcui"] = element.rxcui ? "" + element.rxcui : "";
+            gridItem["generic_product_identifier"] = element.generic_product_identifier
+              ? "" + element.generic_product_identifier
+              : "";
+            gridItem["trademark_code"] = element.trademark_code
+              ? "" + element.trademark_code
+              : "";
+            gridItem["database_category"] = element.database_category
+              ? "" + element.database_category
+              : "";
+            count++;
+            return gridItem;
+          });
+          this.setState({
+            drugData: data,
+            drugGridData: gridData,
+            dataCount: json.payload.count,
+          });
 
-        this.setState({ tierGridContainer: true });
-      }else{
-        this.setState({
-          drugData: Array(),
-          drugGridData: Array(),
-          dataCount: 0
-        });
-      }
+          this.setState({ tierGridContainer: true });
+        } else {
+          this.setState({
+            drugData: Array(),
+            drugGridData: Array(),
+            dataCount: 0
+          });
+        }
       });
   };
 
   onPageSize = (pageSize) => {
-    
+
     this.state.limit = pageSize;
     if (this.props.advancedSearchBody) {
       this.populateGridData(this.props.advancedSearchBody);
@@ -443,7 +445,7 @@ class DrugGrid extends React.Component<any, any> {
     }
   };
   onGridPageChangeHandler = (pageNumber: any) => {
-    
+
     this.state.index = (pageNumber - 1) * this.state.limit;
     if (this.props.advancedSearchBody) {
       this.populateGridData(this.props.advancedSearchBody);
@@ -479,8 +481,8 @@ class DrugGrid extends React.Component<any, any> {
         is_select_all: false,
         not_covered: {},
         search_key: "",
-        drug_list:"",
-        prev_formulary:"",
+        drug_list: "",
+        prev_formulary: "",
       };
       if (this.props.advancedSearchBody && Object.keys(this.props.advancedSearchBody).length > 0) {
         apiDetails["messageBody"] = Object.assign(apiDetails["messageBody"], this.props.advancedSearchBody);
@@ -513,11 +515,11 @@ class DrugGrid extends React.Component<any, any> {
       const saveData = this.props
         .postApplyFormularyDrugST(apiDetails)
         .then((json) => {
-          
+
           if (
-            json.payload &&
-            json.payload.code &&
-            json.payload.code === "200"
+            json?.payload &&
+            json?.payload?.code &&
+            json?.payload?.code === "200"
           ) {
             showMessage("Success", "success");
             this.state.drugData = [];
@@ -534,7 +536,7 @@ class DrugGrid extends React.Component<any, any> {
   };
 
   handleSearch = (searchObject) => {
-    
+
     this.setState({ isFetchingData: true });
     if (searchObject && searchObject.status) {
       setTimeout(() => {
@@ -552,7 +554,7 @@ class DrugGrid extends React.Component<any, any> {
     selectedRow: any,
     isSelected: boolean
   ) => {
-    
+
     if (!selectedRow["isDisabled"]) {
       if (isSelected) {
         const data = this.state.drugGridData.map((d: any) => {
@@ -567,7 +569,7 @@ class DrugGrid extends React.Component<any, any> {
           ...this.state.selectedRowKeys,
           selectedRow.key,
         ];
-        
+
         const selectedRows: number[] = selectedRowKeys.filter(
           (k) => this.state.fixedSelectedRows.indexOf(k) < 0
         );
@@ -600,7 +602,7 @@ class DrugGrid extends React.Component<any, any> {
   };
 
   onSelectedTableRowChanged = (selectedRowKeys) => {
-    
+
 
     this.state.selectedDrugs = [];
     this.setState({
@@ -628,7 +630,7 @@ class DrugGrid extends React.Component<any, any> {
       k => this.state.fixedSelectedRows.indexOf(k) < 0
     );
     this.onSelectedTableRowChanged(selectedRows);
-    this.setState({ drugGridData: data,isSelectAll:isSelected });
+    this.setState({ drugGridData: data, isSelectAll: isSelected });
   };
   render() {
     const columns = [
@@ -694,7 +696,7 @@ class DrugGrid extends React.Component<any, any> {
                   isPinningEnabled={false}
                   enableSearch={false}
                   enableColumnDrag
-                  onSearch={() => {}}
+                  onSearch={() => { }}
                   fixedColumnKeys={[]}
                   pagintionPosition="topRight"
                   gridName="DRUG GRID"

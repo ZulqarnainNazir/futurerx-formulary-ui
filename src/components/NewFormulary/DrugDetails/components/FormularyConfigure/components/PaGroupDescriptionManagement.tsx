@@ -97,6 +97,7 @@ class PaGroupDescriptionManagement extends React.Component<any, any> {
     apiDetails["pathParams"] = "/" + param;
     let isPopUpView = this.props.isPopUpView;
     this.props.getPaGrouptDescriptionVersions(apiDetails).then((json) => {
+      if (json.payload && json.payload.code === "200") {
       let tmpData = json.payload.data;
       if (isPopUpView) {
         tmpData = tmpData.filter((obj) => {
@@ -117,9 +118,9 @@ class PaGroupDescriptionManagement extends React.Component<any, any> {
           ? tmpData[dataLength - 1].id_pa_group_description
           : 0;
       let is_setup_complete =
-          dataLength > 0 ? tmpData[dataLength - 1].is_setup_complete : 0;
+        dataLength > 0 ? tmpData[dataLength - 1].is_setup_complete : 0;
       this.setState({
-            isSetUpComplete: is_setup_complete,
+        isSetUpComplete: is_setup_complete,
       });
       let apiDetails = {};
       apiDetails["lob_type"] = this.props.formulary_lob_id;
@@ -146,6 +147,7 @@ class PaGroupDescriptionManagement extends React.Component<any, any> {
         current_group_id: param,
         current_group_des_id: latestVerion,
       });
+    }
     });
     this.setState({
       newGroup: true,
@@ -184,6 +186,7 @@ class PaGroupDescriptionManagement extends React.Component<any, any> {
       "/" + this.props?.client_id + "?entity_id=" + this.props?.formulary_id;
     let isPopUpView = this.props.isPopUpView;
     this.props.getPaGrouptDescriptions(apiDetails).then((json) => {
+      if (json.payload && json.payload.code === "200") {
       let tmpData = json.payload.data;
       let groupProp = "";
       if (this.props.formulary_lob_id == 1) {
@@ -223,6 +226,7 @@ class PaGroupDescriptionManagement extends React.Component<any, any> {
           completed_groups[0].statusType
         );
       }
+    }
     });
 
     this.props.getPaTypes(this.props.formulary_id).then((json) => {
@@ -359,7 +363,7 @@ class PaGroupDescriptionManagement extends React.Component<any, any> {
                     this.state.groupsData.map((group: any, key: any) =>
                       this.state.searchInput == "" ||
                       (this.state.searchInput != "" &&
-                        group.label.indexOf(this.state.searchInput) > -1) ? (
+                        group.label.toLowerCase().indexOf(this.state.searchInput.toLowerCase()) > -1) ? (
                         this.state.activeTabIndex == 0 &&
                         group.is_archived == false ? (
                           <Groups

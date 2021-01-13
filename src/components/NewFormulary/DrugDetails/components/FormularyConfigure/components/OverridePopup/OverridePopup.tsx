@@ -114,14 +114,14 @@ class OverridePopup extends React.Component<any, any> {
     onDropdownSearchValueChanged = (value) => {
         if (value) {
             let apiDetails = {};
-            apiDetails['apiPart'] = categoryConstants.SEARCH;
+            apiDetails['apiPart'] = categoryConstants.DROPDOWN_SEARCH;
             apiDetails['pathParams'] = this.props?.formulary_id + "/" + this.state.lobCode;
             apiDetails['keyVals'] = [{ key: commonConstants.KEY_SEARCH_VALUE, value: value }, { key: commonConstants.KEY_ENTITY_ID, value: this.props?.formulary_id }];
             const searchData = this.props.getCategoryClasses(apiDetails).then((json => {
                 //debugger;
                 if (json.payload && json.payload.data) {
                     let tmpData = json.payload.data;
-                    let keys = Object.keys(tmpData);
+                    let keys = tmpData.map(item => item['value']);
                     this.setState({
                         categories: keys,
                     });
