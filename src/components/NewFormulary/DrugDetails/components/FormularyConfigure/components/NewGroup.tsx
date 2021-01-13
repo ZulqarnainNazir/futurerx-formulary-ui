@@ -505,7 +505,7 @@ function NewGroup(props: any) {
                     type="text"
                     name="st_group_description_name"
                     onChange={handleChange}
-                    defaultValue={formData.st_group_description_name}
+                    value={formData.st_group_description_name}
                     disabled={editable}
                     className={errorClass}
                   />
@@ -521,7 +521,7 @@ function NewGroup(props: any) {
                       type="text"
                       name="excluded_drug_file"
                       onChange={handleChange}
-                      defaultValue={formData.excluded_drug_file}
+                      value={formData.excluded_drug_file}
                       disabled={editable}
                     />
                   </div>

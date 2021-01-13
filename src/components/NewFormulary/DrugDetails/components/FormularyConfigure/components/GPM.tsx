@@ -180,6 +180,12 @@ class GPM extends React.Component<any, any> {
     let isPopUpView = this.props.isPopUpView;
     this.props.getStGrouptDescriptions(apiDetails).then((json) => {
       let tmpData = json.payload.data;
+      let groupProp = "";
+      if (this.props.formulary_lob_id == 1) {
+        groupProp = "id_st_group_description";
+      } else if (this.props.formulary_lob_id == 4) {
+        groupProp = "id_st_group_description";
+      }
       if (isPopUpView) {
         tmpData = tmpData.filter((obj) => {
           if (obj.is_setup_complete) {
@@ -189,7 +195,7 @@ class GPM extends React.Component<any, any> {
       }
       var result = tmpData.map(function (el) {
         var element = {};
-        element["id"] = el.id_st_group_description;
+        element["id"] = el[groupProp];
         element["label"] = el.st_group_description_name;
         element["status"] = el.is_setup_complete ? "completed" : "warning";
         element["is_archived"] =
@@ -220,7 +226,7 @@ class GPM extends React.Component<any, any> {
     if (tmpData && Array.isArray(tmpData) && tmpData.length > 0) {
       let groupProp = "";
       if (this.props.formulary_lob_id == 1) {
-        groupProp = "id_mcr_base_st_group_description";
+        groupProp = "id_st_group_description";
       } else if (this.props.formulary_lob_id == 4) {
         groupProp = "id_st_group_description";
       }
@@ -318,7 +324,7 @@ class GPM extends React.Component<any, any> {
                     this.state.groupsData.map((group:any, key) =>
                       this.state.searchInput == "" ||
                       (this.state.searchInput != "" &&
-                        group.label.indexOf(this.state.searchInput) > -1) ? (
+                        group.label.toLowerCase().indexOf(this.state.searchInput.toLowerCase()) > -1) ? (
                         this.state.activeTabIndex == 0 &&
                         group.is_archived == false ? (
                           <Groups

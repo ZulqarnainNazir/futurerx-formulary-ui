@@ -359,7 +359,7 @@ class PaGroupDescriptionManagement extends React.Component<any, any> {
                     this.state.groupsData.map((group: any, key: any) =>
                       this.state.searchInput == "" ||
                       (this.state.searchInput != "" &&
-                        group.label.indexOf(this.state.searchInput) > -1) ? (
+                        group.label.toLowerCase().indexOf(this.state.searchInput.toLowerCase()) > -1) ? (
                         this.state.activeTabIndex == 0 &&
                         group.is_archived == false ? (
                           <Groups
