@@ -156,10 +156,8 @@ class ListItem extends Component<any, any> {
     const updatedPayload = this.state.payload;
     const { cardCode, cardName, isIncluded } = this.state;
 
-    // const isArrCriteria =
-    //   cardCode === 4 || cardCode === 5 || cardCode === 8 ? true : false;
     const isCriteriaObject = cardCode === 1 || cardCode === 3 ? true : false;
-    // age & icd are objects
+    // age & icd are object
     // gender, pn, pt, pos, pr, pchl are array
     this.props.handleGlobalState(
       nodeId,
@@ -181,14 +179,13 @@ class ListItem extends Component<any, any> {
     switch (cardCode) {
       case 1:
         let { alSettings } = this.state;
-        if (payload !== null) {
+        if (payload !== null && Object.keys(payload).length) {
           alSettings = { ...payload };
         }
         const alSettingsStatus = {
           type: isIncluded ? COVERED : NOT_COVERED,
           covered: isIncluded,
         };
-
         this.setState({
           alSettings,
           alSettingsStatus,
@@ -220,11 +217,9 @@ class ListItem extends Component<any, any> {
         });
         break;
       case 3:
-        console.log("ICD: ", payload);
         let { icdSettings } = this.state;
         let icdData: any[] = [];
         let icdValue: string[] | undefined = [];
-
         if (payload !== null && Object.keys(payload).length) {
           icdSettings = { ...payload };
           if (payload.icds !== "") {
@@ -252,7 +247,6 @@ class ListItem extends Component<any, any> {
         });
         break;
       case 4:
-        console.log("PN: ", payload);
         let { pnSettings } = this.state;
         let pnDdata: any[] = [];
         let pnValue: string[] | undefined = [];
@@ -282,7 +276,6 @@ class ListItem extends Component<any, any> {
         });
         break;
       case 5:
-        console.log("PT: ", payload);
         let { ptSettings } = this.state;
         let ptData: any[] = [];
         let ptValue: string[] | undefined = [];
@@ -531,14 +524,16 @@ class ListItem extends Component<any, any> {
   };
 
   handleICDChange = (value: any[]) => {
+    debugger;
     let icdSettings: any = { ...this.state.icdSettings };
 
     let icds: any[] = [];
     this.state.icdResults.data.forEach((icd: any) => {
       value.forEach((v) => {
-        if (icd["key"] === v) {
-          icds.push(icd);
-        }
+        if (typeof v === "number")
+          if (icd["key"] === v) {
+            icds.push(icd);
+          }
       });
     });
 
@@ -561,6 +556,17 @@ class ListItem extends Component<any, any> {
     this.props.getICDSearch(apiDetails).then((json) => {
       let response = json.payload && json.payload.data ? json.payload.data : [];
       const data = [...response].slice(0, 8);
+
+      // ADDED to set state with newData instead of data . Also added value in icdResultsobject state
+      // const newData = [...this.state.pnResults.data, ...data].filter(
+      //   (item: any, index, self) => {
+      //     return self.findIndex((val: any) => val.key === item.key) === index;
+      //   }
+      // );
+
+      // const newValue = newData.map((d) => d.value);
+      // console.log("newData", newData, newValue);
+
       this.setState({
         icdResults: {
           data,
@@ -588,6 +594,15 @@ class ListItem extends Component<any, any> {
     let pnSettings: any[] = [...this.state.pnSettings];
 
     // let pns: any[] = [];
+    // const pnResults = { ...this.state.pnResults };
+    // const pnResultsData = [...pnResults.data];
+    // pnResultsData.forEach((pn: any) => {
+    //   value.forEach((v) => {
+    //     if (pn["value"] === v) {
+    //       pnSettings.push(pn);
+    //     }
+    //   });
+    // });
     this.state.pnResults.data.forEach((pn: any) => {
       value.forEach((v) => {
         if (pn["key"] === v) {
@@ -596,7 +611,8 @@ class ListItem extends Component<any, any> {
       });
     });
 
-    const payload: any = { ...pnSettings };
+    // console.log("modified pn results", pnResultsData, pnSettings);
+    const payload: any = [...pnSettings];
     this.setState({
       pnSettings,
       payload,
@@ -606,17 +622,32 @@ class ListItem extends Component<any, any> {
   handlePNSearch = (input) => {
     let apiDetails = {};
     apiDetails["apiPart"] = apiConstants.GET_PN_DRUGS_REPLACE;
-    apiDetails["pathParams"] = this.props?.formulary_id;
+    // apiDetails["pathParams"] = this.props?.formulary_id;
     apiDetails["keyVals"] = [
-      { key: apiConstants.KEY_ENTITY_ID, value: this.props?.formulary_id },
+      // { key: apiConstants.KEY_ENTITY_ID, value: this.props?.formulary_id },
       { key: apiConstants.SEARCHKEY, value: input },
     ];
     this.props.getPNSearch(apiDetails).then((json) => {
       let response = json.payload && json.payload.data ? json.payload.data : [];
       const data = [...response].slice(0, 8);
+
+      // console.log("after search ", [...this.state.pnResults.data, ...data]);
+
+      // // ADDED to set state with newData instead of data . Also added value in pnResults state
+      // const newData = [...this.state.pnResults.data, ...data].filter(
+      //   (item: any, index, self) => {
+      //     return self.findIndex((val: any) => val.key === item.key) === index;
+      //   }
+      // );
+
+      // const newValue = newData.map((d) => d.value);
+      // console.log("newData", newData, newValue);
+
       this.setState({
         pnResults: {
           data,
+          // data: newData,
+          // value: newValue,
         },
       });
     });
@@ -649,7 +680,7 @@ class ListItem extends Component<any, any> {
       });
     });
 
-    const payload: any = { ...ptSettings };
+    const payload: any = [...ptSettings];
     this.setState({
       ptSettings,
       payload,
@@ -659,9 +690,9 @@ class ListItem extends Component<any, any> {
   handlePTSearch = (input) => {
     let apiDetails = {};
     apiDetails["apiPart"] = apiConstants.GET_PT_DRUGS_REPLACE;
-    apiDetails["pathParams"] = this.props?.formulary_id;
+    // apiDetails["pathParams"] = this.props?.formulary_id;
     apiDetails["keyVals"] = [
-      { key: apiConstants.KEY_ENTITY_ID, value: this.props?.formulary_id },
+      // { key: apiConstants.KEY_ENTITY_ID, value: this.props?.formulary_id },
       { key: apiConstants.SEARCHKEY, value: input },
     ];
     this.props.getPTSearch(apiDetails).then((json) => {

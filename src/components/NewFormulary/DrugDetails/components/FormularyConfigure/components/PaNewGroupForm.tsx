@@ -251,7 +251,6 @@ function NewGroup(props: any) {
   const [additionalCriteria, setAdditionalCriteria] = useState(null);
 
   const handleChange = (e) => {
-
     let tmp_value = e.target.value;
     if (e.target.value == "true") {
       tmp_value = true;
@@ -304,7 +303,6 @@ function NewGroup(props: any) {
         return;
       }
       if (msg.length > 0) {
-
         setErrorClass("invalid");
         return;
       }
@@ -487,7 +485,6 @@ function NewGroup(props: any) {
       } else {
         requestData["pathParams"] = "/" + props?.formulary_id + "?entity_id=0";
         props.postPAGroupDescription(requestData).then((json) => {
-
           if (json.payload && json.payload.code === "200") {
             showMessage("Success", "success");
             let apiDetails = {};
@@ -497,7 +494,6 @@ function NewGroup(props: any) {
             props.getPaGrouptDescriptions(apiDetails);
             //props.formType=1;
             setFormType(1);
-
 
             props.getPAGroupDetails({
               formulary_id: props.formulary_id,
@@ -575,7 +571,6 @@ function NewGroup(props: any) {
   };
 
   const openAdditionalCriteria = () => {
-
     toggleAdditionalCriteriaOpen(true);
   };
   const closeAddiionalCriteria = () => toggleAdditionalCriteriaOpen(false);
@@ -595,7 +590,6 @@ function NewGroup(props: any) {
   }, [props.additionalCriteriaObject]);
 
   useEffect(() => {
-
     //setPanelColor(editable ? '-green' : '')
     //setLatestId(props.latestVerion)
     isSetUpComplete(props.isSetUpComplete);
@@ -630,7 +624,6 @@ function NewGroup(props: any) {
   ]);
 
   const getAutoCompleteChangeHandler = (val) => {
-
     setDrug_list_ids(val);
   };
   return (
@@ -663,7 +656,6 @@ function NewGroup(props: any) {
         )}
       </div>
       {(formType > 0 || showHeader > 0) && (
-
         <PAGroupHeader
           popuptitle={
             formData.pa_group_description_name

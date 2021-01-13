@@ -118,9 +118,9 @@ class PaGroupDescriptionManagement extends React.Component<any, any> {
           ? tmpData[dataLength - 1].id_pa_group_description
           : 0;
       let is_setup_complete =
-          dataLength > 0 ? tmpData[dataLength - 1].is_setup_complete : 0;
+        dataLength > 0 ? tmpData[dataLength - 1].is_setup_complete : 0;
       this.setState({
-            isSetUpComplete: is_setup_complete,
+        isSetUpComplete: is_setup_complete,
       });
       let apiDetails = {};
       apiDetails["lob_type"] = this.props.formulary_lob_id;

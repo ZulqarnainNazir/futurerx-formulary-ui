@@ -116,7 +116,6 @@ function PAGroupHeader(props: any) {
     }
 
     props.postPAGroupDescriptionFormularies(apiDetails).then((json) => {
-
       let tmp_array: any = [];
       let count = 1;
       json?.payload?.result?.map((obj) => {
@@ -176,7 +175,8 @@ function PAGroupHeader(props: any) {
       setVersion(versions);
       //const latestVerion = verLength > 0 ? selectedVersion.split(" ")[1] : '';
       setSelectedVersion(versions[verLength - 1].version_number);
-      let selectedVersionId = versions[verLength - 1]["id_pa_group_description"];
+      let selectedVersionId =
+        versions[verLength - 1]["id_pa_group_description"];
       setSelectedVersionId(selectedVersionId);
       setIsSetupComplete(isEditable);
       // props.getPAGroupDetails({
@@ -217,8 +217,9 @@ function PAGroupHeader(props: any) {
       //         ?.id_pa_group_description
       //     : 0;
 
-
-      const is_setup = props.version.find((val) => val.value == selectedVersion);
+      const is_setup = props.version.find(
+        (val) => val.value == selectedVersion
+      );
       let isEditable = true;
       var latestVerion: any = 0;
       if (is_setup) {
@@ -256,9 +257,8 @@ function PAGroupHeader(props: any) {
       setSelectedVersionId(latestVerion);
       props.getPAGroupDetails({
         formulary_id: props.saveGdm.formulary_id,
-        current_group_id:
-          props.saveGdm.current_group_id,
-        current_group_des_id: latestVerion
+        current_group_id: props.saveGdm.current_group_id,
+        current_group_des_id: latestVerion,
       });
     }
     props.onChange(selectedVersion);
@@ -273,7 +273,6 @@ function PAGroupHeader(props: any) {
   };
 
   const onSelectedTableRowChanged = (selectedRowKeys) => {
-
     fomulariesList.map((obj) => (obj["applied_version"] = ""));
     if (selectedRowKeys && selectedRowKeys.length > 0) {
       let tmp: any = selectedRowKeys.map((tierId) => {
@@ -284,7 +283,6 @@ function PAGroupHeader(props: any) {
     }
   };
   const applyFormularies = (e: any) => {
-
     let apiDetails = {};
 
     if (effectiveDate == "") {
@@ -323,7 +321,10 @@ function PAGroupHeader(props: any) {
   const deleteGroup = (e: any, param: any) => {
     let pathParams;
     if (param === "delete-version") {
-      pathParams = props.saveGdm.current_group_des_id + "/CV?entity_id=" + props.formulary_id;
+      pathParams =
+        props.saveGdm.current_group_des_id +
+        "/CV?entity_id=" +
+        props.formulary_id;
     } else if (param === "delete-full") {
       pathParams =
         props.saveGdm.current_group_id + "/GD?entity_id=" + props.formulary_id;
@@ -337,7 +338,6 @@ function PAGroupHeader(props: any) {
         lob_type: props.formulary_lob_id,
       })
       .then((json) => {
-
         if (
           json?.payload?.success?.status &&
           json?.payload?.success?.status == 200
@@ -443,7 +443,10 @@ function PAGroupHeader(props: any) {
   const archiveGroup = (e: any, param: any) => {
     let pathParams;
     if (param === "archive-version") {
-      pathParams = props.saveGdm.current_group_des_id + "/CV?entity_id=" + props.formulary_id;
+      pathParams =
+        props.saveGdm.current_group_des_id +
+        "/CV?entity_id=" +
+        props.formulary_id;
     } else if (param === "archive-full") {
       pathParams =
         props.saveGdm.current_group_id + "/GD?entity_id=" + props.formulary_id;

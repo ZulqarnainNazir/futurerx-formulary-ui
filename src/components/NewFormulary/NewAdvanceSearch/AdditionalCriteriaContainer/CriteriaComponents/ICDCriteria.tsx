@@ -45,9 +45,8 @@ const ICDCriteria = (props) => {
                   showSearch
                   mode="multiple"
                   value={icdResults.value}
-                  // value={icdSettings.icds}
+                  // defaultValue={icdResults.value}
                   placeholder={"dropdown label"}
-                  // style={{ width: "100%" }}
                   defaultActiveFirstOption={false}
                   showArrow={false}
                   filterOption={false}
