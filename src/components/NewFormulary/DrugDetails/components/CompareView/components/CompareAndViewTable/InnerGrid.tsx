@@ -871,22 +871,31 @@ class InnerGrid extends Component<InnerGridProps, any>{
 
           apiDetails['messageBody'] = {};
 
+          let descriptionId = Array();
           switch (this.state.rowData['attribute_name']) {
             case 'PA Group Descriptions':
-              apiDetails['messageBody']['attribute_field_data_type'] = 'STR';
-              apiDetails['messageBody']['attribute_field_name'] = this.state.rowData['attribute_field_name'];
-              apiDetails['messageBody']['attribute_field_value'] = attributeValue;
-              apiDetails['messageBody']['attribute_name'] = this.state.rowData['attribute_name'];
-              apiDetails['messageBody']['file_type'] = this.state.rowData['file_type'];
-              apiDetails['messageBody']['filter'] = [];
+              descriptionId = this.state.drugData.filter(drugData => drugData['group_description_name'] === attributeValue);
+              console.log('Selected description value:',descriptionId);
+              if (descriptionId && descriptionId.length > 0) {
+                apiDetails['messageBody']['attribute_field_data_type'] = 'STR';
+                apiDetails['messageBody']['attribute_field_name'] = this.state.rowData['attribute_field_name'];
+                apiDetails['messageBody']['attribute_field_value'] = ''+descriptionId[0]['group_description_id'];
+                apiDetails['messageBody']['attribute_name'] = this.state.rowData['attribute_name'];
+                apiDetails['messageBody']['file_type'] = this.state.rowData['file_type'];
+                apiDetails['messageBody']['filter'] = [];
+              }
               break;
             case 'ST Group Descriptions':
-              apiDetails['messageBody']['attribute_field_data_type'] = 'STR';
-              apiDetails['messageBody']['attribute_field_name'] = this.state.rowData['attribute_field_name'];
-              apiDetails['messageBody']['attribute_field_value'] = attributeValue;
-              apiDetails['messageBody']['attribute_name'] = this.state.rowData['attribute_name'];
-              apiDetails['messageBody']['file_type'] = this.state.rowData['file_type'];
-              apiDetails['messageBody']['filter'] = [];
+              descriptionId = this.state.drugData.filter(drugData => drugData['group_description_name'] === attributeValue);
+              console.log('Selected description value:',descriptionId);
+              if (descriptionId && descriptionId.length > 0) {
+                apiDetails['messageBody']['attribute_field_data_type'] = 'STR';
+                apiDetails['messageBody']['attribute_field_name'] = this.state.rowData['attribute_field_name'];
+                apiDetails['messageBody']['attribute_field_value'] = ''+descriptionId[0]['group_description_id'];
+                apiDetails['messageBody']['attribute_name'] = this.state.rowData['attribute_name'];
+                apiDetails['messageBody']['file_type'] = this.state.rowData['file_type'];
+                apiDetails['messageBody']['filter'] = [];
+              }
               break;
             case 'Tx Category':
               apiDetails['messageBody']['attribute_field_data_type'] = 'STR';
