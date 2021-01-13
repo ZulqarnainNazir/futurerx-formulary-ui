@@ -653,6 +653,20 @@ class Tier extends React.Component<any, tabsState> {
   }
   onDeleteTierReplaceAction = () => {
     const data = [...this.state.afterDeleteRemainigTiers];
+    let addedTiers = Array();
+    let duplicatesPresent = false;
+    data.map((el: any) => {
+      const current_id = parseInt(el.tier_name.split(" ")[1]);
+      if(!addedTiers.includes(current_id)){
+        addedTiers.push(current_id);
+      }else{
+        duplicatesPresent = true;
+      }
+    })
+    if(duplicatesPresent){
+      showMessage('Duplicate tiers are not allowed in reassigned tier section','error');
+      return;
+    }
     const createdData: any = data.map((el: any) => {
       const current_id = parseInt(el.tier_name.split(" ")[1])
       return {
