@@ -9,6 +9,7 @@ import DialogPopup from "../../shared/FrxDialogPopup/FrxDialogPopup";
 
 import "./SubNavBar.scss";
 import FrxLoader from "../../shared/FrxLoader/FrxLoader";
+import CommonDialogAction from "../components/CommonDialogActions/CommonDialogAction";
 
 const { Option } = Select;
 interface Props {
@@ -50,7 +51,7 @@ class SubNavBar extends Component<Props, State> {
           <Toolbar>
             <Grid container>
               {/* <Grid item sm="auto" /> */}
-              <Grid item sm={10}>
+              <Grid item sm={7}>
                 <span className="subNavBar-icon-select-dropdown-container">
                   <svg
                     width="11"
@@ -423,12 +424,12 @@ class SubNavBar extends Component<Props, State> {
               <Grid
                 item
                 container
-                sm={2}
+                sm={5}
                 justify="flex-end"
                 alignContent="center"
                 className="subNavBar-search-icon"
               >
-                <svg
+                {/* <svg
                   onClick={this.handleAdvanceSearchPopUp}
                   className="subNavBar-search-icons"
                   width="12"
@@ -441,7 +442,8 @@ class SubNavBar extends Component<Props, State> {
                     d="M11.8368 10.3748L9.49991 8.03828C9.39444 7.93282 9.25146 7.87423 9.10145 7.87423H8.71939C9.36631 7.04697 9.75071 6.00644 9.75071 4.87452C9.75071 2.18182 7.56852 0 4.87536 0C2.18219 0 0 2.18182 0 4.87452C0 7.56723 2.18219 9.74905 4.87536 9.74905C6.00747 9.74905 7.04817 9.36471 7.87558 8.7179V9.09989C7.87558 9.24988 7.93417 9.39283 8.03965 9.49829L10.3765 11.8348C10.5969 12.0551 10.9531 12.0551 11.1711 11.8348L11.8345 11.1716C12.0548 10.9513 12.0548 10.5951 11.8368 10.3748ZM4.87536 7.87423C3.2182 7.87423 1.87514 6.53374 1.87514 4.87452C1.87514 3.21765 3.21586 1.87482 4.87536 1.87482C6.53251 1.87482 7.87558 3.21531 7.87558 4.87452C7.87558 6.53139 6.53485 7.87423 4.87536 7.87423Z"
                     fill="white"
                   />
-                </svg>
+                </svg> */}
+                <CommonDialogAction />
               </Grid>
             </Grid>
           </Toolbar>

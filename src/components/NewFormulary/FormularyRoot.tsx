@@ -54,7 +54,7 @@ class FormularyRoot extends React.Component<any, any> {
   render() {
     return (
       <Fragment>
-      <CommonDialogAction />
+      {/* <CommonDialogAction /> */}
       <>
         <div className="formulary-root">
           <FrxTabs
