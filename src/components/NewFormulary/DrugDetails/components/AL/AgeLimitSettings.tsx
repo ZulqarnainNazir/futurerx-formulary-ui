@@ -1,5 +1,4 @@
 import React from "react";
-import Box from "@material-ui/core/Box";
 import PanelHeader from "../../../../shared/Frx-components/panel-header/PanelHeader";
 import DropDown from "../../../../shared/Frx-components/dropdown/DropDown";
 import Button from "../../../../shared/Frx-components/button/Button";
@@ -40,7 +39,6 @@ class AgeLimitSettings extends React.Component<any, any> {
           />
 
           <div className="inner-container">
-
             {this.props.alSettings.map((s) => (
               <StatusContentFormPanel
                 title="Age"
@@ -107,15 +105,13 @@ class AgeLimitSettings extends React.Component<any, any> {
                 </span>
               </div>
             ) : null}
-
-            <Box display="flex" justifyContent="flex-end">
-              <Button
-                label="Apply"
-                onClick={() => this.props.showGrid()}
-                disabled={this.props.isDisabled}
-              />
-            </Box>
           </div>
+
+          <Button
+            label="Apply"
+            onClick={() => this.props.showGrid()}
+            disabled={this.props.isDisabled}
+          />
         </div>
       </>
     );
