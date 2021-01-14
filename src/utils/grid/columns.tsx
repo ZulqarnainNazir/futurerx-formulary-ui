@@ -22,7 +22,88 @@ import FrxTimeProgressBar from "../../components/shared/FrxTimeProgressBar/FrxTi
 // <div>claim id</div>
 // );
 // };
-
+export const MemberAuditViewColumns: () => Column<any>[] = () => {
+  return [
+    {
+      position: 1,
+      sorter: {},
+      textCase: "upper",
+      pixelWidth: 163,
+      key: "date",
+      displayTitle: "DATE",
+      isFilterable: true,
+      dataType: "date",
+      filters: numberFilters,
+      hidden: false,
+      sortDirections: ["ascend", "descend"],
+    },
+    {
+      position: 2,
+      sorter: {},
+      textCase: "upper",
+      pixelWidth: 163,
+      key: "start",
+      displayTitle: "start Time",
+      isFilterable: true,
+      dataType: "string",
+      filters: numberFilters,
+      hidden: false,
+      sortDirections: ["ascend", "descend"],
+    },
+    {
+      position: 3,
+      sorter: {},
+      textCase: "upper",
+      pixelWidth: 163,
+      key: "end",
+      displayTitle: "end time",
+      isFilterable: true,
+      dataType: "string",
+      filters: numberFilters,
+      hidden: false,
+      sortDirections: ["ascend", "descend"],
+    },
+    {
+      position: 4,
+      sorter: {},
+      textCase: "upper",
+      pixelWidth: 163,
+      key: "subMenu",
+      displayTitle: "sub menu",
+      isFilterable: true,
+      dataType: "string",
+      filters: numberFilters,
+      hidden: false,
+      sortDirections: ["ascend", "descend"],
+    },
+    {
+      position: 5,
+      sorter: {},
+      textCase: "upper",
+      pixelWidth: 163,
+      key: "task",
+      displayTitle: "task",
+      isFilterable: true,
+      dataType: "string",
+      filters: numberFilters,
+      hidden: false,
+      sortDirections: ["ascend", "descend"],
+    },
+    {
+      position: 6,
+      sorter: {},
+      textCase: "upper",
+      pixelWidth: 163,
+      key: "user",
+      displayTitle: "user",
+      isFilterable: true,
+      dataType: "string",
+      filters: numberFilters,
+      hidden: false,
+      sortDirections: ["ascend", "descend"],
+    },
+  ]
+}
 export const selectFormularyGridMedicare: (data) => Column<any>[] = (data) => {
   return [
     {
