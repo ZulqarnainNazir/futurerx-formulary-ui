@@ -3,18 +3,56 @@ import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
 import { Select } from "antd";
 import 'antd/dist/antd.css';
+import {Input, InputAdornment} from "@material-ui/core";
 import { Drawer, Button, Radio, Space } from 'antd';
 
 import { Grid, Container } from "@material-ui/core";
 import AdvanceSearchContainer from "../../advance-search/AdvanceSearchContainer";
+import FrxMiniTabs from "../../shared/FrxMiniTabs/FrxMiniTabs";
 import DialogPopup from "../../shared/FrxDialogPopup/FrxDialogPopup";
 import {ReactComponent as Navhamburger} from "../../../assets/icons/nav-hamburger.svg";
 
 import "./SubNavBar.scss";
-import FrxLoader from "../../shared/FrxLoader/FrxLoader";
+import CustomerNav from "./CustomerNav";
+import ClientNav from "./ClientNav";
 import CommonDialogAction from "../components/CommonDialogActions/CommonDialogAction";
 import { SelectAll } from "@material-ui/icons";
+import FuturerxLogo from "../../../assets/img/logo.png"; 
 
+const clients = [
+  {
+    id: "1",
+    Name: "Client 1",
+  },
+  {
+    id: "2",
+    Name: "Client 2",
+  },
+  {
+    id: "3",
+    Name: "Client 3",
+  },
+  {
+    id: "4",
+    Name: "Client 4",
+  },
+  {
+    id: "5",
+    Name: "Client 5",
+  },
+  {
+    id: "6",
+    Name: "Client 6",
+  },
+  {
+    id: "7",
+    Name: "Client 7",
+  },
+  {
+    id: "8",
+    Name: "Client 8",
+  },
+];
 const { Option } = Select;
 interface Props {
   history: any;
@@ -26,6 +64,7 @@ class SubNavBar extends Component<Props, State> {
     advanceSearchPopUpOpen: false,
     searchType: "member",
     visible: false,
+    clients: clients,
     placement: ""
   };
 
@@ -69,7 +108,7 @@ class SubNavBar extends Component<Props, State> {
     }, 300);
   };
   render() {
-    const { placement, visible } = this.state;
+    const { placement, visible, clients } = this.state;
     return (
       <div className="sub-navbar">
         <AppBar position="static">
@@ -78,8 +117,9 @@ class SubNavBar extends Component<Props, State> {
               <Grid item sm={7}>
                 <div className="nav-menu-right">
                 <Navhamburger className="nav-hamburger-icon" onClick={this.showDrawer} />
+                
                 <Drawer
-                  title="Basic Drawer"
+                  title={<img src={FuturerxLogo} alt="logo" />}
                   placement="left"
                   closable={true}
                   onClose={this.onClose}
@@ -87,9 +127,8 @@ class SubNavBar extends Component<Props, State> {
                   key={placement}
                   className="drawer-wrapper"
                 >
-                  <p>Some contents...</p>
-                  <p>Some contents...</p>
-                  <p>Some contents...</p>
+                  <p className="font15">Select a customer and subsequent client from below to start working.</p>
+                  <ClientNav clients={clients}/>
                 </Drawer>
                 <span className="subNavBar-icon-select-dropdown-container">
                   <Select

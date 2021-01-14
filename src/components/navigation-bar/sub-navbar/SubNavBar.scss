@@ -1,3 +1,10 @@
+@import "./../../../assets/style.scss";
+.ant-drawer .ant-drawer-content .ant-drawer-header .ant-drawer-close{
+  padding: 25px !important;
+}
+.ant-drawer-title {
+color: black !important;
+}
 .drawer-wrapper {
   .ant-drawer-content-wrapper {
     max-height: 100vh !important;
@@ -131,4 +138,122 @@
   .MuiDialogContent-root {
     padding: 0;
   }
+}
+
+.ant-drawer .ant-drawer-content .ant-drawer-header{
+  padding: 25px 14px !important; 
+}
+.ant-drawer-body{
+  padding: 25px !important;
+}
+.font15{
+  font-size: 15px;
+}
+.member-search__input {
+  background: $color-white;
+  border: 1px solid $input-field-border;
+  box-sizing: border-box;
+  border-radius: 3px;
+  font-size: $font-12;
+  font-weight: $font-weight-normal;
+  color: black; //$input-text-placeholder;
+  margin: 0px !important;
+  margin-top: 10px !important;
+  text-indent: 10px;
+  width: 100%;
+  height: 35px;
+  line-height: 14px;
+  outline: none;
+  margin-bottom: 10px;
+  & > input::placeholder {
+    font-size: 12px;
+    font-weight: $font-weight-normal;
+    // color: $input-text-placeholder;
+    color: black;
+    // text-indent: 10px;
+  }
+  .member-search__icon {
+    margin: 10px;
+  }
+  .MuiInput-input {
+    font-size: $font-12;
+    font-weight: $font-weight-normal;
+    color: $input-text-placeholder;
+    border-bottom: 0;
+  }
+}
+.member-search__input--dropdown {
+  width: 100%;
+  height: 100% !important;
+  border: none !important;
+  // background-color: red;
+
+  background: $color-white;
+  border: 1px solid $input-field-border;
+  box-sizing: border-box;
+  border-radius: 3px;
+  font-size: $font-12;
+  font-weight: $font-weight-normal;
+  color: $input-text-placeholder;
+  //   text-indent: 10px;
+  width: 100%;
+  height: 35px;
+  line-height: 14px;
+  outline: none;
+  margin-bottom: 8px;
+  & > input::placeholder {
+    font-size: 12px;
+    font-weight: $font-weight-normal;
+    // color: $input-text-placeholder;
+    color: black;
+    // text-indent: 10px;
+  }
+  .member-search__icon {
+    margin: 10px;
+  }
+  .MuiInput-input {
+    font-size: $font-12;
+    font-weight: $font-weight-normal;
+    color: $input-text-placeholder;
+    border-bottom: 0;
+  }
+  .ant-select-selector {
+    // .ant-select-selection-search {
+    .ant-select-selection-placeholder {
+      color: inherit;
+    }
+  }
+  // }
+}
+.bottom_nav{
+  width: inherit;
+  height: 42px;
+  margin-left: -25px;
+  margin-right: -25px;
+  border-bottom: 1px solid #ccc;
+}
+.clients_div{
+  /*background: #E5E5E5;*/
+}
+.removeMargin{
+  margin-left: -25px;
+  margin-right: -25px;
+  height: 100vh; 
+}
+.padding15{
+  padding: 15px 30px;
+}
+.clientName{
+  color: #666666;
+  padding: 10px 0px;
+  padding-left: 10px;
+  cursor: pointer;
+font-family: Roboto;
+font-style: normal;
+font-weight: normal;
+font-size: 15px;
+line-height: 30px;
+}
+.circle{
+  padding: 10px 0px;
 }
