@@ -103,9 +103,12 @@ class FormularyConfigure extends React.Component<any, any> {
 
   getTabs(list: TabInfo[]): TabInfo[] {
     console.log(" --------------------------------: ", this.props?.editInfo);
-    let isPA: boolean = false;
-    let isST: boolean = false;
-    let isQL: boolean = false;
+    // let isPA: boolean = false;
+    // let isST: boolean = false;
+		// let isQL: boolean = false;
+		let isPA: boolean = true;
+    let isST: boolean = true;
+    let isQL: boolean = true;
     let isNA: boolean = false;
 
     if (this.props?.editInfo) {

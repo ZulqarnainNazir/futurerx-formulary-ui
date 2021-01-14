@@ -1,6 +1,7 @@
 import axios from "axios";
 import { FormularyVersionHistoryResult } from "./version-history.slice";
 import { BASE_URL1 } from "../../../../api/http-helper";
+import { REQUEST_HEADER } from "../../../../api/http-commons";
 
 const headers = {
   Authorization: "Bearer 1e05ff8b-a0af-4a8f-8915-487321900f21",
@@ -26,7 +27,7 @@ export async function getformularyVersionHistory({
       url,
       { filters: [], search_key: "" },
       {
-        headers: headers
+        headers: REQUEST_HEADER
       }
     );
     // console.log("***** getformulary Versions - Success");

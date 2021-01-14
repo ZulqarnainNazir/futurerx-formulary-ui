@@ -386,6 +386,7 @@ class STF extends React.Component<any, any> {
           }
         });
         let tmp_additionalCriteria = false;
+        let tmp_selectedStType = null;
         this.props
           .getStGrouptDescription({
             lob_type: this.props.formulary_lob_id,
@@ -403,9 +404,11 @@ class STF extends React.Component<any, any> {
                 this.props.setAdditionalCriteria(payload);
                 tmp_additionalCriteria = true;
               }
+              tmp_selectedStType=json?.payload?.data?.id_st_type;
             }
             this.setState({
               is_additional_criteria_defined: tmp_additionalCriteria,
+              selectedStType: tmp_selectedStType,
             });
           });
         this.setState({

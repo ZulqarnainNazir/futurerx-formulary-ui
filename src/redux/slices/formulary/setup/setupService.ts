@@ -113,7 +113,13 @@ export function composePostBody(input: any): any {
   payload.formulary_info.formulary_name = input.GENERAL_INFO?.name;
   payload.formulary_info.contract_year = input.GENERAL_INFO?.service_year;
   payload.formulary_info.abbreviation = input.GENERAL_INFO?.abbreviation;
-  payload.formulary_info.resemble_formulary_id = null;
+
+  if (typeInfo.id_lob == 1) {
+    payload.formulary_info.resemble_formulary_id =
+      input.GENERAL_INFO?.resemble_formulary_id;
+  } else {
+    payload.formulary_info.resemble_formulary_id = null;
+  }
   payload.formulary_info.formulary_description =
     input.GENERAL_INFO?.description;
   payload.formulary_info.is_closed_formulary =

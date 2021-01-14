@@ -27,7 +27,7 @@ import Tags from "./Tags";
 import { getPAGroupDetails } from "../../../../../../redux/slices/formulary/pagdm/pagdmSlice";
 import {
   getCategoryList,
-  getAdditionalCriteriaSectionList,
+  getAdditionalCriteriaSectionList
 } from "../../../../NewAdvanceSearch/advanceSearchMock";
 import AdditionalCriteriaContainer from "../../../../NewAdvanceSearch/AdditionalCriteriaContainer/AdditionalCriteriaContainer";
 
@@ -39,13 +39,14 @@ import {
   postPAGroupDescription,
   putPAGroupDescription,
   getPaGrouptDescriptionVersions,
-  getPaGrouptDescriptions,
+  getPaGrouptDescriptions
 } from "../../../../../../redux/slices/formulary/pa/paActionCreation";
 import SearchableDropdown from "../../../../../shared/Frx-components/SearchableDropdown";
 import { Tag, Space } from "antd";
 import { ReactComponent as CrossCircleWhiteBGIcon } from "../../../../../../assets/icons/crosscirclewhitebg.svg";
 import AdvanceSearchContainer from "../../../../NewAdvanceSearch/AdvanceSearchContainer";
 import "./GroupDescriptionStyles.scss";
+import "./PANewGroupForm.scss";
 interface Props {
   tooltip?: string;
   formType?: number;
@@ -103,17 +104,17 @@ const initialFormData: initialFormData = {
   prescriber_restrictions: "",
   coverage_restrictions: "",
   other_criteria: "",
-  drug_list_ids: [],
+  drug_list_ids: []
 };
 const formInformationPanelTabs = [
   {
     id: 1,
-    text: "PA Criteria Change Indicator",
+    text: "PA Criteria Change Indicator"
   },
   {
     id: 2,
-    text: "PA Indication Indicator",
-  },
+    text: "PA Indication Indicator"
+  }
 ];
 
 const FormInformationPanel = (props: any) => {
@@ -205,14 +206,14 @@ const FormInformationPanel = (props: any) => {
 
 function mapDispatchToProps(dispatch) {
   return {
-    getPaGrouptDescription: (a) => dispatch(getPaGrouptDescription(a)),
-    postPAGroupDescription: (a) => dispatch(postPAGroupDescription(a)),
-    putPAGroupDescription: (a) => dispatch(putPAGroupDescription(a)),
-    getPaGrouptDescriptions: (a) => dispatch(getPaGrouptDescriptions(a)),
-    getPaGrouptDescriptionVersions: (a) =>
+    getPaGrouptDescription: a => dispatch(getPaGrouptDescription(a)),
+    postPAGroupDescription: a => dispatch(postPAGroupDescription(a)),
+    putPAGroupDescription: a => dispatch(putPAGroupDescription(a)),
+    getPaGrouptDescriptions: a => dispatch(getPaGrouptDescriptions(a)),
+    getPaGrouptDescriptionVersions: a =>
       dispatch(getPaGrouptDescriptionVersions(a)),
-    getDrugLists: (a) => dispatch(getDrugLists(a)),
-    getPAGroupDetails: (a) => dispatch(getPAGroupDetails(a)),
+    getDrugLists: a => dispatch(getDrugLists(a)),
+    getPAGroupDetails: a => dispatch(getPAGroupDetails(a))
   };
 }
 
@@ -224,7 +225,7 @@ function mapStateToProps(state) {
     PaGDData: state.paReducer.description,
     version: state.paVersion.paVersion,
     additionalCriteriaObject: state?.additionalCriteria?.additionalCriteriaBody,
-    savePaGdm: state.savePaGdm,
+    savePaGdm: state.savePaGdm
   };
 }
 
@@ -250,7 +251,7 @@ function NewGroup(props: any) {
 
   const [additionalCriteria, setAdditionalCriteria] = useState(null);
 
-  const handleChange = (e) => {
+  const handleChange = e => {
     let tmp_value = e.target.value;
     if (e.target.value == "true") {
       tmp_value = true;
@@ -261,25 +262,25 @@ function NewGroup(props: any) {
       e.target.value === "yes" || e.target.value === "true"
         ? true
         : e.target.value === "no" || e.target.value === "false"
-          ? false
-          : e.target.value;
+        ? false
+        : e.target.value;
     updateFormData({
       ...formData,
-      [e.target.name]: formVal,
+      [e.target.name]: formVal
     });
   };
 
-  const handleChange_1 = (e) => {
+  const handleChange_1 = e => {
     updateFormData({
       ...formData,
-      change_indicator: e,
+      change_indicator: e
     });
   };
 
-  const handleChange_2 = (e) => {
+  const handleChange_2 = e => {
     updateFormData({
       ...formData,
-      id_indication_indicator: e,
+      id_indication_indicator: e
     });
   };
 
@@ -385,7 +386,7 @@ function NewGroup(props: any) {
         let id_pa_group_description = formData["id_pa_group_description"]
           ? formData["id_pa_group_description"]
           : 0;
-        props.putPAGroupDescription(requestData).then((json) => {
+        props.putPAGroupDescription(requestData).then(json => {
           if (json.payload && json.payload.code === "200") {
             showMessage("Success", "success");
             let apiDetails = {};
@@ -406,7 +407,7 @@ function NewGroup(props: any) {
         requestData["apiPart"] =
           "api/1/mcr-pa-group-description/" + props.client_id;
         requestData["pathParams"] = "/" + props?.formulary_id + "?entity_id=0";
-        props.postPAGroupDescription(requestData).then((json) => {
+        props.postPAGroupDescription(requestData).then(json => {
           if (json.payload && json.payload.code === "200") {
             showMessage("Success", "success");
             let apiDetails = {};
@@ -443,7 +444,7 @@ function NewGroup(props: any) {
           "?entity_id=0";
         let id_pa_group_description = props.savePaGdm.current_group_des_id;
 
-        props.putPAGroupDescription(requestData).then((json) => {
+        props.putPAGroupDescription(requestData).then(json => {
           if (json.payload && json.payload.code === "200") {
             showMessage("Success", "success");
             let apiDetails = {};
@@ -459,12 +460,12 @@ function NewGroup(props: any) {
               : props.savePaGdm.current_group_id;
             apiDetails["pathParams"] = "/" + id_base_pa_group_description;
 
-            props.getPaGrouptDescriptionVersions(apiDetails).then((json) => {
+            props.getPaGrouptDescriptionVersions(apiDetails).then(json => {
               if (json.payload && json.payload.code === "200") {
                 const isEditable =
                   json.payload.data.length > 0 &&
                   json.payload.data.find(
-                    (val) =>
+                    val =>
                       val.id_pa_group_description === id_pa_group_description
                   );
                 // props.selectGroup(
@@ -484,7 +485,7 @@ function NewGroup(props: any) {
         });
       } else {
         requestData["pathParams"] = "/" + props?.formulary_id + "?entity_id=0";
-        props.postPAGroupDescription(requestData).then((json) => {
+        props.postPAGroupDescription(requestData).then(json => {
           if (json.payload && json.payload.code === "200") {
             showMessage("Success", "success");
             let apiDetails = {};
@@ -498,7 +499,7 @@ function NewGroup(props: any) {
             props.getPAGroupDetails({
               formulary_id: props.formulary_id,
               current_group_id: json.payload.id_base_pa_group_description,
-              current_group_des_id: json.payload.id_pa_group_description,
+              current_group_des_id: json.payload.id_pa_group_description
             });
 
             formData["id_pa_group_description"] =
@@ -509,12 +510,12 @@ function NewGroup(props: any) {
 
             let id_base_pa_group_description =
               json.payload.id_base_pa_group_description;
-            props.getPaGrouptDescriptionVersions(apiDetails).then((json) => {
+            props.getPaGrouptDescriptionVersions(apiDetails).then(json => {
               if (json.payload && json.payload.code === "200") {
                 const isEditable =
                   json.payload.data.length > 0 &&
                   json.payload.data.find(
-                    (val) =>
+                    val =>
                       val.id_pa_group_description ===
                       formData["id_pa_group_description"]
                   );
@@ -538,7 +539,7 @@ function NewGroup(props: any) {
     setShowHeader(1);
   };
 
-  const onChange = (e) => {
+  const onChange = e => {
     // const latestVerion = Object.keys(props.version).length > 0 ? props.version[Number(e)]?.id_pa_group_description : 0;
     //setLatestId(latestVerion)
     if (Object.keys(props.PaGDData).length > 0 && e && e != "no") {
@@ -549,7 +550,7 @@ function NewGroup(props: any) {
       setChangeEvent(true);
       updateFormData({
         ...formData,
-        ...props.PaGDData,
+        ...props.PaGDData
       });
     } else {
       setChangeEvent(false);
@@ -559,7 +560,7 @@ function NewGroup(props: any) {
   const handleCheckBox = (event: React.ChangeEvent<HTMLInputElement>) => {
     updateFormData({
       ...formData,
-      [event.target.name]: event.target.checked,
+      [event.target.name]: event.target.checked
     });
   };
 
@@ -584,8 +585,6 @@ function NewGroup(props: any) {
   }, [props.formType]);
 
   useEffect(() => {
-
-
     setAdditionalCriteria(props.additionalCriteriaObject);
   }, [props.additionalCriteriaObject]);
 
@@ -606,7 +605,7 @@ function NewGroup(props: any) {
       }
       updateFormData({
         ...formData,
-        ...props.PaGDData,
+        ...props.PaGDData
       });
       setDrug_list_ids(props.PaGDData.drug_list_ids);
     }
@@ -618,16 +617,16 @@ function NewGroup(props: any) {
     setErrorClass("");
   }, [
     props.PaGDData ||
-    props.versionList ||
-    props.activeTabIndex ||
-    props.editMode,
+      props.versionList ||
+      props.activeTabIndex ||
+      props.editMode
   ]);
 
-  const getAutoCompleteChangeHandler = (val) => {
+  const getAutoCompleteChangeHandler = val => {
     setDrug_list_ids(val);
   };
   return (
-    <div className="new-group-des __root-pa-gd-popup">
+    <div className="new-group-des __root-pa-gd-popup pa--form">
       {/* <div className="panel header">
         <span>{props.title ? props.title : formData.pa_group_description_name}</span>
       </div>
@@ -636,7 +635,7 @@ function NewGroup(props: any) {
       <div className="panel header">
         <span>
           {(formType > 0 || showHeader > 0) &&
-            formData.pa_group_description_name
+          formData.pa_group_description_name
             ? formData.pa_group_description_name
             : props.title}
         </span>
@@ -646,7 +645,7 @@ function NewGroup(props: any) {
             <Button
               label="Select This Group"
               className="Button auto-width"
-              onClick={(event) =>
+              onClick={event =>
                 props.selectGroupDescriptionClick(
                   props.savePaGdm.current_group_id
                 )
@@ -670,8 +669,10 @@ function NewGroup(props: any) {
 
       {props.formulary_lob_id == 1 ? (
         <div className="inner-container pa-new-group-form">
-          <div className="setting-1">
-            <span>What file type is this group description for? *</span>
+          <div className="setting-1 ">
+            <span className="question">
+              What file type is this group description for? *
+            </span>
             <AlertMessages delay="10000" />
             <div className="marketing-material radio-group">
               <RadioGroup
@@ -712,10 +713,11 @@ function NewGroup(props: any) {
                 />
               </RadioGroup>
             </div>
-            <Grid container>
+            <Grid container item xs={12}>
               <Grid container item xs={6}>
                 <Grid item xs={12}>
-                  <div className="group group-padding">
+                  {/* <div className="group group-padding"> */}
+                  <div className="pa--form__input">
                     <label>
                       PA GROUP DESCRIPTION <span className="astrict">*</span>
                     </label>
@@ -725,12 +727,13 @@ function NewGroup(props: any) {
                       onChange={handleChange}
                       defaultValue={formData.pa_group_description_name}
                       disabled={editable}
-                      className={errorClass}
+                      className={`${errorClass} pa_group_description_name`}
                     />
                   </div>
                 </Grid>
                 <Grid item xs={12}>
-                  <div className="group group-padding">
+                  {/* <div className="group group-padding"> */}
+                  <div className="">
                     <label>
                       PA Criteria Change Indicator{" "}
                       <span className="astrict">*</span>
@@ -742,7 +745,7 @@ function NewGroup(props: any) {
                       value={props.change_indicator}
                       options={[
                         { key: 0, value: 0 },
-                        { key: 1, value: 1 },
+                        { key: 1, value: 1 }
                       ]}
                       //options={[0,1]}
                       valueProp="key"
@@ -753,7 +756,8 @@ function NewGroup(props: any) {
                   </div>
                 </Grid>
                 <Grid item xs={12}>
-                  <div className="group group-padding">
+                  {/* <div className="group group-padding"> */}
+                  <div className="">
                     <label>
                       PA INDICATION Indicator<span className="astrict">*</span>
                     </label>
@@ -766,7 +770,7 @@ function NewGroup(props: any) {
                         { key: 1, value: 1 },
                         { key: 2, value: 2 },
                         { key: 3, value: 3 },
-                        { key: 4, value: 4 },
+                        { key: 4, value: 4 }
                       ]}
                       valueProp="key"
                       dispProp="value"
@@ -942,17 +946,17 @@ function NewGroup(props: any) {
             <Button
               label="Save Version Progress"
               className="Button"
-              onClick={(event) => saveGroupDescription(event, false)}
+              onClick={event => saveGroupDescription(event, false)}
             />
             <Button
               label="Version to Initiate Change Request"
               className="Button"
-              onClick={(event) => saveGroupDescription(event, false)}
+              onClick={event => saveGroupDescription(event, false)}
             />
             <Button
               label="Version Submitted to CMS"
               className="Button"
-              onClick={(event) => saveGroupDescription(event, true)}
+              onClick={event => saveGroupDescription(event, true)}
             />
           </div>
         </div>
@@ -976,7 +980,7 @@ function NewGroup(props: any) {
                       onClick={() =>
                         updateFormData({
                           ...formData,
-                          id_pa_type: 8,
+                          id_pa_type: 8
                         })
                       }
                       disabled={editable}
@@ -989,7 +993,7 @@ function NewGroup(props: any) {
                       onClick={() =>
                         updateFormData({
                           ...formData,
-                          id_pa_type: 9,
+                          id_pa_type: 9
                         })
                       }
                       disabled={editable}
@@ -1091,7 +1095,7 @@ function NewGroup(props: any) {
                         }
                         updateFormData({
                           ...formData,
-                          is_additional_criteria_defined: true,
+                          is_additional_criteria_defined: true
                         });
                       }}
                       disabled={
@@ -1108,7 +1112,7 @@ function NewGroup(props: any) {
                       onClick={() =>
                         updateFormData({
                           ...formData,
-                          is_additional_criteria_defined: false,
+                          is_additional_criteria_defined: false
                         })
                       }
                       disabled={editable}
@@ -1159,7 +1163,7 @@ function NewGroup(props: any) {
           {props.isPopUpView && (
             <AdditionalCriteriaContainer
               criteriaList={getAdditionalCriteriaSectionList()}
-              handleChildDataSave={() => { }}
+              handleChildDataSave={() => {}}
               isReadOnly={props.isPopUpView}
             />
           )}
@@ -1170,12 +1174,12 @@ function NewGroup(props: any) {
                   <Button
                     label="Save Version Progress"
                     className="Button"
-                    onClick={(event) => saveGroupDescription(event, false)}
+                    onClick={event => saveGroupDescription(event, false)}
                   />
                   <Button
                     label="Save Final Version and Continue"
                     className="Button"
-                    onClick={(event) => saveGroupDescription(event, true)}
+                    onClick={event => saveGroupDescription(event, true)}
                   />
                 </>
               ) : null}
